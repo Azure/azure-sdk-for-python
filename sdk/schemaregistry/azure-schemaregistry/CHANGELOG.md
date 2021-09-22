@@ -20,6 +20,7 @@
 ### Other Changes
 
 - Updated azure-core dependency to 1.17.1.
+- Removed caching support of registered schemas so requests are sent to the service to register schemas, get schema properties, and get schemas.
 
 ## 1.0.0b2 (2021-08-17)
 

@@ -66,8 +66,6 @@ class SchemaRegistryClient(object):
         **kwargs: Any
     ) -> None:
         self._generated_client = AzureSchemaRegistry(credential, fully_qualified_namespace, **kwargs)
-        self._description_to_properties = {}
-        self._id_to_schema = {}
 
     async def __aenter__(self):
         await self._generated_client.__aenter__()
@@ -129,20 +127,7 @@ class SchemaRegistryClient(object):
 
         response = await self._generated_client.send_request(request)
         response.raise_for_status()
-        schema_properties = _parse_response_schema_properties(response)
-
-        schema_description = (
-            group_name,
-            name,
-            schema_definition,
-            format,
-        )
-        self._id_to_schema[schema_properties.id] = Schema(
-            schema_definition, schema_properties
-        )
-        self._description_to_properties[schema_description] = schema_properties
-
-        return schema_properties
+        return _parse_response_schema_properties(response)
 
     async def get_schema(
         self,
@@ -166,15 +151,10 @@ class SchemaRegistryClient(object):
                 :caption: Get schema by id.
 
         """
-        try:
-            return self._id_to_schema[id]
-        except KeyError:
-            request = schema_rest.build_get_by_id_request(schema_id=id)
-            response = await self._generated_client.send_request(request, **kwargs)
-            response.raise_for_status()
-            schema = _parse_response_schema(response)
-            self._id_to_schema[id] = schema
-            return schema
+        request = schema_rest.build_get_by_id_request(schema_id=id)
+        response = await self._generated_client.send_request(request, **kwargs)
+        response.raise_for_status()
+        return _parse_response_schema(response)
 
     async def get_schema_properties(
         self,
@@ -210,30 +190,15 @@ class SchemaRegistryClient(object):
         except AttributeError:
             pass
 
-        try:
-            properties = self._description_to_properties[
-                (group_name, name, schema_definition, format)
-            ]
-            return properties
-        except KeyError:
-            request = schema_rest.build_query_id_by_content_request(
-                group_name=group_name,
-                schema_name=name,
-                content=schema_definition,
-                serialization_type=format,
-                content_type=kwargs.pop("content_type", "application/json"),
-                **kwargs
-            )
+        request = schema_rest.build_query_id_by_content_request(
+            group_name=group_name,
+            schema_name=name,
+            content=schema_definition,
+            serialization_type=format,
+            content_type=kwargs.pop("content_type", "application/json"),
+            **kwargs
+        )
 
-            response = await self._generated_client.send_request(request, **kwargs)
-            response.raise_for_status()
-            schema_properties = _parse_response_schema_properties(response)
-
-            if not self._id_to_schema.get(schema_properties.id):
-                self._id_to_schema[schema_properties.id] = Schema(schema_definition, schema_properties)
-            else:
-                schema_properties = self._id_to_schema[schema_properties.id].properties
-            self._description_to_properties[
-                (group_name, name, schema_definition, format)
-            ] = schema_properties
-            return schema_properties
+        response = await self._generated_client.send_request(request, **kwargs)
+        response.raise_for_status()
+        return _parse_response_schema_properties(response)
