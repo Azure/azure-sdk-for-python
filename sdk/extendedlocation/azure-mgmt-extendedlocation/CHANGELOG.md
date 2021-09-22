@@ -3,7 +3,8 @@
 ## 1.0.0 (2021-09-22)
 
 **Features**
-
+  - Adding a new API Version 2021-08-15
+  - Adding support for Managed Identity [SystemAssigned]
   - Model PatchableCustomLocations has a new parameter identity
   - Model CustomLocation has a new parameter identity
 
