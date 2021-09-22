@@ -10,58 +10,111 @@ try:
     from ._models_py3 import Account
     from ._models_py3 import AccountList
     from ._models_py3 import AccountUpdate
+    from ._models_py3 import CheckNameAvailabilityRequest
+    from ._models_py3 import CheckNameAvailabilityResponse
     from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorDefinition
+    from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse
+    from ._models_py3 import GroupInformation
+    from ._models_py3 import GroupInformationProperties
+    from ._models_py3 import Identity
     from ._models_py3 import Instance
     from ._models_py3 import InstanceList
     from ._models_py3 import IotHubSettings
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationListResult
+    from ._models_py3 import PrivateEndpoint
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointConnectionListResult
+    from ._models_py3 import PrivateLinkResourceListResult
+    from ._models_py3 import PrivateLinkResourceProperties
+    from ._models_py3 import PrivateLinkServiceConnectionState
+    from ._models_py3 import ProxyResource
     from ._models_py3 import Resource
+    from ._models_py3 import SystemData
     from ._models_py3 import TagUpdate
     from ._models_py3 import TrackedResource
 except (SyntaxError, ImportError):
     from ._models import Account  # type: ignore
     from ._models import AccountList  # type: ignore
     from ._models import AccountUpdate  # type: ignore
+    from ._models import CheckNameAvailabilityRequest  # type: ignore
+    from ._models import CheckNameAvailabilityResponse  # type: ignore
     from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorDefinition  # type: ignore
+    from ._models import ErrorDetail  # type: ignore
     from ._models import ErrorResponse  # type: ignore
+    from ._models import GroupInformation  # type: ignore
+    from ._models import GroupInformationProperties  # type: ignore
+    from ._models import Identity  # type: ignore
     from ._models import Instance  # type: ignore
     from ._models import InstanceList  # type: ignore
     from ._models import IotHubSettings  # type: ignore
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationListResult  # type: ignore
+    from ._models import PrivateEndpoint  # type: ignore
+    from ._models import PrivateEndpointConnection  # type: ignore
+    from ._models import PrivateEndpointConnectionListResult  # type: ignore
+    from ._models import PrivateLinkResourceListResult  # type: ignore
+    from ._models import PrivateLinkResourceProperties  # type: ignore
+    from ._models import PrivateLinkServiceConnectionState  # type: ignore
+    from ._models import ProxyResource  # type: ignore
     from ._models import Resource  # type: ignore
+    from ._models import SystemData  # type: ignore
     from ._models import TagUpdate  # type: ignore
     from ._models import TrackedResource  # type: ignore
 
 from ._device_update_enums import (
     ActionType,
+    CheckNameAvailabilityReason,
+    CreatedByType,
+    GroupIdProvisioningState,
     Origin,
+    PrivateEndpointConnectionProvisioningState,
+    PrivateEndpointServiceConnectionStatus,
     ProvisioningState,
+    PublicNetworkAccess,
+    ResourceIdentityType,
 )
 
 __all__ = [
     'Account',
     'AccountList',
     'AccountUpdate',
+    'CheckNameAvailabilityRequest',
+    'CheckNameAvailabilityResponse',
     'ErrorAdditionalInfo',
-    'ErrorDefinition',
+    'ErrorDetail',
     'ErrorResponse',
+    'GroupInformation',
+    'GroupInformationProperties',
+    'Identity',
     'Instance',
     'InstanceList',
     'IotHubSettings',
     'Operation',
     'OperationDisplay',
     'OperationListResult',
+    'PrivateEndpoint',
+    'PrivateEndpointConnection',
+    'PrivateEndpointConnectionListResult',
+    'PrivateLinkResourceListResult',
+    'PrivateLinkResourceProperties',
+    'PrivateLinkServiceConnectionState',
+    'ProxyResource',
     'Resource',
+    'SystemData',
     'TagUpdate',
     'TrackedResource',
     'ActionType',
+    'CheckNameAvailabilityReason',
+    'CreatedByType',
+    'GroupIdProvisioningState',
     'Origin',
+    'PrivateEndpointConnectionProvisioningState',
+    'PrivateEndpointServiceConnectionStatus',
     'ProvisioningState',
+    'PublicNetworkAccess',
+    'ResourceIdentityType',
 ]
