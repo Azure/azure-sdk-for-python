@@ -6,21 +6,23 @@
 import time
 import datetime
 import argparse
-import asyncio
+import threading
 import os
 import logging
 from collections import defaultdict
 from functools import partial
+from dotenv import load_dotenv
 
-from azure.identity.aio import ClientSecretCredential
-from azure.eventhub.aio import EventHubConsumerClient
-from azure.eventhub import EventHubSharedKeyCredential
-from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
-from azure.eventhub import TransportType
+from azure.identity import ClientSecretCredential
+from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
+from azure.eventhub import EventHubConsumerClient, TransportType, EventHubSharedKeyCredential
 
 from logger import get_logger
 from process_monitor import ProcessMonitor
 from app_insights_metric import AzureMonitorMetric
+
+ENV_FILE = os.environ.get('ENV_FILE')
+load_dotenv(dotenv_path=ENV_FILE, override=True)
 
 
 def parse_starting_position(args):
@@ -39,35 +41,36 @@ def parse_starting_position(args):
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--link_credit", default=3000, type=int)
-parser.add_argument("--output_interval", type=float, default=1000)
-parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=30)
-parser.add_argument("--consumer_group", help="Consumer group name", default="$default")
+parser.add_argument("--link_credit", default=int(os.environ.get("LINK_CREDIT", 3000)), type=int)
+parser.add_argument("--output_interval", type=float, default=int(os.environ.get("OUTPUT_INTERVAL", 5000)))
+parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=int(os.environ.get("DURATION", 999999999)))
+parser.add_argument("--consumer_group", help="Consumer group name", default=os.environ.get("CONSUMER_GROUP", "$default"))
 parser.add_argument("--auth_timeout", help="Authorization Timeout", type=float, default=60)
-parser.add_argument("--starting_offset", help="Starting offset", type=str)
+parser.add_argument("--starting_offset", help="Starting offset", type=str, default=os.environ.get("STARTING_OFFSET", "-1"))
 parser.add_argument("--starting_sequence_number", help="Starting sequence number", type=int)
-parser.add_argument("--starting_datetime", help="Starting datetime string, should be format of YYYY-mm-dd HH:mm:ss", type=str)
+parser.add_argument("--starting_datetime", help="Starting datetime string, should be format of YYYY-mm-dd HH:mm:ss")
 parser.add_argument("--partitions", help="Number of partitions. 0 means to get partitions from eventhubs", type=int, default=0)
 parser.add_argument("--recv_partition_id", help="Receive from a specific partition if this is set", type=int)
-parser.add_argument("--max_batch_size", type=int, default=0,
+parser.add_argument("--max_batch_size", type=int, default=int(os.environ.get("MAX_BATCH_SIZE", 0)),
                     help="Call EventHubConsumerClient.receive_batch() if not 0, otherwise call receive()")
 parser.add_argument("--max_wait_time", type=float, default=0,
                     help="max_wait_time of EventHubConsumerClient.receive_batch() or EventHubConsumerClient.receive()")
+
 parser.add_argument("--track_last_enqueued_event_properties", action="store_true")
 parser.add_argument("--load_balancing_interval", help="time duration in seconds between two load balance", type=float, default=10)
 parser.add_argument("--conn_str", help="EventHub connection string",
-                    default=os.environ.get('EVENT_HUB_PERF_32_CONN_STR'))
-parser.add_argument("--eventhub", help="Name of EventHub")
+                    default=os.environ.get('EVENT_HUB_CONN_STR'))
+parser.add_argument("--eventhub", help="Name of EventHub", default=os.environ.get('EVENT_HUB_NAME'))
 parser.add_argument("--address", help="Address URI to the EventHub entity")
-parser.add_argument("--sas_policy", help="Name of the shared access policy to authenticate with")
-parser.add_argument("--sas_key", help="Shared access key")
+parser.add_argument("--sas-policy", help="Name of the shared access policy to authenticate with")
+parser.add_argument("--sas-key", help="Shared access key")
 parser.add_argument(
     "--transport_type",
     help="Transport type, 0 means AMQP, 1 means AMQP over WebSocket",
     type=int,
     default=0
 )
-parser.add_argument("--parallel_recv_cnt", help="Number of receive clients doing parallel receiving", type=int, default=1)
+parser.add_argument("--parallel_recv_cnt", help="Number of receive clients doing parallel receiving", type=int)
 parser.add_argument("--proxy_hostname", type=str)
 parser.add_argument("--proxy_port", type=str)
 parser.add_argument("--proxy_username", type=str)
@@ -83,7 +86,14 @@ parser.add_argument("--log_filename", help="log file name", type=str)
 
 args = parser.parse_args()
 starting_position = parse_starting_position(args)
-LOGGER = get_logger(args.log_filename, "stress_receive_async", level=logging.INFO, print_console=args.print_console)
+print_console = args.print_console or (os.environ.get("PRINT_CONSOLE") == "1")
+
+LOGGER = get_logger(
+    args.log_filename,
+    "stress_receive_sync",
+    level=logging.INFO,
+    print_console=print_console
+)
 LOG_PER_COUNT = args.output_interval
 
 start_time = time.perf_counter()
@@ -91,22 +101,21 @@ recv_cnt_map = defaultdict(int)
 recv_cnt_iteration_map = defaultdict(int)
 recv_time_map = dict()
 
-azure_metric_monitor = AzureMonitorMetric("Async EventHubConsumerClient")
+azure_metric_monitor = AzureMonitorMetric("Sync EventHubConsumerClient")
 
 
 class EventHubConsumerClientTest(EventHubConsumerClient):
-    async def get_partition_ids(self):
+    def get_partition_ids(self):
         if args.partitions != 0:
             return [str(i) for i in range(args.partitions)]
         else:
-            return await super(EventHubConsumerClientTest, self).get_partition_ids()
+            return super(EventHubConsumerClientTest, self).get_partition_ids()
 
 
-async def on_event_received(process_monitor, partition_context, event):
+def on_event_received(process_monitor, partition_context, event):
     recv_cnt_map[partition_context.partition_id] += 1 if event else 0
     if recv_cnt_map[partition_context.partition_id] % LOG_PER_COUNT == 0:
         total_time_elapsed = time.perf_counter() - start_time
-
         partition_previous_time = recv_time_map.get(partition_context.partition_id)
         partition_current_time = time.perf_counter()
         recv_time_map[partition_context.partition_id] = partition_current_time
@@ -122,15 +131,14 @@ async def on_event_received(process_monitor, partition_context, event):
             process_monitor.cpu_usage_percent,
             process_monitor.memory_usage_percent
         )
-        await partition_context.update_checkpoint(event)
+        partition_context.update_checkpoint(event)
 
 
-async def on_event_batch_received(process_monitor, partition_context, event_batch):
+def on_event_batch_received(process_monitor, partition_context, event_batch):
     recv_cnt_map[partition_context.partition_id] += len(event_batch)
     recv_cnt_iteration_map[partition_context.partition_id] += len(event_batch)
     if recv_cnt_iteration_map[partition_context.partition_id] > LOG_PER_COUNT:
         total_time_elapsed = time.perf_counter() - start_time
-
         partition_previous_time = recv_time_map.get(partition_context.partition_id)
         partition_current_time = time.perf_counter()
         recv_time_map[partition_context.partition_id] = partition_current_time
@@ -147,15 +155,14 @@ async def on_event_batch_received(process_monitor, partition_context, event_batc
             process_monitor.cpu_usage_percent,
             process_monitor.memory_usage_percent
         )
-        await partition_context.update_checkpoint()
+        partition_context.update_checkpoint()
 
 
-async def on_error(partition_context, exception):
+def on_error(partition_context, exception):
     azure_metric_monitor.record_error(exception, extra="partition: {}".format(partition_context.partition_id))
 
 
 def create_client(args):
-
     if args.storage_conn_str:
         checkpoint_store = BlobCheckpointStore.from_connection_string(args.storage_conn_str, args.storage_container_name)
     else:
@@ -214,9 +221,13 @@ def create_client(args):
     return client
 
 
-async def run(args):
+def run(args):
 
-    with ProcessMonitor("monitor_{}".format(args.log_filename), "consumer_stress_async", print_console=args.print_console) as process_monitor:
+    with ProcessMonitor(
+        "monitor_{}".format(args.log_filename),
+        "consumer_stress_sync",
+        print_console=print_console
+    ) as process_monitor:
         kwargs_dict = {
             "prefetch": args.link_credit,
             "partition_id": str(args.recv_partition_id) if args.recv_partition_id else None,
@@ -234,34 +245,31 @@ async def run(args):
 
         if args.parallel_recv_cnt and args.parallel_recv_cnt > 1:
             clients = [create_client(args) for _ in range(args.parallel_recv_cnt)]
-            tasks = [
-                asyncio.ensure_future(
-                    clients[i].receive_batch(
-                        on_event_batch_received_with_process_monitor,
-                        **kwargs_dict
-                    ) if args.max_batch_size else clients[i].receive(
-                        on_event_received_with_process_monitor,
-                        **kwargs_dict
-                    )
+            threads = [
+                threading.Thread(
+                    target=clients[i].receive_batch if args.max_batch_size else clients[i].receive,
+                    args=(on_event_batch_received_with_process_monitor if args.max_batch_size else on_event_received_with_process_monitor,),
+                    kwargs=kwargs_dict,
+                    daemon=True
                 ) for i in range(args.parallel_recv_cnt)
             ]
         else:
             clients = [create_client(args)]
-            tasks = [asyncio.ensure_future(
-                clients[0].receive_batch(
-                    on_event_batch_received_with_process_monitor,
-                    **kwargs_dict
-                ) if args.max_batch_size else clients[0].receive(
-                    on_event_received_with_process_monitor,
-                    **kwargs_dict
-                )
+            threads = [threading.Thread(
+                target=clients[0].receive_batch if args.max_batch_size else clients[0].receive,
+                args=(on_event_batch_received_with_process_monitor if args.max_batch_size else on_event_received_with_process_monitor,),
+                kwargs=kwargs_dict,
+                daemon=True
             )]
 
-        await asyncio.sleep(args.duration)
-        await asyncio.gather(*[clients[i].close() for i in range(args.parallel_recv_cnt)])
-        await asyncio.gather(*tasks)
+        for thread in threads:
+            thread.start()
+        time.sleep(args.duration)
+        for client in clients:
+            client.close()
+        for thread in threads:
+            thread.join()
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(run(args))
+    run(args)
