@@ -6,7 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
-from urllib.parse import urlparse
 
 from azure.core.exceptions import (ClientAuthenticationError, HttpResponseError,
                                     ResourceExistsError, ResourceNotFoundError, map_error)
@@ -14,6 +13,11 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._generated import models as _models
+
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse  # type: ignore
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
