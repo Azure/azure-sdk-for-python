@@ -48,7 +48,7 @@ class DatabasesOperations:
         resource_group_name: str,
         cluster_name: str,
         resource_name: "_models.CheckNameRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckNameResult":
         """Checks that the database name is valid and is not already in use.
 
@@ -113,7 +113,7 @@ class DatabasesOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DatabaseListResult"]:
         """Returns the list of databases of the given Kusto cluster.
 
@@ -188,7 +188,7 @@ class DatabasesOperations:
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Database":
         """Returns a database.
 
@@ -251,7 +251,7 @@ class DatabasesOperations:
         cluster_name: str,
         database_name: str,
         parameters: "_models.Database",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Database":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Database"]
         error_map = {
@@ -313,7 +313,7 @@ class DatabasesOperations:
         cluster_name: str,
         database_name: str,
         parameters: "_models.Database",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Database"]:
         """Creates or updates a database.
 
@@ -327,8 +327,8 @@ class DatabasesOperations:
         :type parameters: ~azure.mgmt.kusto.models.Database
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Database or the result of cls(response)
@@ -389,7 +389,7 @@ class DatabasesOperations:
         cluster_name: str,
         database_name: str,
         parameters: "_models.Database",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Database":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Database"]
         error_map = {
@@ -451,7 +451,7 @@ class DatabasesOperations:
         cluster_name: str,
         database_name: str,
         parameters: "_models.Database",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Database"]:
         """Updates a database.
 
@@ -465,8 +465,8 @@ class DatabasesOperations:
         :type parameters: ~azure.mgmt.kusto.models.Database
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Database or the result of cls(response)
@@ -526,7 +526,7 @@ class DatabasesOperations:
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -572,7 +572,7 @@ class DatabasesOperations:
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the database with the given name.
 
@@ -584,8 +584,8 @@ class DatabasesOperations:
         :type database_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -641,7 +641,7 @@ class DatabasesOperations:
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DatabasePrincipalListResult"]:
         """Returns a list of database principals of the given Kusto cluster and database.
 
@@ -720,7 +720,7 @@ class DatabasesOperations:
         cluster_name: str,
         database_name: str,
         database_principals_to_add: "_models.DatabasePrincipalListRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DatabasePrincipalListResult":
         """Add Database principals permissions.
 
@@ -790,7 +790,7 @@ class DatabasesOperations:
         cluster_name: str,
         database_name: str,
         database_principals_to_remove: "_models.DatabasePrincipalListRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DatabasePrincipalListResult":
         """Remove Database principals permissions.
 

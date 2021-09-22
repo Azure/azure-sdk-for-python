@@ -44,7 +44,7 @@ class OperationsResultsOperations:
         self,
         location: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OperationResult":
         """Returns operation results.
 

@@ -563,7 +563,7 @@ class ClusterCheckNameRequest(msrest.serialization.Model):
 
     :param name: Required. Cluster name.
     :type name: str
-    :ivar type: Required. The type of resource, Microsoft.Kusto/clusters. Default value:
+    :ivar type: The type of resource, Microsoft.Kusto/clusters. Has constant value:
      "Microsoft.Kusto/clusters".
     :vartype type: str
     """
@@ -684,8 +684,8 @@ class ClusterPrincipalAssignmentCheckNameRequest(msrest.serialization.Model):
 
     :param name: Required. Principal Assignment resource name.
     :type name: str
-    :ivar type: Required. The type of resource, Microsoft.Kusto/clusters/principalAssignments.
-     Default value: "Microsoft.Kusto/clusters/principalAssignments".
+    :ivar type: The type of resource, Microsoft.Kusto/clusters/principalAssignments. Has constant
+     value: "Microsoft.Kusto/clusters/principalAssignments".
     :vartype type: str
     """
 
@@ -1084,9 +1084,8 @@ class DatabasePrincipalAssignmentCheckNameRequest(msrest.serialization.Model):
 
     :param name: Required. Principal Assignment resource name.
     :type name: str
-    :ivar type: Required. The type of resource,
-     Microsoft.Kusto/clusters/databases/principalAssignments. Default value:
-     "Microsoft.Kusto/clusters/databases/principalAssignments".
+    :ivar type: The type of resource, Microsoft.Kusto/clusters/databases/principalAssignments. Has
+     constant value: "Microsoft.Kusto/clusters/databases/principalAssignments".
     :vartype type: str
     """
 
@@ -1248,8 +1247,8 @@ class DataConnectionCheckNameRequest(msrest.serialization.Model):
 
     :param name: Required. Data Connection name.
     :type name: str
-    :ivar type: Required. The type of resource, Microsoft.Kusto/clusters/databases/dataConnections.
-     Default value: "Microsoft.Kusto/clusters/databases/dataConnections".
+    :ivar type: The type of resource, Microsoft.Kusto/clusters/databases/dataConnections. Has
+     constant value: "Microsoft.Kusto/clusters/databases/dataConnections".
     :vartype type: str
     """
 
@@ -1852,7 +1851,7 @@ class Operation(msrest.serialization.Model):
     :param origin: The intended executor of the operation.
     :type origin: str
     :param properties: Any object.
-    :type properties: object
+    :type properties: any
     """
 
     _attribute_map = {
@@ -2259,7 +2258,7 @@ class ScriptCheckNameRequest(msrest.serialization.Model):
 
     :param name: Required. Script name.
     :type name: str
-    :ivar type: Required. The type of resource, Microsoft.Kusto/clusters/databases/scripts. Default
+    :ivar type: The type of resource, Microsoft.Kusto/clusters/databases/scripts. Has constant
      value: "Microsoft.Kusto/clusters/databases/scripts".
     :vartype type: str
     """
@@ -2319,7 +2318,7 @@ class SkuDescription(msrest.serialization.Model):
     :ivar location_info: Locations and zones.
     :vartype location_info: list[~azure.mgmt.kusto.models.SkuLocationInfoItem]
     :ivar restrictions: The restrictions because of which SKU cannot be used.
-    :vartype restrictions: list[object]
+    :vartype restrictions: list[any]
     """
 
     _validation = {

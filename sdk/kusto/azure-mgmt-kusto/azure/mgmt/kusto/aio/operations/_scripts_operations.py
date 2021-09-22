@@ -48,7 +48,7 @@ class ScriptsOperations:
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ScriptListResult"]:
         """Returns the list of database scripts for given database.
 
@@ -127,7 +127,7 @@ class ScriptsOperations:
         cluster_name: str,
         database_name: str,
         script_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Script":
         """Gets a Kusto cluster database script.
 
@@ -194,7 +194,7 @@ class ScriptsOperations:
         database_name: str,
         script_name: str,
         parameters: "_models.Script",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Script":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Script"]
         error_map = {
@@ -258,7 +258,7 @@ class ScriptsOperations:
         database_name: str,
         script_name: str,
         parameters: "_models.Script",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Script"]:
         """Creates a Kusto database script.
 
@@ -274,8 +274,8 @@ class ScriptsOperations:
         :type parameters: ~azure.mgmt.kusto.models.Script
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Script or the result of cls(response)
@@ -339,7 +339,7 @@ class ScriptsOperations:
         database_name: str,
         script_name: str,
         parameters: "_models.Script",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Script":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Script"]
         error_map = {
@@ -400,7 +400,7 @@ class ScriptsOperations:
         database_name: str,
         script_name: str,
         parameters: "_models.Script",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Script"]:
         """Updates a database script.
 
@@ -416,8 +416,8 @@ class ScriptsOperations:
         :type parameters: ~azure.mgmt.kusto.models.Script
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Script or the result of cls(response)
@@ -480,7 +480,7 @@ class ScriptsOperations:
         cluster_name: str,
         database_name: str,
         script_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -528,7 +528,7 @@ class ScriptsOperations:
         cluster_name: str,
         database_name: str,
         script_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a Kusto principalAssignment.
 
@@ -542,8 +542,8 @@ class ScriptsOperations:
         :type script_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -602,7 +602,7 @@ class ScriptsOperations:
         cluster_name: str,
         database_name: str,
         script_name: "_models.ScriptCheckNameRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckNameResult":
         """Checks that the script name is valid and is not already in use.
 

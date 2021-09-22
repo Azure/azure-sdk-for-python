@@ -48,7 +48,7 @@ class DataConnectionsOperations:
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DataConnectionListResult"]:
         """Returns the list of data connections of the given Kusto database.
 
@@ -127,7 +127,7 @@ class DataConnectionsOperations:
         cluster_name: str,
         database_name: str,
         parameters: "_models.DataConnectionValidation",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.DataConnectionValidationListResult"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DataConnectionValidationListResult"]]
         error_map = {
@@ -184,7 +184,7 @@ class DataConnectionsOperations:
         cluster_name: str,
         database_name: str,
         parameters: "_models.DataConnectionValidation",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DataConnectionValidationListResult"]:
         """Checks that the data connection parameters are valid.
 
@@ -198,8 +198,8 @@ class DataConnectionsOperations:
         :type parameters: ~azure.mgmt.kusto.models.DataConnectionValidation
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DataConnectionValidationListResult or the result of cls(response)
@@ -260,7 +260,7 @@ class DataConnectionsOperations:
         cluster_name: str,
         database_name: str,
         data_connection_name: "_models.DataConnectionCheckNameRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckNameResult":
         """Checks that the data connection name is valid and is not already in use.
 
@@ -330,7 +330,7 @@ class DataConnectionsOperations:
         cluster_name: str,
         database_name: str,
         data_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataConnection":
         """Returns a data connection.
 
@@ -397,7 +397,7 @@ class DataConnectionsOperations:
         database_name: str,
         data_connection_name: str,
         parameters: "_models.DataConnection",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataConnection":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataConnection"]
         error_map = {
@@ -461,7 +461,7 @@ class DataConnectionsOperations:
         database_name: str,
         data_connection_name: str,
         parameters: "_models.DataConnection",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DataConnection"]:
         """Creates or updates a data connection.
 
@@ -477,8 +477,8 @@ class DataConnectionsOperations:
         :type parameters: ~azure.mgmt.kusto.models.DataConnection
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DataConnection or the result of cls(response)
@@ -542,7 +542,7 @@ class DataConnectionsOperations:
         database_name: str,
         data_connection_name: str,
         parameters: "_models.DataConnection",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataConnection":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataConnection"]
         error_map = {
@@ -606,7 +606,7 @@ class DataConnectionsOperations:
         database_name: str,
         data_connection_name: str,
         parameters: "_models.DataConnection",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DataConnection"]:
         """Updates a data connection.
 
@@ -622,8 +622,8 @@ class DataConnectionsOperations:
         :type parameters: ~azure.mgmt.kusto.models.DataConnection
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DataConnection or the result of cls(response)
@@ -686,7 +686,7 @@ class DataConnectionsOperations:
         cluster_name: str,
         database_name: str,
         data_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -734,7 +734,7 @@ class DataConnectionsOperations:
         cluster_name: str,
         database_name: str,
         data_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the data connection with the given name.
 
@@ -748,8 +748,8 @@ class DataConnectionsOperations:
         :type data_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

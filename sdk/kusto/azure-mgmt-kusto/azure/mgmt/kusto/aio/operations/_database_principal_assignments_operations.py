@@ -49,7 +49,7 @@ class DatabasePrincipalAssignmentsOperations:
         cluster_name: str,
         database_name: str,
         principal_assignment_name: "_models.DatabasePrincipalAssignmentCheckNameRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckNameResult":
         """Checks that the database principal assignment is valid and is not already in use.
 
@@ -119,7 +119,7 @@ class DatabasePrincipalAssignmentsOperations:
         cluster_name: str,
         database_name: str,
         principal_assignment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DatabasePrincipalAssignment":
         """Gets a Kusto cluster database principalAssignment.
 
@@ -186,7 +186,7 @@ class DatabasePrincipalAssignmentsOperations:
         database_name: str,
         principal_assignment_name: str,
         parameters: "_models.DatabasePrincipalAssignment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DatabasePrincipalAssignment":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatabasePrincipalAssignment"]
         error_map = {
@@ -247,7 +247,7 @@ class DatabasePrincipalAssignmentsOperations:
         database_name: str,
         principal_assignment_name: str,
         parameters: "_models.DatabasePrincipalAssignment",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DatabasePrincipalAssignment"]:
         """Creates a Kusto cluster database principalAssignment.
 
@@ -263,8 +263,8 @@ class DatabasePrincipalAssignmentsOperations:
         :type parameters: ~azure.mgmt.kusto.models.DatabasePrincipalAssignment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DatabasePrincipalAssignment or the result of cls(response)
@@ -327,7 +327,7 @@ class DatabasePrincipalAssignmentsOperations:
         cluster_name: str,
         database_name: str,
         principal_assignment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -375,7 +375,7 @@ class DatabasePrincipalAssignmentsOperations:
         cluster_name: str,
         database_name: str,
         principal_assignment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a Kusto principalAssignment.
 
@@ -389,8 +389,8 @@ class DatabasePrincipalAssignmentsOperations:
         :type principal_assignment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -448,7 +448,7 @@ class DatabasePrincipalAssignmentsOperations:
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DatabasePrincipalAssignmentListResult"]:
         """Lists all Kusto cluster database principalAssignments.
 
