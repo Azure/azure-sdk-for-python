@@ -47,11 +47,7 @@ class SchemaRegistryAsyncTests(AzureTestCase):
             schema_name = self.get_resource_name('test-schema-basic-async')
             schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
             serialization_type = "Avro"
-            assert len(client._id_to_schema) == 0
-            assert len(client._description_to_properties) == 0
             schema_properties = await client.register_schema(schemaregistry_group, schema_name, schema_str, serialization_type)
-            assert len(client._id_to_schema) == 1
-            assert len(client._description_to_properties) == 1
 
             assert schema_properties.id is not None
             assert schema_properties.location is not None
@@ -66,28 +62,13 @@ class SchemaRegistryAsyncTests(AzureTestCase):
             assert returned_schema.properties.serialization_type == "Avro"
             assert returned_schema.content == schema_str
 
-            # check that same cached properties object is returned by get_schema_properties
-            cached_properties = await client.get_schema_properties(schemaregistry_group, schema_name, schema_str, serialization_type)
-            same_cached_properties = await client.get_schema_properties(schemaregistry_group, schema_name, schema_str, serialization_type)
-            assert same_cached_properties == cached_properties
-
-            # check if schema is added to cache when it does not exist in the cache
-            cached_properties = client._description_to_properties[
-                (schemaregistry_group, schema_name, schema_str, serialization_type)
-            ]
-            properties_cache_length = len(client._description_to_properties)
-            del client._description_to_properties[
-                (schemaregistry_group, schema_name, schema_str, serialization_type)
-            ]
-            assert len(client._description_to_properties) == properties_cache_length - 1
-
             returned_schema_properties = await client.get_schema_properties(schemaregistry_group, schema_name, schema_str, serialization_type)
-            assert len(client._description_to_properties) == properties_cache_length
 
             assert returned_schema_properties.id == schema_properties.id
             assert returned_schema_properties.location is not None
             assert returned_schema_properties.version == 1
             assert returned_schema_properties.serialization_type == "Avro"
+
         await client._generated_client._config.credential.close()
 
     @SchemaRegistryPowerShellPreparer()
@@ -112,19 +93,7 @@ class SchemaRegistryAsyncTests(AzureTestCase):
             assert new_schema_properties.version == schema_properties.version + 1
             assert new_schema_properties.serialization_type == "Avro"
 
-            # check that same cached schema object is returned by get_schema
-            cached_schema = await client.get_schema(id=new_schema_properties.id)
-            same_cached_schema = await client.get_schema(id=new_schema_properties.id)
-            assert same_cached_schema == cached_schema
-
-            # check if schema is added to cache when it does not exist in the cache
-            cached_schema = client._id_to_schema[new_schema_properties.id]
-            schema_cache_length = len(client._id_to_schema)
-            del client._id_to_schema[new_schema_properties.id]
-            assert len(client._id_to_schema) == schema_cache_length - 1
-
             new_schema = await client.get_schema(id=new_schema_properties.id)
-            assert len(client._id_to_schema) == schema_cache_length
 
             assert new_schema.properties.id != schema_properties.id
             assert new_schema.properties.id == new_schema_properties.id
@@ -133,12 +102,6 @@ class SchemaRegistryAsyncTests(AzureTestCase):
             assert new_schema.properties.version == schema_properties.version + 1
             assert new_schema.properties.serialization_type == "Avro"
 
-            # check that properties object is the same in caches
-            client._id_to_schema = {}
-            client._description_to_properties = {}
-            new_schema = await client.get_schema(id=new_schema_properties.id)
-            new_schema_properties = await client.get_schema_properties(schemaregistry_group, schema_name, schema_str_new, serialization_type)
-            assert new_schema.properties == new_schema_properties
         await client._generated_client._config.credential.close()
 
     @SchemaRegistryPowerShellPreparer()
@@ -149,14 +112,8 @@ class SchemaRegistryAsyncTests(AzureTestCase):
         serialization_type = "Avro"
         async with client:
             schema_properties = await client.register_schema(schemaregistry_group, schema_name, schema_str, serialization_type)
-            schema_cache_length = len(client._id_to_schema)
-            desc_cache_length = len(client._description_to_properties)
             schema_properties_second = await client.register_schema(schemaregistry_group, schema_name, schema_str, serialization_type)
-            schema_cache_second_length = len(client._id_to_schema)
-            desc_cache_second_length = len(client._description_to_properties)
             assert schema_properties.id == schema_properties_second.id
-            assert schema_cache_length == schema_cache_second_length
-            assert desc_cache_length == desc_cache_second_length
         await client._generated_client._config.credential.close()
 
     @SchemaRegistryPowerShellPreparer()
