@@ -47,7 +47,8 @@ class TestExamplesTests(AdministrationTestCase, KeyVaultTestCase):
         await restore_poller.wait()
         # [END begin_restore]
 
-        await asyncio.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
+        if self.is_live:
+            await asyncio.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
     @all_api_versions()
     @backup_client_setup
@@ -74,4 +75,5 @@ class TestExamplesTests(AdministrationTestCase, KeyVaultTestCase):
         await restore_poller.wait()
         # [END begin_selective_restore]
 
-        await asyncio.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
+        if self.is_live:
+            await asyncio.sleep(60)  # additional waiting to avoid conflicts with resources in other tests

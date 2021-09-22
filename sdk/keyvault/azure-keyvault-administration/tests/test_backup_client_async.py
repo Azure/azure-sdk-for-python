@@ -29,7 +29,8 @@ class BackupClientTests(AdministrationTestCase, KeyVaultTestCase):
         # restore the backup
         restore_poller = await client.begin_restore(backup_operation.folder_url, self.sas_token)
         await restore_poller.wait()
-        await asyncio.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
+        if self.is_live:
+            await asyncio.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
     @all_api_versions()
     @backup_client_setup
@@ -58,7 +59,8 @@ class BackupClientTests(AdministrationTestCase, KeyVaultTestCase):
 
         await rehydrated.wait()
         await restore_poller.wait()
-        await asyncio.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
+        if self.is_live:
+            await asyncio.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
     @all_api_versions()
     @backup_client_setup
@@ -79,7 +81,8 @@ class BackupClientTests(AdministrationTestCase, KeyVaultTestCase):
         # delete the key
         await self._poll_until_no_exception(key_client.delete_key, key_name, expected_exception=ResourceExistsError)
         await key_client.purge_deleted_key(key_name)
-        await asyncio.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
+        if self.is_live:
+            await asyncio.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
     @all_api_versions()
     @backup_client_setup
@@ -128,4 +131,5 @@ class BackupClientTests(AdministrationTestCase, KeyVaultTestCase):
         await restore_poller.wait()
         assert restore_poller.status() == "Succeeded" and restore_poller.polling_method().status() == "Succeeded"
 
-        await asyncio.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
+        if self.is_live:
+            await asyncio.sleep(60)  # additional waiting to avoid conflicts with resources in other tests

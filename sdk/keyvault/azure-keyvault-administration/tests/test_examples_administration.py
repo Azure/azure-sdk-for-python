@@ -47,7 +47,8 @@ class TestExamplesTests(AdministrationTestCase, KeyVaultTestCase):
         restore_poller.wait()
         # [END begin_restore]
 
-        time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
+        if self.is_live:
+            time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
     @all_api_versions()
     @backup_client_setup
@@ -74,4 +75,5 @@ class TestExamplesTests(AdministrationTestCase, KeyVaultTestCase):
         restore_poller.wait()
         # [END begin_selective_restore]
 
-        time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
+        if self.is_live:
+            time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests

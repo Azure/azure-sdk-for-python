@@ -87,7 +87,8 @@ class AccessControlTests(AdministrationTestCase, KeyVaultTestCase):
         client.delete_role_definition(scope, definition_name)
 
         assert not any(d.id == definition.id for d in client.list_role_definitions(scope))
-        time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
+        if self.is_live:
+            time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
     @all_api_versions()
     @access_control_client_setup
@@ -123,7 +124,8 @@ class AccessControlTests(AdministrationTestCase, KeyVaultTestCase):
         client.delete_role_assignment(scope, created.name)
 
         assert not any(a.role_assignment_id == created.role_assignment_id for a in client.list_role_assignments(scope))
-        time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
+        if self.is_live:
+            time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
 
 def assert_role_definitions_equal(d1, d2):
