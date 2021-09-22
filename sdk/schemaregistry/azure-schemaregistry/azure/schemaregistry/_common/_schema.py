@@ -85,5 +85,5 @@ class Schema(object):
         properties,
     ):
         # type: (str, SchemaProperties) -> None
-        self.schema_definition = schema_definition 
+        self.schema_definition = schema_definition
         self.properties = properties

@@ -99,8 +99,6 @@ class SchemaRegistryClient(object):
         :param format: Format for the schema being registered.
          For now Avro is the only supported schema format by the service.
         :type format: Union[str, SchemaFormat]
-        :keyword content_type: The content type of the request. Default value is 'application/json'.
-        :paramtype content_type: str
         :rtype: SchemaProperties
 
         .. admonition:: Example:
@@ -186,8 +184,6 @@ class SchemaRegistryClient(object):
         :param str schema_definition: String representation of the schema being registered.
         :param format: Format for the schema being registered.
         :type format: Union[str, SchemaFormat]
-        :keyword content_type: The content type of the request. Default value is 'application/json'.
-        :paramtype content_type: str
         :rtype: SchemaProperties
 
         .. admonition:: Example:
