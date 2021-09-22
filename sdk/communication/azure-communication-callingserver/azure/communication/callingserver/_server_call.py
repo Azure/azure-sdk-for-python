@@ -62,7 +62,7 @@ class ServerCall(object):
     def start_recording(
             self,
             recording_state_callback_uri, # type: str
-            **kwargs, # type: Any
+            **kwargs # type: Any
     ): # type: (...) -> StartCallRecordingResult
 
         if not recording_state_callback_uri:
@@ -86,7 +86,7 @@ class ServerCall(object):
     def pause_recording(
             self,
             recording_id, # type: str
-            **kwargs, # type: Any
+            **kwargs # type: Any
     ): # type: (...) -> AsyncHttpResponse
 
         if not recording_id:
@@ -102,7 +102,7 @@ class ServerCall(object):
     def resume_recording(
             self,
             recording_id, # type: str
-            **kwargs, # type: Any
+            **kwargs # type: Any
     ): # type: (...) -> AsyncHttpResponse
 
         if not recording_id:
@@ -118,7 +118,7 @@ class ServerCall(object):
     def stop_recording(
             self,
             recording_id, # type: str
-            **kwargs, # type: Any
+            **kwargs # type: Any
     ): # type: (...) -> AsyncHttpResponse
 
         if not recording_id:
@@ -134,7 +134,7 @@ class ServerCall(object):
     def get_recording_properities(
             self,
             recording_id, # type: str
-            **kwargs, # type: Any
+            **kwargs # type: Any
     ): # type: (...) -> CallRecordingProperties
 
         if not recording_id:
