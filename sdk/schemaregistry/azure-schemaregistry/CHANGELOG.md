@@ -14,9 +14,7 @@
   - `content`, which has been renamed from `schema_content`
   - `format`, which has been renamed from `serialization_type`
 - `location` instance variable in `SchemaProperties` has been removed.
-- The following positional arguments are now required keyword arguments:
-  - `id`, `serialization_type`, and `version` on `SchemaProperties`
-  - `content` and `properties` on `Schema`
+- `Schema` and `SchemaProperties` no longer have positional parameters, as they will not be constructed by the user.
 
 ### Bugs Fixed
 

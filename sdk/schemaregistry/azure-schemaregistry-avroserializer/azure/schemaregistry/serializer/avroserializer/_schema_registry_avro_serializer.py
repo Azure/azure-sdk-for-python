@@ -51,7 +51,7 @@ class SchemaRegistryAvroSerializer(object):
             self._schema_group = kwargs.pop("group_name")
             self._schema_registry_client = kwargs.pop("client") # type: "SchemaRegistryClient"
         except KeyError as e:
-            raise ValueError("'{}' is a required keyword.".format(e.args[0]))
+            raise TypeError("'{}' is a required keyword.".format(e.args[0]))
         self._avro_serializer = AvroObjectSerializer(codec=kwargs.get("codec"))
         self._auto_register_schemas = kwargs.get("auto_register_schemas", False)
         self._auto_register_schema_func = (
@@ -138,7 +138,7 @@ class SchemaRegistryAvroSerializer(object):
         try:
             raw_input_schema = kwargs.get("schema")
         except KeyError as e:
-            raise ValueError("'{}' is a required keyword.".format(e.args[0]))
+            raise TypeError("'{}' is a required keyword.".format(e.args[0]))
         try:
             cached_schema = self._user_input_schema_cache[raw_input_schema]
         except KeyError:

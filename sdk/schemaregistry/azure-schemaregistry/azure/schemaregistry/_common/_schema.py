@@ -30,12 +30,12 @@ class SchemaProperties(object):
     """
     Meta properties of a schema.
 
-    :keyword id: Required. References specific schema in registry namespace.
-    :paramtype id: str
-    :keyword serialization_type: Required. Serialization type for the schema being stored.
-    :paramtype serialization_type: str
-    :keyword version: Required. Version of the returned schema.
-    :paramtype version: int
+    :ivar id: References specific schema in registry namespace.
+    :type id: str
+    :ivar serialization_type: Serialization type for the schema being stored.
+    :type serialization_type: str
+    :ivar version: Version of the returned schema.
+    :type version: int
 
     .. admonition:: Example:
 
@@ -59,17 +59,17 @@ class SchemaProperties(object):
             self.serialization_type = kwargs.pop('serialization_type')
             self.version = kwargs.pop('version')
         except KeyError as e:
-            raise ValueError("'{}' is a required keyword.".format(e.args[0]))
+            raise TypeError("'{}' is a required keyword.".format(e.args[0]))
 
 
 class Schema(object):
     """
     The schema content of a schema, along with id and meta properties.
 
-    :keyword content: Required. The content of the schema.
-    :paramtype content: str
-    :keyword properties: Required. The properties of the schema.
-    :paramtype properties: SchemaProperties
+    :ivar content: The content of the schema.
+    :type content: str
+    :ivar properties: The properties of the schema.
+    :type properties: SchemaProperties
 
     .. admonition:: Example:
 
@@ -91,4 +91,4 @@ class Schema(object):
             self.content = kwargs.pop("content")
             self.properties = kwargs.pop("properties")
         except KeyError as e:
-            raise ValueError("'{}' is a required keyword.".format(e.args[0]))
+            raise TypeError("'{}' is a required keyword.".format(e.args[0]))
