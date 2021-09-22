@@ -34,7 +34,6 @@ except ImportError:  # 2.7
 from io import BytesIO
 import json
 import logging
-import os
 import time
 import copy
 
@@ -50,7 +49,6 @@ from typing import (
     TYPE_CHECKING,
     Generic,
     TypeVar,
-    cast,
     IO,
     List,
     Union,
@@ -63,7 +61,7 @@ from typing import (
     Type
 )
 
-from six.moves.http_client import HTTPConnection, HTTPResponse as _HTTPResponse
+from six.moves.http_client import HTTPResponse as _HTTPResponse
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import (
@@ -75,6 +73,12 @@ from azure.core.pipeline import (
 )
 from .._tools import await_result as _await_result
 from ...utils._utils import _case_insensitive_dict
+from ...utils._pipeline_transport_rest_shared import (
+    _format_parameters_helper,
+    _prepare_multipart_body_helper,
+    _serialize_request,
+    _format_data_helper,
+)
 
 
 if TYPE_CHECKING:
@@ -126,36 +130,6 @@ def _urljoin(base_url, stub_url):
     parsed = urlparse(base_url)
     parsed = parsed._replace(path=parsed.path.rstrip("/") + "/" + stub_url)
     return parsed.geturl()
-
-
-class _HTTPSerializer(HTTPConnection, object):
-    """Hacking the stdlib HTTPConnection to serialize HTTP request as strings.
-    """
-
-    def __init__(self, *args, **kwargs):
-        self.buffer = b""
-        kwargs.setdefault("host", "fakehost")
-        super(_HTTPSerializer, self).__init__(*args, **kwargs)
-
-    def putheader(self, header, *values):
-        if header in ["Host", "Accept-Encoding"]:
-            return
-        super(_HTTPSerializer, self).putheader(header, *values)
-
-    def send(self, data):
-        self.buffer += data
-
-
-def _serialize_request(http_request):
-    serializer = _HTTPSerializer()
-    serializer.request(
-        method=http_request.method,
-        url=http_request.url,
-        body=http_request.body,
-        headers=http_request.headers,
-    )
-    return serializer.buffer
-
 
 class HttpTransport(
     AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPResponseType]
@@ -253,16 +227,7 @@ class HttpRequest(object):
         :param data: The request field data.
         :type data: str or file-like object.
         """
-        if hasattr(data, "read"):
-            data = cast(IO, data)
-            data_name = None
-            try:
-                if data.name[0] != "<" and data.name[-1] != ">":
-                    data_name = os.path.basename(data.name)
-            except (AttributeError, TypeError):
-                pass
-            return (data_name, data, "application/octet-stream")
-        return (None, cast(str, data))
+        return _format_data_helper(data)
 
     def format_parameters(self, params):
         # type: (Dict[str, str]) -> None
@@ -272,26 +237,7 @@ class HttpRequest(object):
 
         :param dict params: A dictionary of parameters.
         """
-        query = urlparse(self.url).query
-        if query:
-            self.url = self.url.partition("?")[0]
-            existing_params = {
-                p[0]: p[-1] for p in [p.partition("=") for p in query.split("&")]
-            }
-            params.update(existing_params)
-        query_params = []
-        for k, v in params.items():
-            if isinstance(v, list):
-                for w in v:
-                    if w is None:
-                        raise ValueError("Query parameter {} cannot be None".format(k))
-                    query_params.append("{}={}".format(k, w))
-            else:
-                if v is None:
-                    raise ValueError("Query parameter {} cannot be None".format(k))
-                query_params.append("{}={}".format(k, v))
-        query = "?" + "&".join(query_params)
-        self.url = self.url + query
+        return _format_parameters_helper(self, params)
 
     def set_streamed_data_body(self, data):
         """Set a streamable data body.
@@ -416,54 +362,7 @@ class HttpRequest(object):
         :returns: The updated index after all parts in this request have been added.
         :rtype: int
         """
-        if not self.multipart_mixed_info:
-            return 0
-
-        requests = self.multipart_mixed_info[0]  # type: List[HttpRequest]
-        boundary = self.multipart_mixed_info[2]  # type: Optional[str]
-
-        # Update the main request with the body
-        main_message = Message()
-        main_message.add_header("Content-Type", "multipart/mixed")
-        if boundary:
-            main_message.set_boundary(boundary)
-
-        for req in requests:
-            part_message = Message()
-            if req.multipart_mixed_info:
-                content_index = req.prepare_multipart_body(content_index=content_index)
-                part_message.add_header("Content-Type", req.headers['Content-Type'])
-                payload = req.serialize()
-                # We need to remove the ~HTTP/1.1 prefix along with the added content-length
-                payload = payload[payload.index(b'--'):]
-            else:
-                part_message.add_header("Content-Type", "application/http")
-                part_message.add_header("Content-Transfer-Encoding", "binary")
-                part_message.add_header("Content-ID", str(content_index))
-                payload = req.serialize()
-                content_index += 1
-            part_message.set_payload(payload)
-            main_message.attach(part_message)
-
-        try:
-            from email.policy import HTTP
-
-            full_message = main_message.as_bytes(policy=HTTP)
-            eol = b"\r\n"
-        except ImportError:  # Python 2.7
-            # Right now we decide to not support Python 2.7 on serialization, since
-            # it doesn't serialize a valid HTTP request (and our main scenario Storage refuses it)
-            raise NotImplementedError(
-                "Multipart request are not supported on Python 2.7"
-            )
-            # full_message = main_message.as_string()
-            # eol = b'\n'
-        _, _, body = full_message.split(eol, 2)
-        self.set_bytes_body(body)
-        self.headers["Content-Type"] = (
-            "multipart/mixed; boundary=" + main_message.get_boundary()
-        )
-        return content_index
+        return _prepare_multipart_body_helper(self, content_index)
 
     def serialize(self):
         # type: () -> bytes
