@@ -16,7 +16,6 @@ from ._converters import (AddParticipantRequestConverter,
                           PlayAudioRequestConverter)
 from ._generated.models import (AddParticipantResult,
                                 CallRecordingProperties,
-                                CommunicationIdentifierModel,
                                 PhoneNumberIdentifierModel,
                                 PlayAudioResult,
                                 StartCallRecordingRequest,
