@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-
 import validators
 
 def is_valid_url(url: str) -> bool:
