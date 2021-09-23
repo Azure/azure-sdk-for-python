@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class ProtectableContainersOperations(object):
-    """ProtectableContainersOperations operations.
+class ResourceGuardProxiesOperations(object):
+    """ResourceGuardProxiesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,46 +39,39 @@ class ProtectableContainersOperations(object):
 
         self.config = config
 
-    def list(
-            self, vault_name, resource_group_name, fabric_name, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the containers that can be registered to Recovery Services Vault.
+    def get(
+            self, vault_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        """List the ResourceGuardProxies under vault.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
         :param resource_group_name: The name of the resource group where the
          recovery services vault is present.
         :type resource_group_name: str
-        :param fabric_name:
-        :type fabric_name: str
-        :param filter: OData filter options.
-        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ProtectableContainerResource
+        :return: An iterator like instance of ResourceGuardProxyBaseResource
         :rtype:
-         ~azure.mgmt.recoveryservicesbackup.models.ProtectableContainerResourcePaged[~azure.mgmt.recoveryservicesbackup.models.ProtectableContainerResource]
+         ~azure.mgmt.recoveryservicesbackup.models.ResourceGuardProxyBaseResourcePaged[~azure.mgmt.recoveryservicesbackup.models.ResourceGuardProxyBaseResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.get.metadata['url']
                 path_format_arguments = {
                     'vaultName': self._serialize.url("vault_name", vault_name, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'fabricName': self._serialize.url("fabric_name", fabric_name, 'str')
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
                 url = next_link
@@ -114,7 +107,7 @@ class ProtectableContainersOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.ProtectableContainerResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.ResourceGuardProxyBaseResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectableContainers'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupResourceGuardProxies'}

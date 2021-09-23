@@ -756,6 +756,9 @@ class ProtectedItem(Model):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     """
@@ -778,6 +781,7 @@ class ProtectedItem(Model):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
     }
 
@@ -800,6 +804,7 @@ class ProtectedItem(Model):
         self.deferred_delete_time_remaining = kwargs.get('deferred_delete_time_remaining', None)
         self.is_deferred_delete_schedule_upcoming = kwargs.get('is_deferred_delete_schedule_upcoming', None)
         self.is_rehydrate = kwargs.get('is_rehydrate', None)
+        self.resource_guard_operation_requests = kwargs.get('resource_guard_operation_requests', None)
         self.protected_item_type = None
 
 
@@ -852,6 +857,9 @@ class AzureFileshareProtectedItem(ProtectedItem):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the fileshare represented by this
@@ -901,6 +909,7 @@ class AzureFileshareProtectedItem(ProtectedItem):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'protection_status': {'key': 'protectionStatus', 'type': 'str'},
@@ -983,6 +992,8 @@ class ProtectionPolicy(Model):
 
     :param protected_items_count: Number of items associated with this policy.
     :type protected_items_count: int
+    :param resource_guard_operation_requests: ResourceGuard Operation Requests
+    :type resource_guard_operation_requests: list[str]
     :param backup_management_type: Required. Constant filled by server.
     :type backup_management_type: str
     """
@@ -993,6 +1004,7 @@ class ProtectionPolicy(Model):
 
     _attribute_map = {
         'protected_items_count': {'key': 'protectedItemsCount', 'type': 'int'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
     }
 
@@ -1003,6 +1015,7 @@ class ProtectionPolicy(Model):
     def __init__(self, **kwargs):
         super(ProtectionPolicy, self).__init__(**kwargs)
         self.protected_items_count = kwargs.get('protected_items_count', None)
+        self.resource_guard_operation_requests = kwargs.get('resource_guard_operation_requests', None)
         self.backup_management_type = None
 
 
@@ -1013,6 +1026,8 @@ class AzureFileShareProtectionPolicy(ProtectionPolicy):
 
     :param protected_items_count: Number of items associated with this policy.
     :type protected_items_count: int
+    :param resource_guard_operation_requests: ResourceGuard Operation Requests
+    :type resource_guard_operation_requests: list[str]
     :param backup_management_type: Required. Constant filled by server.
     :type backup_management_type: str
     :param work_load_type: Type of workload for the backup management.
@@ -1041,6 +1056,7 @@ class AzureFileShareProtectionPolicy(ProtectionPolicy):
 
     _attribute_map = {
         'protected_items_count': {'key': 'protectedItemsCount', 'type': 'int'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
         'work_load_type': {'key': 'workLoadType', 'type': 'str'},
         'schedule_policy': {'key': 'schedulePolicy', 'type': 'SchedulePolicy'},
@@ -1540,6 +1556,9 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the VM represented by this backup
@@ -1598,6 +1617,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'virtual_machine_id': {'key': 'virtualMachineId', 'type': 'str'},
@@ -1683,6 +1703,9 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the VM represented by this backup
@@ -1741,6 +1764,7 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'virtual_machine_id': {'key': 'virtualMachineId', 'type': 'str'},
@@ -1904,6 +1928,9 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the VM represented by this backup
@@ -1962,6 +1989,7 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'virtual_machine_id': {'key': 'virtualMachineId', 'type': 'str'},
@@ -2349,6 +2377,8 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
 
     :param protected_items_count: Number of items associated with this policy.
     :type protected_items_count: int
+    :param resource_guard_operation_requests: ResourceGuard Operation Requests
+    :type resource_guard_operation_requests: list[str]
     :param backup_management_type: Required. Constant filled by server.
     :type backup_management_type: str
     :param instant_rp_details:
@@ -2376,6 +2406,7 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
 
     _attribute_map = {
         'protected_items_count': {'key': 'protectedItemsCount', 'type': 'int'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
         'instant_rp_details': {'key': 'instantRPDetails', 'type': 'InstantRPAdditionalDetails'},
         'schedule_policy': {'key': 'schedulePolicy', 'type': 'SchedulePolicy'},
@@ -2785,6 +2816,9 @@ class AzureSqlProtectedItem(ProtectedItem):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param protected_item_data_id: Internal ID of a backup item. Used by Azure
@@ -2818,6 +2852,7 @@ class AzureSqlProtectedItem(ProtectedItem):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'protected_item_data_id': {'key': 'protectedItemDataId', 'type': 'str'},
         'protection_state': {'key': 'protectionState', 'type': 'str'},
@@ -2866,6 +2901,8 @@ class AzureSqlProtectionPolicy(ProtectionPolicy):
 
     :param protected_items_count: Number of items associated with this policy.
     :type protected_items_count: int
+    :param resource_guard_operation_requests: ResourceGuard Operation Requests
+    :type resource_guard_operation_requests: list[str]
     :param backup_management_type: Required. Constant filled by server.
     :type backup_management_type: str
     :param retention_policy: Retention policy details.
@@ -2879,6 +2916,7 @@ class AzureSqlProtectionPolicy(ProtectionPolicy):
 
     _attribute_map = {
         'protected_items_count': {'key': 'protectedItemsCount', 'type': 'int'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
         'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
     }
@@ -3596,6 +3634,9 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the DB represented by this backup
@@ -3660,6 +3701,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'server_name': {'key': 'serverName', 'type': 'str'},
@@ -3732,6 +3774,8 @@ class AzureVmWorkloadProtectionPolicy(ProtectionPolicy):
 
     :param protected_items_count: Number of items associated with this policy.
     :type protected_items_count: int
+    :param resource_guard_operation_requests: ResourceGuard Operation Requests
+    :type resource_guard_operation_requests: list[str]
     :param backup_management_type: Required. Constant filled by server.
     :type backup_management_type: str
     :param work_load_type: Type of workload for the backup management.
@@ -3757,6 +3801,7 @@ class AzureVmWorkloadProtectionPolicy(ProtectionPolicy):
 
     _attribute_map = {
         'protected_items_count': {'key': 'protectedItemsCount', 'type': 'int'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
         'work_load_type': {'key': 'workLoadType', 'type': 'str'},
         'settings': {'key': 'settings', 'type': 'Settings'},
@@ -3822,6 +3867,9 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the DB represented by this backup
@@ -3886,6 +3934,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'server_name': {'key': 'serverName', 'type': 'str'},
@@ -4204,6 +4253,9 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the DB represented by this backup
@@ -4268,6 +4320,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'server_name': {'key': 'serverName', 'type': 'str'},
@@ -4656,6 +4709,9 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the DB represented by this backup
@@ -4720,6 +4776,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'server_name': {'key': 'serverName', 'type': 'str'},
@@ -6717,6 +6774,8 @@ class BackupResourceVaultConfig(Model):
      values include: 'Invalid', 'Enabled', 'Disabled'
     :type soft_delete_feature_state: str or
      ~azure.mgmt.recoveryservicesbackup.models.SoftDeleteFeatureState
+    :param resource_guard_operation_requests: ResourceGuard Operation Requests
+    :type resource_guard_operation_requests: list[str]
     """
 
     _attribute_map = {
@@ -6725,6 +6784,7 @@ class BackupResourceVaultConfig(Model):
         'storage_type_state': {'key': 'storageTypeState', 'type': 'str'},
         'enhanced_security_state': {'key': 'enhancedSecurityState', 'type': 'str'},
         'soft_delete_feature_state': {'key': 'softDeleteFeatureState', 'type': 'str'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -6734,6 +6794,7 @@ class BackupResourceVaultConfig(Model):
         self.storage_type_state = kwargs.get('storage_type_state', None)
         self.enhanced_security_state = kwargs.get('enhanced_security_state', None)
         self.soft_delete_feature_state = kwargs.get('soft_delete_feature_state', None)
+        self.resource_guard_operation_requests = kwargs.get('resource_guard_operation_requests', None)
 
 
 class BackupResourceVaultConfigResource(Resource):
@@ -8187,6 +8248,9 @@ class DPMProtectedItem(ProtectedItem):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the managed item
@@ -8222,6 +8286,7 @@ class DPMProtectedItem(ProtectedItem):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'backup_engine_name': {'key': 'backupEngineName', 'type': 'str'},
@@ -8611,6 +8676,9 @@ class GenericProtectedItem(ProtectedItem):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the container.
@@ -8650,6 +8718,7 @@ class GenericProtectedItem(ProtectedItem):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'policy_state': {'key': 'policyState', 'type': 'str'},
@@ -8677,6 +8746,8 @@ class GenericProtectionPolicy(ProtectionPolicy):
 
     :param protected_items_count: Number of items associated with this policy.
     :type protected_items_count: int
+    :param resource_guard_operation_requests: ResourceGuard Operation Requests
+    :type resource_guard_operation_requests: list[str]
     :param backup_management_type: Required. Constant filled by server.
     :type backup_management_type: str
     :param sub_protection_policy: List of sub-protection policies which
@@ -8696,6 +8767,7 @@ class GenericProtectionPolicy(ProtectionPolicy):
 
     _attribute_map = {
         'protected_items_count': {'key': 'protectedItemsCount', 'type': 'int'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
         'sub_protection_policy': {'key': 'subProtectionPolicy', 'type': '[SubProtectionPolicy]'},
         'time_zone': {'key': 'timeZone', 'type': 'str'},
@@ -9010,6 +9082,10 @@ class IaasVMRestoreRequest(RestoreRequest):
      customer storage account.
     :type identity_info:
      ~azure.mgmt.recoveryservicesbackup.models.IdentityInfo
+    :param identity_based_restore_details: IaaS VM workload specific restore
+     details for restores using managed identity.
+    :type identity_based_restore_details:
+     ~azure.mgmt.recoveryservicesbackup.models.IdentityBasedRestoreDetails
     """
 
     _validation = {
@@ -9037,6 +9113,7 @@ class IaasVMRestoreRequest(RestoreRequest):
         'disk_encryption_set_id': {'key': 'diskEncryptionSetId', 'type': 'str'},
         'zones': {'key': 'zones', 'type': '[str]'},
         'identity_info': {'key': 'identityInfo', 'type': 'IdentityInfo'},
+        'identity_based_restore_details': {'key': 'identityBasedRestoreDetails', 'type': 'IdentityBasedRestoreDetails'},
     }
 
     _subtype_map = {
@@ -9064,6 +9141,7 @@ class IaasVMRestoreRequest(RestoreRequest):
         self.disk_encryption_set_id = kwargs.get('disk_encryption_set_id', None)
         self.zones = kwargs.get('zones', None)
         self.identity_info = kwargs.get('identity_info', None)
+        self.identity_based_restore_details = kwargs.get('identity_based_restore_details', None)
         self.object_type = 'IaasVMRestoreRequest'
 
 
@@ -9140,6 +9218,10 @@ class IaasVMRestoreWithRehydrationRequest(IaasVMRestoreRequest):
      customer storage account.
     :type identity_info:
      ~azure.mgmt.recoveryservicesbackup.models.IdentityInfo
+    :param identity_based_restore_details: IaaS VM workload specific restore
+     details for restores using managed identity.
+    :type identity_based_restore_details:
+     ~azure.mgmt.recoveryservicesbackup.models.IdentityBasedRestoreDetails
     :param recovery_point_rehydration_info: RP Rehydration Info
     :type recovery_point_rehydration_info:
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointRehydrationInfo
@@ -9170,6 +9252,7 @@ class IaasVMRestoreWithRehydrationRequest(IaasVMRestoreRequest):
         'disk_encryption_set_id': {'key': 'diskEncryptionSetId', 'type': 'str'},
         'zones': {'key': 'zones', 'type': '[str]'},
         'identity_info': {'key': 'identityInfo', 'type': 'IdentityInfo'},
+        'identity_based_restore_details': {'key': 'identityBasedRestoreDetails', 'type': 'IdentityBasedRestoreDetails'},
         'recovery_point_rehydration_info': {'key': 'recoveryPointRehydrationInfo', 'type': 'RecoveryPointRehydrationInfo'},
     }
 
@@ -9177,6 +9260,28 @@ class IaasVMRestoreWithRehydrationRequest(IaasVMRestoreRequest):
         super(IaasVMRestoreWithRehydrationRequest, self).__init__(**kwargs)
         self.recovery_point_rehydration_info = kwargs.get('recovery_point_rehydration_info', None)
         self.object_type = 'IaasVMRestoreWithRehydrationRequest'
+
+
+class IdentityBasedRestoreDetails(Model):
+    """IaaS VM workload specific restore details for restores using managed
+    identity.
+
+    :param object_type: Gets the class type.
+    :type object_type: str
+    :param target_storage_account_id: Fully qualified ARM ID of the target
+     storage account.
+    :type target_storage_account_id: str
+    """
+
+    _attribute_map = {
+        'object_type': {'key': 'objectType', 'type': 'str'},
+        'target_storage_account_id': {'key': 'targetStorageAccountId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(IdentityBasedRestoreDetails, self).__init__(**kwargs)
+        self.object_type = kwargs.get('object_type', None)
+        self.target_storage_account_id = kwargs.get('target_storage_account_id', None)
 
 
 class IdentityInfo(Model):
@@ -9896,6 +10001,9 @@ class MabFileFolderProtectedItem(ProtectedItem):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of this backup item.
@@ -9937,6 +10045,7 @@ class MabFileFolderProtectedItem(ProtectedItem):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'computer_name': {'key': 'computerName', 'type': 'str'},
@@ -10139,6 +10248,8 @@ class MabProtectionPolicy(ProtectionPolicy):
 
     :param protected_items_count: Number of items associated with this policy.
     :type protected_items_count: int
+    :param resource_guard_operation_requests: ResourceGuard Operation Requests
+    :type resource_guard_operation_requests: list[str]
     :param backup_management_type: Required. Constant filled by server.
     :type backup_management_type: str
     :param schedule_policy: Backup schedule of backup policy.
@@ -10155,6 +10266,7 @@ class MabProtectionPolicy(ProtectionPolicy):
 
     _attribute_map = {
         'protected_items_count': {'key': 'protectedItemsCount', 'type': 'int'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
         'schedule_policy': {'key': 'schedulePolicy', 'type': 'SchedulePolicy'},
         'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
@@ -11486,6 +11598,100 @@ class RecoveryPointTierInformation(Model):
         self.extended_info = kwargs.get('extended_info', None)
 
 
+class ResourceGuardOperationDetail(Model):
+    """ResourceGuardOperationDetail.
+
+    :param vault_critical_operation:
+    :type vault_critical_operation: str
+    :param default_resource_request:
+    :type default_resource_request: str
+    """
+
+    _attribute_map = {
+        'vault_critical_operation': {'key': 'vaultCriticalOperation', 'type': 'str'},
+        'default_resource_request': {'key': 'defaultResourceRequest', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ResourceGuardOperationDetail, self).__init__(**kwargs)
+        self.vault_critical_operation = kwargs.get('vault_critical_operation', None)
+        self.default_resource_request = kwargs.get('default_resource_request', None)
+
+
+class ResourceGuardProxyBase(Model):
+    """ResourceGuardProxyBase.
+
+    :param resource_guard_resource_id:
+    :type resource_guard_resource_id: str
+    :param resource_guard_operation_details:
+    :type resource_guard_operation_details:
+     list[~azure.mgmt.recoveryservicesbackup.models.ResourceGuardOperationDetail]
+    :param last_updated_time:
+    :type last_updated_time: str
+    :param description:
+    :type description: str
+    """
+
+    _attribute_map = {
+        'resource_guard_resource_id': {'key': 'resourceGuardResourceId', 'type': 'str'},
+        'resource_guard_operation_details': {'key': 'resourceGuardOperationDetails', 'type': '[ResourceGuardOperationDetail]'},
+        'last_updated_time': {'key': 'lastUpdatedTime', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ResourceGuardProxyBase, self).__init__(**kwargs)
+        self.resource_guard_resource_id = kwargs.get('resource_guard_resource_id', None)
+        self.resource_guard_operation_details = kwargs.get('resource_guard_operation_details', None)
+        self.last_updated_time = kwargs.get('last_updated_time', None)
+        self.description = kwargs.get('description', None)
+
+
+class ResourceGuardProxyBaseResource(Resource):
+    """ResourceGuardProxyBaseResource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id represents the complete path to the resource.
+    :vartype id: str
+    :ivar name: Resource name associated with the resource.
+    :vartype name: str
+    :ivar type: Resource type represents the complete path of the form
+     Namespace/ResourceType/ResourceType/...
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param e_tag: Optional ETag.
+    :type e_tag: str
+    :param properties: ResourceGuardProxyBaseResource properties
+    :type properties:
+     ~azure.mgmt.recoveryservicesbackup.models.ResourceGuardProxyBase
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'ResourceGuardProxyBase'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ResourceGuardProxyBaseResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
 class ResourceList(Model):
     """Base for all lists of resources.
 
@@ -11595,6 +11801,22 @@ class RetentionDuration(Model):
         super(RetentionDuration, self).__init__(**kwargs)
         self.count = kwargs.get('count', None)
         self.duration_type = kwargs.get('duration_type', None)
+
+
+class SecurityPinBase(Model):
+    """Base class for get security pin request body.
+
+    :param resource_guard_operation_requests: ResourceGuard Operation Requests
+    :type resource_guard_operation_requests: list[str]
+    """
+
+    _attribute_map = {
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SecurityPinBase, self).__init__(**kwargs)
+        self.resource_guard_operation_requests = kwargs.get('resource_guard_operation_requests', None)
 
 
 class Settings(Model):
@@ -11903,6 +12125,43 @@ class TriggerDataMoveRequest(Model):
         self.correlation_id = kwargs.get('correlation_id', None)
         self.source_container_arm_ids = kwargs.get('source_container_arm_ids', None)
         self.pause_gc = kwargs.get('pause_gc', None)
+
+
+class UnlockDeleteRequest(Model):
+    """Request body of unlock delete API.
+
+    :param resource_guard_operation_requests:
+    :type resource_guard_operation_requests: list[str]
+    :param resource_to_be_deleted:
+    :type resource_to_be_deleted: str
+    """
+
+    _attribute_map = {
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
+        'resource_to_be_deleted': {'key': 'resourceToBeDeleted', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(UnlockDeleteRequest, self).__init__(**kwargs)
+        self.resource_guard_operation_requests = kwargs.get('resource_guard_operation_requests', None)
+        self.resource_to_be_deleted = kwargs.get('resource_to_be_deleted', None)
+
+
+class UnlockDeleteResponse(Model):
+    """Response of Unlock Delete API.
+
+    :param unlock_delete_expiry_time: This is the time when unlock delete
+     privileges will get expired.
+    :type unlock_delete_expiry_time: str
+    """
+
+    _attribute_map = {
+        'unlock_delete_expiry_time': {'key': 'unlockDeleteExpiryTime', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(UnlockDeleteResponse, self).__init__(**kwargs)
+        self.unlock_delete_expiry_time = kwargs.get('unlock_delete_expiry_time', None)
 
 
 class ValidateOperationRequest(Model):

@@ -66,7 +66,7 @@ class RecoveryPointsOperations(object):
          ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointResourcePaged[~azure.mgmt.recoveryservicesbackup.models.RecoveryPointResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2021-06-01"
+        api_version = "2021-07-01"
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -160,7 +160,7 @@ class RecoveryPointsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2021-06-01"
+        api_version = "2021-07-01"
 
         # Construct URL
         url = self.get.metadata['url']

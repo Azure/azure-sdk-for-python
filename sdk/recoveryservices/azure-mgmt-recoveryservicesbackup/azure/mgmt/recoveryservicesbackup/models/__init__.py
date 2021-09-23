@@ -174,6 +174,7 @@ try:
     from ._models_py3 import IaasVMRecoveryPoint
     from ._models_py3 import IaasVMRestoreRequest
     from ._models_py3 import IaasVMRestoreWithRehydrationRequest
+    from ._models_py3 import IdentityBasedRestoreDetails
     from ._models_py3 import IdentityInfo
     from ._models_py3 import ILRRequest
     from ._models_py3 import ILRRequestResource
@@ -247,6 +248,9 @@ try:
     from ._models_py3 import RecoveryPointResource
     from ._models_py3 import RecoveryPointTierInformation
     from ._models_py3 import Resource
+    from ._models_py3 import ResourceGuardOperationDetail
+    from ._models_py3 import ResourceGuardProxyBase
+    from ._models_py3 import ResourceGuardProxyBaseResource
     from ._models_py3 import ResourceHealthDetails
     from ._models_py3 import ResourceList
     from ._models_py3 import RestoreFileSpecs
@@ -255,6 +259,7 @@ try:
     from ._models_py3 import RetentionDuration
     from ._models_py3 import RetentionPolicy
     from ._models_py3 import SchedulePolicy
+    from ._models_py3 import SecurityPinBase
     from ._models_py3 import Settings
     from ._models_py3 import SimpleRetentionPolicy
     from ._models_py3 import SimpleSchedulePolicy
@@ -265,6 +270,8 @@ try:
     from ._models_py3 import TargetRestoreInfo
     from ._models_py3 import TokenInformation
     from ._models_py3 import TriggerDataMoveRequest
+    from ._models_py3 import UnlockDeleteRequest
+    from ._models_py3 import UnlockDeleteResponse
     from ._models_py3 import ValidateIaasVMRestoreOperationRequest
     from ._models_py3 import ValidateOperationRequest
     from ._models_py3 import ValidateOperationResponse
@@ -448,6 +455,7 @@ except (SyntaxError, ImportError):
     from ._models import IaasVMRecoveryPoint
     from ._models import IaasVMRestoreRequest
     from ._models import IaasVMRestoreWithRehydrationRequest
+    from ._models import IdentityBasedRestoreDetails
     from ._models import IdentityInfo
     from ._models import ILRRequest
     from ._models import ILRRequestResource
@@ -521,6 +529,9 @@ except (SyntaxError, ImportError):
     from ._models import RecoveryPointResource
     from ._models import RecoveryPointTierInformation
     from ._models import Resource
+    from ._models import ResourceGuardOperationDetail
+    from ._models import ResourceGuardProxyBase
+    from ._models import ResourceGuardProxyBaseResource
     from ._models import ResourceHealthDetails
     from ._models import ResourceList
     from ._models import RestoreFileSpecs
@@ -529,6 +540,7 @@ except (SyntaxError, ImportError):
     from ._models import RetentionDuration
     from ._models import RetentionPolicy
     from ._models import SchedulePolicy
+    from ._models import SecurityPinBase
     from ._models import Settings
     from ._models import SimpleRetentionPolicy
     from ._models import SimpleSchedulePolicy
@@ -539,6 +551,8 @@ except (SyntaxError, ImportError):
     from ._models import TargetRestoreInfo
     from ._models import TokenInformation
     from ._models import TriggerDataMoveRequest
+    from ._models import UnlockDeleteRequest
+    from ._models import UnlockDeleteResponse
     from ._models import ValidateIaasVMRestoreOperationRequest
     from ._models import ValidateOperationRequest
     from ._models import ValidateOperationResponse
@@ -567,6 +581,7 @@ from ._paged_models import ProtectionContainerResourcePaged
 from ._paged_models import ProtectionIntentResourcePaged
 from ._paged_models import ProtectionPolicyResourcePaged
 from ._paged_models import RecoveryPointResourcePaged
+from ._paged_models import ResourceGuardProxyBaseResourcePaged
 from ._paged_models import WorkloadItemResourcePaged
 from ._paged_models import WorkloadProtectableItemResourcePaged
 from ._recovery_services_backup_client_enums import (
@@ -595,6 +610,8 @@ from ._recovery_services_backup_client_enums import (
     SQLDataDirectoryType,
     RestorePointQueryType,
     RetentionDurationType,
+    StorageType,
+    StorageTypeState,
     BackupManagementType,
     JobStatus,
     JobOperationType,
@@ -609,8 +626,6 @@ from ._recovery_services_backup_client_enums import (
     CreateMode,
     HealthState,
     ScheduleRunType,
-    StorageType,
-    StorageTypeState,
     EnhancedSecurityState,
     SoftDeleteFeatureState,
     AzureFileShareType,
@@ -796,6 +811,7 @@ __all__ = [
     'IaasVMRecoveryPoint',
     'IaasVMRestoreRequest',
     'IaasVMRestoreWithRehydrationRequest',
+    'IdentityBasedRestoreDetails',
     'IdentityInfo',
     'ILRRequest',
     'ILRRequestResource',
@@ -869,6 +885,9 @@ __all__ = [
     'RecoveryPointResource',
     'RecoveryPointTierInformation',
     'Resource',
+    'ResourceGuardOperationDetail',
+    'ResourceGuardProxyBase',
+    'ResourceGuardProxyBaseResource',
     'ResourceHealthDetails',
     'ResourceList',
     'RestoreFileSpecs',
@@ -877,6 +896,7 @@ __all__ = [
     'RetentionDuration',
     'RetentionPolicy',
     'SchedulePolicy',
+    'SecurityPinBase',
     'Settings',
     'SimpleRetentionPolicy',
     'SimpleSchedulePolicy',
@@ -887,6 +907,8 @@ __all__ = [
     'TargetRestoreInfo',
     'TokenInformation',
     'TriggerDataMoveRequest',
+    'UnlockDeleteRequest',
+    'UnlockDeleteResponse',
     'ValidateIaasVMRestoreOperationRequest',
     'ValidateOperationRequest',
     'ValidateOperationResponse',
@@ -917,6 +939,7 @@ __all__ = [
     'WorkloadItemResourcePaged',
     'WorkloadProtectableItemResourcePaged',
     'ProtectionContainerResourcePaged',
+    'ResourceGuardProxyBaseResourcePaged',
     'EncryptionAtRestType',
     'LastUpdateStatus',
     'InfrastructureEncryptionState',
@@ -942,6 +965,8 @@ __all__ = [
     'SQLDataDirectoryType',
     'RestorePointQueryType',
     'RetentionDurationType',
+    'StorageType',
+    'StorageTypeState',
     'BackupManagementType',
     'JobStatus',
     'JobOperationType',
@@ -956,8 +981,6 @@ __all__ = [
     'CreateMode',
     'HealthState',
     'ScheduleRunType',
-    'StorageType',
-    'StorageTypeState',
     'EnhancedSecurityState',
     'SoftDeleteFeatureState',
     'AzureFileShareType',

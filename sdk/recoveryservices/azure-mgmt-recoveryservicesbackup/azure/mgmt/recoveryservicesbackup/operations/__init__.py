@@ -9,6 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from ._backup_resource_storage_configs_non_crr_operations import BackupResourceStorageConfigsNonCRROperations
 from ._protection_intent_operations import ProtectionIntentOperations
 from ._backup_status_operations import BackupStatusOperations
 from ._feature_support_operations import FeatureSupportOperations
@@ -51,6 +52,8 @@ from ._backup_protectable_items_operations import BackupProtectableItemsOperatio
 from ._backup_protection_containers_operations import BackupProtectionContainersOperations
 from ._security_pi_ns_operations import SecurityPINsOperations
 from ._recovery_points_recommended_for_move_operations import RecoveryPointsRecommendedForMoveOperations
+from ._resource_guard_proxies_operations import ResourceGuardProxiesOperations
+from ._resource_guard_proxy_operations import ResourceGuardProxyOperations
 from ._backup_usage_summaries_crr_operations import BackupUsageSummariesCRROperations
 from ._aad_properties_operations import AadPropertiesOperations
 from ._cross_region_restore_operations import CrossRegionRestoreOperations
@@ -64,6 +67,7 @@ from ._backup_protected_items_crr_operations import BackupProtectedItemsCrrOpera
 from ._recovery_services_backup_client_operations import RecoveryServicesBackupClientOperationsMixin
 
 __all__ = [
+    'BackupResourceStorageConfigsNonCRROperations',
     'ProtectionIntentOperations',
     'BackupStatusOperations',
     'FeatureSupportOperations',
@@ -106,6 +110,8 @@ __all__ = [
     'BackupProtectionContainersOperations',
     'SecurityPINsOperations',
     'RecoveryPointsRecommendedForMoveOperations',
+    'ResourceGuardProxiesOperations',
+    'ResourceGuardProxyOperations',
     'BackupUsageSummariesCRROperations',
     'AadPropertiesOperations',
     'CrossRegionRestoreOperations',

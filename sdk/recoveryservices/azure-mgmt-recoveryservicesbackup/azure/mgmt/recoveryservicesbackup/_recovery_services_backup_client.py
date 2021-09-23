@@ -14,6 +14,7 @@ from msrest import Serializer, Deserializer
 
 from ._configuration import RecoveryServicesBackupClientConfiguration
 from .operations import RecoveryServicesBackupClientOperationsMixin
+from .operations import BackupResourceStorageConfigsNonCRROperations
 from .operations import ProtectionIntentOperations
 from .operations import BackupStatusOperations
 from .operations import FeatureSupportOperations
@@ -56,6 +57,8 @@ from .operations import BackupProtectableItemsOperations
 from .operations import BackupProtectionContainersOperations
 from .operations import SecurityPINsOperations
 from .operations import RecoveryPointsRecommendedForMoveOperations
+from .operations import ResourceGuardProxiesOperations
+from .operations import ResourceGuardProxyOperations
 from .operations import BackupUsageSummariesCRROperations
 from .operations import AadPropertiesOperations
 from .operations import CrossRegionRestoreOperations
@@ -75,6 +78,8 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin, 
     :ivar config: Configuration for client.
     :vartype config: RecoveryServicesBackupClientConfiguration
 
+    :ivar backup_resource_storage_configs_non_crr: BackupResourceStorageConfigsNonCRR operations
+    :vartype backup_resource_storage_configs_non_crr: azure.mgmt.recoveryservicesbackup.operations.BackupResourceStorageConfigsNonCRROperations
     :ivar protection_intent: ProtectionIntent operations
     :vartype protection_intent: azure.mgmt.recoveryservicesbackup.operations.ProtectionIntentOperations
     :ivar backup_status: BackupStatus operations
@@ -159,6 +164,10 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin, 
     :vartype security_pi_ns: azure.mgmt.recoveryservicesbackup.operations.SecurityPINsOperations
     :ivar recovery_points_recommended_for_move: RecoveryPointsRecommendedForMove operations
     :vartype recovery_points_recommended_for_move: azure.mgmt.recoveryservicesbackup.operations.RecoveryPointsRecommendedForMoveOperations
+    :ivar resource_guard_proxies: ResourceGuardProxies operations
+    :vartype resource_guard_proxies: azure.mgmt.recoveryservicesbackup.operations.ResourceGuardProxiesOperations
+    :ivar resource_guard_proxy: ResourceGuardProxy operations
+    :vartype resource_guard_proxy: azure.mgmt.recoveryservicesbackup.operations.ResourceGuardProxyOperations
     :ivar backup_usage_summaries_crr: BackupUsageSummariesCRR operations
     :vartype backup_usage_summaries_crr: azure.mgmt.recoveryservicesbackup.operations.BackupUsageSummariesCRROperations
     :ivar aad_properties: AadProperties operations
@@ -198,6 +207,8 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin, 
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.backup_resource_storage_configs_non_crr = BackupResourceStorageConfigsNonCRROperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.protection_intent = ProtectionIntentOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_status = BackupStatusOperations(
@@ -281,6 +292,10 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin, 
         self.security_pi_ns = SecurityPINsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.recovery_points_recommended_for_move = RecoveryPointsRecommendedForMoveOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.resource_guard_proxies = ResourceGuardProxiesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.resource_guard_proxy = ResourceGuardProxyOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_usage_summaries_crr = BackupUsageSummariesCRROperations(
             self._client, self.config, self._serialize, self._deserialize)
