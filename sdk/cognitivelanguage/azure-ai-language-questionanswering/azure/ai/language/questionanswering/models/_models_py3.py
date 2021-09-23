@@ -17,14 +17,14 @@ from ._question_answering_client_enums import *
 class AnswerSpan(msrest.serialization.Model):
     """Answer span object of QnA.
 
-    :param text: Predicted text of answer span.
-    :type text: str
-    :param confidence_score: Predicted score of answer span, value ranges from 0 to 1.
-    :type confidence_score: float
-    :param offset: The answer span offset from the start of answer.
-    :type offset: int
-    :param length: The length of the answer span.
-    :type length: int
+    :keyword text: Predicted text of answer span.
+    :paramtype text: str
+    :keyword confidence_score: Predicted score of answer span, value ranges from 0 to 1.
+    :paramtype confidence_score: float
+    :keyword offset: The answer span offset from the start of answer.
+    :paramtype offset: int
+    :keyword length: The length of the answer span.
+    :paramtype length: int
     """
 
     _validation = {
@@ -57,14 +57,14 @@ class AnswerSpan(msrest.serialization.Model):
 class AnswerSpanRequest(msrest.serialization.Model):
     """To configure Answer span prediction feature.
 
-    :param enable: Enable or disable Answer Span prediction.
-    :type enable: bool
-    :param confidence_score_threshold: Minimum threshold score required to include an answer span,
-     value ranges from 0 to 1.
-    :type confidence_score_threshold: float
-    :param top_answers_with_span: Number of Top answers to be considered for span prediction from 1
-     to 10.
-    :type top_answers_with_span: int
+    :keyword enable: Enable or disable Answer Span prediction.
+    :paramtype enable: bool
+    :keyword confidence_score_threshold: Minimum threshold score required to include an answer
+     span, value ranges from 0 to 1.
+    :paramtype confidence_score_threshold: float
+    :keyword top_answers_with_span: Number of Top answers to be considered for span prediction from
+     1 to 10.
+    :paramtype top_answers_with_span: int
     """
 
     _validation = {
@@ -97,19 +97,19 @@ class Error(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. One of a server-defined set of error codes. Possible values include:
+    :keyword code: Required. One of a server-defined set of error codes. Possible values include:
      "InvalidRequest", "InvalidArgument", "Unauthorized", "Forbidden", "NotFound",
      "TooManyRequests", "InternalServerError", "ServiceUnavailable".
-    :type code: str or ~azure.ai.language.questionanswering.models.ErrorCode
-    :param message: Required. A human-readable representation of the error.
-    :type message: str
-    :param target: The target of the error.
-    :type target: str
-    :param details: An array of details about specific errors that led to this reported error.
-    :type details: list[~azure.ai.language.questionanswering.models.Error]
-    :param innererror: An object containing more specific information than the current object about
-     the error.
-    :type innererror: ~azure.ai.language.questionanswering.models.InnerErrorModel
+    :paramtype code: str or ~azure.ai.language.questionanswering.models.ErrorCode
+    :keyword message: Required. A human-readable representation of the error.
+    :paramtype message: str
+    :keyword target: The target of the error.
+    :paramtype target: str
+    :keyword details: An array of details about specific errors that led to this reported error.
+    :paramtype details: list[~azure.ai.language.questionanswering.models.Error]
+    :keyword innererror: An object containing more specific information than the current object
+     about the error.
+    :paramtype innererror: ~azure.ai.language.questionanswering.models.InnerErrorModel
     """
 
     _validation = {
@@ -146,8 +146,8 @@ class Error(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Error response.
 
-    :param error: The error object.
-    :type error: ~azure.ai.language.questionanswering.models.Error
+    :keyword error: The error object.
+    :paramtype error: ~azure.ai.language.questionanswering.models.Error
     """
 
     _attribute_map = {
@@ -164,19 +164,19 @@ class InnerErrorModel(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. One of a server-defined set of error codes. Possible values include:
+    :keyword code: Required. One of a server-defined set of error codes. Possible values include:
      "InvalidRequest", "InvalidParameterValue", "KnowledgeBaseNotFound",
      "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling", "ExtractionFailure".
-    :type code: str or ~azure.ai.language.questionanswering.models.InnerErrorCode
-    :param message: Required. Error message.
-    :type message: str
-    :param details: Error details.
-    :type details: dict[str, str]
-    :param target: Error target.
-    :type target: str
-    :param innererror: An object containing more specific information than the current object about
-     the error.
-    :type innererror: ~azure.ai.language.questionanswering.models.InnerErrorModel
+    :paramtype code: str or ~azure.ai.language.questionanswering.models.InnerErrorCode
+    :keyword message: Required. Error message.
+    :paramtype message: str
+    :keyword details: Error details.
+    :paramtype details: dict[str, str]
+    :keyword target: Error target.
+    :paramtype target: str
+    :keyword innererror: An object containing more specific information than the current object
+     about the error.
+    :paramtype innererror: ~azure.ai.language.questionanswering.models.InnerErrorModel
     """
 
     _validation = {
@@ -213,23 +213,23 @@ class InnerErrorModel(msrest.serialization.Model):
 class KnowledgeBaseAnswer(msrest.serialization.Model):
     """Represents knowledge base answer.
 
-    :param questions: List of questions.
-    :type questions: list[str]
-    :param answer: The Answer.
-    :type answer: str
-    :param confidence_score: Answer confidence score, value ranges from 0 to 1.
-    :type confidence_score: float
-    :param id: ID of the QnA result.
-    :type id: int
-    :param source: Source of QnA result.
-    :type source: str
-    :param metadata: Metadata associated with the answer, useful to categorize or filter question
+    :keyword questions: List of questions.
+    :paramtype questions: list[str]
+    :keyword answer: The Answer.
+    :paramtype answer: str
+    :keyword confidence_score: Answer confidence score, value ranges from 0 to 1.
+    :paramtype confidence_score: float
+    :keyword id: ID of the QnA result.
+    :paramtype id: int
+    :keyword source: Source of QnA result.
+    :paramtype source: str
+    :keyword metadata: Metadata associated with the answer, useful to categorize or filter question
      answers.
-    :type metadata: dict[str, str]
-    :param dialog: Dialog associated with Answer.
-    :type dialog: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerDialog
-    :param answer_span: Answer span object of QnA with respect to user's question.
-    :type answer_span: ~azure.ai.language.questionanswering.models.AnswerSpan
+    :paramtype metadata: dict[str, str]
+    :keyword dialog: Dialog associated with Answer.
+    :paramtype dialog: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerDialog
+    :keyword answer_span: Answer span object of QnA with respect to user's question.
+    :paramtype answer_span: ~azure.ai.language.questionanswering.models.AnswerSpan
     """
 
     _validation = {
@@ -274,12 +274,12 @@ class KnowledgeBaseAnswer(msrest.serialization.Model):
 class KnowledgeBaseAnswerDialog(msrest.serialization.Model):
     """Dialog associated with Answer.
 
-    :param is_context_only: To mark if a prompt is relevant only with a previous question or not.
+    :keyword is_context_only: To mark if a prompt is relevant only with a previous question or not.
      If true, do not include this QnA as search result for queries without context; otherwise, if
      false, ignores context and includes this QnA in search result.
-    :type is_context_only: bool
-    :param prompts: List of 0 to 20 prompts associated with the answer.
-    :type prompts: list[~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerPrompt]
+    :paramtype is_context_only: bool
+    :keyword prompts: List of 0 to 20 prompts associated with the answer.
+    :paramtype prompts: list[~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerPrompt]
     """
 
     _validation = {
@@ -306,12 +306,12 @@ class KnowledgeBaseAnswerDialog(msrest.serialization.Model):
 class KnowledgeBaseAnswerPrompt(msrest.serialization.Model):
     """Prompt for an answer.
 
-    :param display_order: Index of the prompt - used in ordering of the prompts.
-    :type display_order: int
-    :param qna_id: QnA ID corresponding to the prompt.
-    :type qna_id: int
-    :param display_text: Text displayed to represent a follow up question prompt.
-    :type display_text: str
+    :keyword display_order: Index of the prompt - used in ordering of the prompts.
+    :paramtype display_order: int
+    :keyword qna_id: QnA ID corresponding to the prompt.
+    :paramtype qna_id: int
+    :keyword display_text: Text displayed to represent a follow up question prompt.
+    :paramtype display_text: str
     """
 
     _validation = {
@@ -343,10 +343,10 @@ class KnowledgeBaseAnswerRequestContext(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param previous_qna_id: Required. Previous turn top answer result QnA ID.
-    :type previous_qna_id: int
-    :param previous_user_query: Previous user query.
-    :type previous_user_query: str
+    :keyword previous_qna_id: Required. Previous turn top answer result QnA ID.
+    :paramtype previous_qna_id: int
+    :keyword previous_user_query: Previous user query.
+    :paramtype previous_user_query: str
     """
 
     _validation = {
@@ -367,8 +367,8 @@ class KnowledgeBaseAnswerRequestContext(msrest.serialization.Model):
 class KnowledgeBaseAnswers(msrest.serialization.Model):
     """Represents List of Question Answers.
 
-    :param answers: Represents Answer Result list.
-    :type answers: list[~azure.ai.language.questionanswering.models.KnowledgeBaseAnswer]
+    :keyword answers: Represents Answer Result list.
+    :paramtype answers: list[~azure.ai.language.questionanswering.models.KnowledgeBaseAnswer]
     """
 
     _attribute_map = {
@@ -383,29 +383,32 @@ class KnowledgeBaseAnswers(msrest.serialization.Model):
 class KnowledgeBaseQueryOptions(msrest.serialization.Model):
     """The question parameters to answer using a knowledge base.
 
-    :param qna_id: Exact QnA ID to fetch from the knowledge base, this field takes priority over
+    :keyword qna_id: Exact QnA ID to fetch from the knowledge base, this field takes priority over
      question.
-    :type qna_id: int
-    :param question: User question to query against the knowledge base.
-    :type question: str
-    :param top: Max number of answers to be returned for the question.
-    :type top: int
-    :param user_id: Unique identifier for the user.
-    :type user_id: str
-    :param confidence_score_threshold: Minimum threshold score for answers, value ranges from 0 to
-     1.
-    :type confidence_score_threshold: float
-    :param context: Context object with previous QnA's information.
-    :type context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerRequestContext
-    :param ranker_type: (Optional) Set to 'QuestionOnly' for using a question only Ranker. Possible
-     values include: "Default", "QuestionOnly".
-    :type ranker_type: str or ~azure.ai.language.questionanswering.models.RankerType
-    :param strict_filters: Filter QnAs based on give metadata list and knowledge base source names.
-    :type strict_filters: ~azure.ai.language.questionanswering.models.StrictFilters
-    :param answer_span_request: To configure Answer span prediction feature.
-    :type answer_span_request: ~azure.ai.language.questionanswering.models.AnswerSpanRequest
-    :param include_unstructured_sources: (Optional) Flag to enable Query over Unstructured Sources.
-    :type include_unstructured_sources: bool
+    :paramtype qna_id: int
+    :keyword question: User question to query against the knowledge base.
+    :paramtype question: str
+    :keyword top: Max number of answers to be returned for the question.
+    :paramtype top: int
+    :keyword user_id: Unique identifier for the user.
+    :paramtype user_id: str
+    :keyword confidence_score_threshold: Minimum threshold score for answers, value ranges from 0
+     to 1.
+    :paramtype confidence_score_threshold: float
+    :keyword context: Context object with previous QnA's information.
+    :paramtype context:
+     ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerRequestContext
+    :keyword ranker_type: (Optional) Set to 'QuestionOnly' for using a question only Ranker.
+     Possible values include: "Default", "QuestionOnly".
+    :paramtype ranker_type: str or ~azure.ai.language.questionanswering.models.RankerType
+    :keyword strict_filters: Filter QnAs based on give metadata list and knowledge base source
+     names.
+    :paramtype strict_filters: ~azure.ai.language.questionanswering.models.StrictFilters
+    :keyword answer_span_request: To configure Answer span prediction feature.
+    :paramtype answer_span_request: ~azure.ai.language.questionanswering.models.AnswerSpanRequest
+    :keyword include_unstructured_sources: (Optional) Flag to enable Query over Unstructured
+     Sources.
+    :paramtype include_unstructured_sources: bool
     """
 
     _validation = {
@@ -456,11 +459,11 @@ class KnowledgeBaseQueryOptions(msrest.serialization.Model):
 class MetadataFilter(msrest.serialization.Model):
     """Find QnAs that are associated with the given list of metadata.
 
-    :param metadata: Dictionary of :code:`<string>`.
-    :type metadata: dict[str, str]
-    :param compound_operation: (Optional) Set to 'OR' for joining metadata using 'OR' operation.
+    :keyword metadata: Dictionary of :code:`<string>`.
+    :paramtype metadata: dict[str, str]
+    :keyword compound_operation: (Optional) Set to 'OR' for joining metadata using 'OR' operation.
      Possible values include: "AND", "OR".
-    :type compound_operation: str or
+    :paramtype compound_operation: str or
      ~azure.ai.language.questionanswering.models.CompoundOperationKind
     """
 
@@ -484,14 +487,14 @@ class MetadataFilter(msrest.serialization.Model):
 class StrictFilters(msrest.serialization.Model):
     """filters over knowledge base.
 
-    :param metadata_filter: Find QnAs that are associated with the given list of metadata.
-    :type metadata_filter: ~azure.ai.language.questionanswering.models.MetadataFilter
-    :param source_filter: Find QnAs that are associated with the given list of sources in knowledge
-     base.
-    :type source_filter: list[str]
-    :param compound_operation: (Optional) Set to 'OR' for joining metadata using 'OR' operation.
+    :keyword metadata_filter: Find QnAs that are associated with the given list of metadata.
+    :paramtype metadata_filter: ~azure.ai.language.questionanswering.models.MetadataFilter
+    :keyword source_filter: Find QnAs that are associated with the given list of sources in
+     knowledge base.
+    :paramtype source_filter: list[str]
+    :keyword compound_operation: (Optional) Set to 'OR' for joining metadata using 'OR' operation.
      Possible values include: "AND", "OR".
-    :type compound_operation: str or
+    :paramtype compound_operation: str or
      ~azure.ai.language.questionanswering.models.CompoundOperationKind
     """
 
@@ -518,18 +521,18 @@ class StrictFilters(msrest.serialization.Model):
 class TextAnswer(msrest.serialization.Model):
     """Represents answer result.
 
-    :param answer: Answer.
-    :type answer: str
-    :param confidence_score: answer confidence score, value ranges from 0 to 1.
-    :type confidence_score: float
-    :param id: record ID.
-    :type id: str
-    :param answer_span: Answer span object with respect to user's question.
-    :type answer_span: ~azure.ai.language.questionanswering.models.AnswerSpan
-    :param offset: The sentence offset from the start of the document.
-    :type offset: int
-    :param length: The length of the sentence.
-    :type length: int
+    :keyword answer: Answer.
+    :paramtype answer: str
+    :keyword confidence_score: answer confidence score, value ranges from 0 to 1.
+    :paramtype confidence_score: float
+    :keyword id: record ID.
+    :paramtype id: str
+    :keyword answer_span: Answer span object with respect to user's question.
+    :paramtype answer_span: ~azure.ai.language.questionanswering.models.AnswerSpan
+    :keyword offset: The sentence offset from the start of the document.
+    :paramtype offset: int
+    :keyword length: The length of the sentence.
+    :paramtype length: int
     """
 
     _validation = {
@@ -568,8 +571,8 @@ class TextAnswer(msrest.serialization.Model):
 class TextAnswers(msrest.serialization.Model):
     """Represents the answer results.
 
-    :param answers: Represents the answer results.
-    :type answers: list[~azure.ai.language.questionanswering.models.TextAnswer]
+    :keyword answers: Represents the answer results.
+    :paramtype answers: list[~azure.ai.language.questionanswering.models.TextAnswer]
     """
 
     _attribute_map = {
@@ -586,19 +589,20 @@ class TextQueryOptions(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param question: Required. User question to query against the given text records.
-    :type question: str
-    :param records: Required. Text records to be searched for given question.
-    :type records: list[~azure.ai.language.questionanswering.models.TextRecord]
-    :param language: Language of the text records. This is BCP-47 representation of a language. For
-     example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
+    :keyword question: Required. User question to query against the given text records.
+    :paramtype question: str
+    :keyword records: Required. Text records to be searched for given question.
+    :paramtype records: list[~azure.ai.language.questionanswering.models.TextRecord]
+    :keyword language: Language of the text records. This is BCP-47 representation of a language.
+     For example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
      default.
-    :type language: str
-    :param string_index_type: Specifies the method used to interpret string offsets.  Defaults to
+    :paramtype language: str
+    :keyword string_index_type: Specifies the method used to interpret string offsets.  Defaults to
      Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
      https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
      "UnicodeCodePoint", "Utf16CodeUnit". Default value: "TextElements_v8".
-    :type string_index_type: str or ~azure.ai.language.questionanswering.models.StringIndexType
+    :paramtype string_index_type: str or
+     ~azure.ai.language.questionanswering.models.StringIndexType
     """
 
     _validation = {
@@ -634,10 +638,10 @@ class TextRecord(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. Unique identifier for the text record.
-    :type id: str
-    :param text: Required. Text contents of the record.
-    :type text: str
+    :keyword id: Required. Unique identifier for the text record.
+    :paramtype id: str
+    :keyword text: Required. Text contents of the record.
+    :paramtype text: str
     """
 
     _validation = {
