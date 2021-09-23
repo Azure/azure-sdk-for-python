@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-language-questionanswering/1.0.0b2 Python/3.9.5 (macOS-11.5.2-x86_64-i386-64bit)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-05-01-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-07-15-preview
   response:
     body:
       string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Charge
@@ -24,15 +24,16 @@ interactions:
         \     \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
         []\n      }\n    }\n  ]\n}"
     headers:
-      apim-request-id: 82923f05-3c9f-416f-9855-2fbefa6085dc
+      apim-request-id: 24be7932-f7a1-4019-8472-32c2551d1d6e
       content-length: '583'
       content-type: application/json; charset=utf-8
-      date: Wed, 30 Jun 2021 15:15:47 GMT
+      csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTransaction=1
+      date: Tue, 21 Sep 2021 21:06:49 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
       x-envoy-upstream-service-time: '132'
     status:
       code: 200
       message: OK
-    url: https://wuppe.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=190a9e13-8ede-4e4b-a8fd-c4d7f2aeab6c&deploymentName=test&api-version=2021-05-01-preview
+    url: https://wuppe.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=190a9e13-8ede-4e4b-a8fd-c4d7f2aeab6c&deploymentName=test&api-version=2021-07-15-preview
 version: 1

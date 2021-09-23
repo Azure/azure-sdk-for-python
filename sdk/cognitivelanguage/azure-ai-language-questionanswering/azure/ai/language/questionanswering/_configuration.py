@@ -26,28 +26,28 @@ class QuestionAnsweringClientConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
     :param endpoint: Supported Cognitive Services endpoint (e.g., https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
     :type endpoint: str
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: ~azure.core.credentials.AzureKeyCredential
     """
 
     def __init__(
         self,
-        credential,  # type: AzureKeyCredential
         endpoint,  # type: str
+        credential,  # type: AzureKeyCredential
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
         super(QuestionAnsweringClientConfiguration, self).__init__(**kwargs)
 
-        self.credential = credential
         self.endpoint = endpoint
-        self.api_version = "2021-05-01-preview"
+        self.credential = credential
+        self.api_version = "2021-07-15-preview"
         kwargs.setdefault("sdk_moniker", "ai-language-questionanswering/{}".format(VERSION))
         self._configure(**kwargs)
 

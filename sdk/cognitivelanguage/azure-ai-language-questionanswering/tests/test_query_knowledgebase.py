@@ -14,7 +14,7 @@ from testcase import (
 )
 
 from azure.ai.language.questionanswering import QuestionAnsweringClient
-from azure.ai.language.questionanswering._rest import *
+from azure.ai.language.questionanswering.operations._operations import build_query_text_request, build_query_knowledge_base_request
 from azure.ai.language.questionanswering.models import (
     KnowledgeBaseQueryOptions,
     KnowledgeBaseAnswerRequestContext,
@@ -54,7 +54,7 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
             assert answer.get('source')
             assert answer.get('metadata') is not None
             assert not answer.get('answerSpan')
-            
+
             assert answer.get('questions')
             for question in answer['questions']:
                 assert question
@@ -108,7 +108,7 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
                 assert answer['answerSpan'].get('confidenceScore')
                 assert answer['answerSpan'].get('offset') is not None
                 assert answer['answerSpan'].get('length')
-            
+
             assert answer.get('questions')
             for question in answer['questions']:
                 assert question

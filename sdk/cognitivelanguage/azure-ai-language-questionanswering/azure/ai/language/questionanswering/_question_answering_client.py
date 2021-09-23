@@ -18,17 +18,17 @@ from .operations import QuestionAnsweringClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, Optional
 
     from azure.core.credentials import AzureKeyCredential
     from azure.core.rest import HttpRequest, HttpResponse
 
 
 class QuestionAnsweringClient(QuestionAnsweringClientOperationsMixin):
-    """The language service API is a suite of natural language processing (NLP) skills built with best-in-class Microsoft machine learning algorithms.  The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction, language detection and question answering. Further documentation can be found in https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview.
+    """The language service API is a suite of natural language processing (NLP) skills built with best-in-class Microsoft machine learning algorithms.  The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction, language detection and question answering. Further documentation can be found in :code:`<a href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
-         https://<resource-name>.api.cognitiveservices.azure.com).
+     https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.AzureKeyCredential
@@ -41,9 +41,9 @@ class QuestionAnsweringClient(QuestionAnsweringClientOperationsMixin):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = "{Endpoint}/language"
-        self._config = QuestionAnsweringClientConfiguration(credential, endpoint, **kwargs)
-        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _endpoint = "{Endpoint}/language"
+        self._config = QuestionAnsweringClientConfiguration(endpoint, credential, **kwargs)
+        self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -57,6 +57,13 @@ class QuestionAnsweringClient(QuestionAnsweringClientOperationsMixin):
     ):
         # type: (...) -> HttpResponse
         """Runs the network request through the client's chained policies.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = client.send_request(request)
+        <HttpResponse: 200 OK>
+
         For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
 
         :param request: The network request you want to make. Required.
@@ -70,6 +77,7 @@ class QuestionAnsweringClient(QuestionAnsweringClientOperationsMixin):
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
+
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
