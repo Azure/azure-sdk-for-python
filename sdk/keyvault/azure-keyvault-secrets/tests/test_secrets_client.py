@@ -297,13 +297,15 @@ class SecretClientTests(SecretsTestCase, KeyVaultTestCase):
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
-                try:
-                    body = json.loads(message.message)
-                    if body["value"] == "secret-value":
-                        return
-                except (ValueError, KeyError):
-                    # this means the message is not JSON or has no kty property
-                    pass
+                messages_request = message.message.split("/n")
+                for m in messages_request:
+                    try:
+                        body = json.loads(m)
+                        if body["value"] == "secret-value":
+                            return
+                    except (ValueError, KeyError):
+                        # this means the message is not JSON or has no kty property
+                        pass
 
         assert False, "Expected request body wasn't logged"
 
@@ -321,12 +323,14 @@ class SecretClientTests(SecretsTestCase, KeyVaultTestCase):
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
-                try:
-                    body = json.loads(message.message)
-                    assert body["value"] != "secret-value", "Client request body was logged"
-                except (ValueError, KeyError):
-                    # this means the message is not JSON or has no kty property
-                    pass
+                messages_request = message.message.split("/n")
+                for m in messages_request:
+                    try:
+                        body = json.loads(m)
+                        assert body["value"] != "secret-value", "Client request body was logged"
+                    except (ValueError, KeyError):
+                        # this means the message is not JSON or has no kty property
+                        pass
 
 
 def test_service_headers_allowed_in_logs():
