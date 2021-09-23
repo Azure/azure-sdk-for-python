@@ -202,32 +202,6 @@ $PackageExclusions = @{
   'azure-mgmt-network' = 'Manual process used to build';
 }
 
-# In python, we download the dev version from custom feed in public/azure-sdk-for-python
-function Get-python-DocsMsDevLanguageSpecificPackageInfo($packageInfo) {
-  try
-  {
-    $pythonPackageInfo = Invoke-RestMethod -Uri "https://dev.azure.com/azure-sdk/public/_packaging?_a=package&feed=azure-sdk-for-python&package=$($packageInfo.Name)&protocolType=PyPI&version=$($packageInfo.DevVersion)#"
-
-    if ($pythonPackageInfo.'dist-tags'.dev)
-    {
-      Write-Host "Using published version at 'dev' tag: '$($npmPackageInfo.'dist-tags'.dev)'"
-      $packageInfo.Version = $npmPackageInfo.'dist-tags'.dev
-    }
-    else
-    {
-      LogWarning "No 'dev' dist-tag available for '$($packageInfo.Name)'. Keeping current version '$($packageInfo.Version)'"
-    }
-  }
-  catch
-  {
-    LogWarning "Error getting package info from public/azure-sdk-for-python for $($packageInfo.Name)"
-    LogWarning $_.Exception
-    LogWarning $_.Exception.StackTrace
-  }
-
-  return $pythonPackageInfo
-}
-
 function Update-python-DocsMsPackages($DocsRepoLocation, $DocsMetadata) {
   Write-Host "Excluded packages:"
   foreach ($excludedPackage in $PackageExclusions.Keys) {
