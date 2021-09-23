@@ -71,6 +71,8 @@ the Azure Cloud because it combines common production credentials with
 development credentials. `DefaultAzureCredential` attempts to authenticate via
 the following mechanisms in this order, stopping when one succeeds:
 
+![DefaultAzureCredential authentication flow](https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/identity/azure-identity/images/DefaultAzureCredentialAuthenticationFlow.png)
+
 - Environment - `DefaultAzureCredential` will read account information specified
   via [environment variables](#environment-variables "environment variables")
   and use it to authenticate.
