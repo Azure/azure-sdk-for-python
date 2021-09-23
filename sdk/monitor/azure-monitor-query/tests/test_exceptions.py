@@ -30,6 +30,7 @@ def test_logs_single_query_partial_exception():
     response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(days=1))
     assert response.__class__ == LogsQueryPartialResult
     assert response.partial_error is not None
+    assert response.partial_data is not None
     assert response.partial_error.code == 'PartialError'
     assert response.partial_error.__class__ == LogsQueryError
 

@@ -61,7 +61,7 @@ def test_logs_single_query_with_partial_success():
     response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
 
     assert response.partial_error is not None
-    assert response.tables is not None
+    assert response.partial_data is not None
     assert response.__class__ == LogsQueryPartialResult
 
 @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/19917")

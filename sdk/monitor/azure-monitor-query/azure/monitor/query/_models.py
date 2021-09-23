@@ -216,16 +216,12 @@ class LogsQueryResult(object):
     :ivar visualization: This will include a visualization property in the response that specifies the type of
      visualization selected by the query and any properties for that visualization.
     :vartype visualization: object
-    :ivar partial_error: Any error info. This is none except in the case where `allow_partial_errors`
-     is explicitly set to True.
-    :vartype partial_error: ~azure.core.exceptions.HttpResponseError
     :ivar str status: The status of the resuly.
      Always 'Success' for an instance of a LogsQueryResult.
     """
 
     def __init__(self, **kwargs):
         self.tables = kwargs.get("tables", None)
-        self.partial_error = None
         self.statistics = kwargs.get("statistics", None)
         self.visualization = kwargs.get("visualization", None)
         self.status = LogsQueryStatus.SUCCESS
@@ -568,7 +564,7 @@ class MetricUnit(str, Enum):
     BITS_PER_SECOND = "BitsPerSecond"
 
 
-class LogsQueryPartialResult(LogsQueryResult):
+class LogsQueryPartialResult(object):
     """The LogsQueryPartialResult.
 
     :ivar partial_data: The list of tables, columns and rows.
@@ -581,20 +577,38 @@ class LogsQueryPartialResult(LogsQueryResult):
     :vartype visualization: object
     :ivar partial_error: The partial errror info
     :vartype partial_error: ~azure.core.exceptions.HttpResponseError
-    :ivar str status: The status of the resuly.
+    :ivar str status: The status of the result. Always 'partial' for LogsQueryPartialResult
      Always 'PartialError' for an instance of a LogsQueryPartialResult.
     """
 
     def __init__(self, **kwargs):
-        super(LogsQueryPartialResult, self).__init__(**kwargs)
+        self.partial_data = kwargs.get("partial_data", None)
         self.partial_error = kwargs.get("partial_error", None)
+        self.statistics = kwargs.get("statistics", None)
+        self.visualization = kwargs.get("visualization", None)
         self.status = LogsQueryStatus.PARTIAL
 
+    def __iter__(self):
+        return iter(self.partial_data)
+
     @classmethod
-    def _from_generated(cls, generated, error):
-        super_gen = super(LogsQueryPartialResult, cls)._from_generated(generated) # pylint: disable=W0221
-        super_gen.partial_error = error._from_generated(generated.error) # pylint: disable=W0221
-        return super_gen
+    def _from_generated(cls, generated, error): # pylint: disable=arguments-differ
+        if not generated:
+            return cls()
+        partial_data = None
+        if isinstance(generated, BatchQueryResponse):
+            generated = generated.body
+        if generated.tables is not None:
+            partial_data = [
+                LogsTable._from_generated(table)  # pylint: disable=protected-access
+                for table in generated.tables
+            ]
+        return cls(
+            partial_data=partial_data,
+            partial_error=error._from_generated(generated.error), # pylint: disable=protected-access
+            statistics=generated.statistics,
+            visualization=generated.render,
+        )
 
 
 class LogsQueryStatus(str, Enum):
