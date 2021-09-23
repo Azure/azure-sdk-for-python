@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import Any, Callable, Dict, Generic, Optional, TypeVar, overload, Union, List
+from typing import TYPE_CHECKING, overload
 import warnings
 
 from azure.core.exceptions import (
@@ -17,26 +17,96 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
+from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
+from msrest import Serializer
 
-from ... import models as _models, _rest as rest
-from ..._patch import _validate_text_records
+from .. import models as _models
+from .._patch import _validate_text_records
 
-T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
+
+    T = TypeVar("T")
+    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+
+_SERIALIZER = Serializer()
+# fmt: off
+
+def build_query_knowledge_base_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    project_name = kwargs.pop('project_name')  # type: str
+    deployment_name = kwargs.pop('deployment_name', None)  # type: Optional[str]
+
+    api_version = "2021-07-15-preview"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/:query-knowledgebases')
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['projectName'] = _SERIALIZER.query("project_name", project_name, 'str')
+    if deployment_name is not None:
+        query_parameters['deploymentName'] = _SERIALIZER.query("deployment_name", deployment_name, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
 
 
-class QuestionAnsweringClientOperationsMixin:
+def build_query_text_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    api_version = "2021-07-15-preview"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/:query-text')
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+# fmt: on
+class QuestionAnsweringClientOperationsMixin(object):
     @overload
-    async def query_knowledge_base(
+    def query_knowledge_base(
         self,
-        knowledge_base_query_options: "_models.KnowledgeBaseQueryOptions",
-        *,
-        project_name: str,
-        deployment_name: Optional[str] = None,
-        **kwargs: Any
-    ) -> "_models.KnowledgeBaseAnswers":
+        knowledge_base_query_options,  # type: "_models.KnowledgeBaseQueryOptions"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.KnowledgeBaseAnswers"
         """Answers the specified question using your knowledge base.
 
         :param knowledge_base_query_options: Post body of the request.
@@ -51,37 +121,25 @@ class QuestionAnsweringClientOperationsMixin:
         :rtype: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        ...
+        pass
 
     @overload
-    async def query_knowledge_base(
+    def query_knowledge_base(
         self,
-        *,
-        project_name: str,
-        deployment_name: Optional[str] = None,
-        qna_id: Optional[int] = None,
-        question: Optional[str] = None,
-        top: Optional[int] = None,
-        user_id: Optional[str] = None,
-        confidence_score_threshold: Optional[float] = None,
-        context: Optional["_models.KnowledgeBaseAnswerRequestContext"] = None,
-        ranker_type: Optional[Union[str, "_models.RankerType"]] = None,
-        strict_filters: Optional["_models.StrictFilters"] = None,
-        answer_span_request: Optional["_models.AnswerSpanRequest"] = None,
-        include_unstructured_sources: Optional[bool] = None,
-        **kwargs: Any
-    ) -> "_models.KnowledgeBaseAnswers":
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.KnowledgeBaseAnswers"
         """Answers the specified question using your knowledge base.
 
         :keyword project_name: The name of the project to use.
         :paramtype project_name: str
         :keyword deployment_name: The name of the specific deployment of the project to use.
         :paramtype deployment_name: str
+        :keyword question: User question to query against the knowledge base.
+        :paramtype question: str
         :keyword qna_id: Exact QnA ID to fetch from the knowledge base, this field takes priority over
         question.
         :paramtype qna_id: int
-        :keyword question: User question to query against the knowledge base.
-        :paramtype question: str
         :keyword top: Max number of answers to be returned for the question.
         :paramtype top: int
         :keyword user_id: Unique identifier for the user.
@@ -105,13 +163,14 @@ class QuestionAnsweringClientOperationsMixin:
         :rtype: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        ...
+        pass
 
-    async def query_knowledge_base(
+    def query_knowledge_base(
         self,
-        *args,
-        **kwargs: Any
-    ) -> "_models.KnowledgeBaseAnswers":
+        *args,  # type: "_models.KnowledgeBaseQueryOptions"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.KnowledgeBaseAnswers"
         """Answers the specified question using your knowledge base.
 
         :param knowledge_base_query_options: Post body of the request. Provide either `knowledge_base_query_options`, OR
@@ -122,11 +181,11 @@ class QuestionAnsweringClientOperationsMixin:
         :paramtype project_name: str
         :keyword deployment_name: The name of the specific deployment of the project to use.
         :paramtype deployment_name: str
-        :keyword qna_id: Exact QnA ID to fetch from the knowledge base, this field takes priority over question.
-        :paramtype qna_id: int
         :keyword question: User question to query against the knowledge base. Provide either `knowledge_base_query_options`, OR
          individual keyword arguments. If both are provided, only the options object will be used.
         :paramtype question: str
+        :keyword qna_id: Exact QnA ID to fetch from the knowledge base, this field takes priority over question.
+        :paramtype qna_id: int
         :keyword top: Max number of answers to be returned for the question.
         :paramtype top: int
         :keyword user_id: Unique identifier for the user.
@@ -173,26 +232,24 @@ class QuestionAnsweringClientOperationsMixin:
 
         json = self._serialize.body(knowledge_base_query_options, "KnowledgeBaseQueryOptions")
 
-        request = rest.build_query_knowledge_base_request(
+        request = build_query_knowledge_base_request(
             content_type=content_type,
             project_name=project_name,
             deployment_name=deployment_name,
             json=json,
             template_url=self.query_knowledge_base.metadata["url"],
-        )._to_pipeline_transport_request()
+        )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(
-            request, stream=False, _return_pipeline_response=True, **kwargs
-        )
+        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize("KnowledgeBaseAnswers", pipeline_response)
@@ -205,9 +262,12 @@ class QuestionAnsweringClientOperationsMixin:
     query_knowledge_base.metadata = {"url": "/:query-knowledgebases"}  # type: ignore
 
     @overload
-    async def query_text(
-        self, text_query_options: "_models.TextQueryOptions", **kwargs: Any
-    ) -> "_models.TextAnswers":
+    def query_text(
+        self,
+        text_query_options,  # type: "_models.TextQueryOptions"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.TextAnswers"
         """Answers the specified question using the provided text in the body.
 
         :param text_query_options: Post body of the request.
@@ -217,24 +277,20 @@ class QuestionAnsweringClientOperationsMixin:
         :rtype: ~azure.ai.language.questionanswering.models.TextAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        ...
+        pass
 
     @overload
-    async def query_text(
+    def query_text(
         self,
-        *,
-        question: str,
-        records: List["_models.TextRecord"],
-        language: Optional[str] = None,
-        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = "TextElements_v8",
-        **kwargs: Any
-    ) -> "_models.TextAnswers":
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.TextAnswers"
         """Answers the specified question using the provided text in the body.
 
         :keyword question: Required. User question to query against the given text records.
         :paramtype question: str
         :keyword records: Required. Text records to be searched for given question.
-        :paramtype records: list[~azure.ai.language.questionanswering.models.TextRecord]
+        :paramtype records: list[str or ~azure.ai.language.questionanswering.models.TextRecord]
         :keyword language: Language of the text records. This is BCP-47 representation of a language. For
         example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
         default.
@@ -249,22 +305,25 @@ class QuestionAnsweringClientOperationsMixin:
         :rtype: ~azure.ai.language.questionanswering.models.TextAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        ...
+        pass
 
-    async def query_text(
-        self, *args, **kwargs: Any
-    ) -> "_models.TextAnswers":
+    def query_text(
+        self,
+        *args,  # type: "_models.TextQueryOptions"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.TextAnswers"
         """Answers the specified question using the provided text in the body.
 
         :param text_query_options: Post body of the request. Provide either `text_query_options`, OR
          individual keyword arguments. If both are provided, only the options object will be used.
         :type text_query_options: ~azure.ai.language.questionanswering.models.TextQueryOptions
-        :keyword question: User question to query against the given text records. Provide either `text_query_options`, OR
-         individual keyword arguments. If both are provided, only the options object will be used.
+        :keyword question: User question to query against the given text records. Provide either `text_query_options`, 
+         OR individual keyword arguments. If both are provided, only the options object will be used.
         :paramtype question: str
         :keyword records: Text records to be searched for given question. Provide either `text_query_options`, OR
          individual keyword arguments. If both are provided, only the options object will be used.
-        :paramtype records: list[~azure.ai.language.questionanswering.models.TextRecord]
+        :paramtype records: list[str or ~azure.ai.language.questionanswering.models.TextRecord]
         :keyword language: Language of the text records. This is BCP-47 representation of a language. For
          example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as default.
         :paramtype language: str
@@ -299,24 +358,22 @@ class QuestionAnsweringClientOperationsMixin:
 
         json = self._serialize.body(text_query_options, "TextQueryOptions")
 
-        request = rest.build_query_text_request(
+        request = build_query_text_request(
             content_type=content_type,
             json=json,
             template_url=self.query_text.metadata["url"],
-        )._to_pipeline_transport_request()
+        )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(
-            request, stream=False, _return_pipeline_response=True, **kwargs
-        )
+        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize("TextAnswers", pipeline_response)

@@ -15,9 +15,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-language-questionanswering/1.0.0b2 Python/3.9.5 (macOS-11.5.2-x86_64-i386-64bit)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-05-01-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-07-15-preview
   response:
     body:
       string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Ports
@@ -68,7 +68,7 @@ interactions:
         on Surface.com. |\\n| Sensors | Six sensors\u2014 accelerometer, magnetometer,
         gyro, ambient light sensor, Hall effect, Wi-Fi SAR\u2014let apps do things
         like track motion and determine location. |\",\n      \"confidenceScore\":
-        100.0,\n      \"id\": 5,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
+        1.0,\n      \"id\": 5,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
         \     \"metadata\": {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n
         \       \"prompts\": [\n          {\n            \"displayOrder\": 0,\n            \"qnaId\":
         6,\n            \"displayText\": \"Software\"\n          },\n          {\n
@@ -80,7 +80,7 @@ interactions:
         \     \"answerSpan\": {\n        \"text\": \"**Ports and connectors**\\n\\nSurface
         Pro 4 has the ports you expect in a full-feature laptop.\\n\\nFull-size USB
         3.0 port Connect a USB accessory like a mouse, printer, Ethernet adapter,
-        USB drive, or smartphone.\",\n        \"confidenceScore\": 1.06,\n        \"offset\":
+        USB drive, or smartphone.\",\n        \"confidenceScore\": 0.0106,\n        \"offset\":
         0,\n        \"length\": 206\n      }\n    },\n    {\n      \"questions\":
         [\n        \"Connect monitors, accessories, and other devices\"\n      ],\n
         \     \"answer\": \"**Connect monitors, accessories, and other devices**\\n\\nYou
@@ -88,7 +88,7 @@ interactions:
         Pro 4 using the USB port, Mini DisplayPort, or Bluetooth. Or, connect everything
         to a Surface Dock (sold separately). With Surface Dock, you can switch between
         fully connected and fully mobile with a single connector.\",\n      \"confidenceScore\":
-        46.59,\n      \"id\": 64,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
+        0.46380000000000005,\n      \"id\": 64,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
         \     \"metadata\": {\n        \"explicitlytaggedheading\": \"connect monitors,
         accessories, and other devices\"\n      },\n      \"dialog\": {\n        \"isContextOnly\":
         false,\n        \"prompts\": [\n          {\n            \"displayOrder\":
@@ -104,25 +104,27 @@ interactions:
         is for video only. Audio will play from your Surface speakers unless you\u2019ve
         connected external speakers. For more info about this, see [Surface sound,](http://www.microsoft.com/surface/support/hardware-and-drivers/sound-volume-and-speakers)
         [volume, and audio accessories](http://www.microsoft.com/surface/support/hardware-and-drivers/sound-volume-and-speakers)
-        on Surface.com.\",\n      \"confidenceScore\": 43.97,\n      \"id\": 68,\n
+        on Surface.com.\",\n      \"confidenceScore\": 0.4307,\n      \"id\": 68,\n
         \     \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
         {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
         []\n      }\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - 2eb92f74-cda1-4bdb-a18f-a59b4d7cdf11
+      - 7d3e4c75-318d-47ac-a24f-0e6839903f5d
       content-length:
-      - '7459'
+      - '7474'
       content-type:
       - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.QuestionAnsweringTransaction=1
       date:
-      - Fri, 25 Jun 2021 19:41:13 GMT
+      - Tue, 21 Sep 2021 21:06:32 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '426'
+      - '902'
     status:
       code: 200
       message: OK

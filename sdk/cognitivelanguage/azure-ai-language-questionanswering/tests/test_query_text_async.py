@@ -15,7 +15,7 @@ from testcase import (
 )
 
 from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
-from azure.ai.language.questionanswering._rest import *
+from azure.ai.language.questionanswering.operations._operations import build_query_text_request, build_query_knowledge_base_request
 from azure.ai.language.questionanswering.models import (
     TextQueryOptions,
     TextRecord
