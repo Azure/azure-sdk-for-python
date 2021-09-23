@@ -1,0 +1,4 @@
+pytest
+autopep8
+pylint
+guid
