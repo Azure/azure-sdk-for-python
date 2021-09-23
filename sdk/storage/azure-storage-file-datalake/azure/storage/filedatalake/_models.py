@@ -23,9 +23,11 @@ from azure.storage.blob._generated.models import Logging as GenLogging, Metrics 
 from ._shared.models import DictMixin
 
 
-class FileSystemProperties(object):
+class FileSystemProperties(DictMixin):
     """File System properties class.
 
+    :ivar str name:
+        Name of the filesystem.
     :ivar ~datetime.datetime last_modified:
         A datetime object representing the last time the file system was modified.
     :ivar str etag:
