@@ -82,7 +82,6 @@ class _HttpResponseBaseImpl(_HttpResponseBase):  # pylint: disable=too-many-inst
         self._json = None  # this is filled in ContentDecodePolicy, when we deserialize
         self._content = None  # type: Optional[bytes]
         self._text = None  # type: Optional[str]
-        self._last_passed_encoding = None
 
     @property
     def request(self):
