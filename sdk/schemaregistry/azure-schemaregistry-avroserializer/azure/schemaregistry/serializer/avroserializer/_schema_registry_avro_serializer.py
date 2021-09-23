@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from functools import lru_cache
 from io import BytesIO
 from typing import Any, Dict, Union
 import avro
@@ -56,8 +57,6 @@ class SchemaRegistryAvroSerializer(object):
                 if self._auto_register_schemas
                 else self._schema_registry_client.get_schema_id
             )
-        self._id_to_schema = {}
-        self._schema_to_id = {}
         self._user_input_schema_cache = {}
 
     def __enter__(self):
@@ -76,8 +75,9 @@ class SchemaRegistryAvroSerializer(object):
         """
         self._schema_registry_client.close()
 
-    def _get_schema_id(self, schema_name, schema, **kwargs):
-        # type: (str, avro.schema.Schema, Any) -> str
+    @lru_cache(maxsize=128)
+    def _get_schema_id(self, schema_name, schema_str, **kwargs):
+        # type: (str, str, Any) -> str
         """
         Get schema id from local cache with the given schema.
         If there is no item in the local cache, get schema id from the service and cache it.
@@ -89,17 +89,12 @@ class SchemaRegistryAvroSerializer(object):
         :return: Schema Id
         :rtype: str
         """
-        schema_str = str(schema)
-        try:
-            return self._schema_to_id[schema_str]
-        except KeyError:
-            schema_id = self._auto_register_schema_func(
-                self._schema_group, schema_name, "Avro", schema_str, **kwargs
-            ).schema_id
-            self._schema_to_id[schema_str] = schema_id
-            self._id_to_schema[schema_id] = schema_str
-            return schema_id
+        schema_id = self._auto_register_schema_func(
+            self._schema_group, schema_name, "Avro", schema_str, **kwargs
+        ).schema_id
+        return schema_id
 
+    @lru_cache(maxsize=128)
     def _get_schema(self, schema_id, **kwargs):
         # type: (str, Any) -> str
         """
@@ -109,15 +104,10 @@ class SchemaRegistryAvroSerializer(object):
         :param str schema_id: Schema id
         :return: Schema content
         """
-        try:
-            return self._id_to_schema[schema_id]
-        except KeyError:
-            schema_str = self._schema_registry_client.get_schema(
-                schema_id, **kwargs
-            ).schema_content
-            self._id_to_schema[schema_id] = schema_str
-            self._schema_to_id[schema_str] = schema_id
-            return schema_str
+        schema_str = self._schema_registry_client.get_schema(
+            schema_id, **kwargs
+        ).schema_content
+        return schema_str
 
     def serialize(self, value, schema, **kwargs):
         # type: (Dict[str, Any], Union[str, bytes], Any) -> bytes
@@ -141,7 +131,7 @@ class SchemaRegistryAvroSerializer(object):
             cached_schema = parsed_schema
 
         record_format_identifier = b"\0\0\0\0"
-        schema_id = self._get_schema_id(cached_schema.fullname, cached_schema, **kwargs)
+        schema_id = self._get_schema_id(cached_schema.fullname, str(cached_schema), **kwargs)
         data_bytes = self._avro_serializer.serialize(value, cached_schema)
 
         stream = BytesIO()
