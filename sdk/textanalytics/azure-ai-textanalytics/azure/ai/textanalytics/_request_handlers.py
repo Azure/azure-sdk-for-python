@@ -16,8 +16,8 @@ from ._models import (
     AnalyzeSentimentAction,
     ExtractSummaryAction,
     RecognizeCustomEntitiesAction,
-    ClassifyDocumentCategoryAction,
-    ClassifyDocumentCategoriesAction,
+    ClassifyDocumentSingleCategoryAction,
+    ClassifyDocumentMultiCategoriesAction,
     _AnalyzeActionsType,
 )
 
@@ -104,9 +104,9 @@ def _determine_action_type(action):  # pylint: disable=too-many-return-statement
         return _AnalyzeActionsType.EXTRACT_SUMMARY
     if isinstance(action, RecognizeCustomEntitiesAction):
         return _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES
-    if isinstance(action, ClassifyDocumentCategoryAction):
+    if isinstance(action, ClassifyDocumentSingleCategoryAction):
         return _AnalyzeActionsType.CLASSIFY_CUSTOM_CATEGORY
-    if isinstance(action, ClassifyDocumentCategoriesAction):
+    if isinstance(action, ClassifyDocumentMultiCategoriesAction):
         return _AnalyzeActionsType.CLASSIFY_CUSTOM_CATEGORIES
     return _AnalyzeActionsType.EXTRACT_KEY_PHRASES
 

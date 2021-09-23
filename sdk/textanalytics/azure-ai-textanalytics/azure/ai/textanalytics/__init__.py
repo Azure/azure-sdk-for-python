@@ -55,10 +55,10 @@ from ._models import (
     SummarySentence,
     RecognizeCustomEntitiesAction,
     RecognizeCustomEntitiesResult,
-    ClassifyDocumentCategoryAction,
-    ClassifyDocumentCategoryResult,
-    ClassifyDocumentCategoriesAction,
-    ClassifyDocumentCategoriesResult,
+    ClassifyDocumentSingleCategoryAction,
+    ClassifyDocumentSingleCategoryResult,
+    ClassifyDocumentMultiCategoriesAction,
+    ClassifyDocumentMultiCategoriesResult,
     DocumentClassification,
 )
 
@@ -116,10 +116,10 @@ __all__ = [
     "SummarySentence",
     "RecognizeCustomEntitiesAction",
     "RecognizeCustomEntitiesResult",
-    "ClassifyDocumentCategoryAction",
-    "ClassifyDocumentCategoryResult",
-    "ClassifyDocumentCategoriesAction",
-    "ClassifyDocumentCategoriesResult",
+    "ClassifyDocumentSingleCategoryAction",
+    "ClassifyDocumentSingleCategoryResult",
+    "ClassifyDocumentMultiCategoriesAction",
+    "ClassifyDocumentMultiCategoriesResult",
     "DocumentClassification",
 ]
 

@@ -34,7 +34,7 @@ def sample_classify_document_categories():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import (
         TextAnalyticsClient,
-        ClassifyDocumentCategoriesAction
+        ClassifyDocumentMultiCategoriesAction
     )
 
     endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
@@ -63,7 +63,7 @@ def sample_classify_document_categories():
     poller = text_analytics_client.begin_analyze_actions(
         documents,
         actions=[
-            ClassifyDocumentCategoriesAction(
+            ClassifyDocumentMultiCategoriesAction(
                 project_name=project_name,
                 deployment_name=deployed_model_name
             ),

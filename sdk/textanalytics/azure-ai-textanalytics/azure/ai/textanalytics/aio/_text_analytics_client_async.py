@@ -51,10 +51,10 @@ from .._models import (
     ExtractSummaryResult,
     RecognizeCustomEntitiesAction,
     RecognizeCustomEntitiesResult,
-    ClassifyDocumentCategoryAction,
-    ClassifyDocumentCategoryResult,
-    ClassifyDocumentCategoriesAction,
-    ClassifyDocumentCategoriesResult,
+    ClassifyDocumentSingleCategoryAction,
+    ClassifyDocumentSingleCategoryResult,
+    ClassifyDocumentMultiCategoriesAction,
+    ClassifyDocumentMultiCategoriesResult,
 )
 from .._lro import TextAnalyticsOperationResourcePolling
 from ._lro_async import (
@@ -858,8 +858,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 AnalyzeSentimentAction,
                 ExtractSummaryAction,
                 RecognizeCustomEntitiesAction,
-                ClassifyDocumentCategoryAction,
-                ClassifyDocumentCategoriesAction,
+                ClassifyDocumentSingleCategoryAction,
+                ClassifyDocumentMultiCategoriesAction,
             ]
         ],  # pylint: disable=line-too-long
         **kwargs: Any,
@@ -874,8 +874,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     AnalyzeSentimentResult,
                     ExtractSummaryResult,
                     RecognizeCustomEntitiesResult,
-                    ClassifyDocumentCategoryResult,
-                    ClassifyDocumentCategoriesResult,
+                    ClassifyDocumentSingleCategoryResult,
+                    ClassifyDocumentMultiCategoriesResult,
                     DocumentError,
                 ]
             ]
@@ -902,7 +902,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :type actions:
             list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or
             RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or ExtractSummaryAction or
-            RecognizeCustomEntitiesAction or ClassifyDocumentCategoryAction or ClassifyDocumentCategoriesAction]
+            RecognizeCustomEntitiesAction or ClassifyDocumentSingleCategoryAction or
+            ClassifyDocumentMultiCategoriesAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -927,16 +928,16 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             ~azure.ai.textanalytics.aio.AsyncAnalyzeActionsLROPoller[~azure.core.async_paging.AsyncItemPaged[
             list[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult,
             ExtractKeyPhrasesResult, AnalyzeSentimentResult, ExtractSummaryAction, RecognizeCustomEntitiesResult,
-            ClassifyDocumentCategoryResult, ClassifyDocumentCategoriesResult, DocumentError]]]]
+            ClassifyDocumentSingleCategoryResult, ClassifyDocumentMultiCategoriesResult, DocumentError]]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. versionadded:: v3.1
             The *begin_analyze_actions* client method.
         .. versionadded:: v3.2-preview
-            The *ExtractSummaryAction*, *RecognizeCustomEntitiesAction*, *ClassifyDocumentCategoryAction*,
-            and *ClassifyDocumentCategoriesAction* input options and the corresponding *ExtractSummaryResult*,
-            *RecognizeCustomEntitiesResult*, *ClassifyDocumentCategoryResult*, and *ClassifyDocumentCategoriesResult*
-            result objects
+            The *ExtractSummaryAction*, *RecognizeCustomEntitiesAction*, *ClassifyDocumentSingleCategoryAction*,
+            and *ClassifyDocumentMultiCategoriesAction* input options and the corresponding *ExtractSummaryResult*,
+            *RecognizeCustomEntitiesResult*, *ClassifyDocumentSingleCategoryResult*,
+            and *ClassifyDocumentMultiCategoriesResult* result objects
 
         .. admonition:: Example:
 
