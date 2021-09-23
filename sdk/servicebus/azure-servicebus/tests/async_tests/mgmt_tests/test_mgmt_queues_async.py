@@ -216,7 +216,6 @@ class ServiceBusAdministrationClientQueueAsyncTests(AzureMgmtTestCase):
         with pytest.raises(msrest.exceptions.ValidationError):
             await mgmt_service.create_queue('')
 
-
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_queue_create_with_queue_description(self, servicebus_namespace_connection_string, **kwargs):
@@ -224,6 +223,7 @@ class ServiceBusAdministrationClientQueueAsyncTests(AzureMgmtTestCase):
         await clear_queues(mgmt_service)
         queue_name = "dkldf"
         queue_name_2 = "vjiqjx"
+        queue_name_3 = "clpqza"
         topic_name = "aghadh"
         await mgmt_service.create_topic(topic_name)
         await mgmt_service.create_queue(
@@ -260,6 +260,13 @@ class ServiceBusAdministrationClientQueueAsyncTests(AzureMgmtTestCase):
             max_size_in_megabytes=3072,
             requires_session=True
         )
+
+        with pytest.raises(HttpResponseError):
+            await mgmt_service.create_queue(
+                queue_name_3,
+                max_message_size_in_kilobytes=10
+            )
+
         try:
             queue = await mgmt_service.get_queue(queue_name)
             assert queue.name == queue_name
@@ -297,6 +304,99 @@ class ServiceBusAdministrationClientQueueAsyncTests(AzureMgmtTestCase):
             await mgmt_service.delete_queue(queue_name)
             await mgmt_service.delete_queue(queue_name_2)
             await mgmt_service.delete_topic(topic_name)
+            await mgmt_service.close()
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest', sku='Premium')
+    async def test_async_mgmt_queue_premium_create_with_queue_description(self, servicebus_namespace_connection_string,
+                                                                  **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+        await clear_queues(mgmt_service)
+        queue_name = "dkldf"
+        queue_name_2 = "vjiqjx"
+        queue_name_3 = "rekocd"
+
+        await mgmt_service.create_queue(
+            queue_name,
+            auto_delete_on_idle=datetime.timedelta(minutes=10),
+            dead_lettering_on_message_expiration=True,
+            default_message_time_to_live=datetime.timedelta(minutes=11),
+            duplicate_detection_history_time_window=datetime.timedelta(minutes=12),
+            enable_batched_operations=True,
+            # enable_express=True,
+            # enable_partitioning=True,
+            lock_duration=datetime.timedelta(seconds=13),
+            max_delivery_count=14,
+            max_size_in_megabytes=3072,
+            # requires_duplicate_detection=True,
+            requires_session=True,
+            max_message_size_in_kilobytes=12345
+        )
+
+        await mgmt_service.create_queue(
+            queue_name_2,
+            auto_delete_on_idle="PT10M1S",
+            dead_lettering_on_message_expiration=True,
+            default_message_time_to_live="PT11M2S",
+            duplicate_detection_history_time_window="PT12M3S",
+            enable_batched_operations=True,
+            lock_duration="PT13S",
+            max_delivery_count=14,
+            max_size_in_megabytes=3072,
+            requires_session=True
+        )  # default max_message_size_in_kilobytes is 1024
+
+        with pytest.raises(HttpResponseError):
+            await mgmt_service.create_queue(
+                queue_name_3,
+                max_message_size_in_kilobytes=1023  # min allowed is 1024
+            )
+
+        with pytest.raises(HttpResponseError):
+            await mgmt_service.create_queue(
+                queue_name_3,
+                max_message_size_in_kilobytes=102401  # max allowed is 102400
+            )
+
+
+        try:
+            queue = await mgmt_service.get_queue(queue_name)
+            assert queue.name == queue_name
+            assert queue.auto_delete_on_idle == datetime.timedelta(minutes=10)
+            assert queue.dead_lettering_on_message_expiration == True
+            assert queue.default_message_time_to_live == datetime.timedelta(minutes=11)
+            assert queue.duplicate_detection_history_time_window == datetime.timedelta(minutes=12)
+            assert queue.enable_batched_operations == True
+            # assert queue.enable_express == True
+            # assert queue.enable_partitioning == True
+            assert queue.lock_duration == datetime.timedelta(seconds=13)
+            assert queue.max_delivery_count == 14
+            assert queue.max_size_in_megabytes % 3072 == 0
+            # assert queue.requires_duplicate_detection == True
+            assert queue.requires_session == True
+            assert queue.max_message_size_in_kilobytes == 12345
+
+            queue_2 = await mgmt_service.get_queue(queue_name_2)
+            assert queue_2.name == queue_name_2
+            assert queue_2.auto_delete_on_idle == datetime.timedelta(minutes=10, seconds=1)
+            assert queue_2.dead_lettering_on_message_expiration == True
+            assert queue_2.default_message_time_to_live == datetime.timedelta(minutes=11, seconds=2)
+            assert queue_2.duplicate_detection_history_time_window == datetime.timedelta(minutes=12, seconds=3)
+            assert queue_2.enable_batched_operations == True
+            assert queue_2.lock_duration == datetime.timedelta(seconds=13)
+            assert queue_2.max_delivery_count == 14
+            assert queue_2.max_size_in_megabytes % 3072 == 0
+            assert queue_2.requires_session == True
+            assert queue_2.max_message_size_in_kilobytes == 1024
+
+            queue_2.max_message_size_in_kilobytes = 54321
+            await mgmt_service.update_queue(queue_2)
+            queue_2_new = await mgmt_service.get_queue(queue_name_2)
+            assert queue_2_new.max_message_size_in_kilobytes == 54321
+
+        finally:
+            await mgmt_service.delete_queue(queue_name)
+            await mgmt_service.delete_queue(queue_name_2)
             await mgmt_service.close()
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')

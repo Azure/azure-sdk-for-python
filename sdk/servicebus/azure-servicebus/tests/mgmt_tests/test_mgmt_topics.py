@@ -47,6 +47,8 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
         clear_topics(mgmt_service)
         topic_name = "iweidk"
         topic_name_2 = "djsadq"
+        topic_name_3 = "famviq"
+
         try:
             mgmt_service.create_topic(
                 topic_name=topic_name,
@@ -87,6 +89,85 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
             assert topic_2.enable_express
             assert topic_2.enable_partitioning
             assert topic_2.max_size_in_megabytes % 3072 == 0
+
+            with pytest.raises(HttpResponseError):
+                mgmt_service.create_topic(
+                    topic_name_3,
+                    max_message_size_in_kilobytes=10
+                )
+
+        finally:
+            mgmt_service.delete_topic(topic_name)
+            mgmt_service.delete_topic(topic_name_2)
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest', sku='Premium')
+    def test_mgmt_topic_premium_create_with_topic_description(self, servicebus_namespace_connection_string, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+        clear_topics(mgmt_service)
+        topic_name = "iweidk"
+        topic_name_2 = "cdasmc"
+        topic_name_3 = "rekocd"
+        try:
+            mgmt_service.create_topic(
+                topic_name=topic_name,
+                auto_delete_on_idle=datetime.timedelta(minutes=10),
+                default_message_time_to_live=datetime.timedelta(minutes=11),
+                duplicate_detection_history_time_window=datetime.timedelta(minutes=12),
+                enable_batched_operations=True,
+                #enable_express=True,
+                #enable_partitioning=True,
+                max_size_in_megabytes=3072,
+                max_message_size_in_kilobytes=12345
+            )
+            topic = mgmt_service.get_topic(topic_name)
+            assert topic.name == topic_name
+            assert topic.auto_delete_on_idle == datetime.timedelta(minutes=10)
+            assert topic.default_message_time_to_live == datetime.timedelta(minutes=11)
+            assert topic.duplicate_detection_history_time_window == datetime.timedelta(minutes=12)
+            assert topic.enable_batched_operations
+            # enable_express is not supported for the premium sku, see doc
+            # https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-premium-messaging#express-entities
+            # assert topic.enable_express
+            # partitioning is not available for the the premium sku, see doc
+            # https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-partitioning
+            # assert topic.enable_partitioning
+            assert topic.max_size_in_megabytes % 3072 == 0
+            assert topic.max_message_size_in_kilobytes == 12345
+
+            mgmt_service.create_topic(
+                topic_name=topic_name_2,
+                auto_delete_on_idle="PT10M",
+                default_message_time_to_live="PT11M",
+                duplicate_detection_history_time_window="PT12M",
+                enable_batched_operations=True,
+                max_size_in_megabytes=3072
+            )
+            topic_2 = mgmt_service.get_topic(topic_name_2)
+            assert topic_2.name == topic_name_2
+            assert topic_2.auto_delete_on_idle == datetime.timedelta(minutes=10)
+            assert topic_2.default_message_time_to_live == datetime.timedelta(minutes=11)
+            assert topic_2.duplicate_detection_history_time_window == datetime.timedelta(minutes=12)
+            assert topic_2.enable_batched_operations
+            assert topic_2.max_size_in_megabytes % 3072 == 0
+            assert topic_2.max_message_size_in_kilobytes == 1024
+
+            topic_2.max_message_size_in_kilobytes = 54321
+            mgmt_service.update_topic(topic_2)
+            topic_2_new = mgmt_service.get_topic(topic_name_2)
+            assert topic_2_new.max_message_size_in_kilobytes == 54321
+
+            with pytest.raises(HttpResponseError):
+                mgmt_service.create_topic(
+                    topic_name=topic_name_3,
+                    max_message_size_in_kilobytes=1023
+                )
+
+            with pytest.raises(HttpResponseError):
+                mgmt_service.create_topic(
+                    topic_name=topic_name_3,
+                    max_message_size_in_kilobytes=102401
+                )
 
         finally:
             mgmt_service.delete_topic(topic_name)
