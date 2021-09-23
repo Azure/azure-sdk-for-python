@@ -314,6 +314,19 @@ def test_text_and_encoding(send_request):
     assert response.text("latin-1") == u'ð\x9f\x91©' == response.content.decode("latin-1")
     assert response.encoding == "utf-16"
 
+def test_passing_encoding_to_text(send_request):
+    response = send_request(
+        request=HttpRequest("GET", "/encoding/emoji"),
+    )
+    assert response.content == u"👩".encode("utf-8")
+    assert response.text() == u"👩"
+
+    # pass in different encoding
+    assert response.text("latin-1") == u'ð\x9f\x91©'
+
+    # check response.text() still gets us the old value
+    assert response.text() == u"👩"
+
 def test_initialize_response_abc():
     with pytest.raises(TypeError) as ex:
         HttpResponse()

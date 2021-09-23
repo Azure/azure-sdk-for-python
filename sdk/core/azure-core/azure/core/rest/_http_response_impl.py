@@ -82,6 +82,7 @@ class _HttpResponseBaseImpl(_HttpResponseBase):  # pylint: disable=too-many-inst
         self._json = None  # this is filled in ContentDecodePolicy, when we deserialize
         self._content = None  # type: Optional[bytes]
         self._text = None  # type: Optional[str]
+        self._last_passed_encoding = None
 
     @property
     def request(self):
@@ -184,9 +185,11 @@ class _HttpResponseBaseImpl(_HttpResponseBase):  # pylint: disable=too-many-inst
          also be set independently through our encoding property
         :return: The response's content decoded as a string.
         """
-        if self._text is None or encoding:
-            encoding_to_pass = encoding or self.encoding
-            self._text = decode_to_text(encoding_to_pass, self.content)
+        if encoding:
+            return decode_to_text(encoding, self.content)
+        if self._text:
+            return self._text
+        self._text = decode_to_text(self.encoding, self.content)
         return self._text
 
     def json(self):
