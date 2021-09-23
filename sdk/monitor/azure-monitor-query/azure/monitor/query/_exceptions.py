@@ -16,8 +16,9 @@ class LogsQueryError(object):
     :vartype code: str
     :ivar message: A human readable error message.
     :vartype message: str
-    :ivar bool status: status for error item when iterating over list of
+    :ivar status: status for error item when iterating over list of
         results. Always Failuere for an instance of a LogsQueryError.
+    :vartype status: ~azure.monitor.query.LogsQueryStatus
     """
 
     def __init__(self, **kwargs):

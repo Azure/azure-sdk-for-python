@@ -51,7 +51,7 @@ class LogsQueryClient(object):
             timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]
         ],
         **kwargs: Any
-    ) -> LogsQueryResult:
+    ) -> Union[LogsQueryResult, LogsQueryPartialResult]:
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
@@ -76,7 +76,7 @@ class LogsQueryClient(object):
          These can be qualified workspace names, workspace Ids or Azure resource Ids.
         :paramtype additional_workspaces: list[str]
         :return: QueryResults, or the result of cls(response)
-        :rtype: ~azure.monitor.query.LogsQueryResult
+        :rtype: ~azure.monitor.query.LogsQueryResult or ~azure.monitor.query.LogsQueryPartialResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         timespan = construct_iso8601(timespan)
@@ -124,7 +124,8 @@ class LogsQueryClient(object):
         :param queries: The list of Kusto queries to execute.
         :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQuery]
         :return: list of LogsQueryResult objects, or the result of cls(response)
-        :rtype: list[~azure.monitor.query.LogsQueryResult or ~azure.monitor.query.LogsQueryError]
+        :rtype: list[~azure.monitor.query.LogsQueryResult or ~azure.monitor.query.LogsQueryResult
+         or ~azure.monitor.query.LogsQueryError]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         try:

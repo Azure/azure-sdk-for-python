@@ -26,7 +26,7 @@ class LogsTable(object):
     :ivar columns: The labels of columns in this table.
     :vartype columns: list[str]
     :ivar column_types: The types of columns in this table.
-    :vartype columns: list[object]
+    :vartype column_types: list[object]
     :ivar rows: Required. The resulting rows from this query.
     :vartype rows: list[~azure.monitor.query.LogsTableRow]
     """
@@ -60,7 +60,7 @@ class LogsTable(object):
 class LogsTableRow(object):
     """Represents a single row in logs table.
 
-    :ivar index: The index of the row in the table
+    :ivar int index: The index of the row in the table
     """
 
     def __init__(self, **kwargs):
@@ -79,8 +79,6 @@ class LogsTableRow(object):
     def __getitem__(self, column):
         """This type must be subscriptable directly to row.
         Must be gettableby both column name and row index
-        Example: row[0] -> returns the first element of row and
-        row[column_name] -> returns the row element against the given column name.
 
         :param column: The name of the column or the index of the element in a row.
         :type column: str or int
@@ -216,8 +214,9 @@ class LogsQueryResult(object):
     :ivar visualization: This will include a visualization property in the response that specifies the type of
      visualization selected by the query and any properties for that visualization.
     :vartype visualization: object
-    :ivar str status: The status of the resuly.
+    :ivar status: The status of the resuly.
      Always 'Success' for an instance of a LogsQueryResult.
+    :vartype status: ~azure.monitor.query.LogsQueryStatus
     """
 
     def __init__(self, **kwargs):
@@ -576,9 +575,10 @@ class LogsQueryPartialResult(object):
      visualization selected by the query and any properties for that visualization.
     :vartype visualization: object
     :ivar partial_error: The partial errror info
-    :vartype partial_error: ~azure.core.exceptions.HttpResponseError
-    :ivar str status: The status of the result. Always 'partial' for LogsQueryPartialResult
+    :vartype partial_error: ~azure.monitor.query.LogsQueryError
+    :ivar status: The status of the result. Always 'partial' for LogsQueryPartialResult
      Always 'PartialError' for an instance of a LogsQueryPartialResult.
+    :vartype status: ~azure.monitor.query.LogsQueryStatus
     """
 
     def __init__(self, **kwargs):
