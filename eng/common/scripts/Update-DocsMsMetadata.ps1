@@ -112,6 +112,7 @@ function UpdateDocsMsMetadataForPackage($packageInfoJsonLocation) {
       # downstream processes
       $packageInfo.Version = $packageInfo.DevVersion
     }
+    $packageInfo.Version = $packageInfo.DevVersion
   }
 
   $packageMetadataArray = (Get-CSVMetadata).Where({ $_.Package -eq $packageInfo.Name -and $_.GroupId -eq $packageInfo.Group -and $_.Hide -ne 'true' -and $_.New -eq 'true' })
