@@ -147,12 +147,12 @@ class ArmDisasterRecovery(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~azure.mgmt.servicebus.v2021_01_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.servicebus.v2021_06_01_preview.models.SystemData
     :ivar provisioning_state: Provisioning state of the Alias(Disaster Recovery configuration) -
      possible values 'Accepted' or 'Succeeded' or 'Failed'. Possible values include: "Accepted",
      "Succeeded", "Failed".
     :vartype provisioning_state: str or
-     ~azure.mgmt.servicebus.v2021_01_01_preview.models.ProvisioningStateDR
+     ~azure.mgmt.servicebus.v2021_06_01_preview.models.ProvisioningStateDR
     :ivar pending_replication_operations_count: Number of entities pending to be replicated.
     :vartype pending_replication_operations_count: long
     :param partner_namespace: ARM Id of the Primary/Secondary eventhub namespace name, which is
@@ -163,7 +163,7 @@ class ArmDisasterRecovery(Resource):
     :type alternate_name: str
     :ivar role: role of namespace in GEO DR - possible values 'Primary' or 'PrimaryNotReplicating'
      or 'Secondary'. Possible values include: "Primary", "PrimaryNotReplicating", "Secondary".
-    :vartype role: str or ~azure.mgmt.servicebus.v2021_01_01_preview.models.RoleDisasterRecovery
+    :vartype role: str or ~azure.mgmt.servicebus.v2021_06_01_preview.models.RoleDisasterRecovery
     """
 
     _validation = {
@@ -207,7 +207,7 @@ class ArmDisasterRecoveryListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param value: List of Alias(Disaster Recovery configurations).
-    :type value: list[~azure.mgmt.servicebus.v2021_01_01_preview.models.ArmDisasterRecovery]
+    :type value: list[~azure.mgmt.servicebus.v2021_06_01_preview.models.ArmDisasterRecovery]
     :ivar next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of Alias(Disaster Recovery configuration).
     :vartype next_link: str
@@ -271,7 +271,7 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
     :param reason: The reason for unavailability of a namespace. Possible values include: "None",
      "InvalidName", "SubscriptionIsDisabled", "NameInUse", "NameInLockdown",
      "TooManyNamespaceInCurrentSubscription".
-    :type reason: str or ~azure.mgmt.servicebus.v2021_01_01_preview.models.UnavailableReason
+    :type reason: str or ~azure.mgmt.servicebus.v2021_06_01_preview.models.UnavailableReason
     """
 
     _validation = {
@@ -300,7 +300,7 @@ class ConnectionState(msrest.serialization.Model):
     :param status: Status of the connection. Possible values include: "Pending", "Approved",
      "Rejected", "Disconnected".
     :type status: str or
-     ~azure.mgmt.servicebus.v2021_01_01_preview.models.PrivateLinkConnectionStatus
+     ~azure.mgmt.servicebus.v2021_06_01_preview.models.PrivateLinkConnectionStatus
     :param description: Description of the connection state.
     :type description: str
     """
@@ -375,42 +375,12 @@ class CorrelationFilter(msrest.serialization.Model):
         self.requires_preprocessing = kwargs.get('requires_preprocessing', True)
 
 
-class DictionaryValue(msrest.serialization.Model):
-    """Recognized Dictionary value.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar principal_id: Principal Id of user assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: Client Id of user assigned identity.
-    :vartype client_id: str
-    """
-
-    _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DictionaryValue, self).__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
-
-
 class Encryption(msrest.serialization.Model):
     """Properties to configure Encryption.
 
     :param key_vault_properties: Properties of KeyVault.
     :type key_vault_properties:
-     list[~azure.mgmt.servicebus.v2021_01_01_preview.models.KeyVaultProperties]
+     list[~azure.mgmt.servicebus.v2021_06_01_preview.models.KeyVaultProperties]
     :param key_source: Enumerates the possible value of keySource for Encryption. The only
      acceptable values to pass in are None and "Microsoft.KeyVault". The default value is
      "Microsoft.KeyVault".
@@ -469,7 +439,7 @@ class ErrorResponse(msrest.serialization.Model):
     """The resource management error response.
 
     :param error: The error object.
-    :type error: ~azure.mgmt.servicebus.v2021_01_01_preview.models.ErrorResponseError
+    :type error: ~azure.mgmt.servicebus.v2021_06_01_preview.models.ErrorResponseError
     """
 
     _attribute_map = {
@@ -496,10 +466,10 @@ class ErrorResponseError(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~azure.mgmt.servicebus.v2021_01_01_preview.models.ErrorResponse]
+    :vartype details: list[~azure.mgmt.servicebus.v2021_06_01_preview.models.ErrorResponse]
     :ivar additional_info: The error additional info.
     :vartype additional_info:
-     list[~azure.mgmt.servicebus.v2021_01_01_preview.models.ErrorAdditionalInfo]
+     list[~azure.mgmt.servicebus.v2021_06_01_preview.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -561,10 +531,10 @@ class Identity(msrest.serialization.Model):
     :vartype tenant_id: str
     :param type: Type of managed service identity. Possible values include: "SystemAssigned",
      "UserAssigned", "SystemAssigned, UserAssigned", "None".
-    :type type: str or ~azure.mgmt.servicebus.v2021_01_01_preview.models.ManagedServiceIdentityType
+    :type type: str or ~azure.mgmt.servicebus.v2021_06_01_preview.models.ManagedServiceIdentityType
     :param user_assigned_identities: Properties for User Assigned Identities.
     :type user_assigned_identities: dict[str,
-     ~azure.mgmt.servicebus.v2021_01_01_preview.models.DictionaryValue]
+     ~azure.mgmt.servicebus.v2021_06_01_preview.models.UserAssignedIdentity]
     """
 
     _validation = {
@@ -576,7 +546,7 @@ class Identity(msrest.serialization.Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{DictionaryValue}'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
     }
 
     def __init__(
@@ -601,7 +571,7 @@ class KeyVaultProperties(msrest.serialization.Model):
     :type key_version: str
     :param identity:
     :type identity:
-     ~azure.mgmt.servicebus.v2021_01_01_preview.models.UserAssignedIdentityProperties
+     ~azure.mgmt.servicebus.v2021_06_01_preview.models.UserAssignedIdentityProperties
     """
 
     _attribute_map = {
@@ -674,7 +644,7 @@ class MigrationConfigListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param value: List of Migration Configs.
-    :type value: list[~azure.mgmt.servicebus.v2021_01_01_preview.models.MigrationConfigProperties]
+    :type value: list[~azure.mgmt.servicebus.v2021_06_01_preview.models.MigrationConfigProperties]
     :ivar next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of migrationConfigurations.
     :vartype next_link: str
@@ -710,7 +680,7 @@ class MigrationConfigProperties(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~azure.mgmt.servicebus.v2021_01_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.servicebus.v2021_06_01_preview.models.SystemData
     :ivar provisioning_state: Provisioning state of Migration Configuration.
     :vartype provisioning_state: str
     :ivar pending_replication_operations_count: Number of entities pending to be replicated.
@@ -772,15 +742,23 @@ class NetworkRuleSet(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~azure.mgmt.servicebus.v2021_01_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.servicebus.v2021_06_01_preview.models.SystemData
+    :param trusted_service_access_enabled: Value that indicates whether Trusted Service Access is
+     Enabled or not.
+    :type trusted_service_access_enabled: bool
     :param default_action: Default Action for Network Rule Set. Possible values include: "Allow",
      "Deny".
-    :type default_action: str or ~azure.mgmt.servicebus.v2021_01_01_preview.models.DefaultAction
+    :type default_action: str or ~azure.mgmt.servicebus.v2021_06_01_preview.models.DefaultAction
     :param virtual_network_rules: List VirtualNetwork Rules.
     :type virtual_network_rules:
-     list[~azure.mgmt.servicebus.v2021_01_01_preview.models.NWRuleSetVirtualNetworkRules]
+     list[~azure.mgmt.servicebus.v2021_06_01_preview.models.NWRuleSetVirtualNetworkRules]
     :param ip_rules: List of IpRules.
-    :type ip_rules: list[~azure.mgmt.servicebus.v2021_01_01_preview.models.NWRuleSetIpRules]
+    :type ip_rules: list[~azure.mgmt.servicebus.v2021_06_01_preview.models.NWRuleSetIpRules]
+    :param public_network_access: This determines if traffic is allowed over public network. By
+     default it is enabled. Possible values include: "Enabled", "Disabled". Default value:
+     "Enabled".
+    :type public_network_access: str or
+     ~azure.mgmt.servicebus.v2021_06_01_preview.models.PublicNetworkAccessFlag
     """
 
     _validation = {
@@ -795,9 +773,11 @@ class NetworkRuleSet(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'trusted_service_access_enabled': {'key': 'properties.trustedServiceAccessEnabled', 'type': 'bool'},
         'default_action': {'key': 'properties.defaultAction', 'type': 'str'},
         'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[NWRuleSetVirtualNetworkRules]'},
         'ip_rules': {'key': 'properties.ipRules', 'type': '[NWRuleSetIpRules]'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
     }
 
     def __init__(
@@ -806,16 +786,18 @@ class NetworkRuleSet(Resource):
     ):
         super(NetworkRuleSet, self).__init__(**kwargs)
         self.system_data = None
+        self.trusted_service_access_enabled = kwargs.get('trusted_service_access_enabled', None)
         self.default_action = kwargs.get('default_action', None)
         self.virtual_network_rules = kwargs.get('virtual_network_rules', None)
         self.ip_rules = kwargs.get('ip_rules', None)
+        self.public_network_access = kwargs.get('public_network_access', "Enabled")
 
 
 class NetworkRuleSetListResult(msrest.serialization.Model):
     """The response of the List NetworkRuleSet operation.
 
     :param value: Result of the List NetworkRuleSet operation.
-    :type value: list[~azure.mgmt.servicebus.v2021_01_01_preview.models.NetworkRuleSet]
+    :type value: list[~azure.mgmt.servicebus.v2021_06_01_preview.models.NetworkRuleSet]
     :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of NetworkRuleSet.
     :type next_link: str
@@ -841,7 +823,7 @@ class NWRuleSetIpRules(msrest.serialization.Model):
     :param ip_mask: IP Mask.
     :type ip_mask: str
     :param action: The IP Filter Action. Possible values include: "Allow". Default value: "Allow".
-    :type action: str or ~azure.mgmt.servicebus.v2021_01_01_preview.models.NetworkRuleIPAction
+    :type action: str or ~azure.mgmt.servicebus.v2021_06_01_preview.models.NetworkRuleIPAction
     """
 
     _attribute_map = {
@@ -862,7 +844,7 @@ class NWRuleSetVirtualNetworkRules(msrest.serialization.Model):
     """Description of VirtualNetworkRules - NetworkRules resource.
 
     :param subnet: Subnet properties.
-    :type subnet: ~azure.mgmt.servicebus.v2021_01_01_preview.models.Subnet
+    :type subnet: ~azure.mgmt.servicebus.v2021_06_01_preview.models.Subnet
     :param ignore_missing_vnet_service_endpoint: Value that indicates whether to ignore missing
      VNet Service Endpoint.
     :type ignore_missing_vnet_service_endpoint: bool
@@ -890,7 +872,7 @@ class Operation(msrest.serialization.Model):
     :ivar name: Operation name: {provider}/{resource}/{operation}.
     :vartype name: str
     :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.servicebus.v2021_01_01_preview.models.OperationDisplay
+    :type display: ~azure.mgmt.servicebus.v2021_06_01_preview.models.OperationDisplay
     """
 
     _validation = {
@@ -953,7 +935,7 @@ class OperationListResult(msrest.serialization.Model):
 
     :ivar value: List of ServiceBus operations supported by the Microsoft.ServiceBus resource
      provider.
-    :vartype value: list[~azure.mgmt.servicebus.v2021_01_01_preview.models.Operation]
+    :vartype value: list[~azure.mgmt.servicebus.v2021_06_01_preview.models.Operation]
     :ivar next_link: URL to get the next set of operation list results if there are any.
     :vartype next_link: str
     """
@@ -1008,16 +990,16 @@ class PrivateEndpointConnection(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~azure.mgmt.servicebus.v2021_01_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.servicebus.v2021_06_01_preview.models.SystemData
     :param private_endpoint: The Private Endpoint resource for this Connection.
-    :type private_endpoint: ~azure.mgmt.servicebus.v2021_01_01_preview.models.PrivateEndpoint
+    :type private_endpoint: ~azure.mgmt.servicebus.v2021_06_01_preview.models.PrivateEndpoint
     :param private_link_service_connection_state: Details about the state of the connection.
     :type private_link_service_connection_state:
-     ~azure.mgmt.servicebus.v2021_01_01_preview.models.ConnectionState
+     ~azure.mgmt.servicebus.v2021_06_01_preview.models.ConnectionState
     :param provisioning_state: Provisioning state of the Private Endpoint Connection. Possible
      values include: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed".
     :type provisioning_state: str or
-     ~azure.mgmt.servicebus.v2021_01_01_preview.models.EndPointProvisioningState
+     ~azure.mgmt.servicebus.v2021_06_01_preview.models.EndPointProvisioningState
     """
 
     _validation = {
@@ -1052,7 +1034,7 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
     """Result of the list of all private endpoint connections operation.
 
     :param value: A collection of private endpoint connection resources.
-    :type value: list[~azure.mgmt.servicebus.v2021_01_01_preview.models.PrivateEndpointConnection]
+    :type value: list[~azure.mgmt.servicebus.v2021_06_01_preview.models.PrivateEndpointConnection]
     :param next_link: A link for the next page of private endpoint connection resources.
     :type next_link: str
     """
@@ -1114,7 +1096,7 @@ class PrivateLinkResourcesListResult(msrest.serialization.Model):
     """Result of the List private link resources operation.
 
     :param value: A collection of private link resources.
-    :type value: list[~azure.mgmt.servicebus.v2021_01_01_preview.models.PrivateLinkResource]
+    :type value: list[~azure.mgmt.servicebus.v2021_06_01_preview.models.PrivateLinkResource]
     :param next_link: A link for the next page of private link resources.
     :type next_link: str
     """
@@ -1140,7 +1122,7 @@ class RegenerateAccessKeyParameters(msrest.serialization.Model):
 
     :param key_type: Required. The access key to regenerate. Possible values include: "PrimaryKey",
      "SecondaryKey".
-    :type key_type: str or ~azure.mgmt.servicebus.v2021_01_01_preview.models.KeyType
+    :type key_type: str or ~azure.mgmt.servicebus.v2021_06_01_preview.models.KeyType
     :param key: Optional, if the key value provided, is reset for KeyType value or autogenerate Key
      value set for keyType.
     :type key: str
@@ -1216,17 +1198,17 @@ class Rule(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~azure.mgmt.servicebus.v2021_01_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.servicebus.v2021_06_01_preview.models.SystemData
     :param action: Represents the filter actions which are allowed for the transformation of a
      message that have been matched by a filter expression.
-    :type action: ~azure.mgmt.servicebus.v2021_01_01_preview.models.Action
+    :type action: ~azure.mgmt.servicebus.v2021_06_01_preview.models.Action
     :param filter_type: Filter type that is evaluated against a BrokeredMessage. Possible values
      include: "SqlFilter", "CorrelationFilter".
-    :type filter_type: str or ~azure.mgmt.servicebus.v2021_01_01_preview.models.FilterType
+    :type filter_type: str or ~azure.mgmt.servicebus.v2021_06_01_preview.models.FilterType
     :param sql_filter: Properties of sqlFilter.
-    :type sql_filter: ~azure.mgmt.servicebus.v2021_01_01_preview.models.SqlFilter
+    :type sql_filter: ~azure.mgmt.servicebus.v2021_06_01_preview.models.SqlFilter
     :param correlation_filter: Properties of correlationFilter.
-    :type correlation_filter: ~azure.mgmt.servicebus.v2021_01_01_preview.models.CorrelationFilter
+    :type correlation_filter: ~azure.mgmt.servicebus.v2021_06_01_preview.models.CorrelationFilter
     """
 
     _validation = {
@@ -1263,7 +1245,7 @@ class RuleListResult(msrest.serialization.Model):
     """The response of the List rule operation.
 
     :param value: Result of the List Rules operation.
-    :type value: list[~azure.mgmt.servicebus.v2021_01_01_preview.models.Rule]
+    :type value: list[~azure.mgmt.servicebus.v2021_06_01_preview.models.Rule]
     :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of rules.
     :type next_link: str
@@ -1295,9 +1277,9 @@ class SBAuthorizationRule(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~azure.mgmt.servicebus.v2021_01_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.servicebus.v2021_06_01_preview.models.SystemData
     :param rights: The rights associated with the rule.
-    :type rights: list[str or ~azure.mgmt.servicebus.v2021_01_01_preview.models.AccessRights]
+    :type rights: list[str or ~azure.mgmt.servicebus.v2021_06_01_preview.models.AccessRights]
     """
 
     _validation = {
@@ -1328,7 +1310,7 @@ class SBAuthorizationRuleListResult(msrest.serialization.Model):
     """The response to the List Namespace operation.
 
     :param value: Result of the List Authorization Rules operation.
-    :type value: list[~azure.mgmt.servicebus.v2021_01_01_preview.models.SBAuthorizationRule]
+    :type value: list[~azure.mgmt.servicebus.v2021_06_01_preview.models.SBAuthorizationRule]
     :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of Authorization Rules.
     :type next_link: str
@@ -1346,6 +1328,36 @@ class SBAuthorizationRuleListResult(msrest.serialization.Model):
         super(SBAuthorizationRuleListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.next_link = kwargs.get('next_link', None)
+
+
+class SBClientAffineProperties(msrest.serialization.Model):
+    """Properties specific to client affine subscriptions.
+
+    :param client_id: Indicates the Client ID of the application that created the client-affine
+     subscription.
+    :type client_id: str
+    :param is_durable: For client-affine subscriptions, this value indicates whether the
+     subscription is durable or not.
+    :type is_durable: bool
+    :param is_shared: For client-affine subscriptions, this value indicates whether the
+     subscription is shared or not.
+    :type is_shared: bool
+    """
+
+    _attribute_map = {
+        'client_id': {'key': 'clientId', 'type': 'str'},
+        'is_durable': {'key': 'isDurable', 'type': 'bool'},
+        'is_shared': {'key': 'isShared', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SBClientAffineProperties, self).__init__(**kwargs)
+        self.client_id = kwargs.get('client_id', None)
+        self.is_durable = kwargs.get('is_durable', None)
+        self.is_shared = kwargs.get('is_shared', None)
 
 
 class TrackedResource(Resource):
@@ -1409,11 +1421,11 @@ class SBNamespace(TrackedResource):
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param sku: Properties of SKU.
-    :type sku: ~azure.mgmt.servicebus.v2021_01_01_preview.models.SBSku
+    :type sku: ~azure.mgmt.servicebus.v2021_06_01_preview.models.SBSku
     :param identity: Properties of BYOK Identity description.
-    :type identity: ~azure.mgmt.servicebus.v2021_01_01_preview.models.Identity
+    :type identity: ~azure.mgmt.servicebus.v2021_06_01_preview.models.Identity
     :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~azure.mgmt.servicebus.v2021_01_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.servicebus.v2021_06_01_preview.models.SystemData
     :ivar provisioning_state: Provisioning state of the namespace.
     :vartype provisioning_state: str
     :ivar status: Status of the namespace.
@@ -1430,10 +1442,13 @@ class SBNamespace(TrackedResource):
      regions supported availability zones.
     :type zone_redundant: bool
     :param encryption: Properties of BYOK Encryption description.
-    :type encryption: ~azure.mgmt.servicebus.v2021_01_01_preview.models.Encryption
+    :type encryption: ~azure.mgmt.servicebus.v2021_06_01_preview.models.Encryption
     :param private_endpoint_connections: List of private endpoint connections.
     :type private_endpoint_connections:
-     list[~azure.mgmt.servicebus.v2021_01_01_preview.models.PrivateEndpointConnection]
+     list[~azure.mgmt.servicebus.v2021_06_01_preview.models.PrivateEndpointConnection]
+    :param disable_local_auth: This property disables SAS authentication for the Service Bus
+     namespace.
+    :type disable_local_auth: bool
     """
 
     _validation = {
@@ -1468,6 +1483,7 @@ class SBNamespace(TrackedResource):
         'zone_redundant': {'key': 'properties.zoneRedundant', 'type': 'bool'},
         'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
     }
 
     def __init__(
@@ -1487,13 +1503,14 @@ class SBNamespace(TrackedResource):
         self.zone_redundant = kwargs.get('zone_redundant', None)
         self.encryption = kwargs.get('encryption', None)
         self.private_endpoint_connections = kwargs.get('private_endpoint_connections', None)
+        self.disable_local_auth = kwargs.get('disable_local_auth', None)
 
 
 class SBNamespaceListResult(msrest.serialization.Model):
     """The response of the List Namespace operation.
 
     :param value: Result of the List Namespace operation.
-    :type value: list[~azure.mgmt.servicebus.v2021_01_01_preview.models.SBNamespace]
+    :type value: list[~azure.mgmt.servicebus.v2021_06_01_preview.models.SBNamespace]
     :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of Namespaces.
     :type next_link: str
@@ -1529,9 +1546,9 @@ class SBNamespaceUpdateParameters(ResourceNamespacePatch):
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param sku: Properties of SKU.
-    :type sku: ~azure.mgmt.servicebus.v2021_01_01_preview.models.SBSku
+    :type sku: ~azure.mgmt.servicebus.v2021_06_01_preview.models.SBSku
     :param identity: Properties of BYOK Identity description.
-    :type identity: ~azure.mgmt.servicebus.v2021_01_01_preview.models.Identity
+    :type identity: ~azure.mgmt.servicebus.v2021_06_01_preview.models.Identity
     :ivar provisioning_state: Provisioning state of the namespace.
     :vartype provisioning_state: str
     :ivar status: Status of the namespace.
@@ -1548,10 +1565,13 @@ class SBNamespaceUpdateParameters(ResourceNamespacePatch):
      regions supported availability zones.
     :type zone_redundant: bool
     :param encryption: Properties of BYOK Encryption description.
-    :type encryption: ~azure.mgmt.servicebus.v2021_01_01_preview.models.Encryption
+    :type encryption: ~azure.mgmt.servicebus.v2021_06_01_preview.models.Encryption
     :param private_endpoint_connections: List of private endpoint connections.
     :type private_endpoint_connections:
-     list[~azure.mgmt.servicebus.v2021_01_01_preview.models.PrivateEndpointConnection]
+     list[~azure.mgmt.servicebus.v2021_06_01_preview.models.PrivateEndpointConnection]
+    :param disable_local_auth: This property disables SAS authentication for the Service Bus
+     namespace.
+    :type disable_local_auth: bool
     """
 
     _validation = {
@@ -1583,6 +1603,7 @@ class SBNamespaceUpdateParameters(ResourceNamespacePatch):
         'zone_redundant': {'key': 'properties.zoneRedundant', 'type': 'bool'},
         'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
     }
 
     def __init__(
@@ -1601,6 +1622,7 @@ class SBNamespaceUpdateParameters(ResourceNamespacePatch):
         self.zone_redundant = kwargs.get('zone_redundant', None)
         self.encryption = kwargs.get('encryption', None)
         self.private_endpoint_connections = kwargs.get('private_endpoint_connections', None)
+        self.disable_local_auth = kwargs.get('disable_local_auth', None)
 
 
 class SBQueue(Resource):
@@ -1615,9 +1637,9 @@ class SBQueue(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~azure.mgmt.servicebus.v2021_01_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.servicebus.v2021_06_01_preview.models.SystemData
     :ivar count_details: Message Count Details.
-    :vartype count_details: ~azure.mgmt.servicebus.v2021_01_01_preview.models.MessageCountDetails
+    :vartype count_details: ~azure.mgmt.servicebus.v2021_06_01_preview.models.MessageCountDetails
     :ivar created_at: The exact time the message was created.
     :vartype created_at: ~datetime.datetime
     :ivar updated_at: The exact time the message was updated.
@@ -1636,6 +1658,9 @@ class SBQueue(Resource):
     :param max_size_in_megabytes: The maximum size of the queue in megabytes, which is the size of
      memory allocated for the queue. Default is 1024.
     :type max_size_in_megabytes: int
+    :param max_message_size_in_kilobytes: Maximum size (in KB) of the message payload that can be
+     accepted by the queue. This property is only used in Premium today and default is 1024.
+    :type max_message_size_in_kilobytes: long
     :param requires_duplicate_detection: A value indicating if this queue requires duplicate
      detection.
     :type requires_duplicate_detection: bool
@@ -1658,7 +1683,7 @@ class SBQueue(Resource):
     :param status: Enumerates the possible values for the status of a messaging entity. Possible
      values include: "Active", "Disabled", "Restoring", "SendDisabled", "ReceiveDisabled",
      "Creating", "Deleting", "Renaming", "Unknown".
-    :type status: str or ~azure.mgmt.servicebus.v2021_01_01_preview.models.EntityStatus
+    :type status: str or ~azure.mgmt.servicebus.v2021_06_01_preview.models.EntityStatus
     :param enable_batched_operations: Value that indicates whether server-side batched operations
      are enabled.
     :type enable_batched_operations: bool
@@ -1703,6 +1728,7 @@ class SBQueue(Resource):
         'message_count': {'key': 'properties.messageCount', 'type': 'long'},
         'lock_duration': {'key': 'properties.lockDuration', 'type': 'duration'},
         'max_size_in_megabytes': {'key': 'properties.maxSizeInMegabytes', 'type': 'int'},
+        'max_message_size_in_kilobytes': {'key': 'properties.maxMessageSizeInKilobytes', 'type': 'long'},
         'requires_duplicate_detection': {'key': 'properties.requiresDuplicateDetection', 'type': 'bool'},
         'requires_session': {'key': 'properties.requiresSession', 'type': 'bool'},
         'default_message_time_to_live': {'key': 'properties.defaultMessageTimeToLive', 'type': 'duration'},
@@ -1732,6 +1758,7 @@ class SBQueue(Resource):
         self.message_count = None
         self.lock_duration = kwargs.get('lock_duration', None)
         self.max_size_in_megabytes = kwargs.get('max_size_in_megabytes', None)
+        self.max_message_size_in_kilobytes = kwargs.get('max_message_size_in_kilobytes', None)
         self.requires_duplicate_detection = kwargs.get('requires_duplicate_detection', None)
         self.requires_session = kwargs.get('requires_session', None)
         self.default_message_time_to_live = kwargs.get('default_message_time_to_live', None)
@@ -1751,7 +1778,7 @@ class SBQueueListResult(msrest.serialization.Model):
     """The response to the List Queues operation.
 
     :param value: Result of the List Queues operation.
-    :type value: list[~azure.mgmt.servicebus.v2021_01_01_preview.models.SBQueue]
+    :type value: list[~azure.mgmt.servicebus.v2021_06_01_preview.models.SBQueue]
     :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of queues.
     :type next_link: str
@@ -1778,10 +1805,10 @@ class SBSku(msrest.serialization.Model):
 
     :param name: Required. Name of this SKU. Possible values include: "Basic", "Standard",
      "Premium".
-    :type name: str or ~azure.mgmt.servicebus.v2021_01_01_preview.models.SkuName
+    :type name: str or ~azure.mgmt.servicebus.v2021_06_01_preview.models.SkuName
     :param tier: The billing tier of this particular SKU. Possible values include: "Basic",
      "Standard", "Premium".
-    :type tier: str or ~azure.mgmt.servicebus.v2021_01_01_preview.models.SkuTier
+    :type tier: str or ~azure.mgmt.servicebus.v2021_06_01_preview.models.SkuTier
     :param capacity: The specified messaging units for the tier. For Premium tier, capacity are 1,2
      and 4.
     :type capacity: int
@@ -1819,7 +1846,7 @@ class SBSubscription(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~azure.mgmt.servicebus.v2021_01_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.servicebus.v2021_06_01_preview.models.SystemData
     :ivar message_count: Number of messages.
     :vartype message_count: long
     :ivar created_at: Exact time the message was created.
@@ -1829,7 +1856,7 @@ class SBSubscription(Resource):
     :ivar updated_at: The exact time the message was updated.
     :vartype updated_at: ~datetime.datetime
     :ivar count_details: Message count details.
-    :vartype count_details: ~azure.mgmt.servicebus.v2021_01_01_preview.models.MessageCountDetails
+    :vartype count_details: ~azure.mgmt.servicebus.v2021_06_01_preview.models.MessageCountDetails
     :param lock_duration: ISO 8061 lock duration timespan for the subscription. The default value
      is 1 minute.
     :type lock_duration: ~datetime.timedelta
@@ -1853,7 +1880,7 @@ class SBSubscription(Resource):
     :param status: Enumerates the possible values for the status of a messaging entity. Possible
      values include: "Active", "Disabled", "Restoring", "SendDisabled", "ReceiveDisabled",
      "Creating", "Deleting", "Renaming", "Unknown".
-    :type status: str or ~azure.mgmt.servicebus.v2021_01_01_preview.models.EntityStatus
+    :type status: str or ~azure.mgmt.servicebus.v2021_06_01_preview.models.EntityStatus
     :param enable_batched_operations: Value that indicates whether server-side batched operations
      are enabled.
     :type enable_batched_operations: bool
@@ -1864,6 +1891,12 @@ class SBSubscription(Resource):
     :type forward_to: str
     :param forward_dead_lettered_messages_to: Queue/Topic name to forward the Dead Letter message.
     :type forward_dead_lettered_messages_to: str
+    :param is_client_affine: Value that indicates whether the subscription has an affinity to the
+     client id.
+    :type is_client_affine: bool
+    :param client_affine_properties: Properties specific to client affine subscriptions.
+    :type client_affine_properties:
+     ~azure.mgmt.servicebus.v2021_06_01_preview.models.SBClientAffineProperties
     """
 
     _validation = {
@@ -1900,6 +1933,8 @@ class SBSubscription(Resource):
         'auto_delete_on_idle': {'key': 'properties.autoDeleteOnIdle', 'type': 'duration'},
         'forward_to': {'key': 'properties.forwardTo', 'type': 'str'},
         'forward_dead_lettered_messages_to': {'key': 'properties.forwardDeadLetteredMessagesTo', 'type': 'str'},
+        'is_client_affine': {'key': 'properties.isClientAffine', 'type': 'bool'},
+        'client_affine_properties': {'key': 'properties.clientAffineProperties', 'type': 'SBClientAffineProperties'},
     }
 
     def __init__(
@@ -1925,13 +1960,15 @@ class SBSubscription(Resource):
         self.auto_delete_on_idle = kwargs.get('auto_delete_on_idle', None)
         self.forward_to = kwargs.get('forward_to', None)
         self.forward_dead_lettered_messages_to = kwargs.get('forward_dead_lettered_messages_to', None)
+        self.is_client_affine = kwargs.get('is_client_affine', None)
+        self.client_affine_properties = kwargs.get('client_affine_properties', None)
 
 
 class SBSubscriptionListResult(msrest.serialization.Model):
     """The response to the List Subscriptions operation.
 
     :param value: Result of the List Subscriptions operation.
-    :type value: list[~azure.mgmt.servicebus.v2021_01_01_preview.models.SBSubscription]
+    :type value: list[~azure.mgmt.servicebus.v2021_06_01_preview.models.SBSubscription]
     :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of subscriptions.
     :type next_link: str
@@ -1963,7 +2000,7 @@ class SBTopic(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~azure.mgmt.servicebus.v2021_01_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.servicebus.v2021_06_01_preview.models.SystemData
     :ivar size_in_bytes: Size of the topic, in bytes.
     :vartype size_in_bytes: long
     :ivar created_at: Exact time the message was created.
@@ -1975,7 +2012,7 @@ class SBTopic(Resource):
     :ivar subscription_count: Number of subscriptions.
     :vartype subscription_count: int
     :ivar count_details: Message count details.
-    :vartype count_details: ~azure.mgmt.servicebus.v2021_01_01_preview.models.MessageCountDetails
+    :vartype count_details: ~azure.mgmt.servicebus.v2021_06_01_preview.models.MessageCountDetails
     :param default_message_time_to_live: ISO 8601 Default message timespan to live value. This is
      the duration after which the message expires, starting from when the message is sent to Service
      Bus. This is the default value used when TimeToLive is not set on a message itself.
@@ -1983,6 +2020,9 @@ class SBTopic(Resource):
     :param max_size_in_megabytes: Maximum size of the topic in megabytes, which is the size of the
      memory allocated for the topic. Default is 1024.
     :type max_size_in_megabytes: int
+    :param max_message_size_in_kilobytes: Maximum size (in KB) of the message payload that can be
+     accepted by the topic. This property is only used in Premium today and default is 1024.
+    :type max_message_size_in_kilobytes: long
     :param requires_duplicate_detection: Value indicating if this topic requires duplicate
      detection.
     :type requires_duplicate_detection: bool
@@ -1995,7 +2035,7 @@ class SBTopic(Resource):
     :param status: Enumerates the possible values for the status of a messaging entity. Possible
      values include: "Active", "Disabled", "Restoring", "SendDisabled", "ReceiveDisabled",
      "Creating", "Deleting", "Renaming", "Unknown".
-    :type status: str or ~azure.mgmt.servicebus.v2021_01_01_preview.models.EntityStatus
+    :type status: str or ~azure.mgmt.servicebus.v2021_06_01_preview.models.EntityStatus
     :param support_ordering: Value that indicates whether the topic supports ordering.
     :type support_ordering: bool
     :param auto_delete_on_idle: ISO 8601 timespan idle interval after which the topic is
@@ -2035,6 +2075,7 @@ class SBTopic(Resource):
         'count_details': {'key': 'properties.countDetails', 'type': 'MessageCountDetails'},
         'default_message_time_to_live': {'key': 'properties.defaultMessageTimeToLive', 'type': 'duration'},
         'max_size_in_megabytes': {'key': 'properties.maxSizeInMegabytes', 'type': 'int'},
+        'max_message_size_in_kilobytes': {'key': 'properties.maxMessageSizeInKilobytes', 'type': 'long'},
         'requires_duplicate_detection': {'key': 'properties.requiresDuplicateDetection', 'type': 'bool'},
         'duplicate_detection_history_time_window': {'key': 'properties.duplicateDetectionHistoryTimeWindow', 'type': 'duration'},
         'enable_batched_operations': {'key': 'properties.enableBatchedOperations', 'type': 'bool'},
@@ -2059,6 +2100,7 @@ class SBTopic(Resource):
         self.count_details = None
         self.default_message_time_to_live = kwargs.get('default_message_time_to_live', None)
         self.max_size_in_megabytes = kwargs.get('max_size_in_megabytes', None)
+        self.max_message_size_in_kilobytes = kwargs.get('max_message_size_in_kilobytes', None)
         self.requires_duplicate_detection = kwargs.get('requires_duplicate_detection', None)
         self.duplicate_detection_history_time_window = kwargs.get('duplicate_detection_history_time_window', None)
         self.enable_batched_operations = kwargs.get('enable_batched_operations', None)
@@ -2073,7 +2115,7 @@ class SBTopicListResult(msrest.serialization.Model):
     """The response to the List Topics operation.
 
     :param value: Result of the List Topics operation.
-    :type value: list[~azure.mgmt.servicebus.v2021_01_01_preview.models.SBTopic]
+    :type value: list[~azure.mgmt.servicebus.v2021_06_01_preview.models.SBTopic]
     :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of topics.
     :type next_link: str
@@ -2106,10 +2148,6 @@ class SqlFilter(msrest.serialization.Model):
     :type requires_preprocessing: bool
     """
 
-    _validation = {
-        'compatibility_level': {'maximum': 20, 'minimum': 20},
-    }
-
     _attribute_map = {
         'sql_expression': {'key': 'sqlExpression', 'type': 'str'},
         'compatibility_level': {'key': 'compatibilityLevel', 'type': 'int'},
@@ -2122,7 +2160,7 @@ class SqlFilter(msrest.serialization.Model):
     ):
         super(SqlFilter, self).__init__(**kwargs)
         self.sql_expression = kwargs.get('sql_expression', None)
-        self.compatibility_level = kwargs.get('compatibility_level', 20)
+        self.compatibility_level = kwargs.get('compatibility_level', None)
         self.requires_preprocessing = kwargs.get('requires_preprocessing', True)
 
 
@@ -2184,7 +2222,7 @@ class SystemData(msrest.serialization.Model):
     :type created_by: str
     :param created_by_type: The type of identity that created the resource. Possible values
      include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~azure.mgmt.servicebus.v2021_01_01_preview.models.CreatedByType
+    :type created_by_type: str or ~azure.mgmt.servicebus.v2021_06_01_preview.models.CreatedByType
     :param created_at: The timestamp of resource creation (UTC).
     :type created_at: ~datetime.datetime
     :param last_modified_by: The identity that last modified the resource.
@@ -2192,7 +2230,7 @@ class SystemData(msrest.serialization.Model):
     :param last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
     :type last_modified_by_type: str or
-     ~azure.mgmt.servicebus.v2021_01_01_preview.models.CreatedByType
+     ~azure.mgmt.servicebus.v2021_06_01_preview.models.CreatedByType
     :param last_modified_at: The type of identity that last modified the resource.
     :type last_modified_at: ~datetime.datetime
     """
@@ -2217,6 +2255,36 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_by = kwargs.get('last_modified_by', None)
         self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
         self.last_modified_at = kwargs.get('last_modified_at', None)
+
+
+class UserAssignedIdentity(msrest.serialization.Model):
+    """Recognized Dictionary value.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: Principal Id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: Client Id of user assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(UserAssignedIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
 
 
 class UserAssignedIdentityProperties(msrest.serialization.Model):
