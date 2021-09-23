@@ -10,9 +10,9 @@ parameters:
   TargetDocRepoName: ''
 
 stages:
-  - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
+  - ${{if and(in(variables['Build.Reason'], 'Manual', ''), eq(variables['System.TeamProject'], 'internal'))}}:
     - ${{ each artifact in parameters.Artifacts }}:
-      - stage: Release_${{artifact.safeName}}
+      - stage:
         displayName: 'Release: ${{artifact.name}}'
         dependsOn: ${{parameters.DependsOn}}
         condition: and(succeeded(), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
@@ -262,7 +262,7 @@ stages:
               $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}} | ? {$_.Name -match "-[0-9]*.[0-9]*.[0-9]*a[0-9]*" } | Measure-Object).Count
 
               if ($fileCount -eq 0) {
-                Write-Host "No alpha packages for ${{artifact.safeName}} to publish."
+                Write-Host "No alpha packages for ${{artifact.name}} to publish."
                 exit 0
               }
 

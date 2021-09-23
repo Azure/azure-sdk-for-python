@@ -32,16 +32,14 @@ from azure.core.exceptions import HttpResponseError
 
 from ..utils._utils import _case_insensitive_dict
 from ._helpers import (
-    FilesType,
     set_content_body,
     set_json_body,
     set_multipart_body,
     set_urlencoded_body,
-    format_parameters,
-    to_pipeline_transport_request_helper,
-    from_pipeline_transport_request_helper,
+    _format_parameters_helper,
     get_charset_encoding,
     decode_to_text,
+    HttpRequestBackcompatMixin,
 )
 from ..exceptions import ResponseNotReadError
 if TYPE_CHECKING:
@@ -63,7 +61,7 @@ if TYPE_CHECKING:
 
 ################################## CLASSES ######################################
 
-class HttpRequest(object):
+class HttpRequest(HttpRequestBackcompatMixin):
     """Provisional object that represents an HTTP request.
 
     **This object is provisional**, meaning it may be changed in a future release.
@@ -107,7 +105,7 @@ class HttpRequest(object):
 
         params = kwargs.pop("params", None)
         if params:
-            self.url = format_parameters(self.url, params)
+            _format_parameters_helper(self, params)
         self._files = None
         self._data = None
 
@@ -127,10 +125,14 @@ class HttpRequest(object):
                 )
             )
 
-    def _set_body(self, content, data, files, json):
-        # type: (Optional[ContentType], Optional[dict], Optional[FilesType], Any) -> HeadersType
+    def _set_body(self, **kwargs):
+        # type: (Any) -> HeadersType
         """Sets the body of the request, and returns the default headers
         """
+        content = kwargs.pop("content", None)
+        data = kwargs.pop("data", None)
+        files = kwargs.pop("files", None)
+        json = kwargs.pop("json", None)
         default_headers = {}
         if data is not None and not isinstance(data, dict):
             # should we warn?
@@ -182,13 +184,6 @@ class HttpRequest(object):
             return request
         except (ValueError, TypeError):
             return copy.copy(self)
-
-    def _to_pipeline_transport_request(self):
-        return to_pipeline_transport_request_helper(self)
-
-    @classmethod
-    def _from_pipeline_transport_request(cls, pipeline_transport_request):
-        return from_pipeline_transport_request_helper(cls, pipeline_transport_request)
 
 class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
 
