@@ -115,7 +115,7 @@ class LogsQueryClient(object):
     @distributed_trace_async
     async def query_batch(
         self, queries: Union[Sequence[Dict], Sequence[LogsBatchQuery]], **kwargs: Any
-    ) -> List[Union[LogsQueryResult, LogsQueryError]]:
+    ) -> List[Union[LogsQueryResult, LogsQueryError, LogsQueryPartialResult]]:
         """Execute a list of analytics queries. Each request can be either a LogQueryRequest
         object or an equivalent serialized model.
 
@@ -124,7 +124,7 @@ class LogsQueryClient(object):
         :param queries: The list of Kusto queries to execute.
         :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQuery]
         :return: list of LogsQueryResult objects, or the result of cls(response)
-        :rtype: list[~azure.monitor.query.LogsQueryResult or ~azure.monitor.query.LogsQueryResult
+        :rtype: list[~azure.monitor.query.LogsQueryResult or ~azure.monitor.query.LogsQueryPartialResult
          or ~azure.monitor.query.LogsQueryError]
         :raises: ~azure.core.exceptions.HttpResponseError
         """

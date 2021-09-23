@@ -84,7 +84,7 @@ class LogsQueryClient(object):
          These can be qualified workspace names, workspace Ids, or Azure resource Ids.
         :paramtype additional_workspaces: list[str]
         :return: LogsQueryResult, or the result of cls(response)
-        :rtype: ~azure.monitor.query.LogsQueryResult or ~azure.monitor.query.LogsQueryPartialResult
+        :rtype: Union[~azure.monitor.query.LogsQueryResult, ~azure.monitor.query.LogsQueryPartialResult]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -148,8 +148,8 @@ class LogsQueryClient(object):
         :param queries: The list of Kusto queries to execute.
         :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQuery]
         :return: List of LogsQueryResult, or the result of cls(response)
-        :rtype: list[~azure.monitor.query.LogsQueryResult or ~azure.monitor.query.LogsQueryResult
-         or ~azure.monitor.query.LogsQueryError]
+        :rtype: list[Union[~azure.monitor.query.LogsQueryResult, ~azure.monitor.query.LogsQueryPartialResult,
+         ~azure.monitor.query.LogsQueryError]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
