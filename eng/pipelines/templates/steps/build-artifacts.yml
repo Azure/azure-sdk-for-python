@@ -68,7 +68,7 @@ steps:
       pwsh: true
       workingDirectory: $(Pipeline.Workspace)
     displayName: Update package properties with dev version
-    condition: and(succeeded(),eq(variables['SetDevVersion'],'true'))
+    condition: and(succeeded(),eq(variables['SetDevVersion'],'false'))
   - task: PythonScript@0
     displayName: 'Generate Packages'
     inputs:
