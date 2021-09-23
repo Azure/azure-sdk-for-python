@@ -115,7 +115,7 @@ function UpdateDocsMsMetadataForPackage($packageInfoJsonLocation) {
     $packageInfo.Version = $packageInfo.DevVersion
   }
 
-  $packageMetadataArray = (Get-CSVMetadata).Where({ $_.Package -eq $packageInfo.Name -and $_.GroupId -eq $packageInfo.Group -and $_.Hide -ne 'true' -and $_.New -eq 'true' })
+  $packageMetadataArray = (Get-CSVMetadata).Where({ $_.Package -eq $packageInfo.Name -and $_.GroupId -eq $packageInfo.Group })
   if ($packageMetadataArray.Count -eq 0) { 
     LogWarning "Could not retrieve metadata for $($packageInfo.Name) from metadata CSV. Using best effort defaults."
     $packageMetadata = $null
