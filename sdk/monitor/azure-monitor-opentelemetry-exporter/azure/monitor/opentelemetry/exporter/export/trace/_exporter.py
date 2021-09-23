@@ -131,7 +131,6 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                 span.attributes[SpanAttributes.HTTP_METHOD],
                 span.name,
             )
-            data.properties["request.name"] = envelope.tags["ai.operation.name"]
             url = ""
             if SpanAttributes.HTTP_USER_AGENT in span.attributes:
                 # TODO: Not exposed in Swagger, need to update def
@@ -173,7 +172,6 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
             if url:
                 url = url[:2048]  # Breeze max length
             data.url = url
-            data.properties["request.url"] = url
             if SpanAttributes.HTTP_STATUS_CODE in span.attributes:
                 status_code = span.attributes[SpanAttributes.HTTP_STATUS_CODE]
                 data.response_code = str(status_code)
@@ -206,7 +204,7 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
         data = RemoteDependencyData(
             name=span.name[:1024],  # Breeze max length
             id="{:016x}".format(span.context.span_id),
-            result_code=str(span.status.status_code.value),
+            result_code="0",
             duration=_utils.ns_to_duration(span.end_time - span.start_time),
             success=span.status.is_ok,
             properties={},

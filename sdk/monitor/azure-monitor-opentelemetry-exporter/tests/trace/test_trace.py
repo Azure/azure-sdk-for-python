@@ -361,7 +361,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.type, "postgresql")
         self.assertEqual(envelope.data.base_data.target, "service")
         self.assertEqual(envelope.data.base_data.data, "SELECT")
-        self.assertEqual(envelope.data.base_data.result_code, "1")
+        self.assertEqual(envelope.data.base_data.result_code, "0")
 
         # Target
         span._attributes = {
@@ -445,7 +445,7 @@ class TestAzureTraceExporter(unittest.TestCase):
 
         # TODO: data.data
         # self.assertEqual(envelope.data.base_data.data, "SELECT")
-        self.assertEqual(envelope.data.base_data.result_code, "1")
+        self.assertEqual(envelope.data.base_data.result_code, "0")
 
     def test_span_to_envelope_producer_messaging(self):
         exporter = self._exporter
@@ -487,7 +487,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         # self.assertEqual(envelope.data.base_data.target, "rpc")
         # TODO: data.data
         # self.assertEqual(envelope.data.base_data.data, "SELECT")
-        self.assertEqual(envelope.data.base_data.result_code, "1")
+        self.assertEqual(envelope.data.base_data.result_code, "0")
 
     def test_span_to_envelope_internal(self):
         exporter = self._exporter
@@ -523,7 +523,7 @@ class TestAzureTraceExporter(unittest.TestCase):
 
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
         self.assertEqual(envelope.data.base_data.type, "InProc")
-        self.assertEqual(envelope.data.base_data.result_code, "1")
+        self.assertEqual(envelope.data.base_data.result_code, "0")
 
         # type
         span._parent = None
@@ -572,8 +572,6 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.tags["ai.user.userAgent"], "agent")
         self.assertEqual(envelope.tags["ai.location.ip"], "client_ip")
         self.assertEqual(envelope.data.base_data.url, "https://www.wikipedia.org/wiki/Rabbit")
-        self.assertEqual(envelope.data.base_data.properties["request.name"], "GET test")
-        self.assertEqual(envelope.data.base_data.properties["request.url"], "https://www.wikipedia.org/wiki/Rabbit")
         
         # location
         span._attributes = {
