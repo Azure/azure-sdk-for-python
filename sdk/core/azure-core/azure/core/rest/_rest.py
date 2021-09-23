@@ -243,7 +243,7 @@ class _HttpResponseBase(ABC):
     @abc.abstractmethod
     def is_stream_consumed(self):
         # type: (...) -> bool
-        """Whether the stream has been fully consumed.
+        """Whether the stream has been consumed.
 
         :rtype: bool
         """

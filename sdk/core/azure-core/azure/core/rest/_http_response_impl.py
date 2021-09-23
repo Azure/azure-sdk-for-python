@@ -114,7 +114,7 @@ class _HttpResponseBaseImpl(_HttpResponseBase):  # pylint: disable=too-many-inst
     @property
     def is_stream_consumed(self):
         # type: (...) -> bool
-        """Whether the stream has been fully consumed"""
+        """Whether the stream has been consumed"""
         return self._is_stream_consumed
 
     @property
