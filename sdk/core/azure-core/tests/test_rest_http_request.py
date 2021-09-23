@@ -10,7 +10,10 @@
 import io
 import pytest
 import sys
-import collections
+try:
+    import collections.abc as collections
+except ImportError:
+    import collections  # type: ignore
 
 from azure.core.configuration import Configuration
 from azure.core.rest import HttpRequest
