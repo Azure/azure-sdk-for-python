@@ -37,8 +37,4 @@ if sys.version_info < (3, 5):
 
 @pytest.fixture(scope="session", autouse=True)
 def sanitize_uris():
-    add_sanitizer(
-        ProxyRecordingSanitizer.URI,
-        value="fakeendpoint",
-        regex="(?<=\\/\\/)[a-z]+(?=(?:|-secondary)\\.(?:table|blob|queue)\\.core\\.windows\\.net)"
-    )
+    add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")

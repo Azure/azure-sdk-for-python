@@ -11,21 +11,21 @@
         "Content-Length": "32",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 20 Sep 2021 22:10:37 GMT",
+        "Date": "Wed, 22 Sep 2021 00:57:48 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "9552ad7c-1a5f-11ec-8a73-5cf37093a909",
-        "x-ms-date": "Mon, 20 Sep 2021 22:10:37 GMT",
+        "x-ms-client-request-id": "1aaf8726-1b40-11ec-b811-5cf37093a909",
+        "x-ms-date": "Wed, 22 Sep 2021 00:57:48 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": "{\u0022TableName\u0022: \u0022uttable9da93209\u0022}",
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Mon, 20 Sep 2021 22:10:37 GMT",
-        "ETag": "W/\u0022datetime\u00272021-09-20T22%3A10%3A37.1928072Z\u0027\u0022",
+        "Date": "Wed, 22 Sep 2021 00:57:45 GMT",
+        "ETag": "W/\u0022datetime\u00272021-09-22T00%3A57%3A46.1134344Z\u0027\u0022",
         "Location": "https://yalltbtestsprim.table.cosmos.azure.com/Tables(\u0027uttable9da93209\u0027)",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "dc106adc-f2fa-43f7-9637-a052a6753b98"
+        "x-ms-request-id": "12679254-dd60-4aaf-939d-a4029e1d1b4c"
       },
       "ResponseBody": {
         "TableName": "uttable9da93209",
@@ -43,25 +43,25 @@
         "Content-Length": "711",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 20 Sep 2021 22:10:37 GMT",
+        "Date": "Wed, 22 Sep 2021 00:57:48 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "959765e9-1a5f-11ec-a221-5cf37093a909",
-        "x-ms-date": "Mon, 20 Sep 2021 22:10:37 GMT",
+        "x-ms-client-request-id": "1b085a76-1b40-11ec-ae16-5cf37093a909",
+        "x-ms-date": "Wed, 22 Sep 2021 00:57:48 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": "{\u0022PartitionKey\u0022: \u0022pk9da93209\u0022, \u0022PartitionKey@odata.type\u0022: \u0022Edm.String\u0022, \u0022RowKey\u0022: \u0022rk9da93209\u0022, \u0022RowKey@odata.type\u0022: \u0022Edm.String\u0022, \u0022age\u0022: 39, \u0022sex\u0022: \u0022male\u0022, \u0022sex@odata.type\u0022: \u0022Edm.String\u0022, \u0022married\u0022: true, \u0022deceased\u0022: false, \u0022ratio\u0022: 3.1, \u0022ratio@odata.type\u0022: \u0022Edm.Double\u0022, \u0022evenratio\u0022: 3.0, \u0022evenratio@odata.type\u0022: \u0022Edm.Double\u0022, \u0022double\u0022: 5, \u0022double@odata.type\u0022: \u0022Edm.Double\u0022, \u0022large\u0022: 933311100, \u0022Birthday\u0022: \u00221973-10-04T00:00:00.000000Z\u0022, \u0022Birthday@odata.type\u0022: \u0022Edm.DateTime\u0022, \u0022birthday\u0022: \u00221970-10-04T00:00:00.000000Z\u0022, \u0022birthday@odata.type\u0022: \u0022Edm.DateTime\u0022, \u0022binary\u0022: \u0022YmluYXJ5\u0022, \u0022binary@odata.type\u0022: \u0022Edm.Binary\u0022, \u0022other\u0022: 20, \u0022clsid\u0022: \u0022c9da6455-213d-42c9-9a79-3e9149a57833\u0022, \u0022clsid@odata.type\u0022: \u0022Edm.Guid\u0022}",
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Mon, 20 Sep 2021 22:10:37 GMT",
-        "ETag": "W/\u0022datetime\u00272021-09-20T22%3A10%3A37.5345160Z\u0027\u0022",
+        "Date": "Wed, 22 Sep 2021 00:57:45 GMT",
+        "ETag": "W/\u0022datetime\u00272021-09-22T00%3A57%3A46.5790472Z\u0027\u0022",
         "Location": "https://yalltbtestsprim.table.cosmos.azure.com/uttable9da93209(PartitionKey=\u0027pk9da93209\u0027,RowKey=\u0027rk9da93209\u0027)",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "9c680b2d-7f66-4c55-82e4-885ced2fe147"
+        "x-ms-request-id": "eebd79fc-2b70-4d4f-a4dd-2dbcb8df3c7d"
       },
       "ResponseBody": {
         "odata.metadata": "https://yalltbtestsprim.table.cosmos.azure.com/uttable9da93209/$metadata#uttable9da93209/@Element",
-        "odata.etag": "W/\u0022datetime\u00272021-09-20T22%3A10%3A37.5345160Z\u0027\u0022",
+        "odata.etag": "W/\u0022datetime\u00272021-09-22T00%3A57%3A46.5790472Z\u0027\u0022",
         "PartitionKey": "pk9da93209",
         "RowKey": "rk9da93209",
         "age": 39,
@@ -81,7 +81,7 @@
         "other": 20,
         "clsid@odata.type": "Edm.Guid",
         "clsid": "c9da6455-213d-42c9-9a79-3e9149a57833",
-        "Timestamp": "2021-09-20T22:10:37.5345160Z"
+        "Timestamp": "2021-09-22T00:57:46.5790472Z"
       }
     },
     {
@@ -95,19 +95,19 @@
         "Content-Length": "360",
         "Content-Type": "application/json",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 20 Sep 2021 22:10:37 GMT",
-        "If-Match": "W/\u0022datetime\u00272021-09-20T22%3A10%3A37.5345160Z\u0027\u0022",
+        "Date": "Wed, 22 Sep 2021 00:57:48 GMT",
+        "If-Match": "W/\u0022datetime\u00272021-09-22T00%3A57%3A46.5790472Z\u0027\u0022",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "959fe435-1a5f-11ec-a6d1-5cf37093a909",
-        "x-ms-date": "Mon, 20 Sep 2021 22:10:37 GMT",
+        "x-ms-client-request-id": "1b11afcb-1b40-11ec-8603-5cf37093a909",
+        "x-ms-date": "Wed, 22 Sep 2021 00:57:48 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": "{\u0022PartitionKey\u0022: \u0022pk9da93209\u0022, \u0022PartitionKey@odata.type\u0022: \u0022Edm.String\u0022, \u0022RowKey\u0022: \u0022rk9da93209\u0022, \u0022RowKey@odata.type\u0022: \u0022Edm.String\u0022, \u0022age\u0022: \u0022abc\u0022, \u0022age@odata.type\u0022: \u0022Edm.String\u0022, \u0022sex\u0022: \u0022female\u0022, \u0022sex@odata.type\u0022: \u0022Edm.String\u0022, \u0022sign\u0022: \u0022aquarius\u0022, \u0022sign@odata.type\u0022: \u0022Edm.String\u0022, \u0022birthday\u0022: \u00221991-10-04T00:00:00.000000Z\u0022, \u0022birthday@odata.type\u0022: \u0022Edm.DateTime\u0022}",
       "StatusCode": 204,
       "ResponseHeaders": {
-        "Date": "Mon, 20 Sep 2021 22:10:37 GMT",
-        "ETag": "W/\u0022datetime\u00272021-09-20T22%3A10%3A37.5596040Z\u0027\u0022",
-        "x-ms-request-id": "e00a321f-2327-42f6-a0d5-ffb5ad079294"
+        "Date": "Wed, 22 Sep 2021 00:57:46 GMT",
+        "ETag": "W/\u0022datetime\u00272021-09-22T00%3A57%3A46.6067976Z\u0027\u0022",
+        "x-ms-request-id": "a553dbbf-0f22-403c-abd8-4fa67e5a12de"
       },
       "ResponseBody": null
     },
@@ -120,24 +120,24 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 20 Sep 2021 22:10:37 GMT",
+        "Date": "Wed, 22 Sep 2021 00:57:48 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "95a3bda4-1a5f-11ec-b48a-5cf37093a909",
-        "x-ms-date": "Mon, 20 Sep 2021 22:10:37 GMT",
+        "x-ms-client-request-id": "1b165fdd-1b40-11ec-ba83-5cf37093a909",
+        "x-ms-date": "Wed, 22 Sep 2021 00:57:48 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Mon, 20 Sep 2021 22:10:37 GMT",
-        "ETag": "W/\u0022datetime\u00272021-09-20T22%3A10%3A37.5596040Z\u0027\u0022",
+        "Date": "Wed, 22 Sep 2021 00:57:46 GMT",
+        "ETag": "W/\u0022datetime\u00272021-09-22T00%3A57%3A46.6067976Z\u0027\u0022",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "9f96e1c9-e184-4fd7-b52e-57bae3429c48"
+        "x-ms-request-id": "0789a1b6-ef9c-4513-94e8-91db0d795d37"
       },
       "ResponseBody": {
         "odata.metadata": "https://yalltbtestsprim.table.cosmos.azure.com/uttable9da93209/$metadata#uttable9da93209/@Element",
-        "odata.etag": "W/\u0022datetime\u00272021-09-20T22%3A10%3A37.5596040Z\u0027\u0022",
+        "odata.etag": "W/\u0022datetime\u00272021-09-22T00%3A57%3A46.6067976Z\u0027\u0022",
         "PartitionKey": "pk9da93209",
         "RowKey": "rk9da93209",
         "age": "abc",
@@ -145,7 +145,7 @@
         "sign": "aquarius",
         "birthday@odata.type": "Edm.DateTime",
         "birthday": "1991-10-04T00:00:00.0000000Z",
-        "Timestamp": "2021-09-20T22:10:37.5596040Z"
+        "Timestamp": "2021-09-22T00:57:46.6067976Z"
       }
     },
     {
@@ -157,19 +157,19 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 20 Sep 2021 22:10:37 GMT",
+        "Date": "Wed, 22 Sep 2021 00:57:48 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "95a970ea-1a5f-11ec-b571-5cf37093a909",
-        "x-ms-date": "Mon, 20 Sep 2021 22:10:37 GMT",
+        "x-ms-client-request-id": "1b196a62-1b40-11ec-992d-5cf37093a909",
+        "x-ms-date": "Wed, 22 Sep 2021 00:57:48 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Mon, 20 Sep 2021 22:10:37 GMT",
+        "Date": "Wed, 22 Sep 2021 00:57:46 GMT",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "33eaa06d-fad3-4fa7-b143-3c9d877746a1"
+        "x-ms-request-id": "3a8e5bd8-bdef-45ea-9605-230cd095eba5"
       },
       "ResponseBody": {
         "value": [
@@ -189,17 +189,17 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "Date": "Mon, 20 Sep 2021 22:10:37 GMT",
+        "Date": "Wed, 22 Sep 2021 00:57:48 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "95ac89f7-1a5f-11ec-b184-5cf37093a909",
-        "x-ms-date": "Mon, 20 Sep 2021 22:10:37 GMT",
+        "x-ms-client-request-id": "1b1c2fd0-1b40-11ec-9c73-5cf37093a909",
+        "x-ms-date": "Wed, 22 Sep 2021 00:57:48 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "Date": "Mon, 20 Sep 2021 22:10:37 GMT",
-        "x-ms-request-id": "46199cf5-16ec-4811-9a29-10b8fd2cc61c"
+        "Date": "Wed, 22 Sep 2021 00:57:46 GMT",
+        "x-ms-request-id": "59f3a415-8052-44aa-84e7-c6f3f3801722"
       },
       "ResponseBody": null
     }

@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://yalltbtestsprim.table.core.windows.net/?restype=service\u0026comp=properties",
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/?restype=service\u0026comp=properties",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -9,10 +9,10 @@
         "Authorization": "Sanitized",
         "Content-Length": "262",
         "Content-Type": "application/xml",
-        "Date": "Mon, 20 Sep 2021 23:06:38 GMT",
+        "Date": "Thu, 23 Sep 2021 16:56:42 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "68bb4af6-1a67-11ec-ab06-5cf37093a909",
-        "x-ms-date": "Mon, 20 Sep 2021 23:06:38 GMT",
+        "x-ms-client-request-id": "3a198357-1c8f-11ec-94bc-5cf37093a909",
+        "x-ms-date": "Thu, 23 Sep 2021 16:56:42 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": [
@@ -21,43 +21,43 @@
       ],
       "StatusCode": 202,
       "ResponseHeaders": {
-        "Date": "Mon, 20 Sep 2021 23:06:38 GMT",
+        "Date": "Thu, 23 Sep 2021 16:56:36 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
-        "x-ms-client-request-id": "68bb4af6-1a67-11ec-ab06-5cf37093a909",
-        "x-ms-request-id": "eea93cb9-f002-0072-7e74-aeaad4000000",
+        "x-ms-client-request-id": "3a198357-1c8f-11ec-94bc-5cf37093a909",
+        "x-ms-request-id": "a77eece9-5002-001f-659b-b0c2d9000000",
         "x-ms-version": "2019-02-02"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://yalltbtestsprim.table.core.windows.net/?restype=service\u0026comp=properties",
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/?restype=service\u0026comp=properties",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
-        "Date": "Mon, 20 Sep 2021 23:07:23 GMT",
+        "Date": "Thu, 23 Sep 2021 16:57:27 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "8392d1c3-1a67-11ec-b3e6-5cf37093a909",
-        "x-ms-date": "Mon, 20 Sep 2021 23:07:23 GMT",
+        "x-ms-client-request-id": "54f190b3-1c8f-11ec-8805-5cf37093a909",
+        "x-ms-date": "Thu, 23 Sep 2021 16:57:27 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/xml",
-        "Date": "Mon, 20 Sep 2021 23:07:23 GMT",
+        "Date": "Thu, 23 Sep 2021 16:57:21 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
-        "x-ms-client-request-id": "8392d1c3-1a67-11ec-b3e6-5cf37093a909",
-        "x-ms-request-id": "eea9407e-f002-0072-5e74-aeaad4000000",
+        "x-ms-client-request-id": "54f190b3-1c8f-11ec-8805-5cf37093a909",
+        "x-ms-request-id": "a77f394e-5002-001f-179c-b0c2d9000000",
         "x-ms-version": "2019-02-02"
       },
       "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CStorageServiceProperties\u003E\u003CLogging\u003E\u003CVersion\u003E1.0\u003C/Version\u003E\u003CRead\u003Etrue\u003C/Read\u003E\u003CWrite\u003Etrue\u003C/Write\u003E\u003CDelete\u003Etrue\u003C/Delete\u003E\u003CRetentionPolicy\u003E\u003CEnabled\u003Etrue\u003C/Enabled\u003E\u003CDays\u003E5\u003C/Days\u003E\u003C/RetentionPolicy\u003E\u003C/Logging\u003E\u003CHourMetrics\u003E\u003CVersion\u003E1.0\u003C/Version\u003E\u003CEnabled\u003Efalse\u003C/Enabled\u003E\u003CRetentionPolicy\u003E\u003CEnabled\u003Efalse\u003C/Enabled\u003E\u003C/RetentionPolicy\u003E\u003C/HourMetrics\u003E\u003CMinuteMetrics\u003E\u003CVersion\u003E1.0\u003C/Version\u003E\u003CEnabled\u003Efalse\u003C/Enabled\u003E\u003CRetentionPolicy\u003E\u003CEnabled\u003Efalse\u003C/Enabled\u003E\u003C/RetentionPolicy\u003E\u003C/MinuteMetrics\u003E\u003CCors /\u003E\u003C/StorageServiceProperties\u003E"

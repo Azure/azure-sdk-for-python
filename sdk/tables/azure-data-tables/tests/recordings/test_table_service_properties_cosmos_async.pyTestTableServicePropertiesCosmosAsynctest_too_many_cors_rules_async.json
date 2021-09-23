@@ -9,10 +9,10 @@
         "Authorization": "Sanitized",
         "Content-Length": "1143",
         "Content-Type": "application/xml",
-        "Date": "Mon, 20 Sep 2021 23:09:40 GMT",
+        "Date": "Thu, 23 Sep 2021 16:59:43 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "d52bc2d0-1a67-11ec-b9e1-5cf37093a909",
-        "x-ms-date": "Mon, 20 Sep 2021 23:09:40 GMT",
+        "x-ms-client-request-id": "a663fa15-1c8f-11ec-b436-5cf37093a909",
+        "x-ms-date": "Thu, 23 Sep 2021 16:59:43 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": [
@@ -22,12 +22,12 @@
       "StatusCode": 501,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=fullmetadata",
-        "Date": "Mon, 20 Sep 2021 23:09:39 GMT",
+        "Date": "Thu, 23 Sep 2021 16:59:38 GMT",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "bc062e70-ef38-4dcd-856b-7b8edf8b67b0"
+        "x-ms-request-id": "db5e5952-699f-4714-b3d0-32258bb863f8"
       },
       "ResponseBody": [
-        "{\u0022odata.error\u0022:{\u0022code\u0022:\u0022NotImplemented\u0022,\u0022message\u0022:{\u0022lang\u0022:\u0022en-us\u0022,\u0022value\u0022:\u0022The requested operation is not supported.\\r\\nActivityId: bc062e70-ef38-4dcd-856b-7b8edf8b67b0, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/6.2.9200.0\\nRequestID:bc062e70-ef38-4dcd-856b-7b8edf8b67b0\\n\u0022}}}\r\n"
+        "{\u0022odata.error\u0022:{\u0022code\u0022:\u0022NotImplemented\u0022,\u0022message\u0022:{\u0022lang\u0022:\u0022en-us\u0022,\u0022value\u0022:\u0022The requested operation is not supported.\\r\\nActivityId: db5e5952-699f-4714-b3d0-32258bb863f8, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/6.2.9200.0\\nRequestID:db5e5952-699f-4714-b3d0-32258bb863f8\\n\u0022}}}\r\n"
       ]
     }
   ],

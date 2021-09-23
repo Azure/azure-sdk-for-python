@@ -11,21 +11,21 @@
         "Content-Length": "36",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Tue, 21 Sep 2021 01:00:43 GMT",
+        "Date": "Wed, 22 Sep 2021 00:34:29 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "58b2e9eb-1a77-11ec-ae43-5cf37093a909",
-        "x-ms-date": "Tue, 21 Sep 2021 01:00:43 GMT",
+        "x-ms-client-request-id": "d8f476e1-1b3c-11ec-8f91-5cf37093a909",
+        "x-ms-date": "Wed, 22 Sep 2021 00:34:29 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": "{\u0022TableName\u0022: \u0022pytablesync8d362b22\u0022}",
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Tue, 21 Sep 2021 01:00:43 GMT",
-        "ETag": "W/\u0022datetime\u00272021-09-21T01%3A00%3A43.7551112Z\u0027\u0022",
+        "Date": "Wed, 22 Sep 2021 00:34:26 GMT",
+        "ETag": "W/\u0022datetime\u00272021-09-22T00%3A34%3A27.4199560Z\u0027\u0022",
         "Location": "https://yalltbtestsprim.table.cosmos.azure.com/Tables(\u0027pytablesync8d362b22\u0027)",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "f17cf50a-7f43-4678-862c-cc7b769afcb6"
+        "x-ms-request-id": "a6035920-a02e-4bc5-b3cf-5bd37131e484"
       },
       "ResponseBody": {
         "TableName": "pytablesync8d362b22",
@@ -43,22 +43,22 @@
         "Content-Length": "36",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Tue, 21 Sep 2021 01:00:43 GMT",
+        "Date": "Wed, 22 Sep 2021 00:34:29 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "59068211-1a77-11ec-bf93-5cf37093a909",
-        "x-ms-date": "Tue, 21 Sep 2021 01:00:43 GMT",
+        "x-ms-client-request-id": "d9567afa-1b3c-11ec-9d71-5cf37093a909",
+        "x-ms-date": "Wed, 22 Sep 2021 00:34:29 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": "{\u0022TableName\u0022: \u0022pytablesync8d362b22\u0022}",
       "StatusCode": 409,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Tue, 21 Sep 2021 01:00:43 GMT",
+        "Date": "Wed, 22 Sep 2021 00:34:27 GMT",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "2490937f-3c33-46d8-9695-05da8b77e821"
+        "x-ms-request-id": "7761427f-24b7-45c4-9b0e-99fa1c48a2d1"
       },
       "ResponseBody": [
-        "{\u0022odata.error\u0022:{\u0022code\u0022:\u0022TableAlreadyExists\u0022,\u0022message\u0022:{\u0022lang\u0022:\u0022en-us\u0022,\u0022value\u0022:\u0022The specified table already exists.\\nRequestID:2490937f-3c33-46d8-9695-05da8b77e821\\n\u0022}}}\r\n"
+        "{\u0022odata.error\u0022:{\u0022code\u0022:\u0022TableAlreadyExists\u0022,\u0022message\u0022:{\u0022lang\u0022:\u0022en-us\u0022,\u0022value\u0022:\u0022The specified table already exists.\\nRequestID:7761427f-24b7-45c4-9b0e-99fa1c48a2d1\\n\u0022}}}\r\n"
       ]
     },
     {
@@ -70,17 +70,17 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "Date": "Tue, 21 Sep 2021 01:00:43 GMT",
+        "Date": "Wed, 22 Sep 2021 00:34:30 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "591134bf-1a77-11ec-98d8-5cf37093a909",
-        "x-ms-date": "Tue, 21 Sep 2021 01:00:43 GMT",
+        "x-ms-client-request-id": "d95e872c-1b3c-11ec-912a-5cf37093a909",
+        "x-ms-date": "Wed, 22 Sep 2021 00:34:30 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "Date": "Tue, 21 Sep 2021 01:00:43 GMT",
-        "x-ms-request-id": "759e51b3-5106-4fbd-bd2f-5aa67142ab91"
+        "Date": "Wed, 22 Sep 2021 00:34:27 GMT",
+        "x-ms-request-id": "0f5fecd2-63ce-4554-8d29-5775e1f5c9e2"
       },
       "ResponseBody": null
     }

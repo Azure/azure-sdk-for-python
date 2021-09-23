@@ -9,22 +9,22 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "Date": "Tue, 21 Sep 2021 01:01:36 GMT",
+        "Date": "Wed, 22 Sep 2021 00:35:26 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "787bd04c-1a77-11ec-9c9e-5cf37093a909",
-        "x-ms-date": "Tue, 21 Sep 2021 01:01:36 GMT",
+        "x-ms-client-request-id": "fabf384a-1b3c-11ec-b100-5cf37093a909",
+        "x-ms-date": "Wed, 22 Sep 2021 00:35:26 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=fullmetadata",
-        "Date": "Tue, 21 Sep 2021 01:01:36 GMT",
+        "Date": "Wed, 22 Sep 2021 00:35:23 GMT",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "5b53f824-2b91-40a6-befa-16ef6dc726b6"
+        "x-ms-request-id": "1118f8b6-fe87-4cc7-a22d-18b724b9d002"
       },
       "ResponseBody": [
-        "{\u0022odata.error\u0022:{\u0022code\u0022:\u0022ResourceNotFound\u0022,\u0022message\u0022:{\u0022lang\u0022:\u0022en-us\u0022,\u0022value\u0022:\u0022The specified resource does not exist.\\nRequestID:5b53f824-2b91-40a6-befa-16ef6dc726b6\\n\u0022}}}\r\n"
+        "{\u0022odata.error\u0022:{\u0022code\u0022:\u0022ResourceNotFound\u0022,\u0022message\u0022:{\u0022lang\u0022:\u0022en-us\u0022,\u0022value\u0022:\u0022The specified resource does not exist.\\nRequestID:1118f8b6-fe87-4cc7-a22d-18b724b9d002\\n\u0022}}}\r\n"
       ]
     }
   ],
