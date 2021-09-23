@@ -8,9 +8,13 @@ import hashlib
 import urllib
 import base64
 import hmac
-from urllib.parse import urlparse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from .utils import get_current_utc_time
+
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse  # type: ignore
 
 class HMACCredentialsPolicy(SansIOHTTPPolicy):
     """Implementation of HMAC authentication policy.
