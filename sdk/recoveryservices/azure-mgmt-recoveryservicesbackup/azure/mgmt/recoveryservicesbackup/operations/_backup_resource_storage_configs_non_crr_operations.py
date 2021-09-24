@@ -22,8 +22,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class BackupResourceVaultConfigsOperations(object):
-    """BackupResourceVaultConfigsOperations operations.
+class BackupResourceStorageConfigsNonCRROperations(object):
+    """BackupResourceStorageConfigsNonCRROperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -50,8 +50,8 @@ class BackupResourceVaultConfigsOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.BackupResourceVaultConfigResource"
-        """Fetches resource vault config.
+        # type: (...) -> "_models.BackupResourceConfigResource"
+        """Fetches resource storage config.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
@@ -59,11 +59,11 @@ class BackupResourceVaultConfigsOperations(object):
          present.
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: BackupResourceVaultConfigResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.recoveryservicesbackup.models.BackupResourceVaultConfigResource
+        :return: BackupResourceConfigResource, or the result of cls(response)
+        :rtype: ~azure.mgmt.recoveryservicesbackup.models.BackupResourceConfigResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupResourceVaultConfigResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupResourceConfigResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -97,37 +97,37 @@ class BackupResourceVaultConfigsOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.NewErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('BackupResourceVaultConfigResource', pipeline_response)
+        deserialized = self._deserialize('BackupResourceConfigResource', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupconfig/vaultconfig'}  # type: ignore
+    get.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupstorageconfig/vaultstorageconfig'}  # type: ignore
 
     def update(
         self,
         vault_name,  # type: str
         resource_group_name,  # type: str
-        parameters,  # type: "_models.BackupResourceVaultConfigResource"
+        parameters,  # type: "_models.BackupResourceConfigResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.BackupResourceVaultConfigResource"
-        """Updates vault security config.
+        # type: (...) -> "_models.BackupResourceConfigResource"
+        """Updates vault storage model type.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
         :param resource_group_name: The name of the resource group where the recovery services vault is
          present.
         :type resource_group_name: str
-        :param parameters: resource config request.
-        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.BackupResourceVaultConfigResource
+        :param parameters: Vault storage config request.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.BackupResourceConfigResource
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: BackupResourceVaultConfigResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.recoveryservicesbackup.models.BackupResourceVaultConfigResource
+        :return: BackupResourceConfigResource, or the result of cls(response)
+        :rtype: ~azure.mgmt.recoveryservicesbackup.models.BackupResourceConfigResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupResourceVaultConfigResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupResourceConfigResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -155,9 +155,9 @@ class BackupResourceVaultConfigsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'BackupResourceVaultConfigResource')
+        body_content = self._serialize.body(parameters, 'BackupResourceConfigResource')
         body_content_kwargs['content'] = body_content
-        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
+        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -166,37 +166,37 @@ class BackupResourceVaultConfigsOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.NewErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('BackupResourceVaultConfigResource', pipeline_response)
+        deserialized = self._deserialize('BackupResourceConfigResource', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupconfig/vaultconfig'}  # type: ignore
+    update.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupstorageconfig/vaultstorageconfig'}  # type: ignore
 
-    def put(
+    def patch(
         self,
         vault_name,  # type: str
         resource_group_name,  # type: str
-        parameters,  # type: "_models.BackupResourceVaultConfigResource"
+        parameters,  # type: "_models.BackupResourceConfigResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.BackupResourceVaultConfigResource"
-        """Updates vault security config.
+        # type: (...) -> None
+        """Updates vault storage model type.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
         :param resource_group_name: The name of the resource group where the recovery services vault is
          present.
         :type resource_group_name: str
-        :param parameters: resource config request.
-        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.BackupResourceVaultConfigResource
+        :param parameters: Vault storage config request.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.BackupResourceConfigResource
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: BackupResourceVaultConfigResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.recoveryservicesbackup.models.BackupResourceVaultConfigResource
+        :return: None, or the result of cls(response)
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupResourceVaultConfigResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -206,7 +206,7 @@ class BackupResourceVaultConfigsOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.put.metadata['url']  # type: ignore
+        url = self.patch.metadata['url']  # type: ignore
         path_format_arguments = {
             'vaultName': self._serialize.url("vault_name", vault_name, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -224,21 +224,18 @@ class BackupResourceVaultConfigsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'BackupResourceVaultConfigResource')
+        body_content = self._serialize.body(parameters, 'BackupResourceConfigResource')
         body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.NewErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('BackupResourceVaultConfigResource', pipeline_response)
-
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, None, {})
 
-        return deserialized
-    put.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupconfig/vaultconfig'}  # type: ignore
+    patch.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupstorageconfig/vaultstorageconfig'}  # type: ignore

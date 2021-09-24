@@ -19,8 +19,8 @@ from ... import models as _models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class Operations:
-    """Operations async operations.
+class ResourceGuardProxiesOperations:
+    """ResourceGuardProxiesOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -41,18 +41,25 @@ class Operations:
         self._deserialize = deserializer
         self._config = config
 
-    def list(
+    def get(
         self,
+        vault_name: str,
+        resource_group_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ClientDiscoveryResponse"]:
-        """Returns the list of available operations.
+    ) -> AsyncIterable["_models.ResourceGuardProxyBaseResourceList"]:
+        """List the ResourceGuardProxies under vault.
 
+        :param vault_name: The name of the recovery services vault.
+        :type vault_name: str
+        :param resource_group_name: The name of the resource group where the recovery services vault is
+         present.
+        :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ClientDiscoveryResponse or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.recoveryservicesbackup.models.ClientDiscoveryResponse]
+        :return: An iterator like instance of either ResourceGuardProxyBaseResourceList or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.recoveryservicesbackup.models.ResourceGuardProxyBaseResourceList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ClientDiscoveryResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceGuardProxyBaseResourceList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -67,7 +74,13 @@ class Operations:
 
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']  # type: ignore
+                url = self.get.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'vaultName': self._serialize.url("vault_name", vault_name, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
@@ -80,7 +93,7 @@ class Operations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('ClientDiscoveryResponse', pipeline_response)
+            deserialized = self._deserialize('ResourceGuardProxyBaseResourceList', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -101,4 +114,4 @@ class Operations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/providers/Microsoft.RecoveryServices/operations'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupResourceGuardProxies'}  # type: ignore
