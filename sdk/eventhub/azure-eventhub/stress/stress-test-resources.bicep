@@ -22,7 +22,7 @@ var defaultSASKeyName = 'RootManageSharedAccessKey'
 var eventHubsAuthRuleResourceId = resourceId('Microsoft.EventHub/namespaces/authorizationRules', eventHubsNamespace_var, defaultSASKeyName)
 var storageAccountId = storageAccount.id
 
-resource eventHubsNamespace 'Microsoft.EventHub/Namespaces@[variables(\'ehVersion\')]' = {
+resource eventHubsNamespace 'Microsoft.EventHub/Namespaces@2017-04-01' = {
   name: eventHubsNamespace_var
   location: location
   sku: {
@@ -32,7 +32,7 @@ resource eventHubsNamespace 'Microsoft.EventHub/Namespaces@[variables(\'ehVersio
   properties: {}
 }
 
-resource eventHubsNamespace_eventHubName 'Microsoft.EventHub/namespaces/eventhubs@[variables(\'ehVersion\')]' = {
+resource eventHubsNamespace_eventHubName 'Microsoft.EventHub/namespaces/eventhubs@2017-04-01' = {
   name: '${eventHubsNamespace_var}/${eventHubName}'
   location: location
   properties: {
@@ -44,10 +44,10 @@ resource eventHubsNamespace_eventHubName 'Microsoft.EventHub/namespaces/eventhub
   ]
 }
 
-resource eventHubsNamespace_eventHubName_eventHubAuthRuleName 'Microsoft.EventHub/namespaces/eventhubs/authorizationRules@[variables(\'ehVersion\')]' = {
+resource eventHubsNamespace_eventHubName_eventHubAuthRuleName 'Microsoft.EventHub/namespaces/eventhubs/authorizationRules@2017-04-01' = {
   name: '${eventHubsNamespace_var}/${eventHubName}/${eventHubAuthRuleName}'
   properties: {
-    Rights: [
+    rights: [
       'Manage'
       'Send'
       'Listen'
