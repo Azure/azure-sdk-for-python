@@ -31,7 +31,7 @@ from azure.identity import ClientSecretCredential, DefaultAzureCredential
 
 def create_client():
     # [START create_sr_client_sync]
-    SCHEMA_REGISTRY_FQN = os.environ['SCHEMA_REGISTRY_ENDPOINT']
+    SCHEMA_REGISTRY_FQN = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
     token_credential = DefaultAzureCredential()
     schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=SCHEMA_REGISTRY_FQN, credential=token_credential)
     # [END create_sr_client_sync]
