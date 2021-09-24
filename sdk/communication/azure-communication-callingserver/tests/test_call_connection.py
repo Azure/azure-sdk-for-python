@@ -93,7 +93,7 @@ def data_source_test_play_audio_to_participant():
     parameters.append((
         _test_constants.ClientType_ConnectionString,
         _test_constants.CALL_ID,
-        _test_constants.PARTICIPANT_ID,
+        CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
         _test_constants.AUDIO_FILE_URI,
         options,
         ))
@@ -101,7 +101,7 @@ def data_source_test_play_audio_to_participant():
     parameters.append((
         _test_constants.ClientType_ManagedIdentity,
         _test_constants.CALL_ID,
-        _test_constants.PARTICIPANT_ID,
+        CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
         _test_constants.AUDIO_FILE_URI,
         options,
         True,
@@ -157,13 +157,13 @@ def data_source_test_remove_participant():
     parameters.append((
         _test_constants.ClientType_ConnectionString,
         _test_constants.CALL_ID,
-        _test_constants.PARTICIPANT_ID,
+        CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
         ))
 
     parameters.append((
         _test_constants.ClientType_ManagedIdentity,
         _test_constants.CALL_ID,
-        _test_constants.PARTICIPANT_ID,
+        CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
         True,
         ))
 
@@ -175,14 +175,14 @@ def data_source_test_cancel_participant_media_operation():
     parameters.append((
         _test_constants.ClientType_ConnectionString,
         _test_constants.CALL_ID,
-        _test_constants.PARTICIPANT_ID,
+        CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
         _test_constants.MEDIA_OPERATION_ID,
         ))
 
     parameters.append((
         _test_constants.ClientType_ManagedIdentity,
         _test_constants.CALL_ID,
-        _test_constants.PARTICIPANT_ID,
+        CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
         _test_constants.MEDIA_OPERATION_ID,
         True,
         ))
@@ -342,7 +342,7 @@ class TestCallConnection(unittest.TestCase):
         self,
         test_name, # type: str
         call_connection_id, # type: str
-        participant_id, # type: str
+        participant, # type: CommunicationIdentifier
         audio_file_uri, # type: str
         options, # type: PlayAudioOptions
         use_managed_identity = False # type: bool
@@ -355,7 +355,7 @@ class TestCallConnection(unittest.TestCase):
             use_managed_identity=use_managed_identity
             )
 
-        result = call_connection.play_audio_to_participant(participant_id, audio_file_uri, options)
+        result = call_connection.play_audio_to_participant(participant, audio_file_uri, options)
 
         verify_play_audio_result(result)
 
@@ -364,7 +364,7 @@ class TestCallConnection(unittest.TestCase):
         self,
         test_name, # type: str
         call_connection_id, # type: str
-        participant_id, # type: str
+        participant, # type: CommunicationIdentifier
         audio_file_uri, # type: str
         options, # type: PlayAudioOptions
         use_managed_identity = False # type: bool
@@ -379,7 +379,7 @@ class TestCallConnection(unittest.TestCase):
 
         raised = False
         try:
-            call_connection.play_audio_to_participant(participant_id, audio_file_uri, options)
+            call_connection.play_audio_to_participant(participant, audio_file_uri, options)
         except:
             raised = True
         assert raised == True
@@ -443,7 +443,7 @@ class TestCallConnection(unittest.TestCase):
         self,
         test_name, # type: str
         call_connection_id, # type: str
-        participant_id, # type: str
+        participant, # type: CommunicationIdentifier
         use_managed_identity = False # type: bool
         ):
 
@@ -455,7 +455,7 @@ class TestCallConnection(unittest.TestCase):
             )
 
         call_connection.remove_participant(
-            participant_id = participant_id
+            participant = participant
             )
         assert call_connection.call_connection_id == _test_constants.CALL_ID
 
@@ -464,7 +464,7 @@ class TestCallConnection(unittest.TestCase):
         self,
         test_name, # type: str
         call_connection_id, # type: str
-        participant_id, # type: str
+        participant, # type: CommunicationIdentifier
         use_managed_identity = False # type: bool
         ):
 
@@ -478,7 +478,7 @@ class TestCallConnection(unittest.TestCase):
         raised = False
         try:
             call_connection.remove_participant(
-                participant_id = participant_id
+                participant = participant
                 )
         except:
             raised = True
@@ -489,7 +489,7 @@ class TestCallConnection(unittest.TestCase):
         self,
         test_name, # type: str
         call_connection_id, # type: str
-        participant_id, # type: str
+        participant, # type: CommunicationIdentifier
         media_operation_id, # type: str
         use_managed_identity = False # type: bool
         ):
@@ -502,7 +502,7 @@ class TestCallConnection(unittest.TestCase):
             )
 
         call_connection.cancel_participant_media_operation(
-            participant_id = participant_id,
+            participant = participant,
             media_operation_id = media_operation_id
             )
         assert call_connection.call_connection_id == _test_constants.CALL_ID
@@ -512,7 +512,7 @@ class TestCallConnection(unittest.TestCase):
         self,
         test_name, # type: str
         call_connection_id, # type: str
-        participant_id, # type: str
+        participant, # type: CommunicationIdentifier
         media_operation_id, # type: str
         use_managed_identity = False # type: bool
         ):
@@ -527,7 +527,7 @@ class TestCallConnection(unittest.TestCase):
         raised = False
         try:
              call_connection.cancel_participant_media_operation(
-                participant_id = participant_id,
+                participant = participant,
                 media_operation_id = media_operation_id
                 )
         except:
