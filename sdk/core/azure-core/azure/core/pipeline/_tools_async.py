@@ -23,7 +23,16 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from ._tools import to_rest_request
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from typing import TypeVar, Union
+    from ..pipeline.transport import AsyncHttpResponse as PipelineTransportAsyncHttpResponse
+    from ..rest import AsyncHttpResponse as RestAsyncHttpResponse
+
+    HTTPResponseType = Union[
+        PipelineTransportAsyncHttpResponse,
+        RestAsyncHttpResponse,
+    ]
 
 async def await_result(func, *args, **kwargs):
     """If func returns an awaitable, await it."""
@@ -33,35 +42,10 @@ async def await_result(func, *args, **kwargs):
         return await result  # type: ignore
     return result
 
-def _get_response_type(pipeline_transport_response):
+async def handle_no_stream_rest_response(response):
     try:
-        from .transport import AioHttpTransportResponse
-        from ..rest._aiohttp import RestAioHttpTransportResponse
-        if isinstance(pipeline_transport_response, AioHttpTransportResponse):
-            return RestAioHttpTransportResponse
-    except ImportError:
-        pass
-    try:
-        from .transport import AsyncioRequestsTransportResponse
-        from ..rest._requests_asyncio import RestAsyncioRequestsTransportResponse
-        if isinstance(pipeline_transport_response, AsyncioRequestsTransportResponse):
-            return RestAsyncioRequestsTransportResponse
-    except ImportError:
-        pass
-    try:
-        from .transport import TrioRequestsTransportResponse
-        from ..rest._requests_trio import RestTrioRequestsTransportResponse
-        if isinstance(pipeline_transport_response, TrioRequestsTransportResponse):
-            return RestTrioRequestsTransportResponse
-    except ImportError:
-        pass
-    raise ValueError("Unknown transport response")
-
-def to_rest_response(pipeline_transport_response):
-    response_type = _get_response_type(pipeline_transport_response)
-    response = response_type(
-        request=to_rest_request(pipeline_transport_response.request),
-        internal_response=pipeline_transport_response.internal_response,
-        block_size=pipeline_transport_response.block_size,
-    )
-    return response
+        await response.read()
+        await response.close()
+    except Exception as exc:
+        await response.close()
+        raise exc

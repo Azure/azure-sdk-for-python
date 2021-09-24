@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Optional, AsyncIterator as AsyncIteratorType
+from typing import Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING
 from collections.abc import AsyncIterator
 try:
     import cchardet as chardet
@@ -46,7 +46,10 @@ from ._base_async import (
     AsyncHttpTransport,
     AsyncHttpResponse,
     _ResponseStopIteration)
-from .._tools import get_block_size as _get_block_size, get_internal_response as _get_internal_response
+from .._tools import is_rest as _is_rest
+from .._tools_async import handle_no_stream_rest_response as _handle_no_stream_rest_response
+if TYPE_CHECKING:
+    from .._tools_async import HTTPResponseType
 
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
@@ -135,7 +138,7 @@ class AioHttpTransport(AsyncHttpTransport):
             return form_data
         return request.data
 
-    async def send(self, request: HttpRequest, **config: Any) -> Optional[AsyncHttpResponse]:
+    async def send(self, request: HttpRequest, **config: Any) -> Optional["HTTPResponseType"]:
         """Send the request using this HTTP sender.
 
         Will pre-load the body into memory to be available with a sync method.
@@ -168,7 +171,7 @@ class AioHttpTransport(AsyncHttpTransport):
                     config['proxy'] = proxies[protocol]
                     break
 
-        response = None
+        response: Optional["HTTPResponseType"] = None
         config['ssl'] = self._build_ssl_config(
             cert=config.pop('connection_cert', self.connection_config.cert),
             verify=config.pop('connection_verify', self.connection_config.verify)
@@ -192,11 +195,22 @@ class AioHttpTransport(AsyncHttpTransport):
                 allow_redirects=False,
                 **config
             )
-            response = AioHttpTransportResponse(request, result,
-                                                self.connection_config.data_block_size,
-                                                decompress=not auto_decompress)
-            if not stream_response:
-                await response.load_body()
+            if _is_rest(request):
+                from azure.core.rest._aiohttp import RestAioHttpTransportResponse
+                response = RestAioHttpTransportResponse(
+                    request=request,
+                    internal_response=result,
+                    block_size=self.connection_config.data_block_size,
+                    decompress=not auto_decompress
+                )
+                if not stream_response:
+                    await _handle_no_stream_rest_response(response)
+            else:
+                response = AioHttpTransportResponse(request, result,
+                                                    self.connection_config.data_block_size,
+                                                    decompress=not auto_decompress)
+                if not stream_response:
+                    await response.load_body()
         except aiohttp.client_exceptions.ClientResponseError as err:
             raise ServiceResponseError(err, error=err) from err
         except aiohttp.client_exceptions.ClientError as err:
@@ -217,9 +231,9 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = _get_block_size(response)
+        self.block_size = response.block_size
         self._decompress = decompress
-        internal_response = _get_internal_response(response)
+        internal_response = response.internal_response
         self.content_length = int(internal_response.headers.get('Content-Length', 0))
         self._decompressor = None
 
@@ -227,7 +241,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         return self.content_length
 
     async def __anext__(self):
-        internal_response = _get_internal_response(self.response)
+        internal_response = self.response.internal_response
         try:
             chunk = await internal_response.content.read(self.block_size)
             if not chunk:

@@ -27,7 +27,7 @@ import asyncio
 from collections.abc import AsyncIterator
 import functools
 import logging
-from typing import Any, Union, Optional, AsyncIterator as AsyncIteratorType
+from typing import Any, Union, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING
 import urllib3 # type: ignore
 
 import requests
@@ -44,8 +44,11 @@ from ._base_async import (
     _iterate_response_content)
 from ._requests_basic import RequestsTransportResponse, _read_raw_stream
 from ._base_requests_async import RequestsAsyncTransportBase
-from .._tools import get_block_size as _get_block_size, get_internal_response as _get_internal_response
+from .._tools import is_rest as _is_rest
+from .._tools_async import handle_no_stream_rest_response as _handle_no_stream_rest_response
 
+if TYPE_CHECKING:
+    from .._tools_async import HTTPResponseType
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -83,7 +86,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
     async def sleep(self, duration):  # pylint:disable=invalid-overridden-method
         await asyncio.sleep(duration)
 
-    async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore # pylint:disable=invalid-overridden-method
+    async def send(self, request: HttpRequest, **kwargs: Any) -> "HTTPResponseType":  # type: ignore # pylint:disable=invalid-overridden-method
         """Send the request using this HTTP sender.
 
         :param request: The HttpRequest
@@ -130,6 +133,16 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
 
         if error:
             raise error
+        if _is_rest(request):
+            from azure.core.rest._requests_asyncio import RestAsyncioRequestsTransportResponse
+            retval = RestAsyncioRequestsTransportResponse(
+                request=request,
+                internal_response=response,
+                block_size=self.connection_config.data_block_size
+            )
+            if not kwargs.get("stream"):
+                await _handle_no_stream_rest_response(retval)
+            return retval
 
         return AsyncioRequestsTransportResponse(request, response, self.connection_config.data_block_size)
 
@@ -146,11 +159,11 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = _get_block_size(response)
+        self.block_size = response.block_size
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
             raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
-        internal_response = _get_internal_response(response)
+        internal_response = response.internal_response
         if decompress:
             self.iter_content_func = internal_response.iter_content(self.block_size)
         else:
@@ -162,7 +175,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
 
     async def __anext__(self):
         loop = _get_running_loop()
-        internal_response = _get_internal_response(self.response)
+        internal_response = self.response.internal_response
         try:
             chunk = await loop.run_in_executor(
                 None,

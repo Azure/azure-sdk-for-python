@@ -121,8 +121,7 @@ def _is_empty(response):
 
     :rtype: bool
     """
-    content = response.content if hasattr(response, "content") else response.body()  # type: ignore
-    return not bool(content)
+    return not bool(response.body())
 
 
 class LongRunningOperation(ABC):
@@ -578,7 +577,7 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
         # Re-inject 'x-ms-client-request-id' while polling
         if "request_id" not in self._operation_config:
             self._operation_config["request_id"] = self._get_request_id()
-        if hasattr(self._initial_response.http_response, "content"):
+        if hasattr(self._initial_response.http_response, "is_closed"):
             # if I am a azure.core.rest.HttpResponse
             # want to keep making azure.core.rest calls
             from azure.core.rest import HttpRequest as RestHttpRequest
