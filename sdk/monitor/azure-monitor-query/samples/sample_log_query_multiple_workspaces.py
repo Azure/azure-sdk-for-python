@@ -19,7 +19,7 @@ query = "union * | where TimeGenerated > ago(100d) | project TenantId | summariz
 end_time = datetime.now(UTC())
 
 # returns LogsQueryResult 
-response = client.query(
+response = client.query_workspace(
     os.environ['LOG_WORKSPACE_ID'],
     query,
     additional_workspaces=[os.environ["SECONDARY_WORKSPACE_ID"]],

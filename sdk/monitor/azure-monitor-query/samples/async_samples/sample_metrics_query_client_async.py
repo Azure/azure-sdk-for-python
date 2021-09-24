@@ -17,7 +17,7 @@ async def query_metrics():
 
     metrics_uri = os.environ['METRICS_RESOURCE_URI']
     async with client:
-        response = await client.query(
+        response = await client.query_resource(
             metrics_uri,
             metric_names=["Ingress"],
             timespan=timedelta(hours=2),

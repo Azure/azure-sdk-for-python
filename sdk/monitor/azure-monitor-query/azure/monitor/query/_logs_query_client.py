@@ -58,7 +58,7 @@ class LogsQueryClient(object):
         self._query_op = self._client.query
 
     @distributed_trace
-    def query(self, workspace_id, query, **kwargs):
+    def query_workspace(self, workspace_id, query, **kwargs):
         # type: (str, str, Any) -> Union[LogsQueryResult, LogsQueryPartialResult]
         """Execute an Analytics query.
 

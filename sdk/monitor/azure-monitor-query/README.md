@@ -122,7 +122,7 @@ start_time=datetime(2021, 7, 2)
 end_time=datetime.now()
 
 # returns LogsQueryResult
-response = client.query(
+response = client.query_workspace(
     os.environ['LOG_WORKSPACE_ID'],
     query,
     timespan=(start_time, end_time)
@@ -230,7 +230,7 @@ from azure.identity import DefaultAzureCredential
 credential = DefaultAzureCredential()
 client = LogsQueryClient(credential)
 
-response = client.query(
+response = client.query_workspace(
     os.environ['LOG_WORKSPACE_ID'],
     "range x from 1 to 10000000000 step 1 | count",
     server_timeout=1,
@@ -250,7 +250,7 @@ The same logs query can be executed across multiple Log Analytics workspaces. In
 For example, the following query executes in three workspaces:
 
 ```python
-client.query(
+client.query_workspace(
     <workspace_id>,
     query,
     additional_workspaces=['<workspace 2>', '<workspace 3>']
@@ -282,7 +282,7 @@ client = MetricsQueryClient(credential)
 start_time = datetime(2021, 5, 25)
 duration = timedelta(days=1)
 metrics_uri = os.environ['METRICS_RESOURCE_URI']
-response = client.query(
+response = client.query_resource(
     metrics_uri,
     metric_names=["PublishSuccessCount"],
     timespan=(start_time, duration)
@@ -328,7 +328,7 @@ credential = DefaultAzureCredential()
 client = MetricsQueryClient(credential)
 
 metrics_uri = os.environ['METRICS_RESOURCE_URI']
-response = client.query(
+response = client.query_resource(
     metrics_uri,
     metric_names=["MatchedEventCount"],
     aggregations=[MetricAggregationType.COUNT]

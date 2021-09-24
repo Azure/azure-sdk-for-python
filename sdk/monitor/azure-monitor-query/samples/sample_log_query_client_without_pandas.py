@@ -17,7 +17,7 @@ query = """AppRequests |
 summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
 # returns LogsQueryResult 
-response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(hours=1))
+response = client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(hours=1))
 
 if not response.tables:
     print("No results for the query")
