@@ -23,7 +23,7 @@ class CosmosDBManagementClientOperationsMixin:
 
     def location_list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.LocationListResult"]:
         """List Cosmos DB locations and their properties.
 
@@ -37,7 +37,7 @@ class CosmosDBManagementClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -90,7 +90,7 @@ class CosmosDBManagementClientOperationsMixin:
     async def location_get(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.LocationGetResult":
         """Get the properties of an existing Cosmos DB location.
 
@@ -106,7 +106,7 @@ class CosmosDBManagementClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL
