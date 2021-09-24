@@ -1,6 +1,7 @@
 from ._converter import (
     JoinCallRequestConverter,
     PlayAudioRequestConverter,
+    PlayAudioToParticipantRequestConverter,
     AddParticipantRequestConverter,
     RemoveParticipantRequestConverter,
     CancelAllMediaOperationsConverter,
@@ -11,6 +12,7 @@ from ._converter import (
 __all__ = [
     'JoinCallRequestConverter',
     'PlayAudioRequestConverter',
+    'PlayAudioToParticipantRequestConverter',
     "AddParticipantRequestConverter",
     "RemoveParticipantRequestConverter",
     "CancelAllMediaOperationsConverter",

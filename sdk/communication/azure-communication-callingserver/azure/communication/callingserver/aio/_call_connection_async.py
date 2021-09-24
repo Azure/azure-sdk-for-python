@@ -19,7 +19,8 @@ from .._converters import (
     CancelAllMediaOperationsConverter,
     TransferCallRequestConverter,
     CancelMediaOperationRequestConverter,
-    PlayAudioRequestConverter
+    PlayAudioRequestConverter,
+    PlayAudioToParticipantRequestConverter
     )
 from .._generated.models import (AddParticipantResult,
                                  CancelAllMediaOperationsResult,
@@ -140,27 +141,30 @@ class CallConnection:
     @distributed_trace_async()
     async def play_audio_to_participant(
             self,
-            participant_id: str,
+            participant: CommunicationIdentifier,
             audio_file_uri: str,
             play_audio_options: 'PlayAudioOptions',
             **kwargs: Any
         ) -> PlayAudioResult:
 
-        if not participant_id:
-            raise ValueError("participant_id can not be None")
+        if not participant:
+            raise ValueError("participant can not be None")
 
         if not audio_file_uri:
             raise ValueError("audio_file_uri can not be None")
 
         if not play_audio_options:
-            raise ValueError("options can not be None")
+            raise ValueError("play_audio_options can not be None")
 
-        play_audio_request = PlayAudioRequestConverter.convert(audio_file_uri, play_audio_options)
+        play_audio_to_participant_request = PlayAudioToParticipantRequestConverter.convert(
+            identifier=serialize_identifier(participant),
+            audio_file_uri=audio_file_uri,
+            play_audio_options=play_audio_options
+            )
 
         return await self._call_connection_client.participant_play_audio(
             call_connection_id=self.call_connection_id,
-            participant_id=participant_id,
-            play_audio_request=play_audio_request,
+            play_audio_to_participant_request=play_audio_to_participant_request,
             **kwargs
         )
 

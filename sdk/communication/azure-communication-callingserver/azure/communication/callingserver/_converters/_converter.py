@@ -8,6 +8,7 @@ from .._models import JoinCallOptions, PlayAudioOptions
 from .._generated.models import (
     JoinCallRequest,
     PlayAudioRequest,
+    PlayAudioToParticipantRequest,
     TransferCallRequest,
     CommunicationIdentifierModel,
     AddParticipantRequest,
@@ -57,6 +58,29 @@ class PlayAudioRequestConverter(object):
             audio_file_id=play_audio_options.audio_file_id,
             callback_uri=play_audio_options.callback_uri
             )
+
+class PlayAudioToParticipantRequestConverter(object):
+    @staticmethod
+    def convert(
+        identifier, # type: CommunicationIdentifierModel
+        audio_file_uri, # type: str
+        play_audio_options # type: PlayAudioOptions
+        ): # type: (...) -> PlayAudioToParticipantRequest
+
+        if not audio_file_uri:
+            raise ValueError("audio_file_uri can not be None")
+        if not play_audio_options:
+            raise ValueError("playaudio_options can not be None")
+
+        return PlayAudioToParticipantRequest(
+            identifier=identifier,
+            audio_file_uri=audio_file_uri,
+            loop=play_audio_options.loop,
+            operation_context=play_audio_options,
+            audio_file_id=play_audio_options.audio_file_id,
+            callback_uri=play_audio_options.callback_uri
+            )
+
 
 class AddParticipantRequestConverter(object):
     @staticmethod
