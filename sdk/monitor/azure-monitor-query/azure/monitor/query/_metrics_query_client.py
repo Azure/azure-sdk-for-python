@@ -44,7 +44,7 @@ class MetricsQueryClient(object):
 
     def __init__(self, credential, **kwargs):
         # type: (TokenCredential, Any) -> None
-        endpoint = kwargs.pop('endpoint', 'https://management.azure.com')
+        endpoint = kwargs.pop("endpoint", "https://management.azure.com")
         self._client = MonitorQueryClient(
             credential=credential,
             base_url=endpoint,
@@ -116,8 +116,12 @@ class MetricsQueryClient(object):
         kwargs.setdefault("top", kwargs.pop("max_results", None))
         kwargs.setdefault("interval", kwargs.pop("granularity", None))
         kwargs.setdefault("orderby", kwargs.pop("order_by", None))
-        generated = self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
-        return MetricsResult._from_generated(generated) # pylint: disable=protected-access
+        generated = self._metrics_op.list(
+            resource_uri, connection_verify=False, **kwargs
+        )
+        return MetricsResult._from_generated( # pylint: disable=protected-access
+            generated
+        )
 
     @distributed_trace
     def list_metric_namespaces(self, resource_uri, **kwargs):
@@ -133,7 +137,7 @@ class MetricsQueryClient(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricNamespace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        start_time = kwargs.pop('start_time', None)
+        start_time = kwargs.pop("start_time", None)
         if start_time:
             start_time = Serializer.serialize_iso(start_time)
         return self._namespace_op.list(
@@ -142,10 +146,12 @@ class MetricsQueryClient(object):
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [
-                    MetricNamespace._from_generated(x) for x in objs # pylint: disable=protected-access
-                ]
+                    MetricNamespace._from_generated(x) # pylint: disable=protected-access
+                    for x in objs
+                ],
             ),
-            **kwargs)
+            **kwargs
+        )
 
     @distributed_trace
     def list_metric_definitions(self, resource_uri, **kwargs):
@@ -160,17 +166,19 @@ class MetricsQueryClient(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricDefinition]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        metric_namespace = kwargs.pop('namespace', None)
+        metric_namespace = kwargs.pop("namespace", None)
         return self._definitions_op.list(
             resource_uri,
             metric_namespace,
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [
-                    MetricDefinition._from_generated(x) for x in objs # pylint: disable=protected-access
-                ]
+                    MetricDefinition._from_generated(x) # pylint: disable=protected-access
+                    for x in objs
+                ],
             ),
-            **kwargs)
+            **kwargs
+        )
 
     def close(self):
         # type: () -> None
