@@ -25,7 +25,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 20 Sep 2021 20:08:15 GMT
+      - Wed, 22 Sep 2021 00:45:29 GMT
       location:
       - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-basic31c70f88/versions/1?api-version=2020-09-01-preview
       schema-id:
@@ -67,7 +67,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 20 Sep 2021 20:08:15 GMT
+      - Wed, 22 Sep 2021 00:45:30 GMT
       location:
       - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-basic31c70f88/versions/1?api-version=2020-09-01-preview
       schema-id:
@@ -115,7 +115,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 20 Sep 2021 20:08:16 GMT
+      - Wed, 22 Sep 2021 00:45:30 GMT
       location:
       - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-basic31c70f88/versions/1?api-version=2020-09-01-preview
       schema-id:
