@@ -39,6 +39,9 @@ if TYPE_CHECKING:
         Union,
         Tuple,
         Optional,
+        Callable,
+        Type,
+        Iterator,
     )
     # importing both the py3 RestHttpRequest and the fallback RestHttpRequest
     from azure.core.rest._rest_py3 import HttpRequest as RestHttpRequestPy3
@@ -50,6 +53,13 @@ if TYPE_CHECKING:
         RestHttpRequestPy3, RestHttpRequestPy2, PipelineTransportHttpRequest
     ]
     from ..pipeline.policies import SansIOHTTPPolicy
+    from azure.core.pipeline.transport import (
+        HttpResponse as PipelineTransportHttpResponse,
+        AioHttpTransportResponse as PipelineTransportAioHttpTransportResponse,
+    )
+    from azure.core.pipeline.transport._base import (
+        _HttpResponseBase as PipelineTransportHttpResponseBase
+    )
 
 class BytesIOSocket(object):
     """Mocking the "makefile" of socket for HTTPResponse.
@@ -210,9 +220,17 @@ def _serialize_request(http_request):
     return serializer.buffer
 
 def _decode_parts_helper(
-    response, message, http_response_type, requests, deserialize_response
+    response,  # type: PipelineTransportHttpResponseBase
+    message,  # type: Message
+    http_response_type,  # type: Type[PipelineTransportHttpResponseBase]
+    requests,  # type: List[PipelineTransportHttpRequest]
+    deserialize_response  # type: Callable
 ):
-    """Rebuild an HTTP response from pure string."""
+    # type: (...) -> List[PipelineTransportHttpResponse]
+    """Helper for _decode_parts.
+
+    Rebuild an HTTP response from pure string.
+    """
     responses = []
     for index, raw_reponse in enumerate(message.get_payload()):
         content_type = raw_reponse.get_content_type()
@@ -236,7 +254,10 @@ def _decode_parts_helper(
     return responses
 
 def _get_raw_parts_helper(response, http_response_type):
-    """Assuming this body is multipart, return the iterator or parts.
+    """Helper for _get_raw_parts
+
+    Assuming this body is multipart, return the iterator or parts.
+
     If parts are application/http use http_response_type or HttpClientTransportResponse
     as enveloppe.
     """
@@ -253,6 +274,12 @@ def _get_raw_parts_helper(response, http_response_type):
     return response._decode_parts(message, http_response_type, requests)  # pylint: disable=protected-access
 
 def _parts_helper(response):
+    # type: (PipelineTransportHttpResponse) -> Iterator[PipelineTransportHttpResponse]
+    """Assuming the content-type is multipart/mixed, will return the parts as an iterator.
+
+    :rtype: iterator[HttpResponse]
+    :raises ValueError: If the content is not multipart/mixed
+    """
     if not response.content_type or not response.content_type.startswith("multipart/mixed"):
         raise ValueError(
             "You can't get parts if the response is not multipart/mixed"
@@ -292,7 +319,7 @@ def _format_data_helper(data):
     a string for a form-data request.
 
     :param data: The request field data.
-        :type data: str or file-like object.
+    :type data: str or file-like object.
     """
     if hasattr(data, "read"):
         data = cast(IO, data)
@@ -307,6 +334,15 @@ def _format_data_helper(data):
 
 def _aiohttp_body_helper(response):
     # pylint: disable=protected-access
+    # type: (PipelineTransportAioHttpTransportResponse) -> bytes
+    """Helper for body method of Aiohttp responses.
+
+    Since aiohttp body methods need decompression work synchronously,
+    need to share thid code across old and new aiohttp transport responses
+    for backcompat.
+
+    :rtype: bytes
+    """
     if response._content is None:
         raise ValueError("Body is not available. Call async method load_body, or do your call with stream=False.")
     if not response._decompress:

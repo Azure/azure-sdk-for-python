@@ -49,8 +49,7 @@ from ._bigger_block_size_http_adapters import BiggerBlockSizeHTTPAdapter
 from .._tools import is_rest as _is_rest, handle_non_stream_rest_response as _handle_non_stream_rest_response
 
 if TYPE_CHECKING:
-    from azure.core.rest import HttpResponse as RestHttpResponse
-    HTTPResponseType = Union[RestHttpResponse, HttpResponse]
+    from .._tools import HTTPResponseType
 
 PipelineType = TypeVar("PipelineType")
 

@@ -57,6 +57,11 @@ class _CaseInsensitiveDict(CaseInsensitiveDict):
         return _ItemsView(self)
 
 class _RestRequestsTransportResponseBaseMixin(_HttpResponseBackcompatMixinBase):
+    """Backcompat mixin for the sync and async requests responses
+
+    Overriding the default mixin behavior here because we need to synchronously
+    read the response's content for the async requests responses
+    """
 
     def _body(self):
         # Since requests is not an async library, for backcompat, users should

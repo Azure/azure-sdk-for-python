@@ -42,7 +42,11 @@ async def await_result(func, *args, **kwargs):
         return await result  # type: ignore
     return result
 
-async def handle_no_stream_rest_response(response):
+async def handle_no_stream_rest_response(response: "RestAsyncHttpResponse") -> None:
+    """Handle reading and closing of non stream rest responses.
+    For our new rest responses, we have to call .read() and .close() for our non-stream
+    responses. This way, we load in the body for users to access.
+    """
     try:
         await response.read()
         await response.close()

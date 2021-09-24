@@ -56,6 +56,11 @@ if TYPE_CHECKING:
     from typing import Any, Optional, Iterator, MutableMapping, Callable
 
 class _HttpResponseBackcompatMixinBase(object):
+    """Base Backcompat mixin for responses.
+
+    This mixin is used by both sync and async HttpResponse
+    backcompat mixins.
+    """
 
     def __getattr__(self, attr):
         backcompat_attrs = [
@@ -90,6 +95,10 @@ class _HttpResponseBackcompatMixinBase(object):
         return self.content  # pylint: disable=no-member
 
     def _decode_parts(self, message, http_response_type, requests):
+        """Helper for _decode_parts.
+
+        Rebuild an HTTP response from pure string.
+        """
         def _deserialize_response(
             http_response_as_bytes, http_request, http_response_type
         ):
@@ -107,6 +116,13 @@ class _HttpResponseBackcompatMixinBase(object):
         )
 
     def _get_raw_parts(self, http_response_type=None):
+        """Helper for get_raw_parts
+
+        Assuming this body is multipart, return the iterator or parts.
+
+        If parts are application/http use http_response_type or HttpClientTransportResponse
+        as enveloppe.
+        """
         return _get_raw_parts_helper(
             self, http_response_type or RestHttpClientTransportResponse
         )
@@ -120,6 +136,7 @@ class _HttpResponseBackcompatMixinBase(object):
         return self._stream_download_generator(pipeline, self, **kwargs)
 
 class HttpResponseBackcompatMixin(_HttpResponseBackcompatMixinBase):
+    """Backcompat mixin for sync HttpResponses"""
 
     def __getattr__(self, attr):
         backcompat_attrs = ["parts"]

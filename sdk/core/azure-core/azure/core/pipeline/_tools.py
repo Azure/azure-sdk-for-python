@@ -23,6 +23,12 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from typing import Union, Any
+    from azure.core.rest import HttpResponse as RestHttpResponse
+    from azure.core.pipeline.transport import HttpResponse as PipelineTransportHttpResponse
+    HTTPResponseType = Union[RestHttpResponse, PipelineTransportHttpResponse]
 
 def await_result(func, *args, **kwargs):
     """If func returns an awaitable, raise that this runner can't handle it."""
@@ -34,6 +40,7 @@ def await_result(func, *args, **kwargs):
     return result
 
 def is_rest(obj):
+    # type: (Any) -> bool
     """Return whether a request or a response is a rest request / response.
 
     Checking whether the response has the object content can sometimes result
@@ -44,6 +51,11 @@ def is_rest(obj):
     return hasattr(obj, "is_stream_consumed") or hasattr(obj, "content")
 
 def handle_non_stream_rest_response(response):
+    # type: (RestHttpResponse) -> None
+    """Handle reading and closing of non stream rest responses.
+    For our new rest responses, we have to call .read() and .close() for our non-stream
+    responses. This way, we load in the body for users to access.
+    """
     try:
         response.read()
         response.close()

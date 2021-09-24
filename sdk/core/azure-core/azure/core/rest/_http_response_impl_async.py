@@ -33,6 +33,8 @@ from ..utils._pipeline_transport_rest_shared_async import _PartGenerator
 
 
 class AsyncHttpResponseBackcompatMixin(_HttpResponseBackcompatMixinBase):
+    """Backcompat mixin for async responses"""
+
     def __getattr__(self, attr):
         backcompat_attrs = ["parts"]
         attr = _pad_attr_name(attr, backcompat_attrs)

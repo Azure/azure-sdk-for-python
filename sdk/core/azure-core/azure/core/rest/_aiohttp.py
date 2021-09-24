@@ -116,6 +116,12 @@ class _CIMultiDict(CIMultiDict):
         return values or default
 
 class _RestAioHttpTransportResponseBackcompatMixin(AsyncHttpResponseBackcompatMixin):
+    """Backcompat mixin for aiohttp responses.
+
+    Need to add it's own mixin because it has function load_body, which other
+    transport responses don't have, and also because we need to synchronously
+    decompress the body if users call .body()
+    """
 
     def body(self) -> bytes:
         """Return the whole body as bytes in memory.
