@@ -61,11 +61,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import (
     ABC,
     AbstractContextManager,
-    PipelineRequest,
-    PipelineResponse,
-    PipelineContext,
 )
-from .._tools import await_result as _await_result
 from ...utils._utils import _case_insensitive_dict
 from ...utils._pipeline_transport_rest_shared import (
     _format_parameters_helper,

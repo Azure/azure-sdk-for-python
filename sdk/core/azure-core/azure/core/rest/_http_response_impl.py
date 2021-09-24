@@ -410,7 +410,14 @@ class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse, HttpResponseBackcom
             yield part
         self.close()
 
-class _RestHttpClientTransportResponseBase(_HttpResponseBaseImpl):
+class _RestHttpClientTransportResponseBackcompatBaseMixin(_HttpResponseBackcompatMixinBase):
+
+    def body(self):
+        if self._content is None:
+            self._content = self.internal_response.read()
+        return self.content
+
+class _RestHttpClientTransportResponseBase(_HttpResponseBaseImpl, _RestHttpClientTransportResponseBackcompatBaseMixin):
 
     def __init__(self, **kwargs):
         internal_response = kwargs.pop("internal_response")

@@ -33,7 +33,7 @@ from ..pipeline import (
 from ..pipeline._tools import await_result as _await_result
 
 if TYPE_CHECKING:
-    from typing import (
+    from typing import (  # pylint: disable=ungrouped-imports
         Dict,
         List,
         Union,
@@ -306,6 +306,7 @@ def _format_data_helper(data):
     return (None, cast(str, data))
 
 def _aiohttp_body_helper(response):
+    # pylint: disable=protected-access
     if response._content is None:
         raise ValueError("Body is not available. Call async method load_body, or do your call with stream=False.")
     if not response._decompress:

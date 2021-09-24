@@ -48,7 +48,6 @@ from ._base_async import (
     _ResponseStopIteration)
 from ...utils._pipeline_transport_rest_shared import _aiohttp_body_helper
 from .._tools import is_rest as _is_rest
-from .._tools_async import handle_no_stream_rest_response as _handle_no_stream_rest_response
 if TYPE_CHECKING:
     from .._tools_async import HTTPResponseType
 

@@ -33,7 +33,7 @@ import aiohttp
 import trio
 
 import pytest
-from utils import HTTP_REQUESTS, create_http_request
+from utils import HTTP_REQUESTS, AIOHTTP_TRANSPORT_RESPONSES, create_transport_response, is_rest
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -92,7 +92,7 @@ def test_conf_async_trio_requests(port, http_request):
     assert isinstance(response.status_code, int)
 
 
-def _create_aiohttp_response(body_bytes, headers=None):
+def _create_aiohttp_response(http_response, body_bytes, headers=None):
     class MockAiohttpClientResponse(aiohttp.ClientResponse):
         def __init__(self, body_bytes, headers=None):
             self._body = body_bytes
@@ -103,29 +103,36 @@ def _create_aiohttp_response(body_bytes, headers=None):
 
     req_response = MockAiohttpClientResponse(body_bytes, headers)
 
-    response = AioHttpTransportResponse(
+    response = create_transport_response(
+        http_response,
         None, # Don't need a request here
         req_response
     )
-    response._body = body_bytes
+    response._content = body_bytes
 
     return response
 
 
 @pytest.mark.asyncio
-async def test_aiohttp_response_text():
+@pytest.mark.parametrize("http_response", AIOHTTP_TRANSPORT_RESPONSES)
+async def test_aiohttp_response_text(http_response):
 
     for encoding in ["utf-8", "utf-8-sig", None]:
 
         res = _create_aiohttp_response(
+            http_response,
             b'\xef\xbb\xbf56',
             {'Content-Type': 'text/plain'}
         )
+        if is_rest(http_response):
+            await res.read()
         assert res.text(encoding) == '56', "Encoding {} didn't work".format(encoding)
 
 @pytest.mark.asyncio
-async def test_aiohttp_response_decompression():
+@pytest.mark.parametrize("http_response", AIOHTTP_TRANSPORT_RESPONSES)
+async def test_aiohttp_response_decompression(http_response):
     res = _create_aiohttp_response(
+        http_response,
         b"\x1f\x8b\x08\x00\x00\x00\x00\x00\x04\x00\x8d\x8d\xb1n\xc30\x0cD"
         b"\xff\x85s\x14HVlY\xda\x8av.\n4\x1d\x9a\x8d\xa1\xe5D\x80m\x01\x12="
         b"\x14A\xfe\xbd\x92\x81d\xceB\x1c\xef\xf8\x8e7\x08\x038\xf0\xa67Fj+"
@@ -146,9 +153,11 @@ async def test_aiohttp_response_decompression():
     assert res.body() == expect, "Decompression didn't work"
 
 @pytest.mark.asyncio
-async def test_aiohttp_response_decompression_negtive():
+@pytest.mark.parametrize("http_response", AIOHTTP_TRANSPORT_RESPONSES)
+async def test_aiohttp_response_decompression_negtive(http_response):
     import zlib
     res = _create_aiohttp_response(
+        http_response,
         b"\xff\x85s\x14HVlY\xda\x8av.\n4\x1d\x9a\x8d\xa1\xe5D\x80m\x01\x12="
         b"\x14A\xfe\xbd\x92\x81d\xceB\x1c\xef\xf8\x8e7\x08\x038\xf0\xa67Fj+"
         b"\x946\x9d8\x0c4\x08{\x96(\x94mzkh\x1cM/a\x07\x94<\xb2\x1f>\xca8\x86"
@@ -162,11 +171,14 @@ async def test_aiohttp_response_decompression_negtive():
     with pytest.raises(zlib.error):
         body = res.body()
 
-def test_repr():
+@pytest.mark.parametrize("http_response", AIOHTTP_TRANSPORT_RESPONSES)
+def test_repr(http_response):
     res = _create_aiohttp_response(
+        http_response,
         b'\xef\xbb\xbf56',
         {}
     )
     res.content_type = "text/plain"
 
-    assert repr(res) == "<AioHttpTransportResponse: 200 OK, Content-Type: text/plain>"
+    class_name = "AsyncHttpResponse" if is_rest(http_response) else "AioHttpTransportResponse"
+    assert repr(res) == f"<{class_name}: 200 OK, Content-Type: text/plain>"

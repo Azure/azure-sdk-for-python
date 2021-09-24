@@ -12,24 +12,50 @@ try:
 except ImportError:
     import mock
 
-from azure.core.pipeline.transport import HttpResponse, RequestsTransport
-from azure.core.pipeline.transport._base import HttpClientTransportResponse, HttpTransport, _deserialize_response, _urljoin
+from azure.core.pipeline.transport import HttpResponse as PipelineTransportHttpResponse, RequestsTransport
+from azure.core.pipeline.transport._base import HttpTransport, _deserialize_response, _urljoin
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import Pipeline
 from azure.core.exceptions import HttpResponseError
 import logging
 import pytest
-from utils import HTTP_REQUESTS
+from utils import HTTP_REQUESTS, request_and_responses_product, HTTP_CLIENT_TRANSPORT_RESPONSES, create_transport_response, is_rest
+from azure.core.rest._http_response_impl import HttpResponseImpl as RestHttpResponseImpl
 
 
-class MockResponse(HttpResponse):
+class PipelineTransportMockResponse(PipelineTransportHttpResponse):
     def __init__(self, request, body, content_type):
-        super(MockResponse, self).__init__(request, None)
+        super(PipelineTransportMockResponse, self).__init__(request, None)
         self._body = body
         self.content_type = content_type
 
     def body(self):
         return self._body
+
+class RestMockResponse(RestHttpResponseImpl):
+    def __init__(self, request, body, content_type):
+        super(RestMockResponse, self).__init__(
+            request=request,
+            internal_response=None,
+            content_type=content_type,
+            block_size=None,
+            status_code=200,
+            reason="OK",
+            headers={},
+            stream_download_generator=None,
+        )
+        # the impl takes in a lot more kwargs. It's not public and is a
+        # helper implementation shared across our azure core transport responses
+        self._body = body
+
+    def body(self):
+        return self._body
+
+    @property
+    def content(self):
+        return self._body
+
+MOCK_RESPONSES = [PipelineTransportMockResponse, RestMockResponse]
 
 @pytest.mark.skipif(sys.version_info < (3, 6), reason="Multipart serialization not supported on 2.7 + dict order not deterministic on 3.5")
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -97,8 +123,8 @@ def test_url_join(http_request):
     assert _urljoin('devstoreaccount1/', 'testdir/') == 'devstoreaccount1/testdir/'
 
 
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_http_client_response(port, http_request):
+@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_CLIENT_TRANSPORT_RESPONSES))
+def test_http_client_response(port, http_request, http_response):
     # Create a core request
     request = http_request("GET", "http://localhost:{}".format(port))
 
@@ -107,7 +133,9 @@ def test_http_client_response(port, http_request):
     conn.request("GET", "/get")
     r1 = conn.getresponse()
 
-    response = HttpClientTransportResponse(request, r1)
+    response = create_transport_response(http_response, request, r1)
+    if is_rest(http_response):
+        response.read()
 
     # Don't assume too much in those assert, since we reach a real server
     assert response.internal_response is r1
@@ -621,8 +649,8 @@ def test_multipart_send_with_combination_changeset_middle(http_request):
     )
 
 
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_multipart_receive(http_request):
+@pytest.mark.parametrize("http_request,mock_response", request_and_responses_product(MOCK_RESPONSES))
+def test_multipart_receive(http_request, mock_response):
 
     class ResponsePolicy(object):
         def on_response(self, request, response):
@@ -666,7 +694,7 @@ def test_multipart_receive(http_request):
         "--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed--"
     )
 
-    response = MockResponse(
+    response = mock_response(
         request,
         body_as_str.encode('ascii'),
         "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
@@ -684,22 +712,22 @@ def test_multipart_receive(http_request):
     assert res1.status_code == 404
     assert res1.headers['x-ms-fun'] == 'true'
 
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_raise_for_status_bad_response(http_request):
-    response = MockResponse(request=None, body=None, content_type=None)
+@pytest.mark.parametrize("mock_response", MOCK_RESPONSES)
+def test_raise_for_status_bad_response(mock_response):
+    response = mock_response(request=None, body=None, content_type=None)
     response.status_code = 400
     with pytest.raises(HttpResponseError):
         response.raise_for_status()
 
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_raise_for_status_good_response(http_request):
-    response = MockResponse(request=None, body=None, content_type=None)
+@pytest.mark.parametrize("mock_response", MOCK_RESPONSES)
+def test_raise_for_status_good_response(mock_response):
+    response = mock_response(request=None, body=None, content_type=None)
     response.status_code = 200
     response.raise_for_status()
 
 
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_multipart_receive_with_one_changeset(http_request):
+@pytest.mark.parametrize("http_request,mock_response", request_and_responses_product(MOCK_RESPONSES))
+def test_multipart_receive_with_one_changeset(http_request, mock_response):
 
     changeset = http_request(None, None)
     changeset.set_multipart_mixed(
@@ -739,7 +767,7 @@ def test_multipart_receive_with_one_changeset(http_request):
         b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed--\r\n'
     )
 
-    response = MockResponse(
+    response = mock_response(
         request,
         body_as_bytes,
         "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
@@ -754,8 +782,8 @@ def test_multipart_receive_with_one_changeset(http_request):
     assert res0.status_code == 202
 
 
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_multipart_receive_with_multiple_changesets(http_request):
+@pytest.mark.parametrize("http_request,mock_response", request_and_responses_product(MOCK_RESPONSES))
+def test_multipart_receive_with_multiple_changesets(http_request, mock_response):
 
     changeset1 = http_request(None, None)
     changeset1.set_multipart_mixed(
@@ -824,7 +852,7 @@ def test_multipart_receive_with_multiple_changesets(http_request):
         b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed--\r\n'
     )
 
-    response = MockResponse(
+    response = mock_response(
         request,
         body_as_bytes,
         "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
@@ -840,8 +868,8 @@ def test_multipart_receive_with_multiple_changesets(http_request):
     assert parts[3].status_code == 409
 
 
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_multipart_receive_with_combination_changeset_first(http_request):
+@pytest.mark.parametrize("http_request,mock_response", request_and_responses_product(MOCK_RESPONSES))
+def test_multipart_receive_with_combination_changeset_first(http_request, mock_response):
 
     changeset = http_request(None, None)
     changeset.set_multipart_mixed(
@@ -890,7 +918,7 @@ def test_multipart_receive_with_combination_changeset_first(http_request):
         b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed--\r\n'
     )
 
-    response = MockResponse(
+    response = mock_response(
         request,
         body_as_bytes,
         "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
@@ -905,8 +933,8 @@ def test_multipart_receive_with_combination_changeset_first(http_request):
     assert parts[2].status_code == 404
 
 
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_multipart_receive_with_combination_changeset_middle(http_request):
+@pytest.mark.parametrize("http_request,mock_response", request_and_responses_product(MOCK_RESPONSES))
+def test_multipart_receive_with_combination_changeset_middle(http_request, mock_response):
 
     changeset = http_request(None, None)
     changeset.set_multipart_mixed(http_request("DELETE", "/container1/blob1"))
@@ -956,7 +984,7 @@ def test_multipart_receive_with_combination_changeset_middle(http_request):
         b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed--\r\n'
     )
 
-    response = MockResponse(
+    response = mock_response(
         request,
         body_as_bytes,
         "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
@@ -971,8 +999,8 @@ def test_multipart_receive_with_combination_changeset_middle(http_request):
     assert parts[2].status_code == 404
 
 
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_multipart_receive_with_combination_changeset_last(http_request):
+@pytest.mark.parametrize("http_request,mock_response", request_and_responses_product(MOCK_RESPONSES))
+def test_multipart_receive_with_combination_changeset_last(http_request, mock_response):
 
     changeset = http_request(None, None)
     changeset.set_multipart_mixed(
@@ -1022,7 +1050,7 @@ def test_multipart_receive_with_combination_changeset_last(http_request):
         b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed--\r\n'
     )
 
-    response = MockResponse(
+    response = mock_response(
         request,
         body_as_bytes,
         "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
@@ -1037,8 +1065,8 @@ def test_multipart_receive_with_combination_changeset_last(http_request):
     assert parts[2].status_code == 404
 
 
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_multipart_receive_with_bom(http_request):
+@pytest.mark.parametrize("http_request,mock_response", request_and_responses_product(MOCK_RESPONSES))
+def test_multipart_receive_with_bom(http_request, mock_response):
 
     req0 = http_request("DELETE", "/container0/blob0")
 
@@ -1060,7 +1088,7 @@ def test_multipart_receive_with_bom(http_request):
         b"--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed--"
     )
 
-    response = MockResponse(
+    response = mock_response(
         request,
         body_as_bytes,
         "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
@@ -1074,8 +1102,8 @@ def test_multipart_receive_with_bom(http_request):
     assert res0.body().startswith(b'\xef\xbb\xbf')
 
 
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_recursive_multipart_receive(http_request):
+@pytest.mark.parametrize("http_request,mock_response", request_and_responses_product(MOCK_RESPONSES))
+def test_recursive_multipart_receive(http_request, mock_response):
     req0 = http_request("DELETE", "/container0/blob0")
     internal_req0 = http_request("DELETE", "/container0/blob0")
     req0.set_multipart_mixed(internal_req0)
@@ -1106,7 +1134,7 @@ def test_recursive_multipart_receive(http_request):
         "--batchresponse_8d5f5bcd-2cb5-44bb-91b5-e9a722e68cb6--"
     ).format(internal_body_as_str)
 
-    response = MockResponse(
+    response = mock_response(
         request,
         body_as_str.encode('ascii'),
         "multipart/mixed; boundary=batchresponse_8d5f5bcd-2cb5-44bb-91b5-e9a722e68cb6"
@@ -1171,6 +1199,6 @@ def test_conflict_timeout(caplog, port, http_request):
 def test_aiohttp_loop():
     import asyncio
     from azure.core.pipeline.transport import AioHttpTransport
-    loop = asyncio.get_event_loop()
+    loop = asyncio._get_running_loop()
     with pytest.raises(ValueError):
         transport = AioHttpTransport(loop=loop)

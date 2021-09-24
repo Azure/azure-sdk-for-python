@@ -6,7 +6,7 @@
 import json
 
 from azure.core.pipeline.transport import AsyncioRequestsTransport
-from utils import HTTP_REQUESTS
+from utils import HTTP_REQUESTS, is_rest
 import pytest
 
 
@@ -29,6 +29,8 @@ async def test_async_gen_data(port, http_request):
     async with AsyncioRequestsTransport() as transport:
         req = http_request('GET', 'http://localhost:{}/basic/anything'.format(port), data=AsyncGen())
         response = await transport.send(req)
+        if is_rest(http_request):
+            assert is_rest(response)
         assert json.loads(response.text())['data'] == "azerty"
 
 @pytest.mark.asyncio
@@ -37,4 +39,6 @@ async def test_send_data(port, http_request):
     async with AsyncioRequestsTransport() as transport:
         req = http_request('PUT', 'http://localhost:{}/basic/anything'.format(port), data=b"azerty")
         response = await transport.send(req)
+        if is_rest(http_request):
+            assert is_rest(response)
         assert json.loads(response.text())['data'] == "azerty"
