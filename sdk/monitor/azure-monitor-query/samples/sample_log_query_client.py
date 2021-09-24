@@ -21,7 +21,7 @@ query = """AppRadfequests | take 5"""
 
 # returns LogsQueryResult 
 try:
-    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(days=1))
+    response = client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(days=1))
     if response.status == LogsQueryStatus.PARTIAL:
         # handle error here
         error = response.partial_error
