@@ -136,7 +136,7 @@ class SchemaRegistryAvroSerializer(object):
         :rtype: bytes
         """
         try:
-            raw_input_schema = kwargs.get("schema")
+            raw_input_schema = kwargs.pop("schema")
         except KeyError as e:
             raise TypeError("'{}' is a required keyword.".format(e.args[0]))
         try:
