@@ -66,6 +66,7 @@ CancelAllMediaOperaionsResponsePayload = {
     }
 
 SEVERCALL_ID = "b3ba87f4-9daf-4d0b-b95a-53d955a40577"
+GROUPCALL_ID = "507ad2dc-5a40-4d85-b2d9-cf214d469638"
 
 # PlayAudio
 AUDIO_FILE_URI = "https://bot.contoso.io/audio/sample-message.wav"

@@ -13,10 +13,12 @@ from typing import TYPE_CHECKING, Any, List  # pylint: disable=unused-import
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._communication_identifier_serializer import serialize_identifier
+from .._communication_call_locator_serializer import serialize_call_locator
 from .._generated.aio._azure_communication_calling_server_service import \
     AzureCommunicationCallingServerService
 from .._generated.models import CreateCallRequest, PhoneNumberIdentifierModel
 from .._shared.models import CommunicationIdentifier
+from .._models import CallLocator
 from ._call_connection_async import CallConnection
 from ._server_call_async import ServerCall
 from .._converters import JoinCallRequestConverter
@@ -182,15 +184,15 @@ class CallingServerClient:
     @distributed_trace_async()
     async def join_call(
         self,
-        server_call_id: str,
+        call_locator: 'CallLocator',
         source: CommunicationIdentifier,
         call_options: 'JoinCallOptions',
         **kwargs: Any
     ) -> CallConnection:
-        """Join the call using server call id.
+        """Join the call using call_locator.
 
-        :param str server_call_id:
-           The server call id.
+        :param CallLocator call_locator:
+           The callLocator.
         :param CommunicationIdentifier source:
            The source identity.
         :param JoinCallOptions call_options:
@@ -198,8 +200,8 @@ class CallingServerClient:
         :returns: CallConnection for a successful join request.
         :rtype: ~azure.communication.callingserver.CallConnection
         """
-        if not server_call_id:
-            raise ValueError("server_call_id can not be None")
+        if not call_locator:
+            raise ValueError("call_locator can not be None")
 
         if not source:
             raise ValueError("source can not be None")
@@ -207,10 +209,13 @@ class CallingServerClient:
         if not call_options:
             raise ValueError("call_options can not be None")
 
-        join_call_request = JoinCallRequestConverter.convert(serialize_identifier(source), call_options)
+        join_call_request = JoinCallRequestConverter.convert(
+            serialize_call_locator(call_locator),
+            serialize_identifier(source),
+            call_options
+            )
 
         join_call_response = await self._server_call_client.join_call(
-            server_call_id=server_call_id,
             call_request=join_call_request,
             **kwargs
         )

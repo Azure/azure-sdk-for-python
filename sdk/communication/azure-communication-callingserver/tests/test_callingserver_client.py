@@ -9,8 +9,18 @@ import utils._test_constants as _test_constants
 
 from typing import List
 from parameterized import parameterized
-from azure.communication.callingserver import (CreateCallOptions, MediaType,
-    EventSubscriptionType, JoinCallOptions, CommunicationIdentifier, CommunicationUserIdentifier, PhoneNumberIdentifier)
+from azure.communication.callingserver import (
+    CreateCallOptions,
+    MediaType,
+    EventSubscriptionType,
+    JoinCallOptions,
+    CommunicationIdentifier,
+    CommunicationUserIdentifier,
+    PhoneNumberIdentifier,
+    CallLocator,
+    GroupCallLocator,
+    ServerCallLocator
+    )
 
 def data_source_test_create_connection():
     options = CreateCallOptions(
@@ -48,14 +58,29 @@ def data_source_test_join_call():
     parameters = []
     parameters.append((
         _test_constants.ClientType_ConnectionString,
-        _test_constants.SEVERCALL_ID,
+        ServerCallLocator(_test_constants.SEVERCALL_ID),
         CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
         options,
         ))
 
     parameters.append((
         _test_constants.ClientType_ManagedIdentity,
-        _test_constants.SEVERCALL_ID,
+        ServerCallLocator(_test_constants.SEVERCALL_ID),
+        CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
+        options,
+        True,
+        ))
+
+    parameters.append((
+        _test_constants.ClientType_ConnectionString,
+        GroupCallLocator(_test_constants.GROUPCALL_ID),
+        CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
+        options,
+        ))
+
+    parameters.append((
+        _test_constants.ClientType_ManagedIdentity,
+        GroupCallLocator(_test_constants.GROUPCALL_ID),
         CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
         options,
         True,
@@ -112,7 +137,7 @@ class TestCallingServerClient(unittest.TestCase):
     def test_join_call_succeed(
         self,
         test_name, # type: str
-        servercall_id, # type: str
+        call_locator, # type: CallLocator
         source_user, # type: CommunicationIdentifier
         options, # type: JoinCallOptions
         use_managed_identity = False # type: bool
@@ -125,7 +150,7 @@ class TestCallingServerClient(unittest.TestCase):
             )
 
         call_connection = calling_server_client.join_call(
-            servercall_id,
+            call_locator,
             source_user,
             options
             )
@@ -136,7 +161,7 @@ class TestCallingServerClient(unittest.TestCase):
     def test_join_call_failed(
         self,
         test_name, # type: str
-        servercall_id, # type: str
+        call_locator, # type: CallLocator
         source_user, # type: CommunicationIdentifier
         options, # type: JoinCallOptions
         use_managed_identity = False # type: bool
@@ -151,7 +176,7 @@ class TestCallingServerClient(unittest.TestCase):
         raised = False
         try:
             calling_server_client.join_call(
-                servercall_id,
+                call_locator,
                 source_user,
                 options
                 )

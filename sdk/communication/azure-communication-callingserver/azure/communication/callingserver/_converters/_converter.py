@@ -16,22 +16,27 @@ from .._generated.models import (
     CancelAllMediaOperationsRequest,
     CancelMediaOperationRequest,
     CancelParticipantMediaOperationRequest,
-    PhoneNumberIdentifierModel
+    PhoneNumberIdentifierModel,
+    CallLocatorModel
     )
 
 class JoinCallRequestConverter(object):
     @staticmethod
     def convert(
+        call_locator, # type: CallLocatorModel
         source, # type: CommunicationIdentifierModel
         join_call_options # type: JoinCallOptions
         ): # type: (...) -> JoinCallRequest
 
+        if not call_locator:
+            raise ValueError("call_locator can not be None")
         if not source:
             raise ValueError("source can not be None")
         if not join_call_options:
             raise ValueError("join_call_options can not be None")
 
         return JoinCallRequest(
+            call_locator=call_locator,
             source=source,
             callback_uri=join_call_options.callback_uri,
             requested_media_types=join_call_options.requested_media_types,

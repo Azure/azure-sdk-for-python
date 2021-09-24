@@ -9,8 +9,18 @@ import utils._test_constants as _test_constants
 
 from typing import List
 from parameterized import parameterized
-from azure.communication.callingserver import (CreateCallOptions, MediaType,
-    EventSubscriptionType, JoinCallOptions, CommunicationIdentifier, CommunicationUserIdentifier, PhoneNumberIdentifier)
+from azure.communication.callingserver import (
+    CreateCallOptions,
+    MediaType,
+    EventSubscriptionType,
+    JoinCallOptions,
+    CommunicationIdentifier,
+    CommunicationUserIdentifier,
+    PhoneNumberIdentifier,
+    CallLocator,
+    GroupCallLocator,
+    ServerCallLocator
+    )
 try:
     from unittest.mock import Mock, patch
 except ImportError:  # python < 3.3
@@ -53,21 +63,35 @@ def data_source_test_join_call():
     parameters = []
     parameters.append((
         _test_constants.ClientType_ConnectionString,
-        _test_constants.SEVERCALL_ID,
+        ServerCallLocator(_test_constants.SEVERCALL_ID),
         CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
         options,
         ))
 
     parameters.append((
         _test_constants.ClientType_ManagedIdentity,
-        _test_constants.SEVERCALL_ID,
+        ServerCallLocator(_test_constants.SEVERCALL_ID),
+        CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
+        options,
+        True,
+        ))
+
+    parameters.append((
+        _test_constants.ClientType_ConnectionString,
+        GroupCallLocator(_test_constants.GROUPCALL_ID),
+        CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
+        options,
+        ))
+
+    parameters.append((
+        _test_constants.ClientType_ManagedIdentity,
+        GroupCallLocator(_test_constants.GROUPCALL_ID),
         CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
         options,
         True,
         ))
 
     return parameters
-
 
 @parameterized.expand(data_source_test_create_connection())
 @pytest.mark.asyncio
@@ -117,7 +141,7 @@ async def test_create_connection_failed(
 @pytest.mark.asyncio
 async def test_join_call_succeed(
     test_name, # type: str
-    servercall_id, # type: str
+    call_locator, # type: CallLocator
     source_user, # type: CommunicationIdentifier
     options, # type: JoinCallOptions
     use_managed_identity = False # type: bool
@@ -130,7 +154,7 @@ async def test_join_call_succeed(
         )
 
     call_connection = await calling_server_client.join_call(
-        servercall_id,
+        call_locator,
         source_user,
         options
         )
@@ -141,7 +165,7 @@ async def test_join_call_succeed(
 @pytest.mark.asyncio
 async def test_join_call_failed(
     test_name, # type: str
-    servercall_id, # type: str
+    call_locator, # type: CallLocator
     source_user, # type: CommunicationIdentifier
     options, # type: JoinCallOptions
     use_managed_identity = False # type: bool
@@ -156,7 +180,7 @@ async def test_join_call_failed(
     raised = False
     try:
         await calling_server_client.join_call(
-            servercall_id,
+            call_locator,
             source_user,
             options
             )

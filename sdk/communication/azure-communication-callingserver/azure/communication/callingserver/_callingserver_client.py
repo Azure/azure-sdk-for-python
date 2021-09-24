@@ -10,10 +10,12 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._call_connection import CallConnection
 from ._communication_identifier_serializer import serialize_identifier
+from ._communication_call_locator_serializer import serialize_call_locator
 from ._converters import JoinCallRequestConverter
 from ._generated._azure_communication_calling_server_service import \
     AzureCommunicationCallingServerService
 from ._generated.models import CreateCallRequest, PhoneNumberIdentifierModel
+from ._models import CallLocator
 from ._server_call import ServerCall
 from ._shared.models import CommunicationIdentifier
 from ._shared.utils import get_authentication_policy, parse_connection_str
@@ -21,7 +23,6 @@ from ._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-
     from ._models import CreateCallOptions, JoinCallOptions
 
 class CallingServerClient(object):
@@ -175,15 +176,15 @@ class CallingServerClient(object):
     @distributed_trace()
     def join_call(
         self,
-        server_call_id,  # type: str
+        call_locator,  # type: CallLocator
         source,  # type: CommunicationIdentifier
         call_options,  # type: JoinCallOptions
         **kwargs  # type: Any
     ):  # type: (...) -> CallConnection
-        """Join the call using server call id.
+        """Join the call using call_locator.
 
-        :param str server_call_id:
-           The server call id.
+        :param CallLocator call_locator:
+           The callLocator.
         :param CommunicationIdentifier targets:
            The source identity.
         :param JoinCallOptions options:
@@ -191,8 +192,8 @@ class CallingServerClient(object):
         :returns: CallConnection for a successful join request.
         :rtype: ~azure.communication.callingserver.CallConnection
         """
-        if not server_call_id:
-            raise ValueError("server_call_id can not be None")
+        if not call_locator:
+            raise ValueError("call_locator can not be None")
 
         if not source:
             raise ValueError("source can not be None")
@@ -200,10 +201,13 @@ class CallingServerClient(object):
         if not call_options:
             raise ValueError("call_options can not be None")
 
-        join_call_request = JoinCallRequestConverter.convert(serialize_identifier(source), call_options)
+        join_call_request = JoinCallRequestConverter.convert(
+            serialize_call_locator(call_locator),
+            serialize_identifier(source),
+            call_options
+            )
 
         join_call_response = self._server_call_client.join_call(
-            server_call_id=server_call_id,
             call_request=join_call_request,
             **kwargs
         )

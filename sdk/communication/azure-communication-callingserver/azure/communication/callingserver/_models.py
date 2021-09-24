@@ -4,8 +4,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Any  # pylint: disable=unused-import
-
+from typing import List, Mapping, Optional, Union, Any  # pylint: disable=unused-import
+from enum import Enum, EnumMeta
+from six import with_metaclass
 from ._generated.models import EventSubscriptionType, MediaType
 from ._shared.models import PhoneNumberIdentifier
 
@@ -13,6 +14,84 @@ try:
     from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse # type: ignore
+
+try:
+    from typing import Protocol, TypedDict
+except ImportError:
+    from typing_extensions import Protocol, TypedDict
+from azure.core import CaseInsensitiveEnumMeta
+
+class CallLocatorKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Call Locator Kind."""
+
+    GROUP_CALL_LOCATOR = "group_call_locator"
+    SERVER_CALL_LOCATOR = "server_call_locator"
+
+class CallLocator(object):
+    """Call Locator.
+
+    :ivar kind: The type of locator.
+    :vartype kind: str or CallLocatorKind
+    :ivar Mapping[str, Any] properties: The properties of the locator.
+    """
+    kind = None  # type: Optional[Union[CallLocatorKind, str]]
+    properties = {}  # type: Mapping[str, Any]
+
+GroupCallProperties = TypedDict(
+    'GroupCallProperties',
+    id=str
+)
+
+class GroupCallLocator(CallLocator):
+    """The group call locator.
+
+    :ivar kind: The type of locator.
+    :vartype kind: str or CallLocatorKind
+    :ivar Mapping[str, Any] properties: The properties of the locator.
+     The keys in this mapping include:
+        - `id`(str): ID of the Call.
+
+    :param str id: ID of the Call.
+
+    :ivar id: Required. The group call id.
+    :type id: str
+    """
+    kind = CallLocatorKind.GROUP_CALL_LOCATOR
+
+    def __init__(self, id):
+        # type: (str) -> None
+        if not id:
+            raise ValueError("id can not be None or empty")
+
+        self.properties = GroupCallProperties(id=id)
+
+ServerCallProperties = TypedDict(
+    'ServerCallProperties',
+    id=str
+)
+
+class ServerCallLocator(CallLocator):
+    """The server call locator.
+
+    :ivar kind: The type of locator.
+    :vartype kind: str or CallLocatorKind
+    :ivar Mapping[str, Any] properties: The properties of the locator.
+     The keys in this mapping include:
+        - `id`(str): ID of the Call.
+
+    :param str id: ID of the Call.
+
+    :ivar id: Required. The server call id.
+    :type id: str
+    """
+    kind = CallLocatorKind.SERVER_CALL_LOCATOR
+
+    def __init__(self, id):
+        # type: (str) -> None
+        if not id:
+            raise ValueError("id can not be None or empty")
+
+        self.properties = ServerCallProperties(id=id)
 
 class CreateCallOptions(object):
     """The options for creating a call.
