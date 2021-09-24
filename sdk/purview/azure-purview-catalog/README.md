@@ -73,20 +73,14 @@ The following section shows you how to initialize and authenticate your client, 
 ```python
 from azure.purview.catalog import PurviewCatalogClient
 from azure.identity import DefaultAzureCredential
-from azure.purview.catalog.rest import types
 from azure.core.exceptions import HttpResponseError
 
 credential = DefaultAzureCredential()
 client = PurviewCatalogClient(endpoint="https://<my-account-name>.catalog.purview.azure.com", credential=credential)
-
-request = types.build_get_all_type_definitions_request()
-
-response = client.send_request(request)
 try:
-    response.raise_for_status()
-    json_response = response.json()
+    response = client.types.get_all_type_definitions()
     # print out all of your entity definitions
-    print(json_response['entityDefs'])
+    print(response['entityDefs'])
 
 except HttpResponseError as e:
     print(e)
@@ -133,7 +127,7 @@ Similarly, `logging_enable` can enable detailed logging for a single `send_reque
 even when it isn't enabled for the client:
 
 ```python
-result = client.send_request(request, logging_enable=True)
+result = client.types.get_all_type_definitions(logging_enable=True)
 ```
 
 ## Next steps
