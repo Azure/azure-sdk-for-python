@@ -54,7 +54,7 @@ class SchemaProperties(object):
     ):
         # type: (Any) -> None
         self.id = kwargs.pop('id')
-        self.format = kwargs.get('format')
+        self.format = kwargs.pop('format')
         self.version = kwargs.pop('version')
 
 
