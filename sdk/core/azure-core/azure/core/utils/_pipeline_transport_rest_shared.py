@@ -304,3 +304,22 @@ def _format_data_helper(data):
             pass
         return (data_name, data, "application/octet-stream")
     return (None, cast(str, data))
+
+def _aiohttp_body_helper(response):
+    if response._content is None:
+        raise ValueError("Body is not available. Call async method load_body, or do your call with stream=False.")
+    if not response._decompress:
+        return response._content
+    enc = response.headers.get('Content-Encoding')
+    if not enc:
+        return response._content
+    enc = enc.lower()
+    if enc in ("gzip", "deflate"):
+        if response._decompressed_content:
+            return response._decompressed_content
+        import zlib
+        zlib_mode = 16 + zlib.MAX_WBITS if enc == "gzip" else zlib.MAX_WBITS
+        decompressor = zlib.decompressobj(wbits=zlib_mode)
+        response._decompressed_content = decompressor.decompress(response._content)
+        return response._decompressed_content
+    return response._content

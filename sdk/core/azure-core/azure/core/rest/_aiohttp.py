@@ -30,7 +30,7 @@ from typing import AsyncIterator
 from multidict import CIMultiDict
 from ._http_response_impl_async import AsyncHttpResponseImpl, AsyncHttpResponseBackcompatMixin
 from ..pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
-from ..utils._pipeline_transport_rest_shared import _pad_attr_name
+from ..utils._pipeline_transport_rest_shared import _pad_attr_name, _aiohttp_body_helper
 
 class _ItemsView(collections.abc.ItemsView):
     def __init__(self, ref):
@@ -117,6 +117,16 @@ class _CIMultiDict(CIMultiDict):
 
 class _RestAioHttpTransportResponseBackcompatMixin(AsyncHttpResponseBackcompatMixin):
 
+    def body(self) -> bytes:
+        """Return the whole body as bytes in memory.
+
+        Have to modify the default behavior here. In AioHttp, we do decompression
+        when accessing the body method. The behavior here is the same as if the
+        caller did an async read of the response first. But for backcompat reasons,
+        we need to support this decompression within the synchronous body method.
+        """
+        return _aiohttp_body_helper(self)
+
     async def _load_body(self) -> None:
         """Load in memory the body, so it could be accessible from sync methods."""
         self._content = await self.read()  # type: ignore
@@ -146,6 +156,7 @@ class RestAioHttpTransportResponse(AsyncHttpResponseImpl, _RestAioHttpTransportR
             **kwargs
         )
         self._decompress = decompress
+        self._decompressed_content = None
 
     def __getstate__(self):
         state = self.__dict__.copy()

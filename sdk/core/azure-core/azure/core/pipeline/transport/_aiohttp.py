@@ -46,6 +46,7 @@ from ._base_async import (
     AsyncHttpTransport,
     AsyncHttpResponse,
     _ResponseStopIteration)
+from ...utils._pipeline_transport_rest_shared import _aiohttp_body_helper
 from .._tools import is_rest as _is_rest
 from .._tools_async import handle_no_stream_rest_response as _handle_no_stream_rest_response
 if TYPE_CHECKING:
@@ -204,7 +205,13 @@ class AioHttpTransport(AsyncHttpTransport):
                     decompress=not auto_decompress
                 )
                 if not stream_response:
-                    await _handle_no_stream_rest_response(response)
+                    try:
+                        # load_body instead of read()
+                        await response.load_body()
+                        await response.close()
+                    except Exception as exc:
+                        await response.close()
+                        raise exc
             else:
                 response = AioHttpTransportResponse(request, result,
                                                     self.connection_config.data_block_size,
@@ -288,30 +295,14 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         self.headers = CIMultiDict(aiohttp_response.headers)
         self.reason = aiohttp_response.reason
         self.content_type = aiohttp_response.headers.get('content-type')
-        self._body = None
-        self._decompressed_body = None
+        self._content = None
+        self._decompressed_content = None
         self._decompress = decompress
 
     def body(self) -> bytes:
         """Return the whole body as bytes in memory.
         """
-        if self._body is None:
-            raise ValueError("Body is not available. Call async method load_body, or do your call with stream=False.")
-        if not self._decompress:
-            return self._body
-        enc = self.headers.get('Content-Encoding')
-        if not enc:
-            return self._body
-        enc = enc.lower()
-        if enc in ("gzip", "deflate"):
-            if self._decompressed_body:
-                return self._decompressed_body
-            import zlib
-            zlib_mode = 16 + zlib.MAX_WBITS if enc == "gzip" else zlib.MAX_WBITS
-            decompressor = zlib.decompressobj(wbits=zlib_mode)
-            self._decompressed_body = decompressor.decompress(self._body)
-            return self._decompressed_body
-        return self._body
+        return _aiohttp_body_helper(self)
 
     def text(self, encoding: Optional[str] = None) -> str:
         """Return the whole body as a string.
@@ -320,7 +311,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
 
         :param str encoding: The encoding to apply.
         """
-        # super().text detects charset based on self._body() which is compressed
+        # super().text detects charset based on self._content() which is compressed
         # implement the decoding explicitly here
         body = self.body()
 
@@ -353,7 +344,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
 
     async def load_body(self) -> None:
         """Load in memory the body, so it could be accessible from sync methods."""
-        self._body = await self.internal_response.read()
+        self._content = await self.internal_response.read()
 
     def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
