@@ -56,7 +56,7 @@ class MetricsQueryClient(object):
         self._definitions_op = self._client.metric_definitions
 
     @distributed_trace
-    def query(self, resource_uri, metric_names, **kwargs):
+    def query_resource(self, resource_uri, metric_names, **kwargs):
         # type: (str, list, Optional[timedelta], Any) -> MetricsResult
         """Lists the metric values for a resource.
 

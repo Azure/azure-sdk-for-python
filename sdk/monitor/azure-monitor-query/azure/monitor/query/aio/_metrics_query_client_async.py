@@ -48,7 +48,7 @@ class MetricsQueryClient(object):
         self._definitions_op = self._client.metric_definitions
 
     @distributed_trace_async
-    async def query(
+    async def query_resource(
         self, resource_uri: str, metric_names: List, **kwargs: Any
     ) -> MetricsResult:
         """Lists the metric values for a resource.
