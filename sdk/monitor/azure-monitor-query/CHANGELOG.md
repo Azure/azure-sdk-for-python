@@ -5,7 +5,7 @@
 ### Features Added
 
 - Added `LogsQueryPartialResult` and `LogsQueryError` to handle errors.
-- Added and `status` attributes to `LogsQueryResult`.
+- Added `status` attribute to `LogsQueryResult`.
 - Added a new `LogsTableRow` type that represents a single row in a table.
 
 ### Breaking Changes

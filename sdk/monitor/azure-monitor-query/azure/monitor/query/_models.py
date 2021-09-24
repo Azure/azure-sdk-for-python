@@ -214,7 +214,7 @@ class LogsQueryResult(object):
     :ivar visualization: This will include a visualization property in the response that specifies the type of
      visualization selected by the query and any properties for that visualization.
     :vartype visualization: object
-    :ivar status: The status of the resuly.
+    :ivar status: The status of the result.
      Always 'Success' for an instance of a LogsQueryResult.
     :vartype status: ~azure.monitor.query.LogsQueryStatus
     """
@@ -576,8 +576,7 @@ class LogsQueryPartialResult(object):
     :vartype visualization: object
     :ivar partial_error: The partial errror info
     :vartype partial_error: ~azure.monitor.query.LogsQueryError
-    :ivar status: The status of the result. Always 'partial' for LogsQueryPartialResult
-     Always 'PartialError' for an instance of a LogsQueryPartialResult.
+    :ivar status: The status of the result. Always 'PartialError' for an instance of a LogsQueryPartialResult.
     :vartype status: ~azure.monitor.query.LogsQueryStatus
     """
 

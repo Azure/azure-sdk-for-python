@@ -17,7 +17,7 @@ class LogsQueryError(object):
     :ivar message: A human readable error message.
     :vartype message: str
     :ivar status: status for error item when iterating over list of
-        results. Always Failuere for an instance of a LogsQueryError.
+        results. Always "Failure" for an instance of a LogsQueryError.
     :vartype status: ~azure.monitor.query.LogsQueryStatus
     """
 
