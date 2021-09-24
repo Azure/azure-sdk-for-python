@@ -4,7 +4,7 @@
 from datetime import datetime, timedelta
 import os
 import pandas as pd
-from azure.monitor.query import LogsQueryClient, LogsBatchQuery
+from azure.monitor.query import LogsQueryClient, LogsBatchQuery, LogsQueryStatus, LogsQueryPartialResult
 from azure.identity import DefaultAzureCredential
 
 
@@ -33,17 +33,23 @@ requests = [
         include_statistics=True
     ),
 ]
-responses = client.query_batch(requests, allow_partial_errors=False)
+results = client.query_batch(requests)
 
-for response in responses:
-    if not response.is_error:
-        table = response.tables[0]
+for res in results:
+    if res.status == LogsQueryStatus.FAILURE:
+        # this will be a LogsQueryError
+        print(res.message)
+    elif res.status == LogsQueryStatus.PARTIAL:
+        ## this will be a LogsQueryPartialResult
+        print(res.partial_error.message)
+        table = res.tables[0]
         df = pd.DataFrame(table.rows, columns=table.columns)
         print(df)
-        print("\n\n-------------------------\n\n")
-    else:
-        error = response
-        print(error.message)
+    elif res.status == LogsQueryStatus.SUCCESS:
+        ## this will be a LogsQueryResult
+        table = res.tables[0]
+        df = pd.DataFrame(table.rows, columns=table.columns)
+        print(df)
 
 
 # [END send_query_batch]
