@@ -11,9 +11,11 @@
 import io
 import sys
 import pytest
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.rest._requests_basic import RestRequestsTransportResponse
 from azure.core.exceptions import HttpResponseError
 import xml.etree.ElementTree as ET
+from utils import readonly_checks
 
 @pytest.fixture
 def send_request(client):
@@ -311,3 +313,28 @@ def test_text_and_encoding(send_request):
     # assert latin-1 changes text decoding without changing encoding property
     assert response.text("latin-1") == u'ð\x9f\x91©' == response.content.decode("latin-1")
     assert response.encoding == "utf-16"
+
+def test_passing_encoding_to_text(send_request):
+    response = send_request(
+        request=HttpRequest("GET", "/encoding/emoji"),
+    )
+    assert response.content == u"👩".encode("utf-8")
+    assert response.text() == u"👩"
+
+    # pass in different encoding
+    assert response.text("latin-1") == u'ð\x9f\x91©'
+
+    # check response.text() still gets us the old value
+    assert response.text() == u"👩"
+
+def test_initialize_response_abc():
+    with pytest.raises(TypeError) as ex:
+        HttpResponse()
+    assert "Can't instantiate abstract class" in str(ex)
+
+def test_readonly(send_request):
+    """Make sure everything that is readonly is readonly"""
+    response = send_request(HttpRequest("GET", "/health"))
+
+    assert isinstance(response, RestRequestsTransportResponse)
+    readonly_checks(response)
