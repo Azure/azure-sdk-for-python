@@ -30,7 +30,7 @@ except ImportError:
 
 from requests.structures import CaseInsensitiveDict
 
-from ._http_response_impl import _HttpResponseBaseImpl, HttpResponseImpl
+from ._http_response_impl import _HttpResponseBaseImpl, HttpResponseImpl, _HttpResponseBackcompatMixinBase
 from ..pipeline.transport._requests_basic import StreamDownloadGenerator
 
 class _ItemsView(collections.ItemsView):
@@ -56,7 +56,17 @@ class _CaseInsensitiveDict(CaseInsensitiveDict):
         """Return a new view of the dictionary's items."""
         return _ItemsView(self)
 
-class _RestRequestsTransportResponseBase(_HttpResponseBaseImpl):
+class _RestRequestsTransportResponseBaseMixin(_HttpResponseBackcompatMixinBase):
+
+    def _body(self):
+        # Since requests is not an async library, for backcompat, users should
+        # be able to access the body directly without loading it first (like we have to do
+        # in aiohttp). So here, we set self._content to self._internal_response.content,
+        # which is similar to read, without the async call.
+        self._content = self._internal_response.content
+        return self._content
+
+class _RestRequestsTransportResponseBase(_HttpResponseBaseImpl, _RestRequestsTransportResponseBaseMixin):
     def __init__(self, **kwargs):
         internal_response = kwargs.pop("internal_response")
         content = None

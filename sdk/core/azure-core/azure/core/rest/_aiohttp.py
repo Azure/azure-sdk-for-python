@@ -28,8 +28,9 @@ import asyncio
 from itertools import groupby
 from typing import AsyncIterator
 from multidict import CIMultiDict
-from ._http_response_impl_async import AsyncHttpResponseImpl
+from ._http_response_impl_async import AsyncHttpResponseImpl, AsyncHttpResponseBackcompatMixin
 from ..pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
+from ..utils._pipeline_transport_rest_shared import _pad_attr_name
 
 class _ItemsView(collections.abc.ItemsView):
     def __init__(self, ref):
@@ -114,7 +115,18 @@ class _CIMultiDict(CIMultiDict):
             values = ", ".join(values)
         return values or default
 
-class RestAioHttpTransportResponse(AsyncHttpResponseImpl):
+class _RestAioHttpTransportResponseBackcompatMixin(AsyncHttpResponseBackcompatMixin):
+
+    async def _load_body(self) -> None:
+        """Load in memory the body, so it could be accessible from sync methods."""
+        self._content = await self.read()  # type: ignore
+
+    def __getattr__(self, attr):
+        backcompat_attrs = ["load_body"]
+        attr = _pad_attr_name(attr, backcompat_attrs)
+        return super().__getattr__(attr)
+
+class RestAioHttpTransportResponse(AsyncHttpResponseImpl, _RestAioHttpTransportResponseBackcompatMixin):
     def __init__(
         self,
         *,

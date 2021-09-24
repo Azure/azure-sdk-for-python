@@ -23,11 +23,83 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import asyncio
+import collections.abc
 from typing import AsyncIterator
 from ._rest_py3 import AsyncHttpResponse as _AsyncHttpResponse
-from ._http_response_impl import _HttpResponseBaseImpl
+from ._http_response_impl import (
+    _HttpResponseBaseImpl, _HttpResponseBackcompatMixinBase, _RestHttpClientTransportResponseBase
+)
+from ..utils._pipeline_transport_rest_shared import _pad_attr_name
+from ..pipeline import PipelineContext, PipelineRequest, PipelineResponse
+from ..pipeline._tools_async import await_result as _await_result
 
-class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse):
+class _PartGenerator(collections.abc.AsyncIterator):
+    """Until parts is a real async iterator, wrap the sync call.
+    :param parts: An iterable of parts
+    """
+
+    def __init__(self, response) -> None:
+        self._response = response
+        self._parts = None
+
+    async def _parse_response(self):
+        responses = self._response._get_raw_parts(  # pylint: disable=protected-access
+            http_response_type=RestAsyncHttpClientTransportResponse
+        )
+        if self._response.request.multipart_mixed_info:
+            policies = self._response.request.multipart_mixed_info[
+                1
+            ]
+
+            async def parse_responses(response):
+                http_request = response.request
+                context = PipelineContext(None)
+                pipeline_request = PipelineRequest(http_request, context)
+                pipeline_response = PipelineResponse(
+                    http_request, response, context=context
+                )
+
+                for policy in policies:
+                    await _await_result(
+                        policy.on_response, pipeline_request, pipeline_response
+                    )
+
+            # Not happy to make this code asyncio specific, but that's multipart only for now
+            # If we need trio and multipart, let's reinvesitgate that later
+            await asyncio.gather(*[parse_responses(res) for res in responses])
+
+        return responses
+
+    async def __anext__(self):
+        if not self._parts:
+            self._parts = iter(await self._parse_response())
+
+        try:
+            return next(self._parts)
+        except StopIteration:
+            raise StopAsyncIteration()
+
+class AsyncHttpResponseBackcompatMixin(_HttpResponseBackcompatMixinBase):
+    def __getattr__(self, attr):
+        backcompat_attrs = ["parts"]
+        attr = _pad_attr_name(attr, backcompat_attrs)
+        return super().__getattr__(attr)
+
+    def parts(self):
+        """DEPRECATED: Assuming the content-type is multipart/mixed, will return the parts as an async iterator.
+        This is deprecated and will be removed in a later release.
+        :rtype: AsyncIterator
+        :raises ValueError: If the content is not multipart/mixed
+        """
+        if not self.content_type or not self.content_type.startswith("multipart/mixed"):
+            raise ValueError(
+                "You can't get parts if the response is not multipart/mixed"
+            )
+
+        return _PartGenerator(self)
+
+class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttpResponseBackcompatMixin):
     """AsyncHttpResponseImpl built on top of our HttpResponse protocol class.
 
     Since ~azure.core.rest.AsyncHttpResponse is an abstract base class, we need to
@@ -114,3 +186,18 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse):
         return "<AsyncHttpResponse: {} {}{}>".format(
             self.status_code, self.reason, content_type_str
         )
+
+class RestAsyncHttpClientTransportResponse(_RestHttpClientTransportResponseBase, AsyncHttpResponseImpl):
+    """Create a Rest HTTPResponse from an http.client response.
+    """
+
+    async def iter_bytes(self):
+        raise TypeError("We do not support iter_bytes for this transport response")
+
+    async def iter_raw(self):
+        raise TypeError("We do not support iter_raw for this transport response")
+
+    async def read(self):
+        if self._content is None:
+            self._content = self._internal_response.read()
+        return self._content
