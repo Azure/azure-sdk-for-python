@@ -35,7 +35,7 @@ class DeleteOperations(object):
         # [START list_repository_names]
         account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         credential = DefaultAzureCredential()
-        client = ContainerRegistryClient(account_url, credential)
+        client = ContainerRegistryClient(account_url, credential,audience="https://management.azure.com")
 
         for repository in client.list_repository_names():
             print(repository)

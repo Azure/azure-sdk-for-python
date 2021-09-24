@@ -35,7 +35,7 @@ class CreateClients(object):
 
         account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
-        client = ContainerRegistryClient(account_url, DefaultAzureCredential())
+        client = ContainerRegistryClient(account_url, DefaultAzureCredential(),audience="https://management.azure.com")
         # [END create_registry_client]
 
     def basic_sample(self):
@@ -46,7 +46,7 @@ class CreateClients(object):
         account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
         # Instantiate the client
-        client = ContainerRegistryClient(account_url, DefaultAzureCredential())
+        client = ContainerRegistryClient(account_url, DefaultAzureCredential(),audience="https://management.azure.com")
         with client:
             # Iterate through all the repositories
             for repository_name in client.list_repository_names():
