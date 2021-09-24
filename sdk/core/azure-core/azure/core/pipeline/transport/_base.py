@@ -535,7 +535,8 @@ class PipelineClientBase(object):
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = HttpRequest(method, self.format_url(url))
+        from azure.core.rest import HttpRequest as RestHttpRequest
+        request = RestHttpRequest(method, self.format_url(url))
 
         if params:
             request.format_parameters(params)
