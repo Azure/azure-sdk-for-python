@@ -147,7 +147,7 @@ class LogsBatchQuery(object):
     :param query: The Analytics query. Learn more about the `Analytics query syntax
      <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
     :type query: str
-    :keyword timespan: The timespan for which to query the data. This can be a timedelta,
+    :keyword timespan: Required. The timespan for which to query the data. This can be a timedelta,
      a timedelta and a start datetime, or a start datetime/end datetime.
     :paramtype timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
      or tuple[~datetime.datetime, ~datetime.datetime]

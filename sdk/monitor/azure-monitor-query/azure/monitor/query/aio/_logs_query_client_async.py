@@ -62,7 +62,7 @@ class LogsQueryClient(object):
         :param query: The Kusto query. Learn more about the `Kusto query syntax
          <https://docs.microsoft.com/azure/data-explorer/kusto/query/>`_.
         :type query: str
-        :param timespan: The timespan for which to query the data. This can be a timedelta,
+        :param timespan: Required. The timespan for which to query the data. This can be a timedelta,
          a timedelta and a start datetime, or a start datetime/end datetime.
         :type timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
          or tuple[~datetime.datetime, ~datetime.datetime]

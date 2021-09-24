@@ -6,6 +6,7 @@
 
 - Added `LogsQueryPartialResult` and `LogsQueryError` to handle errors.
 - Added `status` attribute to `LogsQueryResult`.
+- Added `LogsQueryStatus` Enum to describe the status of a result.
 - Added a new `LogsTableRow` type that represents a single row in a table.
 
 ### Breaking Changes
