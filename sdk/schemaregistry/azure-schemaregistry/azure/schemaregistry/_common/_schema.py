@@ -32,8 +32,8 @@ class SchemaProperties(object):
 
     :ivar id: References specific schema in registry namespace.
     :type id: str
-    :ivar serialization_type: Serialization type for the schema being stored.
-    :type serialization_type: str
+    :ivar format: Format for the schema being stored.
+    :type format: str
     :ivar version: Version of the returned schema.
     :type version: int
 
@@ -53,21 +53,17 @@ class SchemaProperties(object):
         **kwargs
     ):
         # type: (Any) -> None
-        try:
-            self.id = kwargs.pop('id')
-            self.location = kwargs.pop('location')
-            self.serialization_type = kwargs.pop('serialization_type')
-            self.version = kwargs.pop('version')
-        except KeyError as e:
-            raise TypeError("'{}' is a required keyword.".format(e.args[0]))
+        self.id = kwargs.pop('id')
+        self.format = kwargs.get('format')
+        self.version = kwargs.pop('version')
 
 
 class Schema(object):
     """
     The schema content of a schema, along with id and meta properties.
 
-    :ivar content: The content of the schema.
-    :type content: str
+    :ivar schema_definition: The content of the schema.
+    :type schema_definition: str
     :ivar properties: The properties of the schema.
     :type properties: SchemaProperties
 
@@ -87,8 +83,5 @@ class Schema(object):
         **kwargs
     ):
         # type: (Any) -> None
-        try:
-            self.content = kwargs.pop("content")
-            self.properties = kwargs.pop("properties")
-        except KeyError as e:
-            raise TypeError("'{}' is a required keyword.".format(e.args[0]))
+        self.schema_definition = kwargs.pop("schema_definition")
+        self.properties = kwargs.pop("properties")

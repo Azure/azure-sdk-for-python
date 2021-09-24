@@ -11,8 +11,9 @@
 - `register_schema` and `get_schema_properties` methods on sync and async `SchemaRegistryClient` now take in the following parameters in the given order:
   - `group_name`, which has been renamed from `schema_group`
   - `name`, which has been renamed from `schema_name`
-  - `content`, which has been renamed from `schema_content`
+  - `schema_definition`, which has been renamed from `schema_content`
   - `format`, which has been renamed from `serialization_type`
+- `endpoint` parameter in `SchemaRegistryClient` constructor has been renamed `fully_qualified_namespace`
 - `location` instance variable in `SchemaProperties` has been removed.
 - `Schema` and `SchemaProperties` no longer have positional parameters, as they will not be constructed by the user.
 
@@ -21,6 +22,7 @@
 ### Other Changes
 
 - Updated azure-core dependency to 1.17.1.
+- Removed caching support of registered schemas so requests are sent to the service to register schemas, get schema properties, and get schemas.
 
 ## 1.0.0b2 (2021-08-17)
 

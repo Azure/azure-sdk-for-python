@@ -6,35 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
-
-
-class CompoundOperationKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CompoundOperationKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """(Optional) Set to 'OR' for joining metadata using 'OR' operation."""
 
     AND_ENUM = "AND"
     OR_ENUM = "OR"
 
 
-class ErrorCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Human-readable error code."""
 
     INVALID_REQUEST = "InvalidRequest"
@@ -47,7 +31,7 @@ class ErrorCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SERVICE_UNAVAILABLE = "ServiceUnavailable"
 
 
-class InnerErrorCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class InnerErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Human-readable error code."""
 
     INVALID_REQUEST = "InvalidRequest"
@@ -58,14 +42,14 @@ class InnerErrorCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     EXTRACTION_FAILURE = "ExtractionFailure"
 
 
-class RankerType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RankerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """(Optional) Set to 'QuestionOnly' for using a question only Ranker."""
 
     DEFAULT = "Default"
     QUESTION_ONLY = "QuestionOnly"
 
 
-class StringIndexType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StringIndexType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the method used to interpret string offsets.  Defaults to Text Elements (Graphemes)
     according to Unicode v8.0.0. For additional information see
     https://aka.ms/text-analytics-offsets.

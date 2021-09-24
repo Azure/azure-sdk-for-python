@@ -70,7 +70,7 @@ class NotebookWorkspacesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-06-15"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -149,7 +149,7 @@ class NotebookWorkspacesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-06-15"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -201,7 +201,7 @@ class NotebookWorkspacesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-06-15"
+        api_version = "2021-07-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -335,7 +335,7 @@ class NotebookWorkspacesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-06-15"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -466,7 +466,7 @@ class NotebookWorkspacesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-06-15"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -517,7 +517,7 @@ class NotebookWorkspacesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-06-15"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -635,7 +635,7 @@ class NotebookWorkspacesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-06-15"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL

@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-language-questionanswering/1.0.0b2 Python/3.9.5 (macOS-11.5.2-x86_64-i386-64bit)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-05-01-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-07-15-preview
   response:
     body:
       string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Charge
@@ -29,19 +29,21 @@ interactions:
         []\n      }\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - 236db4d3-6b6a-4a54-b4a7-a85776b45d72
+      - 713fabed-16c6-4c14-858e-099bcfa4cbfc
       content-length:
       - '583'
       content-type:
       - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.QuestionAnsweringTransaction=1
       date:
-      - Thu, 15 Jul 2021 22:08:29 GMT
+      - Tue, 21 Sep 2021 21:06:36 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '1056'
+      - '153'
     status:
       code: 200
       message: OK

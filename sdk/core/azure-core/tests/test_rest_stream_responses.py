@@ -82,7 +82,6 @@ def test_iter_bytes(client):
 @pytest.mark.skip(reason="We've gotten rid of iter_text for now")
 def test_iter_text(client):
     request = HttpRequest("GET", "/basic/string")
-
     with client.send_request(request, stream=True) as response:
         content = ""
         for part in response.iter_text():

@@ -2,6 +2,8 @@
 
 ## 1.0.0b2 (unreleased)
 
+* We are now targeting service version `2021-07-15-preview`
+
 ### Breaking changes
 * The method `QuestionAnsweringClient.query_knowledgebase` has been renamed to `query_knowledge_base`.
 

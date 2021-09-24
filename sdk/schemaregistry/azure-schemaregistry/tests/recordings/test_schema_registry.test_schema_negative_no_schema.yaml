@@ -15,14 +15,14 @@ interactions:
   response:
     body:
       string: '{"Code":400,"Detail":"SubCode=40000, UnknownType:The request is invalid.
-        [MGResponseHttpError=BadRequest]. TrackingId:a563e2f1-335c-4828-9b2f-da273d9ccd8c_G28,
+        [MGResponseHttpError=BadRequest]. TrackingId:95d455ee-9f97-4982-95eb-164e5823f8dd_G7,
         SystemTracker:swathip-test-eventhubs.servicebus.windows.net:$schemagroups\/getSchemaById\/a,
-        Timestamp:2021-09-03T21:37:33"}'
+        Timestamp:2021-09-24T19:10:20"}'
     headers:
       content-type:
       - application/json
       date:
-      - Fri, 03 Sep 2021 21:37:32 GMT
+      - Fri, 24 Sep 2021 19:10:19 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -48,13 +48,13 @@ interactions:
   response:
     body:
       string: '{"Code":404,"Detail":"Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does
-        not exist. TrackingId:68ff2f6e-e922-4c97-9673-4b96c50bd517_G28, SystemTracker:swathip-test-eventhubs.servicebus.windows.net:$schemagroups\/getSchemaById\/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
-        Timestamp:2021-09-03T21:37:33"}'
+        not exist. TrackingId:b14d75ed-2e3e-41b0-860c-461dd6bb4270_G7, SystemTracker:swathip-test-eventhubs.servicebus.windows.net:$schemagroups\/getSchemaById\/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
+        Timestamp:2021-09-24T19:10:20"}'
     headers:
       content-type:
       - application/json
       date:
-      - Fri, 03 Sep 2021 21:37:33 GMT
+      - Fri, 24 Sep 2021 19:10:19 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

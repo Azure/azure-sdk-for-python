@@ -78,6 +78,14 @@ class BlobStorageEventType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MICROSOFT_STORAGE_BLOB_CREATED = "Microsoft.Storage.BlobCreated"
     MICROSOFT_STORAGE_BLOB_RENAMED = "Microsoft.Storage.BlobRenamed"
 
+class ClusterNetworkAccessFlag(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Whether or not to restrict outbound network access.  Value is optional but if passed in, must
+    be 'Enabled' or 'Disabled'
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
 class ClusterPrincipalRole(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Cluster principal role.
     """
@@ -257,6 +265,14 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     MOVING = "Moving"
+
+class PublicNetworkAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Public network access to the cluster is enabled by default. When disabled, only private
+    endpoint connection to the cluster is allowed
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 class Reason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Message providing the reason why the given name is invalid.
