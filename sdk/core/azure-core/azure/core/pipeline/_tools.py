@@ -34,8 +34,14 @@ def await_result(func, *args, **kwargs):
     return result
 
 def is_rest(obj):
-    """Return whether a request or a response is a rest request / response"""
-    return hasattr(obj, "content")
+    """Return whether a request or a response is a rest request / response.
+
+    Checking whether the response has the object content can sometimes result
+    in a ResponseNotRead error if you're checking the value on a response
+    that has not been read in yet. To get around this, we also have added
+    a check for is_stream_consumed, which is an exclusive property on our new responses.
+    """
+    return hasattr(obj, "is_stream_consumed") or hasattr(obj, "content")
 
 def handle_non_stream_rest_response(response):
     try:

@@ -27,7 +27,8 @@ import concurrent.futures
 import requests.utils
 import pytest
 from azure.core.pipeline.transport import RequestsTransport
-from utils import HTTP_REQUESTS, REQUESTS_TRANSPORT_RESPONSES, create_transport_response, is_rest
+from utils import HTTP_REQUESTS, REQUESTS_TRANSPORT_RESPONSES, create_transport_response
+from azure.core.pipeline._tools import is_rest
 
 
 def test_threading_basic_requests():

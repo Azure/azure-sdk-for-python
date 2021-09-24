@@ -32,6 +32,7 @@ from .base_polling import (
     LROBasePolling,
     _raise_if_bad_http_status_and_method,
 )
+from ..pipeline._tools import is_rest
 
 __all__ = ["AsyncLROBasePolling"]
 
@@ -119,7 +120,7 @@ class AsyncLROBasePolling(LROBasePolling):
         # Re-inject 'x-ms-client-request-id' while polling
         if "request_id" not in self._operation_config:
             self._operation_config["request_id"] = self._get_request_id()
-        if hasattr(self._initial_response.http_response, "is_closed"):
+        if is_rest(self._initial_response.http_response):
             # if I am a azure.core.rest.HttpResponse
             # want to keep making azure.core.rest calls
             from azure.core.rest import HttpRequest as RestHttpRequest

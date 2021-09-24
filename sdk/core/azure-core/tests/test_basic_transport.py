@@ -19,8 +19,9 @@ from azure.core.pipeline import Pipeline
 from azure.core.exceptions import HttpResponseError
 import logging
 import pytest
-from utils import HTTP_REQUESTS, request_and_responses_product, HTTP_CLIENT_TRANSPORT_RESPONSES, create_transport_response, is_rest
+from utils import HTTP_REQUESTS, request_and_responses_product, HTTP_CLIENT_TRANSPORT_RESPONSES, create_transport_response
 from azure.core.rest._http_response_impl import HttpResponseImpl as RestHttpResponseImpl
+from azure.core.pipeline._tools import is_rest
 
 
 class PipelineTransportMockResponse(PipelineTransportHttpResponse):

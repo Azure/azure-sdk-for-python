@@ -31,6 +31,7 @@ from typing import TYPE_CHECKING, Optional, Any, Union
 from ..exceptions import HttpResponseError, DecodeError
 from . import PollingMethod
 from ..pipeline.policies._utils import get_retry_after
+from ..pipeline._tools import is_rest
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
@@ -577,7 +578,7 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
         # Re-inject 'x-ms-client-request-id' while polling
         if "request_id" not in self._operation_config:
             self._operation_config["request_id"] = self._get_request_id()
-        if hasattr(self._initial_response.http_response, "is_closed"):
+        if is_rest(self._initial_response.http_response):
             # if I am a azure.core.rest.HttpResponse
             # want to keep making azure.core.rest calls
             from azure.core.rest import HttpRequest as RestHttpRequest

@@ -8,7 +8,7 @@ import types
 ############################## LISTS USED TO PARAMETERIZE TESTS ##############################
 from azure.core.rest import HttpRequest as RestHttpRequest
 from azure.core.pipeline.transport import HttpRequest as PipelineTransportHttpRequest
-
+from azure.core.pipeline._tools import is_rest
 HTTP_REQUESTS = [PipelineTransportHttpRequest, RestHttpRequest]
 REQUESTS_TRANSPORT_RESPONSES = []
 
@@ -60,9 +60,6 @@ def request_and_responses_product(*args):
     pipeline_transport = tuple([PipelineTransportHttpRequest]) + tuple(arg[0] for arg in args)
     rest = tuple([RestHttpRequest]) + tuple(arg[1] for arg in args)
     return [pipeline_transport, rest]
-
-def is_rest(obj):
-    return hasattr(obj, "content")
 
 def create_http_request(http_request, *args, **kwargs):
     if hasattr(http_request, "content"):

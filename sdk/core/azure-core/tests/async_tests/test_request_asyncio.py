@@ -6,7 +6,8 @@
 import json
 
 from azure.core.pipeline.transport import AsyncioRequestsTransport
-from utils import HTTP_REQUESTS, is_rest
+from utils import HTTP_REQUESTS
+from azure.core.pipeline._tools import is_rest
 import pytest
 
 

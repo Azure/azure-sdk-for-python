@@ -48,7 +48,8 @@ from azure.core.pipeline.transport import HttpTransport
 
 from azure.core.polling.base_polling import LROBasePolling
 from azure.core.pipeline.policies._utils import _FixedOffset
-from utils import request_and_responses_product, is_rest, REQUESTS_TRANSPORT_RESPONSES, create_transport_response
+from utils import request_and_responses_product, REQUESTS_TRANSPORT_RESPONSES, create_transport_response
+from azure.core.pipeline._tools import is_rest
 
 class SimpleResource:
     """An implementation of Python 3 SimpleNamespace.

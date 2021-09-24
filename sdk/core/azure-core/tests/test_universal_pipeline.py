@@ -50,7 +50,8 @@ from azure.core.pipeline.policies import (
     RetryPolicy,
     HTTPPolicy,
 )
-from utils import HTTP_REQUESTS, create_http_request, HTTP_RESPONSES, REQUESTS_TRANSPORT_RESPONSES, create_http_response, create_transport_response, is_rest
+from utils import HTTP_REQUESTS, create_http_request, HTTP_RESPONSES, REQUESTS_TRANSPORT_RESPONSES, create_http_response, create_transport_response
+from azure.core.pipeline._tools import is_rest
 
 def test_pipeline_context():
     kwargs={

@@ -33,7 +33,8 @@ import aiohttp
 import trio
 
 import pytest
-from utils import HTTP_REQUESTS, AIOHTTP_TRANSPORT_RESPONSES, create_transport_response, is_rest
+from utils import HTTP_REQUESTS, AIOHTTP_TRANSPORT_RESPONSES, create_transport_response
+from azure.core.pipeline._tools import is_rest
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)

@@ -18,7 +18,8 @@ from azure.core.pipeline import (
 from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
 )
-from utils import HTTP_RESPONSES, create_http_response, request_and_responses_product, is_rest
+from utils import HTTP_RESPONSES, create_http_response, request_and_responses_product
+from azure.core.pipeline._tools import is_rest
 
 @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
 def test_http_logger(http_request, http_response):
