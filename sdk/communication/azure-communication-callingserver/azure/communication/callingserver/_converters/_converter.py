@@ -11,6 +11,7 @@ from .._generated.models import (
     TransferCallRequest,
     CommunicationIdentifierModel,
     AddParticipantRequest,
+    RemoveParticipantRequest,
     CancelAllMediaOperationsRequest,
     CancelMediaOperationRequest,
     PhoneNumberIdentifierModel
@@ -74,6 +75,19 @@ class AddParticipantRequestConverter(object):
             participant=participant,
             operation_context=operation_context,
             callback_uri=callback_uri
+            )
+
+class RemoveParticipantRequestConverter(object):
+    @staticmethod
+    def convert(
+        identifier, # type: CommunicationIdentifierModel
+        ): # type: (...) -> RemoveParticipantRequest
+
+        if not identifier:
+            raise ValueError("identifier can not be None")
+
+        return RemoveParticipantRequest(
+            identifier=identifier
             )
 
 class CancelAllMediaOperationsConverter(object):

@@ -11,6 +11,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._communication_identifier_serializer import serialize_identifier
 from ._converters import (
     AddParticipantRequestConverter,
+    RemoveParticipantRequestConverter,
     CancelAllMediaOperationsConverter,
     TransferCallRequestConverter,
     CancelMediaOperationRequestConverter,
@@ -115,13 +116,17 @@ class CallConnection(object):
     @distributed_trace()
     def remove_participant(
             self,
-            participant_id,  # type: str
+            participant,  # type: CommunicationIdentifier
             **kwargs  # type: Any
         ): # type: (...) -> None
 
+        remove_participant_request = RemoveParticipantRequestConverter.convert(
+            identifier=serialize_identifier(participant)
+            )
+
         return self._call_connection_client.remove_participant(
             call_connection_id=self.call_connection_id,
-            participant_id=participant_id,
+            remove_participant_request=remove_participant_request,
             **kwargs
         )
 
