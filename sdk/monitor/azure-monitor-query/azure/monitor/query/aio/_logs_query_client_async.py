@@ -42,7 +42,7 @@ class LogsQueryClient(object):
         self._query_op = self._client.query
 
     @distributed_trace_async
-    async def query(
+    async def query_workspace(
         self,
         workspace_id: str,
         query: str,

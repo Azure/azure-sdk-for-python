@@ -18,7 +18,7 @@ def test_logs_single_query_fatal_exception():
     credential = _credential()
     client = LogsQueryClient(credential)
     with pytest.raises(HttpResponseError):
-        client.query('bad_workspace_id', 'AppRequests', timespan=None)
+        client.query_workspace('bad_workspace_id', 'AppRequests', timespan=None)
 
 @pytest.mark.live_test_only
 def test_logs_single_query_partial_exception():
@@ -27,7 +27,7 @@ def test_logs_single_query_partial_exception():
     query = """let Weight = 92233720368547758;
     range x from 1 to 3 step 1
     | summarize percentilesw(x, Weight * 100, 50)"""
-    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(days=1))
+    response = client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(days=1))
     assert response.__class__ == LogsQueryPartialResult
     assert response.partial_error is not None
     assert response.partial_data is not None
