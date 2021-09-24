@@ -15,6 +15,7 @@ from ._converters import (
     CancelAllMediaOperationsConverter,
     TransferCallRequestConverter,
     CancelMediaOperationRequestConverter,
+    CancelParticipantMediaOperationRequestConverter,
     PlayAudioRequestConverter,
     PlayAudioToParticipantRequestConverter
     )
@@ -164,24 +165,24 @@ class CallConnection(object):
     @distributed_trace()
     def cancel_participant_media_operation(
             self,
-            participant_id,  # type: str
+            participant,  # type: CommunicationIdentifier
             media_operation_id,  # type: str
             **kwargs  # type: Any
         ):  # type: (...) -> None
 
-        if not participant_id:
-            raise ValueError("participant_id can not be None")
+        if not participant:
+            raise ValueError("participant can not be None")
 
         if not media_operation_id:
             raise ValueError("media_operation_id can not be None")
 
-        cancel_media_operation_request = CancelMediaOperationRequestConverter.convert(
+        cancel_media_operation_request = CancelParticipantMediaOperationRequestConverter.convert(
+            identifier=serialize_identifier(participant),
             media_operation_id=media_operation_id
             )
 
         return self._call_connection_client.cancel_participant_media_operation(
             call_connection_id=self.call_connection_id,
-            participant_id=participant_id,
             cancel_media_operation_request=cancel_media_operation_request,
             **kwargs
         )

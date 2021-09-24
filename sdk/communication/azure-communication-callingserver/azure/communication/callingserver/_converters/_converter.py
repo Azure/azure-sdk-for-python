@@ -15,6 +15,7 @@ from .._generated.models import (
     RemoveParticipantRequest,
     CancelAllMediaOperationsRequest,
     CancelMediaOperationRequest,
+    CancelParticipantMediaOperationRequest,
     PhoneNumberIdentifierModel
     )
 
@@ -134,6 +135,23 @@ class CancelMediaOperationRequestConverter(object):
             raise ValueError("media_operation_id can not be None")
 
         return CancelMediaOperationRequest(
+            media_operation_id=media_operation_id
+        )
+
+class CancelParticipantMediaOperationRequestConverter(object):
+    @staticmethod
+    def convert(
+        identifier, # type: CommunicationIdentifierModel
+        media_operation_id # type: str
+        ): # type: (...) -> CancelMediaOperationRequest
+
+        if not identifier:
+            raise ValueError("identifier can not be None")
+        if not media_operation_id:
+            raise ValueError("media_operation_id can not be None")
+
+        return CancelParticipantMediaOperationRequest(
+            identifier=identifier,
             media_operation_id=media_operation_id
         )
 

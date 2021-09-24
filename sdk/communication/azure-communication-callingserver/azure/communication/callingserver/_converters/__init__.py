@@ -6,6 +6,7 @@ from ._converter import (
     RemoveParticipantRequestConverter,
     CancelAllMediaOperationsConverter,
     CancelMediaOperationRequestConverter,
+    CancelParticipantMediaOperationRequestConverter,
     TransferCallRequestConverter
     )
 
@@ -17,5 +18,6 @@ __all__ = [
     "RemoveParticipantRequestConverter",
     "CancelAllMediaOperationsConverter",
     "CancelMediaOperationRequestConverter",
+    "CancelParticipantMediaOperationRequestConverter",
     "TransferCallRequestConverter"
 ]
