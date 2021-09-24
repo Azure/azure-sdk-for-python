@@ -28,6 +28,15 @@ class ListSecretsTest(PerfStressTest):
 
     async def global_setup(self):
         """The global setup is run only once."""
+        # Validate that vault contains 0 secrets (including soft-deleted secrets), since additional secrets
+        # (including soft-deleted) impact performance.
+        async for secret in self.async_client.list_properties_of_secrets():
+            raise Exception("KeyVault %s must contain 0 secrets (including soft-deleted) before starting perf test" \
+                % self.async_client.vault_url)
+        async for secret in self.async_client.list_deleted_secrets():
+            raise Exception("KeyVault %s must contain 0 secrets (including soft-deleted) before starting perf test" \
+                % self.async_client.vault_url)
+
         await super().global_setup()
         create = [self.async_client.set_secret(name, "secret-value") for name in self.secret_names]
         await asyncio.wait(create)
