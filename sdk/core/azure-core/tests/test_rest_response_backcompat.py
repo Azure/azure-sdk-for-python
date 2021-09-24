@@ -88,7 +88,6 @@ def test_response_status_code(old_response, new_response):
 
 def test_response_headers(old_response, new_response):
     assert set(old_response.headers.keys()) == set(new_response.headers.keys()) == set(["Content-Type", "Connection", "Server", "Date"])
-    assert set(old_response.headers.values()) == set(new_response.headers.values())
     old_response.headers = {"Hello": "world!"}
     new_response.headers = {"Hello": "world!"}
     assert old_response.headers == new_response.headers == {"Hello": "world!"}
