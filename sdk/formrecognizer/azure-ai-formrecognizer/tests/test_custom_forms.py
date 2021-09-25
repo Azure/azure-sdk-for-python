@@ -8,7 +8,8 @@ import pytest
 import functools
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormTrainingClient, _models, DocumentAnalysisClient, DocumentModelAdministrationClient, AnalyzeResult
-from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult, AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
+from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer._response_handlers import prepare_form_result
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -460,7 +461,7 @@ class TestCustomForms(FormRecognizerTest):
         build_poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
         model = build_poller.result()
 
-        poller = fr_client.begin_analyze_document(model.model_id, myfile, pages=["1"])
+        poller = fr_client.begin_analyze_document(model.model_id, myfile, pages="1")
         assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
         result = poller.result()
         assert result
