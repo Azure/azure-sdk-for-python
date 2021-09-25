@@ -9,11 +9,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '224'
+      - '236'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyze
   response:
@@ -21,19 +21,19 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - dbfbad2d-c573-4648-a05e-58c80b01accd
+      - 5654b72d-bb04-489e-91da-42a94c3426fe
       content-length:
       - '0'
       date:
-      - Tue, 11 May 2021 00:34:49 GMT
+      - Thu, 23 Sep 2021 22:41:05 GMT
       operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/dbfbad2d-c573-4648-a05e-58c80b01accd
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/5654b72d-bb04-489e-91da-42a94c3426fe
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '865'
+      - '476'
     status:
       code: 202
       message: Accepted
@@ -47,28 +47,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/dbfbad2d-c573-4648-a05e-58c80b01accd
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/5654b72d-bb04-489e-91da-42a94c3426fe
   response:
     body:
-      string: '{"status": "running", "createdDateTime": "2021-05-11T00:34:49Z", "lastUpdatedDateTime":
-        "2021-05-11T00:34:49Z"}'
+      string: '{"status": "running", "createdDateTime": "2021-09-23T22:41:06Z", "lastUpdatedDateTime":
+        "2021-09-23T22:41:06Z"}'
     headers:
       apim-request-id:
-      - 30b96672-3664-413b-9ea1-c8b70c25aab8
+      - 4b221fcd-014e-4ef8-990a-8c1be9de246c
       content-length:
       - '106'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 11 May 2021 00:34:53 GMT
+      - Thu, 23 Sep 2021 22:41:11 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '12'
+      - '13'
     status:
       code: 200
       message: OK
@@ -82,13 +82,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/dbfbad2d-c573-4648-a05e-58c80b01accd
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/5654b72d-bb04-489e-91da-42a94c3426fe
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-05-11T00:34:49Z",
-        "lastUpdatedDateTime": "2021-05-11T00:34:54Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-09-23T22:41:06Z",
+        "lastUpdatedDateTime": "2021-09-23T22:41:11Z", "analyzeResult": {"version":
         "2.0.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
         "unit": "inch", "language": "en", "lines": [{"boundingBox": [3.2791, 0.7167,
         5.0584, 0.7167, 5.0584, 0.8109, 3.2791, 0.8109], "text": "STATE OF CALIFORNIA:
@@ -575,19 +575,19 @@ interactions:
         "#/readResults/0/lines/34/words/1", "#/readResults/0/lines/35/words/0"]}]}]}]}}'
     headers:
       apim-request-id:
-      - 583274a5-64b5-40f7-9810-0bf36f52ab1c
+      - d591b38a-f341-48ec-b76a-713c98f4ee19
       content-length:
       - '34566'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 11 May 2021 00:34:58 GMT
+      - Thu, 23 Sep 2021 22:41:15 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '18'
+      - '24'
     status:
       code: 200
       message: OK

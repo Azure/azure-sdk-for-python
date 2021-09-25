@@ -5,11 +5,13 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import pytest
 import re
 from azure.ai.formrecognizer._helpers import get_element_type
 from testcase import FormRecognizerTest
 
 
+@pytest.mark.skip
 class TestResolveElements(FormRecognizerTest):
 
     def test_word_reference(self):
