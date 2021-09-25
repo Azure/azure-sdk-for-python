@@ -64,7 +64,7 @@ class CallConnectionTestAsync(AsyncCommunicationTestCase):
             http_logging_policy=get_http_logging_policy()
         )
 
-    @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
+    @pytest.mark.skip(reason="Skip because the server side bits not ready")
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_play_cancel_hangup_scenario_async(self):
         # create call option
@@ -114,7 +114,7 @@ class CallConnectionTestAsync(AsyncCommunicationTestCase):
                     CallingServerLiveTestUtils.sleep_if_in_live_mode()
                     await call_connection_async.hang_up()
 
-    @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
+    @pytest.mark.skip(reason="Skip because the server side bits not ready")
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_add_remove_hangup_scenario_async(self):
         # create call option

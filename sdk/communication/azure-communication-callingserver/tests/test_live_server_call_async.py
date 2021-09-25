@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import os, uuid
+import pytest
 import utils._test_constants as CONST
 from azure.communication.callingserver.aio import CallingServerClient
 from azure.communication.callingserver import (
@@ -57,6 +58,7 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
             http_logging_policy=get_http_logging_policy()
         )
 
+    @pytest.mark.skip(reason="Skip because the server side bits not ready")
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_join_play_cancel_hangup_scenario_async(self):
         async with self.callingserver_client:
@@ -99,6 +101,7 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
                     await CallingServerLiveTestUtilsAsync.clean_up_connections_async(call_connections)
 
 
+    @pytest.mark.skip(reason="Skip because the server side bits not ready")
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_add_remove_hangup_scenario_async(self):
         async with self.callingserver_client:
