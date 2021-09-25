@@ -20,7 +20,7 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, IO, Iterable, List, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, IO, Iterable, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -30,7 +30,7 @@ class FormRecognizerClientOperationsMixin(object):
     def _analyze_document_initial(
         self,
         model_id,  # type: str
-        pages=None,  # type: Optional[List[str]]
+        pages=None,  # type: Optional[str]
         locale=None,  # type: Optional[str]
         string_index_type=None,  # type: Optional[Union[str, "_models.StringIndexType"]]
         analyze_request=None,  # type: Optional[Union[IO, "_models.AnalyzeDocumentRequest"]]
@@ -50,14 +50,14 @@ class FormRecognizerClientOperationsMixin(object):
         url = self._analyze_document_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'modelId': self._serialize.url("model_id", model_id, 'str'),
+            'modelId': self._serialize.url("model_id", model_id, 'str', pattern=r'[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         if pages is not None:
-            query_parameters['pages'] = self._serialize.query("pages", pages, '[str]', div=',')
+            query_parameters['pages'] = self._serialize.query("pages", pages, 'str', pattern=r'^(\d+(-\d+)?)(,\s*(\d+(-\d+)?))*$')
         if locale is not None:
             query_parameters['locale'] = self._serialize.query("locale", locale, 'str')
         if string_index_type is not None:
@@ -103,7 +103,7 @@ class FormRecognizerClientOperationsMixin(object):
     def begin_analyze_document(
         self,
         model_id,  # type: str
-        pages=None,  # type: Optional[List[str]]
+        pages=None,  # type: Optional[str]
         locale=None,  # type: Optional[str]
         string_index_type=None,  # type: Optional[Union[str, "_models.StringIndexType"]]
         analyze_request=None,  # type: Optional[Union[IO, "_models.AnalyzeDocumentRequest"]]
@@ -117,14 +117,14 @@ class FormRecognizerClientOperationsMixin(object):
         :param model_id: Unique model name.
         :type model_id: str
         :param pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9".
-        :type pages: list[str]
+        :type pages: str
         :param locale: Locale hint for text recognition and document analysis.  Value may contain only
          the language code (ex. "en", "fr") or BCP 47 language tag (ex. "en-US").
         :type locale: str
         :param string_index_type: Method used to compute string offset and length.
-        :type string_index_type: str or ~azure.ai.formrecognizer.v3_0_preview_1.models.StringIndexType
+        :type string_index_type: str or ~azure.ai.formrecognizer.v2021_09_30_preview.models.StringIndexType
         :param analyze_request: Analyze request parameters.
-        :type analyze_request: IO or ~azure.ai.formrecognizer.v3_0_preview_1.models.AnalyzeDocumentRequest
+        :type analyze_request: IO or ~azure.ai.formrecognizer.v2021_09_30_preview.models.AnalyzeDocumentRequest
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/octet-stream", "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -164,7 +164,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'modelId': self._serialize.url("model_id", model_id, 'str'),
+            'modelId': self._serialize.url("model_id", model_id, 'str', pattern=r'[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}'),
         }
 
         if polling is True: polling_method = LROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -198,7 +198,7 @@ class FormRecognizerClientOperationsMixin(object):
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeResultOperation, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v3_0_preview_1.models.AnalyzeResultOperation
+        :rtype: ~azure.ai.formrecognizer.v2021_09_30_preview.models.AnalyzeResultOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeResultOperation"]
@@ -213,7 +213,7 @@ class FormRecognizerClientOperationsMixin(object):
         url = self.get_analyze_document_result.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'modelId': self._serialize.url("model_id", model_id, 'str'),
+            'modelId': self._serialize.url("model_id", model_id, 'str', pattern=r'[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}'),
             'resultId': self._serialize.url("result_id", result_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -305,7 +305,7 @@ class FormRecognizerClientOperationsMixin(object):
         Builds a custom document analysis model.
 
         :param build_request: Building request parameters.
-        :type build_request: ~azure.ai.formrecognizer.v3_0_preview_1.models.BuildDocumentModelRequest
+        :type build_request: ~azure.ai.formrecognizer.v2021_09_30_preview.models.BuildDocumentModelRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling.
@@ -416,8 +416,8 @@ class FormRecognizerClientOperationsMixin(object):
 
         Creates a new model from document types of existing models.
 
-        :param compose_request:
-        :type compose_request: ~azure.ai.formrecognizer.v3_0_preview_1.models.ComposeDocumentModelRequest
+        :param compose_request: Compose request parameters.
+        :type compose_request: ~azure.ai.formrecognizer.v2021_09_30_preview.models.ComposeDocumentModelRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling.
@@ -478,11 +478,11 @@ class FormRecognizerClientOperationsMixin(object):
         Generates authorization to copy a model to this location with specified modelId and optional
         description.
 
-        :param authorize_copy_request:
-        :type authorize_copy_request: ~azure.ai.formrecognizer.v3_0_preview_1.models.AuthorizeCopyRequest
+        :param authorize_copy_request: Authorize copy request parameters.
+        :type authorize_copy_request: ~azure.ai.formrecognizer.v2021_09_30_preview.models.AuthorizeCopyRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CopyAuthorization, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v3_0_preview_1.models.CopyAuthorization
+        :rtype: ~azure.ai.formrecognizer.v2021_09_30_preview.models.CopyAuthorization
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CopyAuthorization"]
@@ -550,7 +550,7 @@ class FormRecognizerClientOperationsMixin(object):
         url = self._copy_document_model_to_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'modelId': self._serialize.url("model_id", model_id, 'str'),
+            'modelId': self._serialize.url("model_id", model_id, 'str', pattern=r'[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -596,8 +596,8 @@ class FormRecognizerClientOperationsMixin(object):
 
         :param model_id: Unique model name.
         :type model_id: str
-        :param copy_to_request:
-        :type copy_to_request: ~azure.ai.formrecognizer.v3_0_preview_1.models.CopyAuthorization
+        :param copy_to_request: Copy to request parameters.
+        :type copy_to_request: ~azure.ai.formrecognizer.v2021_09_30_preview.models.CopyAuthorization
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling.
@@ -632,7 +632,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'modelId': self._serialize.url("model_id", model_id, 'str'),
+            'modelId': self._serialize.url("model_id", model_id, 'str', pattern=r'[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}'),
         }
 
         if polling is True: polling_method = LROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -660,7 +660,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either GetOperationsResponse or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.formrecognizer.v3_0_preview_1.models.GetOperationsResponse]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.formrecognizer.v2021_09_30_preview.models.GetOperationsResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.GetOperationsResponse"]
@@ -737,7 +737,7 @@ class FormRecognizerClientOperationsMixin(object):
         :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GetOperationResponse, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v3_0_preview_1.models.GetOperationResponse
+        :rtype: ~azure.ai.formrecognizer.v2021_09_30_preview.models.GetOperationResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.GetOperationResponse"]
@@ -792,7 +792,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either GetModelsResponse or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.formrecognizer.v3_0_preview_1.models.GetModelsResponse]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.formrecognizer.v2021_09_30_preview.models.GetModelsResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.GetModelsResponse"]
@@ -869,7 +869,7 @@ class FormRecognizerClientOperationsMixin(object):
         :type model_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ModelInfo, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v3_0_preview_1.models.ModelInfo
+        :rtype: ~azure.ai.formrecognizer.v2021_09_30_preview.models.ModelInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ModelInfo"]
@@ -884,7 +884,7 @@ class FormRecognizerClientOperationsMixin(object):
         url = self.get_model.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'modelId': self._serialize.url("model_id", model_id, 'str'),
+            'modelId': self._serialize.url("model_id", model_id, 'str', pattern=r'[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -942,7 +942,7 @@ class FormRecognizerClientOperationsMixin(object):
         url = self.delete_model.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'modelId': self._serialize.url("model_id", model_id, 'str'),
+            'modelId': self._serialize.url("model_id", model_id, 'str', pattern=r'[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -979,7 +979,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GetInfoResponse, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v3_0_preview_1.models.GetInfoResponse
+        :rtype: ~azure.ai.formrecognizer.v2021_09_30_preview.models.GetInfoResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.GetInfoResponse"]
