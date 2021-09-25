@@ -5,24 +5,24 @@ interactions:
       Accept:
       - application/json
       Content-Length:
-      - '217'
+      - '229'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyze?includeTextDetails=true
   response:
     body:
       string: ''
     headers:
-      apim-request-id: dfab249e-c60f-43e5-b0cf-31faa6a02a31
+      apim-request-id: 497b99c4-327e-4a25-8fca-c25ec1f47828
       content-length: '0'
-      date: Tue, 11 May 2021 00:03:57 GMT
-      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyzeResults/dfab249e-c60f-43e5-b0cf-31faa6a02a31
+      date: Wed, 15 Sep 2021 21:40:41 GMT
+      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyzeResults/497b99c4-327e-4a25-8fca-c25ec1f47828
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '1314'
+      x-envoy-upstream-service-time: '929'
     status:
       code: 202
       message: Accepted
@@ -31,13 +31,13 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyzeResults/dfab249e-c60f-43e5-b0cf-31faa6a02a31
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyzeResults/497b99c4-327e-4a25-8fca-c25ec1f47828
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-05-11T00:03:57Z",
-        "lastUpdatedDateTime": "2021-05-11T00:03:59Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-09-15T21:40:42Z",
+        "lastUpdatedDateTime": "2021-09-15T21:40:44Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": -16.6836, "width": 4032, "height":
         3024, "unit": "pixel", "lines": [{"text": "Dr. Avery Smith", "boundingBox":
         [416, 1155, 1608, 871, 1637, 993, 443, 1268], "words": [{"text": "Dr.", "boundingBox":
@@ -162,15 +162,15 @@ interactions:
         "#/readResults/0/lines/6/words/2", "#/readResults/0/lines/6/words/3", "#/readResults/0/lines/6/words/4",
         "#/readResults/0/lines/6/words/5"]}]}}}]}}'
     headers:
-      apim-request-id: 1e6f56b3-596f-417c-9b09-39ef4f3b4634
+      apim-request-id: ef7a7f3d-9b40-4149-a78c-d2e1e4cfc2a0
       content-length: '9039'
       content-type: application/json; charset=utf-8
-      date: Tue, 11 May 2021 00:04:02 GMT
+      date: Wed, 15 Sep 2021 21:40:46 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '19'
+      x-envoy-upstream-service-time: '17'
     status:
       code: 200
       message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyzeResults/dfab249e-c60f-43e5-b0cf-31faa6a02a31
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyzeResults/497b99c4-327e-4a25-8fca-c25ec1f47828
 version: 1
