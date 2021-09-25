@@ -8,7 +8,7 @@
 # disabled unsubscriptable-object because of pylint bug referenced here:
 # https://github.com/PyCQA/pylint/issues/3882
 
-from typing import TYPE_CHECKING, Any, List  # pylint: disable=unused-import
+from typing import TYPE_CHECKING, Any, List, Optional  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -16,18 +16,30 @@ from .._communication_identifier_serializer import serialize_identifier
 from .._communication_call_locator_serializer import serialize_call_locator
 from .._generated.aio._azure_communication_calling_server_service import \
     AzureCommunicationCallingServerService
-from .._generated.models import CreateCallRequest, PhoneNumberIdentifierModel
+from .._generated.models import (
+    CreateCallRequest,
+    PhoneNumberIdentifierModel,
+    PlayAudioResult,
+    AddParticipantResult
+    )
 from .._shared.models import CommunicationIdentifier
 from .._models import CallLocator
 from ._call_connection_async import CallConnection
-from ._server_call_async import ServerCall
-from .._converters import JoinCallRequestConverter
+from .._converters import (
+    JoinCallRequestConverter,
+    PlayAudioWithCallLocatorRequestConverter,
+    PlayAudioToParticipantWithCallLocatorRequestConverter,
+    AddParticipantWithCallLocatorRequestConverter,
+    RemoveParticipantWithCallLocatorRequestConverter,
+    CancelMediaOperationWithCallLocatorRequestConverter,
+    CancelParticipantMediaOperationWithCallLocatorRequestConverter
+    )
 from .._shared.utils import get_authentication_policy, parse_connection_str
 from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-    from .._models import CreateCallOptions, JoinCallOptions
+    from .._models import CreateCallOptions, JoinCallOptions, PlayAudioOptions
 
 class CallingServerClient:
     """A client to interact with the AzureCommunicationService Calling Server.
@@ -46,11 +58,11 @@ class CallingServerClient:
             :dedent: 8
     """
     def __init__(
-            self,
-            endpoint: str,
-            credential: 'AsyncTokenCredential',
-            **kwargs: Any
-        ) -> None:
+        self,
+        endpoint: str,
+        credential: 'AsyncTokenCredential',
+        **kwargs: Any
+    ) -> None:
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
@@ -74,10 +86,10 @@ class CallingServerClient:
 
     @classmethod
     def from_connection_string(
-            cls,
-            conn_str: str,
-            **kwargs: Any
-        ) -> 'CallingServerClient':
+        cls,
+        conn_str: str,
+        **kwargs: Any
+    ) -> 'CallingServerClient':
         """Create CallingServerClient from a Connection String.
 
         :param str conn_str:
@@ -99,9 +111,9 @@ class CallingServerClient:
         return cls(endpoint, access_key, **kwargs)
 
     def get_call_connection(
-            self,
-            call_connection_id: str,
-        ) -> CallConnection:
+        self,
+        call_connection_id: str,
+    ) -> CallConnection:
         """Initializes a new instance of CallConnection.
 
         :param str call_connection_id:
@@ -113,22 +125,6 @@ class CallingServerClient:
             raise ValueError("call_connection_id can not be None")
 
         return CallConnection(call_connection_id, self._call_connection_client, self._callingserver_service_client)
-
-    def initialize_server_call(
-            self,
-            server_call_id: str
-        ) -> ServerCall:
-        """Initializes a server call.
-
-        :param str server_call_id:
-           The server call id.
-        :returns: Instance of ServerCall.
-        :rtype: ~azure.communication..callingserver.ServerCall
-        """
-        if not server_call_id:
-            raise ValueError("call_connection_id can not be None")
-
-        return ServerCall(server_call_id, self._server_call_client, self._callingserver_service_client)
 
     @distributed_trace_async()
     async def create_call_connection(
@@ -151,10 +147,8 @@ class CallingServerClient:
         """
         if not source:
             raise ValueError("source can not be None")
-
         if not targets:
             raise ValueError("targets can not be None or empty")
-
         if not options:
             raise ValueError("options can not be None")
 
@@ -202,10 +196,8 @@ class CallingServerClient:
         """
         if not call_locator:
             raise ValueError("call_locator can not be None")
-
         if not source:
             raise ValueError("source can not be None")
-
         if not call_options:
             raise ValueError("call_options can not be None")
 
@@ -224,6 +216,165 @@ class CallingServerClient:
             join_call_response.call_connection_id,
             self._call_connection_client,
             self._callingserver_service_client
+            )
+
+    @distributed_trace_async()
+    async def play_audio(
+        self,
+        call_locator: 'CallLocator',
+        audio_file_uri: str,
+        play_audio_options: 'PlayAudioOptions',
+        **kwargs: Any
+    ) -> PlayAudioResult:
+
+        if not call_locator:
+            raise ValueError("call_locator can not be None")
+        if not audio_file_uri:
+            raise ValueError("audio_file_uri can not be None")
+        if not play_audio_options:
+            raise ValueError("options can not be None")
+
+        play_audio_request = PlayAudioWithCallLocatorRequestConverter.convert(
+            serialize_call_locator(call_locator),
+            audio_file_uri,
+            play_audio_options
+            )
+
+        return await self._server_call_client.play_audio(
+            play_audio_request=play_audio_request,
+            **kwargs
+        )
+
+    @distributed_trace_async()
+    async def play_audio_to_participant(
+        self,
+        call_locator: 'CallLocator',
+        participant: 'CommunicationIdentifier',
+        audio_file_uri: str,
+        play_audio_options: 'PlayAudioOptions',
+        **kwargs: Any
+    ) -> PlayAudioResult:
+
+        if not call_locator:
+            raise ValueError("call_locator can not be None")
+        if not participant:
+            raise ValueError("participant can not be None")
+        if not audio_file_uri:
+            raise ValueError("audio_file_uri can not be None")
+        if not play_audio_options:
+            raise ValueError("play_audio_options can not be None")
+
+        play_audio_to_participant_request = PlayAudioToParticipantWithCallLocatorRequestConverter.convert(
+            serialize_call_locator(call_locator),
+            serialize_identifier(participant),
+            audio_file_uri,
+            play_audio_options
+            )
+
+        return await self._server_call_client.participant_play_audio(
+            play_audio_to_participant_request=play_audio_to_participant_request,
+            **kwargs
+        )
+
+    @distributed_trace_async()
+    async def add_participant(
+        self,
+        call_locator: 'CallLocator',
+        participant: 'CommunicationIdentifier',
+        callback_uri: str,
+        alternate_caller_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        **kwargs: Any
+    ) -> AddParticipantResult:
+
+        if not call_locator:
+            raise ValueError("call_locator can not be None")
+        if not participant:
+            raise ValueError("participant can not be None")
+
+        alternate_caller_id = (None
+            if alternate_caller_id is None
+            else PhoneNumberIdentifierModel(value=alternate_caller_id))
+
+        add_participant_with_call_locator_request = AddParticipantWithCallLocatorRequestConverter.convert(
+            serialize_call_locator(call_locator),
+            serialize_identifier(participant),
+            alternate_caller_id=alternate_caller_id,
+            operation_context=operation_context,
+            callback_uri=callback_uri
+            )
+
+        return await self._server_call_client.add_participant(
+            add_participant_with_call_locator_request=add_participant_with_call_locator_request,
+            **kwargs
+        )
+
+    @distributed_trace_async()
+    async def remove_participant(
+        self,
+        call_locator: 'CallLocator',
+        participant: 'CommunicationIdentifier',
+        **kwargs: Any
+    ) -> None:
+
+        remove_participant_with_call_locator_request = RemoveParticipantWithCallLocatorRequestConverter.convert(
+            serialize_call_locator(call_locator),
+            serialize_identifier(participant)
+            )
+
+        return await self._server_call_client.remove_participant(
+            remove_participant_with_call_locator_request=remove_participant_with_call_locator_request,
+            **kwargs
+        )
+
+    @distributed_trace_async()
+    async def cancel_media_operation(
+        self,
+        call_locator: 'CallLocator',
+        media_operation_id: str,
+        **kwargs: Any
+    ) -> None:
+
+        if not call_locator:
+            raise ValueError("call_locator can not be None")
+        if not media_operation_id:
+            raise ValueError("media_operation_id can not be None")
+
+        cancel_media_operation_request = CancelMediaOperationWithCallLocatorRequestConverter.convert(
+            serialize_call_locator(call_locator),
+            media_operation_id=media_operation_id
+            )
+
+        return await self._server_call_client.cancel_media_operation(
+            cancel_media_operation_request=cancel_media_operation_request,
+            **kwargs
+        )
+
+    @distributed_trace_async()
+    async def cancel_participant_media_operation(
+        self,
+        call_locator: 'CallLocator',
+        participant: 'CommunicationIdentifier',
+        media_operation_id: str,
+        **kwargs: Any
+    ) -> None:
+
+        if not call_locator:
+            raise ValueError("call_locator can not be None")
+        if not participant:
+            raise ValueError("participant can not be None")
+        if not media_operation_id:
+            raise ValueError("media_operation_id can not be None")
+
+        cancel_participant_media_operation_request = CancelParticipantMediaOperationWithCallLocatorRequestConverter.convert(
+            serialize_call_locator(call_locator),
+            serialize_identifier(participant),
+            media_operation_id=media_operation_id
+            )
+
+        return await self._server_call_client.cancel_participant_media_operation(
+            cancel_participant_media_operation_request=cancel_participant_media_operation_request,
+            **kwargs
             )
 
     async def close(self) -> None:

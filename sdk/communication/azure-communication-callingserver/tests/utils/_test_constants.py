@@ -44,7 +44,16 @@ CreateOrJoinCallPayload={
 # Common
 PHONE_NUMBER = "+14255550123"
 OPERATION_CONTEXT = "dummyOperationContext"
-ErrorPayload={"msg": "some error"}
+ErrorPayload={
+    "operationId": "dummyId",
+    "status": "failed",
+    "operationContext": OPERATION_CONTEXT,
+    "resultInfo": {
+        "code": 404,
+        "subcode": 404,
+        "message": "Resource not found on the server."
+        }
+    }
 ClientType_ConnectionString = "use connectionString"
 ClientType_ManagedIdentity = "use managedIdentity"
 CALLBACK_URI = "https://bot.contoso.io/callback"
@@ -58,11 +67,6 @@ CancelAllMediaOperaionsResponsePayload = {
     "operationId": "dummyId",
     "status": "completed",
     "operationContext": OPERATION_CONTEXT,
-    "resultInfo": {
-        "code": 200,
-        "subcode": 200,
-        "message": "dummyMessage"
-        }
     }
 
 SEVERCALL_ID = "b3ba87f4-9daf-4d0b-b95a-53d955a40577"
@@ -74,12 +78,7 @@ AUDIO_FILE_ID = "sampleAudioFileId"
 PlayAudioResponsePayload = {
     "operationId": "dummyId",
     "status": "running",
-    "operationContext": OPERATION_CONTEXT,
-    "resultInfo": {
-        "code": 200,
-        "subcode": 200,
-        "message": "dummyMessage"
-        }
+    "operationContext": OPERATION_CONTEXT
     }
 
 # AddParticipant

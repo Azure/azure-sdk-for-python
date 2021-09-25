@@ -23,7 +23,6 @@ from ._models import (
     GroupCallLocator,
     ServerCallLocator
     )
-from ._server_call import ServerCall
 from ._shared.models import CommunicationIdentifier, CommunicationUserIdentifier, PhoneNumberIdentifier
 
 __all__ = [
@@ -45,7 +44,6 @@ __all__ = [
     'PlayAudioOptions',
     'PlayAudioRequest',
     'PlayAudioResult',
-    'ServerCall',
     'CallLocator',
     'GroupCallLocator',
     'ServerCallLocator'

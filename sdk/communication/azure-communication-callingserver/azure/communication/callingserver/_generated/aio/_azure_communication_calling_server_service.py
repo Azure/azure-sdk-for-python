@@ -6,23 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from copy import deepcopy
+from typing import Any, Awaitable
 
 from azure.core import AsyncPipelineClient
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from msrest import Deserializer, Serializer
 
-from ._configuration import AzureCommunicationCallingServerServiceConfiguration
-from .operations import CallConnectionsOperations
-from .operations import ServerCallsOperations
 from .. import models
+from ._configuration import AzureCommunicationCallingServerServiceConfiguration
+from .operations import CallConnectionsOperations, ServerCallsOperations
 
-
-class AzureCommunicationCallingServerService(object):
-    """Azure Communication CallingServer Service.
+class AzureCommunicationCallingServerService:
+    """Azure Communication Service Call Automation APIs.
 
     :ivar call_connections: CallConnectionsOperations operations
-    :vartype call_connections: azure.communication.callingserver.aio.operations.CallConnectionsOperations
+    :vartype call_connections:
+     azure.communication.callingserver.aio.operations.CallConnectionsOperations
     :ivar server_calls: ServerCallsOperations operations
     :vartype server_calls: azure.communication.callingserver.aio.operations.ServerCallsOperations
     :param endpoint: The endpoint of the Azure Communication resource.
@@ -34,36 +34,47 @@ class AzureCommunicationCallingServerService(object):
         endpoint: str,
         **kwargs: Any
     ) -> None:
-        base_url = '{endpoint}'
+        _base_url = '{endpoint}'
         self._config = AzureCommunicationCallingServerServiceConfiguration(endpoint, **kwargs)
-        self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = AsyncPipelineClient(base_url=_base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
+        self._serialize.client_side_validation = False
+        self.call_connections = CallConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.server_calls = ServerCallsOperations(self._client, self._config, self._serialize, self._deserialize)
 
-        self.call_connections = CallConnectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.server_calls = ServerCallsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
 
-    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+    def _send_request(
+        self,
+        request: HttpRequest,
+        **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = await client._send_request(request)
+        <AsyncHttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
         """
+
+        request_copy = deepcopy(request)
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        return self._client.send_request(request_copy, **kwargs)
 
     async def close(self) -> None:
         await self._client.close()
