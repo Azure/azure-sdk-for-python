@@ -36,8 +36,8 @@ This table shows the relationship between SDK versions and supported API version
 
 > Note: Starting with version 2021-09-30-preview, a new set of clients were introduced to leverage the newest features
 > of the Form Recognizer service. Please see the [Migration Guide](TODO) for detailed instructions on how to update application
-> code from client library version 3.1.X or lower to the latest version. Additionally, see the [Changelog]() for more detailed information.
-> See the below table for the relationship of API version to supported client:
+> code from client library version 3.1.X or lower to the latest version. Additionally, see the [Changelog](TODO) for more detailed information.
+> The below table describes the relationship of each client and its supported API version(s):
 
 |API version|Supported clients
 |-|-
@@ -145,7 +145,7 @@ Use the `model_id` parameter to select the type of model for analysis.
 
 |Model ID| Features
 |-|-
-|"<custom-id>" | Text extraction, selection marks, tables, labeled fields and values from your custom documents
+|"{custom-model-id}" | Text extraction, selection marks, tables, labeled fields and values from your custom documents
 |"prebuilt-layout" | Text extraction, selection marks, tables
 |"prebuilt-document" | Text extraction, selection marks, tables, key-value pairs and entities
 |"prebuilt-invoices" | Text extraction, selection marks, tables, and pre-trained fields and values pertaining to invoices
@@ -256,8 +256,8 @@ poller = document_analysis_client.begin_analyze_document_from_url(model_id=model
 result = poller.result()
 ```
 
-### Recognize Layout
-Recognize text, selection marks, text styles, and table structures, along with their bounding box coordinates, from documents.
+### Extract Layout
+Extract text, selection marks, text styles, and table structures, along with their bounding box coordinates, from documents.
 
 ```python
 from azure.ai.formrecognizer import DocumentAnalysisClient
@@ -356,7 +356,7 @@ document_analysis_client = DocumentAnalysisClient(endpoint, credential)
 with open("<path to your receipt>", "rb") as fd:
     receipt = fd.read()
 
-poller = document_analysis_client.begin_analyze_document(receipt)
+poller = document_analysis_client.begin_analyze_document("prebuilt-receipt", receipt)
 result = poller.result()
 
 for receipt in result.documents:
@@ -376,7 +376,7 @@ You are not limited to receipts! There are a few prebuilt models to choose from,
 - Analyze business cards using the `prebuilt-businessCard` model ID (fields recognized by the service can be found [here][service_recognize_business_cards]).
 - Analyze invoices using the `prebuilt-invoice` model ID (fields recognized by the service can be found [here][service_recognize_invoice]).
 - Analyze identity documents using the `prebuilt-idDocuments` model ID (fields recognized by the service can be found [here][service_recognize_identity_documents]).
-- Analyze document with general prebuilt document model using the `prebuilt-document` model ID (document key-value pairs will be recognized by the service).
+- Analyze documents with general prebuilt document model using the `prebuilt-document` model ID (document key-value pairs will be recognized by the service).
 
 ### Build a model
 Build a custom model on your own document type. The resulting model can be used to analyze values from the types of documents it was trained on.
@@ -479,7 +479,7 @@ describes available configurations for retries, logging, transport protocols, an
 
 ### More sample code
 
-See the [sample README](TODO) for several code snippets illustrating common patterns used in the Form Recognizer Python API.
+See the [Sample README][sample_readme] for several code snippets illustrating common patterns used in the Form Recognizer Python API.
 
 ### Additional documentation
 
@@ -528,6 +528,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [service_recognize_invoice]: https://aka.ms/formrecognizer/invoicefields
 [service_recognize_identity_documents]: https://aka.ms/formrecognizer/iddocumentfields
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
+[sample_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
