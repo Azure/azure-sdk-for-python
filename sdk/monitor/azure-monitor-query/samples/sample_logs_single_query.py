@@ -1,6 +1,22 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+"""
+FILE: sample_logs_single_query.py
+DESCRIPTION:
+    This sample demonstrates authenticating the LogsQueryClient and querying a single query.
+USAGE:
+    python sample_logs_single_query.py
+    Set the environment variables with your own values before running the sample:
+    1) LOGS_WORKSPACE_ID - The first (primary) workspace ID.
 
+    In order to use the DefaultAzureCredential, the following environment variables must be set:
+    1) AZURE_CLIENT_ID - The client ID of a user-assigned managed identity.
+    2) AZURE_TENANT_ID - Tenant ID to use when authenticating a user.
+    3) AZURE_CLIENT_ID - The client secret to be used for authentication.
+
+**Note** - Although this example uses pandas to prin the response, it is totally optional and is
+not a required package for querying. Alternatively, native python can be used as well.
+"""
 import os
 import pandas as pd
 from datetime import timedelta
@@ -14,19 +30,18 @@ credential  = DefaultAzureCredential()
 client = LogsQueryClient(credential)
 # [END client_auth_with_token_cred]
 
-# Response time trend 
-# request duration over the last 12 hours. 
 # [START send_logs_query]
-query = """AppRadfequests | take 5"""
+query= """AppRequests | take 5"""
 
-# returns LogsQueryResult 
 try:
     response = client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(days=1))
     if response.status == LogsQueryStatus.PARTIAL:
-        # handle error here
         error = response.partial_error
+        data = response.partial_data
         print(error.message)
-    for table in response:
+    elif response.status == LogsQueryStatus.SUCCESS:
+        data = response.tables
+    for table in data:
         df = pd.DataFrame(data=table.rows, columns=table.columns)
         print(df)
 except HttpResponseError as err:
