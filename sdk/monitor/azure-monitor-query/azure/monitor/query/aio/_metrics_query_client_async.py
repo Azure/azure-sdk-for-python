@@ -7,7 +7,6 @@
 
 # pylint: disable=anomalous-backslash-in-string
 
-from datetime import timedelta
 from typing import TYPE_CHECKING, Any, List
 from msrest.serialization import Serializer
 
