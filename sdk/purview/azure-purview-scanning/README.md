@@ -78,14 +78,8 @@ from azure.core.exceptions import HttpResponseError
 
 credential = DefaultAzureCredential()
 client = PurviewScanningClient(endpoint="https://<my-account-name>.scan.purview.azure.com", credential=credential)
-
-request = data_sources.build_list_all_request()
-
-response = client.send_request(request)
 try:
-    response.raise_for_status()
-    json_response = response.json()
-
+    
     assert len(json_response['value']) == json_response['count']
     for value in json_response['value']:
         print(value)
