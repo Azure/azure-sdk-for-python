@@ -121,7 +121,8 @@ def _find_package_name_and_output(rest_repo, readme_link):
 def get_python_pipelines():
     python_piplines = {}
     pipeline_client = PipelinesClient(base_url='https://dev.azure.com/azure-sdk',
-                                      creds=BasicAuthentication('', os.getenv('PIPELINE_TOKEN')))
+                                      creds=BasicAuthentication(os.getenv('PIPELINE_TOKEN'), ''))
+    print("*********************", os.getenv('PIPELINE_TOKEN'))
     pipelines = pipeline_client.list_pipelines(project='internal')
     for pipeline in pipelines:
         if re.findall('^python - \w*$', pipeline.name):
