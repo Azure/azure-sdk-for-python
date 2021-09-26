@@ -122,9 +122,6 @@ def get_python_pipelines():
     python_piplines = {}
     pipeline_client = PipelinesClient(base_url='https://dev.azure.com/azure-sdk',
                                       creds=BasicAuthentication(os.getenv('PIPELINE_TOKEN'), ''))
-    print("*********************", os.getenv('PIPELINE_TOKEN'))
-    print("++++", os.getenv('PIPELINE_HEADERS'))
-    print("+++", os.getenv('USR_NAME'))
     pipelines = pipeline_client.list_pipelines(project='internal')
     for pipeline in pipelines:
         if re.findall('^python - \w*$', pipeline.name):
