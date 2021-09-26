@@ -67,7 +67,7 @@ class BasePrediction(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'project_kind': {'key': 'projectKind', 'type': 'str'},
+        'project_kind': {'key': 'projectType', 'type': 'str'},
         'top_intent': {'key': 'topIntent', 'type': 'str'},
     }
 
@@ -324,7 +324,7 @@ class DeepstackPrediction(BasePrediction):
     }
 
     _attribute_map = {
-        'project_kind': {'key': 'projectKind', 'type': 'str'},
+        'project_kind': {'key': 'projectType', 'type': 'str'},
         'top_intent': {'key': 'topIntent', 'type': 'str'},
         'intents': {'key': 'intents', 'type': '[DeepstackIntent]'},
         'entities': {'key': 'entities', 'type': '[DeepstackEntity]'},
@@ -783,7 +783,7 @@ class WorkflowPrediction(BasePrediction):
     }
 
     _attribute_map = {
-        'project_kind': {'key': 'projectKind', 'type': 'str'},
+        'project_kind': {'key': 'projectType', 'type': 'str'},
         'top_intent': {'key': 'topIntent', 'type': 'str'},
         'intents': {'key': 'intents', 'type': '{TargetIntentResult}'},
     }

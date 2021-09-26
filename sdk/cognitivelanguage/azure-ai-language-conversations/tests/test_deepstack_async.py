@@ -40,12 +40,12 @@ class DeepstackAnalysisAsyncTests(AsyncConversationTest):
         assert isinstance(result, ConversationAnalysisResult)
         assert result.query == "One california maki please."
         assert isinstance(result.prediction, DeepstackPrediction)
-        assert result.prediction.project_type == 'conversation'
+        assert result.prediction.project_kind == 'conversation'
         assert len(result.prediction.entities) > 0
-        assert len(result.prediction.classifications) > 0
+        assert len(result.prediction.intents) > 0
         assert result.prediction.top_intent == 'Order'
-        assert result.prediction.classifications[0].category == 'Order'
-        assert result.prediction.classifications[0].confidence_score > 0
+        assert result.prediction.intents[0].category == 'Order'
+        assert result.prediction.intents[0].confidence_score > 0
         assert result.prediction.entities[0].category == 'OrderItem'
         assert result.prediction.entities[0].text == 'california maki'
         assert result.prediction.entities[0].confidence_score > 0
@@ -68,12 +68,12 @@ class DeepstackAnalysisAsyncTests(AsyncConversationTest):
         assert isinstance(result, ConversationAnalysisResult)
         assert result.query == "One california maki please."
         assert isinstance(result.prediction, DeepstackPrediction)
-        assert result.prediction.project_type == 'conversation'
+        assert result.prediction.project_kind == 'conversation'
         assert len(result.prediction.entities) > 0
-        assert len(result.prediction.classifications) > 0
+        assert len(result.prediction.intents) > 0
         assert result.prediction.top_intent == 'Order'
-        assert result.prediction.classifications[0].category == 'Order'
-        assert result.prediction.classifications[0].confidence_score > 0
+        assert result.prediction.intents[0].category == 'Order'
+        assert result.prediction.intents[0].confidence_score > 0
         assert result.prediction.entities[0].category == 'OrderItem'
         assert result.prediction.entities[0].text == 'california maki'
         assert result.prediction.entities[0].confidence_score > 0
