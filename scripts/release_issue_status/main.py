@@ -132,8 +132,7 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python
     logging.info("new issue number: {}".format(item.issue_object.number))
 
     if 'auto-link' not in item.labels:
-        item.labels.append('auto-link')
-        item.issue_object.set_labels(*item.labels)
+        item.issue_object.add_to_labels('auto-link')
         try:
             package_name, readme_link, output_folder = update_issue_body(request_repo, rest_repo, item.issue_object.number)
             logging.info("pkname, readme", package_name, readme_link)
@@ -142,8 +141,7 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python
             duplicated_issue[key] = duplicated_issue.get(key, 0) + 1
         except Exception as e:
             item.bot_advice = 'failed to modify the body of the new issue. Please modify manually'
-            item.labels.append('attention')
-            item.issue_object.set_labels(*item.labels)
+            item.issue_object.add_to_labels('attention')
             logging.info(e)
             raise
     else:
@@ -152,8 +150,7 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python
         except Exception as e:
             logging.info('Issue: {}  get pkname and output folder failed'.format(item.issue_object.number))
             item.bot_advice = 'failed to find Readme link and output folder. Please check !!'
-            item.labels.append('attention')
-            item.issue_object.set_labels(*item.labels)
+            item.issue_object.add_to_labels('attention')
             logging.info(e)
             raise
     try:
@@ -162,8 +159,7 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python
         rg.begin_reply_generate(item=item, rest_repo=rest_repo, readme_link=readme_link,
                                 sdk_repo=sdk_repo, pipeline_url=pipeline_url)
         if 'Configured' in item.labels:
-            item.labels.remove('Configured')
-            item.issue_object.set_labels(*item.labels)
+            item.issue_object.remove_from_labels('Configured')
     except Exception as e:
         item.bot_advice = 'auto reply failed, Please intervene manually !!'
         logging.info('Error from auto reply')
@@ -174,6 +170,11 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python
 def main():
     # get latest issue status
     g = Github(os.getenv('TOKEN'))  # please fill user_token
+    print('*'*15)
+    print('token',os.getenv('TOKEN'))
+    print('PIPELINE_URL',os.getenv('PIPELINE_URL'))
+    print('pipeline_token',os.getenv('PIPELINE_URL'))
+    print('*'*15)
     request_repo = g.get_repo('Azure/sdk-release-request')
     rest_repo = g.get_repo('Azure/azure-rest-api-specs')   
     sdk_repo = g.get_repo('Azure/azure-sdk-for-python')
@@ -234,8 +235,7 @@ def main():
                 if assign_count == 1:
                     item.issue_object.remove_from_assignees(*['RAY-316'])
                     item.issue_object.add_to_assignees(*['BigCat20196'])
-                item.labels.append('assigned')
-                item.issue_object.set_labels(*item.labels)
+                item.issue_object.add_to_labels('assigned')
             try:
                 auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python_piplines)
             except Exception as e:
@@ -252,15 +252,13 @@ def main():
                 logging.info(f"=====issue: {item.issue_object.number}, {e}")
 
         if item.days_from_latest_commit >= 30 and item.language == 'Python' and '30days attention' not in item.labels:
-            item.labels.append('30days attention')
-            item.issue_object.set_labels(*item.labels)
+            item.issue_object.add_to_labels('30days attention')
             item.issue_object.create_comment(f'hi @{item.author}, the issue is closed since there is no reply for a long time. Please reopen it if necessary or create new one.')
             item.issue_object.edit(state='close')
         elif item.days_from_latest_commit >= 15 and item.language == 'Python' and '15days attention' not in item.labels:
             item.issue_object.create_comment(f'hi @{item.author}, this release-request has been delayed more than 15 days,'
                                              ' please deal with it ASAP. We will close the issue if there is still no response after 15 days!')
-            item.labels.append('15days attention')
-            item.issue_object.set_labels(*item.labels)
+            item.issue_object.add_to_labels('15days attention')
 
         # judge whether there is duplicated issue for same package
         if item.package != _NULL and duplicated_issue.get((item.language, item.package)) > 1:
