@@ -59,6 +59,7 @@ class LogsTable(object):
 
 class LogsTableRow(object):
     """Represents a single row in logs table.
+    This type is gettable by both column name and column index.
 
     :ivar int index: The index of the row in the table
     """
@@ -78,7 +79,7 @@ class LogsTableRow(object):
 
     def __getitem__(self, column):
         """This type must be subscriptable directly to row.
-        Must be gettableby both column name and row index
+        Must be gettable by both column name and row index
 
         :param column: The name of the column or the index of the element in a row.
         :type column: str or int
@@ -91,8 +92,6 @@ class LogsTableRow(object):
 
 class MetricsResult(object):
     """The response to a metrics query.
-
-    All required parameters must be populated in order to send to Azure.
 
     :ivar cost: The integer value representing the cost of the query, for data case.
     :vartype cost: int
@@ -138,9 +137,7 @@ class MetricsResult(object):
 
 
 class LogsBatchQuery(object):
-    """A single request in a batch.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
+    """A single request in a batch. The batch query API accepts a list of these objects.
 
     :param workspace_id: Workspace Id to be included in the query.
     :type workspace_id: str
@@ -204,7 +201,7 @@ class LogsBatchQuery(object):
 
 
 class LogsQueryResult(object):
-    """The LogsQueryResult.
+    """The LogsQueryResult type is returned when the response of a query is a success.
 
     :ivar tables: The list of tables, columns and rows.
     :vartype tables: list[~azure.monitor.query.LogsTable]
@@ -389,9 +386,7 @@ class MetricDefinition(object):  # pylint: disable=too-many-instance-attributes
 class MetricValue(object):
     """Represents a metric value.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar timestamp: Required. The timestamp for the metric value in ISO 8601 format.
+    :ivar timestamp: The timestamp for the metric value.
     :vartype timestamp: ~datetime.datetime
     :ivar average: The average value in the time range.
     :vartype average: float
@@ -430,21 +425,20 @@ class MetricValue(object):
 
 
 class Metric(object):
-    """The result data of a query.
+    """The result data of a single metric name.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Required. The metric Id.
+    :ivar id: The metric Id.
     :vartype id: str
-    :ivar type: Required. The resource type of the metric resource.
+    :ivar type: The resource type of the metric resource.
     :vartype type: str
-    :ivar name: Required. The name of the metric.
+    :ivar name: The name of the metric.
     :vartype name: str
-    :ivar unit: Required. The unit of the metric. Possible values include: "Count", "Bytes",
+    :ivar unit: The unit of the metric. To access these values, use the MetricUnit enum.
+     Possible values include: "Count", "Bytes",
      "Seconds", "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds",
      "Unspecified", "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
     :vartype unit: str
-    :ivar timeseries: Required. The time series returned when a data query is performed.
+    :ivar timeseries: The time series returned when a data query is performed.
     :vartype timeseries: list[~azure.monitor.query.TimeSeriesElement]
     :ivar display_description: Detailed description of this metric.
     :vartype display_description: str
@@ -485,12 +479,6 @@ class TimeSeriesElement(object):
      a result type of data is specified.
     :vartype data: list[~azure.monitor.query.MetricValue]
     """
-
-    _attribute_map = {
-        "metadata_values": {"key": "metadata_values", "type": "[MetadataValue]"},
-        "data": {"key": "data", "type": "[MetricValue]"},
-    }
-
     def __init__(self, **kwargs):
         # type: (Any) -> None
         self.metadata_values = kwargs.get("metadatavalues", None)
@@ -514,11 +502,9 @@ class MetricAvailability(object):
     """Metric availability specifies the time grain (aggregation interval or frequency)
     and the retention period for that time grain.
 
-    :ivar granularity: the time grain specifies the aggregation interval for the metric. Expressed
-     as a duration 'PT1M', 'P1D', etc.
+    :ivar granularity: the time grain specifies the aggregation interval for the metric.
     :vartype granularity: ~datetime.timedelta
-    :ivar retention: the retention period for the metric at the specified timegrain. Expressed as
-     a duration 'PT1M', 'P1D', etc.
+    :ivar retention: the retention period for the metric at the specified timegrain.
     :vartype retention: ~datetime.timedelta
     """
 
@@ -564,7 +550,8 @@ class MetricUnit(str, Enum):
 
 
 class LogsQueryPartialResult(object):
-    """The LogsQueryPartialResult.
+    """The LogsQueryPartialResult type is returned when the response of a query is a
+    partial success (or partial failure).
 
     :ivar partial_data: The list of tables, columns and rows.
     :vartype partial_data: list[~azure.monitor.query.LogsTable]

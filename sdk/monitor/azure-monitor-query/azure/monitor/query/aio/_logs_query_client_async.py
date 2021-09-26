@@ -23,7 +23,13 @@ if TYPE_CHECKING:
 
 
 class LogsQueryClient(object):
-    """LogsQueryClient
+    """LogsQueryClient. Use this client to collect and organize log and performance data from
+    monitored resources. Data from different sources such as platform logs from Azure services,
+    log and performance data from virtual machines agents, and usage and performance data from
+    apps can be consolidated into a single Azure Log Analytics workspace.
+    
+    The various data types can be analyzed together using the
+    [Kusto Query Language](https://docs.microsoft.com/azure/data-explorer/kusto/query/)
 
     :param credential: The credential to authenticate the client
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
@@ -62,20 +68,20 @@ class LogsQueryClient(object):
         :param query: The Kusto query. Learn more about the `Kusto query syntax
          <https://docs.microsoft.com/azure/data-explorer/kusto/query/>`_.
         :type query: str
-        :param timespan: Required. The timespan for which to query the data. This can be a timedelta,
+        :keyword timespan: Required. The timespan for which to query the data. This can be a timedelta,
          a timedelta and a start datetime, or a start datetime/end datetime.
-        :type timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
+        :paramtype timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
          or tuple[~datetime.datetime, ~datetime.datetime]
-        :keyword int server_timeout: the server timeout. The default timeout is 3 minutes,
+        :keyword int server_timeout: the server timeout in seconds. The default timeout is 3 minutes,
          and the maximum timeout is 10 minutes.
         :keyword bool include_statistics: To get information about query statistics.
         :keyword bool include_visualization: In the query language, it is possible to specify different
          visualization options. By default, the API does not return information regarding the type of
          visualization to show. If your client requires this information, specify the preference
         :keyword additional_workspaces: A list of workspaces that are included in the query.
-         These can be qualified workspace names, workspace Ids or Azure resource Ids.
+         These can be qualified workspace names, workspace Ids, or Azure resource Ids.
         :paramtype additional_workspaces: list[str]
-        :return: QueryResults, or the result of cls(response)
+        :return: LogsQueryResult if there is a success or LogsQueryPartialResult when there is a partial success.
         :rtype: ~azure.monitor.query.LogsQueryResult or ~azure.monitor.query.LogsQueryPartialResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -116,14 +122,17 @@ class LogsQueryClient(object):
     async def query_batch(
         self, queries: Union[Sequence[Dict], Sequence[LogsBatchQuery]], **kwargs: Any
     ) -> List[Union[LogsQueryResult, LogsQueryError, LogsQueryPartialResult]]:
-        """Execute a list of analytics queries. Each request can be either a LogQueryRequest
+        """Execute a list of analytics queries. Each request can be either a LogsBatchQuery
         object or an equivalent serialized model.
 
-        The response is returned in the same order as that of the requests sent.
+        **NOTE**: The response is returned in the same order as that of the requests sent.
 
         :param queries: The list of Kusto queries to execute.
         :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQuery]
-        :return: list of LogsQueryResult objects, or the result of cls(response)
+        :return: List of LogsQueryResult, LogsQueryPartialResult and LogsQueryError.
+         For a given query, a LogsQueryResult is returned if the response is a success, LogsQueryPartialResult
+         is returned when there is a partial success and a LogsQueryError is returned when there is a failure.
+         The status of each response can be checked using `LogsQueryStatus` enum.
         :rtype: list[~azure.monitor.query.LogsQueryResult or ~azure.monitor.query.LogsQueryPartialResult
          or ~azure.monitor.query.LogsQueryError]
         :raises: ~azure.core.exceptions.HttpResponseError
