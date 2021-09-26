@@ -27,7 +27,7 @@ class LogsQueryClient(object):
     monitored resources. Data from different sources such as platform logs from Azure services,
     log and performance data from virtual machines agents, and usage and performance data from
     apps can be consolidated into a single Azure Log Analytics workspace.
-    
+
     The various data types can be analyzed together using the
     [Kusto Query Language](https://docs.microsoft.com/azure/data-explorer/kusto/query/)
 

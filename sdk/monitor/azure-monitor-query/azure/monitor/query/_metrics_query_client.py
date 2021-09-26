@@ -7,7 +7,7 @@
 
 # pylint: disable=anomalous-backslash-in-string
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, List
 from msrest.serialization import Serializer
 from azure.core.tracing.decorator import distributed_trace
 
@@ -61,7 +61,7 @@ class MetricsQueryClient(object):
 
     @distributed_trace
     def query_resource(self, resource_uri, metric_names, **kwargs):
-        # type: (str, list, Optional[timedelta], Any) -> MetricsResult
+        # type: (str, List[str], Any) -> MetricsResult
         """Lists the metric values for a resource.
 
         :param resource_uri: The identifier of the resource.

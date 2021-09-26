@@ -32,7 +32,7 @@ class LogsQueryClient(object):
     monitored resources. Data from different sources such as platform logs from Azure services,
     log and performance data from virtual machines agents, and usage and performance data from
     apps can be consolidated into a single Azure Log Analytics workspace.
-    
+
     The various data types can be analyzed together using the
     [Kusto Query Language](https://docs.microsoft.com/azure/data-explorer/kusto/query/)
 
@@ -137,7 +137,7 @@ class LogsQueryClient(object):
             response = LogsQueryPartialResult._from_generated( # pylint: disable=protected-access
                 generated_response, LogsQueryError
             )
-        return response
+        return cast(Union[LogsQueryResult, LogsQueryPartialResult], response)
 
     @distributed_trace
     def query_batch(
@@ -171,7 +171,7 @@ class LogsQueryClient(object):
             :caption: Get a response for multiple Log Queries.
         """
         try:
-            queries = [LogsBatchQuery(**q) for q in queries]
+            queries = [LogsBatchQuery(**cast(Dict, q)) for q in queries]
         except (KeyError, TypeError):
             pass
         queries = [
@@ -183,7 +183,7 @@ class LogsQueryClient(object):
             request_order = [req["id"] for req in queries]
         batch = BatchRequest(requests=queries)
         generated = self._query_op.batch(batch, **kwargs)
-        mapping = {item.id: item for item in generated.responses}
+        mapping = {item.id: item for item in generated.responses} # type: ignore
         return order_results(
             request_order,
             mapping,

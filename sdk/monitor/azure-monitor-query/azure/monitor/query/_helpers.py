@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Dict, Union, Any
 from msrest import Serializer, Deserializer
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
@@ -47,6 +47,7 @@ def get_metrics_authentication_policy(
 
 
 def order_results(request_order, mapping, **kwargs):
+    # type: (List, Dict, Any) -> List
     ordered = [mapping[id] for id in request_order]
     results = []
     for item in ordered:
