@@ -4,6 +4,10 @@ interactions:
     headers:
       Accept:
       - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       User-Agent:
       - azsdk-python-purview-scanning/1.0.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: GET
@@ -12,14 +16,19 @@ interactions:
     body:
       string: '{"value":[],"count":0}'
     headers:
-      content-length: '22'
-      content-type: application/json; charset=utf-8
-      date: Sun, 26 Sep 2021 06:58:17 GMT
-      request-context: appId=cid-v1:caaf2286-a721-4ba8-a2bd-9a1b7993b4fd
-      server: Kestrel
-      strict-transport-security: max-age=31536000; includeSubDomains
+      content-length:
+      - '22'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sun, 26 Sep 2021 06:58:28 GMT
+      request-context:
+      - appId=cid-v1:caaf2286-a721-4ba8-a2bd-9a1b7993b4fd
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
     status:
       code: 200
       message: OK
-    url: https://purview-msyyc.scan.purview.azure.com/datasources?api-version=2018-12-01-preview
 version: 1

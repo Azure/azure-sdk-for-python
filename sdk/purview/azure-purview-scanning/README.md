@@ -73,17 +73,14 @@ The following section shows you how to initialize and authenticate your client, 
 ```python
 from azure.purview.scanning import PurviewScanningClient
 from azure.identity import DefaultAzureCredential
-from azure.purview.scanning.rest import data_sources
 from azure.core.exceptions import HttpResponseError
 
 credential = DefaultAzureCredential()
 client = PurviewScanningClient(endpoint="https://<my-account-name>.scan.purview.azure.com", credential=credential)
 try:
-    
-    assert len(json_response['value']) == json_response['count']
-    for value in json_response['value']:
-        print(value)
-
+    response = client.data_sources.list_all()
+    result = [item for item in response]
+    print(result)
 except HttpResponseError as e:
     print(e)
 ```
@@ -129,7 +126,7 @@ Similarly, `logging_enable` can enable detailed logging for a single `send_reque
 even when it isn't enabled for the client:
 
 ```python
-result = client.send_request(request, logging_enable=True)
+result = client.data_sources.list_all(logging_enable=True)
 ```
 
 ## Next steps

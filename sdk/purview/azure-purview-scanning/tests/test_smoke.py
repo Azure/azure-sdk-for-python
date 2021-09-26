@@ -13,9 +13,5 @@ class PurviewScanningSmokeTest(PurviewScanningTest):
     def test_basic_smoke_test(self, purviewscanning_endpoint):
         client = self.create_client(endpoint=purviewscanning_endpoint)
         response = client.data_sources.list_all()
-
-        result = []
-        for item in response:
-            result.append(item)
-        assert set(response.keys()) == set(['value', 'count'])
-        assert len(response['value']) == response['count']
+        result = [item for item in response]
+        assert result == []
