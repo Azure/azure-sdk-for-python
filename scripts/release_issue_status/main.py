@@ -173,7 +173,7 @@ def main():
     print('*'*15)
     print('token',os.getenv('TOKEN'))
     print('PIPELINE_URL',os.getenv('PIPELINE_URL'))
-    print('pipeline_token',os.getenv('PIPELINE_URL'))
+    print('pipeline_token',os.getenv('PIPELINE_TOKEN'))
     print('*'*15)
     request_repo = g.get_repo('Azure/sdk-release-request')
     rest_repo = g.get_repo('Azure/azure-rest-api-specs')   
