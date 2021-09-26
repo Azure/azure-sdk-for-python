@@ -4,7 +4,8 @@
 import os
 import pandas as pd
 from datetime import timedelta
-from azure.monitor.query import LogsQueryClient
+from azure.monitor.query import LogsQueryClient, LogsQueryStatus
+from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
 
 # [START client_auth_with_token_cred]
@@ -16,21 +17,22 @@ client = LogsQueryClient(credential)
 # Response time trend 
 # request duration over the last 12 hours. 
 # [START send_logs_query]
-query = """AppRequests |
-summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
+query = """AppRadfequests | take 5"""
 
 # returns LogsQueryResult 
-response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(days=1))
-
-if not response.tables:
-    print("No results for the query")
-
-for table in response.tables:
-    try:
-        df = pd.DataFrame(table.rows, columns=table.columns)
+try:
+    response = client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(days=1))
+    if response.status == LogsQueryStatus.PARTIAL:
+        # handle error here
+        error = response.partial_error
+        print(error.message)
+    for table in response:
+        df = pd.DataFrame(data=table.rows, columns=table.columns)
         print(df)
-    except TypeError:
-        print(response.error)
+except HttpResponseError as err:
+    print("something fatal happened")
+    print (err)
+
 # [END send_logs_query]
 """
     TimeGenerated                                        _ResourceId          avgRequestDuration

@@ -46,7 +46,7 @@ class StorageAccountsOperations:
     async def check_name_availability(
         self,
         account_name: "_models.StorageAccountCheckNameAvailabilityParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckNameAvailabilityResult":
         """Checks that the storage account name is valid and is not already in use.
 
@@ -108,7 +108,7 @@ class StorageAccountsOperations:
         resource_group_name: str,
         account_name: str,
         parameters: "_models.StorageAccountCreateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.StorageAccount"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.StorageAccount"]]
         error_map = {
@@ -163,7 +163,7 @@ class StorageAccountsOperations:
         resource_group_name: str,
         account_name: str,
         parameters: "_models.StorageAccountCreateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.StorageAccount"]:
         """Asynchronously creates a new storage account with the specified parameters. If an account is
         already created and a subsequent create request is issued with different properties, the
@@ -181,8 +181,8 @@ class StorageAccountsOperations:
         :type parameters: ~azure.mgmt.storage.v2018_07_01.models.StorageAccountCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either StorageAccount or the result of cls(response)
@@ -239,7 +239,7 @@ class StorageAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a storage account in Microsoft Azure.
 
@@ -296,7 +296,7 @@ class StorageAccountsOperations:
         resource_group_name: str,
         account_name: str,
         expand: Optional[str] = "geoReplicationStats",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StorageAccount":
         """Returns the properties for the specified storage account including but not limited to name, SKU
         name, location, and account status. The ListKeys operation should be used to retrieve storage
@@ -365,7 +365,7 @@ class StorageAccountsOperations:
         resource_group_name: str,
         account_name: str,
         parameters: "_models.StorageAccountUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StorageAccount":
         """The update operation can be used to update the SKU, encryption, access tier, or tags for a
         storage account. It can also be used to map the account to a custom domain. Only one custom
@@ -438,7 +438,7 @@ class StorageAccountsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.StorageAccountListResult"]:
         """Lists all the storage accounts available under the subscription. Note that storage keys are not
         returned; use the ListKeys operation for this.
@@ -506,7 +506,7 @@ class StorageAccountsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.StorageAccountListResult"]:
         """Lists all the storage accounts available under the given resource group. Note that storage keys
         are not returned; use the ListKeys operation for this.
@@ -579,7 +579,7 @@ class StorageAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StorageAccountListKeysResult":
         """Lists the access keys for the specified storage account.
 
@@ -641,7 +641,7 @@ class StorageAccountsOperations:
         resource_group_name: str,
         account_name: str,
         regenerate_key: "_models.StorageAccountRegenerateKeyParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StorageAccountListKeysResult":
         """Regenerates one of the access keys for the specified storage account.
 
@@ -710,7 +710,7 @@ class StorageAccountsOperations:
         resource_group_name: str,
         account_name: str,
         parameters: "_models.AccountSasParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ListAccountSasResponse":
         """List SAS credentials of a storage account.
 
@@ -779,7 +779,7 @@ class StorageAccountsOperations:
         resource_group_name: str,
         account_name: str,
         parameters: "_models.ServiceSasParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ListServiceSasResponse":
         """List service SAS credentials of a specific resource.
 
@@ -847,7 +847,7 @@ class StorageAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -889,7 +889,7 @@ class StorageAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Failover request can be triggered for a storage account in case of availability issues. The
         failover occurs from the storage account's primary cluster to secondary cluster for RA-GRS
@@ -904,8 +904,8 @@ class StorageAccountsOperations:
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

@@ -46,7 +46,7 @@ class MetricsPerfTest(PerfStressTest):
         Avoid putting any ancilliary logic (e.g. generating UUIDs), and put this in the setup/init instead
         so that we're only measuring the client API call.
         """
-        self.metrics_client.query(
+        self.metrics_client.query_resource(
             self.metrics_uri,
             self.names,
             aggregations=self.aggregations
@@ -59,7 +59,7 @@ class MetricsPerfTest(PerfStressTest):
         Avoid putting any ancilliary logic (e.g. generating UUIDs), and put this in the setup/init instead
         so that we're only measuring the client API call.
         """
-        await self.async_metrics_client.query(
+        await self.async_metrics_client.query_resource(
             self.metrics_uri,
             self.names,
             aggregations=self.aggregations

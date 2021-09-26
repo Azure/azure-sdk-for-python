@@ -110,5 +110,10 @@ class ManagedIdentityCredential(object):
         """
 
         if not self._credential:
-            raise CredentialUnavailableError(message="No managed identity endpoint found.")
+            raise CredentialUnavailableError(
+                message="No managed identity endpoint found. \n"
+                        "The Target Azure platform could not be determined from environment variables. \n"
+                        "Visit https://aka.ms/azsdk/python/identity/managedidentitycredential/troubleshoot to "
+                        "troubleshoot this issue."
+            )
         return self._credential.get_token(*scopes, **kwargs)

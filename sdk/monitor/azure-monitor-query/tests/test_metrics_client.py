@@ -16,7 +16,7 @@ def _credential():
 def test_metrics_auth():
     credential = _credential()
     client = MetricsQueryClient(credential)
-    response = client.query(
+    response = client.query_resource(
         os.environ['METRICS_RESOURCE_URI'],
         metric_names=["MatchedEventCount"],
         timespan=timedelta(days=1),
@@ -29,7 +29,7 @@ def test_metrics_auth():
 def test_metrics_granularity():
     credential = _credential()
     client = MetricsQueryClient(credential)
-    response = client.query(
+    response = client.query_resource(
         os.environ['METRICS_RESOURCE_URI'],
         metric_names=["MatchedEventCount"],
         timespan=timedelta(days=1),

@@ -119,7 +119,10 @@ def run_command_line(command_line):
         # (handling Exception here because subprocess.SubprocessError and .TimeoutExpired were added in 3.3)
         if proc and not proc.returncode:
             proc.kill()
-        error = CredentialUnavailableError(message="Failed to invoke PowerShell")
+        error = CredentialUnavailableError(
+            message="Failed to invoke PowerShell.\n"
+                    "To mitigate this issue, please refer to the troubleshooting guidelines here at "
+                    "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot.")
         six.raise_from(error, ex)
 
     raise_for_error(proc.returncode, stdout, stderr)
