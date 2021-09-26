@@ -7,7 +7,7 @@ logging.basicConfig(level=logging.INFO,
                     format='[auto-reply  log] - %(funcName)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 
 
-def whether_change_readme_(rest_repo, link_dict, labels):
+def readme_comparison(rest_repo, link_dict, labels):
     # to see whether need change readme
     contents = str(rest_repo.get_contents(link_dict['readme_path']).decoded_content)
     pattern_tag = re.compile(r'tag: package-[\w+-.]+')
@@ -56,11 +56,6 @@ def reply_owner(reply_content):
     issue_object_rg.create_comment(reply_content)
 
 
-def add_label(label_name, labels):
-    if label_name not in labels:
-        labels.append(label_name)
-    issue_object_rg.set_labels(*labels)
-
 
 def get_reply_and_sdk_number_from_readme(rest_repo, link_dict):
     commits = rest_repo.get_commits(path=link_dict['resource_manager'])
@@ -84,7 +79,7 @@ def begin_reply_generate(item, rest_repo, readme_link, sdk_repo, pipeline_url):
     issue_object_rg = item.issue_object
     link_dict = get_links(readme_link)
     labels = item.labels
-    whether_change_readme = whether_change_readme_(rest_repo, link_dict, labels)
+    whether_change_readme = readme_comparison(rest_repo, link_dict, labels)
 
     if not whether_change_readme:
         reply_content, sdk_link_number = get_reply_and_sdk_number_from_readme(rest_repo, link_dict)
@@ -97,6 +92,6 @@ def begin_reply_generate(item, rest_repo, readme_link, sdk_repo, pipeline_url):
         else:
             logging.info(f'{issue_object_rg.number} run pipeline fail')
         reply_owner(reply_content)
-        add_label('auto-ask-check', labels)
+        issue_object_rg.add_to_labels('auto-ask-check')
     else:
         logging.info('issue {} need config readme'.format(issue_object_rg.number))
