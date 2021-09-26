@@ -193,8 +193,7 @@ def auto_close_issue(sdk_repo, item):
         comment = f'Hi @{issue_author}, pypi link: https://pypi.org/project/{package_name}/{last_version}/'
         issue_info.create_comment(body=comment)
         issue_info.edit(state='closed')
-        item.labels.append('auto-closed')
-        item.issue_object.set_labels(*item.labels)
+        item.issue_object.add_to_labels('auto-closed')
         logging.info(f"issue number：{issue_number} has been closed!")
 
 
