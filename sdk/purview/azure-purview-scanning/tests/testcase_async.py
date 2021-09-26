@@ -5,15 +5,15 @@
 # license information.
 # --------------------------------------------------------------------------
 from devtools_testutils import AzureTestCase
-from azure.purview.scanning.aio import PurviewScanningClient
+from azure.purview.scanning.aio import PurviewScanningClient as AsyncPurviewScanningClient
 
 
 class PurviewScanningTestAsync(AzureTestCase):
 
-    def create_client(self, endpoint):
-        credential = self.get_credential(PurviewScanningClient, is_async=True)
+    def create_async_client(self, endpoint):
+        credential = self.get_credential(AsyncPurviewScanningClient, is_async=True)
         return self.create_client_from_credential(
-            PurviewScanningClient,
+            AsyncPurviewScanningClient,
             credential=credential,
             endpoint=endpoint,
         )

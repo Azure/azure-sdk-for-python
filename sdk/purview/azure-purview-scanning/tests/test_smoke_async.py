@@ -12,7 +12,7 @@ class PurviewScanningSmokeTestAsync(PurviewScanningTestAsync):
 
     @PurviewScanningPowerShellPreparer()
     async def test_basic_smoke_test(self, purviewscanning_endpoint):
-        client = self.create_client(endpoint=purviewscanning_endpoint)
+        client = self.create_async_client(endpoint=purviewscanning_endpoint)
         response = client.data_sources.list_all()
         result = [item async for item in response]
         assert result == []
