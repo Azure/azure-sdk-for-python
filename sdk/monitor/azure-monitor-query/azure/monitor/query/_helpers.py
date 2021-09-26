@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, List, Dict, Union, Any
+from typing import TYPE_CHECKING, List, Dict, Any
 from msrest import Serializer, Deserializer
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
