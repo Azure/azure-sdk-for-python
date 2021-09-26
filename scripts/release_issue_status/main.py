@@ -170,14 +170,6 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python
 def main():
     # get latest issue status
     g = Github(os.getenv('TOKEN'))  # please fill user_token
-    print('*'*15)
-    print('token',os.getenv('TOKEN'))
-    print('PIPELINE_URL',os.getenv('PIPELINE_URL'))
-    print('pipeline_token',os.getenv('PIPELINE_TOKEN'))
-    print('ENV_FILE',os.getenv('ENV_FILE'))
-    print('COOKIE',os.getenv('COOKIE'))
-    print('PIPELINE_HEADERS',os.getenv('PIPELINE_HEADERS'))
-    print('*'*15)
     request_repo = g.get_repo('Azure/sdk-release-request')
     rest_repo = g.get_repo('Azure/azure-rest-api-specs')   
     sdk_repo = g.get_repo('Azure/azure-sdk-for-python')
