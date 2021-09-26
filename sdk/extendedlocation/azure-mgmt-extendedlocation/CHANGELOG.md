@@ -16,6 +16,6 @@
 
 * Remove v2020_07_15_privatepreview
 
-## 1.0.0b1 (2020-03-25)
+## 1.0.0b1 (2021-03-25)
 
 * Initial Release
