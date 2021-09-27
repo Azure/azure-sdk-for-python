@@ -133,18 +133,25 @@ def analyze_document():
                     )
                 )
 
+    print("----Entities found in document----")
+    for idx, entity in enumerate(result.entities):
+        print("Entity of category '{}' with sub-category '{}'".format(entity.category, entity.sub_category))
+        print("...has content '{}'".format(entity.content))
+        print("...within '{}' bounding regions".format(format_bounding_region(entity.bounding_regions)))
+        print("...with confidence {}".format(entity.confidence))
+
     print("----Key-value pairs found in document----")
     for idx, kv_pair in enumerate(result.key_value_pairs):
         if kv_pair.key:
             print(
-                    "...Key '{}' found within '{}' bounding regions".format(
+                    "Key '{}' found within '{}' bounding regions".format(
                         kv_pair.key.content,
                         format_bounding_region(kv_pair.key.bounding_regions),
                     )
                 )
         if kv_pair.value:
             print(
-                    "...Value '{}' found within '{}' bounding regions".format(
+                    "Value '{}' found within '{}' bounding regions".format(
                         kv_pair.value.content,
                         format_bounding_region(kv_pair.value.bounding_regions),
                     )
