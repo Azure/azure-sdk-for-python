@@ -348,7 +348,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             attributes={
                 "db.system": "postgresql",
                 "peer.service": "service",
-                "db.statement": "SELECT",
+                "db.statement": "SELECT * from test",
             },
             kind=SpanKind.CLIENT,
         )
@@ -369,8 +369,17 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
         self.assertEqual(envelope.data.base_data.type, "postgresql")
         self.assertEqual(envelope.data.base_data.target, "service")
-        self.assertEqual(envelope.data.base_data.data, "SELECT")
+        self.assertEqual(envelope.data.base_data.data, "SELECT * from test")
         self.assertEqual(envelope.data.base_data.result_code, "0")
+
+        # data
+        span._attributes = {
+            "db.system": "postgresql",
+            "peer.service": "service",
+            "db.operation": "SELECT",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.data, "SELECT")
 
         # Target
         span._attributes = {
@@ -380,7 +389,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             "peer.service": "service",
         }
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.data.base_data.target, "service/testDb")
+        self.assertEqual(envelope.data.base_data.target, "service|testDb")
 
         span._attributes = {
             "db.system": "postgresql",

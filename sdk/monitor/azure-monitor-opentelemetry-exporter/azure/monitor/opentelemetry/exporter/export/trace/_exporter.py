@@ -331,16 +331,18 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                     data.type = db_system
                 else:
                     data.type = "SQL"
-                # data is the full statement
+                # data is the full statement or operation
                 if SpanAttributes.DB_STATEMENT in span.attributes:
                     data.data = span.attributes[SpanAttributes.DB_STATEMENT]
+                elif SpanAttributes.DB_OPERATION in span.attributes:
+                    data.data = span.attributes[SpanAttributes.DB_OPERATION]
                 # db specific logic for target
                 if SpanAttributes.DB_NAME in span.attributes:
                     db_name = span.attributes[SpanAttributes.DB_NAME]
                     if target is None:
                         target = db_name
                     else:
-                        target = "{}/{}".format(target, db_name)
+                        target = "{}|{}".format(target, db_name)
                 if target is None:
                     target = db_system
             elif SpanAttributes.RPC_SYSTEM in span.attributes:  # Rpc
