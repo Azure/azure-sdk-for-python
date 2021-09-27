@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added new error type `IncompleteReadError` which is raise if peer closes connection without sending complete message body.
+- Added new error type `IncompleteReadError` which is raised if peer closes connection without sending complete message body.
 
 ### Breaking Changes
 
