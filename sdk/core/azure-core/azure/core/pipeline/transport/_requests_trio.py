@@ -153,7 +153,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
         self.open()
         trio_limiter = kwargs.get("trio_limiter", None)
         response = None
-        error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
+        error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError, IncompleteReadError]]
         data_to_send = await self._retrieve_request_data(request)
         try:
             try:

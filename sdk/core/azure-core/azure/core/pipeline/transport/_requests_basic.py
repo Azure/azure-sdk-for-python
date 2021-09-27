@@ -84,8 +84,8 @@ def _set_enforce_content_length(request, *args, **kwargs):  # pylint: disable=un
     Hook to set urllib3's enforce_content_length
     """
     # Do not modify objects if they don't look like the urllib3 connections
-    if hasattr(request.raw, "enforce_content_length"):
-        request.raw.enforce_content_length = True
+    if hasattr(request.raw, "enforce_content_length"):  # mypy: ignore
+        request.raw.enforce_content_length = True   # mypy: ignore
 
 
 def _get_request_hooks(user_hooks):
@@ -299,7 +299,7 @@ class RequestsTransport(HttpTransport):
         """
         self.open()
         response = None
-        error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
+        error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError, IncompleteReadError]]
 
         try:
             connection_timeout = kwargs.pop('connection_timeout', self.connection_config.timeout)

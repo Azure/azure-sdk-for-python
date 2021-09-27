@@ -99,7 +99,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         self.open()
         loop = kwargs.get("loop", _get_running_loop())
         response = None
-        error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
+        error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError, IncompleteReadError]]
         data_to_send = await self._retrieve_request_data(request)
         try:
             response = await loop.run_in_executor(
