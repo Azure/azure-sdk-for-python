@@ -20,18 +20,18 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"286ba485f55e4c06aac7f5c33d762000"}'
+      string: '{"id":"9d7f438550c74f65a54fbdf72c6fc2e5"}'
     headers:
       content-type:
       - application/json
       date:
-      - Wed, 22 Sep 2021 00:45:40 GMT
+      - Fri, 24 Sep 2021 19:10:27 GMT
       location:
       - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2020-09-01-preview
       schema-id:
-      - 286ba485f55e4c06aac7f5c33d762000
+      - 9d7f438550c74f65a54fbdf72c6fc2e5
       schema-id-location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/286ba485f55e4c06aac7f5c33d762000?api-version=2020-09-01-preview
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/9d7f438550c74f65a54fbdf72c6fc2e5?api-version=2020-09-01-preview
       schema-version:
       - '1'
       schema-versions-location:
@@ -68,18 +68,18 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"286ba485f55e4c06aac7f5c33d762000"}'
+      string: '{"id":"9d7f438550c74f65a54fbdf72c6fc2e5"}'
     headers:
       content-type:
       - application/json
       date:
-      - Wed, 22 Sep 2021 00:45:40 GMT
+      - Fri, 24 Sep 2021 19:10:27 GMT
       location:
       - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2020-09-01-preview
       schema-id:
-      - 286ba485f55e4c06aac7f5c33d762000
+      - 9d7f438550c74f65a54fbdf72c6fc2e5
       schema-id-location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/286ba485f55e4c06aac7f5c33d762000?api-version=2020-09-01-preview
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/9d7f438550c74f65a54fbdf72c6fc2e5?api-version=2020-09-01-preview
       schema-version:
       - '1'
       schema-versions-location:
