@@ -175,7 +175,7 @@ stages:
                               SparseCheckoutPaths:
                                 - docs-ref-services/
                                 - metadata/
-                                
+
           - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
             - deployment: UpdatePackageVersion
               displayName: "Update Package Version"
@@ -260,8 +260,8 @@ stages:
             displayName: 'Publish ${{artifact.name}} alpha package'
 
     - job: PublishDocsToNightlyBranch
+      dependsOn: PublishPackages
       condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
-      DependsOn: PublishPackages
       pool:
         name: azsdk-pool-mms-ubuntu-2004-general
         vmImage: MMSUbuntu20.04
