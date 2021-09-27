@@ -58,7 +58,7 @@ These settings apply only when `--tag=package-metadatapolices` is specified on t
 Please also specify `--python-sdks-folder=<path to the root directory of your azure-sdk-for-python clone>`.
 
 ``` yaml $(tag) == 'package-metadatapolices'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/purview/data-plane/Azure.Analytics.Purview.MetadataPolicies/preview/2021-07-01/purviewMetadataPolicy.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/47868932eb81378d95890594b596f09ce27b69e6/specification/purview/data-plane/Azure.Analytics.Purview.MetadataPolicies/preview/2021-07-01/purviewMetadataPolicy.json
 output-folder: ../azure/purview/administration/metadatapolices
 namespace: azure.purview.administration.metadatapolices
 clear-output-folder: true

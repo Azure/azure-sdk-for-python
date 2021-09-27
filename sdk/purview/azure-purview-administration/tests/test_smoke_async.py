@@ -4,8 +4,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from testcase import PurviewAccountPowerShellPreparer
-from testcase_async import PurviewAccountTestAsync
+from testcase import PurviewAccountPowerShellPreparer, PurviewMetaPolicyPowerShellPreparer
+from testcase_async import PurviewAccountTestAsync, PurviewMetaPolicyTestAsync
 from _util import PurviewAccountRecordingProcessor, PurviewAccountCollectionsRecordingProcessor
 
 
@@ -26,3 +26,20 @@ class PurviewAccountSmokeTestAsync(PurviewAccountTestAsync):
         result = [item async for item in response]
         for item in result:
             assert set(item.keys()) == set(['name', 'friendlyName', 'description', 'systemData', 'collectionProvisioningState'])
+
+
+class PurviewMetaDataPolicySmokeTestAsync(PurviewMetaPolicyTestAsync):
+
+    @PurviewMetaPolicyPowerShellPreparer()
+    async def test_metadata_policy_smoke_async(self, purviewmetapolicy_endpoint):
+        client = self.create_async_client(endpoint=purviewmetapolicy_endpoint)
+        response = client.metadata_policy.list_all()
+        result = [item async for item in response]
+        assert len(result) >= 1
+
+    @PurviewMetaPolicyPowerShellPreparer()
+    async def test_metadata_role_smoke_async(self, purviewmetapolicy_endpoint):
+        client = self.create_async_client(endpoint=purviewmetapolicy_endpoint)
+        response = client.metadata_roles.list()
+        result = [item async for item in response]
+        assert len(result) >= 4

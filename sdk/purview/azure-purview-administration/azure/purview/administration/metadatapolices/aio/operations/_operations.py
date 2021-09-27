@@ -138,7 +138,7 @@ class MetadataRolesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = _loads(pipeline_response.http_response.body())
-            list_of_elem = deserialized["value"]
+            list_of_elem = deserialized["values"]
             if cls:
                 list_of_elem = cls(list_of_elem)
             return deserialized.get("nextLink", None), AsyncList(list_of_elem)
@@ -296,7 +296,7 @@ class MetadataPolicyOperations:
 
         async def extract_data(pipeline_response):
             deserialized = _loads(pipeline_response.http_response.body())
-            list_of_elem = deserialized["value"]
+            list_of_elem = deserialized["values"]
             if cls:
                 list_of_elem = cls(list_of_elem)
             return deserialized.get("nextLink", None), AsyncList(list_of_elem)

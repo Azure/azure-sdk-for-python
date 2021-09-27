@@ -1,8 +1,8 @@
-# Azure Purview Account client library for Python
+# Azure Purview Administration client library for Python
 
-Azure Purview Account is a fully managed cloud service.
+Azure Purview is a fully managed cloud service.
 
-**Please rely heavily on the [service's documentation][account_product_documentation] and our [client docs][request_builders_and_client] to use this library**
+**Please rely heavily on the [service's documentation][account_product_documentation] to use this library**
 
 [Source code][source_code] |  [Package (PyPI)][account_pypi] | [API reference documentation][account_ref_docs]| [Product documentation][account_product_documentation]
 
@@ -22,7 +22,7 @@ Follow [these][purview_resource] instructions to create your Purview resource
 Install the Azure Purview Account client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-purview-account
+pip install azure-purview-administration
 ```
 
 ### Authenticate the client
@@ -44,11 +44,13 @@ AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
 Use the returned token credential to authenticate the client:
 
 ```python
-from azure.purview.account import PurviewAccountClient
+from azure.purview.administration.account import PurviewAccountClient
+from azure.purview.administration.metadatapolices import PurviewMetadataPoliciesClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-client = PurviewAccountClient(endpoint="https://<my-account-name>.purview.azure.com", credential=credential)
+account_client = PurviewAccountClient(endpoint="https://<my-account-name>.purview.azure.com", credential=credential)
+metadatapolicy_client = PurviewMetadataPoliciesClient(endpoint="https://<my-account-name>.purview.azure.com", credential=credential)
 ```
 
 ## Key concepts
@@ -64,7 +66,7 @@ The following section shows you how to initialize and authenticate your client, 
 ### Get Keys
 
 ```python
-from azure.purview.account import PurviewAccountClient
+from azure.purview.administration.account import PurviewAccountClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
@@ -73,11 +75,28 @@ response = client.accounts.get_access_keys()
 print(response)
 ```
 
+The following section shows you how to initialize and authenticate your client, then list all of your roles.
+
+- [List_Roles](#list-roles "List Roles")
+
+### List Roles
+
+```python
+from azure.purview.administration.metadatapolices import PurviewMetadataPoliciesClient
+from azure.identity import DefaultAzureCredential
+
+credential = DefaultAzureCredential()
+client = PurviewMetadataPoliciesClient(endpoint="https://<my-account-name>.purview.azure.com", credential=credential)
+response = client.metadata_roles.list()
+result = [item for item in response]
+print(result)
+```
+
 ## Troubleshooting
 
 ### General
 
-The Purview Account client will raise exceptions if status code of your responses is not defined.
+The Purview client will raise exceptions if status code of your responses is not defined.
 
 ### Logging
 
@@ -93,7 +112,7 @@ headers, can be enabled on a client with the `logging_enable` keyword argument:
 import sys
 import logging
 from azure.identity import DefaultAzureCredential
-from azure.purview.account import PurviewAccountClient
+from azure.purview.administration.account import PurviewAccountClient
 
 # Create a logger for the 'azure' SDK
 logger = logging.getLogger('azure')
@@ -117,10 +136,6 @@ even when it isn't enabled for the client:
 result = client.accounts.get_access_keys(logging_enable=True)
 ```
 
-## Next steps
-
-For more generic samples, see our [client docs][request_builders_and_client].
-
 ## Contributing
 
 This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit [cla.microsoft.com][cla].
@@ -142,7 +157,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
-[request_builders_and_client]: https://aka.ms/azsdk/python/protocol/quickstart
 [enable_aad]: https://docs.microsoft.com/azure/purview/create-catalog-portal#add-a-security-principal-to-a-data-plane-role
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 [cla]: https://cla.microsoft.com

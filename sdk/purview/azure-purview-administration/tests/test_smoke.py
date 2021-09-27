@@ -35,11 +35,11 @@ class PurviewMetaPolicySmokeTest(PurviewMetaPolicyTest):
         client = self.create_client(endpoint=purviewmetapolicy_endpoint)
         response = client.metadata_policy.list_all()
         result = [item for item in response]
-        assert result is not None
+        assert len(result) >= 1
 
     @PurviewMetaPolicyPowerShellPreparer()
     def test_meta_roles_smoke_test(self, purviewmetapolicy_endpoint):
         client = self.create_client(endpoint=purviewmetapolicy_endpoint)
         response = client.metadata_roles.list()
         result = [item for item in response]
-        assert result is not None
+        assert len(result) >= 4

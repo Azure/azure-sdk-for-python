@@ -269,7 +269,7 @@ class MetadataRolesOperations(object):
 
         def extract_data(pipeline_response):
             deserialized = _loads(pipeline_response.http_response.body())
-            list_of_elem = deserialized["value"]
+            list_of_elem = deserialized["values"]
             if cls:
                 list_of_elem = cls(list_of_elem)
             return deserialized.get("nextLink", None), iter(list_of_elem)
@@ -428,7 +428,7 @@ class MetadataPolicyOperations(object):
 
         def extract_data(pipeline_response):
             deserialized = _loads(pipeline_response.http_response.body())
-            list_of_elem = deserialized["value"]
+            list_of_elem = deserialized["values"]
             if cls:
                 list_of_elem = cls(list_of_elem)
             return deserialized.get("nextLink", None), iter(list_of_elem)
