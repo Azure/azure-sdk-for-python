@@ -57,16 +57,15 @@ class LogsTable(object):
         )
 
 
-class LogsTableRow(list):
+class LogsTableRow(object):
     """Represents a single row in logs table.
     This type is gettable by both column name and column index.
 
     :ivar int index: The index of the row in the table
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs): # pylint: disable
         # type: (Any) -> None
-        super(LogsTableRow, self).__init__(**kwargs)
         _col_types = kwargs["col_types"]
         row = kwargs["row"]
         self._row = process_row(_col_types, row)
@@ -145,8 +144,7 @@ class MetricsResult(object):
 class MetricsList(list):
     """Custom list for metrics
     """
-    def __init__(self, **kwargs):
-        super(MetricsList, self).__init__(**kwargs)
+    def __init__(self, **kwargs): # pylint: disable=super-init-not-called
         self._metrics = kwargs['metrics']
         self._metric_names = {val.name: ind for ind, val in enumerate(self._metrics)}
 
