@@ -23,7 +23,10 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from functools import lru_cache
+try:
+    from functools import lru_cache
+except ImportError:
+    from ._helpers import lru_cache
 from io import BytesIO
 from typing import Any, Dict, Mapping
 import avro
@@ -53,6 +56,7 @@ class SchemaRegistryAvroSerializer(object):
             self._schema_registry_client = kwargs.pop("client") # type: "SchemaRegistryClient"
         except KeyError as e:
             raise TypeError("'{}' is a required keyword.".format(e.args[0]))
+        self._lru_cache_maxsize = 128
         self._avro_serializer = AvroObjectSerializer(codec=kwargs.get("codec"))
         self._auto_register_schemas = kwargs.get("auto_register_schemas", False)
         self._auto_register_schema_func = (
