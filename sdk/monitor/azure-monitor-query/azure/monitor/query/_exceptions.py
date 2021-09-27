@@ -10,8 +10,6 @@ from ._models import LogsQueryStatus
 class LogsQueryError(object):
     """The code and message for an error.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar code: A machine readable error code.
     :vartype code: str
     :ivar message: A human readable error message.

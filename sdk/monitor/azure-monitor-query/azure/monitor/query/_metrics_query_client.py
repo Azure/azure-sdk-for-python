@@ -7,7 +7,7 @@
 
 # pylint: disable=anomalous-backslash-in-string
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, List
 from msrest.serialization import Serializer
 from azure.core.tracing.decorator import distributed_trace
 
@@ -25,11 +25,15 @@ if TYPE_CHECKING:
 
 
 class MetricsQueryClient(object):
-    """MetricsQueryClient
+    """MetricsQueryClient should be used to collect numeric data from monitored resources into a
+    time series database. Metrics are numerical values that are collected at regular intervals and
+    describe some aspect of a system at a particular time. Metrics are lightweight and capable of
+    supporting near real-time scenarios, making them particularly useful for alerting and
+    fast detection of issues.
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/sample_metrics_query_client.py
+    .. literalinclude:: ../samples/sample_metrics_query.py
         :start-after: [START metrics_client_auth_with_token_cred]
         :end-before: [END metrics_client_auth_with_token_cred]
         :language: python
@@ -57,7 +61,7 @@ class MetricsQueryClient(object):
 
     @distributed_trace
     def query_resource(self, resource_uri, metric_names, **kwargs):
-        # type: (str, list, Optional[timedelta], Any) -> MetricsResult
+        # type: (str, List[str], Any) -> MetricsResult
         """Lists the metric values for a resource.
 
         :param resource_uri: The identifier of the resource.
@@ -90,10 +94,11 @@ class MetricsQueryClient(object):
          series where A = a1, B = b1 and C = c1::code:`<br>`\ **$filter=A eq ‘a1’ and B eq ‘b1’ and C eq
          ‘c1’**\ :code:`<br>`- Return all time series where A = a1:code:`<br>`\ **$filter=A eq ‘a1’ and
          B eq ‘\ *’ and C eq ‘*\ ’**.
+         To use the split feature, set the value to * - for example, like "City eq '*'"
         :paramtype filter: str
         :keyword metric_namespace: Metric namespace to query metric definitions for.
         :paramtype metric_namespace: str
-        :return: Response, or the result of cls(response)
+        :return: A MetricsResult object.
         :rtype: ~azure.monitor.query.MetricsResult
         :raises: ~azure.core.exceptions.HttpResponseError
 
@@ -162,7 +167,7 @@ class MetricsQueryClient(object):
         :type resource_uri: str
         :keyword namespace: Metric namespace to query metric definitions for.
         :paramtype namespace: str
-        :return: An iterator like instance of either MetricDefinitionCollection or the result of cls(response)
+        :return: An iterator like instance of either MetricDefinition or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricDefinition]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
