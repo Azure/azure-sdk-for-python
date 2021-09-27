@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 24 Sep 2021 19:54:47 GMT
+      - Mon, 27 Sep 2021 16:08:07 GMT
       location:
       - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/example.avro.User/versions/1?api-version=2017-04
       server:
