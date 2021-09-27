@@ -64,7 +64,7 @@ class LogsTableRow(object):
     :ivar int index: The index of the row in the table
     """
 
-    def __init__(self, **kwargs): # pylint: disable
+    def __init__(self, **kwargs):
         # type: (Any) -> None
         _col_types = kwargs["col_types"]
         row = kwargs["row"]
