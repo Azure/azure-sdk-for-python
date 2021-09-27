@@ -3,8 +3,8 @@
 Azure Cognitive Services Form Recognizer is a cloud service that uses machine learning to recognize text and structured data from your documents.
 It includes the following main features:
 
-* Custom models - Build custom models to extract text, field values, selection marks, and table data from documents. Since custom models are trained with your own data, so they're tailored to your documents.
-* Layout - Extract text, table structures, and selection marks, along with their bounding box coordinates, from documents.
+* Custom models - Build custom models to extract text, field values, selection marks, and table data from documents. Custom models are trained with your own data, so they're tailored to your documents.
+* Layout - Extract text, table structures, and selection marks, along with their bounding region coordinates, from documents.
 * Prebuilt models - Analyze data from certain types of common documents (such as receipts, invoices, business cards, or identity documents) using pre-trained models.
 * Prebuilt Document model - Analyze entities, key-value pairs, tables, and selection marks from documents using the general prebuilt document model. 
 
@@ -257,7 +257,7 @@ result = poller.result()
 ```
 
 ### Extract Layout
-Extract text, selection marks, text styles, and table structures, along with their bounding box coordinates, from documents.
+Extract text, selection marks, text styles, and table structures, along with their bounding region coordinates, from documents.
 
 ```python
 from azure.ai.formrecognizer import DocumentAnalysisClient
