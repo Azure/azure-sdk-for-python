@@ -338,6 +338,10 @@ class DecodeError(HttpResponseError):
     """Error raised during response deserialization."""
 
 
+class IncompleteReadError(DecodeError):
+    """Error raised if peer closes connection without sending complete message body."""
+
+
 class ResourceExistsError(HttpResponseError):
     """An error response with status code 4xx.
     This will not be raised directly by the Azure core pipeline."""

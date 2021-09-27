@@ -4,11 +4,17 @@
 
 ### Features Added
 
+- Added new error type `IncompleteReadError` which is raise if peer closes connection without sending complete message body.
+
 ### Breaking Changes
 
 - HttpLoggingPolicy integrates logs into one record #19925
 
 ### Bugs Fixed
+
+- The `Content-Length` header in a http response is strictly checked against the actual number of bytes in the body,
+  rather than silently truncating data in case the underlying tcp connection is closed prematurely. 
+  (thanks to @jochen-ott-by for the contribution)   #20412
 
 ### Other Changes
 
