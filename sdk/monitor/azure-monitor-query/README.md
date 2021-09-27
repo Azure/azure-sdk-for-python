@@ -69,13 +69,7 @@ For examples of Logs and Metrics queries, see the [Examples](#examples) section.
 
 ### Logs query rate limits and throttling
 
-Each Azure Active Directory user is able to make up to 200 requests per 30 seconds, with no cap on the total calls per day. If requests are made at a rate higher than this, these requests will receive HTTP status code 429 (Too Many Requests) along with the `Retry-After: <delta-seconds>` header. The header indicates the number of seconds until requests to this app are likely to be accepted.
-
-In addition to call rate limits and daily quota caps, there are limits on queries themselves. Queries cannot:
-
-- Return more than 500,000 rows.
-- Return more than 64,000,000 bytes (~61 MiB total data).
-- Run longer than 10 minutes by default. See this for details.
+The Log Analytics service applies throttling when the request rate is too high. Limits, such as the maximum number of rows returned, are also applied on the Kusto queries. For more information, see [Rate and query limits](https://dev.loganalytics.io/documentation/Using-the-API/Limits).
 
 ### Metrics data structure
 
@@ -112,68 +106,83 @@ The `timespan` parameter specifies the time duration for which to query the data
 ```python
 import os
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timezone
 from azure.monitor.query import LogsQueryClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
 client = LogsQueryClient(credential)
 
-# Response time trend
-# request duration over the last 12 hours
-query = """AppRequests |
-summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
+query = """AppRequests | take 5"""
 
-start_time=datetime(2021, 7, 2)
-end_time=datetime.now()
+start_time=datetime(2021, 7, 2, tzinfo=timezone.utc)
+end_time=datetime(2021, 7, 4, tzinfo=timezone.utc)
 
-# returns LogsQueryResult
-response = client.query(
-    os.environ['LOG_WORKSPACE_ID'],
-    query,
-    timespan=(start_time, end_time)
-    )
-
-if not response.tables:
-    print("No results for the query")
-
-for table in response.tables:
-    df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
-    print(df)
+try:
+    response = client.query_workspace(
+        workspace_id=os.environ['LOG_WORKSPACE_ID'],
+        query=query,
+        timespan=(start_time, end_time)
+        )
+    if response.status == LogsQueryStatus.PARTIAL:
+        error = response.partial_error
+        data = response.partial_data
+        print(error.message)
+    elif response.status == LogsQueryStatus.SUCCESS:
+        data = response.tables
+    for table in data:
+        df = pd.DataFrame(data=table.rows, columns=table.columns)
+        print(df)
+except HttpResponseError as err:
+    print("something fatal happened")
+    print (err)
 ```
 
 #### Handle logs query response
 
-The `query` API returns the `LogsQueryResult` while the `batch_query` API returns list of `LogsQueryResult`. Here's a hierarchy of the response:
+The `query` API returns a union of `LogsQueryResult` and `LogsQueryPartialResult` while the `batch_query` API returns list of `LogsQueryResult`, `LogsQueryPartialResult` and `LogsQueryError` objects. Here's a hierarchy of the response:
 
 ```
 LogsQueryResult
 |---statistics
 |---visualization
-|---error
 |---tables (list of `LogsTable` objects)
     |---name
     |---rows
-    |---columns (list of `LogsTableColumn` objects)
-        |---name
-        |---type
+    |---columns
+    |---column_types
+
+
+LogsQueryPartialResult
+|---statistics
+|---visualization
+|---partial_error (a `LogsQueryError` object)
+|---partial_data (list of `LogsTable` objects)
+    |---name
+    |---rows
+    |---columns
+    |---column_types
 ```
 
+The `LogsQueryResult` directly iterates over the table as a convinience.
 For example, to handle a logs query response with tables and display it using pandas:
 
 ```python
-table = response.tables[0]
-df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
+response = client.query(...)
+for table in response:
+    df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
 ```
 
-A full sample can be found [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_log_query_client.py).
+A full sample can be found [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_logs_single_query.py).
 
 In a similar fashion, to handle a batch logs query response:
 
 ```python
 for result in response:
-    table = result.tables[0]
-    df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
+    if result.status == LogsQueryStatus.SUCCESS:
+        for table in result:
+            df = pd.DataFrame(table.rows, columns=table.columns)
+            print(df)
 ```
 
 A full sample can be found [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_batch_query.py).
@@ -184,41 +193,51 @@ The following example demonstrates sending multiple queries at the same time usi
 
 ```python
 import os
-from datetime import timedelta
+from datetime import timedelta, datetime, timezone
 import pandas as pd
-from azure.monitor.query import LogsQueryClient, LogsQueryRequest
+from azure.monitor.query import LogsQueryClient, LogsBatchQuery, LogsQueryStatus
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
 client = LogsQueryClient(credential)
-
 requests = [
     LogsBatchQuery(
         query="AzureActivity | summarize count()",
         timespan=timedelta(hours=1),
-        workspace_id=os.environ['LOG_WORKSPACE_ID']
+        workspace_id= os.environ['LOG_WORKSPACE_ID']
     ),
     LogsBatchQuery(
-        query= """AppRequests | take 10  |
-            summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
-        timespan=(datetime(2021, 6, 2), timedelta(hours=1)),
-        workspace_id=os.environ['LOG_WORKSPACE_ID']
+        query= """bad query""",
+        timespan=timedelta(days=1),
+        workspace_id= os.environ['LOG_WORKSPACE_ID']
     ),
     LogsBatchQuery(
-        query= "AppRequests | take 2",
-        workspace_id=os.environ['LOG_WORKSPACE_ID']
+        query= """let Weight = 92233720368547758;
+        range x from 1 to 3 step 1
+        | summarize percentilesw(x, Weight * 100, 50)""",
+        workspace_id= os.environ['LOG_WORKSPACE_ID'],
+        timespan=(datetime(2021, 6, 2, tzinfo=timezone.utc), datetime(2021, 6, 5, tzinfo=timezone.utc)), # (start, end)
+        include_statistics=True
     ),
 ]
-response = client.query_batch(requests)
+results = client.query_batch(requests)
 
-for rsp in response:
-    body = rsp.body
-    if not body.tables:
-        print("Something is wrong")
-    else:
-        for table in body.tables:
-            df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
+for res in results:
+    if res.status == LogsQueryStatus.FAILURE:
+        # this will be a LogsQueryError
+        print(res.message)
+    elif res.status == LogsQueryStatus.PARTIAL:
+        ## this will be a LogsQueryPartialResult
+        print(res.partial_error.message)
+        for table in res.partial_data:
+            df = pd.DataFrame(table.rows, columns=table.columns)
             print(df)
+    elif res.status == LogsQueryStatus.SUCCESS:
+        ## this will be a LogsQueryResult
+        table = res.tables[0]
+        df = pd.DataFrame(table.rows, columns=table.columns)
+        print(df)
+
 ```
 
 ### Advanced logs query scenarios
@@ -236,9 +255,10 @@ from azure.identity import DefaultAzureCredential
 credential = DefaultAzureCredential()
 client = LogsQueryClient(credential)
 
-response = client.query(
+response = client.query_workspace(
     os.environ['LOG_WORKSPACE_ID'],
     "range x from 1 to 10000000000 step 1 | count",
+    timespan=None,
     server_timeout=1,
     )
 ```
@@ -256,7 +276,7 @@ The same logs query can be executed across multiple Log Analytics workspaces. In
 For example, the following query executes in three workspaces:
 
 ```python
-client.query(
+client.query_workspace(
     <workspace_id>,
     query,
     additional_workspaces=['<workspace 2>', '<workspace 3>']
@@ -277,9 +297,11 @@ To find the resource URI:
 2. From the **Overview** blade, select the **JSON View** link.
 3. In the resulting JSON, copy the value of the `id` property.
 
+**NOTE**: The metrics are returned in the order of the metric_names sent.
+
 ```python
 import os
-from datetime import timedelta
+from datetime import timedelta, datetime
 from azure.monitor.query import MetricsQueryClient
 from azure.identity import DefaultAzureCredential
 
@@ -288,7 +310,7 @@ client = MetricsQueryClient(credential)
 start_time = datetime(2021, 5, 25)
 duration = timedelta(days=1)
 metrics_uri = os.environ['METRICS_RESOURCE_URI']
-response = client.query(
+response = client.query_resource(
     metrics_uri,
     metric_names=["PublishSuccessCount"],
     timespan=(start_time, duration)
@@ -334,7 +356,7 @@ credential = DefaultAzureCredential()
 client = MetricsQueryClient(credential)
 
 metrics_uri = os.environ['METRICS_RESOURCE_URI']
-response = client.query(
+response = client.query_resource(
     metrics_uri,
     metric_names=["MatchedEventCount"],
     aggregations=[MetricAggregationType.COUNT]
@@ -372,6 +394,27 @@ Optional keyword arguments can be passed in at the client and per-operation leve
 ## Next steps
 
 To learn more about Azure Monitor, see the [Azure Monitor service documentation][azure_monitor_overview].
+
+### Samples
+These code samples show common champion scenario operations with the Azure Monitor Query client library.
+
+* Send a single query with LogsQueryClient and handle the response as a table: [sample_logs_single_query.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_logs_single_query.py) ([async_sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/async_samples/sample_log_query_async.py))
+
+* Send a single query with LogsQueryClient and handle the response in key value form: [sample_logs_query_key_value_form.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_logs_query_key_value_form.py)
+
+* Send a single query with LogsQueryClient without pandas: [sample_single_log_query_without_pandas.py.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_single_log_query_without_pandas.py)
+
+* Send a single query with LogsQueryClient across multiple workspaces: [sample_logs_query_multiple_workspaces.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_log_query_multiple_workspaces.py)
+
+* Send multiple queries with LogsQueryClient: [sample_batch_query.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_batch_query.py)
+
+* Send a single query with LogsQueryClient using server timeout: [sample_server_timeout.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_server_timeout.py)
+
+* Send a query using MetricsQueryClient: [sample_metrics_query.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_metrics_query.py) ([async_sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/async_samples/sample_metrics_query_async.py))
+
+* Get a list of metric namespaces: [sample_metric_namespaces.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_metric_namespaces.py) ([async_sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/async_samples/sample_metric_namespaces_async.py))
+
+* Get a list of metric definitions: [sample_metric_definitions.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_metric_definitions.py) ([async_sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/async_samples/sample_metric_definitions_async.py))
 
 ## Contributing
 

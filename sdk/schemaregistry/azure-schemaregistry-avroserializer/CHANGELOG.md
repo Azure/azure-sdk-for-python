@@ -5,6 +5,7 @@
 ### Features Added
 
 - `auto_register_schemas` keyword argument has been added to `SchemaRegistryAvroSerializer`, which will allow for automatically registering schemas passed in to the `serialize`.
+- `value` parameter in `serialize` on `SchemaRegistryAvroSerializer` takes type `Mapping` rather than `Dict`.
 
 ### Breaking Changes
 
@@ -13,6 +14,9 @@
 - `data` parameter in the `serialize` and `deserialize` methods on `SchemaRegistryAvroSerializer` has been renamed `value`.
 - `schema` parameter in the `serialize` method on `SchemaRegistryAvroSerializer` no longer accepts argument of type `bytes`.
 - `SchemaRegistryAvroSerializer` constructor no longer takes in the `codec` keyword argument.
+- The following positional arguments are now required keyword arguments:
+  - `client` and `group_name` in `SchemaRegistryAvroSerializer` constructor
+  - `schema` in `serialize` on `SchemaRegistryAvroSerializer`
 
 ### Bugs Fixed
 
