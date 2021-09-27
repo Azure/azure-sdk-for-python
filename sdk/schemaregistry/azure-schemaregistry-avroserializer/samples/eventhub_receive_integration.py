@@ -19,8 +19,8 @@ from azure.schemaregistry.serializer.avroserializer import SchemaRegistryAvroSer
 EVENTHUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
-SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
-GROUP_NAME = os.environ['SCHEMA_REGISTRY_GROUP']
+SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
+GROUP_NAME = os.environ['SCHEMAREGISTRY_GROUP']
 
 
 def on_event(partition_context, event):
@@ -48,7 +48,7 @@ eventhub_consumer = EventHubConsumerClient.from_connection_string(
 # TODO: after 'azure-schemaregistry==1.0.0b3' is released, update 'endpoint' to 'fully_qualified_namespace'
 avro_serializer = SchemaRegistryAvroSerializer(
     client=SchemaRegistryClient(
-        endpoint=SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE,
+        endpoint=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE,
         credential=DefaultAzureCredential()
     ),
     group_name=GROUP_NAME,

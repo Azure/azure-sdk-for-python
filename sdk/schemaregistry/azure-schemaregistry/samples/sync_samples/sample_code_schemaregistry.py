@@ -31,15 +31,15 @@ from azure.identity import ClientSecretCredential, DefaultAzureCredential
 
 def create_client():
     # [START create_sr_client_sync]
-    SCHEMA_REGISTRY_FQN = os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
+    SCHEMAREGISTRY_FQN = os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
     token_credential = DefaultAzureCredential()
-    schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=SCHEMA_REGISTRY_FQN, credential=token_credential)
+    schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=SCHEMAREGISTRY_FQN, credential=token_credential)
     # [END create_sr_client_sync]
     TENANT_ID = os.environ['AZURE_TENANT_ID']
     CLIENT_ID = os.environ['AZURE_CLIENT_ID']
     CLIENT_SECRET = os.environ['AZURE_CLIENT_SECRET']
     token_credential = ClientSecretCredential(TENANT_ID, CLIENT_ID, CLIENT_SECRET)
-    schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=SCHEMA_REGISTRY_FQN, credential=token_credential)
+    schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=SCHEMAREGISTRY_FQN, credential=token_credential)
     return schema_registry_client
 
 
