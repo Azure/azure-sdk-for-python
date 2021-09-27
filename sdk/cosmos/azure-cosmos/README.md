@@ -15,6 +15,10 @@ Use the Azure Cosmos DB SQL API SDK for Python to manage databases and the JSON 
 
 ## Getting started
 
+### Important update on Python 2.x Support
+
+This SDK will not support for Python 2.x starting January 1st, 2022. 
+
 ### Prerequisites
 
 * Azure subscription - [Create a free account][azure_sub]
