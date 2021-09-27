@@ -3,7 +3,7 @@ import pytest
 import os
 from azure.identity import ClientSecretCredential
 from azure.core.exceptions import HttpResponseError
-from azure.monitor.query import LogsQueryClient, LogsBatchQuery, LogsQueryError, LogsTable, LogsQueryResult, LogsTableRow
+from azure.monitor.query import LogsQueryClient, LogsBatchQuery, LogsQueryError, LogsTable, LogsQueryResult, LogsTableRow, LogsQueryPartialResult
 
 def _credential():
     credential  = ClientSecretCredential(
@@ -22,7 +22,7 @@ def test_logs_single_query():
     summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
     # returns LogsQueryResult 
-    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
+    response = client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
 
     assert response is not None
     assert response.tables is not None
@@ -37,7 +37,7 @@ def test_logs_single_query_raises_no_timespan():
 
     # returns LogsQueryResult 
     with pytest.raises(TypeError):
-        client.query(os.environ['LOG_WORKSPACE_ID'], query)
+        client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query)
 
 @pytest.mark.live_test_only
 def test_logs_single_query_with_non_200():
@@ -47,7 +47,7 @@ def test_logs_single_query_with_non_200():
     where TimeGenerated > ago(12h)"""
 
     with pytest.raises(HttpResponseError) as e:
-        client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
+        client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
 
     assert "SemanticError" in e.value.message
 
@@ -58,9 +58,11 @@ def test_logs_single_query_with_partial_success():
     query = """let Weight = 92233720368547758;
     range x from 1 to 3 step 1
     | summarize percentilesw(x, Weight * 100, 50)"""
-    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, allow_partial_errors=True)
+    response = client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
 
     assert response.partial_error is not None
+    assert response.partial_data is not None
+    assert response.__class__ == LogsQueryPartialResult
 
 @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/19917")
 @pytest.mark.live_test_only
@@ -68,7 +70,7 @@ def test_logs_server_timeout():
     client = LogsQueryClient(_credential())
 
     with pytest.raises(HttpResponseError) as e:
-        response = client.query(
+        response = client.query_workspace(
             os.environ['LOG_WORKSPACE_ID'],
             "range x from 1 to 1000000000000000 step 1 | count",
             timespan=None,
@@ -118,7 +120,7 @@ def test_logs_single_query_with_statistics():
     query = """AppRequests"""
 
     # returns LogsQueryResult 
-    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, include_statistics=True)
+    response = client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, include_statistics=True)
 
     assert response.statistics is not None
 
@@ -129,7 +131,7 @@ def test_logs_single_query_with_render():
     query = """AppRequests"""
 
     # returns LogsQueryResult 
-    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, include_visualization=True)
+    response = client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, include_visualization=True)
 
     assert response.visualization is not None
 
@@ -140,7 +142,7 @@ def test_logs_single_query_with_render_and_stats():
     query = """AppRequests"""
 
     # returns LogsQueryResult 
-    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, include_visualization=True, include_statistics=True)
+    response = client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, include_visualization=True, include_statistics=True)
 
     assert response.visualization is not None
     assert response.statistics is not None
@@ -183,7 +185,7 @@ def test_logs_single_query_additional_workspaces():
     query = "union * | where TimeGenerated > ago(100d) | project TenantId | summarize count() by TenantId"
 
     # returns LogsQueryResult 
-    response = client.query(
+    response = client.query_workspace(
         os.environ['LOG_WORKSPACE_ID'],
         query,
         timespan=None,
@@ -229,7 +231,7 @@ def test_logs_query_result_iterate_over_tables():
 
     query = "AppRequests; AppRequests | take 5"
 
-    response = client.query(
+    response = client.query_workspace(
         os.environ['LOG_WORKSPACE_ID'],
         query,
         timespan=None,
@@ -252,7 +254,7 @@ def test_logs_query_result_row_type():
 
     query = "AppRequests | take 5"
 
-    response = client.query(
+    response = client.query_workspace(
         os.environ['LOG_WORKSPACE_ID'],
         query,
         timespan=None,

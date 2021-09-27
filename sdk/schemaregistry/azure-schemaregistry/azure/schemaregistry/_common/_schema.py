@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Optional
+from typing import Any
 
 
 class SchemaProperties(object):
@@ -32,10 +32,8 @@ class SchemaProperties(object):
 
     :ivar id: References specific schema in registry namespace.
     :type id: str
-    :ivar location: URL location of schema, identified by schema group, schema name, and version.
-    :type location: str
-    :ivar serialization_type: Serialization type for the schema being stored.
-    :type serialization_type: str
+    :ivar format: Format for the schema being stored.
+    :type format: str
     :ivar version: Version of the returned schema.
     :type version: int
 
@@ -52,22 +50,20 @@ class SchemaProperties(object):
 
     def __init__(
         self,
-        id=None,    # pylint:disable=redefined-builtin
         **kwargs
     ):
-        # type: (Optional[str], Any) -> None
-        self.id = id
-        self.location = kwargs.get('location')
-        self.serialization_type = kwargs.get('serialization_type')
-        self.version = kwargs.get('version')
+        # type: (Any) -> None
+        self.id = kwargs.pop('id')
+        self.format = kwargs.pop('format')
+        self.version = kwargs.pop('version')
 
 
 class Schema(object):
     """
     The schema content of a schema, along with id and meta properties.
 
-    :ivar content: The content of the schema.
-    :type content: str
+    :ivar schema_definition: The content of the schema.
+    :type schema_definition: str
     :ivar properties: The properties of the schema.
     :type properties: SchemaProperties
 
@@ -84,9 +80,8 @@ class Schema(object):
 
     def __init__(
         self,
-        content,
-        properties,
+        **kwargs
     ):
-        # type: (str, SchemaProperties) -> None
-        self.content = content
-        self.properties = properties
+        # type: (Any) -> None
+        self.schema_definition = kwargs.pop("schema_definition")
+        self.properties = kwargs.pop("properties")

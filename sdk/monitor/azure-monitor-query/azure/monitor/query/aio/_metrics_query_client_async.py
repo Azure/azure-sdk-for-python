@@ -25,6 +25,7 @@ from .._helpers import construct_iso8601
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
+
 class MetricsQueryClient(object):
     """MetricsQueryClient
 
@@ -35,7 +36,7 @@ class MetricsQueryClient(object):
     """
 
     def __init__(self, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
-        endpoint = kwargs.pop('endpoint', 'https://management.azure.com')
+        endpoint = kwargs.pop("endpoint", "https://management.azure.com")
         self._client = MonitorQueryClient(
             credential=credential,
             base_url=endpoint,
@@ -47,12 +48,9 @@ class MetricsQueryClient(object):
         self._definitions_op = self._client.metric_definitions
 
     @distributed_trace_async
-    async def query(
-        self,
-        resource_uri: str,
-        metric_names: List,
-        **kwargs: Any
-        ) -> MetricsResult:
+    async def query_resource(
+        self, resource_uri: str, metric_names: List, **kwargs: Any
+    ) -> MetricsResult:
         """Lists the metric values for a resource.
 
         **Note**: Although the start_time, end_time, duration are optional parameters, it is highly
@@ -95,7 +93,7 @@ class MetricsQueryClient(object):
         :rtype: ~azure.monitor.query.MetricsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        timespan = construct_iso8601(kwargs.pop('timespan', None))
+        timespan = construct_iso8601(kwargs.pop("timespan", None))
         kwargs.setdefault("metricnames", ",".join(metric_names))
         kwargs.setdefault("timespan", timespan)
         kwargs.setdefault("top", kwargs.pop("max_results", None))
@@ -104,11 +102,17 @@ class MetricsQueryClient(object):
         aggregations = kwargs.pop("aggregations", None)
         if aggregations:
             kwargs.setdefault("aggregation", ",".join(aggregations))
-        generated = await self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
-        return MetricsResult._from_generated(generated) # pylint: disable=protected-access
+        generated = await self._metrics_op.list(
+            resource_uri, connection_verify=False, **kwargs
+        )
+        return MetricsResult._from_generated( # pylint: disable=protected-access
+            generated
+        )
 
     @distributed_trace
-    def list_metric_namespaces(self, resource_uri: str, **kwargs: Any) -> AsyncItemPaged[MetricNamespace]:
+    def list_metric_namespaces(
+        self, resource_uri: str, **kwargs: Any
+    ) -> AsyncItemPaged[MetricNamespace]:
         """Lists the metric namespaces for the resource.
 
         :param resource_uri: The identifier of the resource.
@@ -120,7 +124,7 @@ class MetricsQueryClient(object):
         :rtype: ~azure.core.paging.AsyncItemPaged[:class: `~azure.monitor.query.MetricNamespace`]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        start_time = kwargs.pop('start_time', None)
+        start_time = kwargs.pop("start_time", None)
         if start_time:
             start_time = Serializer.serialize_iso(start_time)
         return self._namespace_op.list(
@@ -129,17 +133,17 @@ class MetricsQueryClient(object):
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [
-                    MetricNamespace._from_generated(x) for x in objs # pylint: disable=protected-access
-                ]
+                    MetricNamespace._from_generated(x) # pylint: disable=protected-access
+                    for x in objs
+                ],
             ),
-            **kwargs)
+            **kwargs
+        )
 
     @distributed_trace
     def list_metric_definitions(
-        self,
-        resource_uri: str,
-        **kwargs: Any
-        ) -> AsyncItemPaged[MetricDefinition]:
+        self, resource_uri: str, **kwargs: Any
+    ) -> AsyncItemPaged[MetricDefinition]:
         """Lists the metric definitions for the resource.
 
         :param resource_uri: The identifier of the resource.
@@ -150,17 +154,19 @@ class MetricsQueryClient(object):
         :rtype: ~azure.core.paging.AsyncItemPaged[:class: `~azure.monitor.query.MetricDefinition`]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        metric_namespace = kwargs.pop('namespace', None)
+        metric_namespace = kwargs.pop("namespace", None)
         return self._definitions_op.list(
             resource_uri,
             metric_namespace,
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [
-                    MetricDefinition._from_generated(x) for x in objs # pylint: disable=protected-access
-                ]
+                    MetricDefinition._from_generated(x) # pylint: disable=protected-access
+                    for x in objs
+                ],
             ),
-            **kwargs)
+            **kwargs
+        )
 
     async def __aenter__(self) -> "MetricsQueryClient":
         await self._client.__aenter__()

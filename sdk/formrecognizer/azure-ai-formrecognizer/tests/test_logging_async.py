@@ -62,7 +62,7 @@ class AsyncMockTransport(mock.MagicMock):
             self.__aenter__ = mock.Mock(return_value=get_completed_future())
             self.__aexit__ = mock.Mock(return_value=get_completed_future())
 
-
+@pytest.mark.skip
 class TestLogging(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()

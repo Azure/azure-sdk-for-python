@@ -35,12 +35,12 @@ from typing import (
     Union,
     Mapping,
     Sequence,
-    List,
     Tuple,
     IO,
     Any,
     Dict,
     Iterable,
+    MutableMapping,
 )
 import xml.etree.ElementTree as ET
 import six
@@ -65,8 +65,6 @@ PrimitiveData = Optional[Union[str, int, float, bool]]
 
 
 ParamsType = Mapping[str, Union[PrimitiveData, Sequence[PrimitiveData]]]
-
-HeadersType = Mapping[str, str]
 
 FileContent = Union[str, bytes, IO[str], IO[bytes]]
 FileType = Union[
@@ -129,8 +127,8 @@ def set_xml_body(content):
     return headers, body
 
 def _shared_set_content_body(content):
-    # type: (Any) -> Tuple[HeadersType, Optional[ContentTypeBase]]
-    headers = {}  # type: HeadersType
+    # type: (Any) -> Tuple[MutableMapping[str, str], Optional[ContentTypeBase]]
+    headers = {}  # type: MutableMapping[str, str]
 
     if isinstance(content, ET.Element):
         # XML body

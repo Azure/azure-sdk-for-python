@@ -21,6 +21,7 @@ from ._form_base_client import FormRecognizerClientBase
 from ._polling import AnalyzePolling
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureKeyCredential, TokenCredential
     from azure.core.polling import LROPoller
     from ._models import FormPage, RecognizedForm
 
@@ -32,6 +33,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
     custom forms from trained models. It provides different methods based on inputs from a
     URL and inputs from a stream.
 
+    .. note:: FormRecognizerClient should be used with API versions <=v2.1.
+        To use API versions v2021-09-30-preview and up, instantiate a DocumentAnalysisClient.
+
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
@@ -40,26 +44,34 @@ class FormRecognizerClient(FormRecognizerClientBase):
     :type credential: :class:`~azure.core.credentials.AzureKeyCredential` or
         :class:`~azure.core.credentials.TokenCredential`
     :keyword api_version:
-        The API version of the service to use for requests. It defaults to the latest service version.
-        Setting to an older version may result in reduced feature compatibility.
+        The API version of the service to use for requests. It defaults to API version v2.1.
+        Setting to an older version may result in reduced feature compatibility. To use the
+        latest supported API version and features, instantiate a DocumentAnalysisClient instead.
     :paramtype api_version: str or ~azure.ai.formrecognizer.FormRecognizerApiVersion
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/sample_authentication.py
+        .. literalinclude:: ../samples/v3.1/sample_authentication.py
             :start-after: [START create_fr_client_with_key]
             :end-before: [END create_fr_client_with_key]
             :language: python
             :dedent: 8
             :caption: Creating the FormRecognizerClient with an endpoint and API key.
 
-        .. literalinclude:: ../samples/sample_authentication.py
+        .. literalinclude:: ../samples/v3.1/sample_authentication.py
             :start-after: [START create_fr_client_with_aad]
             :end-before: [END create_fr_client_with_aad]
             :language: python
             :dedent: 8
             :caption: Creating the FormRecognizerClient with a token credential.
     """
+
+    def __init__(self, endpoint, credential, **kwargs):
+        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
+        api_version = kwargs.pop("api_version", FormRecognizerApiVersion.V2_1)
+        super(FormRecognizerClient, self).__init__(
+            endpoint=endpoint, credential=credential, api_version=api_version, client_kind="form", **kwargs
+        )
 
     def _prebuilt_callback(
         self, raw_response, _, headers
@@ -104,7 +116,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_recognize_receipts.py
+            .. literalinclude:: ../samples/v3.1/sample_recognize_receipts.py
                 :start-after: [START recognize_receipts]
                 :end-before: [END recognize_receipts]
                 :language: python
@@ -180,7 +192,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_recognize_receipts_from_url.py
+            .. literalinclude:: ../samples/v3.1/sample_recognize_receipts_from_url.py
                 :start-after: [START recognize_receipts_from_url]
                 :end-before: [END recognize_receipts_from_url]
                 :language: python
@@ -253,7 +265,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_recognize_business_cards.py
+            .. literalinclude:: ../samples/v3.1/sample_recognize_business_cards.py
                 :start-after: [START recognize_business_cards]
                 :end-before: [END recognize_business_cards]
                 :language: python
@@ -368,7 +380,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_recognize_identity_documents.py
+            .. literalinclude:: ../samples/v3.1/sample_recognize_identity_documents.py
                 :start-after: [START recognize_identity_documents]
                 :end-before: [END recognize_identity_documents]
                 :language: python
@@ -482,7 +494,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_recognize_invoices.py
+            .. literalinclude:: ../samples/v3.1/sample_recognize_invoices.py
                 :start-after: [START recognize_invoices]
                 :end-before: [END recognize_invoices]
                 :language: python
@@ -607,7 +619,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_recognize_content.py
+            .. literalinclude:: ../samples/v3.1/sample_recognize_content.py
                 :start-after: [START recognize_content]
                 :end-before: [END recognize_content]
                 :language: python
@@ -756,7 +768,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_recognize_custom_forms.py
+            .. literalinclude:: ../samples/v3.1/sample_recognize_custom_forms.py
                 :start-after: [START recognize_custom_forms]
                 :end-before: [END recognize_custom_forms]
                 :language: python

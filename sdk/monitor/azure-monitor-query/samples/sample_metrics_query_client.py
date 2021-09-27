@@ -17,7 +17,7 @@ client = MetricsQueryClient(credential)
 
 # [START send_metrics_query]
 metrics_uri = os.environ['METRICS_RESOURCE_URI']
-response = client.query(
+response = client.query_resource(
     metrics_uri,
     metric_names=["Ingress"],
     timespan=timedelta(hours=2),
