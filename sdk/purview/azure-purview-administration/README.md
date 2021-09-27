@@ -136,6 +136,10 @@ even when it isn't enabled for the client:
 result = client.accounts.get_access_keys(logging_enable=True)
 ```
 
+## Next steps
+
+For more generic samples, see our [client docs][request_builders_and_client].
+
 ## Contributing
 
 This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit [cla.microsoft.com][cla].
@@ -163,3 +167,4 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
+[request_builders_and_client]: https://aka.ms/azsdk/python/protocol/quickstart
