@@ -1,10 +1,12 @@
 # Release History
 
-## 1.18.1 (Unreleased)
+## 1.19.0 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
+
+- HttpLoggingPolicy integrates logs into one record #19925
 
 ### Bugs Fixed
 
