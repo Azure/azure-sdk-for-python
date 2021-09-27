@@ -19,6 +19,7 @@
 # --------------------------------------------------------------------------
 import functools
 import pytest
+import json
 import uuid
 import avro
 import avro.io
@@ -121,5 +122,30 @@ class SchemaRegistryAvroSerializerTests(AzureTestCase):
         assert decoded_data["name"] == u"Ben"
         assert decoded_data["favorite_number"] == 7
         assert decoded_data["favorite_color"] == u"red"
+
+        sr_avro_serializer.close()
+
+    @SchemaRegistryPowerShellPreparer()
+    def test_basic_sr_avro_serializer_cache(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        # TODO: AFTER RELEASING azure-schemaregistry=1.0.0b3, UPDATE 'endpoint' to 'fully_qualified_namespace'
+        sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_fully_qualified_namespace)
+        sr_avro_serializer = SchemaRegistryAvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
+
+        cache_maxsize = 128
+        for i in range(cache_maxsize+2):
+            schema_json = {
+                "namespace":"example.avro",
+                "type":"record",
+                "name":"User{}".format(i),
+                "fields":[
+                    {"name":"name","type":"string"},
+                    {"name":"favorite_number{}".format(i),"type":["int","null"]}
+                ]
+            }
+            schema_str = json.dumps(schema_json)
+            dict_data = {"name": u"Ben", "favorite_number{}".format(i): i}
+            encoded_data = sr_avro_serializer.serialize(dict_data, schema=schema_str)
+            dict_output = sr_avro_serializer.deserialize(encoded_data)
+            assert dict_output == dict_data
 
         sr_avro_serializer.close()
