@@ -193,5 +193,8 @@ class PipelineClient(PipelineClientBase):
         :rtype: ~azure.core.rest.HttpResponse
         """
         stream = kwargs.pop("stream", False) # want to add default value
+        return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
         pipeline_response = self._pipeline.run(request, stream=stream, **kwargs) # pylint: disable=protected-access
+        if return_pipeline_response:
+            return pipeline_response
         return pipeline_response.http_response

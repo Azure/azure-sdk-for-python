@@ -234,6 +234,17 @@ async def test_multipart_files_content(send_request):
     await send_request(request)
 
 @pytest.mark.asyncio
+async def test_send_request_return_pipeline_response(client):
+    # we use return_pipeline_response for some cases in autorest
+    request = HttpRequest("GET", "/basic/string")
+    response = await client.send_request(request, _return_pipeline_response=True)
+    assert hasattr(response, "http_request")
+    assert hasattr(response, "http_response")
+    assert hasattr(response, "context")
+    assert response.http_response.text() == "Hello, world!"
+    assert hasattr(response.http_request, "content")
+
+@pytest.mark.asyncio
 async def test_text_and_encoding(send_request):
     response = await send_request(
         request=HttpRequest("GET", "/encoding/emoji"),

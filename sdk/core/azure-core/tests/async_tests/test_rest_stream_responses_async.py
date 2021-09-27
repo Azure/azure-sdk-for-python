@@ -176,6 +176,20 @@ async def test_iter_read_back_and_forth(client):
             response.text()
 
 @pytest.mark.asyncio
+async def test_stream_with_return_pipeline_response(client):
+    request = HttpRequest("GET", "/basic/string")
+    pipeline_response = await client.send_request(request, stream=True, _return_pipeline_response=True)
+    assert hasattr(pipeline_response, "http_request")
+    assert hasattr(pipeline_response.http_request, "content")
+    assert hasattr(pipeline_response, "http_response")
+    assert hasattr(pipeline_response, "context")
+    parts = []
+    async for part in pipeline_response.http_response.iter_bytes():
+        parts.append(part)
+    assert parts == [b'Hello, world!']
+    await client.close()
+
+@pytest.mark.asyncio
 async def test_error_reading(client):
     request = HttpRequest("GET", "/errors/403")
     async with client.send_request(request, stream=True) as response:

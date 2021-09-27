@@ -125,9 +125,11 @@ class AsyncLROBasePolling(LROBasePolling):
             # want to keep making azure.core.rest calls
             from azure.core.rest import HttpRequest as RestHttpRequest
             request = RestHttpRequest("GET", status_link)
-        else:
-            # if I am a azure.core.pipeline.transport.HttpResponse
-            request = self._client.get(status_link)
+            return await self._client.send_request(
+                request, _return_pipeline_response=True, **self._operation_config
+            )
+        # if I am a azure.core.pipeline.transport.HttpResponse
+        request = self._client.get(status_link)
 
         # can't use send_request in this case, because send_request is still provisional
         return await self._client._pipeline.run(  # pylint: disable=protected-access
