@@ -243,7 +243,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
         )
         self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
-        self.assertEqual(envelope.data.base_data.name, "test")
+        self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
         self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
         self.assertTrue(envelope.data.base_data.success)
@@ -257,6 +257,15 @@ class TestAzureTraceExporter(unittest.TestCase):
         )
         self.assertEqual(envelope.data.base_data.result_code, "200")
         self.assertEqual(envelope.tags["ai.user.userAgent"], "agent")
+
+        # Name empty
+        span._attributes = {
+            "http.method": "GET",
+            "http.scheme": "https",
+            "http.url": "https://www.example.com",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.name, "GET /")
 
         # Target
         span._attributes = {

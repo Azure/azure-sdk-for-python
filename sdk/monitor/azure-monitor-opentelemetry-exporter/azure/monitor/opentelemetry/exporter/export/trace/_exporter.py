@@ -202,7 +202,7 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
         envelope.name = "Microsoft.ApplicationInsights.RemoteDependency"
         # TODO: ai.operation.name for non-server spans
         data = RemoteDependencyData(
-            name=span.name[:1024],  # Breeze max length
+            name=span.name,
             id="{:016x}".format(span.context.span_id),
             result_code="0",
             duration=_utils.ns_to_duration(span.end_time - span.start_time),
@@ -234,61 +234,72 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                     # TODO: Not exposed in Swagger, need to update def
                     envelope.tags["ai.user.userAgent"] = span.attributes[SpanAttributes.HTTP_USER_AGENT]
                 scheme = span.attributes.get(SpanAttributes.HTTP_SCHEME)
+                # url
                 url = ""
-                # Target
                 if SpanAttributes.HTTP_URL in span.attributes:
                     url = span.attributes[SpanAttributes.HTTP_URL]
-                    # http specific logic for target
-                    if SpanAttributes.PEER_SERVICE not in span.attributes:
-                        try:
-                            parse_url = urlparse(url)
-                            if parse_url.port == _get_default_port_http(scheme):
-                                target = parse_url.hostname
-                            else:
-                                target = parse_url.netloc
-                        except Exception:  # pylint: disable=broad-except
-                            logger.warning("Error while parsing url.")
-                # http specific logic for target
-                if SpanAttributes.PEER_SERVICE not in span.attributes and SpanAttributes.HTTP_HOST in span.attributes:
-                    host = span.attributes[SpanAttributes.HTTP_HOST]
-                    try:
-                        # urlparse insists on absolute URLs starting with "//"
-                        # This logic assumes host does not include a "//"
-                        host_name = urlparse("//" + host)
-                        if host_name.port == _get_default_port_http(scheme):
-                            target = host_name.hostname
-                        else:
-                            target = host
-                    except Exception:  # pylint: disable=broad-except
-                        logger.warning("Error while parsing hostname.")
-                # url
-                if not url:
-                    if scheme and SpanAttributes.HTTP_TARGET in span.attributes:
-                        http_target = span.attributes[SpanAttributes.HTTP_TARGET]
-                        if SpanAttributes.HTTP_HOST in span.attributes:
-                            url = "{}://{}{}".format(
+                elif scheme and SpanAttributes.HTTP_TARGET in span.attributes:
+                    http_target = span.attributes[SpanAttributes.HTTP_TARGET]
+                    if SpanAttributes.HTTP_HOST in span.attributes:
+                        url = "{}://{}{}".format(
+                            scheme,
+                            span.attributes[SpanAttributes.HTTP_HOST],
+                            http_target,
+                        )
+                    elif SpanAttributes.NET_PEER_PORT in span.attributes:
+                        peer_port = span.attributes[SpanAttributes.NET_PEER_PORT]
+                        if SpanAttributes.NET_PEER_NAME in span.attributes:
+                            peer_name = span.attributes[SpanAttributes.NET_PEER_NAME]
+                            url = "{}://{}:{}{}".format(
                                 scheme,
-                                span.attributes[SpanAttributes.HTTP_HOST],
+                                peer_name,
+                                peer_port,
                                 http_target,
                             )
-                        elif SpanAttributes.NET_PEER_PORT in span.attributes:
-                            peer_port = span.attributes[SpanAttributes.NET_PEER_PORT]
-                            if SpanAttributes.NET_PEER_NAME in span.attributes:
-                                peer_name = span.attributes[SpanAttributes.NET_PEER_NAME]
-                                url = "{}://{}:{}{}".format(
-                                    scheme,
-                                    peer_name,
-                                    peer_port,
-                                    http_target,
-                                )
-                            elif SpanAttributes.NET_PEER_IP in span.attributes:
-                                peer_ip = span.attributes[SpanAttributes.NET_PEER_IP]
-                                url = "{}://{}:{}{}".format(
-                                    scheme,
-                                    peer_ip,
-                                    peer_port,
-                                    http_target,
-                                )
+                        elif SpanAttributes.NET_PEER_IP in span.attributes:
+                            peer_ip = span.attributes[SpanAttributes.NET_PEER_IP]
+                            url = "{}://{}:{}{}".format(
+                                scheme,
+                                peer_ip,
+                                peer_port,
+                                http_target,
+                            )
+                target_from_url = ""
+                path = ""
+                if url:
+                    try:
+                        parse_url = urlparse(url)
+                        path = parse_url.path
+                        if not path:
+                            path = "/"
+                        if parse_url.port == _get_default_port_http(scheme):
+                            target_from_url = parse_url.hostname
+                        else:
+                            target_from_url = parse_url.netloc
+                    except Exception:  # pylint: disable=broad-except
+                        logger.warning("Error while parsing url.")
+                # http specific logic for name
+                if path:
+                    data.name = "{} {}".format(
+                        span.attributes[SpanAttributes.HTTP_METHOD],
+                        path,
+                    )
+                # http specific logic for target
+                if SpanAttributes.PEER_SERVICE not in span.attributes:
+                    if SpanAttributes.HTTP_HOST in span.attributes:
+                        host = span.attributes[SpanAttributes.HTTP_HOST]
+                        try:
+                            # urlparse insists on absolute URLs starting with "//"
+                            # This logic assumes host does not include a "//"
+                            host_name = urlparse("//" + host)
+                            if host_name.port == _get_default_port_http(scheme):
+                                target = host_name.hostname
+                            else:
+                                target = host
+                        except Exception:  # pylint: disable=broad-except
+                            logger.warning("Error while parsing hostname.")
+                    elif target_from_url:
+                        target = target_from_url
                 # data is url
                 data.data = url
                 if SpanAttributes.HTTP_STATUS_CODE in span.attributes:
@@ -335,6 +346,8 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
             data.data = data.data[:8192]
         if target:
             data.target = target[:1024]
+        if data.name:
+            data.name = data.name[:1024]
     for key, val in span.attributes.items():
         # Remove Opentelemetry related span attributes from custom dimensions
         if key.startswith("http.") or \
