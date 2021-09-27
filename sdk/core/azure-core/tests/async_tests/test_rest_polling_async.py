@@ -38,9 +38,9 @@ def deserialization_callback():
 @pytest.fixture
 def lro_poller(client, deserialization_callback):
     async def _callback(request, **kwargs):
-        initial_response = await client.send_request(
+        request.url = client._client.format_url(request.url)
+        initial_response = await client._client._pipeline.run(
             request=request,
-            _return_pipeline_response=True
         )
         return AsyncLROPoller(
             client._client,

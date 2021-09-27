@@ -280,16 +280,6 @@ def test_put_xml_basic(send_request):
     )
     send_request(request)
 
-def test_send_request_return_pipeline_response(client):
-    # we use return_pipeline_response for some cases in autorest
-    request = HttpRequest("GET", "/basic/string")
-    response = client.send_request(request, _return_pipeline_response=True)
-    assert hasattr(response, "http_request")
-    assert hasattr(response, "http_response")
-    assert hasattr(response, "context")
-    assert response.http_response.text() == "Hello, world!"
-    assert hasattr(response.http_request, "content")
-
 def test_text_and_encoding(send_request):
     response = send_request(
         request=HttpRequest("GET", "/encoding/emoji"),

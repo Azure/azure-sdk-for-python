@@ -193,12 +193,9 @@ class AsyncPipelineClient(PipelineClientBase):
         return AsyncPipeline(transport, policies)
 
     async def _make_pipeline_call(self, request, **kwargs):
-        return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
         pipeline_response = await self._pipeline.run(
             request, **kwargs  # pylint: disable=protected-access
         )
-        if return_pipeline_response:
-            return pipeline_response
         return pipeline_response.http_response
 
     def send_request(
