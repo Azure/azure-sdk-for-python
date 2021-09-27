@@ -13,6 +13,7 @@ try:
     from ._models_py3 import AddParticipantWithCallLocatorRequest
     from ._models_py3 import AnswerCallRequest
     from ._models_py3 import AnswerCallResult
+    from ._models_py3 import AudioRoutingGroupRequest
     from ._models_py3 import CallConnectionProperties
     from ._models_py3 import CallConnectionStateChangedEvent
     from ._models_py3 import CallLocatorModel
@@ -34,7 +35,8 @@ try:
     from ._models_py3 import GetAllParticipantsWithCallLocatorRequest
     from ._models_py3 import GetParticipantRequest
     from ._models_py3 import GetParticipantWithCallLocatorRequest
-    from ._models_py3 import GroupCallLocatorModel
+    from ._models_py3 import HoldMeetingAudioRequest
+    from ._models_py3 import HoldMeetingAudioWithCallLocatorRequest
     from ._models_py3 import JoinCallRequest
     from ._models_py3 import JoinCallResult
     from ._models_py3 import MicrosoftTeamsUserIdentifierModel
@@ -53,7 +55,8 @@ try:
     from ._models_py3 import RemoveParticipantRequest
     from ._models_py3 import RemoveParticipantWithCallLocatorRequest
     from ._models_py3 import ResultInfo
-    from ._models_py3 import ServerCallLocatorModel
+    from ._models_py3 import ResumeMeetingAudioRequest
+    from ._models_py3 import ResumeMeetingAudioWithCallLocatorRequest
     from ._models_py3 import StartCallRecordingRequest
     from ._models_py3 import StartCallRecordingResult
     from ._models_py3 import StartCallRecordingWithCallLocatorRequest
@@ -75,6 +78,7 @@ except (SyntaxError, ImportError):
     from ._models import AddParticipantWithCallLocatorRequest  # type: ignore
     from ._models import AnswerCallRequest  # type: ignore
     from ._models import AnswerCallResult  # type: ignore
+    from ._models import AudioRoutingGroupRequest  # type: ignore
     from ._models import CallConnectionProperties  # type: ignore
     from ._models import CallConnectionStateChangedEvent  # type: ignore
     from ._models import CallLocatorModel  # type: ignore
@@ -96,7 +100,8 @@ except (SyntaxError, ImportError):
     from ._models import GetAllParticipantsWithCallLocatorRequest  # type: ignore
     from ._models import GetParticipantRequest  # type: ignore
     from ._models import GetParticipantWithCallLocatorRequest  # type: ignore
-    from ._models import GroupCallLocatorModel  # type: ignore
+    from ._models import HoldMeetingAudioRequest  # type: ignore
+    from ._models import HoldMeetingAudioWithCallLocatorRequest  # type: ignore
     from ._models import JoinCallRequest  # type: ignore
     from ._models import JoinCallResult  # type: ignore
     from ._models import MicrosoftTeamsUserIdentifierModel  # type: ignore
@@ -115,7 +120,8 @@ except (SyntaxError, ImportError):
     from ._models import RemoveParticipantRequest  # type: ignore
     from ._models import RemoveParticipantWithCallLocatorRequest  # type: ignore
     from ._models import ResultInfo  # type: ignore
-    from ._models import ServerCallLocatorModel  # type: ignore
+    from ._models import ResumeMeetingAudioRequest  # type: ignore
+    from ._models import ResumeMeetingAudioWithCallLocatorRequest  # type: ignore
     from ._models import StartCallRecordingRequest  # type: ignore
     from ._models import StartCallRecordingResult  # type: ignore
     from ._models import StartCallRecordingWithCallLocatorRequest  # type: ignore
@@ -132,11 +138,15 @@ except (SyntaxError, ImportError):
     from ._models import UnmuteParticipantWithCallLocatorRequest  # type: ignore
 
 from ._azure_communication_calling_server_service_enums import (
+    AudioRoutingMode,
     CallConnectionState,
-    CallLocatorTypeModel,
+    CallLocatorKindModel,
     CallRecordingState,
     CallRejectReason,
     CommunicationCloudEnvironmentModel,
+    Enum0,
+    Enum2,
+    Enum3,
     EventSubscriptionType,
     MediaType,
     OperationStatus,
@@ -153,6 +163,7 @@ __all__ = [
     'AddParticipantWithCallLocatorRequest',
     'AnswerCallRequest',
     'AnswerCallResult',
+    'AudioRoutingGroupRequest',
     'CallConnectionProperties',
     'CallConnectionStateChangedEvent',
     'CallLocatorModel',
@@ -174,7 +185,8 @@ __all__ = [
     'GetAllParticipantsWithCallLocatorRequest',
     'GetParticipantRequest',
     'GetParticipantWithCallLocatorRequest',
-    'GroupCallLocatorModel',
+    'HoldMeetingAudioRequest',
+    'HoldMeetingAudioWithCallLocatorRequest',
     'JoinCallRequest',
     'JoinCallResult',
     'MicrosoftTeamsUserIdentifierModel',
@@ -193,7 +205,8 @@ __all__ = [
     'RemoveParticipantRequest',
     'RemoveParticipantWithCallLocatorRequest',
     'ResultInfo',
-    'ServerCallLocatorModel',
+    'ResumeMeetingAudioRequest',
+    'ResumeMeetingAudioWithCallLocatorRequest',
     'StartCallRecordingRequest',
     'StartCallRecordingResult',
     'StartCallRecordingWithCallLocatorRequest',
@@ -208,11 +221,15 @@ __all__ = [
     'TransferCallRequest',
     'UnmuteParticipantRequest',
     'UnmuteParticipantWithCallLocatorRequest',
+    'AudioRoutingMode',
     'CallConnectionState',
-    'CallLocatorTypeModel',
+    'CallLocatorKindModel',
     'CallRecordingState',
     'CallRejectReason',
     'CommunicationCloudEnvironmentModel',
+    'Enum0',
+    'Enum2',
+    'Enum3',
     'EventSubscriptionType',
     'MediaType',
     'OperationStatus',
