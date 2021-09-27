@@ -14,6 +14,8 @@
   - `schema_definition`, which has been renamed from `schema_content`
   - `format`, which has been renamed from `serialization_type`
 - `endpoint` parameter in `SchemaRegistryClient` constructor has been renamed `fully_qualified_namespace`
+- `location` instance variable in `SchemaProperties` has been removed.
+- `Schema` and `SchemaProperties` no longer have positional parameters, as they will not be constructed by the user.
 
 ### Bugs Fixed
 
