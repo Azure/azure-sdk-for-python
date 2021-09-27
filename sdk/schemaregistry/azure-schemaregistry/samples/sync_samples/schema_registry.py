@@ -38,12 +38,12 @@ import json
 from azure.identity import ClientSecretCredential
 from azure.schemaregistry import SchemaRegistryClient, SchemaFormat
 
-TENANT_ID = os.environ['SCHEMA_REGISTRY_AZURE_TENANT_ID']
-CLIENT_ID = os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_ID']
-CLIENT_SECRET = os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_SECRET']
+TENANT_ID = os.environ['AZURE_TENANT_ID']
+CLIENT_ID = os.environ['AZURE_CLIENT_ID']
+CLIENT_SECRET = os.environ['AZURE_CLIENT_SECRET']
 
-SCHEMA_REGISTRY_FQN = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
-GROUP_NAME = os.environ['SCHEMA_REGISTRY_GROUP']
+SCHEMA_REGISTRY_FQN = os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
+GROUP_NAME = os.environ['SCHEMAREGISTRY_GROUP']
 NAME = 'your-schema-name'
 FORMAT = SchemaFormat.AVRO
 

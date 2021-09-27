@@ -33,13 +33,13 @@ from azure.identity.aio import ClientSecretCredential, DefaultAzureCredential
 
 def create_client():
     # [START create_sr_client_async]
-    SCHEMA_REGISTRY_FQN = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
+    SCHEMA_REGISTRY_FQN = os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
     token_credential = DefaultAzureCredential()
     schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=SCHEMA_REGISTRY_FQN, credential=token_credential)
     # [END create_sr_client_async]
-    TENANT_ID = os.environ['SCHEMA_REGISTRY_AZURE_TENANT_ID']
-    CLIENT_ID = os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_ID']
-    CLIENT_SECRET = os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_SECRET']
+    TENANT_ID = os.environ['AZURE_TENANT_ID']
+    CLIENT_ID = os.environ['AZURE_CLIENT_ID']
+    CLIENT_SECRET = os.environ['AZURE_CLIENT_SECRET']
     token_credential = ClientSecretCredential(TENANT_ID, CLIENT_ID, CLIENT_SECRET)
     schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=SCHEMA_REGISTRY_FQN, credential=token_credential)
     return schema_registry_client, token_credential
@@ -47,7 +47,7 @@ def create_client():
 
 async def register_schema(schema_registry_client):
     # [START register_schema_async]
-    GROUP_NAME = os.environ['SCHEMA_REGISTRY_GROUP']
+    GROUP_NAME = os.environ['SCHEMAREGISTRY_GROUP']
     NAME = 'your-schema-name'
     FORMAT = SchemaFormat.AVRO
     SCHEMA_DEFINITION = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
@@ -66,7 +66,7 @@ async def get_schema(schema_registry_client, id):
 
 
 async def get_schema_id(schema_registry_client):
-    group_name = os.environ['SCHEMA_REGISTRY_GROUP']
+    group_name = os.environ['SCHEMAREGISTRY_GROUP']
     name = 'your-schema-name'
     format = SchemaFormat.AVRO
     schema_definition = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
