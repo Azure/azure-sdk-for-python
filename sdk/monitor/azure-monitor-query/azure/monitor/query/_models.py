@@ -65,6 +65,7 @@ class LogsTableRow(list):
 
     def __init__(self, **kwargs):
         # type: (Any) -> None
+        super(LogsTableRow, self).__init__(**kwargs)
         _col_types = kwargs["col_types"]
         row = kwargs["row"]
         self._row = process_row(_col_types, row)
@@ -164,7 +165,7 @@ class MetricsList(list):
             return self._metrics[metric]
         except TypeError: # TypeError: list indices must be integers or slices, not str
             return self._metrics[self._metric_names[metric]]
-            
+
 
 class LogsBatchQuery(object):
     """A single request in a batch.
