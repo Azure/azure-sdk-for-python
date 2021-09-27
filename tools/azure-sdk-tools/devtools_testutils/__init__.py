@@ -1,5 +1,5 @@
 from .mgmt_testcase import AzureMgmtTestCase, AzureMgmtPreparer
-from .azure_recorded_testcase import add_sanitizer, AzureRecordedTestCase
+from .azure_recorded_testcase import AzureRecordedTestCase
 from .azure_testcase import AzureTestCase, is_live, get_region_override
 from .resource_testcase import (
     FakeResource,
