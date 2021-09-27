@@ -226,7 +226,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
     async def set_file_expiry(self, expiry_options,  # type: str
                               expires_on=None,  # type: Optional[Union[datetime, int]]
                               **kwargs):
-        # type: (str, Optional[Union[datetime, int]], **Any) -> None
+        # type: (...) -> None
         """Sets the time a file will expire and be deleted.
 
         :param str expiry_options:

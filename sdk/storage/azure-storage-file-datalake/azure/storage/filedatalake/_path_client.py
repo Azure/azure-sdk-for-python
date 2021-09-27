@@ -118,8 +118,11 @@ class PathClient(StorageAccountHostsMixin):
             quote(self.path_name, safe='~'),
             self._query_str)
 
-    def _create_path_options(self, resource_type, content_settings=None, metadata=None, **kwargs):
-        # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
+    def _create_path_options(self, resource_type,
+                             content_settings=None,  # type: Optional[ContentSettings]
+                             metadata=None,  # type: Optional[Dict[str, str]]
+                             **kwargs):
+        # type: (...) -> Dict[str, Any]
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
@@ -211,7 +214,7 @@ class PathClient(StorageAccountHostsMixin):
 
     @staticmethod
     def _delete_path_options(**kwargs):
-        # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
+        # type: (**Any) -> Dict[str, Any]
 
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_mod_conditions(kwargs)
@@ -262,7 +265,7 @@ class PathClient(StorageAccountHostsMixin):
 
     @staticmethod
     def _set_access_control_options(owner=None, group=None, permissions=None, acl=None, **kwargs):
-        # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
+        # type: (...) -> Dict[str, Any]
 
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_mod_conditions(kwargs)
@@ -636,8 +639,11 @@ class PathClient(StorageAccountHostsMixin):
             error.continuation_token = last_continuation_token
             raise error
 
-    def _rename_path_options(self, rename_source, content_settings=None, metadata=None, **kwargs):
-        # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
+    def _rename_path_options(self, rename_source,
+                             content_settings=None,  # type: Optional[ContentSettings]
+                             metadata=None,  # type: Optional[Dict[str, str]]
+                             **kwargs):
+        # type: (...) -> Dict[str, Any]
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if metadata or kwargs.pop('permissions', None) or kwargs.pop('umask', None):
