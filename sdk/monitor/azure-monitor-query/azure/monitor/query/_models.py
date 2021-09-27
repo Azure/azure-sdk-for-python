@@ -57,7 +57,7 @@ class LogsTable(object):
         )
 
 
-class LogsTableRow(object):
+class LogsTableRow(list):
     """Represents a single row in logs table.
 
     :ivar int index: The index of the row in the table
@@ -65,6 +65,7 @@ class LogsTableRow(object):
 
     def __init__(self, **kwargs):
         # type: (Any) -> None
+        super(LogsTableRow, self).__init__(**kwargs)
         _col_types = kwargs["col_types"]
         row = kwargs["row"]
         self._row = process_row(_col_types, row)
@@ -75,6 +76,12 @@ class LogsTableRow(object):
     def __iter__(self):
         """This will iterate over the row directly."""
         return iter(self._row)
+
+    def __len__(self):
+        return len(self._row)
+
+    def __repr__(self):
+        return repr(self._row)
 
     def __getitem__(self, column):
         """This type must be subscriptable directly to row.
@@ -131,10 +138,33 @@ class MetricsResult(object):
             granularity=generated.interval,
             namespace=generated.namespace,
             resource_region=generated.resourceregion,
-            metrics=[
+            metrics=MetricsList(metrics=[
                 Metric._from_generated(m) for m in generated.value # pylint: disable=protected-access
-            ],
+            ]),
         )
+
+class MetricsList(list):
+    """Custom list for metrics
+    """
+    def __init__(self, **kwargs):
+        super(MetricsList, self).__init__(**kwargs)
+        self._metrics = kwargs['metrics']
+        self._metric_names = {val.name: ind for ind, val in enumerate(self._metrics)}
+
+    def __iter__(self):
+        return iter(self._metrics)
+
+    def __len__(self):
+        return len(self._metrics)
+
+    def __repr__(self):
+        return repr(self._metrics)
+
+    def __getitem__(self, metric):
+        try:
+            return self._metrics[metric]
+        except TypeError: # TypeError: list indices must be integers or slices, not str
+            return self._metrics[self._metric_names[metric]]
 
 
 class LogsBatchQuery(object):

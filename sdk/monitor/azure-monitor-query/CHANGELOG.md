@@ -8,6 +8,7 @@
 - Added `status` attribute to `LogsQueryResult`.
 - Added `LogsQueryStatus` Enum to describe the status of a result.
 - Added a new `LogsTableRow` type that represents a single row in a table.
+- Items in `metrics` list in `MetricsResult` can now be accessed by metric names.
 
 ### Breaking Changes
 
