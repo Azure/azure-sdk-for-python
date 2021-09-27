@@ -127,11 +127,8 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
         )
         envelope.data = MonitorBase(base_data=data, base_type="RequestData")
         if SpanAttributes.HTTP_METHOD in span.attributes:  # HTTP
-            envelope.tags["ai.operation.name"] = "{} {}".format(
-                span.attributes[SpanAttributes.HTTP_METHOD],
-                span.name,
-            )
             url = ""
+            path = ""
             if SpanAttributes.HTTP_USER_AGENT in span.attributes:
                 # TODO: Not exposed in Swagger, need to update def
                 envelope.tags["ai.user.userAgent"] = span.attributes[SpanAttributes.HTTP_USER_AGENT]
@@ -169,9 +166,27 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                             host_port,
                             http_target,
                         )
-            if url:
-                url = url[:2048]  # Breeze max length
             data.url = url
+            # Http specific logic for ai.operation.name
+            if SpanAttributes.HTTP_ROUTE in span.attributes:
+                envelope.tags["ai.operation.name"] = "{} {}".format(
+                    span.attributes[SpanAttributes.HTTP_METHOD],
+                    span.attributes[SpanAttributes.HTTP_ROUTE],
+                )
+            elif url:
+                try:
+                    parse_url = urlparse(url)
+                    path = parse_url.path
+                    if not path:
+                        path = "/"
+                    envelope.tags["ai.operation.name"] = "{} {}".format(
+                        span.attributes[SpanAttributes.HTTP_METHOD],
+                        path,
+                    )
+                except Exception:  # pylint: disable=broad-except
+                    logger.warning("Error while parsing url.")
+            else:
+                envelope.tags["ai.operation.name"] = span.name
             if SpanAttributes.HTTP_STATUS_CODE in span.attributes:
                 status_code = span.attributes[SpanAttributes.HTTP_STATUS_CODE]
                 data.response_code = str(status_code)
@@ -196,8 +211,13 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
             envelope.tags["ai.operation.name"] = span.name
             if SpanAttributes.NET_PEER_IP in span.attributes:
                 envelope.tags["ai.location.ip"] = span.attributes[SpanAttributes.NET_PEER_IP]
-        data.response_code = data.response_code[:1024]  # Breeze max length
-        data.name = envelope.tags["ai.operation.name"][:1024]  # Breeze max length
+        # Apply truncation
+        if data.url:
+            data.url = data.url[:2048]  # Breeze max length
+        if data.response_code:
+            data.response_code = data.response_code[:1024]  # Breeze max length
+        if envelope.tags["ai.operation.name"]:
+            data.name = envelope.tags["ai.operation.name"][:1024]  # Breeze max length
     else:  # INTERNAL, CLIENT, PRODUCER
         envelope.name = "Microsoft.ApplicationInsights.RemoteDependency"
         # TODO: ai.operation.name for non-server spans

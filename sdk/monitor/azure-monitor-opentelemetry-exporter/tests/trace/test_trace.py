@@ -571,13 +571,13 @@ class TestAzureTraceExporter(unittest.TestCase):
             envelope.name, "Microsoft.ApplicationInsights.Request"
         )
         self.assertEqual(envelope.data.base_type, "RequestData")
-        self.assertEqual(envelope.data.base_data.name, "GET test")
+        self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
         self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
         self.assertEqual(envelope.data.base_data.response_code, "200")
         self.assertTrue(envelope.data.base_data.success)
 
-        self.assertEqual(envelope.tags["ai.operation.name"], "GET test")
+        self.assertEqual(envelope.tags["ai.operation.name"], "GET /wiki/Rabbit")
         self.assertEqual(envelope.tags["ai.user.userAgent"], "agent")
         self.assertEqual(envelope.tags["ai.location.ip"], "client_ip")
         self.assertEqual(envelope.data.base_data.url, "https://www.wikipedia.org/wiki/Rabbit")
@@ -619,6 +619,22 @@ class TestAzureTraceExporter(unittest.TestCase):
         }
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.url, "https://localhost:35555/path")
+
+        # ai.operation.name
+        span._attributes = {
+            "http.method": "GET",
+            "http.url": "https://www.wikipedia.org/wiki/Rabbit/test",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.tags["ai.operation.name"], "GET /wiki/Rabbit/test")
+        self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
+
+        span._attributes = {
+            "http.method": "GET",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.tags["ai.operation.name"], "test")
+        self.assertEqual(envelope.data.base_data.name, "test")
 
     def test_span_envelope_server_messaging(self):
         exporter = self._exporter
