@@ -20,22 +20,22 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"9d7f438550c74f65a54fbdf72c6fc2e5"}'
+      string: '{"id":"31d884a02c65437c81f6eaa5c49a9f6a"}'
     headers:
       content-type:
       - application/json
       date:
-      - Fri, 24 Sep 2021 19:10:27 GMT
+      - Mon, 27 Sep 2021 23:08:53 GMT
       location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2020-09-01-preview
+      - https://swathip-test-eh-schemaregistry.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2020-09-01-preview
       schema-id:
-      - 9d7f438550c74f65a54fbdf72c6fc2e5
+      - 31d884a02c65437c81f6eaa5c49a9f6a
       schema-id-location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/9d7f438550c74f65a54fbdf72c6fc2e5?api-version=2020-09-01-preview
+      - https://swathip-test-eh-schemaregistry.servicebus.windows.net:443/$schemagroups/getschemabyid/31d884a02c65437c81f6eaa5c49a9f6a?api-version=2020-09-01-preview
       schema-version:
       - '1'
       schema-versions-location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/test-schema-twice863b11a7/versions?api-version=2020-09-01-preview
+      - https://swathip-test-eh-schemaregistry.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/test-schema-twice863b11a7/versions?api-version=2020-09-01-preview
       serialization-type:
       - Avro
       server:
@@ -68,22 +68,22 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"9d7f438550c74f65a54fbdf72c6fc2e5"}'
+      string: '{"id":"31d884a02c65437c81f6eaa5c49a9f6a"}'
     headers:
       content-type:
       - application/json
       date:
-      - Fri, 24 Sep 2021 19:10:27 GMT
+      - Mon, 27 Sep 2021 23:08:53 GMT
       location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2020-09-01-preview
+      - https://swathip-test-eh-schemaregistry.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2020-09-01-preview
       schema-id:
-      - 9d7f438550c74f65a54fbdf72c6fc2e5
+      - 31d884a02c65437c81f6eaa5c49a9f6a
       schema-id-location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/9d7f438550c74f65a54fbdf72c6fc2e5?api-version=2020-09-01-preview
+      - https://swathip-test-eh-schemaregistry.servicebus.windows.net:443/$schemagroups/getschemabyid/31d884a02c65437c81f6eaa5c49a9f6a?api-version=2020-09-01-preview
       schema-version:
       - '1'
       schema-versions-location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/test-schema-twice863b11a7/versions?api-version=2020-09-01-preview
+      - https://swathip-test-eh-schemaregistry.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/test-schema-twice863b11a7/versions?api-version=2020-09-01-preview
       serialization-type:
       - Avro
       server:
