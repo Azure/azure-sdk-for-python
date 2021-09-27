@@ -18,6 +18,8 @@ The async versions of the samples require Python 3.6 or later.
 |-------------|---------------|
 |[sample_hello_world.py][hello_world] ([sample_hello_world_async.py][hello_world_async]) |Instantiate a `ContainerRegistryClient` object and `ContainerRepositoryClient` object |
 |[sample_delete_tags.py][delete_tags] and [sample_delete_tags_async.py][delete_tags_async] | Delete tags from a repository |
+|[sample_delete_images.py][delete_images] and [sample_delete_images_async.py][delete_images_async] | Delete images from a repository |
+|[sample_set_image_properties.py][set_image_properties] and [sample_set_image_properties_async.py][set_image_properties_async] | Set read/write/delete properties on an image |
 
 ### Prerequisites
 * Python 2.7, or 3.6 or later is required to use this package.
@@ -53,3 +55,7 @@ Check out the [API reference documentation][rest_docs] to learn more about what 
 [hello_world_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/containerregistry/azure-containerregistry/samples/async_samples/sample_hello_world_async.py
 [delete_tags]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/containerregistry/azure-containerregistry/samples/sample_delete_tags.py
 [delete_tags_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/containerregistry/azure-containerregistry/samples/async_samples/sample_delete_tags_async.py
+[delete_images]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/containerregistry/azure-containerregistry/samples/sample_delete_images.py
+[delete_images_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/containerregistry/azure-containerregistry/samples/async_samples/sample_delete_images_async.py
+[set_image_properties]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/containerregistry/azure-containerregistry/samples/sample_set_image_properties.py
+[set_image_properties_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/containerregistry/azure-containerregistry/samples/async_samples/sample_set_image_properties_async.py

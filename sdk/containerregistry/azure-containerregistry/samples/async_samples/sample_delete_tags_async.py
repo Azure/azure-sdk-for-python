@@ -36,7 +36,8 @@ class DeleteTagsAsync(object):
     async def delete_tags(self):
         # [START list_repository_names]
         credential = DefaultAzureCredential()
-        client = ContainerRegistryClient(self.account_url, credential)
+        audience = "https://management.azure.com"
+        client = ContainerRegistryClient(self.account_url, credential, audience=audience)
 
         async with client:
             async for repository in client.list_repository_names():

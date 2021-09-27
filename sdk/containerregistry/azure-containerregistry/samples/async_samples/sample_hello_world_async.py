@@ -35,12 +35,14 @@ class CreateClientsAsync(object):
     async def create_registry_client(self):
         # Instantiate the ContainerRegistryClient
         # [START create_registry_client]
-        client = ContainerRegistryClient(self.account_url, DefaultAzureCredential())
+        audience = "https://management.azure.com"
+        client = ContainerRegistryClient(self.account_url, DefaultAzureCredential(), audience=audience)
         # [END create_registry_client]
 
     async def basic_sample(self):
         # Instantiate the client
-        client = ContainerRegistryClient(self.account_url, DefaultAzureCredential())
+        audience = "https://management.azure.com"
+        client = ContainerRegistryClient(self.account_url, DefaultAzureCredential(), audience=audience)
         async with client:
             # Iterate through all the repositories
             async for repository_name in client.list_repository_names():
