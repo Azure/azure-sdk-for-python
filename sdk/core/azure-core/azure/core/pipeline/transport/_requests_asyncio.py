@@ -181,6 +181,10 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
             raise StopAsyncIteration()
         except requests.exceptions.StreamConsumedError:
             raise
+        except requests.exceptions.ChunkedEncodingError as err:
+            _LOGGER.warning("Incomplete download: %s", err)
+            internal_response.close()
+            raise IncompleteReadError(err, error=err)
         except Exception as err:
             _LOGGER.warning("Unable to stream download: %s", err)
             internal_response.close()

@@ -52,11 +52,12 @@ async def test_aio_transport_short_read_raises(port, stream):
             assert response.http_response.status_code == 200
             await response.http_response.load_body()
 
+
 @pytest.mark.asyncio
 async def test_aio_transport_short_read_download_stream(port):
+    url = "http://localhost:{}/errors/short-data".format(port)
+    client = AsyncPipelineClient(url)
     with pytest.raises(IncompleteReadError):
-        url = "http://localhost:{}/errors/short-data".format(port)
-        client = AsyncPipelineClient(url)
         async with client:
             request = HttpRequest("GET", url)
             pipeline_response = await client._pipeline.run(request, stream=True)
