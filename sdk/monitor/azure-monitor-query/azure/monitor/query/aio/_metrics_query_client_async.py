@@ -7,8 +7,7 @@
 
 # pylint: disable=anomalous-backslash-in-string
 
-from datetime import timedelta
-from typing import TYPE_CHECKING, Any, List, Optional
+from typing import TYPE_CHECKING, Any, List
 from msrest.serialization import Serializer
 
 from azure.core.async_paging import AsyncItemPaged
@@ -49,7 +48,7 @@ class MetricsQueryClient(object):
 
     @distributed_trace_async
     async def query_resource(
-        self, resource_uri: str, metric_names: List, **kwargs: Any
+        self, resource_uri: str, metric_names: List[str], **kwargs: Any
     ) -> MetricsResult:
         """Lists the metric values for a resource.
 
@@ -86,10 +85,11 @@ class MetricsQueryClient(object):
          series where A = a1, B = b1 and C = c1::code:`<br>`\ **$filter=A eq ‘a1’ and B eq ‘b1’ and C eq
          ‘c1’**\ :code:`<br>`- Return all time series where A = a1:code:`<br>`\ **$filter=A eq ‘a1’ and
          B eq ‘\ *’ and C eq ‘*\ ’**.
+         To use the split feature, set the value to * - for example, like "City eq '*'"
         :paramtype filter: str
         :keyword metric_namespace: Metric namespace to query metric definitions for.
         :paramtype metric_namespace: str
-        :return: Response, or the result of cls(response)
+        :return: A MetricsResult object.
         :rtype: ~azure.monitor.query.MetricsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -150,7 +150,7 @@ class MetricsQueryClient(object):
         :type resource_uri: str
         :keyword namespace: Metric namespace to query metric definitions for.
         :paramtype namespace: str
-        :return: An iterator like instance of either MetricDefinitionCollection or the result of cls(response)
+        :return: An iterator like instance of either MetricDefinition or the result of cls(response)
         :rtype: ~azure.core.paging.AsyncItemPaged[:class: `~azure.monitor.query.MetricDefinition`]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
