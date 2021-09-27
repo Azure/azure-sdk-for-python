@@ -66,7 +66,7 @@ def analyze_document():
     for idx, style in enumerate(result.styles):
         print(
             "Document contains {} content".format(
-                "handwritten" if style.is_handwritte else "no handwritten"
+                "handwritten" if style.is_handwritten else "no handwritten"
             )
         )
 
