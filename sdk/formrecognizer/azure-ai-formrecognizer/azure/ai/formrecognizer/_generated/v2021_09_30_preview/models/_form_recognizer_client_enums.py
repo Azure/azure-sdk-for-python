@@ -70,7 +70,6 @@ class DocumentFieldType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     INTEGER = "integer"
     SELECTION_MARK = "selectionMark"
     COUNTRY_REGION = "countryRegion"
-    CURRENCY = "currency"
     SIGNATURE = "signature"
     ARRAY = "array"
     OBJECT = "object"

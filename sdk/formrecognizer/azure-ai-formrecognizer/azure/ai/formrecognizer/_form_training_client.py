@@ -18,10 +18,6 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling
 from azure.core.pipeline import Pipeline
-from ._generated.models import (
-    CopyRequest,
-    CopyAuthorizationResult,
-)
 from ._helpers import TransportWrapper
 from ._api_versions import FormRecognizerApiVersion
 from ._models import (
@@ -423,10 +419,10 @@ class FormTrainingClient(FormRecognizerClientBase):
 
         return self._client.begin_copy_custom_model(  # type: ignore
             model_id=model_id,
-            copy_request=CopyRequest(
+            copy_request=self._generated_models.CopyRequest(
                 target_resource_id=target["resourceId"],
                 target_resource_region=target["resourceRegion"],
-                copy_authorization=CopyAuthorizationResult(
+                copy_authorization=self._generated_models.CopyAuthorizationResult(
                     access_token=target["accessToken"],
                     model_id=target["modelId"],
                     expiration_date_time_ticks=target["expirationDateTimeTicks"],
