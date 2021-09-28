@@ -186,10 +186,9 @@ def auto_close_issue(sdk_repo, item):
     issue_number, package_name = item.issue_object.number, item.package
     issue_info = sdk_repo.get_issue(number=issue_number)
     issue_author = issue_info.user.login
-    last_comment = list(issue_info.get_comments())[-1]
-    last_comment_date = last_comment.created_at
+    issue_created_date = issue_info.created_at
     last_version, last_time = _get_last_released_date(package_name)
-    if last_time and last_time > last_comment_date:
+    if last_time and last_time > issue_created_date:
         comment = f'Hi @{issue_author}, pypi link: https://pypi.org/project/{package_name}/{last_version}/'
         issue_info.create_comment(body=comment)
         issue_info.edit(state='closed')
