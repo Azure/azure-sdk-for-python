@@ -24,8 +24,8 @@ from azure.core import CaseInsensitiveEnumMeta
 class CallLocatorKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Call Locator Kind."""
 
-    GROUP_CALL_LOCATOR = "group_call_locator"
-    SERVER_CALL_LOCATOR = "server_call_locator"
+    GROUP_CALL_LOCATOR = "groupCallLocator"
+    SERVER_CALL_LOCATOR = "serverCallLocator"
 
 class CallLocator(object):
     """Call Locator.
@@ -34,13 +34,9 @@ class CallLocator(object):
     :vartype kind: str or CallLocatorKind
     :ivar Mapping[str, Any] properties: The properties of the locator.
     """
+    id = None  # type: Optional[str]
     kind = None  # type: Optional[Union[CallLocatorKind, str]]
     properties = {}  # type: Mapping[str, Any]
-
-GroupCallProperties = TypedDict(
-    'GroupCallProperties',
-    id=str
-)
 
 class GroupCallLocator(CallLocator):
     """The group call locator.
@@ -62,13 +58,8 @@ class GroupCallLocator(CallLocator):
         # type: (str) -> None
         if not id:
             raise ValueError("id can not be None or empty")
-
-        self.properties = GroupCallProperties(id=id)
-
-ServerCallProperties = TypedDict(
-    'ServerCallProperties',
-    id=str
-)
+        self.id = id
+        self.properties = {}
 
 class ServerCallLocator(CallLocator):
     """The server call locator.
@@ -90,8 +81,8 @@ class ServerCallLocator(CallLocator):
         # type: (str) -> None
         if not id:
             raise ValueError("id can not be None or empty")
-
-        self.properties = ServerCallProperties(id=id)
+        self.id = id
+        self.properties = {}
 
 class CreateCallOptions(object):
     """The options for creating a call.

@@ -44,8 +44,8 @@ def deserialize_call_locator(call_locator_model):
     :return: CallLocator
     """
 
-    if call_locator_model.group_call_locator:
-        return GroupCallLocator(call_locator_model.group_call_locator.group_id)
-    if call_locator_model.server_call_locator:
-        return ServerCallLocator(call_locator_model.server_call_locator.server_call_id)
+    if call_locator_model.group_call_id and call_locator_model.kind == "groupCallLocator":
+        return GroupCallLocator(call_locator_model.group_call_id)
+    if call_locator_model.server_call_id and call_locator_model.kind == "serverCallLocator":
+        return ServerCallLocator(call_locator_model.server_call_id)
     return None
