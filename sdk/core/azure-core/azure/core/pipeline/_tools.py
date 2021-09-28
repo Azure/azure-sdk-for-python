@@ -24,11 +24,10 @@
 #
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
-    from typing import Union, Any
+    from typing import Any
     from azure.core.rest import HttpResponse as RestHttpResponse
-    from azure.core.pipeline.transport import HttpResponse as PipelineTransportHttpResponse
-    HTTPResponseType = Union[RestHttpResponse, PipelineTransportHttpResponse]
 
 def await_result(func, *args, **kwargs):
     """If func returns an awaitable, raise that this runner can't handle it."""

@@ -27,7 +27,9 @@ import asyncio
 from collections.abc import AsyncIterator
 import functools
 import logging
-from typing import Any, Union, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING
+from typing import (
+    Any, Union, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload
+)
 import urllib3 # type: ignore
 
 import requests
@@ -48,7 +50,10 @@ from .._tools import is_rest as _is_rest
 from .._tools_async import handle_no_stream_rest_response as _handle_no_stream_rest_response
 
 if TYPE_CHECKING:
-    from .._tools_async import HTTPResponseType
+    from ...rest import (
+        HttpRequest as RestHttpRequest,
+        AsyncHttpResponse as RestAsyncHttpResponse
+    )
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -86,7 +91,35 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
     async def sleep(self, duration):  # pylint:disable=invalid-overridden-method
         await asyncio.sleep(duration)
 
-    async def send(self, request: HttpRequest, **kwargs: Any) -> "HTTPResponseType":  # type: ignore # pylint:disable=invalid-overridden-method
+    @overload  # type: ignore
+    async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # pylint:disable=invalid-overridden-method
+        """Send the request using this HTTP sender.
+
+        :param request: The HttpRequest
+        :type request: ~azure.core.pipeline.transport.HttpRequest
+        :return: The AsyncHttpResponse
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+
+        :keyword requests.Session session: will override the driver session and use yours.
+         Should NOT be done unless really required. Anything else is sent straight to requests.
+        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        """
+
+    @overload  # type: ignore
+    async def send(self, request: "RestHttpRequest", **kwargs: Any) -> "RestAsyncHttpResponse":  # pylint:disable=invalid-overridden-method
+        """Send a `azure.core.rest` request using this HTTP sender.
+
+        :param request: The HttpRequest
+        :type request: ~azure.core.rest.HttpRequest
+        :return: The AsyncHttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+
+        :keyword requests.Session session: will override the driver session and use yours.
+         Should NOT be done unless really required. Anything else is sent straight to requests.
+        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        """
+
+    async def send(self, request, **kwargs):  # pylint:disable=invalid-overridden-method
         """Send the request using this HTTP sender.
 
         :param request: The HttpRequest

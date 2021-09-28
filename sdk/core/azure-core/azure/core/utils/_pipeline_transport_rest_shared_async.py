@@ -12,7 +12,6 @@ from ..pipeline._tools_async import await_result as _await_result
 
 if TYPE_CHECKING:
     from typing import List
-    from ..pipeline._tools_async import HTTPResponseType
     from ..pipeline.policies import SansIOHTTPPolicy
 
 class _PartGenerator(AsyncIterator):
@@ -21,7 +20,7 @@ class _PartGenerator(AsyncIterator):
     :param parts: An iterable of parts
     """
 
-    def __init__(self, response: "HTTPResponseType", default_http_response_type: Any) -> None:
+    def __init__(self, response, default_http_response_type: Any) -> None:
         self._response = response
         self._parts = None
         self._default_http_response_type = default_http_response_type

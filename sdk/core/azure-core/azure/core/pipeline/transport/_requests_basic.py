@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 from __future__ import absolute_import
 import logging
-from typing import Iterator, Optional, Any, Union, TypeVar, TYPE_CHECKING
+from typing import Iterator, Optional, Any, Union, TypeVar, overload, TYPE_CHECKING
 import urllib3 # type: ignore
 from urllib3.util.retry import Retry # type: ignore
 from urllib3.exceptions import (
@@ -49,7 +49,7 @@ from ._bigger_block_size_http_adapters import BiggerBlockSizeHTTPAdapter
 from .._tools import is_rest as _is_rest, handle_non_stream_rest_response as _handle_non_stream_rest_response
 
 if TYPE_CHECKING:
-    from .._tools import HTTPResponseType
+    from ...rest import HttpRequest as RestHttpRequest, HttpResponse as RestHttpResponse
 
 PipelineType = TypeVar("PipelineType")
 
@@ -245,8 +245,37 @@ class RequestsTransport(HttpTransport):
             self._session_owner = False
             self.session = None
 
+    @overload
+    def send(self, request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
+        """Send a rest request and get back a rest response.
+
+        :param request: The request object to be sent.
+        :type request: ~azure.core.pipeline.transport.HttpRequest
+        :return: An HTTPResponse object.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
+
+        :keyword requests.Session session: will override the driver session and use yours.
+         Should NOT be done unless really required. Anything else is sent straight to requests.
+        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        """
+
+    @overload
+    def send(self, request, **kwargs):
+        # type: (RestHttpRequest, Any) -> RestHttpResponse
+        """Send an `azure.core.rest` request and get back a rest response.
+
+        :param request: The request object to be sent.
+        :type request: ~azure.core.rest.HttpRequest
+        :return: An HTTPResponse object.
+        :rtype: ~azure.core.rest.HttpResponse
+
+        :keyword requests.Session session: will override the driver session and use yours.
+         Should NOT be done unless really required. Anything else is sent straight to requests.
+        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        """
+
     def send(self, request, **kwargs): # type: ignore
-        # type: (HttpRequest, Any) -> HTTPResponseType
         """Send request object according to configuration.
 
         :param request: The request object to be sent.

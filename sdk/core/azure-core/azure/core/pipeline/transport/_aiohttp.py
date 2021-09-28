@@ -24,7 +24,9 @@
 #
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING
+from typing import (
+    Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload
+)
 from collections.abc import AsyncIterator
 try:
     import cchardet as chardet
@@ -50,7 +52,10 @@ from ...utils._pipeline_transport_rest_shared import _aiohttp_body_helper
 from .._tools import is_rest as _is_rest
 from .._tools_async import handle_no_stream_rest_response as _handle_no_stream_rest_response
 if TYPE_CHECKING:
-    from .._tools_async import HTTPResponseType
+    from ...rest import (
+        HttpRequest as RestHttpRequest,
+        AsyncHttpResponse as RestAsyncHttpResponse,
+    )
 
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
@@ -139,7 +144,43 @@ class AioHttpTransport(AsyncHttpTransport):
             return form_data
         return request.data
 
-    async def send(self, request: HttpRequest, **config: Any) -> Optional["HTTPResponseType"]:
+    @overload
+    async def send(self, request: HttpRequest, **config: Any) -> Optional[AsyncHttpResponse]:
+        """Send the request using this HTTP sender.
+
+        Will pre-load the body into memory to be available with a sync method.
+        Pass stream=True to avoid this behavior.
+
+        :param request: The HttpRequest object
+        :type request: ~azure.core.pipeline.transport.HttpRequest
+        :param config: Any keyword arguments
+        :return: The AsyncHttpResponse
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+
+        :keyword bool stream: Defaults to False.
+        :keyword dict proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
+        :keyword str proxy: will define the proxy to use all the time
+        """
+
+    @overload
+    async def send(self, request: "RestHttpRequest", **config: Any) -> Optional["RestAsyncHttpResponse"]:
+        """Send the `azure.core.rest` request using this HTTP sender.
+
+        Will pre-load the body into memory to be available with a sync method.
+        Pass stream=True to avoid this behavior.
+
+        :param request: The HttpRequest object
+        :type request: ~azure.core.rest.HttpRequest
+        :param config: Any keyword arguments
+        :return: The AsyncHttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+
+        :keyword bool stream: Defaults to False.
+        :keyword dict proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
+        :keyword str proxy: will define the proxy to use all the time
+        """
+
+    async def send(self, request, **config):
         """Send the request using this HTTP sender.
 
         Will pre-load the body into memory to be available with a sync method.

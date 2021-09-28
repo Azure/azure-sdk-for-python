@@ -25,14 +25,8 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from typing import TypeVar, Union
-    from ..pipeline.transport import AsyncHttpResponse as PipelineTransportAsyncHttpResponse
     from ..rest import AsyncHttpResponse as RestAsyncHttpResponse
 
-    HTTPResponseType = Union[
-        PipelineTransportAsyncHttpResponse,
-        RestAsyncHttpResponse,
-    ]
 
 async def await_result(func, *args, **kwargs):
     """If func returns an awaitable, await it."""
