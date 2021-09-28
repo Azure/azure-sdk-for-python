@@ -6,13 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import datetime
-from typing import Any, Dict, List, Optional, Union
-
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
-
-from ._form_recognizer_client_enums import *
 
 
 class AnalyzeDocumentRequest(msrest.serialization.Model):
@@ -31,14 +26,11 @@ class AnalyzeDocumentRequest(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        url_source: Optional[str] = None,
-        base64_source: Optional[bytearray] = None,
         **kwargs
     ):
         super(AnalyzeDocumentRequest, self).__init__(**kwargs)
-        self.url_source = url_source
-        self.base64_source = base64_source
+        self.url_source = kwargs.get('url_source', None)
+        self.base64_source = kwargs.get('base64_source', None)
 
 
 class AnalyzeResult(msrest.serialization.Model):
@@ -48,33 +40,34 @@ class AnalyzeResult(msrest.serialization.Model):
 
     :param api_version: Required. API version used to produce this result. Possible values include:
      "2021-09-30-preview".
-    :type api_version: str or ~azure.ai.formrecognizer.v3_0_preview_1.models.ApiVersion
+    :type api_version: str or ~azure.ai.formrecognizer.v2021_09_30_preview.models.ApiVersion
     :param model_id: Required. Model ID used to produce this result.
     :type model_id: str
     :param string_index_type: Required. Method used to compute string offset and length. Possible
      values include: "textElements", "unicodeCodePoint", "utf16CodeUnit".
-    :type string_index_type: str or ~azure.ai.formrecognizer.v3_0_preview_1.models.StringIndexType
+    :type string_index_type: str or
+     ~azure.ai.formrecognizer.v2021_09_30_preview.models.StringIndexType
     :param content: Required. Concatenate string representation of all textual and visual elements
      in reading order.
     :type content: str
     :param pages: Required. Analyzed pages.
-    :type pages: list[~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentPage]
+    :type pages: list[~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentPage]
     :param tables: Extracted tables.
-    :type tables: list[~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentTable]
+    :type tables: list[~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentTable]
     :param key_value_pairs: Extracted key-value pairs.
     :type key_value_pairs:
-     list[~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentKeyValuePair]
+     list[~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentKeyValuePair]
     :param entities: Extracted entities.
-    :type entities: list[~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentEntity]
+    :type entities: list[~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentEntity]
     :param styles: Extracted font styles.
-    :type styles: list[~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentStyle]
+    :type styles: list[~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentStyle]
     :param documents: Extracted documents.
-    :type documents: list[~azure.ai.formrecognizer.v3_0_preview_1.models.Document]
+    :type documents: list[~azure.ai.formrecognizer.v2021_09_30_preview.models.Document]
     """
 
     _validation = {
         'api_version': {'required': True},
-        'model_id': {'required': True},
+        'model_id': {'required': True, 'pattern': r'[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}'},
         'string_index_type': {'required': True},
         'content': {'required': True},
         'pages': {'required': True},
@@ -95,30 +88,19 @@ class AnalyzeResult(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        api_version: Union[str, "ApiVersion"],
-        model_id: str,
-        string_index_type: Union[str, "StringIndexType"],
-        content: str,
-        pages: List["DocumentPage"],
-        tables: Optional[List["DocumentTable"]] = None,
-        key_value_pairs: Optional[List["DocumentKeyValuePair"]] = None,
-        entities: Optional[List["DocumentEntity"]] = None,
-        styles: Optional[List["DocumentStyle"]] = None,
-        documents: Optional[List["Document"]] = None,
         **kwargs
     ):
         super(AnalyzeResult, self).__init__(**kwargs)
-        self.api_version = api_version
-        self.model_id = model_id
-        self.string_index_type = string_index_type
-        self.content = content
-        self.pages = pages
-        self.tables = tables
-        self.key_value_pairs = key_value_pairs
-        self.entities = entities
-        self.styles = styles
-        self.documents = documents
+        self.api_version = kwargs['api_version']
+        self.model_id = kwargs['model_id']
+        self.string_index_type = kwargs['string_index_type']
+        self.content = kwargs['content']
+        self.pages = kwargs['pages']
+        self.tables = kwargs.get('tables', None)
+        self.key_value_pairs = kwargs.get('key_value_pairs', None)
+        self.entities = kwargs.get('entities', None)
+        self.styles = kwargs.get('styles', None)
+        self.documents = kwargs.get('documents', None)
 
 
 class AnalyzeResultOperation(msrest.serialization.Model):
@@ -129,16 +111,16 @@ class AnalyzeResultOperation(msrest.serialization.Model):
     :param status: Required. Operation status. Possible values include: "notStarted", "running",
      "failed", "succeeded".
     :type status: str or
-     ~azure.ai.formrecognizer.v3_0_preview_1.models.AnalyzeResultOperationStatus
+     ~azure.ai.formrecognizer.v2021_09_30_preview.models.AnalyzeResultOperationStatus
     :param created_date_time: Required. Date and time (UTC) when the analyze operation was
      submitted.
     :type created_date_time: ~datetime.datetime
     :param last_updated_date_time: Required. Date and time (UTC) when the status was last updated.
     :type last_updated_date_time: ~datetime.datetime
     :param error: Encountered error during document analysis.
-    :type error: ~azure.ai.formrecognizer.v3_0_preview_1.models.Error
+    :type error: ~azure.ai.formrecognizer.v2021_09_30_preview.models.Error
     :param analyze_result: Document analysis result.
-    :type analyze_result: ~azure.ai.formrecognizer.v3_0_preview_1.models.AnalyzeResult
+    :type analyze_result: ~azure.ai.formrecognizer.v2021_09_30_preview.models.AnalyzeResult
     """
 
     _validation = {
@@ -157,20 +139,14 @@ class AnalyzeResultOperation(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        status: Union[str, "AnalyzeResultOperationStatus"],
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        error: Optional["Error"] = None,
-        analyze_result: Optional["AnalyzeResult"] = None,
         **kwargs
     ):
         super(AnalyzeResultOperation, self).__init__(**kwargs)
-        self.status = status
-        self.created_date_time = created_date_time
-        self.last_updated_date_time = last_updated_date_time
-        self.error = error
-        self.analyze_result = analyze_result
+        self.status = kwargs['status']
+        self.created_date_time = kwargs['created_date_time']
+        self.last_updated_date_time = kwargs['last_updated_date_time']
+        self.error = kwargs.get('error', None)
+        self.analyze_result = kwargs.get('analyze_result', None)
 
 
 class AuthorizeCopyRequest(msrest.serialization.Model):
@@ -185,7 +161,7 @@ class AuthorizeCopyRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'model_id': {'required': True},
+        'model_id': {'required': True, 'pattern': r'[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}'},
         'description': {'max_length': 4096, 'min_length': 0},
     }
 
@@ -196,14 +172,11 @@ class AuthorizeCopyRequest(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        model_id: str,
-        description: Optional[str] = None,
         **kwargs
     ):
         super(AuthorizeCopyRequest, self).__init__(**kwargs)
-        self.model_id = model_id
-        self.description = description
+        self.model_id = kwargs['model_id']
+        self.description = kwargs.get('description', None)
 
 
 class AzureBlobContentSource(msrest.serialization.Model):
@@ -228,14 +201,11 @@ class AzureBlobContentSource(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        container_url: str,
-        prefix: Optional[str] = None,
         **kwargs
     ):
         super(AzureBlobContentSource, self).__init__(**kwargs)
-        self.container_url = container_url
-        self.prefix = prefix
+        self.container_url = kwargs['container_url']
+        self.prefix = kwargs.get('prefix', None)
 
 
 class BoundingRegion(msrest.serialization.Model):
@@ -261,14 +231,11 @@ class BoundingRegion(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        page_number: int,
-        bounding_box: List[float],
         **kwargs
     ):
         super(BoundingRegion, self).__init__(**kwargs)
-        self.page_number = page_number
-        self.bounding_box = bounding_box
+        self.page_number = kwargs['page_number']
+        self.bounding_box = kwargs['bounding_box']
 
 
 class BuildDocumentModelRequest(msrest.serialization.Model):
@@ -281,11 +248,12 @@ class BuildDocumentModelRequest(msrest.serialization.Model):
     :param description: Model description.
     :type description: str
     :param azure_blob_source: Azure Blob Storage location containing the training data.
-    :type azure_blob_source: ~azure.ai.formrecognizer.v3_0_preview_1.models.AzureBlobContentSource
+    :type azure_blob_source:
+     ~azure.ai.formrecognizer.v2021_09_30_preview.models.AzureBlobContentSource
     """
 
     _validation = {
-        'model_id': {'required': True},
+        'model_id': {'required': True, 'pattern': r'[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}'},
         'description': {'max_length': 4096, 'min_length': 0},
     }
 
@@ -297,16 +265,12 @@ class BuildDocumentModelRequest(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        model_id: str,
-        description: Optional[str] = None,
-        azure_blob_source: Optional["AzureBlobContentSource"] = None,
         **kwargs
     ):
         super(BuildDocumentModelRequest, self).__init__(**kwargs)
-        self.model_id = model_id
-        self.description = description
-        self.azure_blob_source = azure_blob_source
+        self.model_id = kwargs['model_id']
+        self.description = kwargs.get('description', None)
+        self.azure_blob_source = kwargs.get('azure_blob_source', None)
 
 
 class ComponentModelInfo(msrest.serialization.Model):
@@ -319,7 +283,7 @@ class ComponentModelInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'model_id': {'required': True},
+        'model_id': {'required': True, 'pattern': r'[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}'},
     }
 
     _attribute_map = {
@@ -328,12 +292,10 @@ class ComponentModelInfo(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        model_id: str,
         **kwargs
     ):
         super(ComponentModelInfo, self).__init__(**kwargs)
-        self.model_id = model_id
+        self.model_id = kwargs['model_id']
 
 
 class ComposeDocumentModelRequest(msrest.serialization.Model):
@@ -346,11 +308,12 @@ class ComposeDocumentModelRequest(msrest.serialization.Model):
     :param description: Model description.
     :type description: str
     :param component_models: Required. List of component models to compose.
-    :type component_models: list[~azure.ai.formrecognizer.v3_0_preview_1.models.ComponentModelInfo]
+    :type component_models:
+     list[~azure.ai.formrecognizer.v2021_09_30_preview.models.ComponentModelInfo]
     """
 
     _validation = {
-        'model_id': {'required': True},
+        'model_id': {'required': True, 'pattern': r'[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}'},
         'description': {'max_length': 4096, 'min_length': 0},
         'component_models': {'required': True, 'unique': True},
     }
@@ -363,16 +326,12 @@ class ComposeDocumentModelRequest(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        model_id: str,
-        component_models: List["ComponentModelInfo"],
-        description: Optional[str] = None,
         **kwargs
     ):
         super(ComposeDocumentModelRequest, self).__init__(**kwargs)
-        self.model_id = model_id
-        self.description = description
-        self.component_models = component_models
+        self.model_id = kwargs['model_id']
+        self.description = kwargs.get('description', None)
+        self.component_models = kwargs['component_models']
 
 
 class CopyAuthorization(msrest.serialization.Model):
@@ -399,7 +358,7 @@ class CopyAuthorization(msrest.serialization.Model):
     _validation = {
         'target_resource_id': {'required': True},
         'target_resource_region': {'required': True},
-        'target_model_id': {'required': True},
+        'target_model_id': {'required': True, 'pattern': r'[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}'},
         'target_model_location': {'required': True},
         'access_token': {'required': True},
         'expiration_date_time': {'required': True},
@@ -416,22 +375,15 @@ class CopyAuthorization(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        target_resource_id: str,
-        target_resource_region: str,
-        target_model_id: str,
-        target_model_location: str,
-        access_token: str,
-        expiration_date_time: datetime.datetime,
         **kwargs
     ):
         super(CopyAuthorization, self).__init__(**kwargs)
-        self.target_resource_id = target_resource_id
-        self.target_resource_region = target_resource_region
-        self.target_model_id = target_model_id
-        self.target_model_location = target_model_location
-        self.access_token = access_token
-        self.expiration_date_time = expiration_date_time
+        self.target_resource_id = kwargs['target_resource_id']
+        self.target_resource_region = kwargs['target_resource_region']
+        self.target_model_id = kwargs['target_model_id']
+        self.target_model_location = kwargs['target_model_location']
+        self.access_token = kwargs['access_token']
+        self.expiration_date_time = kwargs['expiration_date_time']
 
 
 class CustomDocumentModelsInfo(msrest.serialization.Model):
@@ -457,18 +409,15 @@ class CustomDocumentModelsInfo(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        count: int,
-        limit: int,
         **kwargs
     ):
         super(CustomDocumentModelsInfo, self).__init__(**kwargs)
-        self.count = count
-        self.limit = limit
+        self.count = kwargs['count']
+        self.limit = kwargs['limit']
 
 
 class DocTypeInfo(msrest.serialization.Model):
-    """DocTypeInfo.
+    """Document type info.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -477,7 +426,7 @@ class DocTypeInfo(msrest.serialization.Model):
     :param field_schema: Required. Description of the document semantic schema using a JSON Schema
      style syntax.
     :type field_schema: dict[str,
-     ~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentFieldSchema]
+     ~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentFieldSchema]
     :param field_confidence: Estimated confidence for each field.
     :type field_confidence: dict[str, float]
     """
@@ -495,16 +444,12 @@ class DocTypeInfo(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        field_schema: Dict[str, "DocumentFieldSchema"],
-        description: Optional[str] = None,
-        field_confidence: Optional[Dict[str, float]] = None,
         **kwargs
     ):
         super(DocTypeInfo, self).__init__(**kwargs)
-        self.description = description
-        self.field_schema = field_schema
-        self.field_confidence = field_confidence
+        self.description = kwargs.get('description', None)
+        self.field_schema = kwargs['field_schema']
+        self.field_confidence = kwargs.get('field_confidence', None)
 
 
 class Document(msrest.serialization.Model):
@@ -515,11 +460,12 @@ class Document(msrest.serialization.Model):
     :param doc_type: Required. Document type.
     :type doc_type: str
     :param bounding_regions: Bounding regions covering the document.
-    :type bounding_regions: list[~azure.ai.formrecognizer.v3_0_preview_1.models.BoundingRegion]
+    :type bounding_regions:
+     list[~azure.ai.formrecognizer.v2021_09_30_preview.models.BoundingRegion]
     :param spans: Required. Location of the document in the reading order concatenated content.
-    :type spans: list[~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentSpan]
+    :type spans: list[~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentSpan]
     :param fields: Required. Dictionary of named field values.
-    :type fields: dict[str, ~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentField]
+    :type fields: dict[str, ~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentField]
     :param confidence: Required. Confidence of correctly extracting the document.
     :type confidence: float
     """
@@ -541,20 +487,14 @@ class Document(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        doc_type: str,
-        spans: List["DocumentSpan"],
-        fields: Dict[str, "DocumentField"],
-        confidence: float,
-        bounding_regions: Optional[List["BoundingRegion"]] = None,
         **kwargs
     ):
         super(Document, self).__init__(**kwargs)
-        self.doc_type = doc_type
-        self.bounding_regions = bounding_regions
-        self.spans = spans
-        self.fields = fields
-        self.confidence = confidence
+        self.doc_type = kwargs['doc_type']
+        self.bounding_regions = kwargs.get('bounding_regions', None)
+        self.spans = kwargs['spans']
+        self.fields = kwargs['fields']
+        self.confidence = kwargs['confidence']
 
 
 class DocumentEntity(msrest.serialization.Model):
@@ -569,9 +509,10 @@ class DocumentEntity(msrest.serialization.Model):
     :param content: Required. Entity content.
     :type content: str
     :param bounding_regions: Bounding regions covering the entity.
-    :type bounding_regions: list[~azure.ai.formrecognizer.v3_0_preview_1.models.BoundingRegion]
+    :type bounding_regions:
+     list[~azure.ai.formrecognizer.v2021_09_30_preview.models.BoundingRegion]
     :param spans: Required. Location of the entity in the reading order concatenated content.
-    :type spans: list[~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentSpan]
+    :type spans: list[~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentSpan]
     :param confidence: Required. Confidence of correctly extracting the entity.
     :type confidence: float
     """
@@ -594,22 +535,15 @@ class DocumentEntity(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        category: str,
-        content: str,
-        spans: List["DocumentSpan"],
-        confidence: float,
-        sub_category: Optional[str] = None,
-        bounding_regions: Optional[List["BoundingRegion"]] = None,
         **kwargs
     ):
         super(DocumentEntity, self).__init__(**kwargs)
-        self.category = category
-        self.sub_category = sub_category
-        self.content = content
-        self.bounding_regions = bounding_regions
-        self.spans = spans
-        self.confidence = confidence
+        self.category = kwargs['category']
+        self.sub_category = kwargs.get('sub_category', None)
+        self.content = kwargs['content']
+        self.bounding_regions = kwargs.get('bounding_regions', None)
+        self.spans = kwargs['spans']
+        self.confidence = kwargs['confidence']
 
 
 class DocumentField(msrest.serialization.Model):
@@ -618,9 +552,9 @@ class DocumentField(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param type: Required. Data type of the field value. Possible values include: "string", "date",
-     "time", "phoneNumber", "number", "integer", "selectionMark", "countryRegion", "currency",
-     "signature", "array", "object".
-    :type type: str or ~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentFieldType
+     "time", "phoneNumber", "number", "integer", "selectionMark", "countryRegion", "signature",
+     "array", "object".
+    :type type: str or ~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentFieldType
     :param value_string: String value.
     :type value_string: str
     :param value_date: Date value in YYYY-MM-DD format (ISO 8601).
@@ -632,28 +566,28 @@ class DocumentField(msrest.serialization.Model):
     :param value_number: Floating point value.
     :type value_number: float
     :param value_integer: Integer value.
-    :type value_integer: int
+    :type value_integer: long
     :param value_selection_mark: Selection mark value. Possible values include: "selected",
      "unselected".
     :type value_selection_mark: str or
-     ~azure.ai.formrecognizer.v3_0_preview_1.models.SelectionMarkState
+     ~azure.ai.formrecognizer.v2021_09_30_preview.models.SelectionMarkState
     :param value_signature: Presence of signature. Possible values include: "signed", "unsigned".
     :type value_signature: str or
-     ~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentSignatureType
+     ~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentSignatureType
     :param value_country_region: 3-letter country code value (ISO 3166-1 alpha-3).
     :type value_country_region: str
-    :param value_currency: 3-letter currency code value (ISO 4217).
-    :type value_currency: str
     :param value_array: Array of field values.
-    :type value_array: list[~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentField]
+    :type value_array: list[~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentField]
     :param value_object: Dictionary of named field values.
-    :type value_object: dict[str, ~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentField]
+    :type value_object: dict[str,
+     ~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentField]
     :param content: Field content.
     :type content: str
     :param bounding_regions: Bounding regions covering the field.
-    :type bounding_regions: list[~azure.ai.formrecognizer.v3_0_preview_1.models.BoundingRegion]
+    :type bounding_regions:
+     list[~azure.ai.formrecognizer.v2021_09_30_preview.models.BoundingRegion]
     :param spans: Location of the field in the reading order concatenated content.
-    :type spans: list[~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentSpan]
+    :type spans: list[~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentSpan]
     :param confidence: Confidence of correctly extracting the field.
     :type confidence: float
     """
@@ -670,11 +604,10 @@ class DocumentField(msrest.serialization.Model):
         'value_time': {'key': 'valueTime', 'type': 'time'},
         'value_phone_number': {'key': 'valuePhoneNumber', 'type': 'str'},
         'value_number': {'key': 'valueNumber', 'type': 'float'},
-        'value_integer': {'key': 'valueInteger', 'type': 'int'},
+        'value_integer': {'key': 'valueInteger', 'type': 'long'},
         'value_selection_mark': {'key': 'valueSelectionMark', 'type': 'str'},
         'value_signature': {'key': 'valueSignature', 'type': 'str'},
         'value_country_region': {'key': 'valueCountryRegion', 'type': 'str'},
-        'value_currency': {'key': 'valueCurrency', 'type': 'str'},
         'value_array': {'key': 'valueArray', 'type': '[DocumentField]'},
         'value_object': {'key': 'valueObject', 'type': '{DocumentField}'},
         'content': {'key': 'content', 'type': 'str'},
@@ -685,62 +618,50 @@ class DocumentField(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        type: Union[str, "DocumentFieldType"],
-        value_string: Optional[str] = None,
-        value_date: Optional[datetime.date] = None,
-        value_time: Optional[datetime.time] = None,
-        value_phone_number: Optional[str] = None,
-        value_number: Optional[float] = None,
-        value_integer: Optional[int] = None,
-        value_selection_mark: Optional[Union[str, "SelectionMarkState"]] = None,
-        value_signature: Optional[Union[str, "DocumentSignatureType"]] = None,
-        value_country_region: Optional[str] = None,
-        value_currency: Optional[str] = None,
-        value_array: Optional[List["DocumentField"]] = None,
-        value_object: Optional[Dict[str, "DocumentField"]] = None,
-        content: Optional[str] = None,
-        bounding_regions: Optional[List["BoundingRegion"]] = None,
-        spans: Optional[List["DocumentSpan"]] = None,
-        confidence: Optional[float] = None,
         **kwargs
     ):
         super(DocumentField, self).__init__(**kwargs)
-        self.type = type
-        self.value_string = value_string
-        self.value_date = value_date
-        self.value_time = value_time
-        self.value_phone_number = value_phone_number
-        self.value_number = value_number
-        self.value_integer = value_integer
-        self.value_selection_mark = value_selection_mark
-        self.value_signature = value_signature
-        self.value_country_region = value_country_region
-        self.value_currency = value_currency
-        self.value_array = value_array
-        self.value_object = value_object
-        self.content = content
-        self.bounding_regions = bounding_regions
-        self.spans = spans
-        self.confidence = confidence
+        self.type = kwargs['type']
+        self.value_string = kwargs.get('value_string', None)
+        self.value_date = kwargs.get('value_date', None)
+        self.value_time = kwargs.get('value_time', None)
+        self.value_phone_number = kwargs.get('value_phone_number', None)
+        self.value_number = kwargs.get('value_number', None)
+        self.value_integer = kwargs.get('value_integer', None)
+        self.value_selection_mark = kwargs.get('value_selection_mark', None)
+        self.value_signature = kwargs.get('value_signature', None)
+        self.value_country_region = kwargs.get('value_country_region', None)
+        self.value_array = kwargs.get('value_array', None)
+        self.value_object = kwargs.get('value_object', None)
+        self.content = kwargs.get('content', None)
+        self.bounding_regions = kwargs.get('bounding_regions', None)
+        self.spans = kwargs.get('spans', None)
+        self.confidence = kwargs.get('confidence', None)
 
 
 class DocumentFieldSchema(msrest.serialization.Model):
     """Description of the field semantic schema using a JSON Schema style syntax.
 
-    :param type: Semantic data type of the field value. Possible values include: "string", "date",
-     "time", "phoneNumber", "number", "integer", "selectionMark", "countryRegion", "currency",
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Semantic data type of the field value. Possible values include:
+     "string", "date", "time", "phoneNumber", "number", "integer", "selectionMark", "countryRegion",
      "signature", "array", "object".
-    :type type: str or ~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentFieldType
+    :type type: str or ~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentFieldType
     :param description: Field description.
     :type description: str
     :param example: Example field content.
     :type example: str
     :param items: Field type schema of each array element.
-    :type items: ~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentFieldSchema
+    :type items: ~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentFieldSchema
     :param properties: Named sub-fields of the object field.
-    :type properties: dict[str, ~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentFieldSchema]
+    :type properties: dict[str,
+     ~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentFieldSchema]
     """
+
+    _validation = {
+        'type': {'required': True},
+    }
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
@@ -752,20 +673,14 @@ class DocumentFieldSchema(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        type: Optional[Union[str, "DocumentFieldType"]] = None,
-        description: Optional[str] = None,
-        example: Optional[str] = None,
-        items: Optional["DocumentFieldSchema"] = None,
-        properties: Optional[Dict[str, "DocumentFieldSchema"]] = None,
         **kwargs
     ):
         super(DocumentFieldSchema, self).__init__(**kwargs)
-        self.type = type
-        self.description = description
-        self.example = example
-        self.items = items
-        self.properties = properties
+        self.type = kwargs['type']
+        self.description = kwargs.get('description', None)
+        self.example = kwargs.get('example', None)
+        self.items = kwargs.get('items', None)
+        self.properties = kwargs.get('properties', None)
 
 
 class DocumentKeyValueElement(msrest.serialization.Model):
@@ -776,10 +691,11 @@ class DocumentKeyValueElement(msrest.serialization.Model):
     :param content: Required. Concatenated content of the key-value element in reading order.
     :type content: str
     :param bounding_regions: Bounding regions covering the key-value element.
-    :type bounding_regions: list[~azure.ai.formrecognizer.v3_0_preview_1.models.BoundingRegion]
+    :type bounding_regions:
+     list[~azure.ai.formrecognizer.v2021_09_30_preview.models.BoundingRegion]
     :param spans: Required. Location of the key-value element in the reading order concatenated
      content.
-    :type spans: list[~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentSpan]
+    :type spans: list[~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentSpan]
     """
 
     _validation = {
@@ -795,16 +711,12 @@ class DocumentKeyValueElement(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        content: str,
-        spans: List["DocumentSpan"],
-        bounding_regions: Optional[List["BoundingRegion"]] = None,
         **kwargs
     ):
         super(DocumentKeyValueElement, self).__init__(**kwargs)
-        self.content = content
-        self.bounding_regions = bounding_regions
-        self.spans = spans
+        self.content = kwargs['content']
+        self.bounding_regions = kwargs.get('bounding_regions', None)
+        self.spans = kwargs['spans']
 
 
 class DocumentKeyValuePair(msrest.serialization.Model):
@@ -813,9 +725,9 @@ class DocumentKeyValuePair(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param key: Required. Field label of the key-value pair.
-    :type key: ~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentKeyValueElement
+    :type key: ~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentKeyValueElement
     :param value: Field value of the key-value pair.
-    :type value: ~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentKeyValueElement
+    :type value: ~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentKeyValueElement
     :param confidence: Required. Confidence of correctly extracting the key-value pair.
     :type confidence: float
     """
@@ -833,16 +745,12 @@ class DocumentKeyValuePair(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        key: "DocumentKeyValueElement",
-        confidence: float,
-        value: Optional["DocumentKeyValueElement"] = None,
         **kwargs
     ):
         super(DocumentKeyValuePair, self).__init__(**kwargs)
-        self.key = key
-        self.value = value
-        self.confidence = confidence
+        self.key = kwargs['key']
+        self.value = kwargs.get('value', None)
+        self.confidence = kwargs['confidence']
 
 
 class DocumentLine(msrest.serialization.Model):
@@ -855,7 +763,7 @@ class DocumentLine(msrest.serialization.Model):
     :param bounding_box: Bounding box of the line.
     :type bounding_box: list[float]
     :param spans: Required. Location of the line in the reading order concatenated content.
-    :type spans: list[~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentSpan]
+    :type spans: list[~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentSpan]
     """
 
     _validation = {
@@ -872,16 +780,12 @@ class DocumentLine(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        content: str,
-        spans: List["DocumentSpan"],
-        bounding_box: Optional[List[float]] = None,
         **kwargs
     ):
         super(DocumentLine, self).__init__(**kwargs)
-        self.content = content
-        self.bounding_box = bounding_box
-        self.spans = spans
+        self.content = kwargs['content']
+        self.bounding_box = kwargs.get('bounding_box', None)
+        self.spans = kwargs['spans']
 
 
 class DocumentPage(msrest.serialization.Model):
@@ -901,17 +805,17 @@ class DocumentPage(msrest.serialization.Model):
     :param unit: Required. The unit used by the width, height, and boundingBox properties. For
      images, the unit is "pixel". For PDF, the unit is "inch". Possible values include: "pixel",
      "inch".
-    :type unit: str or ~azure.ai.formrecognizer.v3_0_preview_1.models.LengthUnit
+    :type unit: str or ~azure.ai.formrecognizer.v2021_09_30_preview.models.LengthUnit
     :param spans: Required. Location of the page in the reading order concatenated content.
-    :type spans: list[~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentSpan]
+    :type spans: list[~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentSpan]
     :param words: Required. Extracted words from the page.
-    :type words: list[~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentWord]
+    :type words: list[~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentWord]
     :param selection_marks: Extracted selection marks from the page.
     :type selection_marks:
-     list[~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentSelectionMark]
+     list[~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentSelectionMark]
     :param lines: Required. Extracted lines from the page, potentially containing both textual and
      visual elements.
-    :type lines: list[~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentLine]
+    :type lines: list[~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentLine]
     """
 
     _validation = {
@@ -939,28 +843,18 @@ class DocumentPage(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        page_number: int,
-        angle: float,
-        width: float,
-        height: float,
-        unit: Union[str, "LengthUnit"],
-        spans: List["DocumentSpan"],
-        words: List["DocumentWord"],
-        lines: List["DocumentLine"],
-        selection_marks: Optional[List["DocumentSelectionMark"]] = None,
         **kwargs
     ):
         super(DocumentPage, self).__init__(**kwargs)
-        self.page_number = page_number
-        self.angle = angle
-        self.width = width
-        self.height = height
-        self.unit = unit
-        self.spans = spans
-        self.words = words
-        self.selection_marks = selection_marks
-        self.lines = lines
+        self.page_number = kwargs['page_number']
+        self.angle = kwargs['angle']
+        self.width = kwargs['width']
+        self.height = kwargs['height']
+        self.unit = kwargs['unit']
+        self.spans = kwargs['spans']
+        self.words = kwargs['words']
+        self.selection_marks = kwargs.get('selection_marks', None)
+        self.lines = kwargs['lines']
 
 
 class DocumentSelectionMark(msrest.serialization.Model):
@@ -970,12 +864,12 @@ class DocumentSelectionMark(msrest.serialization.Model):
 
     :param state: Required. State of the selection mark. Possible values include: "selected",
      "unselected".
-    :type state: str or ~azure.ai.formrecognizer.v3_0_preview_1.models.SelectionMarkState
+    :type state: str or ~azure.ai.formrecognizer.v2021_09_30_preview.models.SelectionMarkState
     :param bounding_box: Bounding box of the selection mark.
     :type bounding_box: list[float]
     :param span: Required. Location of the selection mark in the reading order concatenated
      content.
-    :type span: ~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentSpan
+    :type span: ~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentSpan
     :param confidence: Required. Confidence of correctly extracting the selection mark.
     :type confidence: float
     """
@@ -996,18 +890,13 @@ class DocumentSelectionMark(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        state: Union[str, "SelectionMarkState"],
-        span: "DocumentSpan",
-        confidence: float,
-        bounding_box: Optional[List[float]] = None,
         **kwargs
     ):
         super(DocumentSelectionMark, self).__init__(**kwargs)
-        self.state = state
-        self.bounding_box = bounding_box
-        self.span = span
-        self.confidence = confidence
+        self.state = kwargs['state']
+        self.bounding_box = kwargs.get('bounding_box', None)
+        self.span = kwargs['span']
+        self.confidence = kwargs['confidence']
 
 
 class DocumentSpan(msrest.serialization.Model):
@@ -1033,14 +922,11 @@ class DocumentSpan(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        offset: int,
-        length: int,
         **kwargs
     ):
         super(DocumentSpan, self).__init__(**kwargs)
-        self.offset = offset
-        self.length = length
+        self.offset = kwargs['offset']
+        self.length = kwargs['length']
 
 
 class DocumentStyle(msrest.serialization.Model):
@@ -1052,7 +938,7 @@ class DocumentStyle(msrest.serialization.Model):
     :type is_handwritten: bool
     :param spans: Required. Location of the text elements in the concatenated content the style
      applies to.
-    :type spans: list[~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentSpan]
+    :type spans: list[~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentSpan]
     :param confidence: Required. Confidence of correctly identifying the style.
     :type confidence: float
     """
@@ -1070,16 +956,12 @@ class DocumentStyle(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        spans: List["DocumentSpan"],
-        confidence: float,
-        is_handwritten: Optional[bool] = None,
         **kwargs
     ):
         super(DocumentStyle, self).__init__(**kwargs)
-        self.is_handwritten = is_handwritten
-        self.spans = spans
-        self.confidence = confidence
+        self.is_handwritten = kwargs.get('is_handwritten', None)
+        self.spans = kwargs['spans']
+        self.confidence = kwargs['confidence']
 
 
 class DocumentTable(msrest.serialization.Model):
@@ -1092,11 +974,12 @@ class DocumentTable(msrest.serialization.Model):
     :param column_count: Required. Number of columns in the table.
     :type column_count: int
     :param cells: Required. Cells contained within the table.
-    :type cells: list[~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentTableCell]
+    :type cells: list[~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentTableCell]
     :param bounding_regions: Bounding regions covering the table.
-    :type bounding_regions: list[~azure.ai.formrecognizer.v3_0_preview_1.models.BoundingRegion]
+    :type bounding_regions:
+     list[~azure.ai.formrecognizer.v2021_09_30_preview.models.BoundingRegion]
     :param spans: Required. Location of the table in the reading order concatenated content.
-    :type spans: list[~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentSpan]
+    :type spans: list[~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentSpan]
     """
 
     _validation = {
@@ -1116,20 +999,14 @@ class DocumentTable(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        row_count: int,
-        column_count: int,
-        cells: List["DocumentTableCell"],
-        spans: List["DocumentSpan"],
-        bounding_regions: Optional[List["BoundingRegion"]] = None,
         **kwargs
     ):
         super(DocumentTable, self).__init__(**kwargs)
-        self.row_count = row_count
-        self.column_count = column_count
-        self.cells = cells
-        self.bounding_regions = bounding_regions
-        self.spans = spans
+        self.row_count = kwargs['row_count']
+        self.column_count = kwargs['column_count']
+        self.cells = kwargs['cells']
+        self.bounding_regions = kwargs.get('bounding_regions', None)
+        self.spans = kwargs['spans']
 
 
 class DocumentTableCell(msrest.serialization.Model):
@@ -1139,7 +1016,7 @@ class DocumentTableCell(msrest.serialization.Model):
 
     :param kind: Table cell kind. Possible values include: "content", "rowHeader", "columnHeader",
      "stubHead", "description". Default value: "content".
-    :type kind: str or ~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentTableCellKind
+    :type kind: str or ~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentTableCellKind
     :param row_index: Required. Row index of the cell.
     :type row_index: int
     :param column_index: Required. Column index of the cell.
@@ -1151,9 +1028,10 @@ class DocumentTableCell(msrest.serialization.Model):
     :param content: Required. Concatenated content of the table cell in reading order.
     :type content: str
     :param bounding_regions: Bounding regions covering the table cell.
-    :type bounding_regions: list[~azure.ai.formrecognizer.v3_0_preview_1.models.BoundingRegion]
+    :type bounding_regions:
+     list[~azure.ai.formrecognizer.v2021_09_30_preview.models.BoundingRegion]
     :param spans: Required. Location of the table cell in the reading order concatenated content.
-    :type spans: list[~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentSpan]
+    :type spans: list[~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentSpan]
     """
 
     _validation = {
@@ -1178,26 +1056,17 @@ class DocumentTableCell(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        row_index: int,
-        column_index: int,
-        content: str,
-        spans: List["DocumentSpan"],
-        kind: Optional[Union[str, "DocumentTableCellKind"]] = "content",
-        row_span: Optional[int] = 1,
-        column_span: Optional[int] = 1,
-        bounding_regions: Optional[List["BoundingRegion"]] = None,
         **kwargs
     ):
         super(DocumentTableCell, self).__init__(**kwargs)
-        self.kind = kind
-        self.row_index = row_index
-        self.column_index = column_index
-        self.row_span = row_span
-        self.column_span = column_span
-        self.content = content
-        self.bounding_regions = bounding_regions
-        self.spans = spans
+        self.kind = kwargs.get('kind', "content")
+        self.row_index = kwargs['row_index']
+        self.column_index = kwargs['column_index']
+        self.row_span = kwargs.get('row_span', 1)
+        self.column_span = kwargs.get('column_span', 1)
+        self.content = kwargs['content']
+        self.bounding_regions = kwargs.get('bounding_regions', None)
+        self.spans = kwargs['spans']
 
 
 class DocumentWord(msrest.serialization.Model):
@@ -1210,7 +1079,7 @@ class DocumentWord(msrest.serialization.Model):
     :param bounding_box: Bounding box of the word.
     :type bounding_box: list[float]
     :param span: Required. Location of the word in the reading order concatenated content.
-    :type span: ~azure.ai.formrecognizer.v3_0_preview_1.models.DocumentSpan
+    :type span: ~azure.ai.formrecognizer.v2021_09_30_preview.models.DocumentSpan
     :param confidence: Required. Confidence of correctly extracting the word.
     :type confidence: float
     """
@@ -1231,18 +1100,13 @@ class DocumentWord(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        content: str,
-        span: "DocumentSpan",
-        confidence: float,
-        bounding_box: Optional[List[float]] = None,
         **kwargs
     ):
         super(DocumentWord, self).__init__(**kwargs)
-        self.content = content
-        self.bounding_box = bounding_box
-        self.span = span
-        self.confidence = confidence
+        self.content = kwargs['content']
+        self.bounding_box = kwargs.get('bounding_box', None)
+        self.span = kwargs['span']
+        self.confidence = kwargs['confidence']
 
 
 class Error(msrest.serialization.Model):
@@ -1257,9 +1121,9 @@ class Error(msrest.serialization.Model):
     :param target: Target of the error.
     :type target: str
     :param details: List of detailed errors.
-    :type details: list[~azure.ai.formrecognizer.v3_0_preview_1.models.Error]
+    :type details: list[~azure.ai.formrecognizer.v2021_09_30_preview.models.Error]
     :param innererror: Detailed error.
-    :type innererror: ~azure.ai.formrecognizer.v3_0_preview_1.models.InnerError
+    :type innererror: ~azure.ai.formrecognizer.v2021_09_30_preview.models.InnerError
     """
 
     _validation = {
@@ -1277,20 +1141,14 @@ class Error(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        code: str,
-        message: str,
-        target: Optional[str] = None,
-        details: Optional[List["Error"]] = None,
-        innererror: Optional["InnerError"] = None,
         **kwargs
     ):
         super(Error, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
-        self.target = target
-        self.details = details
-        self.innererror = innererror
+        self.code = kwargs['code']
+        self.message = kwargs['message']
+        self.target = kwargs.get('target', None)
+        self.details = kwargs.get('details', None)
+        self.innererror = kwargs.get('innererror', None)
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -1299,7 +1157,7 @@ class ErrorResponse(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param error: Required. Error info.
-    :type error: ~azure.ai.formrecognizer.v3_0_preview_1.models.Error
+    :type error: ~azure.ai.formrecognizer.v2021_09_30_preview.models.Error
     """
 
     _validation = {
@@ -1312,12 +1170,10 @@ class ErrorResponse(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        error: "Error",
         **kwargs
     ):
         super(ErrorResponse, self).__init__(**kwargs)
-        self.error = error
+        self.error = kwargs['error']
 
 
 class GetInfoResponse(msrest.serialization.Model):
@@ -1327,7 +1183,7 @@ class GetInfoResponse(msrest.serialization.Model):
 
     :param custom_document_models: Required. Info regarding custom document models.
     :type custom_document_models:
-     ~azure.ai.formrecognizer.v3_0_preview_1.models.CustomDocumentModelsInfo
+     ~azure.ai.formrecognizer.v2021_09_30_preview.models.CustomDocumentModelsInfo
     """
 
     _validation = {
@@ -1340,21 +1196,19 @@ class GetInfoResponse(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        custom_document_models: "CustomDocumentModelsInfo",
         **kwargs
     ):
         super(GetInfoResponse, self).__init__(**kwargs)
-        self.custom_document_models = custom_document_models
+        self.custom_document_models = kwargs['custom_document_models']
 
 
 class GetModelsResponse(msrest.serialization.Model):
-    """GetModelsResponse.
+    """List Models response object.
 
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. List of models.
-    :type value: list[~azure.ai.formrecognizer.v3_0_preview_1.models.ModelSummary]
+    :type value: list[~azure.ai.formrecognizer.v2021_09_30_preview.models.ModelSummary]
     :param next_link: Link to the next page of models.
     :type next_link: str
     """
@@ -1370,14 +1224,11 @@ class GetModelsResponse(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        value: List["ModelSummary"],
-        next_link: Optional[str] = None,
         **kwargs
     ):
         super(GetModelsResponse, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
+        self.value = kwargs['value']
+        self.next_link = kwargs.get('next_link', None)
 
 
 class OperationInfo(msrest.serialization.Model):
@@ -1389,16 +1240,16 @@ class OperationInfo(msrest.serialization.Model):
     :type operation_id: str
     :param status: Required. Operation status. Possible values include: "notStarted", "running",
      "failed", "succeeded", "canceled".
-    :type status: str or ~azure.ai.formrecognizer.v3_0_preview_1.models.OperationStatus
+    :type status: str or ~azure.ai.formrecognizer.v2021_09_30_preview.models.OperationStatus
     :param percent_completed: Operation progress (0-100).
     :type percent_completed: int
     :param created_date_time: Required. Date and time (UTC) when the operation was created.
     :type created_date_time: ~datetime.datetime
     :param last_updated_date_time: Required. Date and time (UTC) when the status was last updated.
     :type last_updated_date_time: ~datetime.datetime
-    :param kind: Type of operation. Possible values include: "documentModelBuild",
+    :param kind: Required. Type of operation. Possible values include: "documentModelBuild",
      "documentModelCompose", "documentModelCopyTo".
-    :type kind: str or ~azure.ai.formrecognizer.v3_0_preview_1.models.OperationKind
+    :type kind: str or ~azure.ai.formrecognizer.v2021_09_30_preview.models.OperationKind
     :param resource_location: Required. URL of the resource targeted by this operation.
     :type resource_location: str
     """
@@ -1409,6 +1260,7 @@ class OperationInfo(msrest.serialization.Model):
         'percent_completed': {'maximum': 100, 'minimum': 0},
         'created_date_time': {'required': True},
         'last_updated_date_time': {'required': True},
+        'kind': {'required': True},
         'resource_location': {'required': True},
     }
 
@@ -1424,24 +1276,16 @@ class OperationInfo(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        operation_id: str,
-        status: Union[str, "OperationStatus"],
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        resource_location: str,
-        percent_completed: Optional[int] = None,
-        kind: Optional[Union[str, "OperationKind"]] = None,
         **kwargs
     ):
         super(OperationInfo, self).__init__(**kwargs)
-        self.operation_id = operation_id
-        self.status = status
-        self.percent_completed = percent_completed
-        self.created_date_time = created_date_time
-        self.last_updated_date_time = last_updated_date_time
-        self.kind = kind
-        self.resource_location = resource_location
+        self.operation_id = kwargs['operation_id']
+        self.status = kwargs['status']
+        self.percent_completed = kwargs.get('percent_completed', None)
+        self.created_date_time = kwargs['created_date_time']
+        self.last_updated_date_time = kwargs['last_updated_date_time']
+        self.kind = kwargs['kind']
+        self.resource_location = kwargs['resource_location']
 
 
 class GetOperationResponse(OperationInfo):
@@ -1453,20 +1297,20 @@ class GetOperationResponse(OperationInfo):
     :type operation_id: str
     :param status: Required. Operation status. Possible values include: "notStarted", "running",
      "failed", "succeeded", "canceled".
-    :type status: str or ~azure.ai.formrecognizer.v3_0_preview_1.models.OperationStatus
+    :type status: str or ~azure.ai.formrecognizer.v2021_09_30_preview.models.OperationStatus
     :param percent_completed: Operation progress (0-100).
     :type percent_completed: int
     :param created_date_time: Required. Date and time (UTC) when the operation was created.
     :type created_date_time: ~datetime.datetime
     :param last_updated_date_time: Required. Date and time (UTC) when the status was last updated.
     :type last_updated_date_time: ~datetime.datetime
-    :param kind: Type of operation. Possible values include: "documentModelBuild",
+    :param kind: Required. Type of operation. Possible values include: "documentModelBuild",
      "documentModelCompose", "documentModelCopyTo".
-    :type kind: str or ~azure.ai.formrecognizer.v3_0_preview_1.models.OperationKind
+    :type kind: str or ~azure.ai.formrecognizer.v2021_09_30_preview.models.OperationKind
     :param resource_location: Required. URL of the resource targeted by this operation.
     :type resource_location: str
     :param error: Encountered error.
-    :type error: ~azure.ai.formrecognizer.v3_0_preview_1.models.Error
+    :type error: ~azure.ai.formrecognizer.v2021_09_30_preview.models.Error
     :param result: Operation result upon success.
     :type result: any
     """
@@ -1477,6 +1321,7 @@ class GetOperationResponse(OperationInfo):
         'percent_completed': {'maximum': 100, 'minimum': 0},
         'created_date_time': {'required': True},
         'last_updated_date_time': {'required': True},
+        'kind': {'required': True},
         'resource_location': {'required': True},
     }
 
@@ -1494,21 +1339,11 @@ class GetOperationResponse(OperationInfo):
 
     def __init__(
         self,
-        *,
-        operation_id: str,
-        status: Union[str, "OperationStatus"],
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        resource_location: str,
-        percent_completed: Optional[int] = None,
-        kind: Optional[Union[str, "OperationKind"]] = None,
-        error: Optional["Error"] = None,
-        result: Optional[Any] = None,
         **kwargs
     ):
-        super(GetOperationResponse, self).__init__(operation_id=operation_id, status=status, percent_completed=percent_completed, created_date_time=created_date_time, last_updated_date_time=last_updated_date_time, kind=kind, resource_location=resource_location, **kwargs)
-        self.error = error
-        self.result = result
+        super(GetOperationResponse, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
+        self.result = kwargs.get('result', None)
 
 
 class GetOperationsResponse(msrest.serialization.Model):
@@ -1517,7 +1352,7 @@ class GetOperationsResponse(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. List of operations.
-    :type value: list[~azure.ai.formrecognizer.v3_0_preview_1.models.OperationInfo]
+    :type value: list[~azure.ai.formrecognizer.v2021_09_30_preview.models.OperationInfo]
     :param next_link: Link to the next page of operations.
     :type next_link: str
     """
@@ -1533,14 +1368,11 @@ class GetOperationsResponse(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        value: List["OperationInfo"],
-        next_link: Optional[str] = None,
         **kwargs
     ):
         super(GetOperationsResponse, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
+        self.value = kwargs['value']
+        self.next_link = kwargs.get('next_link', None)
 
 
 class InnerError(msrest.serialization.Model):
@@ -1553,7 +1385,7 @@ class InnerError(msrest.serialization.Model):
     :param message: Error message.
     :type message: str
     :param innererror: Detailed error.
-    :type innererror: ~azure.ai.formrecognizer.v3_0_preview_1.models.InnerError
+    :type innererror: ~azure.ai.formrecognizer.v2021_09_30_preview.models.InnerError
     """
 
     _validation = {
@@ -1568,16 +1400,12 @@ class InnerError(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        code: str,
-        message: Optional[str] = None,
-        innererror: Optional["InnerError"] = None,
         **kwargs
     ):
         super(InnerError, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
-        self.innererror = innererror
+        self.code = kwargs['code']
+        self.message = kwargs.get('message', None)
+        self.innererror = kwargs.get('innererror', None)
 
 
 class ModelSummary(msrest.serialization.Model):
@@ -1594,7 +1422,7 @@ class ModelSummary(msrest.serialization.Model):
     """
 
     _validation = {
-        'model_id': {'required': True},
+        'model_id': {'required': True, 'pattern': r'[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}'},
         'description': {'max_length': 4096, 'min_length': 0},
         'created_date_time': {'required': True},
     }
@@ -1607,16 +1435,12 @@ class ModelSummary(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        model_id: str,
-        created_date_time: datetime.datetime,
-        description: Optional[str] = None,
         **kwargs
     ):
         super(ModelSummary, self).__init__(**kwargs)
-        self.model_id = model_id
-        self.description = description
-        self.created_date_time = created_date_time
+        self.model_id = kwargs['model_id']
+        self.description = kwargs.get('description', None)
+        self.created_date_time = kwargs['created_date_time']
 
 
 class ModelInfo(ModelSummary):
@@ -1631,11 +1455,11 @@ class ModelInfo(ModelSummary):
     :param created_date_time: Required. Date and time (UTC) when the model was created.
     :type created_date_time: ~datetime.datetime
     :param doc_types: Supported document types.
-    :type doc_types: dict[str, ~azure.ai.formrecognizer.v3_0_preview_1.models.DocTypeInfo]
+    :type doc_types: dict[str, ~azure.ai.formrecognizer.v2021_09_30_preview.models.DocTypeInfo]
     """
 
     _validation = {
-        'model_id': {'required': True},
+        'model_id': {'required': True, 'pattern': r'[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}'},
         'description': {'max_length': 4096, 'min_length': 0},
         'created_date_time': {'required': True},
     }
@@ -1649,12 +1473,7 @@ class ModelInfo(ModelSummary):
 
     def __init__(
         self,
-        *,
-        model_id: str,
-        created_date_time: datetime.datetime,
-        description: Optional[str] = None,
-        doc_types: Optional[Dict[str, "DocTypeInfo"]] = None,
         **kwargs
     ):
-        super(ModelInfo, self).__init__(model_id=model_id, description=description, created_date_time=created_date_time, **kwargs)
-        self.doc_types = doc_types
+        super(ModelInfo, self).__init__(**kwargs)
+        self.doc_types = kwargs.get('doc_types', None)

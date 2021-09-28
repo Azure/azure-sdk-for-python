@@ -12,7 +12,7 @@ import pytest
 import functools
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
-from azure.ai.formrecognizer._generated.models import GetOperationResponse, ModelInfo
+from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import GetOperationResponse, ModelInfo
 from azure.ai.formrecognizer._models import CustomFormModel, DocumentModel
 from azure.ai.formrecognizer import FormTrainingClient, DocumentModelAdministrationClient, _models
 from testcase import FormRecognizerTest

@@ -9,7 +9,8 @@ import functools
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import FormContentType, _models
 from azure.ai.formrecognizer.aio import FormRecognizerClient, FormTrainingClient, DocumentAnalysisClient, DocumentModelAdministrationClient
-from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult, AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
+from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer import AnalyzeResult
 from azure.ai.formrecognizer._response_handlers import prepare_form_result
 from preparers import FormRecognizerPreparer
@@ -409,7 +410,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             model = await build_poller.result()
 
             async with fr_client:
-                poller = await fr_client.begin_analyze_document(model.model_id, myfile, pages=["1"])
+                poller = await fr_client.begin_analyze_document(model.model_id, myfile, pages="1")
                 assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
                 result = await poller.result()
                 assert result
