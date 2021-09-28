@@ -2,9 +2,9 @@
 
 ## 3.2.0b1 (Unreleased)
 
-This version of the SDK defaults to the latest supported API version, which currently is v2021-09-30-preview.
+This version of the SDK defaults to the latest supported API version, which currently is 2021-09-30-preview.
 
-### Features Added
+**New Features**
 - Added new `DocumentAnalysisClient` with  `begin_analyze_document` and `begin_analyze_document_from_url` methods. Use these methods with the latest Form Recognizer 
 API version to analyze documents, with prebuilt and custom models.
 - Added new models to use with the new `DocumentAnalysisClient`: `AnalyzeResult`, `AnalyzedDocument`, `BoundingRegion`, `DocumentElement`, `DocumentEntity`, `DocumentField`, `DocumentKeyValuePair`, `DocumentKeyValueElement`, `DocumentLine`, `DocumentPage`, `DocumentSelectionMark`, `DocumentSpan`, `DocumentStyle`, `DocumentTable`, `DocumentTableCell`, `DocumentWord`.
@@ -13,20 +13,20 @@ API version to analyze documents, with prebuilt and custom models.
 - Added samples using the `DocumentAnalysisClient` and `DocumentModelAdministrationClient` under `/samples/v3.2-beta`.
 - Added `DocumentAnalysisApiVersion` to be used with `DocumentAnalysisClient` and `DocumentModelAdministrationClient`.
 
-### Breaking Changes
+**Breaking Changes**
 
-### Bugs Fixed
+**Bugs Fixed**
 
-### Other Changes
+**Other Changes**
 - Python 3.5 is no longer supported in this release.
 
 ## 3.1.2 (2021-08-10)
 
-### Bugs Fixed
+**Bugs Fixed**
 - A `HttpResponseError` will be immediately raised when the call quota volume is exceeded in a `F0` tier Form Recognizer
 resource.
 
-### Other Changes
+**Other Changes**
 - Bumped `azure-core` minimum dependency version from `1.8.2` to `1.13.0`
 
 ## 3.1.1 (2021-06-08)
