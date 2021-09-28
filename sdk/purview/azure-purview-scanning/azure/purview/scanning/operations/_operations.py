@@ -14,10 +14,11 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
-from azure.core.pipeline.transport._base import _format_url_section
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from msrest import Serializer
+
+from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -1453,7 +1454,8 @@ class KeyVaultConnectionsOperations(object):
                 
                 request = build_key_vault_connections_list_all_request(
                     template_url=self.list_all.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -1463,7 +1465,8 @@ class KeyVaultConnectionsOperations(object):
                 
                 request = build_key_vault_connections_list_all_request(
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -1767,7 +1770,8 @@ class ClassificationRulesOperations(object):
                 
                 request = build_classification_rules_list_all_request(
                     template_url=self.list_all.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -1777,7 +1781,8 @@ class ClassificationRulesOperations(object):
                 
                 request = build_classification_rules_list_all_request(
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -1856,7 +1861,8 @@ class ClassificationRulesOperations(object):
                 request = build_classification_rules_list_versions_by_classification_rule_name_request(
                     classification_rule_name=classification_rule_name,
                     template_url=self.list_versions_by_classification_rule_name.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -1867,7 +1873,8 @@ class ClassificationRulesOperations(object):
                 request = build_classification_rules_list_versions_by_classification_rule_name_request(
                     classification_rule_name=classification_rule_name,
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -2522,7 +2529,8 @@ class DataSourcesOperations(object):
                 
                 request = build_data_sources_list_all_request(
                     template_url=self.list_all.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -2532,7 +2540,8 @@ class DataSourcesOperations(object):
                 
                 request = build_data_sources_list_all_request(
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -3272,7 +3281,8 @@ class ScansOperations(object):
                 request = build_scans_list_by_data_source_request(
                     data_source_name=data_source_name,
                     template_url=self.list_by_data_source.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -3283,7 +3293,8 @@ class ScansOperations(object):
                 request = build_scans_list_by_data_source_request(
                     data_source_name=data_source_name,
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -3597,7 +3608,8 @@ class ScanResultOperations(object):
                     data_source_name=data_source_name,
                     scan_name=scan_name,
                     template_url=self.list_scan_history.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -3609,7 +3621,8 @@ class ScanResultOperations(object):
                     data_source_name=data_source_name,
                     scan_name=scan_name,
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -3928,7 +3941,8 @@ class ScanRulesetsOperations(object):
                 
                 request = build_scan_rulesets_list_all_request(
                     template_url=self.list_all.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -3938,7 +3952,8 @@ class ScanRulesetsOperations(object):
                 
                 request = build_scan_rulesets_list_all_request(
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -4033,7 +4048,8 @@ class SystemScanRulesetsOperations(object):
                 
                 request = build_system_scan_rulesets_list_all_request(
                     template_url=self.list_all.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -4043,7 +4059,8 @@ class SystemScanRulesetsOperations(object):
                 
                 request = build_system_scan_rulesets_list_all_request(
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -4344,7 +4361,8 @@ class SystemScanRulesetsOperations(object):
                 request = build_system_scan_rulesets_list_versions_by_data_source_request(
                     data_source_type=data_source_type,
                     template_url=self.list_versions_by_data_source.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -4355,7 +4373,8 @@ class SystemScanRulesetsOperations(object):
                 request = build_system_scan_rulesets_list_versions_by_data_source_request(
                     data_source_type=data_source_type,
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }

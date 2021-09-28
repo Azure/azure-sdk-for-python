@@ -18,6 +18,7 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
+from ..._vendor import _convert_request
 from ...operations._operations import build_classification_rules_create_or_update_request, build_classification_rules_delete_request, build_classification_rules_get_request, build_classification_rules_list_all_request, build_classification_rules_list_versions_by_classification_rule_name_request, build_classification_rules_tag_classification_version_request, build_data_sources_create_or_update_request, build_data_sources_delete_request, build_data_sources_get_request, build_data_sources_list_all_request, build_filters_create_or_update_request, build_filters_get_request, build_key_vault_connections_create_request, build_key_vault_connections_delete_request, build_key_vault_connections_get_request, build_key_vault_connections_list_all_request, build_scan_result_cancel_scan_request, build_scan_result_list_scan_history_request, build_scan_result_run_scan_request, build_scan_rulesets_create_or_update_request, build_scan_rulesets_delete_request, build_scan_rulesets_get_request, build_scan_rulesets_list_all_request, build_scans_create_or_update_request, build_scans_delete_request, build_scans_get_request, build_scans_list_by_data_source_request, build_system_scan_rulesets_get_by_version_request, build_system_scan_rulesets_get_latest_request, build_system_scan_rulesets_get_request, build_system_scan_rulesets_list_all_request, build_system_scan_rulesets_list_versions_by_data_source_request, build_triggers_create_trigger_request, build_triggers_delete_trigger_request, build_triggers_get_trigger_request
 
 T = TypeVar('T')
@@ -290,7 +291,8 @@ class KeyVaultConnectionsOperations:
                 
                 request = build_key_vault_connections_list_all_request(
                     template_url=self.list_all.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -300,7 +302,8 @@ class KeyVaultConnectionsOperations:
                 
                 request = build_key_vault_connections_list_all_request(
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -600,7 +603,8 @@ class ClassificationRulesOperations:
                 
                 request = build_classification_rules_list_all_request(
                     template_url=self.list_all.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -610,7 +614,8 @@ class ClassificationRulesOperations:
                 
                 request = build_classification_rules_list_all_request(
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -688,7 +693,8 @@ class ClassificationRulesOperations:
                 request = build_classification_rules_list_versions_by_classification_rule_name_request(
                     classification_rule_name=classification_rule_name,
                     template_url=self.list_versions_by_classification_rule_name.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -699,7 +705,8 @@ class ClassificationRulesOperations:
                 request = build_classification_rules_list_versions_by_classification_rule_name_request(
                     classification_rule_name=classification_rule_name,
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -1349,7 +1356,8 @@ class DataSourcesOperations:
                 
                 request = build_data_sources_list_all_request(
                     template_url=self.list_all.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -1359,7 +1367,8 @@ class DataSourcesOperations:
                 
                 request = build_data_sources_list_all_request(
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -2093,7 +2102,8 @@ class ScansOperations:
                 request = build_scans_list_by_data_source_request(
                     data_source_name=data_source_name,
                     template_url=self.list_by_data_source.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -2104,7 +2114,8 @@ class ScansOperations:
                 request = build_scans_list_by_data_source_request(
                     data_source_name=data_source_name,
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -2415,7 +2426,8 @@ class ScanResultOperations:
                     data_source_name=data_source_name,
                     scan_name=scan_name,
                     template_url=self.list_scan_history.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -2427,7 +2439,8 @@ class ScanResultOperations:
                     data_source_name=data_source_name,
                     scan_name=scan_name,
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -2742,7 +2755,8 @@ class ScanRulesetsOperations:
                 
                 request = build_scan_rulesets_list_all_request(
                     template_url=self.list_all.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -2752,7 +2766,8 @@ class ScanRulesetsOperations:
                 
                 request = build_scan_rulesets_list_all_request(
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -2846,7 +2861,8 @@ class SystemScanRulesetsOperations:
                 
                 request = build_system_scan_rulesets_list_all_request(
                     template_url=self.list_all.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -2856,7 +2872,8 @@ class SystemScanRulesetsOperations:
                 
                 request = build_system_scan_rulesets_list_all_request(
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -3153,7 +3170,8 @@ class SystemScanRulesetsOperations:
                 request = build_system_scan_rulesets_list_versions_by_data_source_request(
                     data_source_type=data_source_type,
                     template_url=self.list_versions_by_data_source.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -3164,7 +3182,8 @@ class SystemScanRulesetsOperations:
                 request = build_system_scan_rulesets_list_versions_by_data_source_request(
                     data_source_type=data_source_type,
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
