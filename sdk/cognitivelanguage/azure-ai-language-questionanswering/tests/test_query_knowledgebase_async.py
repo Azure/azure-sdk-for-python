@@ -21,7 +21,7 @@ from azure.ai.language.questionanswering.models import (
     AnswerSpanRequest,
 )
 from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
-from azure.ai.language.questionanswering._rest import *
+from azure.ai.language.questionanswering.operations._operations import build_query_knowledge_base_request, build_query_text_request
 
 
 class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
@@ -110,7 +110,7 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
                 assert answer['answerSpan'].get('confidenceScore')
                 assert answer['answerSpan'].get('offset') is not None
                 assert answer['answerSpan'].get('length')
-            
+
             assert answer.get('questions')
             for question in answer['questions']:
                 assert question
@@ -332,7 +332,7 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
                 project_name=qna_project,
                 deployment_name='test'
             )
-            
+
             assert len(output.answers) == 1
 
     @GlobalQuestionAnsweringAccountPreparer()

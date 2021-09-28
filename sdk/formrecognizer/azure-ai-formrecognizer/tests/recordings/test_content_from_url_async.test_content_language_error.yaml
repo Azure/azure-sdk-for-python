@@ -5,11 +5,11 @@ interactions:
       Accept:
       - application/json
       Content-Length:
-      - '211'
+      - '223'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/layout/analyze?language=not%20a%20language&readingOrder=basic
   response:
@@ -17,13 +17,13 @@ interactions:
       string: '{"error": {"code": "NotSupportedLanguage", "message": "The requested
         operation is not supported in the language specified."}}'
     headers:
-      apim-request-id: 8b51cb77-754c-47a3-a1b6-0b0b9d05454c
+      apim-request-id: 4c2b7f2a-fdb7-44eb-aec9-978b2cbe5e7a
       content-length: '121'
       content-type: application/json; charset=utf-8
-      date: Tue, 11 May 2021 00:38:13 GMT
+      date: Thu, 23 Sep 2021 22:38:51 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '2'
+      x-envoy-upstream-service-time: '3'
     status:
       code: 400
       message: Bad Request

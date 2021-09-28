@@ -2,7 +2,7 @@ from datetime import datetime, time, timedelta
 import pytest
 import os
 from azure.identity.aio import ClientSecretCredential
-from azure.monitor.query import MetricAggregationType
+from azure.monitor.query import MetricAggregationType, Metric
 from azure.monitor.query.aio import MetricsQueryClient
 
 def _credential():
@@ -18,7 +18,7 @@ def _credential():
 async def test_metrics_auth():
     credential = _credential()
     client = MetricsQueryClient(credential)
-    response = await client.query(
+    response = await client.query_resource(
         os.environ['METRICS_RESOURCE_URI'],
         metric_names=["MatchedEventCount"],
         timespan=timedelta(days=1),
@@ -32,7 +32,7 @@ async def test_metrics_auth():
 async def test_metrics_granularity():
     credential = _credential()
     client = MetricsQueryClient(credential)
-    response = await client.query(
+    response = await client.query_resource(
         os.environ['METRICS_RESOURCE_URI'],
         metric_names=["MatchedEventCount"],
         timespan=timedelta(days=1),
@@ -41,6 +41,26 @@ async def test_metrics_granularity():
         )
     assert response
     assert response.granularity == timedelta(minutes=5)
+
+
+@pytest.mark.live_test_only
+@pytest.mark.asyncio
+async def test_metrics_list():
+    credential = _credential()
+    client = MetricsQueryClient(credential)
+    response = await client.query_resource(
+        os.environ['METRICS_RESOURCE_URI'],
+        metric_names=["MatchedEventCount"],
+        timespan=timedelta(days=1),
+        granularity=timedelta(minutes=5),
+        aggregations=[MetricAggregationType.COUNT]
+        )
+    assert response
+    metrics = response.metrics
+    assert len(metrics) == 1
+    assert metrics[0].__class__ == Metric
+    assert metrics['MatchedEventCount'].__class__ == Metric
+    assert metrics['MatchedEventCount'] == metrics[0]
 
 @pytest.mark.live_test_only
 @pytest.mark.asyncio

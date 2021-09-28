@@ -45,7 +45,7 @@ class ObjectReplicationPoliciesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ObjectReplicationPolicies"]:
         """List the object replication policies associated with the storage account.
 
@@ -124,7 +124,7 @@ class ObjectReplicationPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         object_replication_policy_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ObjectReplicationPolicy":
         """Get the object replication policy of the storage account by policy ID.
 
@@ -135,8 +135,10 @@ class ObjectReplicationPoliciesOperations:
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only.
         :type account_name: str
-        :param object_replication_policy_id: The ID of object replication policy or 'default' if the
-         policy ID is unknown.
+        :param object_replication_policy_id: For the destination account, provide the value 'default'.
+         Configure the policy on the destination account first. For the source account, provide the
+         value of the policy ID that is returned when you download the policy that was defined on the
+         destination account. The policy is downloaded as a JSON file.
         :type object_replication_policy_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ObjectReplicationPolicy, or the result of cls(response)
@@ -192,7 +194,7 @@ class ObjectReplicationPoliciesOperations:
         account_name: str,
         object_replication_policy_id: str,
         properties: "_models.ObjectReplicationPolicy",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ObjectReplicationPolicy":
         """Create or update the object replication policy of the storage account.
 
@@ -203,8 +205,10 @@ class ObjectReplicationPoliciesOperations:
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only.
         :type account_name: str
-        :param object_replication_policy_id: The ID of object replication policy or 'default' if the
-         policy ID is unknown.
+        :param object_replication_policy_id: For the destination account, provide the value 'default'.
+         Configure the policy on the destination account first. For the source account, provide the
+         value of the policy ID that is returned when you download the policy that was defined on the
+         destination account. The policy is downloaded as a JSON file.
         :type object_replication_policy_id: str
         :param properties: The object replication policy set to a storage account. A unique policy ID
          will be created if absent.
@@ -267,7 +271,7 @@ class ObjectReplicationPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         object_replication_policy_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the object replication policy associated with the specified storage account.
 
@@ -278,8 +282,10 @@ class ObjectReplicationPoliciesOperations:
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only.
         :type account_name: str
-        :param object_replication_policy_id: The ID of object replication policy or 'default' if the
-         policy ID is unknown.
+        :param object_replication_policy_id: For the destination account, provide the value 'default'.
+         Configure the policy on the destination account first. For the source account, provide the
+         value of the policy ID that is returned when you download the policy that was defined on the
+         destination account. The policy is downloaded as a JSON file.
         :type object_replication_policy_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)

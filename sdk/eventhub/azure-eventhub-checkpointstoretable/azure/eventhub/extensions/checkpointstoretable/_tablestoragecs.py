@@ -7,7 +7,6 @@ import datetime
 import time
 import logging
 import calendar
-import dateutil.parser
 from azure.core import MatchConditions
 from azure.eventhub import CheckpointStore  # type: ignore  # pylint: disable=no-name-in-module
 from azure.eventhub.exceptions import OwnershipLostError  # type: ignore
@@ -18,6 +17,8 @@ from azure.core.exceptions import (
 )
 from ._vendor.data.tables import TableClient, UpdateMode
 from ._vendor.data.tables._base_client import parse_connection_str
+from ._vendor.data.tables._deserialize import clean_up_dotnet_timestamps
+from ._vendor.data.tables._common_conversion import TZ_UTC
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +39,19 @@ def _to_timestamp(date):
         timestamp = time.mktime(_utc_to_local(date).timetuple())
         timestamp += date.microsecond / 1e6
     return timestamp
+
+def _timestamp_to_datetime(value):
+    # Cosmos returns this with a decimal point that throws an error on deserialization
+    cleaned_value = clean_up_dotnet_timestamps(value)
+    try:
+        dt_obj = datetime.datetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(
+            tzinfo=TZ_UTC
+        )
+    except ValueError:
+        dt_obj = datetime.datetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%SZ").replace(
+            tzinfo=TZ_UTC
+        )
+    return dt_obj
 
 
 class TableCheckpointStore(CheckpointStore):
@@ -113,13 +127,13 @@ class TableCheckpointStore(CheckpointStore):
         Create a dictionary with the `ownership` attributes.
         """
         ownership_entity = {
-            "PartitionKey": "{} {} {} Ownership".format(
+            "PartitionKey": u"{} {} {} Ownership".format(
                 ownership["fully_qualified_namespace"],
                 ownership["eventhub_name"],
                 ownership["consumer_group"],
             ),
-            "RowKey": ownership["partition_id"],
-            "ownerid": ownership["owner_id"],
+            "RowKey": u"{}".format(ownership["partition_id"]),
+            "ownerid": u"{}".format(ownership["owner_id"]),
         }
         return ownership_entity
 
@@ -129,21 +143,21 @@ class TableCheckpointStore(CheckpointStore):
         Create a dictionary with `checkpoint` attributes.
         """
         checkpoint_entity = {
-            "PartitionKey": "{} {} {} Checkpoint".format(
+            "PartitionKey": u"{} {} {} Checkpoint".format(
                 checkpoint["fully_qualified_namespace"],
                 checkpoint["eventhub_name"],
                 checkpoint["consumer_group"],
             ),
-            "RowKey": checkpoint["partition_id"],
-            "offset": checkpoint["offset"],
-            "sequencenumber": checkpoint["sequence_number"],
+            "RowKey": u"{}".format(checkpoint["partition_id"]),
+            "offset": u"{}".format(checkpoint["offset"]),
+            "sequencenumber": u"{}".format(checkpoint["sequence_number"]),
         }
         return checkpoint_entity
 
     def _update_ownership(self, ownership, **kwargs):
         """_update_ownership mutates the passed in ownership."""
+        ownership_entity = TableCheckpointStore._create_ownership_entity(ownership)
         try:
-            ownership_entity = TableCheckpointStore._create_ownership_entity(ownership)
             metadata = self._table_client.update_entity(
                 mode=UpdateMode.REPLACE,
                 entity=ownership_entity,
@@ -166,7 +180,7 @@ class TableCheckpointStore(CheckpointStore):
             )
             ownership["etag"] = metadata["etag"]
             ownership["last_modified_time"] = _to_timestamp(
-                dateutil.parser.isoparse(metadata["content"]["Timestamp"])
+                _timestamp_to_datetime(metadata["content"]["Timestamp"])
             )
 
     def _claim_one_partition(self, ownership, **kwargs):
@@ -289,7 +303,7 @@ class TableCheckpointStore(CheckpointStore):
                 "eventhub_name": eventhub_name,
                 "consumer_group": consumer_group,
                 "partition_id": entity[u"RowKey"],
-                "sequence_number": entity[u"sequencenumber"],
+                "sequence_number": int(entity[u"sequencenumber"]),
                 "offset": str(entity[u"offset"]),
             }
             checkpoints_list.append(checkpoint)
