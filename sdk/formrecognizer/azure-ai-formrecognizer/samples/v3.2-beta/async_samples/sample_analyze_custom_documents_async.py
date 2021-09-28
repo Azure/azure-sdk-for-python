@@ -34,6 +34,17 @@ import os
 import asyncio
 
 
+def format_bounding_region(bounding_regions):
+    if not bounding_regions:
+        return "N/A"
+    return ", ".join("Page #{}: {}".format(region.page_number, format_bounding_box(region.bounding_box)) for region in bounding_regions)
+
+def format_bounding_box(bounding_box):
+    if not bounding_box:
+        return "N/A"
+    return ", ".join(["[{}, {}]".format(p.x, p.y) for p in bounding_box])
+
+
 async def analyze_custom_documents_async(custom_model_id):
     path_to_sample_documents = os.path.abspath(
         os.path.join(
@@ -69,6 +80,12 @@ async def analyze_custom_documents_async(custom_model_id):
         print("Document has type {}".format(document.doc_type))
         print("Document has document type confidence {}".format(document.confidence))
         print("Document was analyzed with model with ID {}".format(result.model_id))
+        print("...within {} bounding regions".format(format_bounding_region(document.bounding_regions)))
+        for key, value in document.fields.items():
+            field_value = value.content
+            if value.value:
+                field_value = value.value
+            print("......found field of type '{}' with value '{}' within '{}' bounding regions and with confidence {}".format(value.value_type, field_value, format_bounding_region(value.bounding_regions), value.confidence))
 
     # iterate over tables, lines, and selection marks on each page
     for page in result.pages:
