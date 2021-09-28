@@ -86,8 +86,8 @@ def check_diff(folder):
     if result:
         command = ["git", "status"]
         run_check_call(command, root_dir)
-        print(
-            "##[warning]Found difference between re-generated code and current commit. Please re-generate with the latest autorest."
+        raise ValueError(
+            "Found difference between re-generated code and current commit. Please re-generate with the latest autorest."
         )
 
 
