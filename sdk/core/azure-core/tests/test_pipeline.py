@@ -379,6 +379,8 @@ def test_basic_requests(port, http_request):
     ]
     with Pipeline(RequestsTransport(), policies=policies) as pipeline:
         response = pipeline.run(request)
+        if is_rest(request):
+            assert is_rest(response.http_response)
 
     assert pipeline._transport.session is None
     assert isinstance(response.http_response.status_code, int)
@@ -393,6 +395,8 @@ def test_basic_options_requests(port, http_request):
     ]
     with Pipeline(RequestsTransport(), policies=policies) as pipeline:
         response = pipeline.run(request)
+        if is_rest(request):
+            assert is_rest(response.http_response)
 
     assert pipeline._transport.session is None
     assert isinstance(response.http_response.status_code, int)
@@ -409,6 +413,8 @@ def test_basic_requests_separate_session(port, http_request):
     transport = RequestsTransport(session=session, session_owner=False)
     with Pipeline(transport, policies=policies) as pipeline:
         response = pipeline.run(request)
+        if is_rest(request):
+            assert is_rest(response.http_response)
 
     assert transport.session
     assert isinstance(response.http_response.status_code, int)
