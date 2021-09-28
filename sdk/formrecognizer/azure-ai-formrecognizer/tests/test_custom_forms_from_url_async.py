@@ -8,7 +8,8 @@ import pytest
 import functools
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer.aio import FormRecognizerClient, FormTrainingClient, DocumentAnalysisClient, DocumentModelAdministrationClient
-from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult, AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
+from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer._response_handlers import prepare_form_result
 from azure.ai.formrecognizer import AnalyzeResult
 from preparers import FormRecognizerPreparer

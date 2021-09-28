@@ -8,7 +8,7 @@
 
 from enum import Enum
 from collections import namedtuple
-from ._generated.models import ModelInfo, Error
+from ._generated.v2021_09_30_preview.models import ModelInfo, Error
 from ._helpers import (
     adjust_value_type,
     adjust_confidence,
