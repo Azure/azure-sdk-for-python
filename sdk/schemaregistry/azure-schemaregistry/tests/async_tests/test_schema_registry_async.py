@@ -32,17 +32,17 @@ from devtools_testutils.azure_testcase import _is_autorest_v3
 
 from azure.core.credentials import AccessToken
 
-SchemaRegistryPowerShellPreparer = functools.partial(PowerShellPreparer, "schemaregistry", schemaregistry_endpoint="fake_resource.servicebus.windows.net/", schemaregistry_group="fakegroup")
+SchemaRegistryPowerShellPreparer = functools.partial(PowerShellPreparer, "schemaregistry", schemaregistry_fully_qualified_namespace="fake_resource.servicebus.windows.net/", schemaregistry_group="fakegroup")
 
 class SchemaRegistryAsyncTests(AzureTestCase):
 
-    def create_client(self, endpoint):
+    def create_client(self, fully_qualified_namespace):
         credential = self.get_credential(SchemaRegistryClient, is_async=True)
-        return self.create_client_from_credential(SchemaRegistryClient, credential, fully_qualified_namespace=endpoint, is_async=True)
+        return self.create_client_from_credential(SchemaRegistryClient, credential, fully_qualified_namespace=fully_qualified_namespace, is_async=True)
 
     @SchemaRegistryPowerShellPreparer()
-    async def test_schema_basic_async(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
-        client = self.create_client(schemaregistry_endpoint)
+    async def test_schema_basic_async(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        client = self.create_client(schemaregistry_fully_qualified_namespace)
         async with client:
             schema_name = self.get_resource_name('test-schema-basic-async')
             schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
@@ -68,8 +68,8 @@ class SchemaRegistryAsyncTests(AzureTestCase):
         await client._generated_client._config.credential.close()
 
     @SchemaRegistryPowerShellPreparer()
-    async def test_schema_update_async(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
-        client = self.create_client(schemaregistry_endpoint)
+    async def test_schema_update_async(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        client = self.create_client(schemaregistry_fully_qualified_namespace)
         async with client:
             schema_name = self.get_resource_name('test-schema-update-async')
             schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
@@ -98,8 +98,8 @@ class SchemaRegistryAsyncTests(AzureTestCase):
         await client._generated_client._config.credential.close()
 
     @SchemaRegistryPowerShellPreparer()
-    async def test_schema_same_twice_async(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
-        client = self.create_client(schemaregistry_endpoint)
+    async def test_schema_same_twice_async(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        client = self.create_client(schemaregistry_fully_qualified_namespace)
         schema_name = self.get_resource_name('test-schema-twice-async')
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}"""
         format = "Avro"
@@ -110,9 +110,9 @@ class SchemaRegistryAsyncTests(AzureTestCase):
         await client._generated_client._config.credential.close()
 
     @SchemaRegistryPowerShellPreparer()
-    async def test_schema_negative_wrong_credential_async(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
+    async def test_schema_negative_wrong_credential_async(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
         credential = ClientSecretCredential(tenant_id="fake", client_id="fake", client_secret="fake")
-        client = SchemaRegistryClient(fully_qualified_namespace=schemaregistry_endpoint, credential=credential)
+        client = SchemaRegistryClient(fully_qualified_namespace=schemaregistry_fully_qualified_namespace, credential=credential)
         async with client, credential:
             schema_name = self.get_resource_name('test-schema-negative-async')
             schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
@@ -121,7 +121,7 @@ class SchemaRegistryAsyncTests(AzureTestCase):
                 await client.register_schema(schemaregistry_group, schema_name, schema_str, format)
 
     @SchemaRegistryPowerShellPreparer()
-    async def test_schema_negative_wrong_endpoint_async(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
+    async def test_schema_negative_wrong_endpoint_async(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
         client = self.create_client("nonexist.servicebus.windows.net")
         async with client:
             schema_name = self.get_resource_name('test-schema-nonexist-async')
@@ -132,8 +132,8 @@ class SchemaRegistryAsyncTests(AzureTestCase):
         await client._generated_client._config.credential.close()
 
     @SchemaRegistryPowerShellPreparer()
-    async def test_schema_negative_no_schema_async(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
-        client = self.create_client(schemaregistry_endpoint)
+    async def test_schema_negative_no_schema_async(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        client = self.create_client(schemaregistry_fully_qualified_namespace)
         async with client:
             with pytest.raises(HttpResponseError):
                 await client.get_schema('a')
