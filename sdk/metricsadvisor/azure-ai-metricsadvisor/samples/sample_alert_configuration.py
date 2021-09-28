@@ -184,8 +184,8 @@ def sample_list_alerts(alert_config_id):
 
     results = client.list_alerts(
         alert_configuration_id=alert_config_id,
-        start_time=datetime.datetime(2020, 1, 1),
-        end_time=datetime.datetime(2020, 9, 9),
+        start_time=datetime.datetime(2021, 1, 1),
+        end_time=datetime.datetime(2021, 9, 9),
         time_mode="AnomalyTime",
     )
 
@@ -243,7 +243,7 @@ def sample_update_alert_config(alert_config):
         detection_configuration_id=detection_configuration_id,
         alert_scope=MetricAnomalyAlertScope(
             scope_type="SeriesGroup",
-            series_group_in_scope={'city': 'Shenzhen'}
+            series_group_in_scope={'region': 'Shenzhen'}
         ),
         alert_conditions=MetricAnomalyAlertConditions(
             metric_boundary_condition=MetricBoundaryCondition(
@@ -293,19 +293,20 @@ def sample_delete_alert_config(alert_config_id):
 
 if __name__ == '__main__':
     print("---Creating anomaly alert configuration...")
-    alert_config = sample_create_alert_config()
+    # alert_config = sample_create_alert_config()
     print("Anomaly alert configuration successfully created...")
     print("\n---Get an anomaly alert configuration...")
-    sample_get_alert_config(alert_config.id)
+    # sample_get_alert_config(alert_config.id)
     print("\n---List anomaly alert configurations...")
-    sample_list_alert_configs()
+    # sample_list_alert_configs()
     print("\n---Query anomaly detection results...")
-    alerts = sample_list_alerts(alert_config.id)
+    alerts = sample_list_alerts("1c1575d8-b09e-40c3-a3c0-d459c64d8382")
     if len(alerts) > 0:
         print("\n---Query anomalies using alert id...")
         alert_id = alerts[0].id
-        sample_list_anomalies_for_alert(alert_config.id, alert_id)
+        print("alert_id: " + alert_id)
+        sample_list_anomalies_for_alert("1c1575d8-b09e-40c3-a3c0-d459c64d8382", alert_id)
     print("\n---Update an anomaly alert configuration...")
-    sample_update_alert_config(alert_config)
+    # sample_update_alert_config(alert_config)
     print("\n---Delete an anomaly alert configuration...")
-    sample_delete_alert_config(alert_config.id)
+    # sample_delete_alert_config(alert_config.id)

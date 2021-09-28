@@ -147,6 +147,6 @@ if __name__ == '__main__':
     print("\n---List hooks...")
     sample_list_hooks()
     print("\n---Update a hook...")
-    sample_update_hook(hook)
+    # sample_update_hook(hook)
     print("\n---Delete a hook...")
-    sample_delete_hook(hook.id)
+    # sample_delete_hook(hook.id)
