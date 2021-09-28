@@ -23,14 +23,14 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/example.avro.User?api-version=2017-04
   response:
     body:
-      string: !!python/unicode '{"id":"e34596b6ecb547299035adb0bede58d2"}'
+      string: !!python/unicode '{"id":"f666e373299048fabaa4296f5dbfed46"}'
     headers:
       content-type:
       - application/json
       date:
-      - Mon, 27 Sep 2021 23:16:25 GMT
+      - Tue, 28 Sep 2021 19:09:51 GMT
       location:
-      - https://swathip-test-eh-schemaregistry.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/example.avro.User/versions/1?api-version=2017-04
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/example.avro.User/versions/1?api-version=2017-04
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -38,15 +38,15 @@ interactions:
       transfer-encoding:
       - chunked
       x-schema-id:
-      - e34596b6ecb547299035adb0bede58d2
+      - f666e373299048fabaa4296f5dbfed46
       x-schema-id-location:
-      - https://swathip-test-eh-schemaregistry.servicebus.windows.net:443/$schemagroups/getschemabyid/e34596b6ecb547299035adb0bede58d2?api-version=2017-04
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/f666e373299048fabaa4296f5dbfed46?api-version=2017-04
       x-schema-type:
       - Avro
       x-schema-version:
       - '1'
       x-schema-versions-location:
-      - https://swathip-test-eh-schemaregistry.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/example.avro.User/versions?api-version=2017-04
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/example.avro.User/versions?api-version=2017-04
     status:
       code: 200
       message: OK

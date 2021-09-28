@@ -7,6 +7,7 @@
 # -------------------------------------------------------------------------
 
 import re
+import sys
 import os.path
 from io import open
 from setuptools import find_packages, setup
@@ -39,6 +40,12 @@ exclude_packages = [
         'azure.schemaregistry',
         'azure.schemaregistry.serializer'
     ]
+install_packages = [
+    'azure-schemaregistry==1.0.0b2',
+    'avro<2.0.0,>=1.10.0'
+]
+if sys.version_info < (3,0):
+    install_packages.append('backports.functools-lru-cache>=1.6.4')
 
 setup(
     name=PACKAGE_NAME,
@@ -64,9 +71,5 @@ setup(
     ],
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
-    install_requires=[
-        'azure-schemaregistry==1.0.0b2',
-        'avro<2.0.0,>=1.10.0',
-        'backports.functools-lru-cache>=1.6.4; python_version=="2.7"'
-    ]
+    install_requires=install_packages
 )
