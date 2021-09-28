@@ -287,7 +287,7 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         self.forward_dead_lettered_messages_to = extract_kwarg(
             "forward_dead_lettered_messages_to"
         )
-        self.max_message_size_in_kilobytes=extract_kwarg("max_message_size_in_kilobytes")
+        self.max_message_size_in_kilobytes = extract_kwarg("max_message_size_in_kilobytes")
 
         validate_extraction_missing_args(extraction_missing_args)
 
@@ -581,7 +581,7 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         self.availability_status = extract_kwarg("availability_status")
         self.enable_express = extract_kwarg("enable_express")
         self.user_metadata = extract_kwarg("user_metadata")
-        self.max_message_size_in_kilobytes=extract_kwarg("max_message_size_in_kilobytes")
+        self.max_message_size_in_kilobytes = extract_kwarg("max_message_size_in_kilobytes")
 
         validate_extraction_missing_args(extraction_missing_args)
 
