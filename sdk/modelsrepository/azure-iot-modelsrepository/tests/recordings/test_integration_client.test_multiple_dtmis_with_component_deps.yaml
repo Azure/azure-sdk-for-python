@@ -1,0 +1,45 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-modelsrepository/1.0.0b2 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://devicemodels.azure.com/dtmi/com/example/phone-2.json
+  response:
+    body:
+      string: '<!DOCTYPE html><html><head><title>WebContentNotFound</title></head><body><h1>The
+        requested content does not exist.</h1><p><ul><li>HttpStatusCode: 404</li><li>ErrorCode:
+        WebContentNotFound</li><li>RequestId : 26055dc3-501e-006b-71f9-b3ffbe000000</li><li>TimeStamp
+        : 2021-09-27T23:45:05.0455869Z</li></ul></p></body></html>'
+    headers:
+      access-control-allow-headers:
+      - '*'
+      access-control-allow-methods:
+      - GET, HEAD, OPTIONS
+      access-control-expose-headers:
+      - '*'
+      content-length:
+      - '321'
+      content-type:
+      - text/html
+      date:
+      - Mon, 27 Sep 2021 23:45:04 GMT
+      server:
+      - Windows-Azure-Web/1.0 Microsoft-HTTPAPI/2.0
+      vary:
+      - Origin
+      x-ms-error-code:
+      - WebContentNotFound
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 404
+      message: Not Found
+version: 1

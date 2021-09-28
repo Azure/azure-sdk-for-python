@@ -15,18 +15,19 @@ DEFAULT_API_VERSION = "2021-02-11"
 
 # Public constants exposed to consumers
 DEFAULT_LOCATION = "https://devicemodels.azure.com"
+METADATA_FILE = "metadata.json"
 
 # Standard strings TODO figure out best way to allow inputs in string
-# GenericGetModelsError = "Failure handling \"{0}\".";
-# InvalidDtmiFormat = "Invalid DTMI format \"{0}\".";
-# ClientInitWithFetcher = "Client session {0} initialized with {1} content fetcher.";
-# ProcessingDtmi = "Processing DTMI \"{0}\". ";
-# SkippingPreProcessedDtmi = "Already processed DTMI \"{0}\". Skipping.";
-# DiscoveredDependencies = "Discovered dependencies \"{0}\".";
-# FetchingModelContent = "Attempting to fetch model content from \"{0}\".";
-# ErrorFetchingModelContent = "Model file \"{0}\" not found or not accessible in target repository.";
-# FailureProcessingRepositoryMetadata = "Unable to fetch or process repository metadata file.";
-# IncorrectDtmiCasing = "Fetched model has incorrect DTMI casing. Expected \"{0}\", parsed \"{1}\".";
+GenericGetModelsError = "Failure handling \"{0}\"."
+InvalidDtmiFormat = "Invalid DTMI format \"{0}\"."
+ClientInitWithFetcher = "Client session {0} initialized with {1} content fetcher."
+ProcessingDtmi = "Processing DTMI \"{0}\". "
+SkippingPreProcessedDtmi = "Already processed DTMI \"{0}\". Skipping."
+DiscoveredDependencies = "Discovered dependencies \"{0}\"."
+FetchingModelContent = "Attempting to fetch model content from \"{0}\"."
+ErrorFetchingModelContent = "Model file \"{0}\" not found or not accessible in target repository."
+FailureProcessingRepositoryMetadata = "Unable to fetch or process repository metadata file."
+IncorrectDtmiCasing = "Fetched model has incorrect DTMI casing. Expected \"{0}\", parsed \"{1}\"."
 
 
 class DependencyModeType(Enum):
@@ -45,3 +46,23 @@ class RemoteProtocolType(Enum):
 
     http = "http"
     https = "https"
+
+class ModelType(Enum):
+    """
+    Possible DTMI modely types.
+    """
+
+    interface = "Interface"
+    component = "Component"
+
+
+class ModelProperties(Enum):
+    """
+    DTMI Model properties for parsing models in Model Query.
+    """
+
+    id = "@id"
+    type = "@type"
+    extends = "extends"
+    contents = "contents"
+    schema = "schema"

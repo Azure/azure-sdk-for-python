@@ -4,34 +4,56 @@
 # license information.
 # --------------------------------------------------------------------------
 import logging
-import json
-import abc
 import os
-import io
+from queue import Queue
 import six.moves.urllib as urllib
-import six
-from azure.core.pipeline.transport import HttpRequest
-from azure.core.exceptions import (
-    map_error,
-    ResourceNotFoundError,
-    HttpResponseError,
-    raise_with_traceback,
+from azure.core.pipeline import Pipeline
+from azure.core.pipeline.transport import RequestsTransport
+from azure.core.pipeline.policies import (
+    UserAgentPolicy,
+    HeadersPolicy,
+    RetryPolicy,
+    RedirectPolicy,
+    NetworkTraceLoggingPolicy,
+    ProxyPolicy,
+    BearerTokenCredentialPolicy,
 )
-from azure.iot.modelsrepository.exceptions import ModelError
-from . import dtmi_conventions
+from azure.core.tracing.decorator_async import distributed_trace_async
+from ..dtmi_conventions import is_valid_dtmi
+from ..exceptions import ModelError
+from .._common import (
+    DependencyModeType,
+    RemoteProtocolType,
+    DiscoveredDependencies,
+    IncorrectDtmiCasing,
+    InvalidDtmiFormat,
+    FailureProcessingRepositoryMetadata,
+    SkippingPreProcessedDtmi,
+    USER_AGENT,
+)
+from ._fetcher import HttpFetcher, FilesystemFetcher
+from .._model_query import ModelQuery
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class DtmiResolver(object):
-    def __init__(self, fetcher):
+    def __init__(self, location, **kwargs):
         """
         :param fetcher: A Fetcher configured to an endpoint to resolve DTMIs from
         :type fetcher: :class:`azure.iot.modelsrepository._resolver.Fetcher`
         """
-        self.fetcher = fetcher
+        self.fetcher = _create_fetcher(location, **kwargs)
 
-    async def resolve(self, dtmis, expanded_model=False):
+    def __enter__(self):
+        self.fetcher.__enter__()
+        return self
+
+    def __exit__(self, *exc_details):
+        self.fetcher.__exit__(*exc_details)
+
+    @distributed_trace_async
+    async def resolve(self, dtmis, dependency_resolution=DependencyModeType.enabled.value):
         """Resolve a DTMI from the configured endpoint and return the resulting JSON model.
 
         :param list[str] dtmis: DTMIs to resolve
@@ -43,155 +65,137 @@ class DtmiResolver(object):
         :returns: A dictionary mapping DTMIs to models
         :rtype: dict
         """
-        model_map = {}
+        processed_models = {}
+        to_process_models = await self._prepare_queue(dtmis)
+        try_from_expanded = False
+
+        if dependency_resolution == DependencyModeType.enabled.value:
+            try:
+                metadata = await self.fetcher.fetch_metadata()
+                if metadata and metadata.get("features") and metadata["features"].get("expanded"):
+                    try_from_expanded = True
+            except:
+                _LOGGER.debug(FailureProcessingRepositoryMetadata)
+
+        while not to_process_models.empty():
+            target_dtmi = to_process_models.get()
+
+            if target_dtmi in processed_models:
+                _LOGGER.debug(SkippingPreProcessedDtmi.format(target_dtmi))
+                continue
+
+            dtdl, expanded_result = await self.fetcher.fetch(target_dtmi, try_from_expanded=try_from_expanded)
+            model_metadata = ModelQuery(dtdl).parse_model()
+            dependencies = model_metadata.dependencies
+
+            # Add dependencies if the result has them
+            if expanded_result:
+                for name in dependencies:
+                    if name not in processed_models:
+                        processed_models[name] = dependencies[name]
+
+            # Add dependencies to to_process_queue if manual resolution is needed
+            if dependency_resolution == DependencyModeType.enabled.value and not expanded_result:
+                if len(dependencies) > 0:
+                    _LOGGER.debug(DiscoveredDependencies.format('", "'.join(dependencies)))
+                for dep in dependencies:
+                    to_process_models.put(dep)
+
+            parsed_dtmi = model_metadata.id
+            if target_dtmi != parsed_dtmi:
+                raise ModelError(IncorrectDtmiCasing.format(target_dtmi, parsed_dtmi))
+
+            processed_models[parsed_dtmi] = dtdl
+
+        return processed_models
+
+    @distributed_trace_async
+    async def _prepare_queue(self, dtmis):
+        to_process_models = Queue()
         for dtmi in dtmis:
-            if dtmi in model_map:
-                _LOGGER.debug("Skipping model that is already processed - Request %s", dtmi)
-            # pylint: disable=protected-access
-            dtdl_path = dtmi_conventions._convert_dtmi_to_path(dtmi)
-            if expanded_model:
-                dtdl_path = dtdl_path.replace(".json", ".expanded.json")
-            _LOGGER.debug("Model %s located in repository at %s", dtmi, dtdl_path)
-
-            # Errors raised here bubble up
-            dtdl = self.fetcher.fetch(dtdl_path)
-
-            if expanded_model:
-                # Verify that the DTMI of the "root" model (i.e. the model we requested the
-                # expanded DTDL for) within the expanded DTDL matches the DTMI of the request
-                if True not in (model["@id"] == dtmi for model in dtdl):
-                    raise ModelError("DTMI mismatch on expanded DTDL - Request: {}".format(dtmi))
-                # Add all the models in the expanded DTDL to the map
-                for model in dtdl:
-                    model_map[model["@id"]] = model
+            if is_valid_dtmi(dtmi):
+                to_process_models.put(dtmi)
             else:
-                model = dtdl
-                # Verify that the DTMI of the fetched model matches the DTMI of the request
-                if model["@id"] != dtmi:
-                    raise ModelError(
-                        "DTMI mismatch - Request: {}, Response: {}".format(dtmi, model["@id"])
-                    )
-                # Add the model to the map
-                model_map[dtmi] = dtdl
-        return model_map
-
-    async def resolve_metadata(self):
-        """Resolve and return the metadata from the configured endpoint.
-
-        :returns: A dictionary representing the metadata
-        :rtype: dict
-        """
-        # Errors raised here bubble up
-        return self.fetcher.fetch()
+                raise ValueError(InvalidDtmiFormat.format(dtmi))
+        return to_process_models
 
 
-@six.add_metaclass(abc.ABCMeta)
-class Fetcher(object):
-    """Interface for fetching from a generic location"""
+def _create_fetcher(location, **kwargs):
+    """Return a Fetcher based upon the type of location"""
+    scheme = urllib.parse.urlparse(location).scheme
+    if scheme in [RemoteProtocolType.http.value, RemoteProtocolType.https.value]:
+        # HTTP/HTTPS URL
+        _LOGGER.debug("Repository Location identified as HTTP/HTTPS endpoint - using HttpFetcher")
+        pipeline = _create_pipeline(**kwargs)
+        fetcher = HttpFetcher(location, pipeline)
+    elif scheme == "" and re.search(
+        r"\.[a-zA-z]{2,63}$",
+        location[: location.find("/") if location.find("/") >= 0 else len(location)],
+    ):
+        # Web URL with protocol unspecified - default to HTTPS
+        _LOGGER.debug(
+            "Repository Location identified as remote endpoint without protocol specified - using HttpFetcher"
+        )
+        location = RemoteProtocolType.https.value + "://" + location
+        pipeline = _create_pipeline(**kwargs)
+        fetcher = HttpFetcher(location, pipeline)
+    elif scheme == "file":
+        # Filesystem URI
+        _LOGGER.debug("Repository Location identified as filesystem URI - using FilesystemFetcher")
+        location = location[len("file://") :]
+        location = _sanitize_filesystem_path(location)
+        fetcher = FilesystemFetcher(location)
+    elif scheme == "" and location.startswith("/"):
+        # POSIX filesystem path
+        _LOGGER.debug(
+            "Repository Location identified as POSIX fileystem path - using FilesystemFetcher"
+        )
+        location = _sanitize_filesystem_path(location)
+        fetcher = FilesystemFetcher(location)
+    elif scheme != "" and len(scheme) == 1 and scheme.isalpha():
+        # Filesystem path using drive letters (e.g. "C:", "D:", etc.)
+        _LOGGER.debug(
+            "Repository Location identified as drive letter fileystem path - using FilesystemFetcher"
+        )
+        location = _sanitize_filesystem_path(location)
+        fetcher = FilesystemFetcher(location)
+    else:
+        raise ValueError("Unable to identify location: {}".format(location))
+    return fetcher
 
-    @abc.abstractmethod
-    async def fetch(self, path):
-        pass
 
-    @abc.abstractmethod
-    async def __aenter__(self):
-        pass
+def _create_pipeline(base_url=None, credential=None, transport=None, **kwargs):
+    """Creates and returns a PipelineClient configured for the provided base_url and kwargs"""
+    transport = transport if transport else kwargs.get("transport", RequestsTransport(**kwargs))
 
-    @abc.abstractmethod
-    async def __aexit__(self, *exc_details):
-        pass
-
-
-class HttpFetcher(Fetcher):
-    """Fetches JSON data from a web endpoint"""
-
-    error_map = {404: ResourceNotFoundError}
-
-    def __init__(self, base_url, pipeline):
-        """
-        :param pipeline: Pipeline (pre-configured)
-        :type pipeline: :class:`azure.core.pipeline.Pipeline`
-        """
-        self.pipeline = pipeline
-        self.base_url = base_url
-
-    async def __aenter__(self):
-        self.pipeline.__aenter__()
-        return self
-
-    async def __aexit__(self, *exc_details):
-        self.pipeline.__aexit__(*exc_details)
-
-    async def fetch(self, path=""):
-        """Fetch and return the contents of a JSON file at a given web path.
-
-        :param str path: Path to JSON file (relative to the base_filepath of the Fetcher)
-
-        :raises: ServiceRequestError if there is an error sending the request
-        :raises: ServiceResponseError if no response was received for the request
-        :raises: ResourceNotFoundError if the JSON file cannot be found
-        :raises: HttpResponseError if there is some other failure during fetch
-
-        :returns: JSON data at the path
-        :rtype: JSON object
-        """
-        _LOGGER.debug("Fetching %s from remote endpoint", path)
-        url = urllib.parse.urljoin(self.base_url, path)
-
-        # Fetch
-        request = HttpRequest("GET", url)
-        _LOGGER.debug("GET %s", url)
-        response = self.pipeline.run(request).http_response
-        if response.status_code != 200:
-            map_error(status_code=response.status_code, response=response, error_map=self.error_map)
-            raise HttpResponseError(
-                "Failed to fetch from remote endpoint. Status code: {}".format(response.status_code)
+    if kwargs.get('policies'):
+        policies = kwargs['policies']
+    else:
+        if credential and hasattr(credential, "get_token"):
+            scope = base_url.strip("/") + "/.default"
+            authentication_policy = BearerTokenCredentialPolicy(credential, scope)
+        elif credential:
+            raise ValueError(
+                "Please provide an instance from azure-identity or a class that implement the 'get_token protocol"
             )
+        else:
+            authentication_policy = kwargs.get("authentication_policy")
+        policies = [
+            kwargs.get("user_agent_policy", UserAgentPolicy(USER_AGENT, **kwargs)),
+            kwargs.get("headers_policy", HeadersPolicy(**kwargs)),
+            authentication_policy,
+            kwargs.get("retry_policy", RetryPolicy(**kwargs)),
+            kwargs.get("redirect_policy", RedirectPolicy(**kwargs)),
+            kwargs.get("logging_policy", NetworkTraceLoggingPolicy(**kwargs)),
+            kwargs.get("proxy_policy", ProxyPolicy(**kwargs)),
+        ]
+    return Pipeline(policies=policies, transport=transport)
 
-        json_response = json.loads(response.text())
-        return json_response
+
+def _sanitize_filesystem_path(path):
+    """Sanitize the filesystem path to be formatted correctly for the current OS"""
+    path = os.path.normcase(path)
+    path = os.path.normpath(path)
+    return path
 
 
-class FilesystemFetcher(Fetcher):
-    """Fetches JSON data from a local filesystem endpoint"""
-
-    def __init__(self, base_filepath):
-        """
-        :param str base_filepath: The base filepath for fetching from
-        """
-        self.base_filepath = base_filepath
-
-    async def __aenter__(self):
-        # Nothing is required here for filesystem
-        return self
-
-    async def __aexit__(self, *exc_details):
-        # Nothing is required here for filesystem
-        pass
-
-    async def fetch(self, path=""):
-        """Fetch and return the contents of a JSON file at a given filesystem path.
-
-        :param str path: Path to JSON file (relative to the base_filepath of the Fetcher)
-
-        :raises: ResourceNotFoundError if the JSON file cannot be found
-
-        :returns: JSON data at the path
-        :rtype: JSON object
-        """
-        _LOGGER.debug("Fetching %s from local filesystem", path)
-        abs_path = os.path.join(self.base_filepath, path)
-        abs_path = os.path.normpath(abs_path)
-
-        # Fetch
-        try:
-            _LOGGER.debug("File open on %s", abs_path)
-            with io.open(abs_path, encoding="utf-8-sig") as f:
-                file_str = f.read()
-        except (OSError, IOError):
-            # In Python 3 a FileNotFoundError is raised when a file doesn't exist.
-            # In Python 2 an IOError is raised when a file doesn't exist.
-            # Both of these errors are inherited from OSError, so we use this to catch them both.
-            # The semantics would ideally be better, but this is the price of supporting both.
-            raise_with_traceback(ResourceNotFoundError, message="Could not open file")
-        return json.loads(file_str)
