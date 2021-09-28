@@ -8,7 +8,6 @@
 import argparse
 import os
 import logging
-import warnings
 
 from common_tasks import run_check_call
 
@@ -87,8 +86,8 @@ def check_diff(folder):
     if result:
         command = ["git", "status"]
         run_check_call(command, root_dir)
-        warnings.warn(
-            "Found difference between re-generated code and current commit. Please re-generate with the latest autorest."
+        print(
+            "##[warning]Found difference between re-generated code and current commit. Please re-generate with the latest autorest."
         )
 
 
