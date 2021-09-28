@@ -14,10 +14,11 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
-from azure.core.pipeline.transport._base import _format_url_section
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from msrest import Serializer
+
+from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -1136,7 +1137,8 @@ class CollectionsOperations(object):
                 request = build_collections_list_collections_request(
                     skip_token=skip_token,
                     template_url=self.list_collections.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -1147,7 +1149,8 @@ class CollectionsOperations(object):
                 request = build_collections_list_collections_request(
                     skip_token=skip_token,
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -1230,7 +1233,8 @@ class CollectionsOperations(object):
                     collection_name=collection_name,
                     skip_token=skip_token,
                     template_url=self.list_child_collection_names.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -1242,7 +1246,8 @@ class CollectionsOperations(object):
                     collection_name=collection_name,
                     skip_token=skip_token,
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -2060,7 +2065,8 @@ class ResourceSetRulesOperations(object):
                 request = build_resource_set_rules_list_resource_set_rules_request(
                     skip_token=skip_token,
                     template_url=self.list_resource_set_rules.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -2071,7 +2077,8 @@ class ResourceSetRulesOperations(object):
                 request = build_resource_set_rules_list_resource_set_rules_request(
                     skip_token=skip_token,
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }

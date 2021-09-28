@@ -13,7 +13,7 @@ interactions:
       string: '{"atlasKafkaPrimaryEndpoint":"000","atlasKafkaSecondaryEndpoint":"000"}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Mon, 27 Sep 2021 03:14:50 GMT
+      date: Tue, 28 Sep 2021 05:56:50 GMT
       server: Kestrel
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked

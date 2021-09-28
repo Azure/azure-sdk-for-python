@@ -18,6 +18,7 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
+from ..._vendor import _convert_request
 from ...operations._operations import build_metadata_policy_get_request, build_metadata_policy_list_all_request, build_metadata_policy_update_request, build_metadata_roles_list_request
 
 T = TypeVar('T')
@@ -114,7 +115,8 @@ class MetadataRolesOperations:
                 
                 request = build_metadata_roles_list_request(
                     template_url=self.list.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -124,7 +126,8 @@ class MetadataRolesOperations:
                 
                 request = build_metadata_roles_list_request(
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -271,7 +274,8 @@ class MetadataPolicyOperations:
                 request = build_metadata_policy_list_all_request(
                     collection_name=collection_name,
                     template_url=self.list_all.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -282,7 +286,8 @@ class MetadataPolicyOperations:
                 request = build_metadata_policy_list_all_request(
                     collection_name=collection_name,
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }

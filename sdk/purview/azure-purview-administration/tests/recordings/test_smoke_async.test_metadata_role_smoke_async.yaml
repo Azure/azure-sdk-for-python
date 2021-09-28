@@ -19,7 +19,7 @@ interactions:
       api-supported-versions: 2021-01-01-preview, 2021-07-01
       content-length: '1983'
       content-type: application/json; charset=utf-8
-      date: Mon, 27 Sep 2021 03:14:56 GMT
+      date: Tue, 28 Sep 2021 05:56:55 GMT
       server: Kestrel
       strict-transport-security: max-age=31536000; includeSubDomains
     status:
@@ -42,7 +42,7 @@ interactions:
       api-supported-versions: 2021-01-01-preview, 2021-07-01
       content-length: '13'
       content-type: application/json; charset=utf-8
-      date: Mon, 27 Sep 2021 03:14:57 GMT
+      date: Tue, 28 Sep 2021 05:56:55 GMT
       server: Kestrel
       strict-transport-security: max-age=31536000; includeSubDomains
     status:

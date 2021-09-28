@@ -18,6 +18,7 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
+from ..._vendor import _convert_request
 from ...operations._operations import build_accounts_get_access_keys_request, build_accounts_get_account_properties_request, build_accounts_regenerate_access_key_request, build_accounts_update_account_properties_request, build_collections_create_or_update_collection_request, build_collections_delete_collection_request, build_collections_get_collection_path_request, build_collections_get_collection_request, build_collections_list_child_collection_names_request, build_collections_list_collections_request, build_resource_set_rules_create_or_update_resource_set_rule_request, build_resource_set_rules_delete_resource_set_rule_request, build_resource_set_rules_get_resource_set_rule_request, build_resource_set_rules_list_resource_set_rules_request
 
 T = TypeVar('T')
@@ -700,7 +701,8 @@ class CollectionsOperations:
                 request = build_collections_list_collections_request(
                     skip_token=skip_token,
                     template_url=self.list_collections.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -711,7 +713,8 @@ class CollectionsOperations:
                 request = build_collections_list_collections_request(
                     skip_token=skip_token,
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -793,7 +796,8 @@ class CollectionsOperations:
                     collection_name=collection_name,
                     skip_token=skip_token,
                     template_url=self.list_child_collection_names.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -805,7 +809,8 @@ class CollectionsOperations:
                     collection_name=collection_name,
                     skip_token=skip_token,
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -1618,7 +1623,8 @@ class ResourceSetRulesOperations:
                 request = build_resource_set_rules_list_resource_set_rules_request(
                     skip_token=skip_token,
                     template_url=self.list_resource_set_rules.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -1629,7 +1635,8 @@ class ResourceSetRulesOperations:
                 request = build_resource_set_rules_list_resource_set_rules_request(
                     skip_token=skip_token,
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
