@@ -20,24 +20,29 @@ from azure.ai.language.conversations.models import (
     ConversationAnalysisResult,
     QuestionAnsweringParameters,
     DeepstackParameters,
-    DeepstackCallingOptions
+    WorkflowPrediction,
+    QuestionAnsweringTargetIntentResult,
+    DSTargetIntentResult,
+    LUISTargetIntentResult
 )
 from azure.ai.language.questionanswering.models import KnowledgeBaseQueryOptions
 
 
-class WorkflowDirectAnalysisTests(ConversationTest):
+class WorkflowAppDirectTests(ConversationTest):
 
     @GlobalConversationAccountPreparer()
-    def test_direct_kb_analysis(self, conv_account, conv_key, workflow_project):
+    def test_direct_kb_intent(self, conv_account, conv_key, workflow_project):
 
-        client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
-        params = ConversationAnalysisInput(
-            query="How do you make sushi rice?",
-            direct_target="SushiMaking",
+        # prepare data
+        query = "How do you make sushi rice?"
+        target_intent = "SushiMaking"
+        input = ConversationAnalysisInput(
+            query=query,
+            direct_target=target_intent,
             parameters={
                 "SushiMaking": QuestionAnsweringParameters(
-                    project_parameters={
-                        "question": "How do you make sushi rice?",
+                    calling_options={
+                        "question": query,
                         "top": 1,
                         "confidenceScoreThreshold": 0.1
                     }
@@ -45,27 +50,36 @@ class WorkflowDirectAnalysisTests(ConversationTest):
             }
         )
 
+        # analyze query
+        client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
         with client:
             result = client.analyze_conversations(
-                params,
+                input,
                 project_name=workflow_project,
                 deployment_name='production',
             )
         
+        # assert
         assert isinstance(result, ConversationAnalysisResult)
-        assert result.query == "How do you make sushi rice?"
+        assert result.query == query
+        assert isinstance(result.prediction, WorkflowPrediction)
+        assert result.prediction.project_kind == "workflow"
+        assert result.prediction.top_intent == target_intent
+        assert isinstance(result.prediction.intents, QuestionAnsweringTargetIntentResult)
 
     @GlobalConversationAccountPreparer()
-    def test_direct_kb_analysis_with_model(self, conv_account, conv_key, workflow_project):
+    def test_kb_intent_with_model(self, conv_account, conv_key, workflow_project):
 
-        client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
-        params = ConversationAnalysisInput(
-            query="How do you make sushi rice?",
-            direct_target="SushiMaking",
+        # prepare data
+        query = "How do you make sushi rice?"
+        target_intent = "SushiMaking"
+        input = ConversationAnalysisInput(
+            query=query,
+            direct_target=target_intent,
             parameters={
                 "SushiMaking": QuestionAnsweringParameters(
                     project_parameters=KnowledgeBaseQueryOptions(
-                        question="How do you make sushi rice?",
+                        question=query,
                         top=1,
                         confidence_score_threshold=0.1
                     )
@@ -73,24 +87,33 @@ class WorkflowDirectAnalysisTests(ConversationTest):
             }
         )
 
+        # analyze query
+        client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
         with client:
             result = client.analyze_conversations(
-                params,
+                input,
                 project_name=workflow_project,
                 deployment_name='production',
             )
         
+        # assert
         assert isinstance(result, ConversationAnalysisResult)
-        assert result.query == "How do you make sushi rice?"
+        assert result.query == query
+        assert isinstance(result.prediction, WorkflowPrediction)
+        assert result.prediction.project_kind == "workflow"
+        assert result.prediction.top_intent == target_intent
+        assert isinstance(result.prediction.intents, QuestionAnsweringTargetIntentResult)
 
-    @pytest.mark.skip("Pending fix to service.")
     @GlobalConversationAccountPreparer()
-    def test_direct_deepstack_analysis(self, conv_account, conv_key, workflow_project):
+    def test_deepstack_intent(self, conv_account, conv_key, workflow_project):
 
+        # prepare data
+        query = "I will have the oyako donburi please."
+        target_intent = "SushiOrder"
         client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
-        params = ConversationAnalysisInput(
-            query="I will have the oyako donburi please.",
-            direct_target="SushiOrder",
+        input = ConversationAnalysisInput(
+            query=query,
+            direct_target=target_intent,
             parameters={
                 "SushiOrder": DeepstackParameters(
                     calling_options={
@@ -100,12 +123,55 @@ class WorkflowDirectAnalysisTests(ConversationTest):
             }
         )
 
+        # analyze query
         with client:
             result = client.analyze_conversations(
-                params,
+                input,
                 project_name=workflow_project,
                 deployment_name='production',
             )
         
+        # assert
         assert isinstance(result, ConversationAnalysisResult)
-        assert result.query == "I will have the oyako donburi please."
+        assert result.query == query
+        assert isinstance(result.prediction, WorkflowPrediction)
+        assert result.prediction.project_kind == "workflow"
+        assert result.prediction.top_intent == target_intent
+        assert isinstance(result.prediction.intents, DSTargetIntentResult)
+
+
+    @pytest.mark.skip(reason="still working on it")
+    @GlobalConversationAccountPreparer()
+    def test_luis_intent(self, conv_account, conv_key, workflow_project):
+
+        # prepare data
+        query = "I will have the oyako donburi please."
+        target_intent = "SushiOrder"
+        client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
+        input = ConversationAnalysisInput(
+            query=query,
+            direct_target=target_intent,
+            parameters={
+                "SushiOrder": DeepstackParameters(
+                    calling_options={
+                       "verbose": True,
+                    }
+                )
+            }
+        )
+
+        # analyze query
+        with client:
+            result = client.analyze_conversations(
+                input,
+                project_name=workflow_project,
+                deployment_name='production',
+            )
+        
+        # assert
+        assert isinstance(result, ConversationAnalysisResult)
+        assert result.query == query
+        assert isinstance(result.prediction, WorkflowPrediction)
+        assert result.prediction.project_kind == "workflow"
+        assert result.prediction.top_intent == target_intent
+        assert isinstance(result.prediction.intents, LUISTargetIntentResult)
