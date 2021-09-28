@@ -245,7 +245,9 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     :ivar forward_dead_lettered_messages_to: The name of the recipient entity to which all the
      dead-lettered messages of this subscription are forwarded to.
     :type forward_dead_lettered_messages_to: str
-    :ivar max_message_size_in_kilobytes: The maximum message payload that can be accepted by the queue.
+    :ivar max_message_size_in_kilobytes: The maximum size in kilobytes of message payload that
+     can be accepted by the queue. This feature is only available when using a Premium namespace
+     and service version "2021-05" or higher.
     :type max_message_size_in_kilobytes: int
     """
 
@@ -547,7 +549,9 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     :type enable_express: bool
     :ivar user_metadata: Metadata associated with the topic.
     :type user_metadata: str
-    :ivar max_message_size_in_kilobytes: The maximum message payload that can be accepted by the topic.
+    :ivar max_message_size_in_kilobytes: The maximum size in kilobytes of message payload that
+     can be accepted by the topic. This feature is only available when using a Premium namespace
+     and service version "2021-05" or higher.
     :type max_message_size_in_kilobytes: int
     """
 

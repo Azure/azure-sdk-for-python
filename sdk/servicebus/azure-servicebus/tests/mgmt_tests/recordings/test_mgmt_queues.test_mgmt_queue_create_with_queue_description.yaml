@@ -14,13 +14,13 @@ interactions:
     uri: https://servicebustestsbname.servicebus.windows.net/$Resources/queues?$skip=0&$top=100&api-version=2021-05
   response:
     body:
-      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Queues</title><id>https://servicebustestappwyrpk4k.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2021-05</id><updated>2021-09-28T19:01:45Z</updated><link
-        rel="self" href="https://servicebustestappwyrpk4k.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2021-05"/></feed>
+      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Queues</title><id>https://servicebustestkxdmegmltc.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2021-05</id><updated>2021-09-28T22:19:03Z</updated><link
+        rel="self" href="https://servicebustestkxdmegmltc.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2021-05"/></feed>
     headers:
       content-type:
       - application/atom+xml;type=feed;charset=utf-8
       date:
-      - Tue, 28 Sep 2021 19:01:44 GMT
+      - Tue, 28 Sep 2021 22:19:03 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -50,16 +50,16 @@ interactions:
     uri: https://servicebustestsbname.servicebus.windows.net/aghadh?api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestappwyrpk4k.servicebus.windows.net/aghadh?api-version=2021-05</id><title
-        type="text">aghadh</title><published>2021-09-28T19:01:45Z</published><updated>2021-09-28T19:01:45Z</updated><author><name>servicebustestappwyrpk4k</name></author><link
-        rel="self" href="https://servicebustestappwyrpk4k.servicebus.windows.net/aghadh?api-version=2021-05"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestkxdmegmltc.servicebus.windows.net/aghadh?api-version=2021-05</id><title
+        type="text">aghadh</title><published>2021-09-28T22:19:03Z</published><updated>2021-09-28T22:19:03Z</updated><author><name>servicebustestkxdmegmltc</name></author><link
+        rel="self" href="https://servicebustestkxdmegmltc.servicebus.windows.net/aghadh?api-version=2021-05"/><content
         type="application/xml"><TopicDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><FilteringMessagesBeforePublishing>false</FilteringMessagesBeforePublishing><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2021-09-28T19:01:45.83Z</CreatedAt><UpdatedAt>2021-09-28T19:01:45.87Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableSubscriptionPartitioning>false</EnableSubscriptionPartitioning><EnableExpress>false</EnableExpress><MaxMessageSizeInKilobytes>256</MaxMessageSizeInKilobytes></TopicDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><FilteringMessagesBeforePublishing>false</FilteringMessagesBeforePublishing><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2021-09-28T22:19:03.93Z</CreatedAt><UpdatedAt>2021-09-28T22:19:03.96Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableSubscriptionPartitioning>false</EnableSubscriptionPartitioning><EnableExpress>false</EnableExpress><MaxMessageSizeInKilobytes>256</MaxMessageSizeInKilobytes></TopicDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Tue, 28 Sep 2021 19:01:45 GMT
+      - Tue, 28 Sep 2021 22:19:03 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -73,7 +73,7 @@ interactions:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
       <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
-      type="application/xml"><QueueDescription><LockDuration>PT13S</LockDuration><MaxSizeInMegabytes>3072</MaxSizeInMegabytes><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT12M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EnablePartitioning>true</EnablePartitioning><EnableExpress>true</EnableExpress><ForwardTo>sb://servicebustestappwyrpk4k.servicebus.windows.net/aghadh</ForwardTo><ForwardDeadLetteredMessagesTo>sb://servicebustestappwyrpk4k.servicebus.windows.net/aghadh</ForwardDeadLetteredMessagesTo></QueueDescription></ns0:content></ns0:entry>'
+      type="application/xml"><QueueDescription><LockDuration>PT13S</LockDuration><MaxSizeInMegabytes>3072</MaxSizeInMegabytes><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT12M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EnablePartitioning>true</EnablePartitioning><EnableExpress>true</EnableExpress><ForwardTo>sb://servicebustestkxdmegmltc.servicebus.windows.net/aghadh</ForwardTo><ForwardDeadLetteredMessagesTo>sb://servicebustestkxdmegmltc.servicebus.windows.net/aghadh</ForwardDeadLetteredMessagesTo></QueueDescription></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
@@ -86,25 +86,25 @@ interactions:
       Content-Type:
       - application/atom+xml
       ServiceBusDlqSupplementaryAuthorization:
-      - SharedAccessSignature sr=sb%3A%2F%2Fservicebustestappwyrpk4k.servicebus.windows.net%2Faghadh&sig=pp%2fo6BkRHhmPpfUiiy%2fffG5Z3akd2Q8eVKUFGuw0p2M%3d&se=1632859305&skn=RootManageSharedAccessKey
+      - SharedAccessSignature sr=sb%3A%2F%2Fservicebustestkxdmegmltc.servicebus.windows.net%2Faghadh&sig=KBXPKuLIIoySgVB0wTSGT3%2b3unw8u9ba88HQPkX%2fEXc%3d&se=1632871144&skn=RootManageSharedAccessKey
       ServiceBusSupplementaryAuthorization:
-      - SharedAccessSignature sr=sb%3A%2F%2Fservicebustestappwyrpk4k.servicebus.windows.net%2Faghadh&sig=pp%2fo6BkRHhmPpfUiiy%2fffG5Z3akd2Q8eVKUFGuw0p2M%3d&se=1632859305&skn=RootManageSharedAccessKey
+      - SharedAccessSignature sr=sb%3A%2F%2Fservicebustestkxdmegmltc.servicebus.windows.net%2Faghadh&sig=KBXPKuLIIoySgVB0wTSGT3%2b3unw8u9ba88HQPkX%2fEXc%3d&se=1632871144&skn=RootManageSharedAccessKey
       User-Agent:
       - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: PUT
     uri: https://servicebustestsbname.servicebus.windows.net/iweidk?api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestappwyrpk4k.servicebus.windows.net/iweidk?api-version=2021-05</id><title
-        type="text">iweidk</title><published>2021-09-28T19:01:46Z</published><updated>2021-09-28T19:01:47Z</updated><author><name>servicebustestappwyrpk4k</name></author><link
-        rel="self" href="https://servicebustestappwyrpk4k.servicebus.windows.net/iweidk?api-version=2021-05"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestkxdmegmltc.servicebus.windows.net/iweidk?api-version=2021-05</id><title
+        type="text">iweidk</title><published>2021-09-28T22:19:04Z</published><updated>2021-09-28T22:19:04Z</updated><author><name>servicebustestkxdmegmltc</name></author><link
+        rel="self" href="https://servicebustestkxdmegmltc.servicebus.windows.net/iweidk?api-version=2021-05"/><content
         type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT13S</LockDuration><MaxSizeInMegabytes>49152</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT12M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2021-09-28T19:01:46.643Z</CreatedAt><UpdatedAt>2021-09-28T19:01:47.093Z</UpdatedAt><SupportOrdering>false</SupportOrdering><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EnablePartitioning>true</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>true</EnableExpress><ForwardTo>sb://servicebustestappwyrpk4k.servicebus.windows.net/aghadh</ForwardTo><ForwardDeadLetteredMessagesTo>sb://servicebustestappwyrpk4k.servicebus.windows.net/aghadh</ForwardDeadLetteredMessagesTo><MaxMessageSizeInKilobytes>256</MaxMessageSizeInKilobytes></QueueDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT13S</LockDuration><MaxSizeInMegabytes>49152</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT12M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2021-09-28T22:19:04.833Z</CreatedAt><UpdatedAt>2021-09-28T22:19:04.99Z</UpdatedAt><SupportOrdering>false</SupportOrdering><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EnablePartitioning>true</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>true</EnableExpress><ForwardTo>sb://servicebustestkxdmegmltc.servicebus.windows.net/aghadh</ForwardTo><ForwardDeadLetteredMessagesTo>sb://servicebustestkxdmegmltc.servicebus.windows.net/aghadh</ForwardDeadLetteredMessagesTo><MaxMessageSizeInKilobytes>256</MaxMessageSizeInKilobytes></QueueDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Tue, 28 Sep 2021 19:01:46 GMT
+      - Tue, 28 Sep 2021 22:19:05 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -118,7 +118,7 @@ interactions:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
       <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
-      type="application/xml"><QueueDescription><LockDuration>PT13S</LockDuration><MaxSizeInMegabytes>3072</MaxSizeInMegabytes><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>PT11M2S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT12M3S</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><AutoDeleteOnIdle>PT10M1S</AutoDeleteOnIdle><EnablePartitioning>true</EnablePartitioning><EnableExpress>true</EnableExpress><ForwardTo>sb://servicebustestappwyrpk4k.servicebus.windows.net/aghadh</ForwardTo><ForwardDeadLetteredMessagesTo>sb://servicebustestappwyrpk4k.servicebus.windows.net/aghadh</ForwardDeadLetteredMessagesTo></QueueDescription></ns0:content></ns0:entry>'
+      type="application/xml"><QueueDescription><LockDuration>PT13S</LockDuration><MaxSizeInMegabytes>3072</MaxSizeInMegabytes><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>PT11M2S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT12M3S</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><AutoDeleteOnIdle>PT10M1S</AutoDeleteOnIdle><EnablePartitioning>true</EnablePartitioning><EnableExpress>true</EnableExpress><ForwardTo>sb://servicebustestkxdmegmltc.servicebus.windows.net/aghadh</ForwardTo><ForwardDeadLetteredMessagesTo>sb://servicebustestkxdmegmltc.servicebus.windows.net/aghadh</ForwardDeadLetteredMessagesTo></QueueDescription></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
@@ -131,25 +131,25 @@ interactions:
       Content-Type:
       - application/atom+xml
       ServiceBusDlqSupplementaryAuthorization:
-      - SharedAccessSignature sr=sb%3A%2F%2Fservicebustestappwyrpk4k.servicebus.windows.net%2Faghadh&sig=s79z%2f7JS9cPqTs4Aj%2f48p15wcArdT%2fRXnOu2iULE6QE%3d&se=1632859307&skn=RootManageSharedAccessKey
+      - SharedAccessSignature sr=sb%3A%2F%2Fservicebustestkxdmegmltc.servicebus.windows.net%2Faghadh&sig=tCjQ5s5ZseN61DYd9WscGhYRw5dkXPju7DSiYYdInAE%3d&se=1632871145&skn=RootManageSharedAccessKey
       ServiceBusSupplementaryAuthorization:
-      - SharedAccessSignature sr=sb%3A%2F%2Fservicebustestappwyrpk4k.servicebus.windows.net%2Faghadh&sig=s79z%2f7JS9cPqTs4Aj%2f48p15wcArdT%2fRXnOu2iULE6QE%3d&se=1632859307&skn=RootManageSharedAccessKey
+      - SharedAccessSignature sr=sb%3A%2F%2Fservicebustestkxdmegmltc.servicebus.windows.net%2Faghadh&sig=tCjQ5s5ZseN61DYd9WscGhYRw5dkXPju7DSiYYdInAE%3d&se=1632871145&skn=RootManageSharedAccessKey
       User-Agent:
       - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: PUT
     uri: https://servicebustestsbname.servicebus.windows.net/vladsk?api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestappwyrpk4k.servicebus.windows.net/vladsk?api-version=2021-05</id><title
-        type="text">vladsk</title><published>2021-09-28T19:01:47Z</published><updated>2021-09-28T19:01:49Z</updated><author><name>servicebustestappwyrpk4k</name></author><link
-        rel="self" href="https://servicebustestappwyrpk4k.servicebus.windows.net/vladsk?api-version=2021-05"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestkxdmegmltc.servicebus.windows.net/vladsk?api-version=2021-05</id><title
+        type="text">vladsk</title><published>2021-09-28T22:19:05Z</published><updated>2021-09-28T22:19:06Z</updated><author><name>servicebustestkxdmegmltc</name></author><link
+        rel="self" href="https://servicebustestkxdmegmltc.servicebus.windows.net/vladsk?api-version=2021-05"/><content
         type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT13S</LockDuration><MaxSizeInMegabytes>49152</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>PT11M2S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT12M3S</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2021-09-28T19:01:47.83Z</CreatedAt><UpdatedAt>2021-09-28T19:01:49.3Z</UpdatedAt><SupportOrdering>false</SupportOrdering><AutoDeleteOnIdle>PT10M1S</AutoDeleteOnIdle><EnablePartitioning>true</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>true</EnableExpress><ForwardTo>sb://servicebustestappwyrpk4k.servicebus.windows.net/aghadh</ForwardTo><ForwardDeadLetteredMessagesTo>sb://servicebustestappwyrpk4k.servicebus.windows.net/aghadh</ForwardDeadLetteredMessagesTo><MaxMessageSizeInKilobytes>256</MaxMessageSizeInKilobytes></QueueDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT13S</LockDuration><MaxSizeInMegabytes>49152</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>PT11M2S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT12M3S</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2021-09-28T22:19:05.917Z</CreatedAt><UpdatedAt>2021-09-28T22:19:06.12Z</UpdatedAt><SupportOrdering>false</SupportOrdering><AutoDeleteOnIdle>PT10M1S</AutoDeleteOnIdle><EnablePartitioning>true</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>true</EnableExpress><ForwardTo>sb://servicebustestkxdmegmltc.servicebus.windows.net/aghadh</ForwardTo><ForwardDeadLetteredMessagesTo>sb://servicebustestkxdmegmltc.servicebus.windows.net/aghadh</ForwardDeadLetteredMessagesTo><MaxMessageSizeInKilobytes>256</MaxMessageSizeInKilobytes></QueueDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Tue, 28 Sep 2021 19:01:48 GMT
+      - Tue, 28 Sep 2021 22:19:06 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -163,7 +163,7 @@ interactions:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
       <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
-      type="application/xml"><QueueDescription><MaxMessageSizeInKilobytes>10</MaxMessageSizeInKilobytes></QueueDescription></ns0:content></ns0:entry>'
+      type="application/xml"><QueueDescription><MaxMessageSizeInKilobytes>1024</MaxMessageSizeInKilobytes></QueueDescription></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
@@ -172,7 +172,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '322'
+      - '324'
       Content-Type:
       - application/atom+xml
       User-Agent:
@@ -182,13 +182,13 @@ interactions:
   response:
     body:
       string: <Error><Code>400</Code><Detail>SubCode=40000. Bad Request. To know more
-        visit https://aka.ms/sbResourceMgrExceptions. . TrackingId:d77be5b4-2356-4ae7-8dee-affe9d290659_G6,
-        SystemTracker:servicebustestsbname.servicebus.windows.net:famviq, Timestamp:2021-09-28T19:01:50</Detail></Error>
+        visit https://aka.ms/sbResourceMgrExceptions. . TrackingId:8bebcfae-4fe3-4a2a-aa45-ec2943469609_G12,
+        SystemTracker:servicebustestsbname.servicebus.windows.net:famviq, Timestamp:2021-09-28T22:19:07</Detail></Error>
     headers:
       content-type:
       - application/xml; charset=utf-8
       date:
-      - Tue, 28 Sep 2021 19:01:49 GMT
+      - Tue, 28 Sep 2021 22:19:06 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -213,19 +213,19 @@ interactions:
     uri: https://servicebustestsbname.servicebus.windows.net/iweidk?enrich=false&api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestappwyrpk4k.servicebus.windows.net/iweidk?enrich=false&amp;api-version=2021-05</id><title
-        type="text">iweidk</title><published>2021-09-28T19:01:46Z</published><updated>2021-09-28T19:01:47Z</updated><author><name>servicebustestappwyrpk4k</name></author><link
-        rel="self" href="https://servicebustestappwyrpk4k.servicebus.windows.net/iweidk?enrich=false&amp;api-version=2021-05"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestkxdmegmltc.servicebus.windows.net/iweidk?enrich=false&amp;api-version=2021-05</id><title
+        type="text">iweidk</title><published>2021-09-28T22:19:04Z</published><updated>2021-09-28T22:19:04Z</updated><author><name>servicebustestkxdmegmltc</name></author><link
+        rel="self" href="https://servicebustestkxdmegmltc.servicebus.windows.net/iweidk?enrich=false&amp;api-version=2021-05"/><content
         type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT13S</LockDuration><MaxSizeInMegabytes>49152</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT12M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2021-09-28T19:01:46.643Z</CreatedAt><UpdatedAt>2021-09-28T19:01:47.093Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>false</SupportOrdering><CountDetails
-        xmlns:d2p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d2p1:ActiveMessageCount>0</d2p1:ActiveMessageCount><d2p1:DeadLetterMessageCount>0</d2p1:DeadLetterMessageCount><d2p1:ScheduledMessageCount>0</d2p1:ScheduledMessageCount><d2p1:TransferMessageCount>0</d2p1:TransferMessageCount><d2p1:TransferDeadLetterMessageCount>0</d2p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EnablePartitioning>true</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>true</EnableExpress><ForwardTo>sb://servicebustestappwyrpk4k.servicebus.windows.net/aghadh</ForwardTo><ForwardDeadLetteredMessagesTo>sb://servicebustestappwyrpk4k.servicebus.windows.net/aghadh</ForwardDeadLetteredMessagesTo><MaxMessageSizeInKilobytes>256</MaxMessageSizeInKilobytes></QueueDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT13S</LockDuration><MaxSizeInMegabytes>49152</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT12M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2021-09-28T22:19:04.833Z</CreatedAt><UpdatedAt>2021-09-28T22:19:04.99Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>false</SupportOrdering><CountDetails
+        xmlns:d2p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d2p1:ActiveMessageCount>0</d2p1:ActiveMessageCount><d2p1:DeadLetterMessageCount>0</d2p1:DeadLetterMessageCount><d2p1:ScheduledMessageCount>0</d2p1:ScheduledMessageCount><d2p1:TransferMessageCount>0</d2p1:TransferMessageCount><d2p1:TransferDeadLetterMessageCount>0</d2p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EnablePartitioning>true</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>true</EnableExpress><ForwardTo>sb://servicebustestkxdmegmltc.servicebus.windows.net/aghadh</ForwardTo><ForwardDeadLetteredMessagesTo>sb://servicebustestkxdmegmltc.servicebus.windows.net/aghadh</ForwardDeadLetteredMessagesTo><MaxMessageSizeInKilobytes>256</MaxMessageSizeInKilobytes></QueueDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Tue, 28 Sep 2021 19:01:49 GMT
+      - Tue, 28 Sep 2021 22:19:06 GMT
       etag:
-      - '637684525070930000'
+      - '637684643449900000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -250,19 +250,19 @@ interactions:
     uri: https://servicebustestsbname.servicebus.windows.net/vladsk?enrich=false&api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestappwyrpk4k.servicebus.windows.net/vladsk?enrich=false&amp;api-version=2021-05</id><title
-        type="text">vladsk</title><published>2021-09-28T19:01:47Z</published><updated>2021-09-28T19:01:49Z</updated><author><name>servicebustestappwyrpk4k</name></author><link
-        rel="self" href="https://servicebustestappwyrpk4k.servicebus.windows.net/vladsk?enrich=false&amp;api-version=2021-05"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestkxdmegmltc.servicebus.windows.net/vladsk?enrich=false&amp;api-version=2021-05</id><title
+        type="text">vladsk</title><published>2021-09-28T22:19:05Z</published><updated>2021-09-28T22:19:06Z</updated><author><name>servicebustestkxdmegmltc</name></author><link
+        rel="self" href="https://servicebustestkxdmegmltc.servicebus.windows.net/vladsk?enrich=false&amp;api-version=2021-05"/><content
         type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT13S</LockDuration><MaxSizeInMegabytes>49152</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>PT11M2S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT12M3S</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2021-09-28T19:01:47.83Z</CreatedAt><UpdatedAt>2021-09-28T19:01:49.3Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>false</SupportOrdering><CountDetails
-        xmlns:d2p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d2p1:ActiveMessageCount>0</d2p1:ActiveMessageCount><d2p1:DeadLetterMessageCount>0</d2p1:DeadLetterMessageCount><d2p1:ScheduledMessageCount>0</d2p1:ScheduledMessageCount><d2p1:TransferMessageCount>0</d2p1:TransferMessageCount><d2p1:TransferDeadLetterMessageCount>0</d2p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>PT10M1S</AutoDeleteOnIdle><EnablePartitioning>true</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>true</EnableExpress><ForwardTo>sb://servicebustestappwyrpk4k.servicebus.windows.net/aghadh</ForwardTo><ForwardDeadLetteredMessagesTo>sb://servicebustestappwyrpk4k.servicebus.windows.net/aghadh</ForwardDeadLetteredMessagesTo><MaxMessageSizeInKilobytes>256</MaxMessageSizeInKilobytes></QueueDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT13S</LockDuration><MaxSizeInMegabytes>49152</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>PT11M2S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT12M3S</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2021-09-28T22:19:05.917Z</CreatedAt><UpdatedAt>2021-09-28T22:19:06.12Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>false</SupportOrdering><CountDetails
+        xmlns:d2p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d2p1:ActiveMessageCount>0</d2p1:ActiveMessageCount><d2p1:DeadLetterMessageCount>0</d2p1:DeadLetterMessageCount><d2p1:ScheduledMessageCount>0</d2p1:ScheduledMessageCount><d2p1:TransferMessageCount>0</d2p1:TransferMessageCount><d2p1:TransferDeadLetterMessageCount>0</d2p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>PT10M1S</AutoDeleteOnIdle><EnablePartitioning>true</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>true</EnableExpress><ForwardTo>sb://servicebustestkxdmegmltc.servicebus.windows.net/aghadh</ForwardTo><ForwardDeadLetteredMessagesTo>sb://servicebustestkxdmegmltc.servicebus.windows.net/aghadh</ForwardDeadLetteredMessagesTo><MaxMessageSizeInKilobytes>256</MaxMessageSizeInKilobytes></QueueDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Tue, 28 Sep 2021 19:01:49 GMT
+      - Tue, 28 Sep 2021 22:19:06 GMT
       etag:
-      - '637684525093000000'
+      - '637684643461200000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -294,9 +294,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 28 Sep 2021 19:01:50 GMT
+      - Tue, 28 Sep 2021 22:19:07 GMT
       etag:
-      - '637684525070930000'
+      - '637684643449900000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -326,9 +326,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 28 Sep 2021 19:01:51 GMT
+      - Tue, 28 Sep 2021 22:19:07 GMT
       etag:
-      - '637684525093000000'
+      - '637684643461200000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -358,9 +358,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 28 Sep 2021 19:01:51 GMT
+      - Tue, 28 Sep 2021 22:19:08 GMT
       etag:
-      - '637684525058700000'
+      - '637684643439600000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

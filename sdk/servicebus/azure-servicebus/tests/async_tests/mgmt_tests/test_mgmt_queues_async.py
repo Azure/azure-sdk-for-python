@@ -264,7 +264,7 @@ class ServiceBusAdministrationClientQueueAsyncTests(AzureMgmtTestCase):
         with pytest.raises(HttpResponseError):
             await mgmt_service.create_queue(
                 queue_name_3,
-                max_message_size_in_kilobytes=10
+                max_message_size_in_kilobytes=1024  # basic/standard ties does not support
             )
 
         try:

@@ -337,7 +337,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :keyword forward_dead_lettered_messages_to: The name of the recipient entity to which all the
          dead-lettered messages of this subscription are forwarded to.
         :paramtype forward_dead_lettered_messages_to: str
-        :keyword max_message_size_in_kilobytes: The maximum message payload that can be accepted by the queue.
+        :keyword max_message_size_in_kilobytes: The maximum size in kilobytes of message payload that
+         can be accepted by the queue. This feature is only available when using a Premium namespace
+         and service version "2021-05" or higher.
+         The minimum allowed value is 1024 while the maximum allowed value is 102400. Default value is 1024.
         :paramtype max_message_size_in_kilobytes: int
 
         :rtype: ~azure.servicebus.management.QueueProperties
@@ -584,7 +587,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :paramtype enable_express: bool
         :keyword user_metadata: Metadata associated with the topic.
         :paramtype user_metadata: str
-        :keyword max_message_size_in_kilobytes: The maximum message payload that can be accepted by the queue.
+        :keyword max_message_size_in_kilobytes: The maximum size in kilobytes of message payload that
+         can be accepted by the topic. This feature is only available when using a Premium namespace
+         and service version "2021-05" or higher.
+         The minimum allowed value is 1024 while the maximum allowed value is 102400. Default value is 1024.
         :paramtype max_message_size_in_kilobytes: int
 
         :rtype: ~azure.servicebus.management.TopicProperties
