@@ -39,7 +39,6 @@ from .pipeline.policies import (
     RequestIdPolicy,
     RetryPolicy,
 )
-from .pipeline._tools import to_rest_response as _to_rest_response
 
 try:
     from typing import TYPE_CHECKING
@@ -192,22 +191,10 @@ class PipelineClient(PipelineClientBase):
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
         :rtype: ~azure.core.rest.HttpResponse
-        # """
-        rest_request = hasattr(request, "content")
+        """
+        stream = kwargs.pop("stream", False) # want to add default value
         return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
-        pipeline_response = self._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
-        response = pipeline_response.http_response
-        if rest_request:
-            response = _to_rest_response(response)
-            try:
-                if not kwargs.get("stream", False):
-                    response.read()
-                    response.close()
-            except Exception as exc:
-                response.close()
-                raise exc
+        pipeline_response = self._pipeline.run(request, stream=stream, **kwargs) # pylint: disable=protected-access
         if return_pipeline_response:
-            pipeline_response.http_response = response
-            pipeline_response.http_request = request
             return pipeline_response
-        return response
+        return pipeline_response.http_response
