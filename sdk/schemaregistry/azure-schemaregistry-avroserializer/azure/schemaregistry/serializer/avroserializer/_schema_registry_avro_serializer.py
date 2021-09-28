@@ -26,7 +26,7 @@
 try:
     from functools import lru_cache
 except ImportError:
-    from ._helpers import lru_cache
+    from backports.functools_lru_cache import lru_cache
 from io import BytesIO
 from typing import Any, Dict, Mapping
 import avro
