@@ -16,38 +16,38 @@ import os
 
 from azure.identity.aio import ClientSecretCredential
 from azure.schemaregistry.aio import SchemaRegistryClient
-from azure.schemaregistry import SerializationType
+from azure.schemaregistry import SchemaFormat
 
 TENANT_ID = os.environ['SCHEMA_REGISTRY_AZURE_TENANT_ID']
 CLIENT_ID = os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_ID']
 CLIENT_SECRET = os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_SECRET']
 
-SCHEMA_REGISTRY_ENDPOINT = os.environ['SCHEMA_REGISTRY_ENDPOINT']
-SCHEMA_GROUP = os.environ['SCHEMA_REGISTRY_GROUP']
-SCHEMA_NAME = 'your-schema-name'
-SERIALIZATION_TYPE = SerializationType.AVRO
+SCHEMA_REGISTRY_FQN = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
+GROUP_NAME = os.environ['SCHEMA_REGISTRY_GROUP']
+NAME = 'your-schema-name'
+FORMAT = SchemaFormat.AVRO
 SCHEMA_STRING = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
 
 
-async def register_schema(client, schema_group, schema_name, schema_string, serialization_type):
+async def register_schema(client, group_name, name, schema_string, format):
     print("Registering schema...")
-    schema_properties = await client.register_schema(schema_group, schema_name, schema_string, serialization_type)
+    schema_properties = await client.register_schema(group_name, name, schema_string, format)
     print("Schema registered, returned schema id is {}".format(schema_properties.id))
     print("Schema properties are {}".format(schema_properties))
     return schema_properties.id
 
 
-async def get_schema_by_id(client, schema_id):
+async def get_schema_by_id(client, id):
     print("Getting schema by id...")
-    schema = await client.get_schema(schema_id)
-    print("The schema string of schema id: {} string is {}".format(schema_id, schema.content))
-    print("Schema properties are {}".format(schema_id))
-    return schema.content
+    schema = await client.get_schema(id)
+    print("The schema string of schema id: {} string is {}".format(id, schema.schema_definition))
+    print("Schema properties are {}".format(id))
+    return schema.schema_definition
 
 
-async def get_schema_id(client, schema_group, schema_name, schema_string, serialization_type):
+async def get_schema_id(client, group_name, name, schema_string, format):
     print("Getting schema id...")
-    schema_properties = await client.get_schema_properties(schema_group, schema_name, schema_string, serialization_type)
+    schema_properties = await client.get_schema_properties(group_name, name, schema_string, format)
     print("The schema id is: {}".format(schema_properties.id))
     print("Schema properties are {}".format(schema_properties))
     return schema_properties.id
@@ -59,11 +59,11 @@ async def main():
         client_id=CLIENT_ID,
         client_secret=CLIENT_SECRET
     )
-    schema_registry_client = SchemaRegistryClient(endpoint=SCHEMA_REGISTRY_ENDPOINT, credential=token_credential)
+    schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=SCHEMA_REGISTRY_FQN, credential=token_credential)
     async with token_credential, schema_registry_client:
-        schema_id = await register_schema(schema_registry_client, SCHEMA_GROUP, SCHEMA_NAME, SCHEMA_STRING, SERIALIZATION_TYPE)
+        schema_id = await register_schema(schema_registry_client, GROUP_NAME, NAME, SCHEMA_STRING, FORMAT)
         schema_str = await get_schema_by_id(schema_registry_client, schema_id)
-        schema_id = await get_schema_id(schema_registry_client, SCHEMA_GROUP, SCHEMA_NAME, SCHEMA_STRING, SERIALIZATION_TYPE)
+        schema_id = await get_schema_id(schema_registry_client, GROUP_NAME, NAME, SCHEMA_STRING, FORMAT)
 
 
 loop = asyncio.get_event_loop()

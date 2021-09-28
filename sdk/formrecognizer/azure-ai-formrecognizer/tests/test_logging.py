@@ -27,7 +27,7 @@ class MockHandler(logging.Handler):
     def emit(self, record):
         self.messages.append(record)
 
-
+@pytest.mark.skip
 class TestLogging(FormRecognizerTest):
 
     @FormRecognizerPreparer()

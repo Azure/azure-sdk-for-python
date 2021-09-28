@@ -1,52 +1,5 @@
 interactions:
 - request:
-    body: null
-    headers:
-      Accept:
-      - application/json;odata.metadata=minimal
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
-    method: DELETE
-    uri: https://searchd998184f.search.windows.net/skillsets('test-ss')?api-version=2021-04-30-Preview
-  response:
-    body:
-      string: '{"error":{"code":"","message":"No skillset with the name ''test-ss''
-        was found in a service named ''searchd998184f''."}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-language:
-      - en
-      content-length:
-      - '116'
-      content-type:
-      - application/json; odata.metadata=minimal
-      date:
-      - Thu, 02 Sep 2021 23:22:43 GMT
-      elapsed-time:
-      - '38'
-      expires:
-      - '-1'
-      odata-version:
-      - '4.0'
-      pragma:
-      - no-cache
-      preference-applied:
-      - odata.include-annotations="*"
-      request-id:
-      - adcd5521-0c44-11ec-99c1-74c63bed1137
-      strict-transport-security:
-      - max-age=15724800; includeSubDomains
-    status:
-      code: 404
-      message: Not Found
-- request:
     body: '{"name": "test-ss", "description": "desc", "skills": [{"@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
       "description": "Skill Version 1", "inputs": [{"name": "text", "source": "/document/content"}],
       "outputs": [{"name": "organizations", "targetName": "organizationsS1"}], "includeTypelessEntities":
@@ -73,12 +26,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b4 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://searchd998184f.search.windows.net/skillsets?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://searchd998184f.search.windows.net/$metadata#skillsets/$entity","@odata.etag":"\"0x8D96E6890F19808\"","name":"test-ss","description":"desc","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":null,"description":"Skill
+      string: '{"@odata.context":"https://searchd998184f.search.windows.net/$metadata#skillsets/$entity","@odata.etag":"\"0x8D977C13CD227F9\"","name":"test-ss","description":"desc","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":null,"description":"Skill
         Version 1","context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"includeTypelessEntities":true,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizationsS1"}]},{"@odata.type":"#Microsoft.Skills.Text.V3.EntityRecognitionSkill","name":null,"description":"Skill
         Version 3","context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"modelVersion":"3","inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizationsS2"}]},{"@odata.type":"#Microsoft.Skills.Text.SentimentSkill","name":null,"description":"Sentiment
         V1","context":null,"defaultLanguageCode":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"score","targetName":"scoreS3"}]},{"@odata.type":"#Microsoft.Skills.Text.V3.SentimentSkill","name":null,"description":"Sentiment
@@ -91,11 +44,11 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Thu, 02 Sep 2021 23:22:43 GMT
+      - Tue, 14 Sep 2021 20:50:08 GMT
       elapsed-time:
-      - '104'
+      - '2192'
       etag:
-      - W/"0x8D96E6890F19808"
+      - W/"0x8D977C13CD227F9"
       expires:
       - '-1'
       location:
@@ -107,7 +60,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - ae01135c-0c44-11ec-9160-74c63bed1137
+      - 5895d1df-159d-11ec-ab13-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -123,12 +76,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b4 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://searchd998184f.search.windows.net/skillsets?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://searchd998184f.search.windows.net/$metadata#skillsets","value":[{"@odata.etag":"\"0x8D96E6890F19808\"","name":"test-ss","description":"desc","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":"#1","description":"Skill
+      string: '{"@odata.context":"https://searchd998184f.search.windows.net/$metadata#skillsets","value":[{"@odata.etag":"\"0x8D977C13CD227F9\"","name":"test-ss","description":"desc","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":"#1","description":"Skill
         Version 1","context":"/document","categories":["Person","Quantity","Organization","URL","Email","Location","DateTime"],"defaultLanguageCode":"en","minimumPrecision":null,"includeTypelessEntities":true,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizationsS1"}]},{"@odata.type":"#Microsoft.Skills.Text.V3.EntityRecognitionSkill","name":"#2","description":"Skill
         Version 3","context":"/document","categories":["Product","Phone Number","Person","Quantity","IP
         Address","Organization","URL","Email","Event","Skill","Location","PersonType","Address","DateTime"],"defaultLanguageCode":"en","minimumPrecision":null,"modelVersion":"3","inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizationsS2"}]},{"@odata.type":"#Microsoft.Skills.Text.SentimentSkill","name":"#3","description":"Sentiment
@@ -142,9 +95,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Thu, 02 Sep 2021 23:22:43 GMT
+      - Tue, 14 Sep 2021 20:50:08 GMT
       elapsed-time:
-      - '40'
+      - '118'
       expires:
       - '-1'
       odata-version:
@@ -154,7 +107,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - ae1b2686-0c44-11ec-b21b-74c63bed1137
+      - 59ff6a42-159d-11ec-b22c-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

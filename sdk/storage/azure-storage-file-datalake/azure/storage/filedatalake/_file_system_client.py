@@ -19,7 +19,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.storage.blob import ContainerClient
 from ._shared.base_client import TransportWrapper, StorageAccountHostsMixin, parse_query, parse_connection_str
-from ._serialize import convert_dfs_url_to_blob_url
+from ._serialize import convert_dfs_url_to_blob_url, get_api_version
 from ._list_paths_helper import DeletedPathPropertiesPaged
 from ._models import LocationMode, FileSystemProperties, PublicAccess, DeletedPathProperties, FileProperties, \
     DirectoryProperties
@@ -105,9 +105,12 @@ class FileSystemClient(StorageAccountHostsMixin):
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
         self._client = AzureDataLakeStorageRESTAPI(self.url, file_system=file_system_name, pipeline=self._pipeline)
+        api_version = get_api_version(kwargs)
+        self._client._config.version = api_version  # pylint: disable=protected-access
         self._datalake_client_for_blob_operation = AzureDataLakeStorageRESTAPI(self._container_client.url,
                                                                                file_system=file_system_name,
                                                                                pipeline=self._pipeline)
+        self._datalake_client_for_blob_operation._config.version = api_version  # pylint: disable=protected-access
 
     def _format_url(self, hostname):
         file_system_name = self.file_system_name
@@ -839,6 +842,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         )
         return DataLakeDirectoryClient(self.url, self.file_system_name, directory_name=directory_name,
                                        credential=self._raw_credential,
+                                       api_version=self.api_version,
                                        _configuration=self._config, _pipeline=_pipeline,
                                        _hosts=self._hosts,
                                        require_encryption=self.require_encryption,
@@ -879,6 +883,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         )
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
+            api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,

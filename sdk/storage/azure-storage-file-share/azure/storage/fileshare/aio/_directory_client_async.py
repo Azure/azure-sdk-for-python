@@ -90,8 +90,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             loop=loop,
             **kwargs)
         self._client = AzureFileStorage(url=self.url, pipeline=self._pipeline, loop=loop)
-        default_api_version = self._client._config.version  # pylint: disable=protected-access
-        self._client._config.version = get_api_version(kwargs, default_api_version) # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
         self._loop = loop
 
     def get_file_client(self, file_name, **kwargs):
