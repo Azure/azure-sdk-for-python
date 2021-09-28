@@ -3,10 +3,10 @@
 Azure Cognitive Services Form Recognizer is a cloud service that uses machine learning to recognize text and structured data from your documents.
 It includes the following main features:
 
-* Custom models - Build custom models to extract text, field values, selection marks, and table data from documents. Custom models are trained with your own data, so they're tailored to your documents.
 * Layout - Extract text, table structures, and selection marks, along with their bounding region coordinates, from documents.
-* Prebuilt models - Analyze data from certain types of common documents (such as receipts, invoices, business cards, or identity documents) using pre-trained models.
-* Prebuilt Document model - Analyze entities, key-value pairs, tables, and selection marks from documents using the general prebuilt document model. 
+* Document - Analyze entities, key-value pairs, tables, and selection marks from documents using the general prebuilt document model. 
+* Prebuilt - Analyze data from certain types of common documents (such as receipts, invoices, business cards, or identity documents) using pre-trained models.
+* Custom - Build custom models to extract text, field values, selection marks, and table data from documents. Custom models are trained with your own data, so they're tailored to your documents.
 
 [Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][python-fr-ref-docs] | [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
 
@@ -24,7 +24,7 @@ Install the Azure Form Recognizer client library for Python with [pip][pip]:
 pip install azure-ai-formrecognizer --pre
 ```
 
-> Note: This version of the client library defaults to the v2021-09-30-preview version of the service
+> Note: This version of the client library defaults to the 2021-09-30-preview version of the service
 
 This table shows the relationship between SDK versions and supported API versions of the service
 
@@ -92,7 +92,9 @@ az cognitiveservices account show --name "resource-name" --resource-group "resou
 
 The API key can be found in the Azure Portal or by running the following Azure CLI command:
 
-```az cognitiveservices account keys list --name "resource-name" --resource-group "resource-group-name"```
+```bash
+az cognitiveservices account keys list --name "resource-name" --resource-group "resource-group-name"
+```
 
 #### Create the client with AzureKeyCredential
 
@@ -145,34 +147,34 @@ Use the `model_id` parameter to select the type of model for analysis.
 
 |Model ID| Features
 |-|-
-|"{custom-model-id}" | Text extraction, selection marks, tables, labeled fields and values from your custom documents
 |"prebuilt-layout" | Text extraction, selection marks, tables
 |"prebuilt-document" | Text extraction, selection marks, tables, key-value pairs and entities
-|"prebuilt-invoices" | Text extraction, selection marks, tables, and pre-trained fields and values pertaining to invoices
-|"prebuilt-businessCard" | Text extraction and pre-trained fields and values pertaining to business cards
-|"prebuilt-idDocument" | Text extraction and pre-trained fields and values pertaining to identity documents
-|"prebuilt-receipt" | Text extraction and pre-trained fields and values pertaining to US sales receipts
+|"prebuilt-invoices" | Text extraction, selection marks, tables, and pre-trained fields and values pertaining to English invoices
+|"prebuilt-businessCard" | Text extraction and pre-trained fields and values pertaining to English business cards
+|"prebuilt-idDocument" | Text extraction and pre-trained fields and values pertaining to US driver licenses and international passports
+|"prebuilt-receipt" | Text extraction and pre-trained fields and values pertaining to English sales receipts
+|"{custom-model-id}" | Text extraction, selection marks, tables, labeled fields and values from your custom documents
 
 Sample code snippets are provided to illustrate using a DocumentAnalysisClient [here](#analyze-documents-using-a-custom-model "Analyze Documents Using a Custom Model").
 
 ### DocumentModelAdministrationClient
 `DocumentModelAdministrationClient` provides operations for:
 
-- Building custom models with labels to recognize specific fields, values, selection marks, tables and structured data you specify by labeling your custom documents. A `DocumentModel` is returned indicating the document types the model will extract, as well as the estimated accuracy for each field. See the [service documentation][fr-train-with-labels] for a more detailed explanation.
+- Building custom models to recognize specific fields you specify by labeling your custom documents. A `DocumentModel` is returned indicating the document type the model will extract, as well as the estimated confidence for each field. See the [service documentation][fr-train-with-labels] for a more detailed explanation.
+- Creating a composed model from a collection of existing models.
 - Managing models created in your account.
 - Copying a custom model from one Form Recognizer resource to another.
-- Creating a composed model from a collection of existing built models.
 
 Please note that models can also be trained using a graphical user interface such as the [Form Recognizer Labeling Tool][fr-labeling-tool].
 
 Sample code snippets are provided to illustrate using a DocumentModelAdministrationClient [here](#build-a-model "Build a model").
 
-### Long-Running Operations
+### Long-running operations
 Long-running operations are operations which consist of an initial request sent to the service to start an operation,
 followed by polling the service at intervals to determine whether the operation has completed or failed, and if it has
 succeeded, to get the result.
 
-Methods that train models, recognize values from forms, or copy/compose models are modeled as long-running operations.
+Methods that analyze documents, train models, or copy/compose models are modeled as long-running operations.
 The client exposes a `begin_<method-name>` method that returns an `LROPoller` or `AsyncLROPoller`. Callers should wait
 for the operation to complete by calling `result()` on the poller object returned from the `begin_<method-name>` method.
 Sample code snippets are provided to illustrate using long-running operations [below](#examples "Examples").
@@ -182,10 +184,10 @@ Sample code snippets are provided to illustrate using long-running operations [b
 
 The following section provides several code snippets covering some of the most common Form Recognizer tasks, including:
 
-* [Analyze Documents Using a Custom Model](#analyze-documents-using-a-custom-model "Analyze Documents Using a Custom Model")
 * [Extract layout](#extract-layout "Extract Layout")
 * [Using Prebuilt Models](#using-prebuilt-models "Using Prebuilt Models")
 * [Build a Model](#build-a-model "Build a model")
+* [Analyze Documents Using a Custom Model](#analyze-documents-using-a-custom-model "Analyze Documents Using a Custom Model")
 * [Manage Your Models](#manage-your-models "Manage Your Models")
 
 ### Analyze Documents Using a Custom Model
@@ -202,7 +204,7 @@ credential = AzureKeyCredential("<api_key>")
 document_analysis_client = DocumentAnalysisClient(endpoint, credential)
 model_id = "<your custom model id>"
 
-with open("<path to your form>", "rb") as fd:
+with open("<path to your document>", "rb") as fd:
     document = fd.read()
 
 poller = document_analysis_client.begin_analyze_document(model_id=model_id, document=document)
@@ -210,8 +212,8 @@ result = poller.result()
 
 for analyzed_document in result.documents:
     print("Document has type {}".format(analyzed_document.doc_type))
-    print("Document has document type confidence {}".format(analyzed_document.confidence))
-    print("Document was analyzed with model with ID {}".format(analyzed_document.model_id))
+    print("Document has confidence {}".format(analyzed_document.confidence))
+    print("Document was analyzed by model with ID {}".format(analyzed_document.model_id))
     for name, field in analyzed_document.fields.items():
         print("Field '{}' has value '{}' with confidence of {}".format(name, field.value, field.confidence))
     
@@ -220,12 +222,17 @@ for page in result.pages:
     print("\nLines found on page {}".format(page.page_number))
     for line in page.lines:
         print("...Line '{}'".format(line.content))
+
+##### [PAUL] We can change this example to enumerate words/selection marks within each line in beta 2.
+    print("\nWords found on page {}".format(page.page_number))
     for word in page.words:
         print(
             "...Word '{}' has a confidence of {}".format(
                 word.content, word.confidence
             )
         )
+
+##### [PAUL] Can we modify SDK to have selection_marks default to empty array if missing from JSON
     if page.selection_marks:
         print("\nSelection marks found on page {}".format(page.page_number))
         for selection_mark in page.selection_marks:
@@ -239,10 +246,10 @@ for page in result.pages:
 for i, table in enumerate(result.tables):
     print("\nTable {} can be found on page:".format(i + 1))
     for region in table.bounding_regions:
-        print("...{}".format(i + 1, region.page_number))
+        print("...{}".format(region.page_number))
     for cell in table.cells:
         print(
-            "...Cell[{}][{}] has text '{}'".format(
+            "...Cell[{}][{}] has content '{}'".format(
                 cell.row_index, cell.column_index, cell.content
             )
         )
@@ -250,7 +257,7 @@ for i, table in enumerate(result.tables):
 
 Alternatively, a document URL can also be used to analyze documents using the `begin_analyze_document_from_url` method.
 
-```
+```python
 document_url = "<url_of_the_document>"
 poller = document_analysis_client.begin_analyze_document_from_url(model_id=model_id, document_url=document_url)
 result = poller.result()
@@ -268,14 +275,16 @@ credential = AzureKeyCredential("<api_key>")
 
 document_analysis_client = DocumentAnalysisClient(endpoint, credential)
 
-with open("<path to your form>", "rb") as fd:
+with open("<path to your document>", "rb") as fd:
     document = fd.read()
 
+##### [Paul] Do we want to consider defining an extensible enum for prebuilt modelIds?
 poller = document_analysis_client.begin_analyze_document("prebuilt-layout", document)
 result = poller.result()
 
 for idx, page in enumerate(result.pages):
-    print("----Analyzing layout from page #{}----".format(idx + 1))
+##### [Paul] idx+1 is not always page_number if only some of the pages are processed.
+    print("----Analyzing layout from page # {}----".format(page.page_number))
     print(
         "Page has width: {} and height: {}, measured with unit: {}".format(
             page.width, page.height, page.unit
@@ -284,7 +293,7 @@ for idx, page in enumerate(result.pages):
 
     for line_idx, line in enumerate(page.lines):
         print(
-            "Line # {} has text content '{}' within bounding box '{}'".format(
+            "...Line # {} has content '{}' within bounding box '{}'".format(
                 line_idx,
                 line.content,
                 line.bounding_box,
@@ -300,7 +309,7 @@ for idx, page in enumerate(result.pages):
 
     for selection_mark in page.selection_marks:
         print(
-            "Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
+            "...Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
                 selection_mark.state,
                 selection_mark.bounding_box,
                 selection_mark.confidence,
@@ -323,24 +332,19 @@ for table_idx, table in enumerate(result.tables):
         )
     for cell in table.cells:
         print(
-            "...Cell[{}][{}] has text '{}'".format(
+            "...Cell[{}][{}] has content '{}'".format(
                 cell.row_index,
                 cell.column_index,
+##### [Paul] May want to escape content so "\n" is not rendered as newline.  Same elsewhere.
                 cell.content,
             )
         )
-        for region in cell.bounding_regions:
-            print(
-                "...content on page {} is within bounding box '{}'".format(
-                    region.page_number,
-                    region.bounding_box,
-                )
-            )
-
 ```
 
 ### Using Prebuilt Models
-Extract fields from certain types of common forms such as receipts, invoices, business cards, identity documents, and general documents using prebuilt models provided by the Form Recognizer service.
+
+<!-- [Paul] prebuilt:document should have its own section since the results are in entities and keyValuePairs.-->
+Extract fields from select document types such as receipts, invoices, business cards, and identity documents using prebuilt models provided by the Form Recognizer service.
 
 For example, to extract fields from a sales receipt, use the prebuilt receipt model provided by passing `model_id="prebuilt-receipt"` into the `begin_analyze_documents` method:
 
@@ -361,22 +365,25 @@ result = poller.result()
 
 for receipt in result.documents:
     for name, field in receipt.fields.items():
+##### [Paul] We will have additional structured fields (TaxDetails) starting in preview.2.
         if name == "Items":
             print("Receipt Items:")
-            for idx, items in enumerate(field.value):
+            for idx, item in enumerate(field.value):
                 print("...Item #{}".format(idx+1))
-                for item_name, item in items.value.items():
-                    print("......{}: {} has confidence {}".format(item_name, item.value, item.confidence))
+                for item_field_name, item_field in item.value.items():
+                    print("......{}: {} has confidence {}".format(
+                        item_field_name, item_field.value, item_field.confidence))
         else:
             print("{}: {} has confidence {}".format(name, field.value, field.confidence))
 ```
 
+<!-- [Paul] Consider using tabular view or link to service concept page listing all prebuilt models once available.-->
 You are not limited to receipts! There are a few prebuilt models to choose from, each of which has its own set of supported fields:
 - Analyze receipts using the `prebuilt-receipt` model ID (fields recognized by the service can be found [here][service_recognize_receipt])
 - Analyze business cards using the `prebuilt-businessCard` model ID (fields recognized by the service can be found [here][service_recognize_business_cards]).
 - Analyze invoices using the `prebuilt-invoice` model ID (fields recognized by the service can be found [here][service_recognize_invoice]).
 - Analyze identity documents using the `prebuilt-idDocuments` model ID (fields recognized by the service can be found [here][service_recognize_identity_documents]).
-- Analyze documents with general prebuilt document model using the `prebuilt-document` model ID (document key-value pairs will be recognized by the service).
+
 
 ### Build a model
 Build a custom model on your own document type. The resulting model can be used to analyze values from the types of documents it was trained on.
@@ -396,7 +403,7 @@ document_model_admin_client = DocumentModelAdministrationClient(endpoint, creden
 
 container_sas_url = "<container-sas-url>"  # training documents uploaded to blob storage
 poller = document_model_admin_client.begin_build_model(
-    container_sas_url, model_id="my first model"
+    source=container_sas_url, model_id="my first model"
 )
 model = poller.result()
 
@@ -404,12 +411,13 @@ print("Model ID: {}".format(model.model_id))
 print("Description: {}".format(model.description))
 print("Model created on: {}\n".format(model.created_on))
 print("Doc types the model can recognize:")
+###### [Paul] The code below will fail when we support structured fields in the future.
+######        It raises the question whether fieldConfidence should be flat or hierarchical.
+######        Consider we change example to not output field type, which is a less common scenario.
 for name, doc_type in model.doc_types.items():
     print("\nDoc Type: '{}' which has the following fields:".format(name))
-    for field_name, field in doc_type.field_schema.items():
-        print("Field: '{}' has type '{}' and confidence score {}".format(
-            field_name, field["type"], doc_type.field_confidence[field_name]
-        ))
+    for field_name, confidence in doc_type.field_confidence.items():
+        print("Field: '{}' has confidence score {}".format(field_name, confidence))
 ```
 
 ### Manage Your Models
@@ -425,8 +433,10 @@ credential = AzureKeyCredential("<api_key>")
 
 document_model_admin_client = DocumentModelAdministrationClient(endpoint, credential)
 
+##### [Paul] Do we want to simplify the method name to get_info() to be consistent with REST API?
 account_info = document_model_admin_client.get_account_info()
 print("Our account has {} custom models, and we can have at most {} custom models".format(
+##### [Paul] Consider renaming to custom_model_count or custom_document_model_count.
     account_info.model_count, account_info.model_limit
 ))
 

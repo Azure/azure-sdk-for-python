@@ -102,6 +102,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
             https://docs.microsoft.com/azure/cognitive-services/form-recognizer/build-training-data-set
         :keyword str model_id: A unique ID for your model. If not specified, a model ID will be created for you.
         :keyword str description: An optional description to add to the model.
+##### [Paul] Not quite sure what would happen when we allow zip files as training data, where prefix may not apply.
+##### [Paul] Recommend highlighting that prefix should end in '/' to avoid cases where we have filenames sharing the same prefix.
         :keyword str prefix: A case-sensitive prefix string to filter documents in the source path.
             For example, when using an Azure storage blob URI, use the prefix to restrict sub folders.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
