@@ -7,10 +7,10 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_layout.py
+FILE: sample_analyze_document.py
 
 DESCRIPTION:
-    This sample demonstrates how to extract text, selection marks, and layout information from a document
+    This sample demonstrates how to extract general document information from a document
     given through a file.
 
     Note that selection marks returned from begin_analyze_document() do not return the text associated with
@@ -18,7 +18,7 @@ DESCRIPTION:
     See sample_build_model.py for more information.
 
 USAGE:
-    python sample_analyze_layout.py
+    python sample_analyze_document.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -27,6 +27,10 @@ USAGE:
 
 import os
 
+def format_bounding_region(bounding_regions):
+    if not bounding_regions:
+        return "N/A"
+    return ", ".join("Page #{}: {}".format(region.page_number, format_bounding_box(region.bounding_box)) for region in bounding_regions)
 
 def format_bounding_box(bounding_box):
     if not bounding_box:
@@ -34,7 +38,7 @@ def format_bounding_box(bounding_box):
     return ", ".join(["[{}, {}]".format(p.x, p.y) for p in bounding_box])
 
 
-def analyze_layout():
+def analyze_document():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
@@ -43,7 +47,7 @@ def analyze_layout():
             "./sample_forms/forms/form_selection_mark.png",
         )
     )
-    # [START analyze_layout]
+    # [START analyze_document]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer import DocumentAnalysisClient
 
@@ -55,7 +59,7 @@ def analyze_layout():
     )
     with open(path_to_sample_documents, "rb") as f:
         poller = document_analysis_client.begin_analyze_document(
-            "prebuilt-layout", document=f
+            "prebuilt-document", document=f
         )
     result = poller.result()
 
@@ -67,7 +71,7 @@ def analyze_layout():
         )
 
     for idx, page in enumerate(result.pages):
-        print("----Analyzing layout from page #{}----".format(idx + 1))
+        print("----Analyzing document from page #{}----".format(idx + 1))
         print(
             "Page has width: {} and height: {}, measured with unit: {}".format(
                 page.width, page.height, page.unit
@@ -129,10 +133,33 @@ def analyze_layout():
                     )
                 )
 
+    print("----Entities found in document----")
+    for idx, entity in enumerate(result.entities):
+        print("Entity of category '{}' with sub-category '{}'".format(entity.category, entity.sub_category))
+        print("...has content '{}'".format(entity.content))
+        print("...within '{}' bounding regions".format(format_bounding_region(entity.bounding_regions)))
+        print("...with confidence {}".format(entity.confidence))
+
+    print("----Key-value pairs found in document----")
+    for idx, kv_pair in enumerate(result.key_value_pairs):
+        if kv_pair.key:
+            print(
+                    "Key '{}' found within '{}' bounding regions".format(
+                        kv_pair.key.content,
+                        format_bounding_region(kv_pair.key.bounding_regions),
+                    )
+                )
+        if kv_pair.value:
+            print(
+                    "Value '{}' found within '{}' bounding regions".format(
+                        kv_pair.value.content,
+                        format_bounding_region(kv_pair.value.bounding_regions),
+                    )
+                )
     print("----------------------------------------")
 
-    # [END analyze_layout]
+    # [END analyze_document]
 
 
 if __name__ == "__main__":
-    analyze_layout()
+    analyze_document()
