@@ -19,7 +19,6 @@
 # --------------------------------------------------------------------------
 import functools
 import pytest
-import json
 import uuid
 import avro
 import avro.io
