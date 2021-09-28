@@ -35,7 +35,6 @@ class FakeTokenCredential(object):
 TEST_ENDPOINT = 'https://test-resource.api.cognitive.microsoft.com'
 TEST_KEY = '0000000000000000'
 TEST_PROJECT = 'test-project'
-TEST_QNA = 'test-qna'
 TEST_WORKFLOW = 'test-workflow'
 
 
@@ -47,7 +46,6 @@ class ConversationTest(AzureTestCase):
         self.scrubber.register_name_pair(os.environ.get("AZURE_CONVERSATIONS_ENDPOINT"), TEST_ENDPOINT)
         self.scrubber.register_name_pair(os.environ.get("AZURE_CONVERSATIONS_KEY"), TEST_KEY)
         self.scrubber.register_name_pair(os.environ.get("AZURE_CONVERSATIONS_PROJECT"), TEST_PROJECT)
-        self.scrubber.register_name_pair(os.environ.get("AZURE_CONVERSATIONS_QNA_PROJECT"), TEST_QNA)
         self.scrubber.register_name_pair(os.environ.get("AZURE_CONVERSATIONS_WORKFLOW_PROJECT"), TEST_WORKFLOW)
 
     def get_oauth_endpoint(self):
@@ -101,7 +99,6 @@ class GlobalConversationAccountPreparer(AzureMgmtPreparer):
                 'conv_account': os.environ.get("AZURE_CONVERSATIONS_ENDPOINT"),
                 'conv_key': os.environ.get("AZURE_CONVERSATIONS_KEY"),
                 'conv_project': os.environ.get("AZURE_CONVERSATIONS_PROJECT"),
-                'qna_project': os.environ.get("AZURE_CONVERSATIONS_QNA_PROJECT"),
                 'workflow_project': os.environ.get("AZURE_CONVERSATIONS_WORKFLOW_PROJECT")
             }
         return {
