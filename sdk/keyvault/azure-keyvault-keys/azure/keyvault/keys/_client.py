@@ -8,7 +8,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
 from ._shared._polling import DeleteRecoverPollingMethod, KeyVaultOperationPoller
-from ._models import DeletedKey, KeyVaultKey, KeyProperties, KeyRotationLifetimeAction, KeyRotationPolicy, RandomBytes, ReleaseKeyResult
+from ._models import DeletedKey, KeyVaultKey, KeyProperties, KeyRotationPolicy, RandomBytes, ReleaseKeyResult
 
 try:
     from typing import TYPE_CHECKING
@@ -729,7 +729,7 @@ class KeyClient(KeyVaultClientBase):
         return RandomBytes(value=result.value)
 
     @distributed_trace
-    async def get_key_rotation_policy(self, name, **kwargs):
+    def get_key_rotation_policy(self, name, **kwargs):
         # type: (str, **Any) -> Optional[KeyRotationPolicy]
         """Get the rotation policy of a Key Vault key.
 
@@ -781,7 +781,7 @@ class KeyClient(KeyVaultClientBase):
         if lifetime_actions:
             lifetime_actions = [
                 self._models.LifetimeActions(
-                    action=action.action,
+                    action=self._models.LifetimeActionsType(type=action.action),
                     trigger=self._models.LifetimeActionsTrigger(
                         time_after_create=action.time_after_create, time_before_expiry=action.time_before_expiry
                     ),
@@ -789,7 +789,7 @@ class KeyClient(KeyVaultClientBase):
                 for action in lifetime_actions
             ]
 
-        attributes = self._models.KeyRotationPolicyAttributes(expiry_time=kwargs.pop("exires_in", None))
+        attributes = self._models.KeyRotationPolicyAttributes(expiry_time=kwargs.pop("expires_in", None))
         policy = self._models.KeyRotationPolicy(lifetime_actions=lifetime_actions, attributes=attributes)
         result = self._client.update_key_rotation_policy(
             vault_base_url=self._vault_url, key_name=name, key_rotation_policy=policy

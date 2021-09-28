@@ -11,18 +11,26 @@ import logging
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.keys import ApiVersion, JsonWebKey, KeyReleasePolicy
+from azure.keyvault.keys import (
+    ApiVersion,
+    JsonWebKey,
+    KeyReleasePolicy,
+    KeyRotationLifetimeAction,
+    KeyRotationPolicyAction,
+)
 from azure.keyvault.keys.aio import KeyClient
 import pytest
 from six import byte2int
 
 from _shared.test_case_async import KeyVaultTestCase
 from _test_case import client_setup, get_attestation_token, get_decorator, get_release_policy, KeysTestCase
+from test_key_client import _assert_rotation_policies_equal
 
 
 all_api_versions = get_decorator(is_async=True)
 only_hsm = get_decorator(only_hsm=True, is_async=True)
 only_hsm_7_3_preview = get_decorator(only_hsm=True, is_async=True, api_versions=[ApiVersion.V7_3_PREVIEW])
+only_vault_7_3_preview = get_decorator(only_vault=True, is_async=True, api_versions=[ApiVersion.V7_3_PREVIEW])
 logging_enabled = get_decorator(is_async=True, logging_enable=True)
 logging_disabled = get_decorator(is_async=True, logging_enable=False)
 
@@ -537,6 +545,34 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         new_release_policy = KeyReleasePolicy(policy_string)
 
         await self._update_key_properties(client, key, new_release_policy)
+
+    @only_vault_7_3_preview()
+    @client_setup
+    async def test_key_rotation(self, client, **kwargs):
+        key_name = self.get_resource_name("rotation-key")
+        key = await self._create_rsa_key(client, key_name)
+        rotated_key = await client.rotate_key(key_name)
+
+        # the rotated key should have a new ID, version, and key material (for RSA, n and e fields)
+        assert key.id != rotated_key.id
+        assert key.properties.version != rotated_key.properties.version
+        assert key.key.n != rotated_key.key.n
+
+    @only_vault_7_3_preview()
+    @client_setup
+    async def test_key_rotation_policy(self, client, **kwargs):
+        key_name = self.get_resource_name("rotation-key")
+        await self._create_rsa_key(client, key_name)
+
+        actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.ROTATE, time_before_expiry="P30D")]
+        updated_policy = await client.update_key_rotation_policy(key_name, expires_in="P90D", lifetime_actions=actions)
+        fetched_policy = await client.get_key_rotation_policy(key_name)
+        _assert_rotation_policies_equal(updated_policy, fetched_policy)
+
+        new_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.NOTIFY, time_after_create="P2M")]
+        new_policy = await client.update_key_rotation_policy(key_name, lifetime_actions=new_actions)
+        new_fetched_policy = await client.get_key_rotation_policy(key_name)
+        _assert_rotation_policies_equal(new_policy, new_fetched_policy)
 
 
 @pytest.mark.asyncio

@@ -311,7 +311,7 @@ class KeyRotationLifetimeAction(object):
 class KeyRotationPolicy(object):
     """The key rotation policy that belongs to a key.
 
-    :ivar str policy_id: The identifier of the key rotation policy.
+    :ivar str id: The identifier of the key rotation policy.
     :ivar lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a key.
     :type lifetime_actions: list[~azure.keyvault.keys.KeyRotationLifetimeAction]
     :ivar str expires_in: The expiry time of the policy that will be applied on new key versions, defined as an ISO

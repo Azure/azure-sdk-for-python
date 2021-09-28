@@ -15,7 +15,6 @@ from .. import (
     DeletedKey,
     JsonWebKey,
     KeyProperties,
-    KeyRotationLifetimeAction,
     KeyRotationPolicy,
     KeyVaultKey,
     RandomBytes,
@@ -763,7 +762,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         if lifetime_actions:
             lifetime_actions = [
                 self._models.LifetimeActions(
-                    action=action.action,
+                    action=self._models.LifetimeActionsType(type=action.action),
                     trigger=self._models.LifetimeActionsTrigger(
                         time_after_create=action.time_after_create, time_before_expiry=action.time_before_expiry
                     ),
@@ -771,7 +770,7 @@ class KeyClient(AsyncKeyVaultClientBase):
                 for action in lifetime_actions
             ]
 
-        attributes = self._models.KeyRotationPolicyAttributes(expiry_time=kwargs.pop("exires_in", None))
+        attributes = self._models.KeyRotationPolicyAttributes(expiry_time=kwargs.pop("expires_in", None))
         policy = self._models.KeyRotationPolicy(lifetime_actions=lifetime_actions, attributes=attributes)
         result = await self._client.update_key_rotation_policy(
             vault_base_url=self._vault_url, key_name=name, key_rotation_policy=policy

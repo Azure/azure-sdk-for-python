@@ -11,7 +11,14 @@ import time
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.keys import ApiVersion, JsonWebKey, KeyClient, KeyReleasePolicy
+from azure.keyvault.keys import (
+    ApiVersion,
+    JsonWebKey,
+    KeyClient,
+    KeyReleasePolicy,
+    KeyRotationLifetimeAction,
+    KeyRotationPolicyAction,
+)
 import pytest
 from six import byte2int
 
@@ -22,8 +29,17 @@ from _test_case import client_setup, get_attestation_token, get_decorator, get_r
 all_api_versions = get_decorator()
 only_hsm = get_decorator(only_hsm=True)
 only_hsm_7_3_preview = get_decorator(only_hsm=True, api_versions=[ApiVersion.V7_3_PREVIEW])
+only_vault_7_3_preview = get_decorator(only_vault=True, api_versions=[ApiVersion.V7_3_PREVIEW])
 logging_enabled = get_decorator(logging_enable=True)
 logging_disabled = get_decorator(logging_enable=False)
+
+
+def _assert_rotation_policies_equal(p1, p2):
+    assert p1.id == p2.id
+    assert p1.expires_in == p2.expires_in
+    assert p1.created_on == p2.created_on
+    assert p1.updated_on == p2.updated_on
+    assert len(p1.lifetime_actions) == len(p2.lifetime_actions)
 
 
 # used for logging tests
@@ -507,6 +523,34 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         new_release_policy = KeyReleasePolicy(policy_string)
 
         self._update_key_properties(client, key, new_release_policy)
+
+    @only_vault_7_3_preview()
+    @client_setup
+    def test_key_rotation(self, client, **kwargs):
+        key_name = self.get_resource_name("rotation-key")
+        key = self._create_rsa_key(client, key_name)
+        rotated_key = client.rotate_key(key_name)
+
+        # the rotated key should have a new ID, version, and key material (for RSA, n and e fields)
+        assert key.id != rotated_key.id
+        assert key.properties.version != rotated_key.properties.version
+        assert key.key.n != rotated_key.key.n
+
+    @only_vault_7_3_preview()
+    @client_setup
+    def test_key_rotation_policy(self, client, **kwargs):
+        key_name = self.get_resource_name("rotation-key")
+        self._create_rsa_key(client, key_name)
+
+        actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.ROTATE, time_before_expiry="P30D")]
+        updated_policy = client.update_key_rotation_policy(key_name, expires_in="P90D", lifetime_actions=actions)
+        fetched_policy = client.get_key_rotation_policy(key_name)
+        _assert_rotation_policies_equal(updated_policy, fetched_policy)
+
+        new_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.NOTIFY, time_after_create="P2M")]
+        new_policy = client.update_key_rotation_policy(key_name, lifetime_actions=new_actions)
+        new_fetched_policy = client.get_key_rotation_policy(key_name)
+        _assert_rotation_policies_equal(new_policy, new_fetched_policy)
 
 
 def test_positive_bytes_count_required():
