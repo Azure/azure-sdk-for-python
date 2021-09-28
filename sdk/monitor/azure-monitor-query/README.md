@@ -138,7 +138,7 @@ for table in response.tables:
 
 #### Handle logs query response
 
-The `query` API returns the `LogsQueryResult` while the `batch_query` API returns list of `LogsQueryResult`. Here's a hierarchy of the response:
+The `query_workspace` API returns a `LogsQueryResult` object, while the `batch_query` API returns a list of `LogsQueryResult` objects. Here's a hierarchy of the response:
 
 ```
 LogsQueryResult
@@ -174,7 +174,7 @@ A full sample can be found [here](https://github.com/Azure/azure-sdk-for-python/
 
 ### Batch logs query
 
-The following example demonstrates sending multiple queries at the same time using batch query API. The queries can either be represented as a list of `LogsBatchQuery` objects or a dictionary. This example uses the former approach.
+The following example demonstrates sending multiple queries at the same time using the batch query API. The queries can either be represented as a list of `LogsBatchQuery` objects or a dictionary. This example uses the former approach.
 
 ```python
 import os
@@ -261,7 +261,7 @@ A full sample can be found [here](https://github.com/Azure/azure-sdk-for-python/
 
 ### Metrics query
 
-The following example gets metrics for an Event Grid subscription. The resource URI is that of an event grid topic.
+The following example gets metrics for an Event Grid subscription. The resource URI is that of an Event Grid topic.
 
 The resource URI must be that of the resource for which metrics are being queried. It's normally of the format `/subscriptions/<id>/resourceGroups/<rg-name>/providers/<source>/topics/<resource-name>`.
 
@@ -297,7 +297,7 @@ for metric in response.metrics:
 
 #### Handle metrics query response
 
-The metrics query API returns a `MetricsResult` object. The `MetricsResult` object contains properties such as a list of `Metric`-typed objects, `granularity`, `namespace`, and `timespan`. The `Metric` objects list can be accessed using the `metrics` param. Each `Metric` object in this list contains a list of `TimeSeriesElement` objects. Each `TimeSeriesElement` contains `data` and `metadata_values` properties. In visual form, the object hierarchy of the response resembles the following structure:
+The metrics query API returns a `MetricsResult` object. The `MetricsResult` object contains properties such as a list of `Metric`-typed objects, `granularity`, `namespace`, and `timespan`. The `Metric` objects list can be accessed using the `metrics` param. Each `Metric` object in this list contains a list of `TimeSeriesElement` objects. Each `TimeSeriesElement` object contains `data` and `metadata_values` properties. In visual form, the object hierarchy of the response resembles the following structure:
 
 ```
 MetricsResult
