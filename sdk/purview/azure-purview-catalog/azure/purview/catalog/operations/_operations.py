@@ -13,12 +13,13 @@ import warnings
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
-from azure.core.pipeline.transport._base import _format_url_section
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.polling.base_polling import LROBasePolling
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from msrest import Serializer
+
+from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -11923,7 +11924,8 @@ class GlossaryOperations(object):
             files=files,
             data=data,
             template_url=self._import_glossary_terms_via_csv_initial.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request, files)
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -12077,7 +12079,8 @@ class GlossaryOperations(object):
             files=files,
             data=data,
             template_url=self._import_glossary_terms_via_csv_by_glossary_name_initial.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request, files)
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
