@@ -2080,6 +2080,7 @@ class BoundingRegion(object):
     :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
         A list of 4 points representing the quadrilateral bounding box
         that outlines the text. The points are listed in clockwise
+##### [Paul] relative to the text orientation.
         order: top-left, top-right, bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF.
     :ivar int page_number:
@@ -2133,6 +2134,11 @@ class BoundingRegion(object):
         )
 
 
+##### [Paul] Suggest naming this DocumentContentElement.
+#####        Propose introducing DocumentPageElement for line, blocks; 
+#####        and DocumentStructureElement for table, keyValuePair, fields, entities, etc.
+##### [Paul] I was expecting to see Span and Confidence here.
+##### [Paul] Having Content here is good.  But since SelectionMark uses State, it may be useful to hide it from IntelliSense there.
 class DocumentElement(object):
     """A DocumentElement.
 

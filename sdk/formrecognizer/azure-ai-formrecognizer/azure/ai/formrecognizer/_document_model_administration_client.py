@@ -90,7 +90,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
     def begin_build_model(self, source, **kwargs):
         # type: (str, Any) -> DocumentModelAdministrationLROPoller[DocumentModel]
         """Build a custom model.
-
+##### [Paul] With BYOS tying a storage account to a FR resource, customers can specify a blob container without SAS token.
         The request must include a `source` parameter that is an
         externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that
         a container URI (without SAS) is accepted only when the container is public.
@@ -208,7 +208,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
                 component_models=[
                     self._generated_models.ComponentModelInfo(model_id=model_id)
                     for model_id in model_ids
-                ] if model_ids else None
+                ] if model_ids else []
             ),
             cls=kwargs.pop("cls", _compose_callback),
             polling=LROBasePolling(
@@ -249,6 +249,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
             ),
             **kwargs
         )
+##### [Paul] I didn't trace.  But I am surprised that serialize() returns dict.
         target = response.serialize()  # type: ignore
         return target
 
