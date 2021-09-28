@@ -30,19 +30,20 @@ from azure.identity.aio import DefaultAzureCredential
 class CreateClientsAsync(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
     async def create_registry_client(self):
         # Instantiate the ContainerRegistryClient
         # [START create_registry_client]
+        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         audience = "https://management.azure.com"
-        client = ContainerRegistryClient(self.account_url, DefaultAzureCredential(), audience=audience)
+        client = ContainerRegistryClient(account_url, DefaultAzureCredential(), audience=audience)
         # [END create_registry_client]
 
     async def basic_sample(self):
         # Instantiate the client
+        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         audience = "https://management.azure.com"
-        client = ContainerRegistryClient(self.account_url, DefaultAzureCredential(), audience=audience)
+        client = ContainerRegistryClient(account_url, DefaultAzureCredential(), audience=audience)
         async with client:
             # Iterate through all the repositories
             async for repository_name in client.list_repository_names():

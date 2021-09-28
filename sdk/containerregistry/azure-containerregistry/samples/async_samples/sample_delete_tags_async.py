@@ -31,13 +31,13 @@ from azure.identity.aio import DefaultAzureCredential
 class DeleteTagsAsync(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
     async def delete_tags(self):
         # [START list_repository_names]
-        credential = DefaultAzureCredential()
         audience = "https://management.azure.com"
-        client = ContainerRegistryClient(self.account_url, credential, audience=audience)
+        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+        credential = DefaultAzureCredential()
+        client = ContainerRegistryClient(account_url, credential, audience=audience)
 
         async with client:
             async for repository in client.list_repository_names():

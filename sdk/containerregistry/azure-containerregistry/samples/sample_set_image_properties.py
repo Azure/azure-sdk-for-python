@@ -10,7 +10,8 @@
 FILE: sample_set_image_properties.py
 
 DESCRIPTION:
-    This sample demonstrates setting an image's properties so it can't be overwritten during a lengthy deployment.
+    This sample demonstrates setting an image's properties on the tag so it can't be overwritten during a lengthy
+    deployment.
 
 USAGE:
     python sample_set_image_properties.py
@@ -30,16 +31,16 @@ from azure.identity import DefaultAzureCredential
 class SetImageProperties(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
     def set_image_properties(self):
         # Create a new ContainerRegistryClient
+        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+        audience = "https://management.azure.com"
         credential = DefaultAzureCredential()
-        audience = "https://myacr.azurecr.io"
-        client = ContainerRegistryClient(self.account_url, credential, audience=audience)
+        client = ContainerRegistryClient(account_url, credential, audience=audience)
 
         # [START update_manifest_properties]
-        # Set permissions on the image's "latest" tag
+        # Set permissions on the v1 image's "latest" tag
         client.update_manifest_properties(
             "library/hello-world",
             "latest",

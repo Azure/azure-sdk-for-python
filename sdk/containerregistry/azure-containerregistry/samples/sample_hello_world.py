@@ -29,19 +29,20 @@ from azure.identity import DefaultAzureCredential
 class CreateClients(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
     def create_registry_client(self):
         # Instantiate the ContainerRegistryClient
         # [START create_registry_client]
+        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         audience = "https://management.azure.com"
-        client = ContainerRegistryClient(self.account_url, DefaultAzureCredential(), audience=audience)
+        client = ContainerRegistryClient(account_url, DefaultAzureCredential(), audience=audience)
         # [END create_registry_client]
 
     def basic_sample(self):
         # Instantiate the client
+        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         audience = "https://management.azure.com"
-        client = ContainerRegistryClient(self.account_url, DefaultAzureCredential(), audience=audience)
+        client = ContainerRegistryClient(account_url, DefaultAzureCredential(), audience=audience)
         with client:
             # Iterate through all the repositories
             for repository_name in client.list_repository_names():

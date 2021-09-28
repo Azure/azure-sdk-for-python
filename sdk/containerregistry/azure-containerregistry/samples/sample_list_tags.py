@@ -32,13 +32,13 @@ from azure.identity import DefaultAzureCredential
 class ListTags(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
     def list_tags(self):
-        # Create a new ContainerRegistryClient
+        # Create a new ContainerRegistryClient        
+        audience = "https://management.azure.com"
+        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         credential = DefaultAzureCredential()
-        audience = "https://myacr.azurecr.io"
-        client = ContainerRegistryClient(self.account_url, credential, audience=audience)
+        client = ContainerRegistryClient(account_url, credential, audience=audience)
 
         manifest = client.get_manifest_properties("library/hello-world", "latest")
         print(manifest.repository_name + ": ")
