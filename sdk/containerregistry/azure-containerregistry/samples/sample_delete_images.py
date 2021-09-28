@@ -40,14 +40,14 @@ class DeleteImages(object):
             print(repository)
             # [END list_repository_names]
 
-            # [START list_tag_properties]
+            # [START list_manifest_properties]
             # Keep the three most recent images, delete everything else
             tag_count = 0
-            for tag in client.list_tag_properties(repository, order_by=ManifestOrder.LAST_UPDATE_TIME_DESCENDING):
+            for manifest in client.list_manifest_properties(repository, order_by=ManifestOrder.LAST_UPDATE_TIME_DESCENDING):
                 tag_count += 1
                 if tag_count > 3:
-                    client.delete_manifest(repository, tag.name)
-            # [END list_tag_properties]
+                    client.delete_manifest(repository, manifest.digest)
+            # [END list_manifest_properties]
 
         client.close()
 

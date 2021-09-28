@@ -7,56 +7,50 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_delete_images_async.py
+FILE: sample_list_tags_async.py
 
 DESCRIPTION:
-    This sample demonstrates deleting all but the most recent three images for each repository.
+    This sample demonstrates listing the tags for an image in a repository with anonymous pull access.
+    Anonymous access allows a user to list all the collections there, but they wouldn't have permissions to
+    modify or delete any of the images in the registry.
 
 USAGE:
-    python sample_delete_images_async.py
+    python sample_list_tags_async.py
 
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
+
+    This sample assumes the registry "myacr.azurecr.io" has a repository "hello-world".
 """
 
 import asyncio
 from dotenv import find_dotenv, load_dotenv
 import os
 
-from azure.containerregistry import ManifestOrder
 from azure.containerregistry.aio import ContainerRegistryClient
 from azure.identity.aio import DefaultAzureCredential
 
 
-class DeleteImagesAsync(object):
+class ListTagsAsync(object):
     def __init__(self):
         load_dotenv(find_dotenv())
         self.account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
-    async def delete_images(self):
-        # [START list_repository_names]
+    async def list_tags(self):
+        # Create a new ContainerRegistryClient
         credential = DefaultAzureCredential()
         audience = "https://management.azure.com"
         client = ContainerRegistryClient(self.account_url, credential, audience=audience)
 
-        async with client:
-            async for repository in client.list_repository_names():
-                print(repository)
-                # [END list_repository_names]
-
-                # [START list_manifest_properties]
-                # Keep the three most recent images, delete everything else
-                tag_count = 0
-                async for manifest in client.list_manifest_properties(repository, order_by=ManifestOrder.LAST_UPDATE_TIME_DESCENDING):
-                    tag_count += 1
-                    if tag_count > 3:
-                        await client.delete_manifest(repository, manifest.digest)
-                # [END list_manifest_properties]
+        manifest = await client.get_manifest_properties("library/hello-world", "latest")
+        print(manifest.repository_name + ":")
+        for tag in manifest.tags:
+            print(tag + "\n")
 
 
 async def main():
-    sample = DeleteImagesAsync()
-    await sample.delete_images()
+    sample = ListTagsAsync()
+    await sample.list_tags()
 
 
 if __name__ == "__main__":
