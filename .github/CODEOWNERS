@@ -127,6 +127,9 @@
 # PRLabel: %Container Registry
 /sdk/containerregistry/                                              @YalinLi0312
 
+# PRLabel: %Digital Twins
+/sdk/digitaltwins/                                              @johngallardo
+
 # Smoke Tests
 /common/smoketest/                                                   @lmazuel @chlowell @annatisch @rakshith91 @shurd @southpolesteve
 
