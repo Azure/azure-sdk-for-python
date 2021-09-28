@@ -3,10 +3,10 @@
 Azure Cognitive Services Form Recognizer is a cloud service that uses machine learning to recognize text and structured data from your documents.
 It includes the following main features:
 
-* Custom models - Build custom models to extract text, field values, selection marks, and table data from documents. Custom models are trained with your own data, so they're tailored to your documents.
 * Layout - Extract text, table structures, and selection marks, along with their bounding region coordinates, from documents.
-* Prebuilt models - Analyze data from certain types of common documents (such as receipts, invoices, business cards, or identity documents) using pre-trained models.
-* Prebuilt Document model - Analyze entities, key-value pairs, tables, and selection marks from documents using the general prebuilt document model. 
+ Document - Analyze entities, key-value pairs, tables, and selection marks from documents using the general prebuilt document model. 
+* Prebuilt - Analyze data from certain types of common documents (such as receipts, invoices, business cards, or identity documents) using pre-trained models.
+* Custom - Build custom models to extract text, field values, selection marks, and table data from documents. Custom models are trained with your own data, so they're tailored to your documents.
 
 [Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][python-fr-ref-docs] | [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
 
@@ -24,7 +24,7 @@ Install the Azure Form Recognizer client library for Python with [pip][pip]:
 pip install azure-ai-formrecognizer --pre
 ```
 
-> Note: This version of the client library defaults to the v2021-09-30-preview version of the service
+> Note: This version of the client library defaults to the 2021-09-30-preview version of the service
 
 This table shows the relationship between SDK versions and supported API versions of the service
 
@@ -92,7 +92,9 @@ az cognitiveservices account show --name "resource-name" --resource-group "resou
 
 The API key can be found in the Azure Portal or by running the following Azure CLI command:
 
-```az cognitiveservices account keys list --name "resource-name" --resource-group "resource-group-name"```
+```bash
+az cognitiveservices account keys list --name "resource-name" --resource-group "resource-group-name"
+```
 
 #### Create the client with AzureKeyCredential
 
@@ -145,34 +147,34 @@ Use the `model_id` parameter to select the type of model for analysis.
 
 |Model ID| Features
 |-|-
-|"{custom-model-id}" | Text extraction, selection marks, tables, labeled fields and values from your custom documents
 |"prebuilt-layout" | Text extraction, selection marks, tables
 |"prebuilt-document" | Text extraction, selection marks, tables, key-value pairs and entities
-|"prebuilt-invoices" | Text extraction, selection marks, tables, and pre-trained fields and values pertaining to invoices
-|"prebuilt-businessCard" | Text extraction and pre-trained fields and values pertaining to business cards
-|"prebuilt-idDocument" | Text extraction and pre-trained fields and values pertaining to identity documents
-|"prebuilt-receipt" | Text extraction and pre-trained fields and values pertaining to US sales receipts
+|"prebuilt-invoices" | Text extraction, selection marks, tables, and pre-trained fields and values pertaining to English invoices
+|"prebuilt-businessCard" | Text extraction and pre-trained fields and values pertaining to English business cards
+|"prebuilt-idDocument" | Text extraction and pre-trained fields and values pertaining to US driver licenses and international passports
+|"prebuilt-receipt" | Text extraction and pre-trained fields and values pertaining to English sales receipts
+|"{custom-model-id}" | Text extraction, selection marks, tables, labeled fields and values from your custom documents
 
 Sample code snippets are provided to illustrate using a DocumentAnalysisClient [here](#analyze-documents-using-a-custom-model "Analyze Documents Using a Custom Model").
 
 ### DocumentModelAdministrationClient
 `DocumentModelAdministrationClient` provides operations for:
 
-- Building custom models with labels to recognize specific fields, values, selection marks, tables and structured data you specify by labeling your custom documents. A `DocumentModel` is returned indicating the document types the model will extract, as well as the estimated accuracy for each field. See the [service documentation][fr-train-with-labels] for a more detailed explanation.
+- Building custom models to recognize specific fields you specify by labeling your custom documents. A `DocumentModel` is returned indicating the document type the model will extract, as well as the estimated confidence for each field. See the [service documentation][fr-train-with-labels] for a more detailed explanation.
+- Creating a composed model from a collection of existing models.
 - Managing models created in your account.
 - Copying a custom model from one Form Recognizer resource to another.
-- Creating a composed model from a collection of existing built models.
 
 Please note that models can also be trained using a graphical user interface such as the [Form Recognizer Labeling Tool][fr-labeling-tool].
 
 Sample code snippets are provided to illustrate using a DocumentModelAdministrationClient [here](#build-a-model "Build a model").
 
-### Long-Running Operations
+### Long-running operations
 Long-running operations are operations which consist of an initial request sent to the service to start an operation,
 followed by polling the service at intervals to determine whether the operation has completed or failed, and if it has
 succeeded, to get the result.
 
-Methods that train models, recognize values from forms, or copy/compose models are modeled as long-running operations.
+Methods that analyze documents, train models, or copy/compose models are modeled as long-running operations.
 The client exposes a `begin_<method-name>` method that returns an `LROPoller` or `AsyncLROPoller`. Callers should wait
 for the operation to complete by calling `result()` on the poller object returned from the `begin_<method-name>` method.
 Sample code snippets are provided to illustrate using long-running operations [below](#examples "Examples").
@@ -202,7 +204,7 @@ credential = AzureKeyCredential("<api_key>")
 document_analysis_client = DocumentAnalysisClient(endpoint, credential)
 model_id = "<your custom model id>"
 
-with open("<path to your form>", "rb") as fd:
+with open("<path to your document>", "rb") as fd:
     document = fd.read()
 
 poller = document_analysis_client.begin_analyze_document(model_id=model_id, document=document)
@@ -210,8 +212,8 @@ result = poller.result()
 
 for analyzed_document in result.documents:
     print("Document has type {}".format(analyzed_document.doc_type))
-    print("Document has document type confidence {}".format(analyzed_document.confidence))
-    print("Document was analyzed with model with ID {}".format(analyzed_document.model_id))
+    print("Document has confidence {}".format(analyzed_document.confidence))
+    print("Document was analyzed by model with ID {}".format(analyzed_document.model_id))
     for name, field in analyzed_document.fields.items():
         print("Field '{}' has value '{}' with confidence of {}".format(name, field.value, field.confidence))
     
@@ -226,23 +228,21 @@ for page in result.pages:
                 word.content, word.confidence
             )
         )
-    if page.selection_marks:
-        print("\nSelection marks found on page {}".format(page.page_number))
-        for selection_mark in page.selection_marks:
-            print(
-                "...Selection mark is '{}' and has a confidence of {}".format(
-                    selection_mark.state, selection_mark.confidence
-                )
+    for selection_mark in page.selection_marks:
+        print(
+            "...Selection mark is '{}' and has a confidence of {}".format(
+                selection_mark.state, selection_mark.confidence
             )
+        )
 
 # iterate over tables in document
 for i, table in enumerate(result.tables):
     print("\nTable {} can be found on page:".format(i + 1))
     for region in table.bounding_regions:
-        print("...{}".format(i + 1, region.page_number))
+        print("...{}".format(region.page_number))
     for cell in table.cells:
         print(
-            "...Cell[{}][{}] has text '{}'".format(
+            "...Cell[{}][{}] has content '{}'".format(
                 cell.row_index, cell.column_index, cell.content
             )
         )
@@ -250,7 +250,7 @@ for i, table in enumerate(result.tables):
 
 Alternatively, a document URL can also be used to analyze documents using the `begin_analyze_document_from_url` method.
 
-```
+```python
 document_url = "<url_of_the_document>"
 poller = document_analysis_client.begin_analyze_document_from_url(model_id=model_id, document_url=document_url)
 result = poller.result()
@@ -268,14 +268,14 @@ credential = AzureKeyCredential("<api_key>")
 
 document_analysis_client = DocumentAnalysisClient(endpoint, credential)
 
-with open("<path to your form>", "rb") as fd:
+with open("<path to your document>", "rb") as fd:
     document = fd.read()
 
 poller = document_analysis_client.begin_analyze_document("prebuilt-layout", document)
 result = poller.result()
 
 for idx, page in enumerate(result.pages):
-    print("----Analyzing layout from page #{}----".format(idx + 1))
+    print("----Analyzing layout from page #{}----".format(page.page_number))
     print(
         "Page has width: {} and height: {}, measured with unit: {}".format(
             page.width, page.height, page.unit
@@ -284,7 +284,7 @@ for idx, page in enumerate(result.pages):
 
     for line_idx, line in enumerate(page.lines):
         print(
-            "Line # {} has text content '{}' within bounding box '{}'".format(
+            "...Line # {} has text content '{}' within bounding box '{}'".format(
                 line_idx,
                 line.content,
                 line.bounding_box,
@@ -300,7 +300,7 @@ for idx, page in enumerate(result.pages):
 
     for selection_mark in page.selection_marks:
         print(
-            "Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
+            "...Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
                 selection_mark.state,
                 selection_mark.bounding_box,
                 selection_mark.confidence,
@@ -323,7 +323,7 @@ for table_idx, table in enumerate(result.tables):
         )
     for cell in table.cells:
         print(
-            "...Cell[{}][{}] has text '{}'".format(
+            "...Cell[{}][{}] has content '{}'".format(
                 cell.row_index,
                 cell.column_index,
                 cell.content,
