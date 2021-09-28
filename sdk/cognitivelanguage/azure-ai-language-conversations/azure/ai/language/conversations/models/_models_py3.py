@@ -442,7 +442,7 @@ class TargetIntentResult(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'target_kind': {'key': 'targetKind', 'type': 'str'},
+        'target_kind': {'key': 'targetType', 'type': 'str'},
         'api_version': {'key': 'apiVersion', 'type': 'str'},
         'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
     }
