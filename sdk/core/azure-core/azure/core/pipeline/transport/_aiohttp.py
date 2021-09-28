@@ -48,6 +48,7 @@ from ._base_async import (
     _ResponseStopIteration)
 from ...utils._pipeline_transport_rest_shared import _aiohttp_body_helper
 from .._tools import is_rest as _is_rest
+from .._tools_async import handle_no_stream_rest_response as _handle_no_stream_rest_response
 if TYPE_CHECKING:
     from .._tools_async import HTTPResponseType
 
@@ -204,13 +205,7 @@ class AioHttpTransport(AsyncHttpTransport):
                     decompress=not auto_decompress
                 )
                 if not stream_response:
-                    try:
-                        # load_body instead of read()
-                        await response.load_body()
-                        await response.close()
-                    except Exception as exc:
-                        await response.close()
-                        raise exc
+                    await _handle_no_stream_rest_response(response)
             else:
                 response = AioHttpTransportResponse(request, result,
                                                     self.connection_config.data_block_size,
