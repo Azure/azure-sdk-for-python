@@ -31,7 +31,7 @@ from ._constants import SCHEMA_ID_START_INDEX, SCHEMA_ID_LENGTH, DATA_START_INDE
 from ._avro_serializer import AvroObjectSerializer
 
 
-class SchemaRegistryAvroSerializer(object):
+class AvroSerializer(object):
     """
     SchemaRegistryAvroSerializer provides the ability to serialize and deserialize data according
     to the given avro schema. It would automatically register, get and cache the schema.
