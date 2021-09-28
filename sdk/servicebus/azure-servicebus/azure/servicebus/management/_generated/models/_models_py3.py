@@ -839,8 +839,8 @@ class QueueDescription(msrest.serialization.Model):
     :param forward_dead_lettered_messages_to: The name of the recipient entity to which all the
      dead-lettered messages of this subscription are forwarded to.
     :type forward_dead_lettered_messages_to: str
-    :param max_message_size_in_kilobytes: The maximum message payload that can be accepted by the
-     queue.
+    :param max_message_size_in_kilobytes: The maximum size in kilobytes of message payload that can
+     be accepted by the queue.
     :type max_message_size_in_kilobytes: int
     """
 
@@ -1670,8 +1670,8 @@ class TopicDescription(msrest.serialization.Model):
     :type enable_express: bool
     :param user_metadata: Metadata associated with the topic.
     :type user_metadata: str
-    :param max_message_size_in_kilobytes: The maximum message payload that can be accepted by the
-     topic.
+    :param max_message_size_in_kilobytes: The maximum size in kilobytes of message payload that can
+     be accepted by the topic.
     :type max_message_size_in_kilobytes: int
     """
 
