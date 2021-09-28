@@ -6,13 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import datetime
-from typing import Dict, List, Optional, Union
-
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
-
-from ._custom_locations_enums import *
 
 
 class Resource(msrest.serialization.Model):
@@ -90,14 +85,11 @@ class TrackedResource(Resource):
 
     def __init__(
         self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
         super(TrackedResource, self).__init__(**kwargs)
-        self.tags = tags
-        self.location = location
+        self.tags = kwargs.get('tags', None)
+        self.location = kwargs['location']
 
 
 class CustomLocation(TrackedResource):
@@ -119,12 +111,14 @@ class CustomLocation(TrackedResource):
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives.
     :type location: str
+    :param identity: Identity for the resource.
+    :type identity: ~azure.mgmt.extendedlocation.v2021_08_15.models.Identity
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.extendedlocation.v2021_08_15.models.SystemData
     :param authentication: This is optional input that contains the authentication that should be
      used to generate the namespace.
     :type authentication:
-     ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.CustomLocationPropertiesAuthentication
+     ~azure.mgmt.extendedlocation.v2021_08_15.models.CustomLocationPropertiesAuthentication
     :param cluster_extension_ids: Contains the reference to the add-on that contains charts to
      deploy CRDs and operators.
     :type cluster_extension_ids: list[str]
@@ -135,7 +129,7 @@ class CustomLocation(TrackedResource):
     :type host_resource_id: str
     :param host_type: Type of host the Custom Locations is referencing (Kubernetes, etc...).
      Possible values include: "Kubernetes".
-    :type host_type: str or ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.HostType
+    :type host_type: str or ~azure.mgmt.extendedlocation.v2021_08_15.models.HostType
     :param namespace: Kubernetes namespace that will be created on the specified cluster.
     :type namespace: str
     :param provisioning_state: Provisioning State for the Custom Location.
@@ -156,6 +150,7 @@ class CustomLocation(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'authentication': {'key': 'properties.authentication', 'type': 'CustomLocationPropertiesAuthentication'},
         'cluster_extension_ids': {'key': 'properties.clusterExtensionIds', 'type': '[str]'},
@@ -168,27 +163,18 @@ class CustomLocation(TrackedResource):
 
     def __init__(
         self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        authentication: Optional["CustomLocationPropertiesAuthentication"] = None,
-        cluster_extension_ids: Optional[List[str]] = None,
-        display_name: Optional[str] = None,
-        host_resource_id: Optional[str] = None,
-        host_type: Optional[Union[str, "HostType"]] = None,
-        namespace: Optional[str] = None,
-        provisioning_state: Optional[str] = None,
         **kwargs
     ):
-        super(CustomLocation, self).__init__(tags=tags, location=location, **kwargs)
+        super(CustomLocation, self).__init__(**kwargs)
+        self.identity = kwargs.get('identity', None)
         self.system_data = None
-        self.authentication = authentication
-        self.cluster_extension_ids = cluster_extension_ids
-        self.display_name = display_name
-        self.host_resource_id = host_resource_id
-        self.host_type = host_type
-        self.namespace = namespace
-        self.provisioning_state = provisioning_state
+        self.authentication = kwargs.get('authentication', None)
+        self.cluster_extension_ids = kwargs.get('cluster_extension_ids', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.host_resource_id = kwargs.get('host_resource_id', None)
+        self.host_type = kwargs.get('host_type', None)
+        self.namespace = kwargs.get('namespace', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
 
 
 class CustomLocationListResult(msrest.serialization.Model):
@@ -199,7 +185,7 @@ class CustomLocationListResult(msrest.serialization.Model):
     :ivar next_link: The URL to use for getting the next set of results.
     :vartype next_link: str
     :ivar value: The list of Custom Locations.
-    :vartype value: list[~azure.mgmt.extendedlocation.v2021_03_15_preview.models.CustomLocation]
+    :vartype value: list[~azure.mgmt.extendedlocation.v2021_08_15.models.CustomLocation]
     """
 
     _validation = {
@@ -284,8 +270,7 @@ class CustomLocationOperationsList(msrest.serialization.Model):
     :param next_link: Next page of operations.
     :type next_link: str
     :param value: Required. Array of customLocationOperation.
-    :type value:
-     list[~azure.mgmt.extendedlocation.v2021_03_15_preview.models.CustomLocationOperation]
+    :type value: list[~azure.mgmt.extendedlocation.v2021_08_15.models.CustomLocationOperation]
     """
 
     _validation = {
@@ -299,14 +284,11 @@ class CustomLocationOperationsList(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        value: List["CustomLocationOperation"],
-        next_link: Optional[str] = None,
         **kwargs
     ):
         super(CustomLocationOperationsList, self).__init__(**kwargs)
-        self.next_link = next_link
-        self.value = value
+        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs['value']
 
 
 class CustomLocationPropertiesAuthentication(msrest.serialization.Model):
@@ -325,14 +307,11 @@ class CustomLocationPropertiesAuthentication(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        type: Optional[str] = None,
-        value: Optional[str] = None,
         **kwargs
     ):
         super(CustomLocationPropertiesAuthentication, self).__init__(**kwargs)
-        self.type = type
-        self.value = value
+        self.type = kwargs.get('type', None)
+        self.value = kwargs.get('value', None)
 
 
 class ProxyResource(Resource):
@@ -383,14 +362,14 @@ class EnabledResourceType(ProxyResource):
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.extendedlocation.v2021_08_15.models.SystemData
     :param cluster_extension_id: Cluster Extension ID.
     :type cluster_extension_id: str
     :param extension_type: Cluster Extension Type.
     :type extension_type: str
     :param types_metadata: Metadata of the Resource Type.
     :type types_metadata:
-     list[~azure.mgmt.extendedlocation.v2021_03_15_preview.models.EnabledResourceTypePropertiesTypesMetadataItem]
+     list[~azure.mgmt.extendedlocation.v2021_08_15.models.EnabledResourceTypePropertiesTypesMetadataItem]
     """
 
     _validation = {
@@ -412,17 +391,13 @@ class EnabledResourceType(ProxyResource):
 
     def __init__(
         self,
-        *,
-        cluster_extension_id: Optional[str] = None,
-        extension_type: Optional[str] = None,
-        types_metadata: Optional[List["EnabledResourceTypePropertiesTypesMetadataItem"]] = None,
         **kwargs
     ):
         super(EnabledResourceType, self).__init__(**kwargs)
         self.system_data = None
-        self.cluster_extension_id = cluster_extension_id
-        self.extension_type = extension_type
-        self.types_metadata = types_metadata
+        self.cluster_extension_id = kwargs.get('cluster_extension_id', None)
+        self.extension_type = kwargs.get('extension_type', None)
+        self.types_metadata = kwargs.get('types_metadata', None)
 
 
 class EnabledResourceTypePropertiesTypesMetadataItem(msrest.serialization.Model):
@@ -444,16 +419,12 @@ class EnabledResourceTypePropertiesTypesMetadataItem(msrest.serialization.Model)
 
     def __init__(
         self,
-        *,
-        api_version: Optional[str] = None,
-        resource_provider_namespace: Optional[str] = None,
-        resource_type: Optional[str] = None,
         **kwargs
     ):
         super(EnabledResourceTypePropertiesTypesMetadataItem, self).__init__(**kwargs)
-        self.api_version = api_version
-        self.resource_provider_namespace = resource_provider_namespace
-        self.resource_type = resource_type
+        self.api_version = kwargs.get('api_version', None)
+        self.resource_provider_namespace = kwargs.get('resource_provider_namespace', None)
+        self.resource_type = kwargs.get('resource_type', None)
 
 
 class EnabledResourceTypesListResult(msrest.serialization.Model):
@@ -464,8 +435,7 @@ class EnabledResourceTypesListResult(msrest.serialization.Model):
     :ivar next_link: The URL to use for getting the next set of results.
     :vartype next_link: str
     :ivar value: The list of EnabledResourceTypes available for a customLocation.
-    :vartype value:
-     list[~azure.mgmt.extendedlocation.v2021_03_15_preview.models.EnabledResourceType]
+    :vartype value: list[~azure.mgmt.extendedlocation.v2021_08_15.models.EnabledResourceType]
     """
 
     _validation = {
@@ -529,10 +499,10 @@ class ErrorDetail(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~azure.mgmt.extendedlocation.v2021_03_15_preview.models.ErrorDetail]
+    :vartype details: list[~azure.mgmt.extendedlocation.v2021_08_15.models.ErrorDetail]
     :ivar additional_info: The error additional info.
     :vartype additional_info:
-     list[~azure.mgmt.extendedlocation.v2021_03_15_preview.models.ErrorAdditionalInfo]
+     list[~azure.mgmt.extendedlocation.v2021_08_15.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -567,7 +537,7 @@ class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     :param error: The error object.
-    :type error: ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.ErrorDetail
+    :type error: ~azure.mgmt.extendedlocation.v2021_08_15.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -576,23 +546,57 @@ class ErrorResponse(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        error: Optional["ErrorDetail"] = None,
         **kwargs
     ):
         super(ErrorResponse, self).__init__(**kwargs)
-        self.error = error
+        self.error = kwargs.get('error', None)
+
+
+class Identity(msrest.serialization.Model):
+    """Identity for the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal ID of resource identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of resource.
+    :vartype tenant_id: str
+    :param type: The identity type. Possible values include: "SystemAssigned", "None".
+    :type type: str or ~azure.mgmt.extendedlocation.v2021_08_15.models.ResourceIdentityType
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Identity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = kwargs.get('type', None)
 
 
 class PatchableCustomLocations(msrest.serialization.Model):
     """The Custom Locations patchable resource definition.
 
+    :param identity: Identity for the resource.
+    :type identity: ~azure.mgmt.extendedlocation.v2021_08_15.models.Identity
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param authentication: This is optional input that contains the authentication that should be
      used to generate the namespace.
     :type authentication:
-     ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.CustomLocationPropertiesAuthentication
+     ~azure.mgmt.extendedlocation.v2021_08_15.models.CustomLocationPropertiesAuthentication
     :param cluster_extension_ids: Contains the reference to the add-on that contains charts to
      deploy CRDs and operators.
     :type cluster_extension_ids: list[str]
@@ -603,7 +607,7 @@ class PatchableCustomLocations(msrest.serialization.Model):
     :type host_resource_id: str
     :param host_type: Type of host the Custom Locations is referencing (Kubernetes, etc...).
      Possible values include: "Kubernetes".
-    :type host_type: str or ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.HostType
+    :type host_type: str or ~azure.mgmt.extendedlocation.v2021_08_15.models.HostType
     :param namespace: Kubernetes namespace that will be created on the specified cluster.
     :type namespace: str
     :param provisioning_state: Provisioning State for the Custom Location.
@@ -611,6 +615,7 @@ class PatchableCustomLocations(msrest.serialization.Model):
     """
 
     _attribute_map = {
+        'identity': {'key': 'identity', 'type': 'Identity'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'authentication': {'key': 'properties.authentication', 'type': 'CustomLocationPropertiesAuthentication'},
         'cluster_extension_ids': {'key': 'properties.clusterExtensionIds', 'type': '[str]'},
@@ -623,26 +628,18 @@ class PatchableCustomLocations(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        authentication: Optional["CustomLocationPropertiesAuthentication"] = None,
-        cluster_extension_ids: Optional[List[str]] = None,
-        display_name: Optional[str] = None,
-        host_resource_id: Optional[str] = None,
-        host_type: Optional[Union[str, "HostType"]] = None,
-        namespace: Optional[str] = None,
-        provisioning_state: Optional[str] = None,
         **kwargs
     ):
         super(PatchableCustomLocations, self).__init__(**kwargs)
-        self.tags = tags
-        self.authentication = authentication
-        self.cluster_extension_ids = cluster_extension_ids
-        self.display_name = display_name
-        self.host_resource_id = host_resource_id
-        self.host_type = host_type
-        self.namespace = namespace
-        self.provisioning_state = provisioning_state
+        self.identity = kwargs.get('identity', None)
+        self.tags = kwargs.get('tags', None)
+        self.authentication = kwargs.get('authentication', None)
+        self.cluster_extension_ids = kwargs.get('cluster_extension_ids', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.host_resource_id = kwargs.get('host_resource_id', None)
+        self.host_type = kwargs.get('host_type', None)
+        self.namespace = kwargs.get('namespace', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
 
 
 class SystemData(msrest.serialization.Model):
@@ -652,8 +649,7 @@ class SystemData(msrest.serialization.Model):
     :type created_by: str
     :param created_by_type: The type of identity that created the resource. Possible values
      include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or
-     ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.CreatedByType
+    :type created_by_type: str or ~azure.mgmt.extendedlocation.v2021_08_15.models.CreatedByType
     :param created_at: The timestamp of resource creation (UTC).
     :type created_at: ~datetime.datetime
     :param last_modified_by: The identity that last modified the resource.
@@ -661,7 +657,7 @@ class SystemData(msrest.serialization.Model):
     :param last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
     :type last_modified_by_type: str or
-     ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.CreatedByType
+     ~azure.mgmt.extendedlocation.v2021_08_15.models.CreatedByType
     :param last_modified_at: The timestamp of resource last modification (UTC).
     :type last_modified_at: ~datetime.datetime
     """
@@ -677,19 +673,12 @@ class SystemData(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        created_at: Optional[datetime.datetime] = None,
-        last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         super(SystemData, self).__init__(**kwargs)
-        self.created_by = created_by
-        self.created_by_type = created_by_type
-        self.created_at = created_at
-        self.last_modified_by = last_modified_by
-        self.last_modified_by_type = last_modified_by_type
-        self.last_modified_at = last_modified_at
+        self.created_by = kwargs.get('created_by', None)
+        self.created_by_type = kwargs.get('created_by_type', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.last_modified_by = kwargs.get('last_modified_by', None)
+        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
+        self.last_modified_at = kwargs.get('last_modified_at', None)

@@ -119,12 +119,14 @@ class CustomLocation(TrackedResource):
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives.
     :type location: str
+    :param identity: Identity for the resource.
+    :type identity: ~azure.mgmt.extendedlocation.v2021_08_15.models.Identity
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.extendedlocation.v2021_08_15.models.SystemData
     :param authentication: This is optional input that contains the authentication that should be
      used to generate the namespace.
     :type authentication:
-     ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.CustomLocationPropertiesAuthentication
+     ~azure.mgmt.extendedlocation.v2021_08_15.models.CustomLocationPropertiesAuthentication
     :param cluster_extension_ids: Contains the reference to the add-on that contains charts to
      deploy CRDs and operators.
     :type cluster_extension_ids: list[str]
@@ -135,7 +137,7 @@ class CustomLocation(TrackedResource):
     :type host_resource_id: str
     :param host_type: Type of host the Custom Locations is referencing (Kubernetes, etc...).
      Possible values include: "Kubernetes".
-    :type host_type: str or ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.HostType
+    :type host_type: str or ~azure.mgmt.extendedlocation.v2021_08_15.models.HostType
     :param namespace: Kubernetes namespace that will be created on the specified cluster.
     :type namespace: str
     :param provisioning_state: Provisioning State for the Custom Location.
@@ -156,6 +158,7 @@ class CustomLocation(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'authentication': {'key': 'properties.authentication', 'type': 'CustomLocationPropertiesAuthentication'},
         'cluster_extension_ids': {'key': 'properties.clusterExtensionIds', 'type': '[str]'},
@@ -171,6 +174,7 @@ class CustomLocation(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
+        identity: Optional["Identity"] = None,
         authentication: Optional["CustomLocationPropertiesAuthentication"] = None,
         cluster_extension_ids: Optional[List[str]] = None,
         display_name: Optional[str] = None,
@@ -181,6 +185,7 @@ class CustomLocation(TrackedResource):
         **kwargs
     ):
         super(CustomLocation, self).__init__(tags=tags, location=location, **kwargs)
+        self.identity = identity
         self.system_data = None
         self.authentication = authentication
         self.cluster_extension_ids = cluster_extension_ids
@@ -199,7 +204,7 @@ class CustomLocationListResult(msrest.serialization.Model):
     :ivar next_link: The URL to use for getting the next set of results.
     :vartype next_link: str
     :ivar value: The list of Custom Locations.
-    :vartype value: list[~azure.mgmt.extendedlocation.v2021_03_15_preview.models.CustomLocation]
+    :vartype value: list[~azure.mgmt.extendedlocation.v2021_08_15.models.CustomLocation]
     """
 
     _validation = {
@@ -284,8 +289,7 @@ class CustomLocationOperationsList(msrest.serialization.Model):
     :param next_link: Next page of operations.
     :type next_link: str
     :param value: Required. Array of customLocationOperation.
-    :type value:
-     list[~azure.mgmt.extendedlocation.v2021_03_15_preview.models.CustomLocationOperation]
+    :type value: list[~azure.mgmt.extendedlocation.v2021_08_15.models.CustomLocationOperation]
     """
 
     _validation = {
@@ -383,14 +387,14 @@ class EnabledResourceType(ProxyResource):
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.extendedlocation.v2021_08_15.models.SystemData
     :param cluster_extension_id: Cluster Extension ID.
     :type cluster_extension_id: str
     :param extension_type: Cluster Extension Type.
     :type extension_type: str
     :param types_metadata: Metadata of the Resource Type.
     :type types_metadata:
-     list[~azure.mgmt.extendedlocation.v2021_03_15_preview.models.EnabledResourceTypePropertiesTypesMetadataItem]
+     list[~azure.mgmt.extendedlocation.v2021_08_15.models.EnabledResourceTypePropertiesTypesMetadataItem]
     """
 
     _validation = {
@@ -464,8 +468,7 @@ class EnabledResourceTypesListResult(msrest.serialization.Model):
     :ivar next_link: The URL to use for getting the next set of results.
     :vartype next_link: str
     :ivar value: The list of EnabledResourceTypes available for a customLocation.
-    :vartype value:
-     list[~azure.mgmt.extendedlocation.v2021_03_15_preview.models.EnabledResourceType]
+    :vartype value: list[~azure.mgmt.extendedlocation.v2021_08_15.models.EnabledResourceType]
     """
 
     _validation = {
@@ -529,10 +532,10 @@ class ErrorDetail(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~azure.mgmt.extendedlocation.v2021_03_15_preview.models.ErrorDetail]
+    :vartype details: list[~azure.mgmt.extendedlocation.v2021_08_15.models.ErrorDetail]
     :ivar additional_info: The error additional info.
     :vartype additional_info:
-     list[~azure.mgmt.extendedlocation.v2021_03_15_preview.models.ErrorAdditionalInfo]
+     list[~azure.mgmt.extendedlocation.v2021_08_15.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -567,7 +570,7 @@ class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     :param error: The error object.
-    :type error: ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.ErrorDetail
+    :type error: ~azure.mgmt.extendedlocation.v2021_08_15.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -584,15 +587,53 @@ class ErrorResponse(msrest.serialization.Model):
         self.error = error
 
 
+class Identity(msrest.serialization.Model):
+    """Identity for the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal ID of resource identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of resource.
+    :vartype tenant_id: str
+    :param type: The identity type. Possible values include: "SystemAssigned", "None".
+    :type type: str or ~azure.mgmt.extendedlocation.v2021_08_15.models.ResourceIdentityType
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "ResourceIdentityType"]] = None,
+        **kwargs
+    ):
+        super(Identity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = type
+
+
 class PatchableCustomLocations(msrest.serialization.Model):
     """The Custom Locations patchable resource definition.
 
+    :param identity: Identity for the resource.
+    :type identity: ~azure.mgmt.extendedlocation.v2021_08_15.models.Identity
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param authentication: This is optional input that contains the authentication that should be
      used to generate the namespace.
     :type authentication:
-     ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.CustomLocationPropertiesAuthentication
+     ~azure.mgmt.extendedlocation.v2021_08_15.models.CustomLocationPropertiesAuthentication
     :param cluster_extension_ids: Contains the reference to the add-on that contains charts to
      deploy CRDs and operators.
     :type cluster_extension_ids: list[str]
@@ -603,7 +644,7 @@ class PatchableCustomLocations(msrest.serialization.Model):
     :type host_resource_id: str
     :param host_type: Type of host the Custom Locations is referencing (Kubernetes, etc...).
      Possible values include: "Kubernetes".
-    :type host_type: str or ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.HostType
+    :type host_type: str or ~azure.mgmt.extendedlocation.v2021_08_15.models.HostType
     :param namespace: Kubernetes namespace that will be created on the specified cluster.
     :type namespace: str
     :param provisioning_state: Provisioning State for the Custom Location.
@@ -611,6 +652,7 @@ class PatchableCustomLocations(msrest.serialization.Model):
     """
 
     _attribute_map = {
+        'identity': {'key': 'identity', 'type': 'Identity'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'authentication': {'key': 'properties.authentication', 'type': 'CustomLocationPropertiesAuthentication'},
         'cluster_extension_ids': {'key': 'properties.clusterExtensionIds', 'type': '[str]'},
@@ -624,6 +666,7 @@ class PatchableCustomLocations(msrest.serialization.Model):
     def __init__(
         self,
         *,
+        identity: Optional["Identity"] = None,
         tags: Optional[Dict[str, str]] = None,
         authentication: Optional["CustomLocationPropertiesAuthentication"] = None,
         cluster_extension_ids: Optional[List[str]] = None,
@@ -635,6 +678,7 @@ class PatchableCustomLocations(msrest.serialization.Model):
         **kwargs
     ):
         super(PatchableCustomLocations, self).__init__(**kwargs)
+        self.identity = identity
         self.tags = tags
         self.authentication = authentication
         self.cluster_extension_ids = cluster_extension_ids
@@ -652,8 +696,7 @@ class SystemData(msrest.serialization.Model):
     :type created_by: str
     :param created_by_type: The type of identity that created the resource. Possible values
      include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or
-     ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.CreatedByType
+    :type created_by_type: str or ~azure.mgmt.extendedlocation.v2021_08_15.models.CreatedByType
     :param created_at: The timestamp of resource creation (UTC).
     :type created_at: ~datetime.datetime
     :param last_modified_by: The identity that last modified the resource.
@@ -661,7 +704,7 @@ class SystemData(msrest.serialization.Model):
     :param last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
     :type last_modified_by_type: str or
-     ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.CreatedByType
+     ~azure.mgmt.extendedlocation.v2021_08_15.models.CreatedByType
     :param last_modified_at: The timestamp of resource last modification (UTC).
     :type last_modified_at: ~datetime.datetime
     """
