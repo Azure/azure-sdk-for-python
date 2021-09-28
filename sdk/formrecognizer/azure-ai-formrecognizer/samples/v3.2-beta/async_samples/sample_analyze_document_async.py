@@ -7,18 +7,18 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_layout.py
+FILE: sample_analyze_document_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to extract text, selection marks, and layout information from a document
+    This sample demonstrates how to extract general document information from a document
     given through a file.
 
     Note that selection marks returned from begin_analyze_document() do not return the text associated with
     the checkbox. For the API to return this information, build a custom model to analyze the checkbox and its text.
-    See sample_build_model.py for more information.
+    See sample_build_model_async.py for more information.
 
 USAGE:
-    python sample_analyze_layout.py
+    python sample_analyze_document_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -26,7 +26,12 @@ USAGE:
 """
 
 import os
+import asyncio
 
+def format_bounding_region(bounding_regions):
+    if not bounding_regions:
+        return "N/A"
+    return ", ".join("Page #{}: {}".format(region.page_number, format_bounding_box(region.bounding_box)) for region in bounding_regions)
 
 def format_bounding_box(bounding_box):
     if not bounding_box:
@@ -34,18 +39,19 @@ def format_bounding_box(bounding_box):
     return ", ".join(["[{}, {}]".format(p.x, p.y) for p in bounding_box])
 
 
-def analyze_layout():
+async def analyze_document():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
             "..",
             "..",
+            "..",
             "./sample_forms/forms/form_selection_mark.png",
         )
     )
-    # [START analyze_layout]
+    # [START analyze_document]
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.formrecognizer import DocumentAnalysisClient
+    from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -53,11 +59,13 @@ def analyze_layout():
     document_analysis_client = DocumentAnalysisClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
-    with open(path_to_sample_documents, "rb") as f:
-        poller = document_analysis_client.begin_analyze_document(
-            "prebuilt-layout", document=f
-        )
-    result = poller.result()
+
+    async with document_analysis_client:
+        with open(path_to_sample_documents, "rb") as f:
+            poller = await document_analysis_client.begin_analyze_document(
+                "prebuilt-document", document=f
+            )
+        result = await poller.result()
 
     for idx, style in enumerate(result.styles):
         print(
@@ -67,7 +75,7 @@ def analyze_layout():
         )
 
     for idx, page in enumerate(result.pages):
-        print("----Analyzing layout from page #{}----".format(idx + 1))
+        print("----Analyzing document from page #{}----".format(idx + 1))
         print(
             "Page has width: {} and height: {}, measured with unit: {}".format(
                 page.width, page.height, page.unit
@@ -129,10 +137,37 @@ def analyze_layout():
                     )
                 )
 
+    print("----Entities found in document----")
+    for idx, entity in enumerate(result.entities):
+        print("Entity of category '{}' with sub-category '{}'".format(entity.category, entity.sub_category))
+        print("...has content '{}'".format(entity.content))
+        print("...within '{}' bounding regions".format(format_bounding_region(entity.bounding_regions)))
+        print("...with confidence {}".format(entity.confidence))
+
+    print("----Key-value pairs found in document----")
+    for idx, kv_pair in enumerate(result.key_value_pairs):
+        if kv_pair.key:
+            print(
+                    "Key '{}' found within '{}' bounding regions".format(
+                        kv_pair.key.content,
+                        format_bounding_region(kv_pair.key.bounding_regions),
+                    )
+                )
+        if kv_pair.value:
+            print(
+                    "Value '{}' found within '{}' bounding regions".format(
+                        kv_pair.value.content,
+                        format_bounding_region(kv_pair.value.bounding_regions),
+                    )
+                )
     print("----------------------------------------")
 
-    # [END analyze_layout]
+    # [END analyze_document]
 
+
+async def main():
+    await analyze_document()
 
 if __name__ == "__main__":
-    analyze_layout()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
