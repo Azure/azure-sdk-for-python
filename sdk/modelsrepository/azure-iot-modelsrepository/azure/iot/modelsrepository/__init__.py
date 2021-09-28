@@ -10,6 +10,7 @@ from ._client import ModelsRepositoryClient
 # Constants
 from ._common import (
     DependencyModeType,
+    DEFAULT_LOCATION,
     VERSION
 )
 
@@ -18,6 +19,7 @@ from .exceptions import ModelError
 
 __all__ = [
     "ModelsRepositoryClient",
+    "DEFAULT_LOCATION",
     "ModelError",
     "DependencyModeType",
 ]

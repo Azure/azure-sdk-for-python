@@ -4,7 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 import re
-
+from six.moves import urllib
+from ._common import InvalidDtmiFormat, METADATA_FILE
 
 def is_valid_dtmi(dtmi):
     """Checks validity of a DTMI
@@ -14,6 +15,8 @@ def is_valid_dtmi(dtmi):
     :returns: Boolean indicating if DTMI is valid
     :rtype: bool
     """
+    if not isinstance(dtmi, str):
+        return False
     pattern = re.compile(
         "^dtmi:[A-Za-z](?:[A-Za-z0-9_]*[A-Za-z0-9])?(?::[A-Za-z](?:[A-Za-z0-9_]*[A-Za-z0-9])?)*;[1-9][0-9]{0,8}$"
     )
@@ -34,28 +37,70 @@ def get_model_uri(dtmi, repository_uri, expanded=False):
     :returns: The URI for the model in the Models Repository
     :rtype: str
     """
+    repository_uri = _add_scheme(repository_uri)
     if not repository_uri.endswith("/"):
         repository_uri += "/"
-    model_uri = repository_uri + _convert_dtmi_to_path(dtmi, expanded)
-    return model_uri
+
+    dtmi_path = _convert_dtmi_to_path(dtmi, expanded)
+    if dtmi_path == "":
+        raise ValueError(InvalidDtmiFormat.format(dtmi))
+
+    return repository_uri + dtmi_path
 
 
 def _convert_dtmi_to_path(dtmi, expanded=False):
     """Returns the relative path for a model given a DTMI
     E.g:
     dtmi:com:example:Thermostat;1 -> dtmi/com/example/thermostat-1.json
+    Returns an empty string if the DTMI is invalid.
 
     :param str dtmi : DTMI for a model
     :param bool expanded: Indicates if the relative path should be for an exapnded model
-
-    :raises ValueError if DTMI is invalid
 
     :returns: Relative path of the model in a Models Repository
     :rtype: str
     """
     if not is_valid_dtmi(dtmi):
-        raise ValueError("Invalid DTMI")
+        return ""
     dtmi_path = dtmi.lower().replace(":", "/").replace(";", "-") + ".json"
     if expanded:
         dtmi_path = dtmi_path.replace(".json", ".expanded.json")
     return dtmi_path
+
+
+def _get_metadata_uri(repository_uri):
+    """Get the URI representing the absolute location of the metadata in a Models Repository
+
+    :param str repository_uri: URI for a Models Repository
+
+    :returns: The URI for the metadata in the Models Repository
+    :rtype: str
+    """
+    repository_uri = _add_scheme(repository_uri)
+    if not repository_uri.endswith("/"):
+        repository_uri += "/"
+    return repository_uri + METADATA_FILE
+
+
+def _add_scheme(uri):
+    """Add the scheme `file://` to local repository uri if needed.
+
+    Specifically checks if the uri is a filesystem path with drive letters or not a web url
+    with an unspecified protocol.
+
+    :param str uri: URI for a Models Repository
+
+    :returns: The URI for the metadata in the Models Repository
+    :rtype: str
+    """
+    scheme = urllib.parse.urlparse(uri).scheme
+    if (
+        (len(scheme) == 1 and scheme.isalpha()) or
+        (scheme == "" and not re.search(
+            r"\.[a-zA-z]{2,63}$",
+            uri[: uri.find("/") if uri.find("/") >= 0 else len(uri)],
+        ))
+    ):
+        return "file://" + uri
+
+    return uri

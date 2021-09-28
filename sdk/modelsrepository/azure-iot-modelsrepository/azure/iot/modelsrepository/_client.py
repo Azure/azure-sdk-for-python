@@ -3,34 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import six.moves.urllib as urllib
-import re
 import logging
-import os
-from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.pipeline.transport import RequestsTransport
-from azure.core.exceptions import ResourceNotFoundError
-from azure.core.pipeline.policies import (
-    UserAgentPolicy,
-    HeadersPolicy,
-    RetryPolicy,
-    RedirectPolicy,
-    NetworkTraceLoggingPolicy,
-    ProxyPolicy,
-    BearerTokenCredentialPolicy,
-)
-from . import (
-    _resolver,
-    _pseudo_parser,
-)
-from azure.iot.modelsrepository._common import (
-    USER_AGENT,
-    DependencyModeType,
-    RemoteProtocolType,
-    DEFAULT_LOCATION,
-    DEFAULT_API_VERSION
-)
+from ._resolver import DtmiResolver
+from ._common import DEFAULT_LOCATION, DEFAULT_API_VERSION, DependencyModeType
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -59,24 +36,20 @@ class ModelsRepositoryClient(object):
 
         :raises: ValueError if an invalid argument is provided
         """
-        repository_location = repository_location if repository_location else DEFAULT_LOCATION
-        _LOGGER.debug("Client configured for respository location %s", repository_location)
+        self.repository_uri = repository_location if repository_location else DEFAULT_LOCATION
+        _LOGGER.debug("Client configured for respository location %s", self.repository_uri)
 
-        # NOTE: depending on how this class develops over time, may need to adjust relationship
-        # between some of these objects
-        self.fetcher = _create_fetcher(location=repository_location, **kwargs)
-        self.resolver = _resolver.DtmiResolver(self.fetcher)
-        self._pseudo_parser = _pseudo_parser.PseudoParser(self.resolver)
+        self.resolver = DtmiResolver(location=self.repository_uri, **kwargs)
 
         # Store api version here (for now). Currently doesn't do anything
         self._api_version = kwargs.get("api_version", DEFAULT_API_VERSION)
 
     def __enter__(self):
-        self.fetcher.__enter__()
+        self.resolver.__enter__()
         return self
 
     def __exit__(self, *exc_details):
-        self.fetcher.__exit__(*exc_details)
+        self.resolver.__exit__(*exc_details)
 
     def close(self):
         # type: () -> None
@@ -110,130 +83,4 @@ class ModelsRepositoryClient(object):
         if isinstance(dtmis, str):
             dtmis = [dtmis]
 
-        if dependency_resolution == DependencyModeType.disabled.value:
-            # Simply retrieve the model(s)
-            _LOGGER.debug("Getting models w/ dependency resolution mode: disabled")
-            _LOGGER.debug("Retrieving model(s): %s...", dtmis)
-            model_map = self.resolver.resolve(dtmis)
-        elif dependency_resolution == DependencyModeType.enabled.value:
-            # Fetch the metadata and ensure dependency resolution is enabled for the repository
-            expanded_availiability = False
-            try:
-                metadata = self.resolver.resolve_metadata()
-                print(f"Metadata: {metadata}")
-                if (
-                    metadata and
-                    metadata.get("features") and
-                    metadata["features"].get("expanded")
-                ):
-                    expanded_availiability = (
-                        metadata["features"]["expanded"] == DependencyModeType.enabled.value
-                    )
-            except:
-                # Expanded form is not availiable - will need to fetch dependencies manually
-                expanded_availiability = False
-                _LOGGER.debug(
-                    "Expanded model form is not available in repository - "
-                    "will fallback to manual dependency resolution mode"
-                )
-
-            _LOGGER.debug("Getting models w/ dependency resolution mode: enabled")
-
-            try:
-                _LOGGER.debug("Retrieving expanded model(s): %s...", dtmis)
-                model_map = self.resolver.resolve(dtmis, expanded_model=expanded_availiability)
-            except ResourceNotFoundError:
-                # Fallback to manual dependency resolution
-                _LOGGER.debug(
-                    "Could not retrieve model(s) from expanded model DTDL - "
-                    "fallback to manual dependency resolution mode"
-                )
-                _LOGGER.debug("Retrieving model(s): %s...", dtmis)
-                model_map = self.resolver.resolve(dtmis)
-
-            # Fetch dependencies manually if needed
-            if not expanded_availiability:
-                base_model_list = list(model_map.values())
-                _LOGGER.debug("Retrieving model dependencies for %s...", dtmis)
-                model_map = self._pseudo_parser.expand(base_model_list)
-
-        return model_map
-
-
-def _create_fetcher(location, **kwargs):
-    """Return a Fetcher based upon the type of location"""
-    scheme = urllib.parse.urlparse(location).scheme
-    if scheme in [RemoteProtocolType.http.value, RemoteProtocolType.https.value]:
-        # HTTP/HTTPS URL
-        _LOGGER.debug("Repository Location identified as HTTP/HTTPS endpoint - using HttpFetcher")
-        pipeline = _create_pipeline(**kwargs)
-        fetcher = _resolver.HttpFetcher(location, pipeline)
-    elif scheme == "" and re.search(
-        r"\.[a-zA-z]{2,63}$",
-        location[: location.find("/") if location.find("/") >= 0 else len(location)],
-    ):
-        # Web URL with protocol unspecified - default to HTTPS
-        _LOGGER.debug(
-            "Repository Location identified as remote endpoint without protocol specified - using HttpFetcher"
-        )
-        location = RemoteProtocolType.https.value + "://" + location
-        pipeline = _create_pipeline(**kwargs)
-        fetcher = _resolver.HttpFetcher(location, pipeline)
-    elif scheme == "file":
-        # Filesystem URI
-        _LOGGER.debug("Repository Location identified as filesystem URI - using FilesystemFetcher")
-        location = location[len("file://") :]
-        location = _sanitize_filesystem_path(location)
-        fetcher = _resolver.FilesystemFetcher(location)
-    elif scheme == "" and location.startswith("/"):
-        # POSIX filesystem path
-        _LOGGER.debug(
-            "Repository Location identified as POSIX fileystem path - using FilesystemFetcher"
-        )
-        location = _sanitize_filesystem_path(location)
-        fetcher = _resolver.FilesystemFetcher(location)
-    elif scheme != "" and len(scheme) == 1 and scheme.isalpha():
-        # Filesystem path using drive letters (e.g. "C:", "D:", etc.)
-        _LOGGER.debug(
-            "Repository Location identified as drive letter fileystem path - using FilesystemFetcher"
-        )
-        location = _sanitize_filesystem_path(location)
-        fetcher = _resolver.FilesystemFetcher(location)
-    else:
-        raise ValueError("Unable to identify location: {}".format(location))
-    return fetcher
-
-
-def _create_pipeline(base_url=None, credential=None, transport=None, **kwargs):
-    """Creates and returns a PipelineClient configured for the provided base_url and kwargs"""
-    transport = transport if transport else kwargs.get("transport", RequestsTransport(**kwargs))
-
-    if kwargs.get('policies'):
-        policies = kwargs['policies']
-    else:
-        if credential and hasattr(credential, "get_token"):
-            scope = base_url.strip("/") + "/.default"
-            authentication_policy = BearerTokenCredentialPolicy(credential, scope)
-        elif credential:
-            raise ValueError(
-                "Please provide an instance from azure-identity or a class that implement the 'get_token protocol"
-            )
-        else:
-            authentication_policy = kwargs.get("authentication_policy")
-        policies = [
-            kwargs.get("user_agent_policy", UserAgentPolicy(USER_AGENT, **kwargs)),
-            kwargs.get("headers_policy", HeadersPolicy(**kwargs)),
-            authentication_policy,
-            kwargs.get("retry_policy", RetryPolicy(**kwargs)),
-            kwargs.get("redirect_policy", RedirectPolicy(**kwargs)),
-            kwargs.get("logging_policy", NetworkTraceLoggingPolicy(**kwargs)),
-            kwargs.get("proxy_policy", ProxyPolicy(**kwargs)),
-        ]
-    return Pipeline(policies=policies, transport=transport)
-
-
-def _sanitize_filesystem_path(path):
-    """Sanitize the filesystem path to be formatted correctly for the current OS"""
-    path = os.path.normcase(path)
-    path = os.path.normpath(path)
-    return path
+        return self.resolver.resolve(dtmis, dependency_resolution=dependency_resolution)
