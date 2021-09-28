@@ -1,9 +1,9 @@
 interactions:
 - request:
-    body: !!python/unicode '"{\"type\": \"record\", \"namespace\": \"example.avro\",
-      \"name\": \"User\", \"fields\": [{\"type\": \"string\", \"name\": \"name\"},
-      {\"type\": [\"int\", \"null\"], \"name\": \"favorite_number\"}, {\"type\": [\"string\",
-      \"null\"], \"name\": \"favorite_color\"}]}"'
+    body: '"{\"type\": \"record\", \"name\": \"User\", \"namespace\": \"example.avro\",
+      \"fields\": [{\"type\": \"string\", \"name\": \"name\"}, {\"type\": [\"int\",
+      \"null\"], \"name\": \"favorite_number\"}, {\"type\": [\"string\", \"null\"],
+      \"name\": \"favorite_color\"}]}"'
     headers:
       Accept:
       - application/json
@@ -16,19 +16,19 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b1 Python/2.7.18 (Windows-10-10.0.19041)
+      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       X-Schema-Type:
       - Avro
     method: POST
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/example.avro.User?api-version=2017-04
   response:
     body:
-      string: !!python/unicode '{"id":"f666e373299048fabaa4296f5dbfed46"}'
+      string: '{"id":"f666e373299048fabaa4296f5dbfed46"}'
     headers:
       content-type:
       - application/json
       date:
-      - Tue, 28 Sep 2021 19:09:52 GMT
+      - Tue, 28 Sep 2021 19:13:23 GMT
       location:
       - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/example.avro.User/versions/1?api-version=2017-04
       server:
