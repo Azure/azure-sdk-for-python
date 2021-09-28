@@ -41,7 +41,7 @@ class ListTags(object):
         client = ContainerRegistryClient(self.account_url, credential, audience=audience)
 
         manifest = client.get_manifest_properties("library/hello-world", "latest")
-        print(manifest.repository_name + ":")
+        print(manifest.repository_name + ": ")
         for tag in manifest.tags:
             print(tag + "\n")
 

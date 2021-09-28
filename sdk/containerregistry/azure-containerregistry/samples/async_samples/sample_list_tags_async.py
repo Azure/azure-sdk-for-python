@@ -43,7 +43,7 @@ class ListTagsAsync(object):
         client = ContainerRegistryClient(self.account_url, credential, audience=audience)
 
         manifest = await client.get_manifest_properties("library/hello-world", "latest")
-        print(manifest.repository_name + ":")
+        print(manifest.repository_name + ": ")
         for tag in manifest.tags:
             print(tag + "\n")
 
