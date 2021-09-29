@@ -39,9 +39,7 @@ class AzureCliCredential(object):
     """
 
     def __init__(self, **kwargs):   # pylint: disable=unused-argument
-        disable_multitenant = os.environ.get(EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH, False)
-        self._allow_multitenant = not disable_multitenant
-
+        pass
     def __enter__(self):
         return self
 
@@ -72,7 +70,7 @@ class AzureCliCredential(object):
 
         resource = _scopes_to_resource(*scopes)
         command = COMMAND_LINE.format(resource)
-        tenant = resolve_tenant("", self._allow_multitenant, **kwargs)
+        tenant = resolve_tenant("", **kwargs)
         if tenant:
             command += " --tenant " + tenant
         output = _run_command(command)

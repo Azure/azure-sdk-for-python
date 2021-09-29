@@ -2,18 +2,12 @@
 
 ## 1.7.0b5 (Unreleased)
 
-### Features Added
+### Breaking Changes
 
 - `allow_multitenant_authentication` argument is deprecated and the setting is always on. To
     disable it, set environment variable
     AZURE_IDENTITY_DISABLE_MULTITENANTAUTH to "True".
 - `azure.identity.RegionalAuthority` is removed.
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.7.0b4 (2021-09-09)
 

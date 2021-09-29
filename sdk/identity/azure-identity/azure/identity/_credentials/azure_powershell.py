@@ -56,9 +56,7 @@ class AzurePowerShellCredential(object):
     """
 
     def __init__(self, **kwargs):   # pylint: disable=unused-argument
-        # type: (**Any) -> None
-        disable_multitenant = os.environ.get(EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH, False)
-        self._allow_multitenant = not disable_multitenant
+        pass
 
     def __enter__(self):
         return self
@@ -88,7 +86,7 @@ class AzurePowerShellCredential(object):
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked Azure PowerShell but didn't
           receive an access token
         """
-        tenant_id = resolve_tenant("", self._allow_multitenant, **kwargs)
+        tenant_id = resolve_tenant("", **kwargs)
         command_line = get_command_line(scopes, tenant_id)
         output = run_command_line(command_line)
         token = parse_token(output)

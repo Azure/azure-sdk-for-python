@@ -36,11 +36,6 @@ class SilentAuthenticationCredential(object):
         # authenticate in the tenant that produced the record unless "tenant_id" specifies another
         self._tenant_id = kwargs.pop("tenant_id", None) or self._auth_record.tenant_id
         validate_tenant_id(self._tenant_id)
-        if self._tenant_id == "adfs":
-            self._allow_multitenant = False
-        else:
-            disable_multitenant = os.environ.get(EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH, False)
-            self._allow_multitenant = not disable_multitenant
         self._cache = kwargs.pop("_cache", None)
         self._client_applications = {}  # type: Dict[str, PublicClientApplication]
         self._client = MsalClient(**kwargs)
@@ -79,7 +74,7 @@ class SilentAuthenticationCredential(object):
         self._initialized = True
 
     def _get_client_application(self, **kwargs):
-        tenant_id = resolve_tenant(self._tenant_id, self._allow_multitenant, **kwargs)
+        tenant_id = resolve_tenant(self._tenant_id, **kwargs)
         if tenant_id not in self._client_applications:
             # CP1 = can handle claims challenges (CAE)
             capabilities = None if "AZURE_IDENTITY_DISABLE_CP1" in os.environ else ["CP1"]

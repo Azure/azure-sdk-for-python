@@ -61,7 +61,7 @@ class AadClientBase(ABC):
 
     def get_cached_access_token(self, scopes, **kwargs):
         # type: (Iterable[str], **Any) -> Optional[AccessToken]
-        tenant = resolve_tenant(self._tenant_id, self._allow_multitenant, **kwargs)
+        tenant = resolve_tenant(self._tenant_id, **kwargs)
         tokens = self._cache.find(
             TokenCache.CredentialType.ACCESS_TOKEN,
             target=list(scopes),
@@ -260,7 +260,7 @@ class AadClientBase(ABC):
 
     def _get_token_url(self, **kwargs):
         # type: (**Any) -> str
-        tenant = resolve_tenant(self._tenant_id, self._allow_multitenant, **kwargs)
+        tenant = resolve_tenant(self._tenant_id, **kwargs)
         return "/".join((self._authority, tenant, "oauth2/v2.0/token"))
 
     def _post(self, data, **kwargs):

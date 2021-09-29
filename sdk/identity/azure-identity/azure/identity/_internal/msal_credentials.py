@@ -33,12 +33,6 @@ class MsalCredential(object):
         )
         self._tenant_id = kwargs.pop("tenant_id", None) or "organizations"
         validate_tenant_id(self._tenant_id)
-        if self._tenant_id == "adfs":
-            self._allow_multitenant = False
-        else:
-            disable_multitenant = os.environ.get(EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH, False)
-            self._allow_multitenant = not disable_multitenant
-
         self._client = MsalClient(**kwargs)
         self._client_applications = {}  # type: Dict[str, msal.ClientApplication]
         self._client_credential = client_credential
@@ -67,7 +61,7 @@ class MsalCredential(object):
 
     def _get_app(self, **kwargs):
         # type: (**Any) -> msal.ClientApplication
-        tenant_id = resolve_tenant(self._tenant_id, self._allow_multitenant, **kwargs)
+        tenant_id = resolve_tenant(self._tenant_id, **kwargs)
         if tenant_id not in self._client_applications:
             # CP1 = can handle claims challenges (CAE)
             capabilities = None if "AZURE_IDENTITY_DISABLE_CP1" in os.environ else ["CP1"]

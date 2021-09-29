@@ -35,8 +35,7 @@ class AzureCliCredential(AsyncContextManager):
     """
 
     def __init__(self, **kwargs: "Any") -> None:    # pylint: disable=unused-argument
-        disable_multitenant = os.environ.get(EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH, False)
-        self._allow_multitenant = not disable_multitenant
+        pass
 
     @log_get_token_async
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
@@ -60,7 +59,7 @@ class AzureCliCredential(AsyncContextManager):
 
         resource = _scopes_to_resource(*scopes)
         command = COMMAND_LINE.format(resource)
-        tenant = resolve_tenant("", self._allow_multitenant, **kwargs)
+        tenant = resolve_tenant("", **kwargs)
         if tenant:
             command += " --tenant " + tenant
         output = await _run_command(command)

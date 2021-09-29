@@ -66,8 +66,8 @@ def validate_tenant_id(tenant_id):
         )
 
 
-def resolve_tenant(default_tenant, allow_multitenant=True, tenant_id=None, **_):
-    # type: (str, Optional[bool], Optional[str], **Any) -> str
+def resolve_tenant(default_tenant, tenant_id=None, **_):
+    # type: (str, Optional[str], **Any) -> str
     """Returns the correct tenant for a token request given a credential's configuration"""
     if (
         tenant_id is None
@@ -76,7 +76,9 @@ def resolve_tenant(default_tenant, allow_multitenant=True, tenant_id=None, **_):
         return default_tenant
 
     disable_multitenant = os.environ.get(EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH, False)
-    if disable_multitenant or not allow_multitenant:
+    if default_tenant == "adfs":
+        disable_multitenant = True
+    if disable_multitenant:
         raise ClientAuthenticationError(
             'The specified tenant for this token request, "{}", does not match'.format(tenant_id)
             + ' the configured tenant, and "multitenant_authentication" is disabled.'

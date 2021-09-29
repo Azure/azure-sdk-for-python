@@ -33,8 +33,7 @@ class AzurePowerShellCredential(AsyncContextManager):
     """
 
     def __init__(self, **kwargs: "Any") -> None:    # pylint: disable=unused-argument
-        disable_multitenant = os.environ.get(EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH, False)
-        self._allow_multitenant = not disable_multitenant
+        pass
 
     @log_get_token_async
     async def get_token(
@@ -59,7 +58,7 @@ class AzurePowerShellCredential(AsyncContextManager):
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
             return _SyncCredential().get_token(*scopes, **kwargs)
 
-        tenant_id = resolve_tenant("", self._allow_multitenant, **kwargs)
+        tenant_id = resolve_tenant("", **kwargs)
         command_line = get_command_line(scopes, tenant_id)
         output = await run_command_line(command_line)
         token = parse_token(output)
