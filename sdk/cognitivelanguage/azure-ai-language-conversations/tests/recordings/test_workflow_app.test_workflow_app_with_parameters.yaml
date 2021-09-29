@@ -1,9 +1,9 @@
 interactions:
 - request:
-    body: '{"query": "How do you make sushi rice?", "directTarget": "SushiMaking",
-      "parameters": {"SushiMaking": {"targetType": "question_answering", "projectParameters":
-      {"question": "How do you make sushi rice?", "top": 1, "confidenceScoreThreshold":
-      0.1}}}}'
+    body: '{"query": "(''How do you make sushi rice?'',)", "parameters": {"SushiMaking":
+      {"targetKind": "question_answering", "callingOptions": {"question": "(''How
+      do you make sushi rice?'',)", "top": 1, "confidenceScoreThreshold": 0.1}}, "SushiOrder":
+      {"targetKind": "luis_deepstack", "callingOptions": {"verbose": true}}}}'
     headers:
       Accept:
       - application/json
@@ -12,16 +12,16 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '249'
+      - '310'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-conversations/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-language-conversations/1.0.0b1 Python/3.9.7 (Windows-10-10.0.19043-SP0)
     method: POST
     uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?projectName=test-workflow&deploymentName=production&api-version=2021-07-15-preview
   response:
     body:
-      string: "{\n  \"query\": \"How do you make sushi rice?\",\n  \"prediction\":
+      string: "{\n  \"query\": \"('How do you make sushi rice?',)\",\n  \"prediction\":
         {\n    \"intents\": {\n      \"SushiMaking\": {\n        \"targetType\": \"question_answering\",\n
         \       \"result\": {\n          \"answers\": [\n            {\n              \"questions\":
         [\n                \"do you eat cake?\",\n                \"do you ever eat
@@ -101,18 +101,20 @@ interactions:
         you ever eat ice cream?\",\n                \"have you ever eaten ice cream?\",\n
         \               \"do you ever eat tofu?\",\n                \"do you ever
         eat steak?\"\n              ],\n              \"answer\": \"I only do food
-        for thought.\",\n              \"score\": 10.86,\n              \"id\": 12,\n
+        for thought.\",\n              \"score\": 10.71,\n              \"id\": 12,\n
         \             \"source\": \"qna_chitchat_Friendly.tsv\",\n              \"isDocumentText\":
         false,\n              \"metadata\": [\n                {\n                  \"name\":
         \"editorial\",\n                  \"value\": \"chitchat\"\n                }\n
         \             ],\n              \"context\": {\n                \"isContextOnly\":
         false,\n                \"prompts\": []\n              }\n            }\n
         \         ],\n          \"activeLearningEnabled\": true\n        },\n        \"confidenceScore\":
-        1\n      }\n    },\n    \"topIntent\": \"SushiMaking\",\n    \"projectType\":
-        \"workflow\"\n  }\n}"
+        0.58619076\n      },\n      \"SushiOrder\": {\n        \"targetType\": \"luis_deepstack\",\n
+        \       \"confidenceScore\": 0.4138092\n      },\n      \"None\": {\n        \"targetType\":
+        \"non_linked\",\n        \"confidenceScore\": 0\n      }\n    },\n    \"topIntent\":
+        \"SushiMaking\",\n    \"projectType\": \"workflow\"\n  }\n}"
     headers:
       apim-request-id:
-      - e44899f0-6379-4587-bf87-54acaf0a031c
+      - dddb7ab4-88fa-433a-9da1-044b01e47960
       cache-control:
       - no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type:
@@ -120,11 +122,11 @@ interactions:
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.OrchestrationLUISTransaction=0
       date:
-      - Fri, 10 Sep 2021 14:28:35 GMT
+      - Wed, 29 Sep 2021 15:00:18 GMT
       pragma:
       - no-cache
       request-id:
-      - e44899f0-6379-4587-bf87-54acaf0a031c
+      - dddb7ab4-88fa-433a-9da1-044b01e47960
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -132,7 +134,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '589'
+      - '191'
     status:
       code: 200
       message: OK

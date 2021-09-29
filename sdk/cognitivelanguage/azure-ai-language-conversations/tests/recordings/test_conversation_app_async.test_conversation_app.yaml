@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-conversations/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-language-conversations/1.0.0b1 Python/3.9.7 (Windows-10-10.0.19043-SP0)
     method: POST
     uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?projectName=test-project&deploymentName=production&api-version=2021-07-15-preview
   response:
@@ -18,21 +18,21 @@ interactions:
         {\n    \"intents\": [\n      {\n        \"category\": \"Order\",\n        \"confidenceScore\":
         1\n      }\n    ],\n    \"entities\": [\n      {\n        \"category\": \"OrderItem\",\n
         \       \"text\": \"california maki\",\n        \"offset\": 4,\n        \"length\":
-        15,\n        \"confidenceScore\": 0.49083808\n      }\n    ],\n    \"topIntent\":
-        \"Order\",\n    \"projectType\": \"conversation\"\n  }\n}"
+        15,\n        \"confidenceScore\": 1\n      }\n    ],\n    \"topIntent\": \"Order\",\n
+        \   \"projectType\": \"conversation\"\n  }\n}"
     headers:
-      apim-request-id: a63a3cf8-4d6c-4304-b102-cbe6709a51ca
+      apim-request-id: aae5ce10-8eea-4f79-b0e9-960d80a5d548
       cache-control: no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type: application/json; charset=utf-8
-      date: Fri, 10 Sep 2021 14:28:29 GMT
+      date: Wed, 29 Sep 2021 15:00:13 GMT
       pragma: no-cache
-      request-id: a63a3cf8-4d6c-4304-b102-cbe6709a51ca
+      request-id: aae5ce10-8eea-4f79-b0e9-960d80a5d548
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '239'
+      x-envoy-upstream-service-time: '33'
     status:
       code: 200
       message: OK
-    url: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?projectName=test-project&deploymentName=production&api-version=2021-07-15-preview
+    url: https://antischsdktest.cognitiveservices.azure.com/language/:analyze-conversations?projectName=antischOne&deploymentName=production&api-version=2021-07-15-preview
 version: 1

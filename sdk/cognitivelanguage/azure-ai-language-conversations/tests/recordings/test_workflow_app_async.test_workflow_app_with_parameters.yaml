@@ -1,24 +1,23 @@
 interactions:
 - request:
-    body: '{"query": "How do you make sushi rice?"}'
+    body: '{"query": "(''How do you make sushi rice?'',)", "parameters": {"SushiMaking":
+      {"targetKind": "question_answering", "callingOptions": {"question": "(''How
+      do you make sushi rice?'',)", "top": 1, "confidenceScoreThreshold": 0.1}}, "SushiOrder":
+      {"targetKind": "luis_deepstack", "callingOptions": {"verbose": true}}}}'
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
-      - '40'
+      - '310'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-conversations/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-language-conversations/1.0.0b1 Python/3.9.7 (Windows-10-10.0.19043-SP0)
     method: POST
     uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?projectName=test-workflow&deploymentName=production&api-version=2021-07-15-preview
   response:
     body:
-      string: "{\n  \"query\": \"How do you make sushi rice?\",\n  \"prediction\":
+      string: "{\n  \"query\": \"('How do you make sushi rice?',)\",\n  \"prediction\":
         {\n    \"intents\": {\n      \"SushiMaking\": {\n        \"targetType\": \"question_answering\",\n
         \       \"result\": {\n          \"answers\": [\n            {\n              \"questions\":
         [\n                \"do you eat cake?\",\n                \"do you ever eat
@@ -98,117 +97,31 @@ interactions:
         you ever eat ice cream?\",\n                \"have you ever eaten ice cream?\",\n
         \               \"do you ever eat tofu?\",\n                \"do you ever
         eat steak?\"\n              ],\n              \"answer\": \"I only do food
-        for thought.\",\n              \"score\": 10.86,\n              \"id\": 12,\n
+        for thought.\",\n              \"score\": 10.71,\n              \"id\": 12,\n
         \             \"source\": \"qna_chitchat_Friendly.tsv\",\n              \"isDocumentText\":
         false,\n              \"metadata\": [\n                {\n                  \"name\":
         \"editorial\",\n                  \"value\": \"chitchat\"\n                }\n
         \             ],\n              \"context\": {\n                \"isContextOnly\":
         false,\n                \"prompts\": []\n              }\n            }\n
         \         ],\n          \"activeLearningEnabled\": true\n        },\n        \"confidenceScore\":
-        0.564024\n      },\n      \"SushiOrder\": {\n        \"targetType\": \"luis_deepstack\",\n
-        \       \"confidenceScore\": 0.435976\n      },\n      \"None\": {\n        \"targetType\":
+        0.58619076\n      },\n      \"SushiOrder\": {\n        \"targetType\": \"luis_deepstack\",\n
+        \       \"confidenceScore\": 0.4138092\n      },\n      \"None\": {\n        \"targetType\":
         \"non_linked\",\n        \"confidenceScore\": 0\n      }\n    },\n    \"topIntent\":
         \"SushiMaking\",\n    \"projectType\": \"workflow\"\n  }\n}"
     headers:
-      apim-request-id:
-      - cddc8781-b78d-4ed0-889f-0a9a8c6c604b
-      cache-control:
-      - no-store, proxy-revalidate, no-cache, max-age=0, private
-      content-type:
-      - application/json; charset=utf-8
-      csp-billing-usage:
-      - CognitiveServices.TextAnalytics.OrchestrationLUISTransaction=0
-      date:
-      - Fri, 10 Sep 2021 14:28:32 GMT
-      pragma:
-      - no-cache
-      request-id:
-      - cddc8781-b78d-4ed0-889f-0a9a8c6c604b
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '1539'
+      apim-request-id: a9ba15b7-a69a-40f7-aef7-3a193956a83f
+      cache-control: no-store, proxy-revalidate, no-cache, max-age=0, private
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.OrchestrationLUISTransaction=0
+      date: Wed, 29 Sep 2021 15:00:24 GMT
+      pragma: no-cache
+      request-id: a9ba15b7-a69a-40f7-aef7-3a193956a83f
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '208'
     status:
       code: 200
       message: OK
-- request:
-    body: '{"query": "I will have sashimi"}'
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '32'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - azsdk-python-ai-language-conversations/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?projectName=test-workflow&deploymentName=production&api-version=2021-07-15-preview
-  response:
-    body:
-      string: "{\n  \"query\": \"I will have sashimi\",\n  \"prediction\": {\n    \"intents\":
-        {\n      \"SushiMaking\": {\n        \"targetType\": \"question_answering\",\n
-        \       \"result\": {\n          \"answers\": [\n            {\n              \"questions\":
-        [\n                \"I could really use a hug\",\n                \"Can I
-        get a little hug?\",\n                \"A hug would be nice\",\n                \"Can
-        we hug it out?\",\n                \"Let's hug\",\n                \"Can I
-        please get a hug?\",\n                \"I want a hug\",\n                \"I
-        could use a hug\",\n                \"Can you hug me?\",\n                \"Will
-        you give me a hug?\",\n                \"Can I have a big hug?\",\n                \"Can
-        I have a little hug?\",\n                \"Can you give me a big hug?\",\n
-        \               \"Can you give me a hug?\",\n                \"Can you give
-        me a little hug?\",\n                \"I need a big hug\",\n                \"I
-        need a hug\",\n                \"Will you give me a big hug?\",\n                \"Will
-        you hug me?\",\n                \"Would you give me a big hug?\",\n                \"Would
-        you give me a hug?\",\n                \"Can I get a big hug?\",\n                \"Can
-        I please have a hug?\",\n                \"Can I get a hug?\",\n                \"I
-        really need a hug\",\n                \"Can we hug?\",\n                \"Would
-        you give me a little hug?\",\n                \"Let's hug it out\",\n                \"I'd
-        love a hug\",\n                \"I'd like a hug\",\n                \"Do you
-        want to give me a hug?\"\n              ],\n              \"answer\": \"Giving
-        you a virtual hug right now.\",\n              \"score\": 2.28,\n              \"id\":
-        67,\n              \"source\": \"qna_chitchat_Friendly.tsv\",\n              \"isDocumentText\":
-        false,\n              \"metadata\": [\n                {\n                  \"name\":
-        \"editorial\",\n                  \"value\": \"chitchat\"\n                }\n
-        \             ],\n              \"context\": {\n                \"isContextOnly\":
-        false,\n                \"prompts\": []\n              }\n            }\n
-        \         ],\n          \"activeLearningEnabled\": true\n        },\n        \"confidenceScore\":
-        0.5102507\n      },\n      \"SushiOrder\": {\n        \"targetType\": \"luis_deepstack\",\n
-        \       \"confidenceScore\": 0.4897493\n      },\n      \"None\": {\n        \"targetType\":
-        \"non_linked\",\n        \"confidenceScore\": 0\n      }\n    },\n    \"topIntent\":
-        \"SushiMaking\",\n    \"projectType\": \"workflow\"\n  }\n}"
-    headers:
-      apim-request-id:
-      - 9e327f62-386d-4118-aeb2-555cfda204a8
-      cache-control:
-      - no-store, proxy-revalidate, no-cache, max-age=0, private
-      content-type:
-      - application/json; charset=utf-8
-      csp-billing-usage:
-      - CognitiveServices.TextAnalytics.OrchestrationLUISTransaction=0
-      date:
-      - Fri, 10 Sep 2021 14:28:32 GMT
-      pragma:
-      - no-cache
-      request-id:
-      - 9e327f62-386d-4118-aeb2-555cfda204a8
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '771'
-    status:
-      code: 200
-      message: OK
+    url: https://antischsdktest.cognitiveservices.azure.com/language/:analyze-conversations?projectName=antischTwo&deploymentName=production&api-version=2021-07-15-preview
 version: 1
