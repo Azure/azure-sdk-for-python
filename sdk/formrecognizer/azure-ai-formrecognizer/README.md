@@ -1,12 +1,12 @@
 # Azure Form Recognizer client library for Python
 
-Azure Cognitive Services Form Recognizer is a cloud service that uses machine learning to recognize text and structured data from your documents.
+Azure Cognitive Services Form Recognizer is a cloud service that uses machine learning to analyze text and structured data from your documents.
 It includes the following main features:
 
 * Layout - Extract text, table structures, and selection marks, along with their bounding region coordinates, from documents.
 * Document - Analyze entities, key-value pairs, tables, and selection marks from documents using the general prebuilt document model. 
 * Prebuilt - Analyze data from certain types of common documents (such as receipts, invoices, business cards, or identity documents) using pre-trained models.
-* Custom - Build custom models to extract text, field values, selection marks, and table data from documents. Custom models are trained with your own data, so they're tailored to your documents.
+* Custom - Build custom models to extract text, field values, selection marks, and table data from documents. Custom models are built with your own data, so they're tailored to your documents.
 
 [Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][python-fr-ref-docs] | [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
 
@@ -143,9 +143,9 @@ document_analysis_client = DocumentAnalysisClient(
 
 ### DocumentAnalysisClient
 `DocumentAnalysisClient` provides operations for analyzing input documents using custom and prebuilt models through the `begin_analyze_document` and `begin_analyze_document_from_url` APIs.
-Use the `model_id` parameter to select the type of model for analysis.
+Use the `model` parameter to select the type of model for analysis.
 
-|Model ID| Features
+|Model | Features
 |-|-
 
 |"prebuilt-layout" | Text extraction, selection marks, tables
@@ -156,19 +156,20 @@ Use the `model_id` parameter to select the type of model for analysis.
 |"prebuilt-receipt" | Text extraction and pre-trained fields and values pertaining to English sales receipts
 |"{custom-model-id}" | Text extraction, selection marks, tables, labeled fields and values from your custom documents
 
-Sample code snippets are provided to illustrate using a DocumentAnalysisClient [here](#analyze-documents-using-a-custom-model "Analyze Documents Using a Custom Model").
+Sample code snippets are provided to illustrate using a DocumentAnalysisClient [here](#examples "Examples").
 
 ### DocumentModelAdministrationClient
 `DocumentModelAdministrationClient` provides operations for:
 
-- Building custom models to recognize specific fields you specify by labeling your custom documents. A `DocumentModel` is returned indicating the document type the model will extract, as well as the estimated confidence for each field. See the [service documentation][fr-train-with-labels] for a more detailed explanation.
+- Building custom models to extract specific fields you specify by labeling your custom documents. A `DocumentModel` is returned indicating the document type the model will extract, as well as the estimated confidence for each field. See the [service documentation][fr-train-with-labels] for a more detailed explanation.
 - Creating a composed model from a collection of existing models.
 - Managing models created in your account.
+- Listing document model operations or getting a specific model operation created within the last 24 hours.
 - Copying a custom model from one Form Recognizer resource to another.
 
 Please note that models can also be trained using a graphical user interface such as the [Form Recognizer Labeling Tool][fr-labeling-tool].
 
-Sample code snippets are provided to illustrate using a DocumentModelAdministrationClient [here](#build-a-model "Build a model").
+Sample code snippets are provided to illustrate using a DocumentModelAdministrationClient [here](#examples "Examples").
 
 ### Long-running operations
 Long-running operations are operations which consist of an initial request sent to the service to start an operation,
@@ -270,7 +271,7 @@ for table_idx, table in enumerate(result.tables):
 ### Using Prebuilt Models
 Extract fields from select document types such as receipts, invoices, business cards, and identity documents using prebuilt models provided by the Form Recognizer service.
 
-For example, to extract fields from a sales receipt, use the prebuilt receipt model provided by passing `model_id="prebuilt-receipt"` into the `begin_analyze_documents` method:
+For example, to extract fields from a sales receipt, use the prebuilt receipt model provided by passing `model="prebuilt-receipt"` into the `begin_analyze_documents` method:
 
 ```python
 from azure.ai.formrecognizer import DocumentAnalysisClient
@@ -301,10 +302,10 @@ for receipt in result.documents:
 ```
 
 You are not limited to receipts! There are a few prebuilt models to choose from, each of which has its own set of supported fields:
-- Analyze receipts using the `prebuilt-receipt` model ID (fields recognized by the service can be found [here][service_recognize_receipt])
-- Analyze business cards using the `prebuilt-businessCard` model ID (fields recognized by the service can be found [here][service_recognize_business_cards]).
-- Analyze invoices using the `prebuilt-invoice` model ID (fields recognized by the service can be found [here][service_recognize_invoice]).
-- Analyze identity documents using the `prebuilt-idDocuments` model ID (fields recognized by the service can be found [here][service_recognize_identity_documents]).
+- Analyze receipts using the `prebuilt-receipt` model (fields recognized by the service can be found [here][service_recognize_receipt])
+- Analyze business cards using the `prebuilt-businessCard` model (fields recognized by the service can be found [here][service_recognize_business_cards]).
+- Analyze invoices using the `prebuilt-invoice` model (fields recognized by the service can be found [here][service_recognize_invoice]).
+- Analyze identity documents using the `prebuilt-idDocuments` model (fields recognized by the service can be found [here][service_recognize_identity_documents]).
 
 ### Build a model
 Build a custom model on your own document type. The resulting model can be used to analyze values from the types of documents it was trained on.
@@ -356,7 +357,7 @@ model_id = "<your custom model id>"
 with open("<path to your document>", "rb") as fd:
     document = fd.read()
 
-poller = document_analysis_client.begin_analyze_document(model_id=model_id, document=document)
+poller = document_analysis_client.begin_analyze_document(model=model_id, document=document)
 result = poller.result()
 
 for analyzed_document in result.documents:
@@ -403,7 +404,7 @@ Alternatively, a document URL can also be used to analyze documents using the `b
 
 ```python
 document_url = "<url_of_the_document>"
-poller = document_analysis_client.begin_analyze_document_from_url(model_id=model_id, document_url=document_url)
+poller = document_analysis_client.begin_analyze_document_from_url(model=model_id, document_url=document_url)
 result = poller.result()
 ```
 
