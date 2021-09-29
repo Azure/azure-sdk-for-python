@@ -176,10 +176,11 @@ function ValidatePackage($packageName, $packageVersion, $workingDirectory) {
     if ($PackageSourceOverride) {
       Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder --extra-index-url=$PackageSourceOverride"
       $pipInstallOutput = pip `
-      install `
-      $packageExpression `
-      --no-cache-dir `
-      --target $installTargetFolder 2>&1 --extra-index-url=$PackageSourceOverride
+        install `
+        $packageExpression `
+        --no-cache-dir `
+        --target $installTargetFolder `
+        --extra-index-url=$PackageSourceOverride 2>&1
     }
     else {
       Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder"
