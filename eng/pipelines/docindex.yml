@@ -33,8 +33,6 @@ jobs:
             - Name: $(DocRepoOwner)/$(DocRepoName)
               WorkingDirectory: $(DocRepoLocation)
 
-      # Set $(DefaultBranch) for use in condition on "Update Docs Onboarding"
-      - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
       # Call update docs ci script to onboard packages
       - task: Powershell@2
         inputs:
