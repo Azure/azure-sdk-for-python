@@ -46,10 +46,10 @@ class DeleteImagesAsync(object):
 
                 # [START list_manifest_properties]
                 # Keep the three most recent images, delete everything else
-                tag_count = 0
+                manifest_count = 0
                 async for manifest in client.list_manifest_properties(repository, order_by=ManifestOrder.LAST_UPDATE_TIME_DESCENDING):
-                    tag_count += 1
-                    if tag_count > 3:
+                    manifest_count += 1
+                    if manifest_count > 3:
                         await client.delete_manifest(repository, manifest.digest)
                 # [END list_manifest_properties]
 
