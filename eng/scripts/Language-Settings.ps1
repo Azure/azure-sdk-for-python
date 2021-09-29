@@ -173,6 +173,7 @@ function ValidatePackage($packageName, $packageVersion, $workingDirectory) {
   # https://github.com/Azure/azure-sdk-for-python/issues/20109
   try {
     $pipInstallOutput = ""
+    $extraIndexUrl = " --extra-index-url=$PackageSourceOverride"
     if ($PackageSourceOverride) {
       Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder --extra-index-url=$PackageSourceOverride"
       $pipInstallOutput = pip `

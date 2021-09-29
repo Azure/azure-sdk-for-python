@@ -92,4 +92,4 @@ jobs:
             -Project "Content%20CI"
             -DefinitionId 3453
             -Base64EncodedAuthToken "$(azuresdk-apidrop-devops-queue-build-pat)"
-            -BuildParametersJson '{"params":"{ \"target_repo\": { \"url\": \"https://github.com/MicrosoftDocs/azure-docs-sdk-python\", \"branch\": \"$(DailyDocsBranchName)\", \"folder\": \"./\" }, \"source_repos\": [] }"}'
+            -BuildParametersJson (@{ params = (Get-Content ./eng/dailydocsconfig.json -Raw) -replace '%%DailyDocsBranchName%%', "$(DailyDocsBranchName)" } | ConvertTo-Json)
