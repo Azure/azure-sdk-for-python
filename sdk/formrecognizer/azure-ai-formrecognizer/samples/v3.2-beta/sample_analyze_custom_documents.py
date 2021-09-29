@@ -63,6 +63,10 @@ def analyze_custom_documents(custom_model_id):
         print("Document has type {}".format(document.doc_type))
         print("Document has document type confidence {}".format(document.confidence))
         print("Document was analyzed with model with ID {}".format(result.model_id))
+        for name, field in document.fields.items():
+            field_value = field.value if field.value else field.content
+            print("......found field of type '{}' with value '{}' and with confidence {}".format(field.value_type, field_value, field.confidence))
+
 
     # iterate over tables, lines, and selection marks on each page
     for page in result.pages:
