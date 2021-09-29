@@ -32,7 +32,7 @@ class QuestionAnsweringClientOperationsMixin:
     @overload
     async def query_knowledge_base(
         self,
-        options: "_models.KnowledgeBaseQueryOptions",
+        options: "_models.QueryKnowledgeBaseOptions",
         *,
         project_name: str,
         deployment_name: str,
@@ -42,7 +42,7 @@ class QuestionAnsweringClientOperationsMixin:
 
         :param options: Positional-only post body of the request.
         :type options:
-         ~azure.ai.language.questionanswering.models.KnowledgeBaseQueryOptions
+         ~azure.ai.language.questionanswering.models.QueryKnowledgeBaseOptions
         :keyword project_name: The name of the project to use.
         :paramtype project_name: str
         :keyword deployment_name: The name of the specific deployment of the project to use.
@@ -115,7 +115,7 @@ class QuestionAnsweringClientOperationsMixin:
         :param options: Post body of the request. Provide either `options`, OR
          individual keyword arguments. If both are provided, only the options object will be used.
         :type options:
-         ~azure.ai.language.questionanswering.models.KnowledgeBaseQueryOptions
+         ~azure.ai.language.questionanswering.models.QueryKnowledgeBaseOptions
         :keyword project_name: The name of the project to use.
         :paramtype project_name: str
         :keyword deployment_name: The name of the specific deployment of the project to use.
@@ -146,7 +146,7 @@ class QuestionAnsweringClientOperationsMixin:
         :rtype: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        options = _get_positional_body(*args, **kwargs) or _models.KnowledgeBaseQueryOptions(
+        options = _get_positional_body(*args, **kwargs) or _models.QueryKnowledgeBaseOptions(
             qna_id=kwargs.pop("qna_id", None),
             question=kwargs.pop("question", None),
             top=kwargs.pop("top", None),
@@ -165,7 +165,7 @@ class QuestionAnsweringClientOperationsMixin:
         project_name = kwargs.pop("project_name")  # type: str
         deployment_name = kwargs.pop("deployment_name")  # type: str
 
-        json = self._serialize.body(options, "KnowledgeBaseQueryOptions")
+        json = self._serialize.body(options, "QueryKnowledgeBaseOptions")
 
         request = build_query_knowledge_base_request(
             content_type=content_type,

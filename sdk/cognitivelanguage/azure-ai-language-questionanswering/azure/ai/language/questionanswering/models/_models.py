@@ -417,92 +417,6 @@ class KnowledgeBaseAnswers(msrest.serialization.Model):
         self.answers = kwargs.get("answers", None)
 
 
-class KnowledgeBaseQueryOptions(msrest.serialization.Model):
-    """The question parameters to answer using a knowledge base.
-
-    :ivar qna_id: Exact QnA ID to fetch from the knowledge base, this field takes priority over
-     question.
-    :vartype qna_id: int
-    :ivar question: User question to query against the knowledge base.
-    :vartype question: str
-    :ivar top: Max number of answers to be returned for the question.
-    :vartype top: int
-    :ivar user_id: Unique identifier for the user.
-    :vartype user_id: str
-    :ivar confidence_score_threshold: Minimum threshold score for answers, value ranges from 0 to
-     1.
-    :vartype confidence_score_threshold: float
-    :ivar context: Context object with previous QnA's information.
-    :vartype context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerRequestContext
-    :ivar ranker_type: (Optional) Set to 'QuestionOnly' for using a question only Ranker. Possible
-     values include: "Default", "QuestionOnly".
-    :vartype ranker_type: str or ~azure.ai.language.questionanswering.models.RankerType
-    :ivar filters: Filter QnAs based on give metadata list and knowledge base source names.
-    :vartype filters: ~azure.ai.language.questionanswering.models.QueryFilters
-    :ivar answer_span_request: To configure Answer span prediction feature.
-    :vartype answer_span_request: ~azure.ai.language.questionanswering.models.AnswerSpanRequest
-    :ivar include_unstructured_sources: (Optional) Flag to enable Query over Unstructured Sources.
-    :vartype include_unstructured_sources: bool
-    """
-
-    _validation = {
-        "confidence_score_threshold": {"maximum": 1, "minimum": 0},
-    }
-
-    _attribute_map = {
-        "qna_id": {"key": "qnaId", "type": "int"},
-        "question": {"key": "question", "type": "str"},
-        "top": {"key": "top", "type": "int"},
-        "user_id": {"key": "userId", "type": "str"},
-        "confidence_score_threshold": {"key": "confidenceScoreThreshold", "type": "float"},
-        "context": {"key": "context", "type": "KnowledgeBaseAnswerRequestContext"},
-        "ranker_type": {"key": "rankerType", "type": "str"},
-        "filters": {"key": "filters", "type": "QueryFilters"},
-        "answer_span_request": {"key": "answerSpanRequest", "type": "AnswerSpanRequest"},
-        "include_unstructured_sources": {"key": "includeUnstructuredSources", "type": "bool"},
-    }
-
-    def __init__(self, **kwargs):
-        """
-        :keyword qna_id: Exact QnA ID to fetch from the knowledge base, this field takes priority over
-         question.
-        :paramtype qna_id: int
-        :keyword question: User question to query against the knowledge base.
-        :paramtype question: str
-        :keyword top: Max number of answers to be returned for the question.
-        :paramtype top: int
-        :keyword user_id: Unique identifier for the user.
-        :paramtype user_id: str
-        :keyword confidence_score_threshold: Minimum threshold score for answers, value ranges from 0
-         to 1.
-        :paramtype confidence_score_threshold: float
-        :keyword context: Context object with previous QnA's information.
-        :paramtype context:
-         ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerRequestContext
-        :keyword ranker_type: (Optional) Set to 'QuestionOnly' for using a question only Ranker.
-         Possible values include: "Default", "QuestionOnly".
-        :paramtype ranker_type: str or ~azure.ai.language.questionanswering.models.RankerType
-        :keyword filters: Filter QnAs based on give metadata list and knowledge base source names.
-        :paramtype filters: ~azure.ai.language.questionanswering.models.QueryFilters
-        :keyword answer_span_request: To configure Answer span prediction feature.
-        :paramtype answer_span_request: ~azure.ai.language.questionanswering.models.AnswerSpanRequest
-        :keyword include_unstructured_sources: (Optional) Flag to enable Query over Unstructured
-         Sources.
-        :paramtype include_unstructured_sources: bool
-        """
-        super(KnowledgeBaseQueryOptions, self).__init__(**kwargs)
-        self.qna_id = kwargs.get("qna_id", None)
-        self.question = kwargs.get("question", None)
-        self.top = kwargs.get("top", None)
-        self.user_id = kwargs.get("user_id", None)
-        self.confidence_score_threshold = kwargs.get("confidence_score_threshold", None)
-        self.context = kwargs.get("context", None)
-        self.ranker_type = kwargs.get("ranker_type", None)
-        self.filters = kwargs.get("filters", None)
-        self.answer_span_request = kwargs.get("answer_span_request", None)
-        self.include_unstructured_sources = kwargs.get("include_unstructured_sources", None)
-
-
 class MetadataFilter(msrest.serialization.Model):
     """Find QnAs that are associated with the given list of metadata.
 
@@ -604,6 +518,148 @@ class QueryFilters(msrest.serialization.Model):
         self.logical_operation = kwargs.get("logical_operation", None)
 
 
+class QueryKnowledgeBaseOptions(msrest.serialization.Model):
+    """The question parameters to answer using a knowledge base.
+
+    :ivar qna_id: Exact QnA ID to fetch from the knowledge base, this field takes priority over
+     question.
+    :vartype qna_id: int
+    :ivar question: User question to query against the knowledge base.
+    :vartype question: str
+    :ivar top: Max number of answers to be returned for the question.
+    :vartype top: int
+    :ivar user_id: Unique identifier for the user.
+    :vartype user_id: str
+    :ivar confidence_score_threshold: Minimum threshold score for answers, value ranges from 0 to
+     1.
+    :vartype confidence_score_threshold: float
+    :ivar context: Context object with previous QnA's information.
+    :vartype context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerRequestContext
+    :ivar ranker_type: (Optional) Set to 'QuestionOnly' for using a question only Ranker. Possible
+     values include: "Default", "QuestionOnly".
+    :vartype ranker_type: str or ~azure.ai.language.questionanswering.models.RankerType
+    :ivar filters: Filter QnAs based on give metadata list and knowledge base source names.
+    :vartype filters: ~azure.ai.language.questionanswering.models.QueryFilters
+    :ivar answer_span_request: To configure Answer span prediction feature.
+    :vartype answer_span_request: ~azure.ai.language.questionanswering.models.AnswerSpanRequest
+    :ivar include_unstructured_sources: (Optional) Flag to enable Query over Unstructured Sources.
+    :vartype include_unstructured_sources: bool
+    """
+
+    _validation = {
+        "confidence_score_threshold": {"maximum": 1, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "qna_id": {"key": "qnaId", "type": "int"},
+        "question": {"key": "question", "type": "str"},
+        "top": {"key": "top", "type": "int"},
+        "user_id": {"key": "userId", "type": "str"},
+        "confidence_score_threshold": {"key": "confidenceScoreThreshold", "type": "float"},
+        "context": {"key": "context", "type": "KnowledgeBaseAnswerRequestContext"},
+        "ranker_type": {"key": "rankerType", "type": "str"},
+        "filters": {"key": "filters", "type": "QueryFilters"},
+        "answer_span_request": {"key": "answerSpanRequest", "type": "AnswerSpanRequest"},
+        "include_unstructured_sources": {"key": "includeUnstructuredSources", "type": "bool"},
+    }
+
+    def __init__(self, **kwargs):
+        """
+        :keyword qna_id: Exact QnA ID to fetch from the knowledge base, this field takes priority over
+         question.
+        :paramtype qna_id: int
+        :keyword question: User question to query against the knowledge base.
+        :paramtype question: str
+        :keyword top: Max number of answers to be returned for the question.
+        :paramtype top: int
+        :keyword user_id: Unique identifier for the user.
+        :paramtype user_id: str
+        :keyword confidence_score_threshold: Minimum threshold score for answers, value ranges from 0
+         to 1.
+        :paramtype confidence_score_threshold: float
+        :keyword context: Context object with previous QnA's information.
+        :paramtype context:
+         ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerRequestContext
+        :keyword ranker_type: (Optional) Set to 'QuestionOnly' for using a question only Ranker.
+         Possible values include: "Default", "QuestionOnly".
+        :paramtype ranker_type: str or ~azure.ai.language.questionanswering.models.RankerType
+        :keyword filters: Filter QnAs based on give metadata list and knowledge base source names.
+        :paramtype filters: ~azure.ai.language.questionanswering.models.QueryFilters
+        :keyword answer_span_request: To configure Answer span prediction feature.
+        :paramtype answer_span_request: ~azure.ai.language.questionanswering.models.AnswerSpanRequest
+        :keyword include_unstructured_sources: (Optional) Flag to enable Query over Unstructured
+         Sources.
+        :paramtype include_unstructured_sources: bool
+        """
+        super(QueryKnowledgeBaseOptions, self).__init__(**kwargs)
+        self.qna_id = kwargs.get("qna_id", None)
+        self.question = kwargs.get("question", None)
+        self.top = kwargs.get("top", None)
+        self.user_id = kwargs.get("user_id", None)
+        self.confidence_score_threshold = kwargs.get("confidence_score_threshold", None)
+        self.context = kwargs.get("context", None)
+        self.ranker_type = kwargs.get("ranker_type", None)
+        self.filters = kwargs.get("filters", None)
+        self.answer_span_request = kwargs.get("answer_span_request", None)
+        self.include_unstructured_sources = kwargs.get("include_unstructured_sources", None)
+
+
+class QueryTextOptions(msrest.serialization.Model):
+    """The question and text record parameters to answer.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar question: Required. User question to query against the given text records.
+    :vartype question: str
+    :ivar records: Required. Text records to be searched for given question.
+    :vartype records: list[~azure.ai.language.questionanswering.models.TextRecord]
+    :ivar language: Language of the text records. This is BCP-47 representation of a language. For
+     example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
+     default.
+    :vartype language: str
+    :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
+     Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
+     https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
+     "UnicodeCodePoint", "Utf16CodeUnit". Default value: "TextElements_v8".
+    :vartype string_index_type: str or ~azure.ai.language.questionanswering.models.StringIndexType
+    """
+
+    _validation = {
+        "question": {"required": True},
+        "records": {"required": True},
+    }
+
+    _attribute_map = {
+        "question": {"key": "question", "type": "str"},
+        "records": {"key": "records", "type": "[TextRecord]"},
+        "language": {"key": "language", "type": "str"},
+        "string_index_type": {"key": "stringIndexType", "type": "str"},
+    }
+
+    def __init__(self, **kwargs):
+        """
+        :keyword question: Required. User question to query against the given text records.
+        :paramtype question: str
+        :keyword records: Required. Text records to be searched for given question.
+        :paramtype records: list[~azure.ai.language.questionanswering.models.TextRecord]
+        :keyword language: Language of the text records. This is BCP-47 representation of a language.
+         For example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
+         default.
+        :paramtype language: str
+        :keyword string_index_type: Specifies the method used to interpret string offsets.  Defaults to
+         Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
+         https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
+         "UnicodeCodePoint", "Utf16CodeUnit". Default value: "TextElements_v8".
+        :paramtype string_index_type: str or
+         ~azure.ai.language.questionanswering.models.StringIndexType
+        """
+        super(QueryTextOptions, self).__init__(**kwargs)
+        self.question = kwargs["question"]
+        self.records = kwargs["records"]
+        self.language = kwargs.get("language", None)
+        self.string_index_type = kwargs.get("string_index_type", "TextElements_v8")
+
+
 class TextAnswer(msrest.serialization.Model):
     """Represents answer result.
 
@@ -676,62 +732,6 @@ class TextAnswers(msrest.serialization.Model):
         """
         super(TextAnswers, self).__init__(**kwargs)
         self.answers = kwargs.get("answers", None)
-
-
-class TextQueryOptions(msrest.serialization.Model):
-    """The question and text record parameters to answer.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar question: Required. User question to query against the given text records.
-    :vartype question: str
-    :ivar records: Required. Text records to be searched for given question.
-    :vartype records: list[~azure.ai.language.questionanswering.models.TextRecord]
-    :ivar language: Language of the text records. This is BCP-47 representation of a language. For
-     example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
-     default.
-    :vartype language: str
-    :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
-     Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
-     https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
-     "UnicodeCodePoint", "Utf16CodeUnit". Default value: "TextElements_v8".
-    :vartype string_index_type: str or ~azure.ai.language.questionanswering.models.StringIndexType
-    """
-
-    _validation = {
-        "question": {"required": True},
-        "records": {"required": True},
-    }
-
-    _attribute_map = {
-        "question": {"key": "question", "type": "str"},
-        "records": {"key": "records", "type": "[TextRecord]"},
-        "language": {"key": "language", "type": "str"},
-        "string_index_type": {"key": "stringIndexType", "type": "str"},
-    }
-
-    def __init__(self, **kwargs):
-        """
-        :keyword question: Required. User question to query against the given text records.
-        :paramtype question: str
-        :keyword records: Required. Text records to be searched for given question.
-        :paramtype records: list[~azure.ai.language.questionanswering.models.TextRecord]
-        :keyword language: Language of the text records. This is BCP-47 representation of a language.
-         For example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
-         default.
-        :paramtype language: str
-        :keyword string_index_type: Specifies the method used to interpret string offsets.  Defaults to
-         Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
-         https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
-         "UnicodeCodePoint", "Utf16CodeUnit". Default value: "TextElements_v8".
-        :paramtype string_index_type: str or
-         ~azure.ai.language.questionanswering.models.StringIndexType
-        """
-        super(TextQueryOptions, self).__init__(**kwargs)
-        self.question = kwargs["question"]
-        self.records = kwargs["records"]
-        self.language = kwargs.get("language", None)
-        self.string_index_type = kwargs.get("string_index_type", "TextElements_v8")
 
 
 class TextRecord(msrest.serialization.Model):

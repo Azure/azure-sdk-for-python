@@ -16,7 +16,7 @@ from testcase import (
 from asynctestcase import AsyncQuestionAnsweringTest
 
 from azure.ai.language.questionanswering.models import (
-    KnowledgeBaseQueryOptions,
+    QueryKnowledgeBaseOptions,
     KnowledgeBaseAnswerRequestContext,
     AnswerSpanRequest,
 )
@@ -127,7 +127,7 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
     @GlobalQuestionAnsweringAccountPreparer()
     async def test_query_knowledgebase(self, qna_account, qna_key, qna_project):
         client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
-        query_params = KnowledgeBaseQueryOptions(
+        query_params = QueryKnowledgeBaseOptions(
             question="Ports and connectors",
             top=3,
             context=KnowledgeBaseAnswerRequestContext(
@@ -168,7 +168,7 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
     @GlobalQuestionAnsweringAccountPreparer()
     async def test_query_knowledgebase_with_answerspan(self, qna_account, qna_key, qna_project):
         client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
-        query_params = KnowledgeBaseQueryOptions(
+        query_params = QueryKnowledgeBaseOptions(
             question="Ports and connectors",
             top=3,
             context=KnowledgeBaseAnswerRequestContext(
@@ -272,7 +272,7 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
     async def test_query_knowledgebase_with_followup(self, qna_account, qna_key, qna_project):
         client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
         async with client:
-            query_params = KnowledgeBaseQueryOptions(
+            query_params = QueryKnowledgeBaseOptions(
                 question="How long should my Surface battery last?",
                 top=3,
                 user_id="sd53lsY=",
@@ -294,7 +294,7 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
             assert len(confident_answers) == 1
             assert confident_answers[0].source == "surface-pro-4-user-guide-EN.pdf"
 
-            query_params = KnowledgeBaseQueryOptions(
+            query_params = QueryKnowledgeBaseOptions(
                 question="How long it takes to charge Surface?",
                 top=3,
                 user_id="sd53lsY=",

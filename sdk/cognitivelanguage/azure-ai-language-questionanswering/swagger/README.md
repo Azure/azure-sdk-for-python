@@ -77,3 +77,23 @@ directive:
     transform: >
         $["x-ms-client-name"] = "Options";
 ```
+
+### Rename `KnowledgeBaseQueryOptions` -> `QueryKnowledgeBaseOptions`
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["KnowledgeBaseQueryOptions"]
+    transform: >
+        $["x-ms-client-name"] = "QueryKnowledgeBaseOptions";
+```
+
+### Rename `TextQueryOptions` -> `QueryTextOptions`
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["TextQueryOptions"]
+    transform: >
+        $["x-ms-client-name"] = "QueryTextOptions";
+```
