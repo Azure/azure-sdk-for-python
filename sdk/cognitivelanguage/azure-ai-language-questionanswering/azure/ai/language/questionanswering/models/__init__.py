@@ -19,7 +19,8 @@ try:
     from ._models_py3 import KnowledgeBaseAnswers
     from ._models_py3 import KnowledgeBaseQueryOptions
     from ._models_py3 import MetadataFilter
-    from ._models_py3 import StrictFilters
+    from ._models_py3 import MetadataRecord
+    from ._models_py3 import QueryFilters
     from ._models_py3 import TextAnswer
     from ._models_py3 import TextAnswers
     from ._models_py3 import TextQueryOptions
@@ -37,16 +38,17 @@ except (SyntaxError, ImportError):
     from ._models import KnowledgeBaseAnswers  # type: ignore
     from ._models import KnowledgeBaseQueryOptions  # type: ignore
     from ._models import MetadataFilter  # type: ignore
-    from ._models import StrictFilters  # type: ignore
+    from ._models import MetadataRecord  # type: ignore
+    from ._models import QueryFilters  # type: ignore
     from ._models import TextAnswer  # type: ignore
     from ._models import TextAnswers  # type: ignore
     from ._models import TextQueryOptions  # type: ignore
     from ._models import TextRecord  # type: ignore
 
 from ._question_answering_client_enums import (
-    CompoundOperationKind,
     ErrorCode,
     InnerErrorCode,
+    LogicalOperationKind,
     RankerType,
     StringIndexType,
 )
@@ -64,14 +66,15 @@ __all__ = [
     "KnowledgeBaseAnswers",
     "KnowledgeBaseQueryOptions",
     "MetadataFilter",
-    "StrictFilters",
+    "MetadataRecord",
+    "QueryFilters",
     "TextAnswer",
     "TextAnswers",
     "TextQueryOptions",
     "TextRecord",
-    "CompoundOperationKind",
     "ErrorCode",
     "InnerErrorCode",
+    "LogicalOperationKind",
     "RankerType",
     "StringIndexType",
 ]

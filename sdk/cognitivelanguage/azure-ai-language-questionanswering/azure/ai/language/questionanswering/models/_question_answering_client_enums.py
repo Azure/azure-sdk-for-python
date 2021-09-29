@@ -11,13 +11,6 @@ from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CompoundOperationKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """(Optional) Set to 'OR' for joining metadata using 'OR' operation."""
-
-    AND_ENUM = "AND"
-    OR_ENUM = "OR"
-
-
 class ErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Human-readable error code."""
 
@@ -40,6 +33,13 @@ class InnerErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AZURE_COGNITIVE_SEARCH_NOT_FOUND = "AzureCognitiveSearchNotFound"
     AZURE_COGNITIVE_SEARCH_THROTTLING = "AzureCognitiveSearchThrottling"
     EXTRACTION_FAILURE = "ExtractionFailure"
+
+
+class LogicalOperationKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Set to 'OR' or 'AND' for using corresponding logical operation."""
+
+    AND_ENUM = "AND"
+    OR_ENUM = "OR"
 
 
 class RankerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):

@@ -35,7 +35,7 @@ class QuestionAnsweringClientOperationsMixin:
         knowledge_base_query_options: "_models.KnowledgeBaseQueryOptions",
         *,
         project_name: str,
-        deployment_name: Optional[str] = None,
+        deployment_name: str,
         **kwargs: Any
     ) -> "_models.KnowledgeBaseAnswers":
         """Answers the specified question using your knowledge base.
@@ -47,8 +47,7 @@ class QuestionAnsweringClientOperationsMixin:
         :paramtype project_name: str
         :keyword deployment_name: The name of the specific deployment of the project to use.
         :paramtype deployment_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: KnowledgeBaseAnswers, or the result of cls(response)
+        :return: KnowledgeBaseAnswers
         :rtype: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -59,7 +58,7 @@ class QuestionAnsweringClientOperationsMixin:
         self,
         *,
         project_name: str,
-        deployment_name: Optional[str] = None,
+        deployment_name: str,
         qna_id: Optional[int] = None,
         question: Optional[str] = None,
         top: Optional[int] = None,
@@ -101,8 +100,6 @@ class QuestionAnsweringClientOperationsMixin:
         :paramtype answer_span_request: ~azure.ai.language.questionanswering.models.AnswerSpanRequest
         :keyword include_unstructured_sources: (Optional) Flag to enable Query over Unstructured Sources.
         :paramtype include_unstructured_sources: bool
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: KnowledgeBaseAnswers, or the result of cls(response)
         :rtype: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -145,8 +142,7 @@ class QuestionAnsweringClientOperationsMixin:
         :paramtype answer_span_request: ~azure.ai.language.questionanswering.models.AnswerSpanRequest
         :keyword include_unstructured_sources: (Optional) Flag to enable Query over Unstructured Sources.
         :paramtype include_unstructured_sources: bool
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: KnowledgeBaseAnswers, or the result of cls(response)
+        :return: KnowledgeBaseAnswers
         :rtype: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -170,7 +166,7 @@ class QuestionAnsweringClientOperationsMixin:
         error_map.update(kwargs.pop("error_map", {}))
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
         project_name = kwargs.pop("project_name")  # type: str
-        deployment_name = kwargs.pop("deployment_name", None)  # type: Optional[str]
+        deployment_name = kwargs.pop("deployment_name")  # type: str
 
         json = self._serialize.body(knowledge_base_query_options, "KnowledgeBaseQueryOptions")
 
@@ -186,9 +182,7 @@ class QuestionAnsweringClientOperationsMixin:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(
-            request, stream=False, _return_pipeline_response=True, **kwargs
-        )
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -206,15 +200,12 @@ class QuestionAnsweringClientOperationsMixin:
     query_knowledge_base.metadata = {"url": "/:query-knowledgebases"}  # type: ignore
 
     @overload
-    async def query_text(
-        self, text_query_options: "_models.TextQueryOptions", **kwargs: Any
-    ) -> "_models.TextAnswers":
+    async def query_text(self, text_query_options: "_models.TextQueryOptions", **kwargs: Any) -> "_models.TextAnswers":
         """Answers the specified question using the provided text in the body.
 
         :param text_query_options: Post body of the request.
         :type text_query_options: ~azure.ai.language.questionanswering.models.TextQueryOptions
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TextAnswers, or the result of cls(response)
+        :return: TextAnswers
         :rtype: ~azure.ai.language.questionanswering.models.TextAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -245,8 +236,7 @@ class QuestionAnsweringClientOperationsMixin:
         https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
         "UnicodeCodePoint", "Utf16CodeUnit". Default value: "TextElements_v8".
         :paramtype string_index_type: str or ~azure.ai.language.questionanswering.models.StringIndexType
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TextAnswers, or the result of cls(response)
+        :return: TextAnswers
         :rtype: ~azure.ai.language.questionanswering.models.TextAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -274,8 +264,7 @@ class QuestionAnsweringClientOperationsMixin:
          https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
          "UnicodeCodePoint", "Utf16CodeUnit". Default value: "TextElements_v8".
         :paramtype string_index_type: str or ~azure.ai.language.questionanswering.models.StringIndexType
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TextAnswers, or the result of cls(response)
+        :return: TextAnswers
         :rtype: ~azure.ai.language.questionanswering.models.TextAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -310,9 +299,7 @@ class QuestionAnsweringClientOperationsMixin:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(
-            request, stream=False, _return_pipeline_response=True, **kwargs
-        )
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:

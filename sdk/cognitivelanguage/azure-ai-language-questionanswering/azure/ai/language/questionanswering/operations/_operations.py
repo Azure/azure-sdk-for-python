@@ -40,7 +40,7 @@ def build_query_knowledge_base_request(
     # type: (...) -> HttpRequest
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     project_name = kwargs.pop('project_name')  # type: str
-    deployment_name = kwargs.pop('deployment_name', None)  # type: Optional[str]
+    deployment_name = kwargs.pop('deployment_name')  # type: str
 
     api_version = "2021-07-15-preview"
     accept = "application/json"
@@ -50,8 +50,7 @@ def build_query_knowledge_base_request(
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     query_parameters['projectName'] = _SERIALIZER.query("project_name", project_name, 'str')
-    if deployment_name is not None:
-        query_parameters['deploymentName'] = _SERIALIZER.query("deployment_name", deployment_name, 'str')
+    query_parameters['deploymentName'] = _SERIALIZER.query("deployment_name", deployment_name, 'str')
     query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
@@ -116,8 +115,7 @@ class QuestionAnsweringClientOperationsMixin(object):
         :paramtype project_name: str
         :keyword deployment_name: The name of the specific deployment of the project to use.
         :paramtype deployment_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: KnowledgeBaseAnswers, or the result of cls(response)
+        :return: KnowledgeBaseAnswers
         :rtype: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -158,8 +156,7 @@ class QuestionAnsweringClientOperationsMixin(object):
         :paramtype answer_span_request: ~azure.ai.language.questionanswering.models.AnswerSpanRequest
         :keyword include_unstructured_sources: (Optional) Flag to enable Query over Unstructured Sources.
         :paramtype include_unstructured_sources: bool
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: KnowledgeBaseAnswers, or the result of cls(response)
+        :return: KnowledgeBaseAnswers
         :rtype: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -203,8 +200,7 @@ class QuestionAnsweringClientOperationsMixin(object):
         :paramtype answer_span_request: ~azure.ai.language.questionanswering.models.AnswerSpanRequest
         :keyword include_unstructured_sources: (Optional) Flag to enable Query over Unstructured Sources.
         :paramtype include_unstructured_sources: bool
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: KnowledgeBaseAnswers, or the result of cls(response)
+        :return: KnowledgeBaseAnswers
         :rtype: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -228,7 +224,7 @@ class QuestionAnsweringClientOperationsMixin(object):
         error_map.update(kwargs.pop("error_map", {}))
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
         project_name = kwargs.pop("project_name")  # type: str
-        deployment_name = kwargs.pop("deployment_name", None)  # type: Optional[str]
+        deployment_name = kwargs.pop("deployment_name")  # type: str
 
         json = self._serialize.body(knowledge_base_query_options, "KnowledgeBaseQueryOptions")
 
@@ -244,7 +240,7 @@ class QuestionAnsweringClientOperationsMixin(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -272,8 +268,7 @@ class QuestionAnsweringClientOperationsMixin(object):
 
         :param text_query_options: Post body of the request.
         :type text_query_options: ~azure.ai.language.questionanswering.models.TextQueryOptions
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TextAnswers, or the result of cls(response)
+        :return: TextAnswers
         :rtype: ~azure.ai.language.questionanswering.models.TextAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -300,8 +295,7 @@ class QuestionAnsweringClientOperationsMixin(object):
         https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
         "UnicodeCodePoint", "Utf16CodeUnit". Default value: "TextElements_v8".
         :paramtype string_index_type: str or ~azure.ai.language.questionanswering.models.StringIndexType
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TextAnswers, or the result of cls(response)
+        :return: TextAnswers
         :rtype: ~azure.ai.language.questionanswering.models.TextAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -318,7 +312,7 @@ class QuestionAnsweringClientOperationsMixin(object):
         :param text_query_options: Post body of the request. Provide either `text_query_options`, OR
          individual keyword arguments. If both are provided, only the options object will be used.
         :type text_query_options: ~azure.ai.language.questionanswering.models.TextQueryOptions
-        :keyword question: User question to query against the given text records. Provide either `text_query_options`, 
+        :keyword question: User question to query against the given text records. Provide either `text_query_options`,
          OR individual keyword arguments. If both are provided, only the options object will be used.
         :paramtype question: str
         :keyword records: Text records to be searched for given question. Provide either `text_query_options`, OR
@@ -332,8 +326,7 @@ class QuestionAnsweringClientOperationsMixin(object):
          https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
          "UnicodeCodePoint", "Utf16CodeUnit". Default value: "TextElements_v8".
         :paramtype string_index_type: str or ~azure.ai.language.questionanswering.models.StringIndexType
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TextAnswers, or the result of cls(response)
+        :return: TextAnswers
         :rtype: ~azure.ai.language.questionanswering.models.TextAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -368,7 +361,7 @@ class QuestionAnsweringClientOperationsMixin(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
