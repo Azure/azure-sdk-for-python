@@ -5,13 +5,14 @@
 # license information.
 # -------------------------------------------------------------------------
 from testcase import PurviewScanningTest, PurviewScanningPowerShellPreparer
-
+from _util import PurviewScanningRecordingProcessor
 
 class PurviewScanningSmokeTest(PurviewScanningTest):
 
     @PurviewScanningPowerShellPreparer()
     def test_basic_smoke_test(self, purviewscanning_endpoint):
+        self.recording_processors.append(PurviewScanningRecordingProcessor())
         client = self.create_client(endpoint=purviewscanning_endpoint)
         response = client.data_sources.list_all()
         result = [item for item in response]
-        assert result == []
+        assert len(result) >= 1
