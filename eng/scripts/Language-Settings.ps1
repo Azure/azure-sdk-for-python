@@ -185,10 +185,10 @@ function ValidatePackage($packageName, $packageVersion, $workingDirectory) {
     else {
       Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder"
       $pipInstallOutput = pip `
-      install `
-      $packageExpression `
-      --no-cache-dir `
-      --target $installTargetFolder 2>&1
+        install `
+        $packageExpression `
+        --no-cache-dir `
+        --target $installTargetFolder 2>&1
     }
     if ($LASTEXITCODE -ne 0) {
       LogWarning "pip install failed for $packageExpression"
