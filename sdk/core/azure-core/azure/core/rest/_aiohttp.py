@@ -171,7 +171,12 @@ class RestAioHttpTransportResponse(AsyncHttpResponseImpl, _RestAioHttpTransportR
         state['headers'] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
         return state
 
-    async def read(self):
+    async def read(self) -> bytes:
+        """Read the response's bytes into memory.
+
+        :return: The response's bytes
+        :rtype: bytes
+        """
         if not self._content:
             self._stream_download_check()
             self._content = await self._internal_response.read()
