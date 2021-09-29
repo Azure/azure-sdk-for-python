@@ -161,7 +161,7 @@ Sample code snippets are provided to illustrate using a DocumentAnalysisClient [
 ### DocumentModelAdministrationClient
 `DocumentModelAdministrationClient` provides operations for:
 
-- Building custom models to analyze specific fields you specify by labeling your custom documents. A `DocumentModel` is returned indicating the document type the model can analyze, as well as the estimated confidence for each field. See the [service documentation][fr-train-with-labels] for a more detailed explanation.
+- Building custom models to analyze specific fields you specify by labeling your custom documents. A `DocumentModel` is returned indicating the document type the model can analyze, as well as the estimated confidence for each field. See the [service documentation][fr-build-model] for a more detailed explanation.
 - Creating a composed model from a collection of existing models.
 - Managing models created in your account.
 - Listing document model operations or getting a specific model operation created within the last 24 hours.
@@ -310,9 +310,8 @@ You are not limited to receipts! There are a few prebuilt models to choose from,
 ### Build a model
 Build a custom model on your own document type. The resulting model can be used to analyze values from the types of documents it was trained on.
 Provide a container SAS URL to your Azure Storage Blob container where you're storing the training documents.
-If training files are within a subfolder in the container, use the [prefix][prefix_ref_docs] keyword argument to specify under which folder to train.
 
-More details on setting up a container and required file structure can be found in the [service documentation][training_data].
+More details on setting up a container and required file structure can be found in the [service documentation][fr-build-training-set].
 
 ```python
 from azure.ai.formrecognizer import DocumentModelAdministrationClient
@@ -495,17 +494,15 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python-fr-ref-docs]: https://aka.ms/azsdk/python/formrecognizer/docs
 [python-fr-samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples
 
-[training_data]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/build-training-data-set
 [azure_subscription]: https://azure.microsoft.com/free/
 [FR_or_CS_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [pip]: https://pypi.org/project/pip/
 [azure_portal_create_FR_resource]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer
 [azure_cli_create_FR_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli?tabs=windows
 [azure-key-credential]: https://aka.ms/azsdk/python/core/azurekeycredential
-[fr-labeling-tool]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/label-tool?tabs=v2-1
-[fr-train-without-labels]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/overview#train-without-labels
-[fr-train-with-labels]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/overview#train-with-labels
-[prefix_ref_docs]: https://aka.ms/azsdk/python/formrecognizer/docs#azure.ai.formrecognizer.FormTrainingClient.begin_training
+[fr-labeling-tool]: https://aka.ms/azsdk/formrecognizer/labelingtool
+[fr-build-model]: https://aka.ms/azsdk/formrecognizer/buildmodel
+[fr-build-training-set]: https://aka.ms/azsdk/formrecognizer/buildtrainingset
 
 [azure_core_ref_docs]: https://aka.ms/azsdk/python/core/docs
 [azure_core_exceptions]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
