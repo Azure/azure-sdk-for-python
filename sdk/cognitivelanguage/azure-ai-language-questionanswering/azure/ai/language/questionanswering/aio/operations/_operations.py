@@ -257,7 +257,7 @@ class QuestionAnsweringClientOperationsMixin:
         options = _get_positional_body(*args, **kwargs) or _models.QueryTextOptions(
             question=kwargs.pop("question"),
             records=kwargs.pop("records"),
-            language=kwargs.pop("language", None),
+            language=kwargs.pop("language", self._default_language),
         )
         try:
             options['records'] = _validate_text_records(options['records'])
