@@ -30,6 +30,7 @@ EXCLUDED_PACKAGE_VERSIONS = {
     'azure-communication-phonenumbers': '1.0.0',
     'azure-communication-sms': '1.0.0',
     'azure-search-documents': '11.2.0b3',
+    'azure-ai-language-questionanswering': '1.0.0b1'
 }
 
 # This method identifies release tag for latest or oldest released version of a given package
