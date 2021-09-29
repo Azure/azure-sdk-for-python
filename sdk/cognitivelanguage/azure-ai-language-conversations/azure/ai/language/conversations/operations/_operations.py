@@ -34,7 +34,7 @@ def build_analyze_conversations_request(
     # type: (...) -> HttpRequest
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     project_name = kwargs.pop('project_name')  # type: str
-    deployment_name = kwargs.pop('deployment_name', None)  # type: Optional[str]
+    deployment_name = kwargs.pop('deployment_name')  # type: str
 
     api_version = "2021-07-15-preview"
     accept = "application/json"
@@ -44,8 +44,7 @@ def build_analyze_conversations_request(
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     query_parameters['projectName'] = _SERIALIZER.query("project_name", project_name, 'str')
-    if deployment_name is not None:
-        query_parameters['deploymentName'] = _SERIALIZER.query("deployment_name", deployment_name, 'str')
+    query_parameters['deploymentName'] = _SERIALIZER.query("deployment_name", deployment_name, 'str')
     query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
@@ -93,7 +92,7 @@ class ConversationAnalysisClientOperationsMixin(object):
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         project_name = kwargs.pop('project_name')  # type: str
-        deployment_name = kwargs.pop('deployment_name', None)  # type: Optional[str]
+        deployment_name = kwargs.pop('deployment_name')  # type: str
 
         json = self._serialize.body(analyze_conversation_options, 'AnalyzeConversationOptions')
 
