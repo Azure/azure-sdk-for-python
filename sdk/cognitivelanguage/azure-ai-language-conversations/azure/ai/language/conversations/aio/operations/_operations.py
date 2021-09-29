@@ -29,7 +29,7 @@ class ConversationAnalysisClientOperationsMixin:
         analyze_conversation_options: "_models.AnalyzeConversationOptions",
         *,
         project_name: str,
-        deployment_name: Optional[str] = None,
+        deployment_name: str,
         **kwargs: Any
     ) -> "_models.AnalyzeConversationResult":
         """Analyzes the input conversation utterance.
