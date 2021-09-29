@@ -7,7 +7,7 @@
 import functools
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 from azure.purview.administration.account import PurviewAccountClient
-from azure.purview.administration.metadatapolices import PurviewMetadataPoliciesClient
+from azure.purview.administration.metadatapolicies import PurviewMetadataPoliciesClient
 
 
 class PurviewAccountTest(AzureTestCase):

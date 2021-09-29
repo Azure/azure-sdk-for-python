@@ -27,10 +27,10 @@ class PurviewMetadataPoliciesClient(object):
 
     :ivar metadata_roles: MetadataRolesOperations operations
     :vartype metadata_roles:
-     azure.purview.administration.metadatapolices.operations.MetadataRolesOperations
+     azure.purview.administration.metadatapolicies.operations.MetadataRolesOperations
     :ivar metadata_policy: MetadataPolicyOperations operations
     :vartype metadata_policy:
-     azure.purview.administration.metadatapolices.operations.MetadataPolicyOperations
+     azure.purview.administration.metadatapolicies.operations.MetadataPolicyOperations
     :param endpoint: The endpoint of your Purview account. Example:
      https://{accountName}.purview.azure.com.
     :type endpoint: str

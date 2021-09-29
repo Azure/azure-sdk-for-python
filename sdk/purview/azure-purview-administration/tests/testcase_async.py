@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 from devtools_testutils import AzureTestCase
 from azure.purview.administration.account.aio import PurviewAccountClient as AsyncPurviewAccountClient
-from azure.purview.administration.metadatapolices.aio import PurviewMetadataPoliciesClient as AsyncPurviewMetadataPoliciesClient
+from azure.purview.administration.metadatapolicies.aio import PurviewMetadataPoliciesClient as AsyncPurviewMetadataPoliciesClient
 
 
 class PurviewAccountTestAsync(AzureTestCase):

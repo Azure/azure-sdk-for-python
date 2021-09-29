@@ -45,17 +45,21 @@ Use the returned token credential to authenticate the client:
 
 ```python
 from azure.purview.administration.account import PurviewAccountClient
-from azure.purview.administration.metadatapolices import PurviewMetadataPoliciesClient
+from azure.purview.administration.metadatapolicies import PurviewMetadataPoliciesClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-account_client = PurviewAccountClient(endpoint="https://<my-account-name>.purview.azure.com", credential=credential)
-metadatapolicy_client = PurviewMetadataPoliciesClient(endpoint="https://<my-account-name>.purview.azure.com", credential=credential)
+endpoint = "https://<my-account-name>.purview.azure.com"
+account_client = PurviewAccountClient(endpoint=endpoint, credential=credential)
+metadatapolicy_client = PurviewMetadataPoliciesClient(endpoint=endpoint, credential=credential)
 ```
 
 ## Key concepts
 
 ### Client
+
+The package contains two kinds of client: `PurviewAccountClient` and `PurviewMetadataPoliciesClient`. You could use them 
+with one package according to your requirements. 
 
 ## Examples
 
@@ -82,7 +86,7 @@ The following section shows you how to initialize and authenticate your client, 
 ### List Roles
 
 ```python
-from azure.purview.administration.metadatapolices import PurviewMetadataPoliciesClient
+from azure.purview.administration.metadatapolicies import PurviewMetadataPoliciesClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
