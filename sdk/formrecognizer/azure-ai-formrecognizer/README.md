@@ -161,7 +161,7 @@ Sample code snippets are provided to illustrate using a DocumentAnalysisClient [
 ### DocumentModelAdministrationClient
 `DocumentModelAdministrationClient` provides operations for:
 
-- Building custom models to extract specific fields you specify by labeling your custom documents. A `DocumentModel` is returned indicating the document type the model will extract, as well as the estimated confidence for each field. See the [service documentation][fr-train-with-labels] for a more detailed explanation.
+- Building custom models to analyze specific fields you specify by labeling your custom documents. A `DocumentModel` is returned indicating the document type the model can analyze, as well as the estimated confidence for each field. See the [service documentation][fr-train-with-labels] for a more detailed explanation.
 - Creating a composed model from a collection of existing models.
 - Managing models created in your account.
 - Listing document model operations or getting a specific model operation created within the last 24 hours.
