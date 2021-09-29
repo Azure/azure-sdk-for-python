@@ -35,10 +35,10 @@ class TestCustomForms(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    def test_custom_form_unlabeled(self, client, formrecognizer_storage_container_sas_url):
+    def test_custom_form_unlabeled(self, client, formrecognizer_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_training(formrecognizer_storage_container_sas_url, use_training_labels=False)
+        poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
         model = poller.result()
 
         with open(self.form_jpg, "rb") as stream:
@@ -54,10 +54,10 @@ class TestCustomForms(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    def test_custom_form_multipage_unlabeled(self, client, formrecognizer_multipage_storage_container_sas_url):
+    def test_custom_form_multipage_unlabeled(self, client, formrecognizer_multipage_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url, use_training_labels=False)
+        poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=False)
         model = poller.result()
 
         with open(self.multipage_invoice_pdf, "rb") as stream:
@@ -76,11 +76,11 @@ class TestCustomForms(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    def test_custom_form_labeled(self, client, formrecognizer_storage_container_sas_url):
+    def test_custom_form_labeled(self, client, formrecognizer_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
 
         poller = client.begin_training(
-            formrecognizer_storage_container_sas_url,
+            formrecognizer_storage_container_sas_url_v2,
             use_training_labels=True,
             model_name="labeled"
         )
@@ -97,11 +97,11 @@ class TestCustomForms(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    def test_custom_form_multipage_labeled(self, client, formrecognizer_multipage_storage_container_sas_url):
+    def test_custom_form_multipage_labeled(self, client, formrecognizer_multipage_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
 
         poller = client.begin_training(
-            formrecognizer_multipage_storage_container_sas_url,
+            formrecognizer_multipage_storage_container_sas_url_v2,
             use_training_labels=True
         )
         model = poller.result()
@@ -122,10 +122,10 @@ class TestCustomForms(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    def test_custom_form_unlabeled_transform(self, client, formrecognizer_storage_container_sas_url):
+    def test_custom_form_unlabeled_transform(self, client, formrecognizer_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_training(formrecognizer_storage_container_sas_url, use_training_labels=False)
+        poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
         model = poller.result()
 
         responses = []
@@ -175,10 +175,10 @@ class TestCustomForms(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    def test_custom_form_multipage_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url):
+    def test_custom_form_multipage_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url, use_training_labels=False)
+        poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=False)
         model = poller.result()
 
         responses = []
@@ -304,10 +304,10 @@ class TestCustomForms(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @pytest.mark.live_test_only
-    def test_custom_form_continuation_token(self, client, formrecognizer_storage_container_sas_url):
+    def test_custom_form_continuation_token(self, client, formrecognizer_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_training(formrecognizer_storage_container_sas_url, use_training_labels=False)
+        poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
         model = poller.result()
 
         with open(self.form_jpg, "rb") as fd:
@@ -328,10 +328,10 @@ class TestCustomForms(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    def test_custom_form_multipage_vendor_set_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2):
+    def test_custom_form_multipage_vendor_set_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2_v2):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_2, use_training_labels=False)
+        poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_2_v2, use_training_labels=False)
         model = poller.result()
 
         responses = []
@@ -367,10 +367,10 @@ class TestCustomForms(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    def test_custom_form_multipage_vendor_set_labeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2):
+    def test_custom_form_multipage_vendor_set_labeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2_v2):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_2, use_training_labels=True)
+        poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_2_v2, use_training_labels=True)
         model = poller.result()
 
         responses = []

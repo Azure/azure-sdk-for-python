@@ -146,18 +146,18 @@ class TestDocumentFromStreamAsync(AsyncFormRecognizerTest):
             document = fd.read()
 
         async with client:
-            poller = await client.begin_analyze_document("prebuilt-document", document, pages=["1"])
+            poller = await client.begin_analyze_document("prebuilt-document", document, pages="1")
             result = await poller.result()
             assert len(result.pages) == 1
 
-            poller = await client.begin_analyze_document("prebuilt-document", document, pages=["1", "3"])
+            poller = await client.begin_analyze_document("prebuilt-document", document, pages="1, 3")
             result = await poller.result()
             assert len(result.pages) == 2
 
-            poller = await client.begin_analyze_document("prebuilt-document", document, pages=["1-2"])
+            poller = await client.begin_analyze_document("prebuilt-document", document, pages="1-2")
             result = await poller.result()
             assert len(result.pages) == 2
 
-            poller = await client.begin_analyze_document("prebuilt-document", document, pages=["1-2", "3"])
+            poller = await client.begin_analyze_document("prebuilt-document", document, pages="1-2, 3")
             result = await poller.result()
             assert len(result.pages) == 3

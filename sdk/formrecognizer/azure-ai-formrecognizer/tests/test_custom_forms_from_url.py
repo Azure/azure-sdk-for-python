@@ -36,11 +36,11 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    def test_form_multipage_unlabeled(self, client, formrecognizer_multipage_storage_container_sas_url):
-        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url, "multipage-training-data", "multipage_invoice1.pdf")
+    def test_form_multipage_unlabeled(self, client, formrecognizer_multipage_storage_container_sas_url_v2):
+        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf")
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url, use_training_labels=False)
+        poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=False)
         model = poller.result()
 
         poller = fr_client.begin_recognize_custom_forms_from_url(
@@ -57,12 +57,12 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    def test_form_multipage_labeled(self, client, formrecognizer_multipage_storage_container_sas_url):
-        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url, "multipage-training-data", "multipage_invoice1.pdf")
+    def test_form_multipage_labeled(self, client, formrecognizer_multipage_storage_container_sas_url_v2):
+        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf")
         fr_client = client.get_form_recognizer_client()
 
         poller = client.begin_training(
-            formrecognizer_multipage_storage_container_sas_url,
+            formrecognizer_multipage_storage_container_sas_url_v2,
             use_training_labels=True
         )
         model = poller.result()
@@ -79,10 +79,10 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    def test_custom_form_multipage_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url):
+    def test_custom_form_multipage_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
-        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url, "multipage-training-data", "multipage_invoice1.pdf")
-        poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url, use_training_labels=False)
+        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf")
+        poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=False)
         model = poller.result()
 
         responses = []
@@ -116,10 +116,10 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    def test_custom_form_multipage_labeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url):
+    def test_custom_form_multipage_labeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
-        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url, "multipage-training-data", "multipage_invoice1.pdf")
-        poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url, use_training_labels=True)
+        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf")
+        poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=True)
         model = poller.result()
 
         responses = []
@@ -155,10 +155,10 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @pytest.mark.live_test_only
-    def test_custom_form_continuation_token(self, client, formrecognizer_storage_container_sas_url):
+    def test_custom_form_continuation_token(self, client, formrecognizer_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
 
-        training_poller = client.begin_training(formrecognizer_storage_container_sas_url, use_training_labels=False)
+        training_poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
         model = training_poller.result()
 
         initial_poller = fr_client.begin_recognize_custom_forms_from_url(
@@ -178,10 +178,10 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    def test_custom_form_multipage_vendor_set_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2):
+    def test_custom_form_multipage_vendor_set_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2_v2):
         fr_client = client.get_form_recognizer_client()
-        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url_2, "multipage-vendor-forms", "multi1.pdf")
-        poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_2, use_training_labels=False)
+        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url_2_v2, "multipage-vendor-forms", "multi1.pdf")
+        poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_2_v2, use_training_labels=False)
         model = poller.result()
 
         responses = []
@@ -215,10 +215,10 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    def test_custom_form_multipage_vendor_set_labeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2):
+    def test_custom_form_multipage_vendor_set_labeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2_v2):
         fr_client = client.get_form_recognizer_client()
-        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url_2, "multipage-vendor-forms", "multi1.pdf")
-        poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_2, use_training_labels=True)
+        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url_2_v2, "multipage-vendor-forms", "multi1.pdf")
+        poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_2_v2, use_training_labels=True)
         model = poller.result()
 
         responses = []
