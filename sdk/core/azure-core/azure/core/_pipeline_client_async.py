@@ -37,7 +37,6 @@ from .pipeline.policies import (
     RequestIdPolicy,
     AsyncRetryPolicy,
 )
-from .pipeline._tools_async import to_rest_response as _to_rest_response
 
 try:
     from typing import TYPE_CHECKING, TypeVar
@@ -194,30 +193,13 @@ class AsyncPipelineClient(PipelineClientBase):
         return AsyncPipeline(transport, policies)
 
     async def _make_pipeline_call(self, request, **kwargs):
-        rest_request = hasattr(request, "content")
         return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
         pipeline_response = await self._pipeline.run(
             request, **kwargs  # pylint: disable=protected-access
         )
-        response = pipeline_response.http_response
-        if rest_request:
-            rest_response = _to_rest_response(response)
-            if not kwargs.get("stream"):
-                try:
-                    # in this case, the pipeline transport response already called .load_body(), so
-                    # the body is loaded. instead of doing response.read(), going to set the body
-                    # to the internal content
-                    rest_response._content = response.body()  # pylint: disable=protected-access
-                    await rest_response._set_read_checks()  # pylint: disable=protected-access
-                except Exception as exc:
-                    await rest_response.close()
-                    raise exc
-            response = rest_response
         if return_pipeline_response:
-            pipeline_response.http_response = response
-            pipeline_response.http_request = request
             return pipeline_response
-        return response
+        return pipeline_response.http_response
 
     def send_request(
         self,

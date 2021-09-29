@@ -50,4 +50,5 @@ async def test_readonly(port):
         response.raise_for_status()
 
     assert isinstance(response, RestAsyncioRequestsTransportResponse)
-    readonly_checks(response)
+    from azure.core.pipeline.transport import AsyncioRequestsTransportResponse
+    readonly_checks(response, old_response_class=AsyncioRequestsTransportResponse)

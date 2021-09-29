@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import copy
 import codecs
 import cgi
 from json import dumps
@@ -370,3 +371,7 @@ class HttpRequestBackcompatMixin(object):
         :rtype: bytes
         """
         return _serialize_request(self)
+
+    def _add_backcompat_properties(self, request, memo):
+        """While deepcopying, we also need to add the private backcompat attrs"""
+        request._multipart_mixed_info = copy.deepcopy(self._multipart_mixed_info, memo)  # pylint: disable=protected-access
