@@ -92,7 +92,7 @@ class RecordedTests(OboRecordedTestCase):
         credential.get_token(self.obo_settings["scope"])
 
 
-def test_allow_multitenant_authentication():
+def test_multitenant_authentication():
     first_tenant = "first-tenant"
     first_token = "***"
     second_tenant = "second-tenant"

@@ -282,7 +282,7 @@ def test_adfs():
     assert record.username == username
 
 
-def test_allow_multitenant_authentication():
+def test_multitenant_authentication():
     first_tenant = "first-tenant"
     first_token = "***"
     second_tenant = "second-tenant"

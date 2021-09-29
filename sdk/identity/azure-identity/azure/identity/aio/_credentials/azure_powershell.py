@@ -32,7 +32,7 @@ class AzurePowerShellCredential(AsyncContextManager):
     This requires previously logging in to Azure via "Connect-AzAccount", and will use the currently logged in identity.
     """
 
-    def __init__(self, **kwargs: "Any") -> None:
+    def __init__(self, **kwargs: "Any") -> None:    # pylint: disable=unused-import
         disable_multitenant = os.environ.get(EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH, False)
         self._allow_multitenant = not disable_multitenant
 

@@ -251,7 +251,7 @@ async def test_cache_multiple_clients():
 
 
 @pytest.mark.asyncio
-async def test_allow_multitenant_authentication():
+async def test_multitenant_authentication():
     first_tenant = "first-tenant"
     first_token = "***"
     second_tenant = "second-tenant"

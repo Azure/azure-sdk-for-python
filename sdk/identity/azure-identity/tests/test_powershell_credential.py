@@ -243,7 +243,7 @@ def test_windows_powershell_fallback():
     assert Fake.calls == 2
 
 
-def test_allow_multitenant_authentication():
+def test_multitenant_authentication():
     first_token = "***"
     second_tenant = "second-tenant"
     second_token = first_token * 2

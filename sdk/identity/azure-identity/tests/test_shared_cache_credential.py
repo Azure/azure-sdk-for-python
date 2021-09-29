@@ -825,7 +825,7 @@ def test_claims_challenge():
     assert kwargs["claims_challenge"] == expected_claims
 
 
-def test_allow_multitenant_authentication():
+def test_multitenant_authentication():
     default_tenant = "organizations"
     first_token = "***"
     second_tenant = "second-tenant"

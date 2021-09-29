@@ -244,7 +244,7 @@ async def test_windows_powershell_fallback():
     assert calls == 2
 
 
-async def test_allow_multitenant_authentication():
+async def test_multitenant_authentication():
     first_token = "***"
     second_tenant = "second-tenant"
     second_token = first_token * 2

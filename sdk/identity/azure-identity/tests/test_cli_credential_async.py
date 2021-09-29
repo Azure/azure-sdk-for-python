@@ -185,7 +185,7 @@ async def test_timeout():
     assert proc.kill.call_count == 1
 
 
-async def test_allow_multitenant_authentication():
+async def test_multitenant_authentication():
     default_tenant = "first-tenant"
     first_token = "***"
     second_tenant = "second-tenant"

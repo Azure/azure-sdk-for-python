@@ -152,7 +152,7 @@ def test_timeout():
             AzureCliCredential().get_token("scope")
 
 
-def test_allow_multitenant_authentication():
+def test_multitenant_authentication():
     default_tenant = "first-tenant"
     first_token = "***"
     second_tenant = "second-tenant"

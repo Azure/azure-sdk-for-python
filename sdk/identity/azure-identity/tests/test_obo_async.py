@@ -69,7 +69,7 @@ async def test_context_manager():
 
 
 @pytest.mark.asyncio
-async def test_allow_multitenant_authentication():
+async def test_multitenant_authentication():
     first_tenant = "first-tenant"
     first_token = "***"
     second_tenant = "second-tenant"

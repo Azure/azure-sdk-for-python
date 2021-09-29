@@ -142,7 +142,7 @@ async def test_auth_code_credential():
     assert transport.send.call_count == 2
 
 
-async def test_allow_multitenant_authentication():
+async def test_multitenant_authentication():
     first_tenant = "first-tenant"
     first_token = "***"
     second_tenant = "second-tenant"

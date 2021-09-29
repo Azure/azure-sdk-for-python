@@ -212,7 +212,7 @@ def test_cache_multiple_clients():
     assert len(cache.find(TokenCache.CredentialType.ACCESS_TOKEN)) == 2
 
 
-def test_allow_multitenant_authentication():
+def test_multitenant_authentication():
     first_tenant = "first-tenant"
     first_token = "***"
     second_tenant = "second-tenant"

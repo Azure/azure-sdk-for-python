@@ -606,7 +606,7 @@ async def test_initialization():
 
 
 @pytest.mark.asyncio
-async def test_allow_multitenant_authentication():
+async def test_multitenant_authentication():
     first_token = "***"
     second_tenant = "second-tenant"
     second_token = first_token * 2
