@@ -215,7 +215,6 @@ class QuestionAnsweringClientOperationsMixin:
         question: str,
         records: List["_models.TextRecord"],
         language: Optional[str] = None,
-        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = "TextElements_v8",
         **kwargs: Any
     ) -> "_models.TextAnswers":
         """Answers the specified question using the provided text in the body.
@@ -228,11 +227,6 @@ class QuestionAnsweringClientOperationsMixin:
         example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
         default.
         :paramtype language: str
-        :keyword string_index_type: Specifies the method used to interpret string offsets.  Defaults to
-        Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
-        https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
-        "UnicodeCodePoint", "Utf16CodeUnit". Default value: "TextElements_v8".
-        :paramtype string_index_type: str or ~azure.ai.language.questionanswering.models.StringIndexType
         :return: TextAnswers
         :rtype: ~azure.ai.language.questionanswering.models.TextAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -256,11 +250,6 @@ class QuestionAnsweringClientOperationsMixin:
         :keyword language: Language of the text records. This is BCP-47 representation of a language. For
          example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as default.
         :paramtype language: str
-        :keyword string_index_type: Specifies the method used to interpret string offsets.  Defaults to
-         Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
-         https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
-         "UnicodeCodePoint", "Utf16CodeUnit". Default value: "TextElements_v8".
-        :paramtype string_index_type: str or ~azure.ai.language.questionanswering.models.StringIndexType
         :return: TextAnswers
         :rtype: ~azure.ai.language.questionanswering.models.TextAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -269,7 +258,6 @@ class QuestionAnsweringClientOperationsMixin:
             question=kwargs.pop("question"),
             records=kwargs.pop("records"),
             language=kwargs.pop("language", None),
-            string_index_type=kwargs.pop("string_index_type", "TextElements_v8")
         )
         try:
             options['records'] = _validate_text_records(options['records'])
