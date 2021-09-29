@@ -35,8 +35,12 @@ class EnvironmentCredential(AsyncContextManager):
     Service principal with certificate:
       - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
       - **AZURE_CLIENT_ID**: the service principal's client ID
-      - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM-encoded certificate file including the private key. The
+      - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM or PKCS12 certificate file including the private key. The
         certificate must not be password-protected.
+
+    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
+        the application or user is registered in. When False, which is the default, the credential will acquire tokens
+        only from the tenant specified by **AZURE_TENANT_ID**.
     """
 
     def __init__(self, **kwargs: "Any") -> None:
@@ -87,12 +91,18 @@ class EnvironmentCredential(AsyncContextManager):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+        :keyword str tenant_id: optional tenant to include in the token request. If **allow_multitenant_authentication**
+            is False, specifying a tenant with this argument may raise an exception.
+
         :rtype: :class:`azure.core.credentials.AccessToken`
+
         :raises ~azure.identity.CredentialUnavailableError: environment variable configuration is incomplete
         """
         if not self._credential:
             message = (
-                "EnvironmentCredential authentication unavailable. Environment variables are not fully configured."
+                "EnvironmentCredential authentication unavailable. Environment variables are not fully configured.\n"
+                "Visit https://aka.ms/azsdk/python/identity/environmentcredential/troubleshoot to troubleshoot."
+                "this issue."
             )
             raise CredentialUnavailableError(message=message)
         return await self._credential.get_token(*scopes, **kwargs)

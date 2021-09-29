@@ -17,63 +17,75 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration import ArtifactsClientConfiguration
-from .operations import LinkedServiceOperations
-from .operations import DatasetOperations
-from .operations import PipelineOperations
-from .operations import PipelineRunOperations
-from .operations import TriggerOperations
-from .operations import TriggerRunOperations
+from .operations import KqlScriptsOperations
+from .operations import KqlScriptOperations
+from .operations import SparkConfigurationOperations
+from .operations import BigDataPoolsOperations
 from .operations import DataFlowOperations
 from .operations import DataFlowDebugSessionOperations
-from .operations import SqlScriptOperations
-from .operations import SparkJobDefinitionOperations
-from .operations import NotebookOperations
-from .operations import WorkspaceOperations
-from .operations import SqlPoolsOperations
-from .operations import BigDataPoolsOperations
+from .operations import DatasetOperations
+from .operations import WorkspaceGitRepoManagementOperations
 from .operations import IntegrationRuntimesOperations
 from .operations import LibraryOperations
-from .operations import WorkspaceGitRepoManagementOperations
+from .operations import LinkedServiceOperations
+from .operations import NotebookOperations
+from .operations import NotebookOperationResultOperations
+from .operations import PipelineOperations
+from .operations import PipelineRunOperations
+from .operations import SparkJobDefinitionOperations
+from .operations import SqlPoolsOperations
+from .operations import SqlScriptOperations
+from .operations import TriggerOperations
+from .operations import TriggerRunOperations
+from .operations import WorkspaceOperations
 from .. import models
 
 
 class ArtifactsClient(object):
     """ArtifactsClient.
 
-    :ivar linked_service: LinkedServiceOperations operations
-    :vartype linked_service: azure.synapse.artifacts.aio.operations.LinkedServiceOperations
-    :ivar dataset: DatasetOperations operations
-    :vartype dataset: azure.synapse.artifacts.aio.operations.DatasetOperations
-    :ivar pipeline: PipelineOperations operations
-    :vartype pipeline: azure.synapse.artifacts.aio.operations.PipelineOperations
-    :ivar pipeline_run: PipelineRunOperations operations
-    :vartype pipeline_run: azure.synapse.artifacts.aio.operations.PipelineRunOperations
-    :ivar trigger: TriggerOperations operations
-    :vartype trigger: azure.synapse.artifacts.aio.operations.TriggerOperations
-    :ivar trigger_run: TriggerRunOperations operations
-    :vartype trigger_run: azure.synapse.artifacts.aio.operations.TriggerRunOperations
+    :ivar kql_scripts: KqlScriptsOperations operations
+    :vartype kql_scripts: azure.synapse.artifacts.aio.operations.KqlScriptsOperations
+    :ivar kql_script: KqlScriptOperations operations
+    :vartype kql_script: azure.synapse.artifacts.aio.operations.KqlScriptOperations
+    :ivar spark_configuration: SparkConfigurationOperations operations
+    :vartype spark_configuration: azure.synapse.artifacts.aio.operations.SparkConfigurationOperations
+    :ivar big_data_pools: BigDataPoolsOperations operations
+    :vartype big_data_pools: azure.synapse.artifacts.aio.operations.BigDataPoolsOperations
     :ivar data_flow: DataFlowOperations operations
     :vartype data_flow: azure.synapse.artifacts.aio.operations.DataFlowOperations
     :ivar data_flow_debug_session: DataFlowDebugSessionOperations operations
     :vartype data_flow_debug_session: azure.synapse.artifacts.aio.operations.DataFlowDebugSessionOperations
-    :ivar sql_script: SqlScriptOperations operations
-    :vartype sql_script: azure.synapse.artifacts.aio.operations.SqlScriptOperations
-    :ivar spark_job_definition: SparkJobDefinitionOperations operations
-    :vartype spark_job_definition: azure.synapse.artifacts.aio.operations.SparkJobDefinitionOperations
-    :ivar notebook: NotebookOperations operations
-    :vartype notebook: azure.synapse.artifacts.aio.operations.NotebookOperations
-    :ivar workspace: WorkspaceOperations operations
-    :vartype workspace: azure.synapse.artifacts.aio.operations.WorkspaceOperations
-    :ivar sql_pools: SqlPoolsOperations operations
-    :vartype sql_pools: azure.synapse.artifacts.aio.operations.SqlPoolsOperations
-    :ivar big_data_pools: BigDataPoolsOperations operations
-    :vartype big_data_pools: azure.synapse.artifacts.aio.operations.BigDataPoolsOperations
+    :ivar dataset: DatasetOperations operations
+    :vartype dataset: azure.synapse.artifacts.aio.operations.DatasetOperations
+    :ivar workspace_git_repo_management: WorkspaceGitRepoManagementOperations operations
+    :vartype workspace_git_repo_management: azure.synapse.artifacts.aio.operations.WorkspaceGitRepoManagementOperations
     :ivar integration_runtimes: IntegrationRuntimesOperations operations
     :vartype integration_runtimes: azure.synapse.artifacts.aio.operations.IntegrationRuntimesOperations
     :ivar library: LibraryOperations operations
     :vartype library: azure.synapse.artifacts.aio.operations.LibraryOperations
-    :ivar workspace_git_repo_management: WorkspaceGitRepoManagementOperations operations
-    :vartype workspace_git_repo_management: azure.synapse.artifacts.aio.operations.WorkspaceGitRepoManagementOperations
+    :ivar linked_service: LinkedServiceOperations operations
+    :vartype linked_service: azure.synapse.artifacts.aio.operations.LinkedServiceOperations
+    :ivar notebook: NotebookOperations operations
+    :vartype notebook: azure.synapse.artifacts.aio.operations.NotebookOperations
+    :ivar notebook_operation_result: NotebookOperationResultOperations operations
+    :vartype notebook_operation_result: azure.synapse.artifacts.aio.operations.NotebookOperationResultOperations
+    :ivar pipeline: PipelineOperations operations
+    :vartype pipeline: azure.synapse.artifacts.aio.operations.PipelineOperations
+    :ivar pipeline_run: PipelineRunOperations operations
+    :vartype pipeline_run: azure.synapse.artifacts.aio.operations.PipelineRunOperations
+    :ivar spark_job_definition: SparkJobDefinitionOperations operations
+    :vartype spark_job_definition: azure.synapse.artifacts.aio.operations.SparkJobDefinitionOperations
+    :ivar sql_pools: SqlPoolsOperations operations
+    :vartype sql_pools: azure.synapse.artifacts.aio.operations.SqlPoolsOperations
+    :ivar sql_script: SqlScriptOperations operations
+    :vartype sql_script: azure.synapse.artifacts.aio.operations.SqlScriptOperations
+    :ivar trigger: TriggerOperations operations
+    :vartype trigger: azure.synapse.artifacts.aio.operations.TriggerOperations
+    :ivar trigger_run: TriggerRunOperations operations
+    :vartype trigger_run: azure.synapse.artifacts.aio.operations.TriggerRunOperations
+    :ivar workspace: WorkspaceOperations operations
+    :vartype workspace: azure.synapse.artifacts.aio.operations.WorkspaceOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param endpoint: The workspace development endpoint, for example https://myworkspace.dev.azuresynapse.net.
@@ -96,39 +108,47 @@ class ArtifactsClient(object):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.linked_service = LinkedServiceOperations(
+        self.kql_scripts = KqlScriptsOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.dataset = DatasetOperations(
+        self.kql_script = KqlScriptOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.pipeline = PipelineOperations(
+        self.spark_configuration = SparkConfigurationOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.pipeline_run = PipelineRunOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.trigger = TriggerOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.trigger_run = TriggerRunOperations(
+        self.big_data_pools = BigDataPoolsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.data_flow = DataFlowOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.data_flow_debug_session = DataFlowDebugSessionOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.sql_script = SqlScriptOperations(
+        self.dataset = DatasetOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.spark_job_definition = SparkJobDefinitionOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.notebook = NotebookOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.workspace = WorkspaceOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.sql_pools = SqlPoolsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.big_data_pools = BigDataPoolsOperations(
+        self.workspace_git_repo_management = WorkspaceGitRepoManagementOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.integration_runtimes = IntegrationRuntimesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.library = LibraryOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.workspace_git_repo_management = WorkspaceGitRepoManagementOperations(
+        self.linked_service = LinkedServiceOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.notebook = NotebookOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.notebook_operation_result = NotebookOperationResultOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.pipeline = PipelineOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.pipeline_run = PipelineRunOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.spark_job_definition = SparkJobDefinitionOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.sql_pools = SqlPoolsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.sql_script = SqlScriptOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.trigger = TriggerOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.trigger_run = TriggerRunOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.workspace = WorkspaceOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:

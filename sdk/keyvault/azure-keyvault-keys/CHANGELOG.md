@@ -1,15 +1,46 @@
 # Release History
 
-## 4.4.1 (Unreleased)
+## 4.5.0b4 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
-### Key Bugs Fixed
+### Bugs Fixed
 
-### Fixed
+### Other Changes
 
+## 4.5.0b3 (2021-09-09)
+
+### Other Changes
+- Updated type hints to fix mypy errors
+  ([#19158](https://github.com/Azure/azure-sdk-for-python/issues/19158))
+
+## 4.5.0b2 (2021-08-10)
+
+### Features Added
+- Added support for secure key release from a Managed HSM
+  ([#19588](https://github.com/Azure/azure-sdk-for-python/issues/19588))
+  - Added `release_key` method to `KeyClient` for releasing the private component of a key
+  - Added `exportable` and `release_policy` keyword-only arguments to key creation and import
+    methods
+  - Added `KeyExportEncryptionAlgorithm` enum for specifying an encryption algorithm to be used
+    in key release
+
+### Breaking Changes
+> These changes do not impact the API of stable versions such as 4.4.0.
+> Only code written against a beta version such as 4.5.0b1 may be affected.
+- `KeyClient.get_random_bytes` now returns a `RandomBytes` model with bytes in a `value`
+  property, rather than returning the bytes directly
+  ([#19895](https://github.com/Azure/azure-sdk-for-python/issues/19895))
+
+## 4.5.0b1 (2021-07-08)
+Beginning with this release, this library requires Python 2.7 or 3.6+.
+
+### Features Added
+- Key Vault API version 7.3-preview is now the default
+- `KeyClient` has a `get_random_bytes` method for getting a requested number of random
+  bytes from a managed HSM
 
 ## 4.4.0 (2021-06-22)
 This is the last version to support Python 3.5. The next version will require Python 2.7 or 3.6+.

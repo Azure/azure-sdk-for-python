@@ -60,7 +60,7 @@ class StorageTargetsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         # Construct URL
@@ -113,8 +113,8 @@ class StorageTargetsOperations(object):
         :type storage_target_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -189,7 +189,7 @@ class StorageTargetsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -246,6 +246,7 @@ class StorageTargetsOperations(object):
         resource_group_name,  # type: str
         cache_name,  # type: str
         storage_target_name,  # type: str
+        force=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -254,7 +255,7 @@ class StorageTargetsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         # Construct URL
@@ -270,6 +271,8 @@ class StorageTargetsOperations(object):
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if force is not None:
+            query_parameters['force'] = self._serialize.query("force", force, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -293,6 +296,7 @@ class StorageTargetsOperations(object):
         resource_group_name,  # type: str
         cache_name,  # type: str
         storage_target_name,  # type: str
+        force=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -308,10 +312,13 @@ class StorageTargetsOperations(object):
         :type cache_name: str
         :param storage_target_name: Name of Storage Target.
         :type storage_target_name: str
+        :param force: Boolean value requesting the force delete operation for a storage target. Force
+         delete discards unwritten-data in the cache instead of flushing it to back-end storage.
+        :type force: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -330,6 +337,7 @@ class StorageTargetsOperations(object):
                 resource_group_name=resource_group_name,
                 cache_name=cache_name,
                 storage_target_name=storage_target_name,
+                force=force,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -389,7 +397,7 @@ class StorageTargetsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         # Construct URL
@@ -440,7 +448,7 @@ class StorageTargetsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-05-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -514,8 +522,8 @@ class StorageTargetsOperations(object):
         :type storagetarget: ~storage_cache_management_client.models.StorageTarget
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either StorageTarget or the result of cls(response)

@@ -16,7 +16,7 @@ except ImportError:
 
 from msrest import Serializer
 from azure.core.pipeline.transport import HttpRequest
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from ._signature_credential_policy import EventGridSasCredentialPolicy
 from . import _constants as constants
@@ -27,7 +27,6 @@ from ._generated.models import (
 
 if TYPE_CHECKING:
     from datetime import datetime
-
 
 def generate_sas(endpoint, shared_access_key, expiration_date_utc, **kwargs):
     # type: (str, str, datetime, Any) -> str
@@ -70,9 +69,14 @@ def _generate_hmac(key, message):
     return base64.b64encode(hmac_new)
 
 
-def _get_authentication_policy(credential):
+def _get_authentication_policy(credential, bearer_token_policy=BearerTokenCredentialPolicy):
     if credential is None:
         raise ValueError("Parameter 'self._credential' must not be None.")
+    if hasattr(credential, "get_token"):
+        return bearer_token_policy(
+            credential,
+            constants.DEFAULT_EVENTGRID_SCOPE
+        )
     if isinstance(credential, AzureKeyCredential):
         return AzureKeyCredentialPolicy(
             credential=credential, name=constants.EVENTGRID_KEY_HEADER
@@ -82,7 +86,7 @@ def _get_authentication_policy(credential):
             credential=credential, name=constants.EVENTGRID_TOKEN_HEADER
         )
     raise ValueError(
-        "The provided credential should be an instance of AzureSasCredential or AzureKeyCredential"
+        "The provided credential should be an instance of a TokenCredential, AzureSasCredential or AzureKeyCredential"
     )
 
 

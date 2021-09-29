@@ -15,12 +15,27 @@ from ._generated.models import (
 )
 
 
+def convert_status(status, ll=False):
+    if ll is False:
+        if status == "Cancelled":
+            return "Canceled"
+        if status == "Cancelling":
+            return "Canceling"
+    elif ll is True:
+        if status == "Canceled":
+            return "Cancelled"
+        if status == "Canceling":
+            return "Cancelling"
+    return status
+
+
 class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
     """Glossary / translation memory to apply to the translation.
 
     :param str glossary_url: Required. Location of the glossary file. This should be a SAS URL to
         the glossary file in the storage blob container. If the translation language pair is
-        not present in the glossary, it will not be applied.
+        not present in the glossary, it will not be applied. See the service documentation for the
+        supported SAS permissions: https://aka.ms/azsdk/documenttranslation/sas-permissions
     :param str file_format: Required. Format of the glossary file. To see supported formats,
         call the :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method.
     :keyword str format_version: File format version. If not specified, the service will
@@ -31,7 +46,8 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
 
     :ivar str glossary_url: Required. Location of the glossary file. This should be a SAS URL to
         the glossary file in the storage blob container. If the translation language pair is
-        not present in the glossary, it will not be applied.
+        not present in the glossary, it will not be applied. See the service documentation for the
+        supported SAS permissions: https://aka.ms/azsdk/documenttranslation/sas-permissions
     :ivar str file_format: Required. Format of the glossary file. To see supported formats,
         call the :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method.
     :ivar str format_version: File format version. If not specified, the service will
@@ -79,7 +95,9 @@ class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
     """Destination for the finished translated documents.
 
     :param str target_url: Required. The target location for your translated documents.
-        This should be a container SAS URL to your target container.
+        This should be a container SAS URL to your target container/blob. See the service
+        documentation for the supported SAS permissions for accessing
+        target storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
     :param str language_code: Required. Target Language Code. This is the language
         you want your documents to be translated to. See supported languages here:
         https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
@@ -90,7 +108,9 @@ class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
         Currently only "AzureBlob" is supported.
 
     :ivar str target_url: Required. The target location for your translated documents.
-        This should be a container SAS URL to your target container.
+        This should be a container SAS URL to your target container/blob. See the service
+        documentation for the supported SAS permissions for accessing
+        target storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
     :ivar str language_code: Required. Target Language Code. This is the language
         you want your documents to be translated to. See supported languages here:
         https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
@@ -150,7 +170,8 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
     translated and written to the location provided by the TranslationTargets.
 
     :param str source_url: Required. Location of the folder / container or single file with your
-        documents.
+        documents. See the service documentation for the supported SAS permissions for accessing
+        source storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
     :param targets: Required. Location of the destination for the output. This is a list of
         TranslationTargets. Note that a TranslationTarget is required for each language code specified.
     :type targets: list[~azure.ai.translation.document.TranslationTarget]
@@ -168,7 +189,8 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
         Currently only "AzureBlob" is supported.
 
     :ivar str source_url: Required. Location of the folder / container or single file with your
-        documents.
+        documents. See the service documentation for the supported SAS permissions for accessing
+        source storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
     :ivar targets: Required. Location of the destination for the output. This is a list of
         TranslationTargets. Note that a TranslationTarget is required for each language code specified.
     :vartype targets: list[~azure.ai.translation.document.TranslationTarget]
@@ -248,8 +270,8 @@ class TranslationStatus(
         * `NotStarted` - the operation has not begun yet.
         * `Running` - translation is in progress.
         * `Succeeded` - at least one document translated successfully within the operation.
-        * `Cancelled` - the operation was cancelled.
-        * `Cancelling` - the operation is being cancelled.
+        * `Canceled` - the operation was canceled.
+        * `Canceling` - the operation is being canceled.
         * `ValidationFailed` - the input failed validation. E.g. there was insufficient permissions on blob containers.
         * `Failed` - all the documents within the operation failed.
 
@@ -261,7 +283,7 @@ class TranslationStatus(
     :ivar int documents_succeeded_count: Number of successful translations on documents.
     :ivar int documents_in_progress_count: Number of translations on documents in progress.
     :ivar int documents_not_yet_started_count: Number of documents that have not yet started being translated.
-    :ivar int documents_cancelled_count: Number of documents that were cancelled for translation.
+    :ivar int documents_canceled_count: Number of documents that were canceled for translation.
     :ivar int total_characters_charged: Total characters charged across all documents within the translation operation.
     """
 
@@ -281,18 +303,19 @@ class TranslationStatus(
         self.documents_not_yet_started_count = kwargs.get(
             "documents_not_yet_started_count", None
         )
-        self.documents_cancelled_count = kwargs.get("documents_cancelled_count", None)
+        self.documents_canceled_count = kwargs.get("documents_canceled_count", None)
         self.total_characters_charged = kwargs.get("total_characters_charged", None)
 
     @classmethod
     def _from_generated(cls, batch_status_details):
         if not batch_status_details:
             return cls()
+
         return cls(
             id=batch_status_details.id,
             created_on=batch_status_details.created_date_time_utc,
             last_updated_on=batch_status_details.last_action_date_time_utc,
-            status=batch_status_details.status,
+            status=convert_status(batch_status_details.status),
             error=DocumentTranslationError._from_generated(  # pylint: disable=protected-access
                 batch_status_details.error
             )
@@ -303,7 +326,7 @@ class TranslationStatus(
             documents_succeeded_count=batch_status_details.summary.success,
             documents_in_progress_count=batch_status_details.summary.in_progress,
             documents_not_yet_started_count=batch_status_details.summary.not_yet_started,
-            documents_cancelled_count=batch_status_details.summary.cancelled,
+            documents_canceled_count=batch_status_details.summary.cancelled,
             total_characters_charged=batch_status_details.summary.total_character_charged,
         )
 
@@ -313,7 +336,7 @@ class TranslationStatus(
             "last_updated_on={}, status={}, error={}, documents_total_count={}, "
             "documents_failed_count={}, documents_succeeded_count={}, "
             "documents_in_progress_count={}, documents_not_yet_started_count={}, "
-            "documents_cancelled_count={}, total_characters_charged={})".format(
+            "documents_canceled_count={}, total_characters_charged={})".format(
                 self.id,
                 self.created_on,
                 self.last_updated_on,
@@ -324,7 +347,7 @@ class TranslationStatus(
                 self.documents_succeeded_count,
                 self.documents_in_progress_count,
                 self.documents_not_yet_started_count,
-                self.documents_cancelled_count,
+                self.documents_canceled_count,
                 self.total_characters_charged,
             )[:1024]
         )
@@ -349,8 +372,8 @@ class DocumentStatus(
         * `Running` - translation is in progress for document
         * `Succeeded` - translation succeeded for the document
         * `Failed` - the document failed to translate. Check the error property.
-        * `Cancelled` - the operation was cancelled, the document was not translated.
-        * `Cancelling` - the operation is cancelling, the document will not be translated.
+        * `Canceled` - the operation was canceled, the document was not translated.
+        * `Canceling` - the operation is canceling, the document will not be translated.
     :ivar str translated_to: The language code of the language the document was translated to,
         if successful.
     :ivar error: Returned if there is an error with the particular document.
@@ -382,7 +405,7 @@ class DocumentStatus(
             translated_document_url=doc_status.path,
             created_on=doc_status.created_date_time_utc,
             last_updated_on=doc_status.last_action_date_time_utc,
-            status=doc_status.status,
+            status=convert_status(doc_status.status),
             translated_to=doc_status.to,
             error=DocumentTranslationError._from_generated(  # pylint: disable=protected-access
                 doc_status.error
@@ -454,7 +477,7 @@ class DocumentTranslationError(
         )[:1024]
 
 
-class FileFormat(object):  # pylint: disable=useless-object-inheritance, R0903
+class DocumentTranslationFileFormat(object):  # pylint: disable=useless-object-inheritance, R0903
     """Possible file formats supported by the Document Translation service.
 
     :ivar file_format: Name of the format.
@@ -490,13 +513,13 @@ class FileFormat(object):  # pylint: disable=useless-object-inheritance, R0903
     @staticmethod
     def _from_generated_list(file_formats):
         return [
-            FileFormat._from_generated(file_formats) for file_formats in file_formats
+            DocumentTranslationFileFormat._from_generated(file_formats) for file_formats in file_formats
         ]
 
     def __repr__(self):
         # pylint: disable=line-too-long
         return (
-            "FileFormat(file_format={}, file_extensions={}, "
+            "DocumentTranslationFileFormat(file_format={}, file_extensions={}, "
             "content_types={}, format_versions={}, default_format_version={}".format(
                 self.file_format,
                 self.file_extensions,

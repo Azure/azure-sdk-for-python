@@ -13,12 +13,16 @@ import unittest
 import uuid
 from datetime import datetime, timedelta
 
+from azure.mgmt.storage.aio import StorageManagementClient
+
+
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.storage.blob._shared.policies import StorageContentValidation
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, BlobAccountPreparer, \
+    CachedResourceGroupPreparer
 
 from azure.storage.blob import (
     BlobProperties,
@@ -27,8 +31,8 @@ from azure.storage.blob import (
     PremiumPageBlobTier,
     SequenceNumberAction,
     StorageErrorCode,
-    generate_blob_sas
-)
+    generate_blob_sas,
+    BlobImmutabilityPolicyMode, ImmutabilityPolicy)
 
 from azure.storage.blob.aio import (
     BlobServiceClient,
@@ -140,7 +144,36 @@ class StoragePageBlobAsyncTest(AsyncStorageTestCase):
         def read(self, count):
             return self.wrapped_file.read(count)
 
-    #--Test cases for page blobs --------------------------------------------
+    # --Test cases for page blobs --------------------------------------------
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_upload_pages_from_url_with_oauth(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        account_url = self.account_url(storage_account, "blob")
+        if not isinstance(account_url, str):
+            account_url = account_url.encode('utf-8')
+            storage_account_key = storage_account_key.encode('utf-8')
+        bsc = BlobServiceClient(account_url, credential=storage_account_key,
+                                connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        await self._setup(bsc)
+        access_token = await self.generate_oauth_token().get_token("https://storage.azure.com/.default")
+        token = "Bearer {}".format(access_token.token)
+        source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
+        source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
+        destination_blob_client = await self._create_blob(bsc, length=SOURCE_BLOB_SIZE)
+
+        # Assert failure without providing token
+        with self.assertRaises(HttpResponseError):
+            await destination_blob_client.upload_pages_from_url(
+                source_blob_client.url, offset=0, length=8 * 1024, source_offset=0)
+        # Assert it works with oauth token
+        await destination_blob_client.upload_pages_from_url(
+            source_blob_client.url, offset=0, length=8 * 1024, source_offset=0, source_authorization=token)
+        # Assert destination blob has right content
+        destination_blob = await destination_blob_client.download_blob()
+        destination_blob_data = await destination_blob.readall()
+        self.assertEqual(source_blob_data, destination_blob_data)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -156,6 +189,46 @@ class StoragePageBlobAsyncTest(AsyncStorageTestCase):
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
         self.assertTrue(await blob.get_blob_properties())
+
+    @GlobalResourceGroupPreparer()
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral",
+                         random_name_enabled=True)
+    async def test_create_blob_with_immutability_policy(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        await self._setup(bsc)
+
+        container_name = self.get_resource_name('vlwcontainer')
+        if self.is_live:
+            token_credential = self.generate_oauth_token()
+            subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+            mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
+            property = mgmt_client.models().BlobContainer(
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
+            await mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
+
+        blob_name = self.get_resource_name("vlwblob")
+        blob = bsc.get_blob_client(container_name, blob_name)
+
+        # Act
+        immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
+        resp = await blob.create_page_blob(1024,
+                                           immutability_policy=immutability_policy,
+                                           legal_hold=True)
+        props = await blob.get_blob_properties()
+
+        # Assert
+        self.assertIsNotNone(resp.get('etag'))
+        self.assertIsNotNone(resp.get('last_modified'))
+        self.assertTrue(props['has_legal_hold'])
+        self.assertIsNotNone(props['immutability_policy']['expiry_time'])
+        self.assertIsNotNone(props['immutability_policy']['policy_mode'])
+
+        if self.is_live:
+            await blob.delete_immutability_policy()
+            await blob.set_legal_hold(False)
+            await blob.delete_blob()
+            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, container_name)
 
     @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()

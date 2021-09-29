@@ -158,7 +158,7 @@ A `KeyVaultAccessControlClient` manages role definitions and role assignments.
 A `KeyVaultBackupClient` performs full key backups, full key restores, and selective key restores.
 
 ## Examples
-This section conntains code snippets covering common tasks:
+This section contains code snippets covering common tasks:
 * Access Control
     * [List all role definitions](#list-all-role-definitions "List all role definitions")
     * [Set, Get, and Delete a role definition](#set-get-and-delete-a-role-defintion "Set, Get, and Delete a role definition")
@@ -392,7 +392,7 @@ contact opencode@microsoft.com with any additional questions or comments.
 [keyvault_docs]: https://docs.microsoft.com/azure/key-vault/
 [managed_hsm]: https://docs.microsoft.com/azure/key-vault/managed-hsm/
 [pip]: https://pypi.org/project/pip/
-[pypi_package_administration]: https://aka.ms/azsdk/python/keyvault-administration/pypi
+[pypi_package_administration]: https://pypi.org/project/azure-keyvault-administration
 [reference_docs]: https://aka.ms/azsdk/python/keyvault-administration/docs
 
 

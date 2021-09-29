@@ -89,4 +89,4 @@ class Operations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.DBForPostgreSQL/operations'}  # type: ignore
+    list.metadata = {'url': '/providers/Microsoft.DBforPostgreSQL/operations'}  # type: ignore

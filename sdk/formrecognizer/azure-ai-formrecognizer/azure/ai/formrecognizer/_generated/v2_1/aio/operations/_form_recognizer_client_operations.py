@@ -25,7 +25,7 @@ class FormRecognizerClientOperationsMixin:
     async def _train_custom_model_async_initial(
         self,
         train_request: "_models.TrainRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -73,7 +73,7 @@ class FormRecognizerClientOperationsMixin:
     async def begin_train_custom_model_async(
         self,
         train_request: "_models.TrainRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Train Custom Model.
 
@@ -142,7 +142,7 @@ class FormRecognizerClientOperationsMixin:
         self,
         model_id: str,
         include_keys: Optional[bool] = False,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Model":
         """Get Custom Model.
 
@@ -201,7 +201,7 @@ class FormRecognizerClientOperationsMixin:
     async def delete_custom_model(
         self,
         model_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete Custom Model.
 
@@ -257,7 +257,7 @@ class FormRecognizerClientOperationsMixin:
         include_text_details: Optional[bool] = False,
         pages: Optional[List[str]] = None,
         file_stream: Optional[Union[IO, "_models.SourcePath"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -324,7 +324,7 @@ class FormRecognizerClientOperationsMixin:
         include_text_details: Optional[bool] = False,
         pages: Optional[List[str]] = None,
         file_stream: Optional[Union[IO, "_models.SourcePath"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Analyze Form.
 
@@ -402,7 +402,7 @@ class FormRecognizerClientOperationsMixin:
         self,
         model_id: str,
         result_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AnalyzeOperationResult":
         """Get Analyze Form Result.
 
@@ -461,7 +461,7 @@ class FormRecognizerClientOperationsMixin:
         self,
         model_id: str,
         copy_request: "_models.CopyRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -511,7 +511,7 @@ class FormRecognizerClientOperationsMixin:
         self,
         model_id: str,
         copy_request: "_models.CopyRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Copy Custom Model.
 
@@ -577,7 +577,7 @@ class FormRecognizerClientOperationsMixin:
         self,
         model_id: str,
         result_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CopyOperationResult":
         """Get Custom Model Copy Result.
 
@@ -634,7 +634,7 @@ class FormRecognizerClientOperationsMixin:
 
     async def generate_model_copy_authorization(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CopyAuthorizationResult":
         """Generate Copy Authorization.
 
@@ -688,7 +688,7 @@ class FormRecognizerClientOperationsMixin:
     async def _compose_custom_models_async_initial(
         self,
         compose_request: "_models.ComposeRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -736,7 +736,7 @@ class FormRecognizerClientOperationsMixin:
     async def begin_compose_custom_models_async(
         self,
         compose_request: "_models.ComposeRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Compose trained with labels models into one composed model.
 
@@ -801,7 +801,7 @@ class FormRecognizerClientOperationsMixin:
         locale: Optional[Union[str, "_models.Locale"]] = None,
         pages: Optional[List[str]] = None,
         file_stream: Optional[Union[IO, "_models.SourcePath"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -869,7 +869,7 @@ class FormRecognizerClientOperationsMixin:
         locale: Optional[Union[str, "_models.Locale"]] = None,
         pages: Optional[List[str]] = None,
         file_stream: Optional[Union[IO, "_models.SourcePath"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Analyze Business Card.
 
@@ -946,7 +946,7 @@ class FormRecognizerClientOperationsMixin:
     async def get_analyze_business_card_result(
         self,
         result_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AnalyzeOperationResult":
         """Get Analyze Business Card Result.
 
@@ -1004,7 +1004,7 @@ class FormRecognizerClientOperationsMixin:
         locale: Optional[Union[str, "_models.Locale"]] = None,
         pages: Optional[List[str]] = None,
         file_stream: Optional[Union[IO, "_models.SourcePath"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -1072,7 +1072,7 @@ class FormRecognizerClientOperationsMixin:
         locale: Optional[Union[str, "_models.Locale"]] = None,
         pages: Optional[List[str]] = None,
         file_stream: Optional[Union[IO, "_models.SourcePath"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Analyze Invoice Document.
 
@@ -1149,7 +1149,7 @@ class FormRecognizerClientOperationsMixin:
     async def get_analyze_invoice_result(
         self,
         result_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AnalyzeOperationResult":
         """Get Analyze Invoice Result.
 
@@ -1206,7 +1206,7 @@ class FormRecognizerClientOperationsMixin:
         include_text_details: Optional[bool] = False,
         pages: Optional[List[str]] = None,
         file_stream: Optional[Union[IO, "_models.SourcePath"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -1271,7 +1271,7 @@ class FormRecognizerClientOperationsMixin:
         include_text_details: Optional[bool] = False,
         pages: Optional[List[str]] = None,
         file_stream: Optional[Union[IO, "_models.SourcePath"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Analyze ID Document.
 
@@ -1344,7 +1344,7 @@ class FormRecognizerClientOperationsMixin:
     async def get_analyze_id_document_result(
         self,
         result_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AnalyzeOperationResult":
         """Get Analyze ID Document Result.
 
@@ -1402,7 +1402,7 @@ class FormRecognizerClientOperationsMixin:
         locale: Optional[Union[str, "_models.Locale"]] = None,
         pages: Optional[List[str]] = None,
         file_stream: Optional[Union[IO, "_models.SourcePath"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -1470,7 +1470,7 @@ class FormRecognizerClientOperationsMixin:
         locale: Optional[Union[str, "_models.Locale"]] = None,
         pages: Optional[List[str]] = None,
         file_stream: Optional[Union[IO, "_models.SourcePath"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Analyze Receipt.
 
@@ -1547,7 +1547,7 @@ class FormRecognizerClientOperationsMixin:
     async def get_analyze_receipt_result(
         self,
         result_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AnalyzeOperationResult":
         """Get Analyze Receipt Result.
 
@@ -1605,7 +1605,7 @@ class FormRecognizerClientOperationsMixin:
         language: Optional[Union[str, "_models.Language"]] = None,
         reading_order: Optional[Union[str, "_models.ReadingOrder"]] = "basic",
         file_stream: Optional[Union[IO, "_models.SourcePath"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -1673,7 +1673,7 @@ class FormRecognizerClientOperationsMixin:
         language: Optional[Union[str, "_models.Language"]] = None,
         reading_order: Optional[Union[str, "_models.ReadingOrder"]] = "basic",
         file_stream: Optional[Union[IO, "_models.SourcePath"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Analyze Layout.
 
@@ -1767,7 +1767,7 @@ class FormRecognizerClientOperationsMixin:
     async def get_analyze_layout_result(
         self,
         result_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AnalyzeOperationResult":
         """Get Analyze Layout Result.
 
@@ -1821,7 +1821,7 @@ class FormRecognizerClientOperationsMixin:
 
     def list_custom_models(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.Models"]:
         """List Custom Models.
 
@@ -1894,7 +1894,7 @@ class FormRecognizerClientOperationsMixin:
 
     async def get_custom_models(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Models":
         """Get Custom Models.
 

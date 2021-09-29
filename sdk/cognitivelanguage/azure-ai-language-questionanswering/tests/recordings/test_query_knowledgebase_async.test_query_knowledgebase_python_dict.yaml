@@ -1,0 +1,39 @@
+interactions:
+- request:
+    body: '{"qnaId": 19}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/1.0.0b2 Python/3.9.5 (macOS-11.5.2-x86_64-i386-64bit)
+    method: POST
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-07-15-preview
+  response:
+    body:
+      string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Charge
+        your Surface Pro 4\"\n      ],\n      \"answer\": \"**Charge your Surface
+        Pro 4**\\n\\n1.  Connect the two parts of the power cord.\\n\\n2.  Connect
+        the power cord securely to the charging port.\\n\\n3.  Plug the power supply
+        into an electrical outlet.\",\n      \"confidenceScore\": 1.0,\n      \"id\":
+        19,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
+        {\n        \"explicitlytaggedheading\": \"charge your surface pro 4\"\n      },\n
+        \     \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
+        []\n      }\n    }\n  ]\n}"
+    headers:
+      apim-request-id: c6c85372-bf1f-4f8c-98ce-8de52137882a
+      content-length: '583'
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTransaction=1
+      date: Tue, 21 Sep 2021 21:06:51 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '139'
+    status:
+      code: 200
+      message: OK
+    url: https://wuppe.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=190a9e13-8ede-4e4b-a8fd-c4d7f2aeab6c&deploymentName=test&api-version=2021-07-15-preview
+version: 1

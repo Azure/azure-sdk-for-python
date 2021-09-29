@@ -12,7 +12,7 @@ urlFragment: formrecognizer-samples
 # Samples for Azure Form Recognizer client library for Python
 
 These code samples show common scenario operations with the Azure Form Recognizer client library.
-The async versions of the samples require Python 3.5 or later.
+The async versions of the samples require Python 3.6 or later.
 
 These sample programs show common scenarios for the Form Recognizer client's offerings.
 
@@ -35,7 +35,7 @@ All of these samples need the endpoint to your Form Recognizer resource ([instru
 |[sample_create_composed_model.py][sample_create_composed_model] and [sample_create_composed_model_async.py][sample_create_composed_model_async]|Create a composed model from a collection of existing models trained with labels|
 
 ## Prerequisites
-* Python 2.7, or 3.5 or later is required to use this package (3.5 or later if using asyncio)
+* Python 2.7, or 3.6 or later is required to use this package (3.6 or later if using asyncio)
 * You must have an [Azure subscription][azure_subscription] and an
 [Azure Form Recognizer account][azure_form_recognizer_account] to run these samples.
 
@@ -78,37 +78,41 @@ what you can do with the Azure Form Recognizer client library.
 [get-endpoint-instructions]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/README.md#looking-up-the-endpoint
 [get-key-instructions]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/README.md#get-the-api-key
 
-[sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_authentication.py
-[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_authentication_async.py
-[sample_differentiate_output_models_trained_with_and_without_labels]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_differentiate_output_models_trained_with_and_without_labels.py
-[sample_differentiate_output_models_trained_with_and_without_labels_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_differentiate_output_models_trained_with_and_without_labels_async.py
-[sample_get_bounding_boxes]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_get_bounding_boxes.py
-[sample_get_bounding_boxes_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_get_bounding_boxes_async.py
-[sample_manage_custom_models]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_manage_custom_models.py
-[sample_manage_custom_models_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_manage_custom_models_async.py
-[sample_recognize_content]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_content.py
-[sample_recognize_content_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_content_async.py
-[sample_recognize_custom_forms]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_custom_forms.py
-[sample_recognize_custom_forms_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_custom_forms_async.py
-[sample_recognize_receipts_from_url]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_receipts_from_url.py
-[sample_recognize_receipts_from_url_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_receipts_from_url_async.py
-[sample_recognize_receipts]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_receipts.py
-[sample_recognize_receipts_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_receipts_async.py
-[sample_recognize_business_cards]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_business_cards.py
-[sample_recognize_business_cards_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_business_cards_async.py
-[sample_recognize_identity_documents]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_identity_documents.py
-[sample_recognize_identity_documents_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_identity_documents_async.py
-[sample_recognize_invoices]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_invoices.py
-[sample_recognize_invoices_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_invoices_async.py
-[sample_train_model_with_labels]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_model_with_labels.py
-[sample_train_model_with_labels_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_model_with_labels_async.py
-[sample_train_model_without_labels]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_model_without_labels.py
-[sample_train_model_without_labels_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_model_without_labels_async.py
-[sample_copy_model]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_copy_model.py
-[sample_copy_model_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_copy_model_async.py
-[sample_strongly_typing_recognized_form]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_strongly_typing_recognized_form.py
-[sample_strongly_typing_recognized_form_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_strongly_typing_recognized_form_async.py
-[sample_create_composed_model]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_create_composed_model.py
-[sample_create_composed_model_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_create_composed_model_async.py
-[sample_differentiate_output_labeled_tables]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_differentiate_output_labeled_tables.py
-[sample_differentiate_output_labeled_tables_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_differentiate_output_labeled_tables_async.py
+<!-- TODO re-enable when in public repo
+
+[sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/sample_authentication.py
+[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/async_samples/sample_authentication_async.py
+[sample_differentiate_output_models_trained_with_and_without_labels]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/sample_differentiate_output_models_trained_with_and_without_labels.py
+[sample_differentiate_output_models_trained_with_and_without_labels_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/async_samples/sample_differentiate_output_models_trained_with_and_without_labels_async.py
+[sample_get_bounding_boxes]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/sample_get_bounding_boxes.py
+[sample_get_bounding_boxes_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/async_samples/sample_get_bounding_boxes_async.py
+[sample_manage_custom_models]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/sample_manage_custom_models.py
+[sample_manage_custom_models_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/async_samples/sample_manage_custom_models_async.py
+[sample_recognize_content]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/sample_recognize_content.py
+[sample_recognize_content_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/async_samples/sample_recognize_content_async.py
+[sample_recognize_custom_forms]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/sample_recognize_custom_forms.py
+[sample_recognize_custom_forms_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/async_samples/sample_recognize_custom_forms_async.py
+[sample_recognize_receipts_from_url]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/sample_recognize_receipts_from_url.py
+[sample_recognize_receipts_from_url_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/async_samples/sample_recognize_receipts_from_url_async.py
+[sample_recognize_receipts]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/sample_recognize_receipts.py
+[sample_recognize_receipts_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/async_samples/sample_recognize_receipts_async.py
+[sample_recognize_business_cards]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/sample_recognize_business_cards.py
+[sample_recognize_business_cards_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/async_samples/sample_recognize_business_cards_async.py
+[sample_recognize_identity_documents]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/sample_recognize_identity_documents.py
+[sample_recognize_identity_documents_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/async_samples/sample_recognize_identity_documents_async.py
+[sample_recognize_invoices]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/sample_recognize_invoices.py
+[sample_recognize_invoices_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/async_samples/sample_recognize_invoices_async.py
+[sample_train_model_with_labels]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/sample_train_model_with_labels.py
+[sample_train_model_with_labels_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/async_samples/sample_train_model_with_labels_async.py
+[sample_train_model_without_labels]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/sample_train_model_without_labels.py
+[sample_train_model_without_labels_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/async_samples/sample_train_model_without_labels_async.py
+[sample_copy_model]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/sample_copy_model.py
+[sample_copy_model_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/async_samples/sample_copy_model_async.py
+[sample_strongly_typing_recognized_form]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/sample_strongly_typing_recognized_form.py
+[sample_strongly_typing_recognized_form_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/async_samples/sample_strongly_typing_recognized_form_async.py
+[sample_create_composed_model]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/sample_create_composed_model.py
+[sample_create_composed_model_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/async_samples/sample_create_composed_model_async.py
+[sample_differentiate_output_labeled_tables]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/sample_differentiate_output_labeled_tables.py
+[sample_differentiate_output_labeled_tables_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v2/async_samples/sample_differentiate_output_labeled_tables_async.py
+
+-->

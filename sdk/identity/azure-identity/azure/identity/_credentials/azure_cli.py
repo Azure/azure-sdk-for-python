@@ -18,7 +18,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
-from .._internal import _scopes_to_resource
+from .._internal import _scopes_to_resource, resolve_tenant
 from .._internal.decorators import log_get_token
 
 if TYPE_CHECKING:
@@ -35,10 +35,27 @@ class AzureCliCredential(object):
     """Authenticates by requesting a token from the Azure CLI.
 
     This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.
+
+    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
+        the identity logged in to the Azure CLI is registered in. When False, which is the default, the credential will
+        acquire tokens only from the tenant of the Azure CLI's active subscription.
     """
 
+    def __init__(self, **kwargs):
+        self._allow_multitenant = kwargs.get("allow_multitenant_authentication", False)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        pass
+
+    def close(self):
+        # type: () -> None
+        """Calling this method is unnecessary."""
+
     @log_get_token("AzureCliCredential")
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=no-self-use,unused-argument
+    def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 
@@ -46,6 +63,9 @@ class AzureCliCredential(object):
         also handle token caching because this credential doesn't cache the tokens it acquires.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
+        :keyword str tenant_id: optional tenant to include in the token request. If **allow_multitenant_authentication**
+            is False, specifying a tenant with this argument may raise an exception.
+
         :rtype: :class:`azure.core.credentials.AccessToken`
 
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure CLI.
@@ -54,12 +74,19 @@ class AzureCliCredential(object):
         """
 
         resource = _scopes_to_resource(*scopes)
-        output = _run_command(COMMAND_LINE.format(resource))
+        command = COMMAND_LINE.format(resource)
+        tenant = resolve_tenant("", self._allow_multitenant, **kwargs)
+        if tenant:
+            command += " --tenant " + tenant
+        output = _run_command(command)
 
         token = parse_token(output)
         if not token:
             sanitized_output = sanitize_output(output)
-            raise ClientAuthenticationError(message="Unexpected output from Azure CLI: '{}'".format(sanitized_output))
+            raise ClientAuthenticationError(
+                message="Unexpected output from Azure CLI: '{}'. \n"
+                        "To mitigate this issue, please refer to the troubleshooting guidelines here at "
+                        "https://aka.ms/azsdk/python/identity/azclicredential/troubleshoot.".format(sanitized_output))
 
         return token
 

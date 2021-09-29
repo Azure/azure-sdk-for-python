@@ -25,7 +25,7 @@ class Operations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~postgre_sql_management_client.models
+    :type models: ~azure.mgmt.rdbms.postgresql_flexibleservers.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -48,7 +48,7 @@ class Operations:
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: OperationListResult, or the result of cls(response)
-        :rtype: ~postgre_sql_management_client.models.OperationListResult
+        :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.OperationListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationListResult"]
@@ -84,4 +84,4 @@ class Operations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.DBForPostgreSql/operations'}  # type: ignore
+    list.metadata = {'url': '/providers/Microsoft.DBforPostgreSQL/operations'}  # type: ignore

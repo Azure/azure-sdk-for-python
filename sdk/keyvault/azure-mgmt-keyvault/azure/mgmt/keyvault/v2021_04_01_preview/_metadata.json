@@ -104,7 +104,6 @@
         "managed_hsms": "ManagedHsmsOperations",
         "mhsm_private_endpoint_connections": "MHSMPrivateEndpointConnectionsOperations",
         "mhsm_private_link_resources": "MHSMPrivateLinkResourcesOperations",
-        "operations": "Operations",
-        "secrets": "SecretsOperations"
+        "operations": "Operations"
     }
 }

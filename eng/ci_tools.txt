@@ -18,7 +18,7 @@ coverage==4.5.4
 codecov==2.1.0
 beautifulsoup4==4.9.1
 pkginfo==1.5.0.1
-pip==20.2
+pip==20.3
 black==21.6b0; python_version >= '3.6'
 
 # locking packages defined as deps from azure-sdk-tools or azure-devtools
@@ -27,10 +27,10 @@ pyOpenSSL==19.1.0
 json-delta==2.0
 ConfigArgParse==1.2.3
 six==1.14.0
-vcrpy==3.0.0
 pyyaml==5.3.1
-pytest==5.4.2; python_version >= '3.5'
 pytest==4.6.9; python_version == '2.7'
+pytest==5.4.2; python_version >= '3.5' and python_version <= '3.9'
+pytest==6.2.4; python_version >= '3.10'
 pytest-cov==2.8.1
 
 # local dev packages

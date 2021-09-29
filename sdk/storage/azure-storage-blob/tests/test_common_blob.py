@@ -14,6 +14,9 @@ import os
 import sys
 from datetime import datetime, timedelta
 
+from azure.mgmt.storage import StorageManagementClient
+
+
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
@@ -41,30 +44,46 @@ from azure.storage.blob import (
     ResourceTypes,
     AccountSasPermissions,
     StandardBlobTier,
-)
+    BlobImmutabilityPolicyMode, ImmutabilityPolicy)
 from azure.storage.blob._generated.models import RehydratePriority
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, BlobAccountPreparer, \
+    CachedResourceGroupPreparer
 from _shared.testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
 TEST_BLOB_PREFIX = 'blob'
-
+LARGE_BLOB_SIZE = 64 * 1024 + 5
 # ------------------------------------------------------------------------------
 
 
 class StorageCommonBlobTest(StorageTestCase):
-    def _setup(self, storage_account, key, **kwargs):
+    def _setup(self, storage_account, key):
         self.bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=key)
         self.container_name = self.get_resource_name('utcontainer')
+        self.source_container_name = self.get_resource_name('utcontainersource')
         if self.is_live:
-            container = self.bsc.get_container_client(self.container_name)
             try:
-                container.create_container(timeout=5)
+                self.bsc.create_container(self.container_name, timeout=5)
+            except ResourceExistsError:
+                pass
+            try:
+                self.bsc.create_container(self.source_container_name, timeout=5)
             except ResourceExistsError:
                 pass
         self.byte_data = self.get_random_bytes(1024)
+
+    def _create_blob(self, tags=None, data=b'', **kwargs):
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(data, tags=tags, overwrite=True, **kwargs)
+        return blob
+
+    def _create_source_blob(self, data):
+        blob_client = self.bsc.get_blob_client(self.source_container_name, self.get_resource_name(TEST_BLOB_PREFIX))
+        blob_client.upload_blob(data, overwrite=True)
+        return blob_client
 
     def _setup_remote(self, storage_account, key):
         self.bsc2 = BlobServiceClient(self.account_url(storage_account, "blob"), credential=key)
@@ -150,7 +169,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_blob_exists(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
-        blob_name = self._create_block_blob()
+        blob_name = self._create_block_blob(overwrite=True)
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -1138,6 +1157,27 @@ class StorageCommonBlobTest(StorageTestCase):
         finally:
             self._disable_soft_delete()
 
+    @GlobalStorageAccountPreparer()
+    def test_start_copy_from_url_with_oauth(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._setup(storage_account, storage_account_key)
+        # Create source blob
+        source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        source_blob_client = self._create_source_blob(data=source_blob_data)
+        # Create destination blob
+        destination_blob_client = self._create_blob()
+        token = "Bearer {}".format(self.generate_oauth_token().get_token("https://storage.azure.com/.default").token)
+
+        with self.assertRaises(HttpResponseError):
+            destination_blob_client.start_copy_from_url(source_blob_client.url, requires_sync=True)
+        with self.assertRaises(ValueError):
+            destination_blob_client.start_copy_from_url(
+                source_blob_client.url, source_authorization=token, requires_sync=False)
+
+        destination_blob_client.start_copy_from_url(
+            source_blob_client.url, source_authorization=token, requires_sync=True)
+        destination_blob_data = destination_blob_client.download_blob().readall()
+        self.assertEqual(source_blob_data, destination_blob_data)
 
     @GlobalStorageAccountPreparer()
     def test_copy_blob_with_existing_blob(self, resource_group, location, storage_account, storage_account_key):
@@ -1160,6 +1200,48 @@ class StorageCommonBlobTest(StorageTestCase):
 
         copy_content = copyblob.download_blob().readall()
         self.assertEqual(copy_content, self.byte_data)
+
+    @GlobalResourceGroupPreparer()
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", random_name_enabled=True)
+    def test_copy_blob_with_immutability_policy(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+
+        container_name = self.get_resource_name('vlwcontainer')
+        if self.is_live:
+            token_credential = self.generate_oauth_token()
+            subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+            mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
+            property = mgmt_client.models().BlobContainer(
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
+            mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
+
+        blob_name = self._create_block_blob()
+        # Act
+        sourceblob = '{0}/{1}/{2}'.format(
+            self.account_url(storage_account, "blob"), self.container_name, blob_name)
+
+        copyblob = self.bsc.get_blob_client(container_name, 'blob1copy')
+        immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
+        copy = copyblob.start_copy_from_url(sourceblob, immutability_policy=immutability_policy,
+                                            legal_hold=True,
+                                            )
+
+        download_resp = copyblob.download_blob()
+        self.assertEqual(download_resp.readall(), self.byte_data)
+
+        self.assertTrue(download_resp.properties['has_legal_hold'])
+        self.assertIsNotNone(download_resp.properties['immutability_policy']['expiry_time'])
+        self.assertIsNotNone(download_resp.properties['immutability_policy']['policy_mode'])
+        self.assertIsNotNone(copy)
+        self.assertEqual(copy['copy_status'], 'success')
+        self.assertFalse(isinstance(copy['copy_status'], Enum))
+
+        if self.is_live:
+            copyblob.delete_immutability_policy()
+            copyblob.set_legal_hold(False)
+            copyblob.delete_blob()
+            mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, container_name)
 
     @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
@@ -1722,6 +1804,90 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertTrue(blob_response.ok)
         self.assertEqual(self.byte_data, blob_response.content)
         self.assertTrue(container_response.ok)
+
+    @pytest.mark.live_test_only
+    @GlobalResourceGroupPreparer()
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", random_name_enabled=True)
+    def test_set_immutability_policy_using_sas(self, resource_group, location, storage_account, storage_account_key):
+        # SAS URL is calculated from storage key, so this test runs live only
+
+        self._setup(storage_account, storage_account_key)
+
+        container_name = self.get_resource_name('vlwcontainer')
+        if self.is_live:
+            token_credential = self.generate_oauth_token()
+            subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+            mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
+            property = mgmt_client.models().BlobContainer(
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
+            mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
+
+        blob_name = self.get_resource_name('vlwblob')
+        blob_client = self.bsc.get_blob_client(container_name, blob_name)
+        blob_client.upload_blob(b"abc", overwrite=True)
+
+        # Act using account sas
+        account_sas_token = generate_account_sas(
+            self.bsc.account_name,
+            self.bsc.credential.account_key,
+            ResourceTypes(container=True, object=True),
+            AccountSasPermissions(read=True, set_immutability_policy=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+        blob = BlobClient(
+            self.bsc.url, container_name= container_name, blob_name=blob_name, credential=account_sas_token)
+        immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
+        resp_with_account_sas = blob.set_immutability_policy(immutability_policy=immutability_policy)
+        blob_response = requests.get(blob.url)
+
+        # Assert response using account sas
+        self.assertTrue(blob_response.ok)
+        self.assertIsNotNone(resp_with_account_sas['immutability_policy_until_date'])
+        self.assertIsNotNone(resp_with_account_sas['immutability_policy_mode'])
+
+        # Acting using container sas
+        container_sas_token = generate_container_sas(
+            self.bsc.account_name,
+            container_name,
+            account_key=self.bsc.credential.account_key,
+            permission=ContainerSasPermissions(read=True, set_immutability_policy=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        blob1 = BlobClient(
+            self.bsc.url, container_name=container_name, blob_name=blob_name, credential=container_sas_token)
+
+        immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
+        resp_with_container_sas = blob1.set_immutability_policy(immutability_policy=immutability_policy)
+        # Assert response using container sas
+        self.assertIsNotNone(resp_with_container_sas['immutability_policy_until_date'])
+        self.assertIsNotNone(resp_with_container_sas['immutability_policy_mode'])
+
+        # Acting using blob sas
+        blob_sas_token = generate_blob_sas(
+            self.bsc.account_name,
+            container_name,
+            blob_name,
+            account_key=self.bsc.credential.account_key,
+            permission=BlobSasPermissions(read=True, set_immutability_policy=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        blob2 = BlobClient(
+            self.bsc.url, container_name=container_name, blob_name=blob_name, credential=blob_sas_token)
+        immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
+        resp_with_blob_sas = blob2.set_immutability_policy(immutability_policy=immutability_policy)
+
+        # Assert response using blob sas
+        self.assertIsNotNone(resp_with_blob_sas['immutability_policy_until_date'])
+        self.assertIsNotNone(resp_with_blob_sas['immutability_policy_mode'])
+        
+        if self.is_live:
+            blob_client.delete_immutability_policy()
+            blob_client.set_legal_hold(False)
+            blob_client.delete_blob()
+            mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, container_name)
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
@@ -2400,5 +2566,165 @@ class StorageCommonBlobTest(StorageTestCase):
             container.create_container(raw_response_hook=fail_response)
         # Assert that the token attempts to refresh 4 times (i.e, get_token called 4 times)
         self.assertEqual(token_credential.get_token_count, 4)
+
+    @GlobalResourceGroupPreparer()
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", random_name_enabled=True)
+    def test_blob_immutability_policy(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+
+        container_name = self.get_resource_name('vlwcontainer')
+        if self.is_live:
+            token_credential = self.generate_oauth_token()
+            subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+            mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
+            property = mgmt_client.models().BlobContainer(
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
+            mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
+
+        # Act
+        blob_name = self.get_resource_name('vlwblob')
+        blob = self.bsc.get_blob_client(container_name, blob_name)
+        blob.upload_blob(b"abc", overwrite=True)
+        immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
+        resp = blob.set_immutability_policy(immutability_policy=immutability_policy)
+
+        # Assert
+        # check immutability policy after set_immutability_policy()
+        props = blob.get_blob_properties()
+        self.assertIsNotNone(resp['immutability_policy_until_date'])
+        self.assertIsNotNone(resp['immutability_policy_mode'])
+        self.assertIsNotNone(props['immutability_policy']['expiry_time'])
+        self.assertIsNotNone(props['immutability_policy']['policy_mode'])
+        self.assertEqual(props['immutability_policy']['policy_mode'], "unlocked")
+
+        # check immutability policy after delete_immutability_policy()
+        blob.delete_immutability_policy()
+        props = blob.get_blob_properties()
+        self.assertIsNone(props['immutability_policy']['policy_mode'])
+        self.assertIsNone(props['immutability_policy']['policy_mode'])
+
+        if self.is_live:
+            blob.delete_immutability_policy()
+            blob.set_legal_hold(False)
+            blob.delete_blob()
+            mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, container_name)
+
+    @GlobalResourceGroupPreparer()
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", random_name_enabled=True)
+    def test_blob_legal_hold(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+
+        container_name = self.get_resource_name('vlwcontainer')
+        if self.is_live:
+            token_credential = self.generate_oauth_token()
+            subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+            mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
+            property = mgmt_client.models().BlobContainer(
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
+            mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
+
+        # Act
+        blob_name = self.get_resource_name('vlwblob')
+        blob = self.bsc.get_blob_client(container_name, blob_name)
+        blob.upload_blob(b"abc", overwrite=True)
+        resp = blob.set_legal_hold(True)
+        props = blob.get_blob_properties()
+
+        with self.assertRaises(HttpResponseError):
+            blob.delete_blob()
+
+        self.assertTrue(resp['legal_hold'])
+        self.assertTrue(props['has_legal_hold'])
+
+        resp2 = blob.set_legal_hold(False)
+        props2 = blob.get_blob_properties()
+
+        self.assertFalse(resp2['legal_hold'])
+        self.assertFalse(props2['has_legal_hold'])
+
+        if self.is_live:
+            blob.delete_immutability_policy()
+            blob.set_legal_hold(False)
+            blob.delete_blob()
+            mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, container_name)
+
+    @GlobalResourceGroupPreparer()
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", random_name_enabled=True)
+    def test_download_blob_with_immutability_policy(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        container_name = self.get_resource_name('vlwcontainer')
+        if self.is_live:
+            token_credential = self.generate_oauth_token()
+            subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+            mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
+            property = mgmt_client.models().BlobContainer(
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
+            mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
+
+        # Act
+        blob_name = self.get_resource_name('vlwblob')
+        blob = self.bsc.get_blob_client(container_name, blob_name)
+        content = b"abcedfg"
+
+        immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
+        blob.upload_blob(content,
+                         immutability_policy=immutability_policy,
+                         legal_hold=True,
+                         overwrite=True)
+
+        download_resp = blob.download_blob()
+
+        with self.assertRaises(HttpResponseError):
+            blob.delete_blob()
+
+        self.assertTrue(download_resp.properties['has_legal_hold'])
+        self.assertIsNotNone(download_resp.properties['immutability_policy']['expiry_time'])
+        self.assertIsNotNone(download_resp.properties['immutability_policy']['policy_mode'])
+
+        # Cleanup
+        if self.is_live:
+            blob.delete_immutability_policy()
+            blob.set_legal_hold(False)
+            blob.delete_blob()
+            mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, container_name)
+
+    @GlobalResourceGroupPreparer()
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", random_name_enabled=True)
+    def test_list_blobs_with_immutability_policy(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        container_name = self.get_resource_name('vlwcontainer')
+        if self.is_live:
+            token_credential = self.generate_oauth_token()
+            subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+            mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
+            property = mgmt_client.models().BlobContainer(
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
+            mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
+
+        # Act
+        blob_name = self.get_resource_name('vlwblob')
+        container_client = self.bsc.get_container_client(container_name)
+        blob = self.bsc.get_blob_client(container_name, blob_name)
+        content = b"abcedfg"
+
+        immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
+        blob.upload_blob(content,immutability_policy=immutability_policy,
+                         legal_hold=True,
+                         overwrite=True)
+
+        blob_list = list(container_client.list_blobs(include=['immutabilitypolicy', 'legalhold']))
+
+        self.assertTrue(blob_list[0]['has_legal_hold'])
+        self.assertIsNotNone(blob_list[0]['immutability_policy']['expiry_time'])
+        self.assertIsNotNone(blob_list[0]['immutability_policy']['policy_mode'])
+
+        if self.is_live:
+            blob.delete_immutability_policy()
+            blob.set_legal_hold(False)
+            blob.delete_blob()
+            mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, container_name)
 
 # ------------------------------------------------------------------------------

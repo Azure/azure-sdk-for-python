@@ -47,7 +47,7 @@ class IntegrationRuntimeObjectMetadataOperations:
         resource_group_name: str,
         factory_name: str,
         integration_runtime_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.SsisObjectMetadataStatusResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SsisObjectMetadataStatusResponse"]]
         error_map = {
@@ -98,7 +98,7 @@ class IntegrationRuntimeObjectMetadataOperations:
         resource_group_name: str,
         factory_name: str,
         integration_runtime_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.SsisObjectMetadataStatusResponse"]:
         """Refresh a SSIS integration runtime object metadata.
 
@@ -110,8 +110,8 @@ class IntegrationRuntimeObjectMetadataOperations:
         :type integration_runtime_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SsisObjectMetadataStatusResponse or the result of cls(response)
@@ -171,7 +171,7 @@ class IntegrationRuntimeObjectMetadataOperations:
         factory_name: str,
         integration_runtime_name: str,
         get_metadata_request: Optional["_models.GetSsisObjectMetadataRequest"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SsisObjectMetadataListResponse":
         """Get a SSIS integration runtime object metadata by specified path. The return is pageable
         metadata list.

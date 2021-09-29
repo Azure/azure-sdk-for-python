@@ -1,6 +1,33 @@
 # Release History
 
+## 9.0.0 (2021-09-17)
+
+**Features**
+
+  - Model ImageRegistryCredential has a new parameter identity_url
+  - Model ImageRegistryCredential has a new parameter identity
+  - Model ContainerGroup has a new parameter subnet_ids
+  - Added operation ContainerGroupsOperations.get_outbound_network_dependencies_endpoints
+
+**Breaking changes**
+
+  - Model ContainerGroup no longer has parameter network_profile
+
+## 8.0.0 (2021-07-20)
+
+**Features**
+
+  - Model LogAnalytics has a new parameter workspace_resource_id
+  - Model ContainerHttpGet has a new parameter http_headers
+  - Added operation ContainersOperations.attach
+
+**Breaking changes**
+
+  - Operation ContainersOperations.list_logs has a new signature
+
 ## 7.0.0 (2020-11-25)
+
+  - GA release
 
 ## 7.0.0b1 (2020-10-12)
 

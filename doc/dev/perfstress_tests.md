@@ -2,7 +2,7 @@
 1. [The perfstress framework](#the-perfstress-framework)
     - [The PerfStressTest base](#the-perfstresstest-base)
     - [Default command options](#default-command-options)
-    - [Running with test proxy](#running-with-test-proxy)
+    - [Running with test proxy](#running-with-the-test-proxy)
 2. [Adding performance tests to an SDK](#adding-performance-tests-to-an-sdk)
     - [Writing a test](#writing-a-test)
     - [Adding legacy T1 tests](#adding-legacy-t1-tests)
@@ -88,7 +88,7 @@ The framework has a series of common command line options built in:
 
 ## Running with the test proxy
 Follow the instructions here to install and run the test proxy server:
-https://github.com/Azure/azure-sdk-tools/tree/feature/http-recording-server/tools/test-proxy/Azure.Sdk.Tools.TestProxy
+https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy
 
 Once running, in a separate process run the perf test in question, combined with the `-x` flag to specify the proxy endpoint.
 ```cmd

@@ -45,7 +45,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     name=data_feed_name,
                     source=SqlServerDataFeedSource(
                         connection_string=self.sql_server_connection_string,
-                        query="select * from adsample2 where Timestamp = @StartTime"
+                        query="select * from adsample2 where Timestamp = @StartTime"
                     ),
                     granularity="Daily",
                     schema=["cost", "revenue"],
@@ -75,7 +75,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     name=data_feed_name,
                     source=SqlServerDataFeedSource(
                         connection_string=self.sql_server_connection_string,
-                        query=u"select * from adsample2 where Timestamp = @StartTime"
+                        query=u"select * from adsample2 where Timestamp = @StartTime"
                     ),
                     granularity=DataFeedGranularity(
                         granularity_type="Daily",
@@ -162,7 +162,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     name=data_feed_name,
                     source=SqlServerDataFeedSource(
                         connection_string=self.sql_server_connection_string,
-                        query=u"select * from adsample2 where Timestamp = @StartTime"
+                        query=u"select * from adsample2 where Timestamp = @StartTime"
                     ),
                     granularity=DataFeedGranularity(
                         granularity_type="Custom",

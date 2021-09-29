@@ -14,6 +14,7 @@ from ._models import (
     RecognizePiiEntitiesAction,
     RecognizeLinkedEntitiesAction,
     AnalyzeSentimentAction,
+    ExtractSummaryAction,
     _AnalyzeActionsType,
 )
 
@@ -96,6 +97,8 @@ def _determine_action_type(action):
         return _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
     if isinstance(action, AnalyzeSentimentAction):
         return _AnalyzeActionsType.ANALYZE_SENTIMENT
+    if isinstance(action, ExtractSummaryAction):
+        return _AnalyzeActionsType.EXTRACT_SUMMARY
     return _AnalyzeActionsType.EXTRACT_KEY_PHRASES
 
 

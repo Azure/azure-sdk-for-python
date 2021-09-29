@@ -16,19 +16,19 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 15c71c56-cdcf-4bee-859d-d7ca34728f60
+      - d81d65d4-93d2-4ff2-bfe5-5cf2ef6879dc
       date:
-      - Wed, 23 Jun 2021 01:46:20 GMT
+      - Tue, 03 Aug 2021 17:31:51 GMT
       operation-location:
-      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/entities/health/jobs/483761e2-49e4-4704-9481-68e3d4067d61
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs/d7206ad3-b765-46ef-90af-d7954f19c58a
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -36,7 +36,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '276'
+      - '210'
     status:
       code: 202
       message: Accepted
@@ -50,19 +50,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/entities/health/jobs/483761e2-49e4-4704-9481-68e3d4067d61
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs/d7206ad3-b765-46ef-90af-d7954f19c58a
   response:
     body:
-      string: '{"jobId":"483761e2-49e4-4704-9481-68e3d4067d61","lastUpdateDateTime":"2021-06-23T01:46:23Z","createdDateTime":"2021-06-23T01:46:20Z","expirationDateTime":"2021-06-24T01:46:20Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"1","entities":[],"relations":[],"warnings":[]},{"id":"2","entities":[],"relations":[],"warnings":[]},{"id":"3","entities":[],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2021-05-15"}}'
+      string: '{"jobId":"d7206ad3-b765-46ef-90af-d7954f19c58a","lastUpdateDateTime":"2021-08-03T17:31:52Z","createdDateTime":"2021-08-03T17:31:51Z","expirationDateTime":"2021-08-04T17:31:51Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"1","entities":[],"relations":[],"warnings":[]},{"id":"2","entities":[],"relations":[],"warnings":[]},{"id":"3","entities":[],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2021-05-15"}}'
     headers:
       apim-request-id:
-      - 1eb6a88f-1de6-40fc-8e5c-257e361e3d19
+      - 2de05b50-a1ec-4378-80f1-238ad9f1519a
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 23 Jun 2021 01:46:25 GMT
+      - Tue, 03 Aug 2021 17:31:57 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -70,7 +70,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '137'
+      - '130'
     status:
       code: 200
       message: OK

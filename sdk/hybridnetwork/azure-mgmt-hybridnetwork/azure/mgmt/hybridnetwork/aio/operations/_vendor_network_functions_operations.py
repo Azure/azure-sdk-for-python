@@ -48,7 +48,7 @@ class VendorNetworkFunctionsOperations:
         location_name: str,
         vendor_name: str,
         service_key: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VendorNetworkFunction":
         """Gets information about the specified vendor network function.
 
@@ -69,7 +69,7 @@ class VendorNetworkFunctionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01-preview"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         # Construct URL
@@ -113,14 +113,14 @@ class VendorNetworkFunctionsOperations:
         vendor_name: str,
         service_key: str,
         parameters: "_models.VendorNetworkFunction",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VendorNetworkFunction":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.VendorNetworkFunction"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01-preview"
+        api_version = "2021-05-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -173,9 +173,10 @@ class VendorNetworkFunctionsOperations:
         vendor_name: str,
         service_key: str,
         parameters: "_models.VendorNetworkFunction",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.VendorNetworkFunction"]:
-        """Creates or updates a vendor network function.
+        """Creates or updates a vendor network function. This operation can take up to 6 hours to
+        complete. This is expected service behavior.
 
         :param location_name: The Azure region where the network function resource was created by the
          customer.
@@ -189,8 +190,8 @@ class VendorNetworkFunctionsOperations:
         :type parameters: ~hybrid_network_management_client.models.VendorNetworkFunction
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VendorNetworkFunction or the result of cls(response)
@@ -250,7 +251,7 @@ class VendorNetworkFunctionsOperations:
         location_name: str,
         vendor_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VendorNetworkFunctionListResult"]:
         """Lists all the vendor network function sub resources in an Azure region, filtered by skuType,
         skuName, vendorProvisioningState.
@@ -273,7 +274,7 @@ class VendorNetworkFunctionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01-preview"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):

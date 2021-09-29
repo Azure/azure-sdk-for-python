@@ -25,7 +25,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         key_name: str,
         parameters: "_models.KeyCreateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.KeyBundle":
         """Creates a new key, stores it, then returns key parameters and attributes to the client.
 
@@ -96,7 +96,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         key_name: str,
         parameters: "_models.KeyImportParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.KeyBundle":
         """Imports an externally created key, stores it, and returns key parameters and attributes to the client.
 
@@ -165,7 +165,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         key_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeletedKeyBundle":
         """Deletes a key of any type from storage in Azure Key Vault.
 
@@ -230,7 +230,7 @@ class KeyVaultClientOperationsMixin:
         key_name: str,
         key_version: str,
         parameters: "_models.KeyUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.KeyBundle":
         """The update key operation changes specified attributes of a stored key and can be applied to any key type and key version stored in Azure Key Vault.
 
@@ -303,7 +303,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         key_name: str,
         key_version: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.KeyBundle":
         """Gets the public part of a stored key.
 
@@ -369,7 +369,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         key_name: str,
         maxresults: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.KeyListResult"]:
         """Retrieves a list of individual key versions with the same key name.
 
@@ -456,7 +456,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         maxresults: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.KeyListResult"]:
         """List keys in the specified vault.
 
@@ -541,7 +541,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         key_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BackupKeyResult":
         """Requests that a backup of the specified key be downloaded to the client.
 
@@ -611,7 +611,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         parameters: "_models.KeyRestoreParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.KeyBundle":
         """Restores a backed up key to a vault.
 
@@ -686,7 +686,7 @@ class KeyVaultClientOperationsMixin:
         key_name: str,
         key_version: str,
         parameters: "_models.KeyOperationsParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.KeyOperationResult":
         """Encrypts an arbitrary sequence of bytes using an encryption key that is stored in a key vault.
 
@@ -765,7 +765,7 @@ class KeyVaultClientOperationsMixin:
         key_name: str,
         key_version: str,
         parameters: "_models.KeyOperationsParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.KeyOperationResult":
         """Decrypts a single block of encrypted data.
 
@@ -842,7 +842,7 @@ class KeyVaultClientOperationsMixin:
         key_name: str,
         key_version: str,
         parameters: "_models.KeySignParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.KeyOperationResult":
         """Creates a signature from a digest using the specified key.
 
@@ -916,7 +916,7 @@ class KeyVaultClientOperationsMixin:
         key_name: str,
         key_version: str,
         parameters: "_models.KeyVerifyParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.KeyVerifyResult":
         """Verifies a signature using a specified key.
 
@@ -992,7 +992,7 @@ class KeyVaultClientOperationsMixin:
         key_name: str,
         key_version: str,
         parameters: "_models.KeyOperationsParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.KeyOperationResult":
         """Wraps a symmetric key using a specified key.
 
@@ -1069,7 +1069,7 @@ class KeyVaultClientOperationsMixin:
         key_name: str,
         key_version: str,
         parameters: "_models.KeyOperationsParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.KeyOperationResult":
         """Unwraps a symmetric key using the specified key that was initially used for wrapping that key.
 
@@ -1142,7 +1142,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         maxresults: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DeletedKeyListResult"]:
         """Lists the deleted keys in the specified vault.
 
@@ -1228,7 +1228,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         key_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeletedKeyBundle":
         """Gets the public part of a deleted key.
 
@@ -1290,7 +1290,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         key_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Permanently deletes the specified key.
 
@@ -1349,7 +1349,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         key_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.KeyBundle":
         """Recovers the deleted key to its latest version.
 

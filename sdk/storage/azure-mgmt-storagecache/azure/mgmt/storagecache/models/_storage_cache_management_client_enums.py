@@ -31,6 +31,8 @@ class CacheIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """
 
     SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
     NONE = "None"
 
 class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):

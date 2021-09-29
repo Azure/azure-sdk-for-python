@@ -44,7 +44,7 @@ class DelegationSettingsOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Gets the entity state (Etag) version of the DelegationSettings.
 
@@ -88,7 +88,7 @@ class DelegationSettingsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -104,7 +104,7 @@ class DelegationSettingsOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PortalDelegationSettings":
         """Get Delegation Settings for the Portal.
 
@@ -148,7 +148,7 @@ class DelegationSettingsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -167,7 +167,7 @@ class DelegationSettingsOperations:
         service_name: str,
         if_match: str,
         parameters: "_models.PortalDelegationSettings",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Update Delegation settings.
 
@@ -222,7 +222,7 @@ class DelegationSettingsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -236,7 +236,7 @@ class DelegationSettingsOperations:
         service_name: str,
         parameters: "_models.PortalDelegationSettings",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PortalDelegationSettings":
         """Create or Update Delegation settings.
 
@@ -292,7 +292,7 @@ class DelegationSettingsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PortalDelegationSettings', pipeline_response)
@@ -307,7 +307,7 @@ class DelegationSettingsOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PortalSettingValidationKeyContract":
         """Gets the secret validation key of the DelegationSettings.
 
@@ -351,7 +351,7 @@ class DelegationSettingsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PortalSettingValidationKeyContract', pipeline_response)

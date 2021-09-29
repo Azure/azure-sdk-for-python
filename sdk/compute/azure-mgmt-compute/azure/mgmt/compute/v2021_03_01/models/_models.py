@@ -34,14 +34,13 @@ class AdditionalCapabilities(msrest.serialization.Model):
 class AdditionalUnattendContent(msrest.serialization.Model):
     """Specifies additional XML formatted information that can be included in the Unattend.xml file, which is used by Windows Setup. Contents are defined by setting name, component name, and the pass in which the content is applied.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar pass_name: The pass name. Currently, the only allowable value is OobeSystem. Default
-     value: "OobeSystem".
-    :vartype pass_name: str
-    :ivar component_name: The component name. Currently, the only allowable value is
-     Microsoft-Windows-Shell-Setup. Default value: "Microsoft-Windows-Shell-Setup".
-    :vartype component_name: str
+    :param pass_name: The pass name. Currently, the only allowable value is OobeSystem. The only
+     acceptable values to pass in are None and "OobeSystem". The default value is None.
+    :type pass_name: str
+    :param component_name: The component name. Currently, the only allowable value is
+     Microsoft-Windows-Shell-Setup. The only acceptable values to pass in are None and
+     "Microsoft-Windows-Shell-Setup". The default value is None.
+    :type component_name: str
     :param setting_name: Specifies the name of the setting to which the content applies. Possible
      values are: FirstLogonCommands and AutoLogon. Possible values include: "AutoLogon",
      "FirstLogonCommands".
@@ -52,11 +51,6 @@ class AdditionalUnattendContent(msrest.serialization.Model):
     :type content: str
     """
 
-    _validation = {
-        'pass_name': {'constant': True},
-        'component_name': {'constant': True},
-    }
-
     _attribute_map = {
         'pass_name': {'key': 'passName', 'type': 'str'},
         'component_name': {'key': 'componentName', 'type': 'str'},
@@ -64,14 +58,13 @@ class AdditionalUnattendContent(msrest.serialization.Model):
         'content': {'key': 'content', 'type': 'str'},
     }
 
-    pass_name = "OobeSystem"
-    component_name = "Microsoft-Windows-Shell-Setup"
-
     def __init__(
         self,
         **kwargs
     ):
         super(AdditionalUnattendContent, self).__init__(**kwargs)
+        self.pass_name = kwargs.get('pass_name', None)
+        self.component_name = kwargs.get('component_name', None)
         self.setting_name = kwargs.get('setting_name', None)
         self.content = kwargs.get('content', None)
 
@@ -3280,9 +3273,10 @@ class ManagedDiskParameters(SubResource):
 
     :param id: Resource Id.
     :type id: str
-    :param storage_account_type: Specifies the storage account type for the managed disk. NOTE:
-     UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-     include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+    :param storage_account_type: Specifies the storage account type for the managed disk. Managed
+     OS disk storage account type can only be set when you create the scale set. NOTE: UltraSSD_LRS
+     can only be used with data disks, it cannot be used with OS Disk. Possible values include:
+     "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
      "StandardSSD_ZRS".
     :type storage_account_type: str or ~azure.mgmt.compute.v2021_03_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption set resource id for
@@ -3715,7 +3709,11 @@ class OSProfile(msrest.serialization.Model):
      <https://docs.microsoft.com/azure/virtual-machines/linux/endorsed-distros>`_.
     :type linux_configuration: ~azure.mgmt.compute.v2021_03_01.models.LinuxConfiguration
     :param secrets: Specifies set of certificates that should be installed onto the virtual
-     machine.
+     machine. To install certificates on a virtual machine it is recommended to use the `Azure Key
+     Vault virtual machine extension for Linux
+     <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_ or the `Azure
+     Key Vault virtual machine extension for Windows
+     <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_.
     :type secrets: list[~azure.mgmt.compute.v2021_03_01.models.VaultSecretGroup]
     :param allow_extension_operations: Specifies whether extension operations should be allowed on
      the virtual machine. :code:`<br>`:code:`<br>`This may only be set to False when no extensions
@@ -4207,25 +4205,15 @@ class ProxyResource(msrest.serialization.Model):
 class PublicIPAddressSku(msrest.serialization.Model):
     """Describes the public IP Sku.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param public_ip_address_sku_name: Required. Specify public IP sku name. Possible values
-     include: "Basic", "Standard".
-    :type public_ip_address_sku_name: str or
-     ~azure.mgmt.compute.v2021_03_01.models.PublicIPAddressSkuName
-    :param public_ip_address_sku_tier: Specify public IP sku tier. Possible values include:
-     "Regional", "Global".
-    :type public_ip_address_sku_tier: str or
-     ~azure.mgmt.compute.v2021_03_01.models.PublicIPAddressSkuTier
+    :param name: Specify public IP sku name. Possible values include: "Basic", "Standard".
+    :type name: str or ~azure.mgmt.compute.v2021_03_01.models.PublicIPAddressSkuName
+    :param tier: Specify public IP sku tier. Possible values include: "Regional", "Global".
+    :type tier: str or ~azure.mgmt.compute.v2021_03_01.models.PublicIPAddressSkuTier
     """
 
-    _validation = {
-        'public_ip_address_sku_name': {'required': True},
-    }
-
     _attribute_map = {
-        'public_ip_address_sku_name': {'key': 'publicIPAddressSkuName', 'type': 'str'},
-        'public_ip_address_sku_tier': {'key': 'publicIPAddressSkuTier', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'str'},
     }
 
     def __init__(
@@ -4233,8 +4221,8 @@ class PublicIPAddressSku(msrest.serialization.Model):
         **kwargs
     ):
         super(PublicIPAddressSku, self).__init__(**kwargs)
-        self.public_ip_address_sku_name = kwargs['public_ip_address_sku_name']
-        self.public_ip_address_sku_tier = kwargs.get('public_ip_address_sku_tier', None)
+        self.name = kwargs.get('name', None)
+        self.tier = kwargs.get('tier', None)
 
 
 class PurchasePlan(msrest.serialization.Model):
@@ -4413,6 +4401,9 @@ class RestorePoint(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :param exclude_disks: List of disk resource ids that the customer wishes to exclude from the
+     restore point. If no disks are specified, all disks will be included.
+    :type exclude_disks: list[~azure.mgmt.compute.v2021_03_01.models.ApiEntityReference]
     :ivar source_metadata: Gets the details of the VM captured at the time of the restore point
      creation.
     :vartype source_metadata: ~azure.mgmt.compute.v2021_03_01.models.RestorePointSourceMetadata
@@ -4426,9 +4417,6 @@ class RestorePoint(ProxyResource):
      restore point operation.
     :vartype provisioning_details:
      ~azure.mgmt.compute.v2021_03_01.models.RestorePointProvisioningDetails
-    :param exclude_disks: List of disk resource ids that the customer wishes to exclude from the
-     restore point. If no disks are specified, all disks will be included.
-    :type exclude_disks: list[~azure.mgmt.compute.v2021_03_01.models.ApiEntityReference]
     """
 
     _validation = {
@@ -4445,11 +4433,11 @@ class RestorePoint(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'source_metadata': {'key': 'sourceMetadata', 'type': 'RestorePointSourceMetadata'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'consistency_mode': {'key': 'consistencyMode', 'type': 'str'},
-        'provisioning_details': {'key': 'provisioningDetails', 'type': 'RestorePointProvisioningDetails'},
-        'exclude_disks': {'key': 'excludeDisks', 'type': '[ApiEntityReference]'},
+        'exclude_disks': {'key': 'properties.excludeDisks', 'type': '[ApiEntityReference]'},
+        'source_metadata': {'key': 'properties.sourceMetadata', 'type': 'RestorePointSourceMetadata'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'consistency_mode': {'key': 'properties.consistencyMode', 'type': 'str'},
+        'provisioning_details': {'key': 'properties.provisioningDetails', 'type': 'RestorePointProvisioningDetails'},
     }
 
     def __init__(
@@ -4457,11 +4445,11 @@ class RestorePoint(ProxyResource):
         **kwargs
     ):
         super(RestorePoint, self).__init__(**kwargs)
+        self.exclude_disks = kwargs.get('exclude_disks', None)
         self.source_metadata = None
         self.provisioning_state = None
         self.consistency_mode = None
         self.provisioning_details = None
-        self.exclude_disks = kwargs.get('exclude_disks', None)
 
 
 class RestorePointCollection(Resource):
@@ -4673,6 +4661,8 @@ class RestorePointSourceMetadata(msrest.serialization.Model):
     :type vm_id: str
     :param security_profile: Gets the security profile.
     :type security_profile: ~azure.mgmt.compute.v2021_03_01.models.SecurityProfile
+    :param location: Location of the VM from which the restore point was created.
+    :type location: str
     """
 
     _attribute_map = {
@@ -4683,6 +4673,7 @@ class RestorePointSourceMetadata(msrest.serialization.Model):
         'license_type': {'key': 'licenseType', 'type': 'str'},
         'vm_id': {'key': 'vmId', 'type': 'str'},
         'security_profile': {'key': 'securityProfile', 'type': 'SecurityProfile'},
+        'location': {'key': 'location', 'type': 'str'},
     }
 
     def __init__(
@@ -4697,6 +4688,7 @@ class RestorePointSourceMetadata(msrest.serialization.Model):
         self.license_type = kwargs.get('license_type', None)
         self.vm_id = kwargs.get('vm_id', None)
         self.security_profile = kwargs.get('security_profile', None)
+        self.location = kwargs.get('location', None)
 
 
 class RestorePointSourceVMDataDisk(msrest.serialization.Model):
@@ -5582,8 +5574,6 @@ class ScheduledEventsProfile(msrest.serialization.Model):
 class SecurityProfile(msrest.serialization.Model):
     """Specifies the Security profile settings for the virtual machine or virtual machine scale set.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :param uefi_settings: Specifies the security settings like secure boot and vTPM used while
      creating the virtual machine. :code:`<br>`:code:`<br>`Minimum api-version: 2020-12-01.
     :type uefi_settings: ~azure.mgmt.compute.v2021_03_01.models.UefiSettings
@@ -5593,23 +5583,18 @@ class SecurityProfile(msrest.serialization.Model):
      :code:`<br>`:code:`<br>` Default: The Encryption at host will be disabled unless this property
      is set to true for the resource.
     :type encryption_at_host: bool
-    :ivar security_type: Specifies the SecurityType of the virtual machine. It is set as
+    :param security_type: Specifies the SecurityType of the virtual machine. It is set as
      TrustedLaunch to enable UefiSettings. :code:`<br>`:code:`<br>` Default: UefiSettings will not
-     be enabled unless this property is set as TrustedLaunch. Default value: "TrustedLaunch".
-    :vartype security_type: str
+     be enabled unless this property is set as TrustedLaunch. Possible values include:
+     "TrustedLaunch".
+    :type security_type: str or ~azure.mgmt.compute.v2021_03_01.models.SecurityTypes
     """
-
-    _validation = {
-        'security_type': {'constant': True},
-    }
 
     _attribute_map = {
         'uefi_settings': {'key': 'uefiSettings', 'type': 'UefiSettings'},
         'encryption_at_host': {'key': 'encryptionAtHost', 'type': 'bool'},
         'security_type': {'key': 'securityType', 'type': 'str'},
     }
-
-    security_type = "TrustedLaunch"
 
     def __init__(
         self,
@@ -5618,6 +5603,7 @@ class SecurityProfile(msrest.serialization.Model):
         super(SecurityProfile, self).__init__(**kwargs)
         self.uefi_settings = kwargs.get('uefi_settings', None)
         self.encryption_at_host = kwargs.get('encryption_at_host', None)
+        self.security_type = kwargs.get('security_type', None)
 
 
 class Sku(msrest.serialization.Model):
@@ -6275,7 +6261,7 @@ class Usage(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar unit: Required. An enum describing the unit of usage measurement. Default value: "Count".
+    :ivar unit: An enum describing the unit of usage measurement. Has constant value: "Count".
     :vartype unit: str
     :param current_value: Required. The current usage of the resource.
     :type current_value: int
@@ -6372,8 +6358,12 @@ class VaultCertificate(msrest.serialization.Model):
      <https://docs.microsoft.com/azure/key-vault/key-vault-get-started/#add>`_. In this case, your
      certificate needs to be It is the Base64 encoding of the following JSON Object which is encoded
      in UTF-8: :code:`<br>`:code:`<br>` {:code:`<br>`
-     "data":":code:`<Base64-encoded-certificate>`",:code:`<br>`  "dataType":"pfx",:code:`<br>`
-     "password":":code:`<pfx-file-password>`":code:`<br>`}.
+     "data":":code:`<Base64-encoded-certificate>`",:code:`<br>` "dataType":"pfx",:code:`<br>`
+     "password":":code:`<pfx-file-password>`":code:`<br>`} :code:`<br>` To install certificates on a
+     virtual machine it is recommended to use the `Azure Key Vault virtual machine extension for
+     Linux <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_ or the
+     `Azure Key Vault virtual machine extension for Windows
+     <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_.
     :type certificate_url: str
     :param certificate_store: For Windows VMs, specifies the certificate store on the Virtual
      Machine to which the certificate should be added. The specified certificate store is implicitly
@@ -9250,7 +9240,11 @@ class VirtualMachineScaleSetOSProfile(msrest.serialization.Model):
      <https://docs.microsoft.com/azure/virtual-machines/linux/endorsed-distros>`_.
     :type linux_configuration: ~azure.mgmt.compute.v2021_03_01.models.LinuxConfiguration
     :param secrets: Specifies set of certificates that should be installed onto the virtual
-     machines in the scale set.
+     machines in the scale set. To install certificates on a virtual machine it is recommended to
+     use the `Azure Key Vault virtual machine extension for Linux
+     <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_ or the `Azure
+     Key Vault virtual machine extension for Windows
+     <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_.
     :type secrets: list[~azure.mgmt.compute.v2021_03_01.models.VaultSecretGroup]
     """
 
@@ -11115,8 +11109,12 @@ class WinRMListener(msrest.serialization.Model):
      <https://docs.microsoft.com/azure/key-vault/key-vault-get-started/#add>`_. In this case, your
      certificate needs to be It is the Base64 encoding of the following JSON Object which is encoded
      in UTF-8: :code:`<br>`:code:`<br>` {:code:`<br>`
-     "data":":code:`<Base64-encoded-certificate>`",:code:`<br>`  "dataType":"pfx",:code:`<br>`
-     "password":":code:`<pfx-file-password>`":code:`<br>`}.
+     "data":":code:`<Base64-encoded-certificate>`",:code:`<br>` "dataType":"pfx",:code:`<br>`
+     "password":":code:`<pfx-file-password>`":code:`<br>`} :code:`<br>` To install certificates on a
+     virtual machine it is recommended to use the `Azure Key Vault virtual machine extension for
+     Linux <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_ or the
+     `Azure Key Vault virtual machine extension for Windows
+     <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_.
     :type certificate_url: str
     """
 

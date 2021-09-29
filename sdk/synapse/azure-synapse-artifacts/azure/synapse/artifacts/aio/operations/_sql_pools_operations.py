@@ -41,7 +41,7 @@ class SqlPoolsOperations:
 
     async def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SqlPoolInfoListResult":
         """List Sql Pools.
 
@@ -55,7 +55,7 @@ class SqlPoolsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -93,7 +93,7 @@ class SqlPoolsOperations:
     async def get(
         self,
         sql_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SqlPool":
         """Get Sql Pool.
 
@@ -109,7 +109,7 @@ class SqlPoolsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL

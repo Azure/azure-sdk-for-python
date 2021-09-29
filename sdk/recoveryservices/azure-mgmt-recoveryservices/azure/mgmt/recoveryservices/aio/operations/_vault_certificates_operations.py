@@ -46,7 +46,7 @@ class VaultCertificatesOperations:
         vault_name: str,
         certificate_name: str,
         certificate_request: "_models.CertificateRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VaultCertificateResponse":
         """Uploads a certificate for a resource.
 
@@ -69,7 +69,7 @@ class VaultCertificatesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2016-06-01"
+        api_version = "2021-03-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

@@ -3,26 +3,26 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - text/plain; charset=utf-8
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/a?api-version=2017-04
+    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/a?api-version=2020-09-01-preview
   response:
     body:
       string: '{"Code":400,"Detail":"SubCode=40000, UnknownType:The request is invalid.
-        [MGResponseHttpError=BadRequest]. TrackingId:d84dbd56-c52d-40d9-83f7-0e2b13655faa_G6,
-        SystemTracker:fake_resource.servicebus.windows.net:$schemagroups\/getSchemaById\/a,
-        Timestamp:2020-11-12T05:59:35"}'
+        [MGResponseHttpError=BadRequest]. TrackingId:21ad828b-f18a-41e9-b6b2-a7999b16edf0_G16,
+        SystemTracker:swathip-test-eventhubs.servicebus.windows.net:$schemagroups\/getSchemaById\/a,
+        Timestamp:2021-09-24T23:46:03"}'
     headers:
       content-type:
       - application/json
       date:
-      - Thu, 12 Nov 2020 05:59:35 GMT
+      - Fri, 24 Sep 2021 23:46:02 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -36,25 +36,25 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - text/plain; charset=utf-8
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2017-04
+    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2020-09-01-preview
   response:
     body:
       string: '{"Code":404,"Detail":"Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does
-        not exist. TrackingId:2d80297c-ad66-4d3e-8750-9853f7578659_G6, SystemTracker:NoSystemTracker,
-        Timestamp:2020-11-12T05:59:35"}'
+        not exist. TrackingId:84fba0d2-8892-49c4-83f7-a46bb0c51a72_G16, SystemTracker:swathip-test-eventhubs.servicebus.windows.net:$schemagroups\/getSchemaById\/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
+        Timestamp:2021-09-24T23:46:03"}'
     headers:
       content-type:
       - application/json
       date:
-      - Thu, 12 Nov 2020 05:59:35 GMT
+      - Fri, 24 Sep 2021 23:46:03 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

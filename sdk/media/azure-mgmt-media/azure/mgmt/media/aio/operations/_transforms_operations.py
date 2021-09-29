@@ -47,7 +47,7 @@ class TransformsOperations:
         account_name: str,
         filter: Optional[str] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TransformCollection"]:
         """List Transforms.
 
@@ -71,7 +71,7 @@ class TransformsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -117,7 +117,7 @@ class TransformsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -133,8 +133,8 @@ class TransformsOperations:
         resource_group_name: str,
         account_name: str,
         transform_name: str,
-        **kwargs
-    ) -> Optional["_models.Transform"]:
+        **kwargs: Any
+    ) -> "_models.Transform":
         """Get Transform.
 
         Gets a Transform.
@@ -147,15 +147,15 @@ class TransformsOperations:
         :type transform_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Transform, or the result of cls(response)
-        :rtype: ~azure.mgmt.media.models.Transform or None
+        :rtype: ~azure.mgmt.media.models.Transform
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Transform"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Transform"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -180,14 +180,12 @@ class TransformsOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('Transform', pipeline_response)
+        deserialized = self._deserialize('Transform', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -201,7 +199,7 @@ class TransformsOperations:
         account_name: str,
         transform_name: str,
         parameters: "_models.Transform",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Transform":
         """Create or Update Transform.
 
@@ -225,7 +223,7 @@ class TransformsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -257,7 +255,7 @@ class TransformsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -277,7 +275,7 @@ class TransformsOperations:
         resource_group_name: str,
         account_name: str,
         transform_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete Transform.
 
@@ -299,7 +297,7 @@ class TransformsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -326,7 +324,7 @@ class TransformsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -340,7 +338,7 @@ class TransformsOperations:
         account_name: str,
         transform_name: str,
         parameters: "_models.Transform",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Transform":
         """Update Transform.
 
@@ -364,7 +362,7 @@ class TransformsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -396,7 +394,7 @@ class TransformsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Transform', pipeline_response)

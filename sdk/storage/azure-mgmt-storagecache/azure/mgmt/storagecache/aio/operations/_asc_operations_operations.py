@@ -44,7 +44,7 @@ class AscOperationsOperations:
         self,
         location: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AscOperation":
         """Gets the status of an asynchronous operation for the Azure HPC Cache.
 
@@ -62,7 +62,7 @@ class AscOperationsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         # Construct URL

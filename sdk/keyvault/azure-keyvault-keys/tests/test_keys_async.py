@@ -11,16 +11,18 @@ import logging
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.keys import JsonWebKey
+from azure.keyvault.keys import ApiVersion, JsonWebKey, KeyReleasePolicy
 from azure.keyvault.keys.aio import KeyClient
+import pytest
 from six import byte2int
 
 from _shared.test_case_async import KeyVaultTestCase
-from _test_case import client_setup, get_decorator, KeysTestCase
+from _test_case import client_setup, get_attestation_token, get_decorator, get_release_policy, KeysTestCase
 
 
 all_api_versions = get_decorator(is_async=True)
-hsm_only = get_decorator(hsm_only=True, is_async=True)
+only_hsm = get_decorator(only_hsm=True, is_async=True)
+only_hsm_7_3_preview = get_decorator(only_hsm=True, is_async=True, api_versions=[ApiVersion.V7_3_PREVIEW])
 logging_enabled = get_decorator(is_async=True, logging_enable=True)
 logging_disabled = get_decorator(is_async=True, logging_enable=False)
 
@@ -35,6 +37,9 @@ class MockHandler(logging.Handler):
 
 
 class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, match_body=False, **kwargs)
+
     def _assert_jwks_equal(self, jwk1, jwk2):
         assert jwk1.kid == jwk2.kid
         assert jwk1.kty == jwk2.kty
@@ -111,13 +116,17 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
             "Missing required date attributes.",
         )
 
-    async def _update_key_properties(self, client, key):
+    async def _update_key_properties(self, client, key, release_policy=None):
         expires = date_parse.parse("2050-01-02T08:00:00.000Z")
         tags = {"foo": "updated tag"}
-        key_bundle = await client.update_key_properties(key.name, expires_on=expires, tags=tags)
-        self.assertEqual(tags, key_bundle.properties.tags)
-        self.assertEqual(key.id, key_bundle.id)
-        self.assertNotEqual(key.properties.updated_on, key_bundle.properties.updated_on)
+        key_bundle = await client.update_key_properties(
+            key.name, expires_on=expires, tags=tags, release_policy=release_policy
+        )
+        assert tags == key_bundle.properties.tags
+        assert key.id == key_bundle.id
+        assert key.properties.updated_on != key_bundle.properties.updated_on
+        if release_policy:
+            assert key.properties.release_policy.data != key_bundle.properties.release_policy.data
         return key_bundle
 
     async def _validate_key_list(self, keys, expected):
@@ -127,7 +136,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
                 del expected[key.name]
         self.assertEqual(len(expected), 0)
 
-    async def _import_test_key(self, client, name, hardware_protected=False):
+    async def _import_test_key(self, client, name, hardware_protected=False, **kwargs):
         def _to_bytes(hex):
             if len(hex) % 2:
                 hex = "0{}".format(hex)
@@ -159,7 +168,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
                 "009fe7ae42e92bc04fcd5780464bd21d0c8ac0c599f9af020fde6ab0a7e7d1d39902f5d8fb6c614184c4c1b103fb46e94cd10a6c8a40f9991a1f28269f326435b6c50276fda6493353c650a833f724d80c7d522ba16c79f0eb61f672736b68fb8be3243d10943c4ab7028d09e76cfb5892222e38bc4d35585bf35a88cd68c73b07"
             ),
         )
-        imported_key = await client.import_key(name, key)
+        imported_key = await client.import_key(name, key, **kwargs)
         self._validate_rsa_key_bundle(imported_key, client.vault_url, name, key.kty, key.key_ops)
         return imported_key
 
@@ -228,7 +237,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         self.assertIsNotNone(deleted_key)
         self.assertEqual(rsa_key.id, deleted_key.id)
 
-    @hsm_only()
+    @only_hsm()
     @client_setup
     async def test_rsa_public_exponent(self, client, **kwargs):
         """The public exponent of a Managed HSM RSA key can be specified during creation"""
@@ -410,14 +419,16 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
-                try:
-                    body = json.loads(message.message)
-                    expected_kty = "RSA-HSM" if is_hsm else "RSA"
-                    if body["kty"] == expected_kty:
-                        return
-                except (ValueError, KeyError):
-                    # this means the message is not JSON or has no kty property
-                    pass
+                messages_request = message.message.split("/n")
+                for m in messages_request:
+                    try:
+                        body = json.loads(m)
+                        expected_kty = "RSA-HSM" if is_hsm else "RSA"
+                        if body["kty"] == expected_kty:
+                            return
+                    except (ValueError, KeyError):
+                        # this means the message is not JSON or has no kty property
+                        pass
 
         assert False, "Expected request body wasn't logged"
 
@@ -435,13 +446,106 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
-                try:
-                    body = json.loads(message.message)
-                    expected_kty = "RSA-HSM" if is_hsm else "RSA"
-                    assert body["kty"] != expected_kty, "Client request body was logged"
-                except (ValueError, KeyError):
-                    # this means the message is not JSON or has no kty property
-                    pass
+                messages_request = message.message.split("/n")
+                for m in messages_request:
+                    try:
+                        body = json.loads(m)
+                        expected_kty = "RSA-HSM" if is_hsm else "RSA"
+                        assert body["kty"] != expected_kty, "Client request body was logged"
+                    except (ValueError, KeyError):
+                        # this means the message is not JSON or has no kty property
+                        pass
+
+    @only_hsm_7_3_preview()
+    @client_setup
+    async def test_get_random_bytes(self, client, **kwargs):
+        assert client
+
+        generated_random_bytes = []
+        for i in range(5):
+            # [START get_random_bytes]
+            # get eight random bytes from a managed HSM
+            result = await client.get_random_bytes(count=8)
+            random_bytes = result.value
+            # [END get_random_bytes]
+            assert len(random_bytes) == 8
+            assert all(random_bytes != rb for rb in generated_random_bytes)
+            generated_random_bytes.append(random_bytes)
+
+    @only_hsm_7_3_preview()
+    @client_setup
+    async def test_key_release(self, client, **kwargs):
+        attestation_uri = self._get_attestation_uri()
+        attestation = get_attestation_token(attestation_uri)
+        release_policy = get_release_policy(attestation_uri)
+
+        rsa_key_name = self.get_resource_name("rsa-key-name")
+        key = await self._create_rsa_key(
+            client, rsa_key_name, hardware_protected=True, exportable=True, release_policy=release_policy
+        )
+        assert key.properties.release_policy
+        assert key.properties.release_policy.data
+        assert key.properties.exportable
+
+        release_result = await client.release_key(rsa_key_name, attestation)
+        assert release_result.value
+
+    @only_hsm_7_3_preview()
+    @client_setup
+    async def test_imported_key_release(self, client, **kwargs):
+        attestation_uri = self._get_attestation_uri()
+        attestation = get_attestation_token(attestation_uri)
+        release_policy = get_release_policy(attestation_uri)
+
+        imported_key_name = self.get_resource_name("imported-key-name")
+        key = await self._import_test_key(
+            client, imported_key_name, hardware_protected=True, exportable=True, release_policy=release_policy
+        )
+        assert key.properties.release_policy
+        assert key.properties.release_policy.data
+        assert key.properties.exportable
+
+        release_result = await client.release_key(imported_key_name, attestation)
+        assert release_result.value
+
+    @only_hsm_7_3_preview()
+    @client_setup
+    async def test_update_release_policy(self, client, **kwargs):
+        attestation_uri = self._get_attestation_uri()
+        release_policy = get_release_policy(attestation_uri)
+        key_name = self.get_resource_name("key-name")
+        key = await self._create_rsa_key(
+            client, key_name, hardware_protected=True, exportable=True, release_policy=release_policy
+        )
+        assert key.properties.release_policy.data
+
+        new_release_policy_json = {
+            "anyOf": [
+                {
+                    "anyOf": [
+                        {
+                            "claim": "sdk-test",
+                            "equals": False
+                        }
+                    ],
+                    "authority": attestation_uri.rstrip("/") + "/"
+                }
+            ],
+            "version": "1.0.0"
+        }
+        policy_string = json.dumps(new_release_policy_json).encode()
+        new_release_policy = KeyReleasePolicy(policy_string)
+
+        await self._update_key_properties(client, key, new_release_policy)
+
+
+@pytest.mark.asyncio
+async def test_positive_bytes_count_required():
+    client = KeyClient("...", object())
+    with pytest.raises(ValueError):
+        await client.get_random_bytes(count=0)
+    with pytest.raises(ValueError):
+        await client.get_random_bytes(count=-1)
 
 
 def test_service_headers_allowed_in_logs():

@@ -24,7 +24,7 @@ class KeyVaultTestCase(AzureTestCase):
         """helper to create resources with a consistent, test-indicative prefix"""
         return super(KeyVaultTestCase, self).get_resource_name("livekvtest{}".format(name))
 
-    def _poll_until_no_exception(self, fn, expected_exception, max_retries=20, retry_delay=3):
+    def _poll_until_no_exception(self, fn, expected_exception, max_retries=20, retry_delay=10):
         """polling helper for live tests because some operations take an unpredictable amount of time to complete"""
 
         for i in range(max_retries):
@@ -36,7 +36,7 @@ class KeyVaultTestCase(AzureTestCase):
                 if self.is_live:
                     time.sleep(retry_delay)
 
-    def _poll_until_exception(self, fn, expected_exception, max_retries=20, retry_delay=3):
+    def _poll_until_exception(self, fn, expected_exception, max_retries=20, retry_delay=10):
         """polling helper for live tests because some operations take an unpredictable amount of time to complete"""
 
         for _ in range(max_retries):

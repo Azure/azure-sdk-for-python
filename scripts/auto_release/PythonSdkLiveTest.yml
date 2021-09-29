@@ -23,6 +23,12 @@ jobs:
         addToPath: true
         architecture: 'x64'
     - bash: |
+        # verify $ISSUE_LINK and $BASE_BRANCH are not null
+        if [ -z "$(BASE_BRANCH)" -o -z "$(ISSUE_LINK)" ]; then
+          echo "ISSUE_LINK or BASE_BRANCH do not exist, pipeline fail!!!"
+          exit 1
+        fi
+
         script_path=$(pwd)/scripts/auto_release
         cd ..
         git config --global user.email "PythonSdkPipelines"
@@ -60,28 +66,26 @@ jobs:
           exit 1
         fi
 
-        test_result=""
+        test_result="Live test success"
         if [ -f "$output_path/live_test_fail.txt" ]; then
           test_result="Live test fail, detailed info is in pipeline log(search keyword FAILED)!!!\n"
         fi
 
         # create PR
-        new_branch=`sed -n '1p' $output_path/output.txt`
-        target_branch=`sed -n '2p' $output_path/output.txt`
-        curl \
-          --user "anything:$(USR_TOKEN)" \
-          -d "{\
-                  \"title\":\"[AutoRelease] $new_branch(Do not merge)\",\
-                  \"body\":\"$test_result Please Add the link issue \",\
-                  \"head\":\"$(USR_NAME):$new_branch\",\
-                  \"base\":\"$target_branch\"\
-              }" \
-              https://api.github.com/repos/Azure/azure-sdk-for-python/pulls
+        export NEW_BRANCH=`sed -n '1p' $output_path/output.txt`
+        export TARGET_BRANCH=`sed -n '2p' $output_path/output.txt`
+        export ISSUE_LINK=$(ISSUE_LINK)
+        export PIPELINE_LINK=$(PIPELINE_LINK)
+        export USR_NAME=$(USR_NAME)
+        export USR_TOKEN=$(USR_TOKEN)
+        export TEST_RESULT=$test_result
+        export UPDATE_TOKEN=$(UPDATE_TOKEN)
 
+        python $script_path/create_auto_release_pr.py
         echo "\'[AutoRelease] $new_branch \' has been created!!!"
 
         # if test fail, still push and crete PR. But pipeline would fail to remind user
         if [ -f "$output_path/live_test_fail.txt" ]; then
-          echo "please fix failure test!!! \'[AutoRelease] $new_branch \' has been created!!!"
+          echo "please fix failure test $(ISSUE_LINK)!!! \'[AutoRelease] $new_branch \' has been created!!!"
           exit 1
         fi

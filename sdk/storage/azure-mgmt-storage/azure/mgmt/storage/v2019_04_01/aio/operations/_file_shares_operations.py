@@ -48,7 +48,7 @@ class FileSharesOperations:
         skip_token: Optional[str] = None,
         maxpagesize: Optional[str] = None,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.FileShareItems"]:
         """Lists all shares.
 
@@ -141,7 +141,7 @@ class FileSharesOperations:
         account_name: str,
         share_name: str,
         file_share: "_models.FileShare",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FileShare":
         """Creates a new share under the specified account as described by request body. The share
         resource includes metadata and properties for that share. It does not include a list of the
@@ -223,7 +223,7 @@ class FileSharesOperations:
         account_name: str,
         share_name: str,
         file_share: "_models.FileShare",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FileShare":
         """Updates share properties as specified in request body. Properties not mentioned in the request
         will not be changed. Update fails if the specified share does not already exist.
@@ -299,7 +299,7 @@ class FileSharesOperations:
         resource_group_name: str,
         account_name: str,
         share_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FileShare":
         """Gets properties of a specified share.
 
@@ -367,7 +367,7 @@ class FileSharesOperations:
         resource_group_name: str,
         account_name: str,
         share_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes specified share under its account.
 

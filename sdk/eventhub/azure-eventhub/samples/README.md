@@ -73,8 +73,12 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
 - [authenticate_with_azure_named_key_credential.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/sync_samples/authenticate_with_azure_named_key_credential.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/async_samples/authenticate_with_azure_named_key_credential_async.py)) - Examples:
     - Utilize `azure.core.credentials.AzureNamedKeyCredential` to authenticate when creating an Event Hub client.
 
-- [connection_to_custom_endpoint_address.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/samples/sync_samples/connection_to_custom_endpoint_address.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/samples/async_samples/connection_to_custom_endpoint_address_async.py)) - Examples:
+- [connection_to_custom_endpoint_address.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/sync_samples/connection_to_custom_endpoint_address.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/async_samples/connection_to_custom_endpoint_address_async.py)) - Examples:
   to create EventHubProducerClient and EventHubConsumerClient that connect to a custom endpoint with a custom certificate.
+
+- [send_and_receive_amqp_annotated_message.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/sync_samples/send_and_receive_amqp_annotated_message.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/async_samples/send_and_receive_amqp_annotated_message_async.py)) - Examples to send AMQPAnnotatedMessage to and receive events from an event hub and parse the body:
+    - Send AMQPAnnotatedMessage of different body types.
+    - Receive messages and parse the body according to the body type.
 
 ## Prerequisites
 - Python 2.7, 3.6 or later.

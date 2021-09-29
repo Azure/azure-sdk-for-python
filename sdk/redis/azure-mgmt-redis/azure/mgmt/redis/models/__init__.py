@@ -8,12 +8,21 @@
 
 try:
     from ._models_py3 import CheckNameAvailabilityParameters
+    from ._models_py3 import ErrorAdditionalInfo
+    from ._models_py3 import ErrorDetail
+    from ._models_py3 import ErrorResponse
     from ._models_py3 import ExportRDBParameters
     from ._models_py3 import ImportRDBParameters
     from ._models_py3 import NotificationListResponse
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationListResult
+    from ._models_py3 import PrivateEndpoint
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointConnectionListResult
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkResourceListResult
+    from ._models_py3 import PrivateLinkServiceConnectionState
     from ._models_py3 import ProxyResource
     from ._models_py3 import RedisAccessKeys
     from ._models_py3 import RedisCommonProperties
@@ -46,12 +55,21 @@ try:
     from ._models_py3 import UpgradeNotification
 except (SyntaxError, ImportError):
     from ._models import CheckNameAvailabilityParameters  # type: ignore
+    from ._models import ErrorAdditionalInfo  # type: ignore
+    from ._models import ErrorDetail  # type: ignore
+    from ._models import ErrorResponse  # type: ignore
     from ._models import ExportRDBParameters  # type: ignore
     from ._models import ImportRDBParameters  # type: ignore
     from ._models import NotificationListResponse  # type: ignore
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationListResult  # type: ignore
+    from ._models import PrivateEndpoint  # type: ignore
+    from ._models import PrivateEndpointConnection  # type: ignore
+    from ._models import PrivateEndpointConnectionListResult  # type: ignore
+    from ._models import PrivateLinkResource  # type: ignore
+    from ._models import PrivateLinkResourceListResult  # type: ignore
+    from ._models import PrivateLinkServiceConnectionState  # type: ignore
     from ._models import ProxyResource  # type: ignore
     from ._models import RedisAccessKeys  # type: ignore
     from ._models import RedisCommonProperties  # type: ignore
@@ -86,7 +104,10 @@ except (SyntaxError, ImportError):
 from ._redis_management_client_enums import (
     DayOfWeek,
     DefaultName,
+    PrivateEndpointConnectionProvisioningState,
+    PrivateEndpointServiceConnectionStatus,
     ProvisioningState,
+    PublicNetworkAccess,
     RebootType,
     RedisKeyType,
     ReplicationRole,
@@ -97,12 +118,21 @@ from ._redis_management_client_enums import (
 
 __all__ = [
     'CheckNameAvailabilityParameters',
+    'ErrorAdditionalInfo',
+    'ErrorDetail',
+    'ErrorResponse',
     'ExportRDBParameters',
     'ImportRDBParameters',
     'NotificationListResponse',
     'Operation',
     'OperationDisplay',
     'OperationListResult',
+    'PrivateEndpoint',
+    'PrivateEndpointConnection',
+    'PrivateEndpointConnectionListResult',
+    'PrivateLinkResource',
+    'PrivateLinkResourceListResult',
+    'PrivateLinkServiceConnectionState',
     'ProxyResource',
     'RedisAccessKeys',
     'RedisCommonProperties',
@@ -135,7 +165,10 @@ __all__ = [
     'UpgradeNotification',
     'DayOfWeek',
     'DefaultName',
+    'PrivateEndpointConnectionProvisioningState',
+    'PrivateEndpointServiceConnectionStatus',
     'ProvisioningState',
+    'PublicNetworkAccess',
     'RebootType',
     'RedisKeyType',
     'ReplicationRole',

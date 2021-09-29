@@ -46,7 +46,7 @@ class RegulatoryComplianceAssessmentsOperations:
         regulatory_compliance_standard_name: str,
         regulatory_compliance_control_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RegulatoryComplianceAssessmentList"]:
         """Details and state of assessments mapped to selected regulatory compliance control.
 
@@ -125,7 +125,7 @@ class RegulatoryComplianceAssessmentsOperations:
         regulatory_compliance_standard_name: str,
         regulatory_compliance_control_name: str,
         regulatory_compliance_assessment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RegulatoryComplianceAssessment":
         """Supported regulatory compliance details and state for selected assessment.
 

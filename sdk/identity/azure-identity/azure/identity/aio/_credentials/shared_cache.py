@@ -32,6 +32,9 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
     :keyword cache_persistence_options: configuration for persistent token caching. If not provided, the credential
         will use the persistent cache shared by Microsoft development applications
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
+    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
+        the user is registered in. When False, which is the default, the credential will acquire tokens only from the
+        user's home tenant.
     """
 
     async def __aenter__(self):
@@ -54,7 +57,11 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+        :keyword str tenant_id: optional tenant to include in the token request. If **allow_multitenant_authentication**
+            is False, specifying a tenant with this argument may raise an exception.
+
         :rtype: :class:`azure.core.credentials.AccessToken`
+
         :raises ~azure.identity.CredentialUnavailableError: the cache is unavailable or contains insufficient user
             information
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
@@ -78,7 +85,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
 
         # try each refresh token, returning the first access token acquired
         for refresh_token in self._get_refresh_tokens(account):
-            token = await self._client.obtain_token_by_refresh_token(scopes, refresh_token)
+            token = await self._client.obtain_token_by_refresh_token(scopes, refresh_token, **kwargs)
             return token
 
         raise CredentialUnavailableError(message=NO_TOKEN.format(account.get("username")))

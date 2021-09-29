@@ -120,8 +120,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             credential=credential,
             **kwargs)
         self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
-        default_api_version = self._client._config.version  # pylint: disable=protected-access
-        self._client._config.version = get_api_version(kwargs, default_api_version)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
     @distributed_trace_async
     async def get_account_information(self, **kwargs): # type: ignore
@@ -229,6 +228,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :keyword ~azure.storage.blob.StandardBlobTier standard_blob_tier:
             A standard blob tier value to set the blob to. For this version of the library,
             this is only applicable to block blobs on standard storage accounts.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
         """
         options = self._upload_blob_from_url_options(
             source_url=self._encode_source_url(source_url),
@@ -318,6 +320,20 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
+        :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
+            Specifies the immutability policy of a blob, blob snapshot or blob version.
+            Currently this parameter of upload_blob() API is for BlockBlob only.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :keyword bool legal_hold:
+            Specified if a legal hold should be set on the blob.
+            Currently this parameter of upload_blob() API is for BlockBlob only.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
         :keyword ~azure.storage.blob.StandardBlobTier standard_blob_tier:
             A standard blob tier value to set the blob to. For this version of the library,
             this is only applicable to block blobs on standard storage accounts.
@@ -789,6 +805,64 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             process_storage_error(error)
 
     @distributed_trace_async
+    async def set_immutability_policy(self, immutability_policy, **kwargs):
+        # type: (**Any) -> Dict[str, str]
+        """The Set Immutability Policy operation sets the immutability policy on the blob.
+
+        .. versionadded:: 12.10.0
+            This operation was introduced in API version '2020-10-02'.
+
+        :param ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
+            Specifies the immutability policy of a blob, blob snapshot or blob version.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: Key value pairs of blob tags.
+        :rtype: Dict[str, str]
+        """
+
+        kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
+        kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
+        return await self._client.blob.set_immutability_policy(cls=return_response_headers, **kwargs)
+
+    @distributed_trace_async()
+    async def delete_immutability_policy(self, **kwargs):
+        # type: (**Any) -> None
+        """The Delete Immutability Policy operation deletes the immutability policy on the blob.
+
+        .. versionadded:: 12.10.0
+            This operation was introduced in API version '2020-10-02'.
+
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: Key value pairs of blob tags.
+        :rtype: Dict[str, str]
+        """
+
+        await self._client.blob.delete_immutability_policy(**kwargs)
+
+    @distributed_trace_async
+    async def set_legal_hold(self, legal_hold, **kwargs):
+        # type: (bool, **Any) -> Dict[str, Union[str, datetime, bool]]
+        """The Set Legal Hold operation sets a legal hold on the blob.
+
+        .. versionadded:: 12.10.0
+            This operation was introduced in API version '2020-10-02'.
+
+        :param bool legal_hold:
+            Specified if a legal hold should be set on the blob.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: Key value pairs of blob tags.
+        :rtype: Dict[str, Union[str, datetime, bool]]
+        """
+
+        return await self._client.blob.set_legal_hold(legal_hold, cls=return_response_headers, **kwargs)
+
+    @distributed_trace_async
     async def create_page_blob(  # type: ignore
             self, size,  # type: int
             content_settings=None,  # type: Optional[ContentSettings]
@@ -830,6 +904,18 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.aio.BlobLeaseClient or str
+        :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
+            Specifies the immutability policy of a blob, blob snapshot or blob version.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :keyword bool legal_hold:
+            Specified if a legal hold should be set on the blob.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -897,6 +983,18 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             .. versionadded:: 12.4.0
 
         :paramtype tags: dict(str, str)
+        :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
+            Specifies the immutability policy of a blob, blob snapshot or blob version.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :keyword bool legal_hold:
+            Specified if a legal hold should be set on the blob.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -1090,6 +1188,18 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             .. versionadded:: 12.4.0
 
         :paramtype tags: dict(str, str)
+        :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
+            Specifies the immutability policy of a blob, blob snapshot or blob version.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :keyword bool legal_hold:
+            Specified if a legal hold should be set on the blob.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
         :keyword ~datetime.datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -1161,8 +1271,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         :keyword bool requires_sync:
             Enforces that the service will not return a response until the copy is complete.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string. This option is only available when `incremental_copy` is
+            set to False and `requires_sync` is set to True.
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
-        :rtype: dict[str, str or ~datetime.datetime]
+        :rtype: dict[str, Union[str, ~datetime.datetime]]
 
         .. admonition:: Example:
 
@@ -1377,7 +1491,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     @distributed_trace_async
     async def stage_block_from_url(
-            self, block_id,  # type: str
+            self, block_id,  # type: Union[str, int]
             source_url,  # type: str
             source_offset=None,  # type: Optional[int]
             source_length=None,  # type: Optional[int]
@@ -1418,6 +1532,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
         :rtype: None
         """
         options = self._stage_block_from_url_options(
@@ -1504,6 +1621,18 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.aio.BlobLeaseClient or str
+        :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
+            Specifies the immutability policy of a blob, blob snapshot or blob version.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :keyword bool legal_hold:
+            Specified if a legal hold should be set on the blob.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
         :keyword bool validate_content:
             If true, calculates an MD5 hash of the page content. The storage
             service checks the hash of the content that has arrived
@@ -2131,6 +2260,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
         """
 
         options = self._upload_pages_from_url_options(
@@ -2391,6 +2523,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
         """
         options = self._append_block_from_url_options(
             copy_source_url=self._encode_source_url(copy_source_url),

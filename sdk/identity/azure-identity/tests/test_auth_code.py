@@ -2,19 +2,21 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.core.credentials import AccessToken
+from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity import AuthorizationCodeCredential
+from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 import msal
 import pytest
+from six.moves.urllib_parse import urlparse
 
 from helpers import build_aad_response, mock_response, Request, validating_transport
 
 try:
-    from unittest.mock import Mock
+    from unittest.mock import Mock, patch
 except ImportError:  # python < 3.3
-    from mock import Mock  # type: ignore
+    from mock import Mock, patch  # type: ignore
 
 
 def test_no_scopes():
@@ -114,3 +116,73 @@ def test_auth_code_credential():
     token = credential.get_token(expected_scope)
     assert token.token == expected_access_token
     assert transport.send.call_count == 2
+
+
+def test_allow_multitenant_authentication():
+    """When allow_multitenant_authentication is True, the credential should respect get_token(tenant_id=...)"""
+
+    first_tenant = "first-tenant"
+    first_token = "***"
+    second_tenant = "second-tenant"
+    second_token = first_token * 2
+
+    def send(request, **_):
+        parsed = urlparse(request.url)
+        tenant = parsed.path.split("/")[1]
+        assert tenant in (first_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
+        token = first_token if tenant == first_tenant else second_token
+        return mock_response(json_payload=build_aad_response(access_token=token, refresh_token="**"))
+
+    credential = AuthorizationCodeCredential(
+        first_tenant,
+        "client-id",
+        "authcode",
+        "https://localhost",
+        allow_multitenant_authentication=True,
+        transport=Mock(send=send),
+    )
+    token = credential.get_token("scope")
+    assert token.token == first_token
+
+    token = credential.get_token("scope", tenant_id=first_tenant)
+    assert token.token == first_token
+
+    token = credential.get_token("scope", tenant_id=second_tenant)
+    assert token.token == second_token
+
+    # should still default to the first tenant
+    token = credential.get_token("scope")
+    assert token.token == first_token
+
+
+def test_multitenant_authentication_not_allowed():
+    """get_token(tenant_id=...) should raise when allow_multitenant_authentication is False (the default)"""
+
+    expected_tenant = "expected-tenant"
+    expected_token = "***"
+
+    def send(request, **_):
+        parsed = urlparse(request.url)
+        tenant = parsed.path.split("/")[1]
+        token = expected_token if tenant == expected_tenant else expected_token * 2
+        return mock_response(json_payload=build_aad_response(access_token=token, refresh_token="**"))
+
+    credential = AuthorizationCodeCredential(
+        expected_tenant, "client-id", "authcode", "https://localhost", transport=Mock(send=send)
+    )
+
+    token = credential.get_token("scope")
+    assert token.token == expected_token
+
+    # explicitly specifying the configured tenant is okay
+    token = credential.get_token("scope", tenant_id=expected_tenant)
+    assert token.token == expected_token
+
+    # but any other tenant should get an error
+    with pytest.raises(ClientAuthenticationError, match="allow_multitenant_authentication"):
+        credential.get_token("scope", tenant_id="un" + expected_tenant)
+
+    # ...unless the compat switch is enabled
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_ENABLE_LEGACY_TENANT_SELECTION: "true"}):
+        token = credential.get_token("scope", tenant_id="un" + expected_tenant)
+    assert token.token == expected_token, "credential should ignore tenant_id kwarg when the compat switch is enabled"

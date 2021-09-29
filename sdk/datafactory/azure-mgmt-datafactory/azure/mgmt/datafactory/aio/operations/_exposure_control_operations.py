@@ -44,7 +44,7 @@ class ExposureControlOperations:
         self,
         location_id: str,
         exposure_control_request: "_models.ExposureControlRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExposureControlResponse":
         """Get exposure control feature for specific location.
 
@@ -107,7 +107,7 @@ class ExposureControlOperations:
         resource_group_name: str,
         factory_name: str,
         exposure_control_request: "_models.ExposureControlRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExposureControlResponse":
         """Get exposure control feature for specific factory.
 
@@ -173,7 +173,7 @@ class ExposureControlOperations:
         resource_group_name: str,
         factory_name: str,
         exposure_control_batch_request: "_models.ExposureControlBatchRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExposureControlBatchResponse":
         """Get list of exposure control features for specific factory.
 

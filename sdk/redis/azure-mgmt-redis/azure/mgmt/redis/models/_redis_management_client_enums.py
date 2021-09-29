@@ -44,6 +44,23 @@ class DefaultName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     DEFAULT = "default"
 
+class PrivateEndpointConnectionProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The current provisioning state.
+    """
+
+    SUCCEEDED = "Succeeded"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    FAILED = "Failed"
+
+class PrivateEndpointServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The private endpoint connection status.
+    """
+
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    REJECTED = "Rejected"
+
 class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Redis instance provisioning status.
     """
@@ -60,6 +77,15 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UNLINKING = "Unlinking"
     UNPROVISIONING = "Unprovisioning"
     UPDATING = "Updating"
+
+class PublicNetworkAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Whether or not public endpoint access is allowed for this cache.  Value is optional but if
+    passed in, must be 'Enabled' or 'Disabled'. If 'Disabled', private endpoints are the exclusive
+    access method. Default value is 'Enabled'
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 class RebootType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Which Redis node(s) to reboot. Depending on this value data loss is possible.

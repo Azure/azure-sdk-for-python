@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import time
 from time import sleep
 
 import pytest
@@ -19,7 +20,8 @@ from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError, ResourceModifiedError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, BlobAccountPreparer, \
+    CachedResourceGroupPreparer
 
 from azure.storage.blob import (
     PublicAccess,
@@ -297,6 +299,7 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertNamedItemInContainer(containers, container.container_name)
         self.assertIsNotNone(containers[0].has_immutability_policy)
         self.assertIsNotNone(containers[0].has_legal_hold)
+        self.assertIsNotNone(containers[0].immutable_storage_with_versioning_enabled)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -497,6 +500,7 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         # Assert
         self.assertIsNotNone(props)
         self.assertDictEqual(props.metadata, metadata)
+        self.assertIsNotNone(props.immutable_storage_with_versioning_enabled)
         # self.assertEqual(props.lease.duration, 'infinite')
         # self.assertEqual(props.lease.state, 'leased')
         # self.assertEqual(props.lease.status, 'locked')
@@ -890,8 +894,7 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_undelete_container(self, resource_group, location, storage_account, storage_account_key):
-        # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
-        pytest.skip('This will be added back along with STG74 features')
+        # TODO: container soft delete should enabled by SRP call or use ARM, so make this test as playback only.
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         container_client = await self._create_container(bsc)
 
@@ -906,47 +909,14 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
             container_list.append(c)
         self.assertTrue(len(container_list) >= 1)
 
-        restored_version = 0
         for container in container_list:
             # find the deleted container and restore it
             if container.deleted and container.name == container_client.container_name:
-                restored_ctn_client = await bsc.undelete_container(container.name, container.version,
-                                                                    new_name="restoredctn" + str(restored_version))
-                restored_version += 1
+                restored_ctn_client = await bsc.undelete_container(container.name, container.version)
 
                 # to make sure the deleted container is restored
                 props = await restored_ctn_client.get_container_properties()
                 self.assertIsNotNone(props)
-
-    @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_restore_to_existing_container(self, resource_group, location, storage_account, storage_account_key):
-        pytest.skip('This will be added back along with STG74 features')
-        # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
-
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
-        # get an existing container
-        existing_container_client = await self._create_container(bsc, prefix="existing")
-        container_client = await self._create_container(bsc)
-
-        # Act
-        await container_client.delete_container()
-        # to make sure the container deleted
-        with self.assertRaises(ResourceNotFoundError):
-            await container_client.get_container_properties()
-
-        container_list = list()
-        async for c in bsc.list_containers(include_deleted=True):
-            container_list.append(c)
-        self.assertTrue(len(container_list) >= 1)
-
-        for container in container_list:
-            # find the deleted container and restore it
-            if container.deleted and container.name == container_client.container_name:
-                with self.assertRaises(HttpResponseError):
-                    await bsc.undelete_container(container.name, container.version,
-                                                  new_name=existing_container_client.container_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -1160,6 +1130,48 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertEqual(blobs[1].name, 'blob2')
         self.assertEqual(blobs[1].metadata['number'], '2')
         self.assertEqual(blobs[1].metadata['name'], 'car')
+
+    @GlobalResourceGroupPreparer()
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral",
+                         random_name_enabled=True)
+    async def test_list_blobs_include_deletedwithversion_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        # pytest.skip("Waiting on metadata XML fix in msrest")
+        container = await self._create_container(bsc)
+        data = b'hello world'
+        content_settings = ContentSettings(
+            content_language='spanish',
+            content_disposition='inline')
+        blob1 = container.get_blob_client('blob1')
+        resp = await blob1.upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '1', 'name': 'bob'})
+        version_id_1 = resp['version_id']
+        await blob1.upload_blob(b"abc", overwrite=True)
+        root_content = b"cde"
+        root_version_id = (await blob1.upload_blob(root_content, overwrite=True))['version_id']
+        # this will delete the root blob, while you can still access it through versioning
+        await blob1.delete_blob()
+
+        await container.get_blob_client('blob2').upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
+        await container.get_blob_client('blob3').upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
+
+        # Act
+        blobs = list()
+        
+        # include deletedwithversions will give you all alive root blobs and the the deleted root blobs when versioning is on.
+        async for blob in container.list_blobs(include=["deletedwithversions"]):
+            blobs.append(blob)
+        downloaded_root_content = await (await blob1.download_blob(version_id=root_version_id)).readall()
+        downloaded_original_content = await (await blob1.download_blob(version_id=version_id_1)).readall()
+
+        # Assert
+        self.assertEqual(blobs[0].name, 'blob1')
+        self.assertTrue(blobs[0].has_versions_only)
+        self.assertEqual(root_content, downloaded_root_content)
+        self.assertEqual(data, downloaded_original_content)
+        self.assertEqual(blobs[1].name, 'blob2')
+        self.assertFalse(blobs[1].has_versions_only)
+        self.assertEqual(blobs[2].name, 'blob3')
+        self.assertFalse(blobs[2].has_versions_only)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test

@@ -66,7 +66,7 @@ class ResourcesOperations(object):
          Valid values include ``createdTime``\ , ``changedTime`` and ``provisioningState``. For example,
          ``$expand=createdTime,changedTime``.
         :type expand: str
-        :param top: The number of results to return. If null is passed, returns all resources.
+        :param top: The maximum number of results to return. If null is passed, returns all resources.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ResourceListResult or the result of cls(response)
@@ -385,7 +385,7 @@ class ResourcesOperations(object):
         :type filter: str
         :param expand: The $expand query parameter.
         :type expand: str
-        :param top: The number of results to return. If null is passed, returns all resource groups.
+        :param top: The maximum number of results to return. If null is passed, returns all resources.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ResourceListResult or the result of cls(response)

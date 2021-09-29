@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import msrest.serialization
 
@@ -234,10 +234,10 @@ class AppResourceProperties(msrest.serialization.Model):
         public: Optional[bool] = None,
         active_deployment_name: Optional[str] = None,
         fqdn: Optional[str] = None,
-        https_only: Optional[bool] = None,
+        https_only: Optional[bool] = False,
         temporary_disk: Optional["TemporaryDisk"] = None,
         persistent_disk: Optional["PersistentDisk"] = None,
-        enable_end_to_end_tls: Optional[bool] = None,
+        enable_end_to_end_tls: Optional[bool] = False,
         **kwargs
     ):
         super(AppResourceProperties, self).__init__(**kwargs)
@@ -385,7 +385,7 @@ class BindingResourceProperties(msrest.serialization.Model):
     :param key: The key of the bound resource.
     :type key: str
     :param binding_parameters: Binding parameters of the Binding resource.
-    :type binding_parameters: dict[str, object]
+    :type binding_parameters: dict[str, any]
     :ivar generated_properties: The generated Spring Boot property file for this binding. The
      secret will be deducted.
     :vartype generated_properties: str
@@ -419,7 +419,7 @@ class BindingResourceProperties(msrest.serialization.Model):
         *,
         resource_id: Optional[str] = None,
         key: Optional[str] = None,
-        binding_parameters: Optional[Dict[str, object]] = None,
+        binding_parameters: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(BindingResourceProperties, self).__init__(**kwargs)
@@ -1233,7 +1233,7 @@ class DeploymentSettings(msrest.serialization.Model):
     :param environment_variables: Collection of environment variables.
     :type environment_variables: dict[str, str]
     :param runtime_version: Runtime version. Possible values include: "Java_8", "Java_11",
-     "NetCore_31".
+     "NetCore_31". Default value: "Java_8".
     :type runtime_version: str or ~azure.mgmt.appplatform.v2020_11_01_preview.models.RuntimeVersion
     """
 
@@ -1254,7 +1254,7 @@ class DeploymentSettings(msrest.serialization.Model):
         jvm_options: Optional[str] = None,
         net_core_main_entry_path: Optional[str] = None,
         environment_variables: Optional[Dict[str, str]] = None,
-        runtime_version: Optional[Union[str, "RuntimeVersion"]] = None,
+        runtime_version: Optional[Union[str, "RuntimeVersion"]] = "Java_8",
         **kwargs
     ):
         super(DeploymentSettings, self).__init__(**kwargs)
@@ -1467,11 +1467,15 @@ class MetricDimension(msrest.serialization.Model):
     :type name: str
     :param display_name: Localized friendly display name of the dimension.
     :type display_name: str
+    :param to_be_exported_for_shoebox: Whether this dimension should be included for the Shoebox
+     export scenario.
+    :type to_be_exported_for_shoebox: bool
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
+        'to_be_exported_for_shoebox': {'key': 'toBeExportedForShoebox', 'type': 'bool'},
     }
 
     def __init__(
@@ -1479,11 +1483,13 @@ class MetricDimension(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         display_name: Optional[str] = None,
+        to_be_exported_for_shoebox: Optional[bool] = None,
         **kwargs
     ):
         super(MetricDimension, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name
+        self.to_be_exported_for_shoebox = to_be_exported_for_shoebox
 
 
 class MetricSpecification(msrest.serialization.Model):
@@ -2560,7 +2566,7 @@ class TemporaryDisk(msrest.serialization.Model):
         self,
         *,
         size_in_gb: Optional[int] = None,
-        mount_path: Optional[str] = None,
+        mount_path: Optional[str] = "/tmp",
         **kwargs
     ):
         super(TemporaryDisk, self).__init__(**kwargs)
@@ -2619,8 +2625,8 @@ class UserSourceInfo(msrest.serialization.Model):
     :type relative_path: str
     :param version: Version of the source.
     :type version: str
-    :param artifact_selector: Selector for the artifact to be used for the deployment for multi-
-     module projects. This should be
+    :param artifact_selector: Selector for the artifact to be used for the deployment for
+     multi-module projects. This should be
      the relative path to the target module/project.
     :type artifact_selector: str
     """

@@ -10,17 +10,18 @@ from io import BytesIO
 from datetime import date, time
 from azure.core.exceptions import ServiceRequestError, ClientAuthenticationError, HttpResponseError
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
+from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
+from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
-from azure.ai.formrecognizer.aio import FormRecognizerClient
-from azure.ai.formrecognizer import FormContentType, FormRecognizerApiVersion
+from azure.ai.formrecognizer.aio import FormRecognizerClient, DocumentAnalysisClient
+from azure.ai.formrecognizer import FormContentType, FormRecognizerApiVersion, AnalyzeResult
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 
 
-GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
-
+GlobalClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
+GlobalClientPreparerV2 = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
 class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
 
@@ -29,21 +30,21 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.receipt_jpg, "rb") as fd:
             myfile = fd.read()
         with self.assertRaises(ServiceRequestError):
-            client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
+            client = DocumentAnalysisClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             async with client:
-                poller = await client.begin_recognize_receipts(myfile)
+                poller = await client.begin_analyze_document("prebuilt-receipt", myfile)
                 result = await poller.result()
 
     @FormRecognizerPreparer()
     async def test_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
-        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
+        client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
             async with client:
-                poller = await client.begin_recognize_receipts(b"xx", content_type="image/jpeg")
+                poller = await client.begin_analyze_document("prebuilt-receipt", b"xx")
                 result = await poller.result()
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparer()
+    @GlobalClientPreparerV2()
     async def test_passing_enum_content_type(self, client):
         with open(self.receipt_png, "rb") as fd:
             myfile = fd.read()
@@ -61,13 +62,14 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         damaged_pdf = b"\x25\x50\x44\x46\x55\x55\x55"  # still has correct bytes to be recognized as PDF
         with self.assertRaises(HttpResponseError):
             async with client:
-                poller = await client.begin_recognize_receipts(
+                poller = await client.begin_analyze_document(
+                    "prebuilt-receipt",
                     damaged_pdf,
                 )
                 result = await poller.result()
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparer()
+    @GlobalClientPreparerV2()
     async def test_damaged_file_bytes_fails_autodetect_content_type(self, client):
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
         with self.assertRaises(ValueError):
@@ -83,7 +85,8 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         damaged_pdf = BytesIO(b"\x25\x50\x44\x46\x55\x55\x55")  # still has correct bytes to be recognized as PDF
         with self.assertRaises(HttpResponseError):
             async with client:
-                poller = await client.begin_recognize_receipts(
+                poller = await client.begin_analyze_document(
+                    "prebuilt-receipt",
                     damaged_pdf,
                 )
                 result = await poller.result()
@@ -106,14 +109,15 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.blank_pdf, "rb") as fd:
             blank = fd.read()
         async with client:
-            poller = await client.begin_recognize_receipts(
+            poller = await client.begin_analyze_document(
+                "prebuilt-receipt",
                 blank,
             )
             result = await poller.result()
         self.assertIsNotNone(result)
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparer()
+    @GlobalClientPreparerV2()
     async def test_passing_bad_content_type_param_passed(self, client):
         with open(self.receipt_jpg, "rb") as fd:
             myfile = fd.read()
@@ -130,7 +134,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
     async def test_passing_unsupported_url_content_type(self, client):
         with self.assertRaises(TypeError):
             async with client:
-                poller = await client.begin_recognize_receipts("https://badurl.jpg", content_type="application/json")
+                poller = await client.begin_analyze_document("prebuilt-receipt", "https://badurl.jpg", content_type="application/json")
                 result = await poller.result()
 
     @FormRecognizerPreparer()
@@ -139,9 +143,10 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.unsupported_content_py, "rb") as fd:
             myfile = fd.read()
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(HttpResponseError):
             async with client:
-                poller = await client.begin_recognize_receipts(
+                poller = await client.begin_analyze_document(
+                    "prebuilt-receipt",
                     myfile,
                 )
                 result = await poller.result()
@@ -153,8 +158,8 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_receipt = prepare_prebuilt_models(analyze_result)
+            analyze_result = client._deserialize(AnalyzeResultOperation, raw_response)
+            extracted_receipt = AnalyzeResult._from_generated(analyze_result.analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_receipt)
 
@@ -162,29 +167,30 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
 
         async with client:
-            poller = await client.begin_recognize_receipts(
-                receipt=myfile,
-                include_field_elements=True,
+            poller = await client.begin_analyze_document(
+                "prebuilt-receipt",
+                document=myfile,
                 cls=callback
             )
             result = await poller.result()
 
-        raw_response = responses[0]
+        raw_analyze_result = responses[0].analyze_result
         returned_model = responses[1]
-        receipt = returned_model[0]
-        actual = raw_response.analyze_result.document_results[0].fields
-        read_results = raw_response.analyze_result.read_results
-        document_results = raw_response.analyze_result.document_results
 
-        # check dict values
-        self.assertFormFieldsTransformCorrect(receipt.fields, actual, read_results)
+        # Check AnalyzeResult
+        assert returned_model.model_id == raw_analyze_result.model_id
+        assert returned_model.api_version == raw_analyze_result.api_version
+        assert returned_model.content == raw_analyze_result.content
+        
+        self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
+        self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
+        self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
+        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentEntitiesTransformCorrect(returned_model.entities, raw_analyze_result.entities)
+        self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
-        self.assertEqual(receipt.page_range.first_page_number, document_results[0].page_range[0])
-        self.assertEqual(receipt.page_range.last_page_number, document_results[0].page_range[1])
-
-        # Check page metadata
-        self.assertFormPagesTransformCorrect(receipt.pages, read_results)
+        assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -192,8 +198,8 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_receipt = prepare_prebuilt_models(analyze_result)
+            analyze_result = client._deserialize(AnalyzeResultOperation, raw_response)
+            extracted_receipt = AnalyzeResult._from_generated(analyze_result.analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_receipt)
 
@@ -201,30 +207,30 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
 
         async with client:
-            poller = await client.begin_recognize_receipts(
-                receipt=myfile,
-                include_field_elements=True,
+            poller = await client.begin_analyze_document(
+                "prebuilt-receipt",
+                document=myfile,
                 cls=callback
             )
             result = await poller.result()
 
-        raw_response = responses[0]
+        raw_analyze_result = responses[0].analyze_result
         returned_model = responses[1]
-        receipt = returned_model[0]
-        actual = raw_response.analyze_result.document_results[0].fields
-        read_results = raw_response.analyze_result.read_results
-        document_results = raw_response.analyze_result.document_results
-        page_results = raw_response.analyze_result.page_results
 
-        # check dict values
-        self.assertFormFieldsTransformCorrect(receipt.fields, actual, read_results)
+        # Check AnalyzeResult
+        assert returned_model.model_id == raw_analyze_result.model_id
+        assert returned_model.api_version == raw_analyze_result.api_version
+        assert returned_model.content == raw_analyze_result.content
+        
+        self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
+        self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
+        self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
+        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentEntitiesTransformCorrect(returned_model.entities, raw_analyze_result.entities)
+        self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
-        self.assertEqual(receipt.page_range.first_page_number, document_results[0].page_range[0])
-        self.assertEqual(receipt.page_range.last_page_number, document_results[0].page_range[1])
-
-        # Check form pages
-        self.assertFormPagesTransformCorrect(receipt.pages, read_results)
+        assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -233,10 +239,10 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
             receipt = fd.read()
 
         async with client:
-            poller = await client.begin_recognize_receipts(receipt)
+            poller = await client.begin_analyze_document("prebuilt-receipt", receipt)
             result = await poller.result()
-        self.assertEqual(len(result), 1)
-        receipt = result[0]
+        self.assertEqual(len(result.documents), 1)
+        receipt = result.documents[0]
         self.assertEqual(receipt.fields.get("MerchantAddress").value, '123 Main Street Redmond, WA 98052')
         self.assertEqual(receipt.fields.get("MerchantName").value, 'Contoso')
         self.assertEqual(receipt.fields.get("Subtotal").value, 1098.99)
@@ -244,15 +250,14 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         self.assertEqual(receipt.fields.get("Total").value, 1203.39)
         self.assertEqual(receipt.fields.get("TransactionDate").value, date(year=2019, month=6, day=10))
         self.assertEqual(receipt.fields.get("TransactionTime").value, time(hour=13, minute=59, second=0))
-        self.assertEqual(receipt.page_range.first_page_number, 1)
-        self.assertEqual(receipt.page_range.last_page_number, 1)
-        self.assertFormPagesHasValues(receipt.pages)
         receipt_type = receipt.fields.get("ReceiptType")
         self.assertIsNotNone(receipt_type.confidence)
         self.assertEqual(receipt_type.value, 'Itemized')
 
+        self.assertEqual(len(result.pages), 1)
+
     @FormRecognizerPreparer()
-    @GlobalClientPreparer()
+    @GlobalClientPreparerV2()
     async def test_receipt_jpg_include_field_elements(self, client):
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
@@ -291,27 +296,27 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.multipage_receipt_pdf, "rb") as fd:
             receipt = fd.read()
         async with client:
-            poller = await client.begin_recognize_receipts(receipt, include_field_elements=True)
+            poller = await client.begin_analyze_document("prebuilt-receipt", receipt)
             result = await poller.result()
 
-        self.assertEqual(len(result), 2)
-        receipt = result[0]
+        d = result.to_dict()
+        result = AnalyzeResult.from_dict(d)
+
+        self.assertEqual(len(result.documents), 2)
+        receipt = result.documents[0]
         self.assertEqual(receipt.fields.get("MerchantAddress").value, '123 Main Street Redmond, WA 98052')
         self.assertEqual(receipt.fields.get("MerchantName").value, 'Contoso')
         self.assertEqual(receipt.fields.get("MerchantPhoneNumber").value, '+19876543210')
         self.assertEqual(receipt.fields.get("Subtotal").value, 11.7)
         self.assertEqual(receipt.fields.get("Tax").value, 1.17)
-        self.assertEqual(receipt.fields.get("Tip").value, 1.623)
-        self.assertEqual(receipt.fields.get("Total").value, 14.52)
+        self.assertEqual(receipt.fields.get("Tip").value, 1.63)
+        self.assertEqual(receipt.fields.get("Total").value, 14.5)
         self.assertEqual(receipt.fields.get("TransactionDate").value, date(year=2019, month=6, day=10))
         self.assertEqual(receipt.fields.get("TransactionTime").value, time(hour=13, minute=59, second=0))
-        self.assertEqual(receipt.page_range.first_page_number, 1)
-        self.assertEqual(receipt.page_range.last_page_number, 1)
-        self.assertFormPagesHasValues(receipt.pages)
         receipt_type = receipt.fields.get("ReceiptType")
         self.assertIsNotNone(receipt_type.confidence)
         self.assertEqual(receipt_type.value, 'Itemized')
-        receipt = result[1]
+        receipt = result.documents[1]
         self.assertEqual(receipt.fields.get("MerchantAddress").value, '123 Main Street Redmond, WA 98052')
         self.assertEqual(receipt.fields.get("MerchantName").value, 'Contoso')
         self.assertEqual(receipt.fields.get("Subtotal").value, 1098.99)
@@ -319,12 +324,11 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         self.assertEqual(receipt.fields.get("Total").value, 1203.39)
         self.assertEqual(receipt.fields.get("TransactionDate").value, date(year=2019, month=6, day=10))
         self.assertEqual(receipt.fields.get("TransactionTime").value, time(hour=13, minute=59, second=0))
-        self.assertEqual(receipt.page_range.first_page_number, 2)
-        self.assertEqual(receipt.page_range.last_page_number, 2)
-        self.assertFormPagesHasValues(receipt.pages)
         receipt_type = receipt.fields.get("ReceiptType")
         self.assertIsNotNone(receipt_type.confidence)
         self.assertEqual(receipt_type.value, 'Itemized')
+
+        self.assertEqual(len(result.pages), 2)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -332,8 +336,8 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_receipt = prepare_prebuilt_models(analyze_result)
+            analyze_result = client._deserialize(AnalyzeResultOperation, raw_response)
+            extracted_receipt = AnalyzeResult._from_generated(analyze_result.analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_receipt)
 
@@ -341,32 +345,31 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
 
         async with client:
-            poller = await client.begin_recognize_receipts(
-                receipt=myfile,
-                include_field_elements=True,
+            poller = await client.begin_analyze_document(
+                "prebuilt-receipt",
+                document=myfile,
                 cls=callback
             )
             result = await poller.result()
 
-        raw_response = responses[0]
-        returned_model = responses[1]
-        actual = raw_response.analyze_result.document_results
-        read_results = raw_response.analyze_result.read_results
-        document_results = raw_response.analyze_result.document_results
-        page_results = raw_response.analyze_result.page_results
+        raw_analyze_result = responses[0].analyze_result
+        d = responses[1].to_dict()
+        returned_model = AnalyzeResult.from_dict(d)
 
-        # check hardcoded values
-        for receipt, actual in zip(returned_model, actual):
+        # Check AnalyzeResult
+        assert returned_model.model_id == raw_analyze_result.model_id
+        assert returned_model.api_version == raw_analyze_result.api_version
+        assert returned_model.content == raw_analyze_result.content
 
-            # check dict values
-            self.assertFormFieldsTransformCorrect(receipt.fields, actual.fields, read_results)
+        self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
+        self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
+        self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
+        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentEntitiesTransformCorrect(returned_model.entities, raw_analyze_result.entities)
+        self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
-            # check page range
-            self.assertEqual(receipt.page_range.first_page_number, actual.page_range[0])
-            self.assertEqual(receipt.page_range.last_page_number, actual.page_range[1])
-
-        # Check form pages
-        self.assertFormPagesTransformCorrect(returned_model, read_results)
+        # check page range
+        assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -377,9 +380,9 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
             receipt = fd.read()
 
         async with client:
-            initial_poller = await client.begin_recognize_receipts(receipt)
+            initial_poller = await client.begin_analyze_document("prebuilt-receipt", receipt)
             cont_token = initial_poller.continuation_token()
-            poller = await client.begin_recognize_receipts(None, continuation_token=cont_token)
+            poller = await client.begin_analyze_document("prebuilt-receipt", None, continuation_token=cont_token)
             result = await poller.result()
             self.assertIsNotNone(result)
             await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
@@ -390,23 +393,24 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
         async with client:
-            poller = await client.begin_recognize_receipts(receipt, locale="en-IN")
+            poller = await client.begin_analyze_document("prebuilt-receipt", receipt, locale="en-IN")
             assert 'en-IN' == poller._polling_method._initial_response.http_response.request.query['locale']
             result = await poller.result()
             assert result
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
+    @pytest.mark.skip("the service is returning a different error code")
     async def test_receipt_locale_error(self, client):
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
         with pytest.raises(HttpResponseError) as e:
             async with client:
-                await client.begin_recognize_receipts(receipt, locale="not a locale")
+                await client.begin_analyze_document("prebuilt-receipt", receipt, locale="not a locale")
         assert "UnsupportedLocale" == e.value.error.code
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
+    @GlobalClientPreparerV2(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     async def test_receipt_locale_v2(self, client):
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
@@ -421,7 +425,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
         async with client:
-            poller = await client.begin_recognize_receipts(receipt, pages=["1"])
+            poller = await client.begin_analyze_document("prebuilt-receipt", receipt, pages="1")
             assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
             result = await poller.result()
             assert result

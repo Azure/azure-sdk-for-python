@@ -44,7 +44,7 @@ class LocationOperations:
     def list_usage(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.UsageListResult"]:
         """Get the usage for a subscription.
 
@@ -60,7 +60,7 @@ class LocationOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-12-01"
+        api_version = "2021-07-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -114,7 +114,7 @@ class LocationOperations:
     def list_cached_images(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CachedImagesListResult"]:
         """Get the list of cached images.
 
@@ -132,7 +132,7 @@ class LocationOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-12-01"
+        api_version = "2021-07-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -186,7 +186,7 @@ class LocationOperations:
     def list_capabilities(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CapabilitiesListResult"]:
         """Get the list of capabilities of the location.
 
@@ -204,7 +204,7 @@ class LocationOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-12-01"
+        api_version = "2021-07-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):

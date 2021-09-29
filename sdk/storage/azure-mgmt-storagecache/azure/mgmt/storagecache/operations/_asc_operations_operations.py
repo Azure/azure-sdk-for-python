@@ -67,7 +67,7 @@ class AscOperationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         # Construct URL

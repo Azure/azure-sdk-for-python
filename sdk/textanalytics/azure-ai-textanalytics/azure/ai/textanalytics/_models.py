@@ -11,7 +11,8 @@ from ._generated.models import (
 )
 
 from ._generated.v3_0 import models as _v3_0_models
-from ._generated.v3_1 import models as _v3_1_models
+from ._generated.v3_2_preview_1 import models as _v3_2_preview_1_models
+from ._version import DEFAULT_API_VERSION
 
 
 def _get_indices(relation):
@@ -122,8 +123,7 @@ class HealthcareEntityRelation(str, Enum):
 
 
 class PiiEntityCategory(str, Enum):
-    """Categories of Personally Identifiable Information (PII).
-    """
+    """Categories of Personally Identifiable Information (PII)."""
 
     ABA_ROUTING_NUMBER = "ABARoutingNumber"
     AR_NATIONAL_IDENTITY_NUMBER = "ARNationalIdentityNumber"
@@ -505,10 +505,13 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
     @classmethod
     def _from_generated(cls, healthcare_result):
         entities = [
-            HealthcareEntity._from_generated(e) for e in healthcare_result.entities  # pylint: disable=protected-access
+            HealthcareEntity._from_generated(e)  # pylint: disable=protected-access
+            for e in healthcare_result.entities
         ]
         relations = [
-            HealthcareRelation._from_generated(r, entities)  # pylint: disable=protected-access
+            HealthcareRelation._from_generated(  # pylint: disable=protected-access
+                r, entities
+            )
             for r in healthcare_result.relations
         ]
 
@@ -517,7 +520,9 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
             entities=entities,
             entity_relations=relations,
             warnings=[
-                TextAnalyticsWarning._from_generated(w)  # pylint: disable=protected-access
+                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
+                    w
+                )
                 for w in healthcare_result.warnings
             ],
             statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
@@ -1290,7 +1295,8 @@ class LinkedEntity(DictMixin):
         return cls(
             name=entity.name,
             matches=[
-                LinkedEntityMatch._from_generated(e) for e in entity.matches  # pylint: disable=protected-access
+                LinkedEntityMatch._from_generated(e)  # pylint: disable=protected-access
+                for e in entity.matches
             ],
             language=entity.language,
             data_source_entity_id=entity.id,
@@ -1492,7 +1498,9 @@ class SentenceSentiment(DictMixin):
         if hasattr(sentence, "targets"):
             mined_opinions = (
                 [
-                    MinedOpinion._from_generated(target, results, sentiment)  # pylint: disable=protected-access
+                    MinedOpinion._from_generated(  # pylint: disable=protected-access
+                        target, results, sentiment
+                    )
                     for target in sentence.targets
                 ]
                 if sentence.targets
@@ -1737,6 +1745,7 @@ class _AnalyzeActionsType(str, Enum):
         "recognize_linked_entities"  #: Linked Entities Recognition action.
     )
     ANALYZE_SENTIMENT = "analyze_sentiment"  #: Sentiment Analysis action.
+    EXTRACT_SUMMARY = "extract_summary"
 
 
 class RecognizeEntitiesAction(DictMixin):
@@ -1786,9 +1795,13 @@ class RecognizeEntitiesAction(DictMixin):
             :1024
         ]
 
-    def _to_generated(self):
-        return _v3_1_models.EntitiesTask(
-            parameters=_v3_1_models.EntitiesTaskParameters(
+    def _to_generated(self, api_version):
+        if api_version == DEFAULT_API_VERSION:
+            from ._generated.v3_2_preview_1 import models
+        else:
+            from ._generated.v3_1 import models
+        return models.EntitiesTask(
+            parameters=models.EntitiesTaskParameters(
                 model_version=self.model_version,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
@@ -1859,9 +1872,13 @@ class AnalyzeSentimentAction(DictMixin):
             )[:1024]
         )
 
-    def _to_generated(self):
-        return _v3_1_models.SentimentAnalysisTask(
-            parameters=_v3_1_models.SentimentAnalysisTaskParameters(
+    def _to_generated(self, api_version):
+        if api_version == DEFAULT_API_VERSION:
+            from ._generated.v3_2_preview_1 import models
+        else:
+            from ._generated.v3_1 import models
+        return models.SentimentAnalysisTask(
+            parameters=models.SentimentAnalysisTaskParameters(
                 model_version=self.model_version,
                 opinion_mining=self.show_opinion_mining,
                 string_index_type=self.string_index_type,
@@ -1923,7 +1940,7 @@ class RecognizePiiEntitiesAction(DictMixin):
         self.domain_filter = kwargs.get("domain_filter", None)
         self.categories_filter = kwargs.get("categories_filter", None)
         self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
-        self.disable_service_logs = kwargs.get("disable_service_logs", False)
+        self.disable_service_logs = kwargs.get("disable_service_logs", True)
 
     def __repr__(self, **kwargs):
         return (
@@ -1937,9 +1954,13 @@ class RecognizePiiEntitiesAction(DictMixin):
             )[:1024]
         )
 
-    def _to_generated(self):
-        return _v3_1_models.PiiTask(
-            parameters=_v3_1_models.PiiTaskParameters(
+    def _to_generated(self, api_version):
+        if api_version == DEFAULT_API_VERSION:
+            from ._generated.v3_2_preview_1 import models
+        else:
+            from ._generated.v3_1 import models
+        return models.PiiTask(
+            parameters=models.PiiTaskParameters(
                 model_version=self.model_version,
                 domain=self.domain_filter,
                 pii_categories=self.categories_filter,
@@ -1988,9 +2009,13 @@ class ExtractKeyPhrasesAction(DictMixin):
             )[:1024]
         )
 
-    def _to_generated(self):
-        return _v3_1_models.KeyPhrasesTask(
-            parameters=_v3_1_models.KeyPhrasesTaskParameters(
+    def _to_generated(self, api_version):
+        if api_version == DEFAULT_API_VERSION:
+            from ._generated.v3_2_preview_1 import models
+        else:
+            from ._generated.v3_1 import models
+        return models.KeyPhrasesTask(
+            parameters=models.KeyPhrasesTaskParameters(
                 model_version=self.model_version,
                 logging_opt_out=self.disable_service_logs,
             )
@@ -2046,11 +2071,176 @@ class RecognizeLinkedEntitiesAction(DictMixin):
             )[:1024]
         )
 
-    def _to_generated(self):
-        return _v3_1_models.EntityLinkingTask(
-            parameters=_v3_1_models.EntityLinkingTaskParameters(
+    def _to_generated(self, api_version):
+        if api_version == DEFAULT_API_VERSION:
+            from ._generated.v3_2_preview_1 import models
+        else:
+            from ._generated.v3_1 import models
+        return models.EntityLinkingTask(
+            parameters=models.EntityLinkingTaskParameters(
                 model_version=self.model_version,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
             )
+        )
+
+
+class ExtractSummaryAction(DictMixin):
+    """ExtractSummaryAction encapsulates the parameters for starting a long-running Extractive
+    Text Summarization operation.
+
+    :keyword str model_version: The model version to use for the analysis.
+    :keyword str string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+        the Text Analytics natural language processing functions. Setting this parameter to true,
+        disables input logging and may limit our ability to remediate issues that occur. Please see
+        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+        additional details, and Microsoft Responsible AI principles at
+        https://www.microsoft.com/ai/responsible-ai.
+    :keyword int max_sentence_count: Maximum number of sentences to return. Defaults to 3.
+    :keyword str order_by:  Possible values include: "Offset", "Rank". Default value: "Offset".
+    :ivar str model_version: The model version to use for the analysis.
+    :ivar str string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
+        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+        the Text Analytics natural language processing functions. Setting this parameter to true,
+        disables input logging and may limit our ability to remediate issues that occur. Please see
+        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+        additional details, and Microsoft Responsible AI principles at
+        https://www.microsoft.com/ai/responsible-ai.
+    :ivar int max_sentence_count: Number of sentences to return. Defaults to 3.
+    :ivar str order_by:  Possible values include: "Offset", "Rank". Default value: "Offset".
+    """
+
+    def __init__(self, **kwargs):
+        self.model_version = kwargs.get("model_version", "latest")
+        self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
+        self.disable_service_logs = kwargs.get("disable_service_logs", False)
+        self.max_sentence_count = kwargs.get("max_sentence_count", 3)
+        self.order_by = kwargs.get("order_by", "Offset")
+
+    def __repr__(self):
+        return (
+            "ExtractSummaryAction(model_version={}, string_index_type={}, disable_service_logs={}, "
+            "max_sentence_count={}, order_by={})".format(
+                self.model_version,
+                self.string_index_type,
+                self.disable_service_logs,
+                self.max_sentence_count,
+                self.order_by,
+            )[:1024]
+        )
+
+    def _to_generated(self, api_version):  # pylint: disable=unused-argument
+        return _v3_2_preview_1_models.ExtractiveSummarizationTask(
+            parameters=_v3_2_preview_1_models.ExtractiveSummarizationTaskParameters(
+                model_version=self.model_version,
+                string_index_type=self.string_index_type,
+                logging_opt_out=self.disable_service_logs,
+                sentence_count=self.max_sentence_count,
+                sort_by=self.order_by,
+            )
+        )
+
+
+class ExtractSummaryResult(DictMixin):
+    """ExtractSummaryResult is a result object which contains
+    the extractive text summarization from a particular document.
+
+    :ivar str id: Unique, non-empty document identifier.
+    :ivar sentences: A ranked list of sentences representing the extracted summary.
+    :vartype sentences: list[~azure.ai.textanalytics.SummarySentence]
+    :ivar warnings: Warnings encountered while processing document.
+    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
+    :ivar statistics: If `show_stats=True` was specified in the request this
+        field will contain information about the document payload.
+    :vartype statistics: ~azure.ai.textanalytics.TextDocumentStatistics
+    :ivar bool is_error: Boolean check for error item when iterating over list of
+        results. Always False for an instance of an ExtractSummaryResult.
+    """
+
+    def __init__(self, **kwargs):
+        self.id = kwargs.get("id", None)
+        self.sentences = kwargs.get("sentences", None)
+        self.warnings = kwargs.get("warnings", None)
+        self.statistics = kwargs.get("statistics", None)
+        self.is_error = False
+
+    def __repr__(self):
+        return "ExtractSummaryResult(id={}, sentences={}, warnings={}, statistics={}, is_error={})".format(
+            self.id,
+            repr(self.sentences),
+            repr(self.warnings),
+            repr(self.statistics),
+            self.is_error,
+        )[
+            :1024
+        ]
+
+    @classmethod
+    def _from_generated(cls, summary):
+        return cls(
+            id=summary.id,
+            sentences=[
+                SummarySentence._from_generated(  # pylint: disable=protected-access
+                    sentence
+                )
+                for sentence in summary.sentences
+            ],
+            warnings=[
+                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
+                    w
+                )
+                for w in summary.warnings
+            ],
+            statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
+                summary.statistics
+            ),
+        )
+
+
+class SummarySentence(DictMixin):
+    """Represents a single sentence from the extractive text summarization.
+
+    :ivar str text: The extracted sentence text.
+    :ivar float rank_score: A float value representing the relevance of the sentence within
+        the summary. Higher values indicate higher importance.
+    :ivar int offset: The sentence offset from the start of the document.
+        The value depends on the value of the `string_index_type` parameter
+        set in the original request, which is UnicodeCodePoint by default.
+    :ivar int length: The length of the sentence. This value depends on the value of the
+        `string_index_type` parameter set in the original request, which is UnicodeCodePoint
+        by default.
+    """
+
+    def __init__(self, **kwargs):
+        self.text = kwargs.get("text", None)
+        self.rank_score = kwargs.get("rank_score", None)
+        self.offset = kwargs.get("offset", None)
+        self.length = kwargs.get("length", None)
+
+    def __repr__(self):
+        return "SummarySentence(text={}, rank_score={}, offset={}, length={})".format(
+            self.text,
+            self.rank_score,
+            self.offset,
+            self.length,
+        )[:1024]
+
+    @classmethod
+    def _from_generated(cls, sentence):
+        return cls(
+            text=sentence.text,
+            rank_score=sentence.rank_score,
+            offset=sentence.offset,
+            length=sentence.length,
         )

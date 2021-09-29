@@ -7,11 +7,13 @@
 # --------------------------------------------------------------------------
 
 import sys
+import time
 from datetime import datetime, timedelta
 from time import sleep
 
 import pytest
 import requests
+from devtools_testutils import ResourceGroupPreparer, BlobAccountPreparer, CachedResourceGroupPreparer
 
 from _shared.testcase import StorageTestCase, LogCaptured, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer, StorageAccountPreparer
 from azure.core import MatchConditions
@@ -226,6 +228,7 @@ class StorageContainerTest(StorageTestCase):
         self.assertNamedItemInContainer(containers, container.container_name)
         self.assertIsNotNone(containers[0].has_immutability_policy)
         self.assertIsNotNone(containers[0].has_legal_hold)
+        self.assertIsNotNone(containers[0].immutable_storage_with_versioning_enabled)
 
     @GlobalStorageAccountPreparer()
     def test_list_containers_with_prefix(self, resource_group, location, storage_account, storage_account_key):
@@ -398,6 +401,7 @@ class StorageContainerTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(props)
         self.assertDictEqual(props.metadata, metadata)
+        self.assertIsNotNone(props.immutable_storage_with_versioning_enabled)
         # self.assertEqual(props.lease.duration, 'infinite')
         # self.assertEqual(props.lease.state, 'leased')
         # self.assertEqual(props.lease.status, 'locked')
@@ -797,8 +801,7 @@ class StorageContainerTest(StorageTestCase):
     @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_undelete_container(self, resource_group, location, storage_account, storage_account_key):
-        # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
-
+        # TODO: container soft delete should enabled by SRP call or use ARM, so make this test as playback only.
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         container_client = self._create_container(bsc)
 
@@ -811,49 +814,20 @@ class StorageContainerTest(StorageTestCase):
         container_list = list(bsc.list_containers(include_deleted=True))
         self.assertTrue(len(container_list) >= 1)
 
-        restored_version = 0
         for container in container_list:
             # find the deleted container and restore it
             if container.deleted and container.name == container_client.container_name:
-                restored_ctn_client = bsc.undelete_container(container.name, container.version,
-                                                              new_name="restored" + str(restored_version))
-                restored_version += 1
+                restored_ctn_client = bsc.undelete_container(container.name, container.version)
 
                 # to make sure the deleted container is restored
                 props = restored_ctn_client.get_container_properties()
                 self.assertIsNotNone(props)
 
-    @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
-    def test_restore_to_existing_container(self, resource_group, location, storage_account, storage_account_key):
-        # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
-
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
-        # get an existing container
-        existing_container_client = self._create_container(bsc, prefix="existing")
-        container_client = self._create_container(bsc)
-
-        # Act
-        container_client.delete_container()
-        # to make sure the container deleted
-        with self.assertRaises(ResourceNotFoundError):
-            container_client.get_container_properties()
-
-        container_list = list(bsc.list_containers(include_deleted=True))
-        self.assertTrue(len(container_list) >= 1)
-
-        for container in container_list:
-            # find the deleted container and restore it
-            if container.deleted and container.name == container_client.container_name:
-                with self.assertRaises(HttpResponseError):
-                    bsc.undelete_container(container.name, container.version,
-                                            new_name=existing_container_client.container_name)
-
     @pytest.mark.live_test_only  # sas token is dynamically generated
     @pytest.mark.playback_test_only  # we need container soft delete enabled account
     @GlobalStorageAccountPreparer()
     def test_restore_with_sas(self, resource_group, location, storage_account, storage_account_key):
-        # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
+        # TODO: container soft delete should enabled by SRP call or use ARM, so make this test as playback only.
         token = generate_account_sas(
             storage_account.name,
             storage_account_key,
@@ -875,9 +849,7 @@ class StorageContainerTest(StorageTestCase):
         for container in container_list:
             # find the deleted container and restore it
             if container.deleted and container.name == container_client.container_name:
-                restored_ctn_client = bsc.undelete_container(container.name, container.version,
-                                                              new_name="restored" + str(restored_version))
-                restored_version += 1
+                restored_ctn_client = bsc.undelete_container(container.name, container.version)
 
                 # to make sure the deleted container is restored
                 props = restored_ctn_client.get_container_properties()
@@ -1084,6 +1056,42 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(blobs[1].metadata['name'], 'car')
         self.assertEqual(blobs[1].content_settings.content_language, 'spanish')
         self.assertEqual(blobs[1].content_settings.content_disposition, 'inline')
+
+    @GlobalResourceGroupPreparer()
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", random_name_enabled=True)
+    def test_list_blobs_include_deletedwithversion(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        # pytest.skip("Waiting on metadata XML fix in msrest")
+        container = self._create_container(bsc)
+        data = b'hello world'
+        content_settings = ContentSettings(
+            content_language='spanish',
+            content_disposition='inline')
+        blob1 = container.get_blob_client('blob1')
+        resp = blob1.upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '1', 'name': 'bob'})
+        version_id_1 = resp['version_id']
+        blob1.upload_blob(b"abc", overwrite=True)
+        root_content = b"cde"
+        root_version_id = blob1.upload_blob(root_content, overwrite=True)['version_id']
+        blob1.delete_blob()
+
+        container.get_blob_client('blob2').upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
+        container.get_blob_client('blob3').upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
+
+        # Act
+        blobs =list(container.list_blobs(include=["deletedwithversions"]))
+        downloaded_root_content = blob1.download_blob(version_id=root_version_id).readall()
+        downloaded_original_content = blob1.download_blob(version_id=version_id_1).readall()
+
+        # Assert
+        self.assertEqual(blobs[0].name, 'blob1')
+        self.assertTrue(blobs[0].has_versions_only)
+        self.assertEqual(root_content, downloaded_root_content)
+        self.assertEqual(data, downloaded_original_content)
+        self.assertEqual(blobs[1].name, 'blob2')
+        self.assertFalse(blobs[1].has_versions_only)
+        self.assertEqual(blobs[2].name, 'blob3')
+        self.assertFalse(blobs[2].has_versions_only)
 
     @GlobalStorageAccountPreparer()
     def test_list_blobs_with_include_uncommittedblobs(self, resource_group, location, storage_account, storage_account_key):

@@ -172,8 +172,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             sas_token, credential, share_snapshot=self.snapshot)
         super(ShareFileClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
         self._client = AzureFileStorage(url=self.url, pipeline=self._pipeline)
-        default_api_version = self._client._config.version  # pylint: disable=protected-access
-        self._client._config.version = get_api_version(kwargs, default_api_version) # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
 
     @classmethod
     def from_file_url(
@@ -1022,11 +1021,12 @@ class ShareFileClient(StorageAccountHostsMixin):
         end_range = offset + length - 1
         destination_range = 'bytes={0}-{1}'.format(offset, end_range)
         source_range = 'bytes={0}-{1}'.format(source_offset, source_offset + length - 1)
-
+        source_authorization = kwargs.pop('source_authorization', None)
         source_mod_conditions = get_source_conditions(kwargs)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
 
         options = {
+            'copy_source_authorization': source_authorization,
             'copy_source': source_url,
             'content_length': 0,
             'source_range': source_range,
@@ -1093,6 +1093,9 @@ class ShareFileClient(StorageAccountHostsMixin):
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
         """
         options = self._upload_range_from_url_options(
             source_url=source_url,

@@ -10,12 +10,16 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated import SearchClient as _SearchServiceClient
-from ._generated.models import SearchIndexerSkillset
+from .models import SearchIndexerSkillset
 from ._utils import (
     get_access_conditions,
     normalize_endpoint,
 )
-from .models import SearchIndexerDataSourceConnection
+from .models import (
+    EntityRecognitionSkillVersion,
+    SearchIndexerDataSourceConnection,
+    SentimentSkillVersion
+)
 from .._api_versions import DEFAULT_VERSION
 from .._headers_mixin import HeadersMixin
 from .._utils import get_authentication_policy
@@ -28,7 +32,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
+class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
     """A client to interact with Azure search service Indexers.
 
     :param endpoint: The URL endpoint of an Azure search service
@@ -77,9 +81,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
 
     def close(self):
         # type: () -> None
-        """Close the :class:`~azure.search.documents.indexes.SearchIndexerClient` session.
-
-        """
+        """Close the :class:`~azure.search.documents.indexes.SearchIndexerClient` session."""
         return self._client.close()
 
     @distributed_trace
@@ -333,11 +335,14 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            data_source_connection, kwargs.pop("match_condition", MatchConditions.Unconditionally)
+            data_source_connection,
+            kwargs.pop("match_condition", MatchConditions.Unconditionally),
         )
         kwargs.update(access_condition)
         name = data_source_connection.name
-        packed_data_source = data_source_connection._to_generated() # pylint:disable=protected-access
+        packed_data_source = (
+            data_source_connection._to_generated()  # pylint:disable=protected-access
+        )
         result = self._client.data_sources.create_or_update(
             data_source_name=name,
             data_source=packed_data_source,
@@ -368,7 +373,9 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.data_sources.get(name, **kwargs)
-        return SearchIndexerDataSourceConnection._from_generated(result)    # pylint:disable=protected-access
+        return SearchIndexerDataSourceConnection._from_generated(  # pylint:disable=protected-access
+            result
+        )
 
     @distributed_trace
     def get_data_source_connections(self, **kwargs):
@@ -390,7 +397,10 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.data_sources.list(**kwargs)
         # pylint:disable=protected-access
-        return [SearchIndexerDataSourceConnection._from_generated(x) for x in result.data_sources]
+        return [
+            SearchIndexerDataSourceConnection._from_generated(x)
+            for x in result.data_sources
+        ]
 
     @distributed_trace
     def get_data_source_connection_names(self, **kwargs):
@@ -430,7 +440,8 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            data_source_connection, kwargs.pop("match_condition", MatchConditions.Unconditionally)
+            data_source_connection,
+            kwargs.pop("match_condition", MatchConditions.Unconditionally),
         )
         kwargs.update(access_condition)
         try:
@@ -462,7 +473,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.skillsets.list(**kwargs)
-        return result.skillsets
+        return [SearchIndexerSkillset._from_generated(skillset) for skillset in result.skillsets] # pylint:disable=protected-access
 
     @distributed_trace
     def get_skillset_names(self, **kwargs):
@@ -500,7 +511,8 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        return self._client.skillsets.get(name, **kwargs)
+        result = self._client.skillsets.get(name, **kwargs)
+        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
 
     @distributed_trace
     def delete_skillset(self, skillset, **kwargs):
@@ -556,8 +568,11 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        _validate_skillset(skillset)
+        skillset = skillset._to_generated() if hasattr(skillset, '_to_generated') else skillset # pylint:disable=protected-access
 
-        return self._client.skillsets.create(skillset, **kwargs)
+        result = self._client.skillsets.create(skillset, **kwargs)
+        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
 
     @distributed_trace
     def create_or_update_skillset(self, skillset, **kwargs):
@@ -578,7 +593,54 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
             skillset, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         kwargs.update(access_condition)
+        _validate_skillset(skillset)
+        skillset = skillset._to_generated() if hasattr(skillset, '_to_generated') else skillset # pylint:disable=protected-access
 
-        return self._client.skillsets.create_or_update(
-            skillset_name=skillset.name, skillset=skillset, error_map=error_map, **kwargs
+        result = self._client.skillsets.create_or_update(
+            skillset_name=skillset.name,
+            skillset=skillset,
+            error_map=error_map,
+            **kwargs
         )
+        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
+
+def _validate_skillset(skillset):
+    """Validates any multi-version skills in the skillset to verify that unsupported
+    parameters are not supplied by the user.
+    """
+    skills = getattr(skillset, 'skills', None)
+    if not skills:
+        return
+
+    error_strings = []
+    for skill in skills:
+        try:
+            skill_version = skill.get('skill_version')
+        except AttributeError:
+            skill_version = getattr(skill, 'skill_version', None)
+        if not skill_version:
+            continue
+
+        if skill_version == SentimentSkillVersion.V1:
+            unsupported = ['model_version', 'include_opinion_mining']
+        elif skill_version == SentimentSkillVersion.V3:
+            unsupported = []
+        elif skill_version == EntityRecognitionSkillVersion.V1:
+            unsupported = ['model_version']
+        elif skill_version == EntityRecognitionSkillVersion.V3:
+            unsupported = ['include_typeless_entities']
+
+        errors = []
+        for item in unsupported:
+            try:
+                if skill.get(item, None):
+                    errors.append(item)
+            except AttributeError:
+                if skill.__dict__.get(item, None):
+                    errors.append(item)
+        if errors:
+            error_strings.append("Unsupported parameters for skill version {}: {}".format(
+                skill_version, ", ".join(errors))
+            )
+    if error_strings:
+        raise ValueError("\n".join(error_strings))

@@ -32,7 +32,7 @@ from git_helper import get_release_tag, git_checkout_tag, git_checkout_branch, c
 AZURE_GLOB_STRING = "azure*"
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
-test_tools_req_file = os.path.abspath(os.path.join(root_dir, "eng", "test_tools.txt"))
+test_tools_req_file = os.path.abspath(os.path.join(root_dir, "eng", "regression_test_tools.txt"))
 
 GIT_REPO_NAME = "azure-sdk-for-python"
 GIT_MASTER_BRANCH = "main"
@@ -274,7 +274,7 @@ class RegressionTest:
                 "Installing filtered dev requirements from {}".format(filtered_dev_req_path)
             )
             run_check_call(
-                [python_executable, "-m", "pip", "install", "-r", filtered_dev_req_path],
+                [python_executable, "-m", "pip", "install", "-r", filtered_dev_req_path, "--extra-index", "https://pypi.org/simple"],
                 dependent_pkg_path,
             )
         else:

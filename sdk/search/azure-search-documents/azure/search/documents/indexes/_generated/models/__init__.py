@@ -49,6 +49,7 @@ try:
     from ._models_py3 import GetIndexStatisticsResult
     from ._models_py3 import HighWaterMarkChangeDetectionPolicy
     from ._models_py3 import ImageAnalysisSkill
+    from ._models_py3 import IndexerCurrentState
     from ._models_py3 import IndexerExecutionResult
     from ._models_py3 import IndexingParameters
     from ._models_py3 import IndexingParametersConfiguration
@@ -86,6 +87,7 @@ try:
     from ._models_py3 import OutputFieldMappingEntry
     from ._models_py3 import PIIDetectionSkill
     from ._models_py3 import PathHierarchyTokenizerV2
+    from ._models_py3 import Paths1Cj7DxmIndexersIndexernameSearchResetdocsPostRequestbodyContentApplicationJsonSchema
     from ._models_py3 import PatternAnalyzer
     from ._models_py3 import PatternCaptureTokenFilter
     from ._models_py3 import PatternReplaceCharFilter
@@ -100,6 +102,7 @@ try:
     from ._models_py3 import SearchField
     from ._models_py3 import SearchIndex
     from ._models_py3 import SearchIndexer
+    from ._models_py3 import SearchIndexerCache
     from ._models_py3 import SearchIndexerDataContainer
     from ._models_py3 import SearchIndexerDataIdentity
     from ._models_py3 import SearchIndexerDataNoneIdentity
@@ -191,6 +194,7 @@ except (SyntaxError, ImportError):
     from ._models import GetIndexStatisticsResult  # type: ignore
     from ._models import HighWaterMarkChangeDetectionPolicy  # type: ignore
     from ._models import ImageAnalysisSkill  # type: ignore
+    from ._models import IndexerCurrentState  # type: ignore
     from ._models import IndexerExecutionResult  # type: ignore
     from ._models import IndexingParameters  # type: ignore
     from ._models import IndexingParametersConfiguration  # type: ignore
@@ -228,6 +232,7 @@ except (SyntaxError, ImportError):
     from ._models import OutputFieldMappingEntry  # type: ignore
     from ._models import PIIDetectionSkill  # type: ignore
     from ._models import PathHierarchyTokenizerV2  # type: ignore
+    from ._models import Paths1Cj7DxmIndexersIndexernameSearchResetdocsPostRequestbodyContentApplicationJsonSchema  # type: ignore
     from ._models import PatternAnalyzer  # type: ignore
     from ._models import PatternCaptureTokenFilter  # type: ignore
     from ._models import PatternReplaceCharFilter  # type: ignore
@@ -242,6 +247,7 @@ except (SyntaxError, ImportError):
     from ._models import SearchField  # type: ignore
     from ._models import SearchIndex  # type: ignore
     from ._models import SearchIndexer  # type: ignore
+    from ._models import SearchIndexerCache  # type: ignore
     from ._models import SearchIndexerDataContainer  # type: ignore
     from ._models import SearchIndexerDataIdentity  # type: ignore
     from ._models import SearchIndexerDataNoneIdentity  # type: ignore
@@ -306,7 +312,9 @@ from ._search_client_enums import (
     ImageDetail,
     IndexerExecutionEnvironment,
     IndexerExecutionStatus,
+    IndexerExecutionStatusDetail,
     IndexerStatus,
+    IndexingMode,
     KeyPhraseExtractionSkillLanguage,
     LexicalAnalyzerName,
     LexicalNormalizerName,
@@ -377,6 +385,7 @@ __all__ = [
     'GetIndexStatisticsResult',
     'HighWaterMarkChangeDetectionPolicy',
     'ImageAnalysisSkill',
+    'IndexerCurrentState',
     'IndexerExecutionResult',
     'IndexingParameters',
     'IndexingParametersConfiguration',
@@ -414,6 +423,7 @@ __all__ = [
     'OutputFieldMappingEntry',
     'PIIDetectionSkill',
     'PathHierarchyTokenizerV2',
+    'Paths1Cj7DxmIndexersIndexernameSearchResetdocsPostRequestbodyContentApplicationJsonSchema',
     'PatternAnalyzer',
     'PatternCaptureTokenFilter',
     'PatternReplaceCharFilter',
@@ -428,6 +438,7 @@ __all__ = [
     'SearchField',
     'SearchIndex',
     'SearchIndexer',
+    'SearchIndexerCache',
     'SearchIndexerDataContainer',
     'SearchIndexerDataIdentity',
     'SearchIndexerDataNoneIdentity',
@@ -490,7 +501,9 @@ __all__ = [
     'ImageDetail',
     'IndexerExecutionEnvironment',
     'IndexerExecutionStatus',
+    'IndexerExecutionStatusDetail',
     'IndexerStatus',
+    'IndexingMode',
     'KeyPhraseExtractionSkillLanguage',
     'LexicalAnalyzerName',
     'LexicalNormalizerName',

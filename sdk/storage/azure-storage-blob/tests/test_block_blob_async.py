@@ -13,12 +13,16 @@ import uuid
 
 from datetime import datetime, timedelta
 
+from azure.mgmt.storage.aio import StorageManagementClient
+
+
 from azure.storage.blob._shared.policies import StorageContentValidation
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, BlobAccountPreparer, \
+    CachedResourceGroupPreparer
 from _shared.testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 from devtools_testutils.storage.aio import AsyncStorageTestCase
 
@@ -28,8 +32,8 @@ from azure.storage.blob import (
     BlobBlock,
     StandardBlobTier,
     generate_blob_sas,
-    BlobSasPermissions, CustomerProvidedEncryptionKey
-)
+    BlobSasPermissions, CustomerProvidedEncryptionKey,
+    BlobImmutabilityPolicyMode, ImmutabilityPolicy)
 
 from azure.storage.blob.aio import (
     BlobServiceClient,
@@ -67,10 +71,16 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
             transport=AiohttpTestTransport())
         self.config = self.bsc._config
         self.container_name = self.get_resource_name(container_name)
+        self.source_container_name = self.get_resource_name('utcontainersource1')
+
         if self.is_live:
             try:
                 await self.bsc.create_container(self.container_name)
-            except ResourceExistsError:
+            except:
+                pass
+            try:
+                await self.bsc.create_container(self.source_container_name)
+            except:
                 pass
 
     def _teardown(self, FILE_PATH):
@@ -107,6 +117,11 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         await blob.upload_blob(data, tags=tags, **kwargs)
         return blob
 
+    async def _create_source_blob(self, data):
+        blob_client = self.bsc.get_blob_client(self.source_container_name, self.get_resource_name(TEST_BLOB_PREFIX+"1"))
+        await blob_client.upload_blob(data, overwrite=True)
+        return blob_client
+
     async def assertBlobEqual(self, container_name, blob_name, expected_data):
         blob = self.bsc.get_blob_client(container_name, blob_name)
         stream = await blob.download_blob()
@@ -124,6 +139,26 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
             return self.wrapped_file.read(count)
 
     #--Test cases for block blobs --------------------------------------------
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_upload_blob_from_url_with_oauth(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        await self._setup(storage_account, storage_account_key)
+        source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        source_blob_client = await self._create_source_blob(data=source_blob_data)
+        destination_blob_client = await self._create_blob()
+        access_token = await self.generate_oauth_token().get_token("https://storage.azure.com/.default")
+        token = "Bearer {}".format(access_token.token)
+
+        # Assert this operation fails without a credential
+        with self.assertRaises(HttpResponseError):
+            await destination_blob_client.upload_blob_from_url(source_blob_client.url)
+        # Assert it passes after passing an oauth credential
+        await destination_blob_client.upload_blob_from_url(source_blob_client.url, source_authorization=token, overwrite=True)
+        destination_blob = await destination_blob_client.download_blob()
+        destination_blob_data = await destination_blob.readall()
+        self.assertEqual(source_blob_data, destination_blob_data)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -524,6 +559,52 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         self.assertEqual(actual, b'AAABBBCCC')
         self.assertEqual(content.properties.etag, put_block_list_resp.get('etag'))
         self.assertEqual(content.properties.last_modified, put_block_list_resp.get('last_modified'))
+
+    @GlobalResourceGroupPreparer()
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", random_name_enabled=True)
+    async def test_put_block_with_immutability_policy(self, resource_group, location, storage_account, storage_account_key):
+        await self._setup(storage_account, storage_account_key)
+        container_name = self.get_resource_name('vlwcontainer')
+
+        if self.is_live:
+            token_credential = self.generate_oauth_token()
+            subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+
+            mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
+            property = mgmt_client.models().BlobContainer(
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
+            await mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
+
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(container_name, blob_name)
+        await blob.stage_block('1', b'AAA')
+        await blob.stage_block('2', b'BBB')
+        await blob.stage_block('3', b'CCC')
+
+        # Act
+        block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
+        immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
+        put_block_list_resp = await blob.commit_block_list(block_list,
+                                                           immutability_policy=immutability_policy,
+                                                           legal_hold=True,
+                                                           )
+
+        # Assert
+        download_resp = await blob.download_blob()
+        content = await download_resp.readall()
+        self.assertEqual(content, b'AAABBBCCC')
+        self.assertEqual(download_resp.properties.etag, put_block_list_resp.get('etag'))
+        self.assertEqual(download_resp.properties.last_modified, put_block_list_resp.get('last_modified'))
+        self.assertTrue(download_resp.properties['has_legal_hold'])
+        self.assertIsNotNone(download_resp.properties['immutability_policy']['expiry_time'])
+        self.assertIsNotNone(download_resp.properties['immutability_policy']['policy_mode'])
+
+        if self.is_live:
+            await blob.delete_immutability_policy()
+            await blob.set_legal_hold(False)
+            await blob.delete_blob()
+            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, container_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test

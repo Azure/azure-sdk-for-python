@@ -48,7 +48,7 @@ class GatewayOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.GatewayCollection"]:
         """Lists a collection of gateways registered with service instance.
 
@@ -125,7 +125,7 @@ class GatewayOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -141,7 +141,7 @@ class GatewayOperations:
         resource_group_name: str,
         service_name: str,
         gateway_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Gets the entity state (Etag) version of the Gateway specified by its identifier.
 
@@ -189,7 +189,7 @@ class GatewayOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -206,7 +206,7 @@ class GatewayOperations:
         resource_group_name: str,
         service_name: str,
         gateway_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GatewayContract":
         """Gets the details of the Gateway specified by its identifier.
 
@@ -254,7 +254,7 @@ class GatewayOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -274,7 +274,7 @@ class GatewayOperations:
         gateway_id: str,
         parameters: "_models.GatewayContract",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GatewayContract":
         """Creates or updates a Gateway to be used in Api Management instance.
 
@@ -334,7 +334,7 @@ class GatewayOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -359,7 +359,7 @@ class GatewayOperations:
         gateway_id: str,
         if_match: str,
         parameters: "_models.GatewayContract",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GatewayContract":
         """Updates the details of the gateway specified by its identifier.
 
@@ -418,7 +418,7 @@ class GatewayOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -437,7 +437,7 @@ class GatewayOperations:
         service_name: str,
         gateway_id: str,
         if_match: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes specific Gateway.
 
@@ -489,7 +489,7 @@ class GatewayOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -502,7 +502,7 @@ class GatewayOperations:
         resource_group_name: str,
         service_name: str,
         gateway_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GatewayKeysContract":
         """Retrieves gateway keys.
 
@@ -550,7 +550,7 @@ class GatewayOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -569,7 +569,7 @@ class GatewayOperations:
         service_name: str,
         gateway_id: str,
         parameters: "_models.GatewayKeyRegenerationRequestContract",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Regenerates specified gateway key invalidating any tokens created with it.
 
@@ -624,7 +624,7 @@ class GatewayOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -638,7 +638,7 @@ class GatewayOperations:
         service_name: str,
         gateway_id: str,
         parameters: "_models.GatewayTokenRequestContract",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GatewayTokenContract":
         """Gets the Shared Access Authorization Token for the gateway.
 
@@ -693,7 +693,7 @@ class GatewayOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('GatewayTokenContract', pipeline_response)

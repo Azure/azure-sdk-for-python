@@ -9,7 +9,6 @@ import base64
 import os
 import unittest
 from datetime import datetime, timedelta
-import asyncio
 
 from azure.core.credentials import AzureSasCredential
 from azure.core.pipeline.transport import AioHttpTransport
@@ -19,6 +18,7 @@ import pytest
 import uuid
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
+from azure.storage.blob.aio import BlobServiceClient
 from azure.storage.fileshare import (
     generate_account_sas,
     generate_file_sas,
@@ -45,6 +45,7 @@ from _shared.asynctestcase import AsyncStorageTestCase
 TEST_SHARE_PREFIX = 'share'
 TEST_DIRECTORY_PREFIX = 'dir'
 TEST_FILE_PREFIX = 'file'
+TEST_BLOB_PREFIX = 'blob'
 INPUT_FILE_PATH = 'file_input.temp.{}.dat'.format(str(uuid.uuid4()))
 OUTPUT_FILE_PATH = 'file_output.temp.{}.dat'.format(str(uuid.uuid4()))
 LARGE_FILE_SIZE = 64 * 1024 + 5
@@ -66,12 +67,16 @@ class AiohttpTestTransport(AioHttpTransport):
 class StorageFileAsyncTest(AsyncStorageTestCase):
     def _setup(self, storage_account, storage_account_key, rmt_account=None, rmt_key=None):
         url = self.account_url(storage_account, "file")
+        blob_url = self.account_url(storage_account, "blob")
         credential = storage_account_key
 
         # test chunking functionality by reducing the threshold
         # for chunking and the size of each chunk, otherwise
         # the tests would take too long to execute
-        self.fsc = ShareServiceClient(url, credential=credential, max_range_size=4 * 1024, transport=AiohttpTestTransport())
+        self.fsc = ShareServiceClient(
+            url, credential=credential, max_range_size=4 * 1024)
+        self.bsc = BlobServiceClient(blob_url, credential=credential)
+        self.source_container_name = self.get_resource_name('sourceshare')
         self.share_name = self.get_resource_name('utshare')
         self.short_byte_data = self.get_random_bytes(1024)
 
@@ -91,6 +96,15 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
     # --Helpers-----------------------------------------------------------------
     def _get_file_reference(self):
         return self.get_resource_name(TEST_FILE_PREFIX)
+
+    async def _create_source_blob(self):
+        try:
+            await self.bsc.create_container(self.source_container_name)
+        except:
+            pass
+        blob_client = self.bsc.get_blob_client(self.source_container_name, self.get_resource_name(TEST_BLOB_PREFIX))
+        await blob_client.upload_blob(b'abcdefghijklmnop' * 32, overwrite=True)
+        return blob_client
 
     async def _setup_share(self, storage_account, storage_account_key, remote=False):
         share_name = self.remote_share_name if remote else self.share_name
@@ -830,6 +844,25 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         self.assertEqual(0, file_ranges[0].get('start'))
         self.assertEqual(511, file_ranges[0].get('end'))
         self.assertEqual(data, file_content)
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_update_range_from_file_url_with_oauth(
+            self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        source_blob_client = await self._create_source_blob()
+        access_token = await self.generate_oauth_token().get_token("https://storage.azure.com/.default")
+        token = "Bearer {}".format(access_token.token)
+
+        destination_file_name = 'filetoupdate'
+        destination_file_client = await self._create_empty_file(
+            storage_account, storage_account_key, file_name=destination_file_name)
+        with self.assertRaises(HttpResponseError):
+            await destination_file_client.upload_range_from_url(
+                source_blob_client.url, offset=0, length=512, source_offset=0)
+
+        await destination_file_client.upload_range_from_url(
+            source_blob_client.url, offset=0, length=512, source_offset=0, source_authorization=token)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test

@@ -17,6 +17,7 @@ from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
+from azure.storage.blob import BlobServiceClient
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.fileshare import (
     generate_account_sas,
@@ -39,6 +40,7 @@ from _shared.testcase import (
 
 # ------------------------------------------------------------------------------
 TEST_SHARE_PREFIX = 'share'
+TEST_BLOB_PREFIX = 'blob'
 TEST_DIRECTORY_PREFIX = 'dir'
 TEST_FILE_PREFIX = 'file'
 INPUT_FILE_PATH = 'file_input.temp.{}.dat'.format(str(uuid.uuid4()))
@@ -53,15 +55,21 @@ class StorageFileTest(StorageTestCase):
         super(StorageFileTest, self).setUp()
 
         url = self.account_url(storage_account, "file")
+        blob_url = self.account_url(storage_account, "blob")
         credential = storage_account_key
 
         # test chunking functionality by reducing the threshold
         # for chunking and the size of each chunk, otherwise
         # the tests would take too long to execute
         self.fsc = ShareServiceClient(url, credential=credential, max_range_size=4 * 1024)
+        self.bsc = BlobServiceClient(blob_url, credential=credential)
         self.share_name = self.get_resource_name('utshare')
+        self.source_container_name = self.get_resource_name('sourceshare')
         if self.is_live:
-            self.fsc.create_share(self.share_name)
+            try:
+                self.fsc.create_share(self.share_name)
+            except:
+                pass
 
         self.short_byte_data = self.get_random_bytes(1024)
 
@@ -79,8 +87,9 @@ class StorageFileTest(StorageTestCase):
             except:
                 pass
     # --Helpers-----------------------------------------------------------------
-    def _get_file_reference(self):
-        return self.get_resource_name(TEST_FILE_PREFIX)
+
+    def _get_file_reference(self, prefix=TEST_FILE_PREFIX):
+        return self.get_resource_name(prefix)
 
     def _create_file(self, file_name=None):
         file_name = self._get_file_reference() if file_name is None else file_name
@@ -88,6 +97,15 @@ class StorageFileTest(StorageTestCase):
         file_client = share_client.get_file_client(file_name)
         file_client.upload_file(self.short_byte_data)
         return file_client
+
+    def _create_source_blob(self):
+        try:
+            self.bsc.create_container(self.source_container_name)
+        except:
+            pass
+        blob_client = self.bsc.get_blob_client(self.source_container_name, self.get_resource_name(TEST_BLOB_PREFIX))
+        blob_client.upload_blob(b'abcdefghijklmnop' * 32, overwrite=True)
+        return blob_client
 
     def _create_empty_file(self, file_name=None, file_size=2048):
         file_name = self._get_file_reference() if file_name is None else file_name
@@ -767,6 +785,21 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(0, file_ranges[0].get('start'))
         self.assertEqual(511, file_ranges[0].get('end'))
         self.assertEqual(data, file_content)
+
+    @GlobalStorageAccountPreparer()
+    def test_update_range_from_file_url_with_oauth(
+            self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        source_blob_client = self._create_source_blob()
+        token = "Bearer {}".format(self.generate_oauth_token().get_token("https://storage.azure.com/.default").token)
+
+        destination_file_name = 'filetoupdate'
+        destination_file_client = self._create_empty_file(file_name=destination_file_name)
+        with self.assertRaises(HttpResponseError):
+            destination_file_client.upload_range_from_url(source_blob_client.url, offset=0, length=512, source_offset=0)
+
+        destination_file_client.upload_range_from_url(source_blob_client.url, offset=0, length=512, source_offset=0,
+                                                      source_authorization=token)
 
     @GlobalStorageAccountPreparer()
     def test_update_range_from_file_url_with_lease(self, resource_group, location, storage_account, storage_account_key):

@@ -6,11 +6,13 @@ import os
 from unittest.mock import Mock, patch
 
 from azure.core.credentials import AccessToken
-from azure.identity import AzureApplicationCredential, CredentialUnavailableError
+from azure.identity import CredentialUnavailableError
+from azure.identity.aio import AzureApplicationCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
 from six.moves.urllib_parse import urlparse
 
+from helpers import build_aad_response, mock_response
 from helpers_async import get_completed_future
 
 
@@ -71,6 +73,20 @@ def test_authority(authority):
     with patch(AzureApplicationCredential.__module__ + ".ManagedIdentityCredential") as mock_credential:
         with patch.dict("os.environ", {EnvironmentVariables.MSI_ENDPOINT: "localhost"}, clear=True):
             test_initialization(mock_credential, expect_argument=False)
+
+
+@pytest.mark.asyncio
+async def test_get_token():
+    expected_token = "***"
+
+    async def send(request, **_):
+        return mock_response(json_payload=build_aad_response(access_token=expected_token))
+
+    with patch.dict("os.environ", {var: "..." for var in EnvironmentVariables.CLIENT_SECRET_VARS}, clear=True):
+        credential = AzureApplicationCredential(transport=Mock(send=send))
+
+    token = await credential.get_token("scope")
+    assert token.token == expected_token
 
 
 def test_managed_identity_client_id():

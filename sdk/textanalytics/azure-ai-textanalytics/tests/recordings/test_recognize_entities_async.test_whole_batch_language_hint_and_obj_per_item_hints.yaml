@@ -12,9 +12,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: "{\"documents\":[{\"id\":\"1\",\"entities\":[{\"text\":\"veterinarian\"\
@@ -25,16 +25,16 @@ interactions:
         :7,\"confidenceScore\":0.92}],\"warnings\":[]},{\"id\":\"3\",\"entities\"\
         :[],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2021-06-01\"}"
     headers:
-      apim-request-id: da75be3f-b3e8-4da3-8b25-f1a6da38c158
+      apim-request-id: 28561acd-b263-4dd7-ba77-587c83610570
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
-      date: Wed, 23 Jun 2021 01:56:36 GMT
+      date: Mon, 02 Aug 2021 21:16:15 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '26'
+      x-envoy-upstream-service-time: '252'
     status:
       code: 200
       message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com//text/analytics/v3.1/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
+    url: https://tacanaryjava.cognitiveservices.azure.com//text/analytics/v3.2-preview.1/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
 version: 1

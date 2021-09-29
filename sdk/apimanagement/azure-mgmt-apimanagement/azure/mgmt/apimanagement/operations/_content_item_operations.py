@@ -53,7 +53,7 @@ class ContentItemOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.ContentItemCollection"]
-        """Returns list of content items.
+        """Lists developer portal's content items specified by the provided content type.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -114,7 +114,7 @@ class ContentItemOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -134,7 +134,8 @@ class ContentItemOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> bool
-        """Returns content item metadata.
+        """Returns the entity state (ETag) version of the developer portal's content item specified by its
+        identifier.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -182,7 +183,7 @@ class ContentItemOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -203,7 +204,7 @@ class ContentItemOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.ContentItemContract"
-        """Returns content item details.
+        """Returns the developer portal's content item specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -251,7 +252,7 @@ class ContentItemOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -274,7 +275,7 @@ class ContentItemOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.ContentItemContract"
-        """Creates new content item.
+        """Creates a new developer portal's content item specified by the provided content type.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -327,7 +328,7 @@ class ContentItemOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -355,7 +356,7 @@ class ContentItemOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Removes specified content item.
+        """Removes the specified developer portal's content item.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -407,7 +408,7 @@ class ContentItemOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

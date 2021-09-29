@@ -45,7 +45,7 @@ class RecoveryServicesOperations:
         resource_group_name: str,
         location: str,
         input: "_models.CheckNameAvailabilityParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckNameAvailabilityResult":
         """API to check for resource name availability.
         A name is available if no other resource exists that has the same SubscriptionId, Resource Name and Type
@@ -74,7 +74,7 @@ class RecoveryServicesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2016-06-01"
+        api_version = "2021-03-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

@@ -10,7 +10,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated.aio import SearchClient as _SearchServiceClient
-from .._generated.models import SearchIndexerSkillset
+from ..models import SearchIndexerSkillset
 from .._utils import (
     get_access_conditions,
     normalize_endpoint,
@@ -30,7 +30,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
+class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
     """A client to interact with Azure search service Indexers.
 
     :param endpoint: The URL endpoint of an Azure search service
@@ -43,10 +43,12 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
 
     _ODATA_ACCEPT = "application/json;odata.metadata=minimal"  # type: str
 
-    def __init__(self, endpoint: str,
-                 credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
-                 **kwargs
-                 ) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        **kwargs
+    ) -> None:
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._endpoint = normalize_endpoint(endpoint)  # type: str
         self._credential = credential
@@ -80,9 +82,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
 
     async def close(self):
         # type: () -> None
-        """Close the :class:`~azure.search.documents.indexes.aio.SearchIndexerClient` session.
-
-        """
+        """Close the :class:`~azure.search.documents.indexes.aio.SearchIndexerClient` session."""
         return await self._client.close()
 
     @distributed_trace_async
@@ -315,7 +315,9 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         return SearchIndexerDataSourceConnection._from_generated(result)
 
     @distributed_trace_async
-    async def create_or_update_data_source_connection(self, data_source_connection, **kwargs):
+    async def create_or_update_data_source_connection(
+        self, data_source_connection, **kwargs
+    ):
         # type: (SearchIndexerDataSourceConnection, **Any) -> SearchIndexerDataSourceConnection
         """Creates a new data source connection or updates a data source connection if it already exists.
         :param data_source_connection: The definition of the data source connection to create or update.
@@ -327,7 +329,8 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            data_source_connection, kwargs.pop("match_condition", MatchConditions.Unconditionally)
+            data_source_connection,
+            kwargs.pop("match_condition", MatchConditions.Unconditionally),
         )
         kwargs.update(access_condition)
         name = data_source_connection.name
@@ -366,7 +369,8 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            data_source_connection, kwargs.pop("match_condition", MatchConditions.Unconditionally)
+            data_source_connection,
+            kwargs.pop("match_condition", MatchConditions.Unconditionally),
         )
         kwargs.update(access_condition)
         try:
@@ -419,7 +423,10 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.data_sources.list(**kwargs)
         # pylint:disable=protected-access
-        return [SearchIndexerDataSourceConnection._from_generated(x) for x in result.data_sources]
+        return [
+            SearchIndexerDataSourceConnection._from_generated(x)
+            for x in result.data_sources
+        ]
 
     @distributed_trace_async
     async def get_data_source_connection_names(self, **kwargs):
@@ -455,7 +462,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.skillsets.list(**kwargs)
-        return result.skillsets
+        return [SearchIndexerSkillset._from_generated(skillset) for skillset in result.skillsets] # pylint:disable=protected-access
 
     @distributed_trace_async
     async def get_skillset_names(self, **kwargs):
@@ -493,7 +500,8 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        return await self._client.skillsets.get(name, **kwargs)
+        result = await self._client.skillsets.get(name, **kwargs)
+        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
 
     @distributed_trace_async
     async def delete_skillset(self, skillset, **kwargs):
@@ -549,8 +557,9 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-
-        return await self._client.skillsets.create(skillset, **kwargs)
+        skillset = skillset._to_generated() if hasattr(skillset, '_to_generated') else skillset # pylint:disable=protected-access
+        result = await self._client.skillsets.create(skillset, **kwargs)
+        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
 
     @distributed_trace_async
     async def create_or_update_skillset(self, skillset, **kwargs):
@@ -571,7 +580,12 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
             skillset, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         kwargs.update(access_condition)
+        skillset = skillset._to_generated() if hasattr(skillset, '_to_generated') else skillset # pylint:disable=protected-access
 
-        return await self._client.skillsets.create_or_update(
-            skillset_name=skillset.name, skillset=skillset, error_map=error_map, **kwargs
+        result = await self._client.skillsets.create_or_update(
+            skillset_name=skillset.name,
+            skillset=skillset,
+            error_map=error_map,
+            **kwargs
         )
+        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access

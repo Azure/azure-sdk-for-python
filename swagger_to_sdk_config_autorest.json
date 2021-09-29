@@ -1,8 +1,8 @@
 {
   "meta": {
     "autorest_options": {
-      "version": "3.4.2",
-      "use": ["@autorest/python@5.8.1", "@autorest/modelerfour@4.19.2"],
+      "version": "3.4.5",
+      "use": ["@autorest/python@5.8.4", "@autorest/modelerfour@4.19.2"],
       "python": "",
       "python-mode": "update",
       "sdkrel:python-sdks-folder": "./sdk/.",

@@ -12,7 +12,7 @@ urlFragment: textanalytics-samples
 # Samples for Azure Text Analytics client library for Python
 
 These code samples show common scenario operations with the Azure Text Analytics client library.
-The async versions of the samples require Python 3.5 or later.
+The async versions of the samples require Python 3.6 or later.
 
 You can authenticate your client with a Cognitive Services/Text Analytics API key or through Azure Active Directory with a token credential from [azure-identity][azure_identity]:
 * See [sample_authentication.py][sample_authentication] and [sample_authentication_async.py][sample_authentication_async] for how to authenticate in the above cases.
@@ -30,9 +30,10 @@ These sample programs show common scenarios for the Text Analytics client's offe
 |[sample_alternative_document_input.py][sample_alternative_document_input] and [sample_alternative_document_input_async.py][sample_alternative_document_input_async]|Pass documents to an endpoint using dicts|
 |[sample_analyze_healthcare_entities.py][analyze_healthcare_entities_sample] and [sample_analyze_healthcare_entities_async.py][analyze_healthcare_entities_sample_async]|Analyze healthcare entities|
 |[sample_analyze_actions.py][analyze_sample] and [sample_analyze_actions_async.py][analyze_sample_async]|Run multiple analyses together in a single request|
+|[sample_extract_summary.py][extract_summary_sample] and [sample_extract_summary_async.py][extract_summary_sample_async]|As part of the analyze API, run extractive text summarization on documents|
 
 ## Prerequisites
-* Python 2.7, or 3.5 or later is required to use this package (3.5 or later if using asyncio)
+* Python 2.7, or 3.6 or later is required to use this package (3.6 or later if using asyncio)
 * You must have an [Azure subscription][azure_subscription] and an
 [Azure Text Analytics account][azure_text_analytics_account] to run these samples.
 
@@ -41,7 +42,7 @@ These sample programs show common scenarios for the Text Analytics client's offe
 1. Install the Azure Text Analytics client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-textanalytics
+pip install azure-ai-textanalytics --pre
 ```
 For more information about how the versioning story of the SDK corresponds to the versioning story of the service's API, see [here][versioning_story_readme].
 
@@ -98,6 +99,8 @@ what you can do with the Azure Text Analytics client library.
 [analyze_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_actions_async.py
 [sample_analyze_healthcare_entities_with_cancellation]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_healthcare_entities_with_cancellation.py
 [sample_analyze_healthcare_entities_with_cancellation_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_healthcare_entities_with_cancellation_async.py
+[extract_summary_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_extract_summary.py
+[extract_summary_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_extract_summary_async.py
 [pip]: https://pypi.org/project/pip/
 [azure_subscription]: https://azure.microsoft.com/free/
 [azure_text_analytics_account]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=singleservice%2Cwindows

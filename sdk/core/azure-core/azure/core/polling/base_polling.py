@@ -31,6 +31,7 @@ from typing import TYPE_CHECKING, Optional, Any, Union
 from ..exceptions import HttpResponseError, DecodeError
 from . import PollingMethod
 from ..pipeline.policies._utils import get_retry_after
+from ..pipeline._tools import is_rest
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
@@ -574,10 +575,21 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
         """
         if self._path_format_arguments:
             status_link = self._client.format_url(status_link, **self._path_format_arguments)
-        request = self._client.get(status_link)
         # Re-inject 'x-ms-client-request-id' while polling
         if "request_id" not in self._operation_config:
             self._operation_config["request_id"] = self._get_request_id()
+        if is_rest(self._initial_response.http_response):
+            # if I am a azure.core.rest.HttpResponse
+            # want to keep making azure.core.rest calls
+            from azure.core.rest import HttpRequest as RestHttpRequest
+            request = RestHttpRequest("GET", status_link)
+            return self._client.send_request(
+                request, _return_pipeline_response=True, **self._operation_config
+            )
+        # if I am a azure.core.pipeline.transport.HttpResponse
+        request = self._client.get(status_link)
+
+        # can't use send_request in this case, because send_request is still provisional
         return self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **self._operation_config
         )

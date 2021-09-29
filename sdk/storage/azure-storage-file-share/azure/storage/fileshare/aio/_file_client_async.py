@@ -137,8 +137,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             credential=credential, loop=loop, **kwargs
         )
         self._client = AzureFileStorage(url=self.url, pipeline=self._pipeline, loop=loop)
-        default_api_version = self._client._config.version  # pylint: disable=protected-access
-        self._client._config.version = get_api_version(kwargs, default_api_version) # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
         self._loop = loop
 
     @distributed_trace_async
@@ -917,6 +916,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :paramtype lease: ~azure.storage.fileshare.aio.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
         """
         options = self._upload_range_from_url_options(
             source_url=source_url,

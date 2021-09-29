@@ -16,6 +16,7 @@ from ..._credentials.azure_powershell import (
     raise_for_error,
     parse_token,
 )
+from ..._internal import resolve_tenant
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
@@ -27,7 +28,14 @@ class AzurePowerShellCredential(AsyncContextManager):
     """Authenticates by requesting a token from Azure PowerShell.
 
     This requires previously logging in to Azure via "Connect-AzAccount", and will use the currently logged in identity.
+
+    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
+        the identity logged in to Azure PowerShell is registered in. When False, which is the default, the credential
+        will acquire tokens only from the tenant of Azure PowerShell's active subscription.
     """
+
+    def __init__(self, **kwargs: "Any") -> None:
+        self._allow_multitenant = kwargs.get("allow_multitenant_authentication", False)
 
     @log_get_token_async
     async def get_token(
@@ -39,6 +47,9 @@ class AzurePowerShellCredential(AsyncContextManager):
         also handle token caching because this credential doesn't cache the tokens it acquires.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
+        :keyword str tenant_id: optional tenant to include in the token request. If **allow_multitenant_authentication**
+            is False, specifying a tenant with this argument may raise an exception.
+
         :rtype: :class:`azure.core.credentials.AccessToken`
 
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke Azure PowerShell, or
@@ -50,7 +61,8 @@ class AzurePowerShellCredential(AsyncContextManager):
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
             return _SyncCredential().get_token(*scopes, **kwargs)
 
-        command_line = get_command_line(scopes)
+        tenant_id = resolve_tenant("", self._allow_multitenant, **kwargs)
+        command_line = get_command_line(scopes, tenant_id)
         output = await run_command_line(command_line)
         token = parse_token(output)
         return token
@@ -71,11 +83,17 @@ async def run_command_line(command_line: "List[str]") -> str:
 
     except OSError as ex:
         # failed to execute "cmd" or "/bin/sh"; Azure PowerShell may or may not be installed
-        error = CredentialUnavailableError(message='Failed to execute "{}"'.format(command_line[0]))
+        error = CredentialUnavailableError(
+            message='Failed to execute "{}".\n'
+                    'To mitigate this issue, please refer to the troubleshooting guidelines here at '
+                    'https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot.'.format(command_line[0]))
         raise error from ex
     except asyncio.TimeoutError as ex:
         proc.kill()
-        raise CredentialUnavailableError(message="Timed out waiting for Azure PowerShell") from ex
+        raise CredentialUnavailableError(
+            message="Timed out waiting for Azure PowerShell.\n"
+                    "To mitigate this issue, please refer to the troubleshooting guidelines here at "
+                    "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot.") from ex
 
     decoded_stdout = stdout.decode()
 

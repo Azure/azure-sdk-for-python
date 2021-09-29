@@ -50,6 +50,7 @@ class ContainersOperations(object):
         container_group_name,  # type: str
         container_name,  # type: str
         tail=None,  # type: Optional[int]
+        timestamps=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.Logs"
@@ -67,6 +68,9 @@ class ContainersOperations(object):
         :param tail: The number of lines to show from the tail of the container instance log. If not
          provided, all available logs are shown up to 4mb.
         :type tail: int
+        :param timestamps: If true, adds a timestamp at the beginning of every line of log output. If
+         not provided, defaults to false.
+        :type timestamps: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Logs, or the result of cls(response)
         :rtype: ~azure.mgmt.containerinstance.models.Logs
@@ -77,7 +81,7 @@ class ContainersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-12-01"
+        api_version = "2021-07-01"
         accept = "application/json"
 
         # Construct URL
@@ -95,6 +99,8 @@ class ContainersOperations(object):
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
         if tail is not None:
             query_parameters['tail'] = self._serialize.query("tail", tail, 'int')
+        if timestamps is not None:
+            query_parameters['timestamps'] = self._serialize.query("timestamps", timestamps, 'bool')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -148,7 +154,7 @@ class ContainersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-12-01"
+        api_version = "2021-07-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -189,3 +195,69 @@ class ContainersOperations(object):
 
         return deserialized
     execute_command.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/containerGroups/{containerGroupName}/containers/{containerName}/exec'}  # type: ignore
+
+    def attach(
+        self,
+        resource_group_name,  # type: str
+        container_group_name,  # type: str
+        container_name,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.ContainerAttachResponse"
+        """Attach to the output of a specific container instance.
+
+        Attach to the output stream of a specific container instance in a specified resource group and
+        container group.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param container_group_name: The name of the container group.
+        :type container_group_name: str
+        :param container_name: The name of the container instance.
+        :type container_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ContainerAttachResponse, or the result of cls(response)
+        :rtype: ~azure.mgmt.containerinstance.models.ContainerAttachResponse
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContainerAttachResponse"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-07-01"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.attach.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'containerGroupName': self._serialize.url("container_group_name", container_group_name, 'str'),
+            'containerName': self._serialize.url("container_name", container_name, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.post(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('ContainerAttachResponse', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    attach.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/containerGroups/{containerGroupName}/containers/{containerName}/attach'}  # type: ignore
