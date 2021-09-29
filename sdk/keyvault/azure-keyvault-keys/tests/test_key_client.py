@@ -41,6 +41,11 @@ def _assert_rotation_policies_equal(p1, p2):
     assert p1.updated_on == p2.updated_on
     assert len(p1.lifetime_actions) == len(p2.lifetime_actions)
 
+def _assert_lifetime_actions_equal(a1, a2):
+    assert a1.action == a2.action
+    assert a1.time_after_create == a2.time_after_create
+    assert a1.time_before_expiry == a2.time_before_expiry
+
 
 # used for logging tests
 class MockHandler(logging.Handler):
@@ -547,10 +552,24 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         fetched_policy = client.get_key_rotation_policy(key_name)
         _assert_rotation_policies_equal(updated_policy, fetched_policy)
 
+        updated_policy_actions = updated_policy.lifetime_actions[0]
+        fetched_policy_actions = fetched_policy.lifetime_actions[0]
+        assert updated_policy_actions.action == KeyRotationPolicyAction.ROTATE
+        assert updated_policy_actions.time_after_create is None
+        assert updated_policy_actions.time_before_expiry == "P30D"
+        _assert_lifetime_actions_equal(updated_policy_actions, fetched_policy_actions)
+
         new_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.NOTIFY, time_after_create="P2M")]
         new_policy = client.update_key_rotation_policy(key_name, lifetime_actions=new_actions)
         new_fetched_policy = client.get_key_rotation_policy(key_name)
         _assert_rotation_policies_equal(new_policy, new_fetched_policy)
+
+        new_policy_actions = new_policy.lifetime_actions[0]
+        new_fetched_policy_actions = new_fetched_policy.lifetime_actions[0]
+        assert new_policy_actions.action == KeyRotationPolicyAction.NOTIFY
+        assert new_policy_actions.time_after_create == "P2M"
+        assert new_policy_actions.time_before_expiry is None
+        _assert_lifetime_actions_equal(new_policy_actions, new_fetched_policy_actions)
 
 
 def test_positive_bytes_count_required():

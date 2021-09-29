@@ -301,7 +301,7 @@ class KeyRotationLifetimeAction(object):
     def _from_generated(cls, lifetime_action):
         if lifetime_action.trigger:
             return cls(
-                action=lifetime_action.action,
+                action=lifetime_action.action.type,
                 time_after_create=lifetime_action.trigger.time_after_create,
                 time_before_expiry=lifetime_action.trigger.time_before_expiry,
             )
@@ -332,7 +332,7 @@ class KeyRotationPolicy(object):
 
     @classmethod
     def _from_generated(cls, policy):
-        lifetime_actions = [KeyRotationLifetimeAction._from_generated(action) for action in policy.lifetime_actions]
+        lifetime_actions = [KeyRotationLifetimeAction._from_generated(action) for action in policy.lifetime_actions]  # pylint:disable=protected-access
         if policy.attributes:
             return cls(
                 policy_id=policy.id,

@@ -50,7 +50,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             :dedent: 4
     """
 
-    # pylint:disable=protected-access
+    # pylint:disable=protected-access, too-many-public-methods
 
     def _get_attributes(self, enabled, not_before, expires_on, exportable=None):
         """Return a KeyAttributes object if none-None attributes are provided, or None otherwise"""
@@ -722,9 +722,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         policy = await self._client.get_key_rotation_policy(vault_base_url=self._vault_url, key_name=name, **kwargs)
-        if policy.id:
-            return KeyRotationPolicy._from_generated(policy)
-        return None
+        return KeyRotationPolicy._from_generated(policy)
 
     @distributed_trace_async
     async def rotate_key(self, name: str, **kwargs: "Any") -> KeyVaultKey:

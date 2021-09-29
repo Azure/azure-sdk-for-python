@@ -24,7 +24,7 @@ from six import byte2int
 
 from _shared.test_case_async import KeyVaultTestCase
 from _test_case import client_setup, get_attestation_token, get_decorator, get_release_policy, KeysTestCase
-from test_key_client import _assert_rotation_policies_equal
+from test_key_client import _assert_lifetime_actions_equal, _assert_rotation_policies_equal
 
 
 all_api_versions = get_decorator(is_async=True)
@@ -569,10 +569,24 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         fetched_policy = await client.get_key_rotation_policy(key_name)
         _assert_rotation_policies_equal(updated_policy, fetched_policy)
 
+        updated_policy_actions = updated_policy.lifetime_actions[0]
+        fetched_policy_actions = fetched_policy.lifetime_actions[0]
+        assert updated_policy_actions.action == KeyRotationPolicyAction.ROTATE
+        assert updated_policy_actions.time_after_create is None
+        assert updated_policy_actions.time_before_expiry == "P30D"
+        _assert_lifetime_actions_equal(updated_policy_actions, fetched_policy_actions)
+
         new_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.NOTIFY, time_after_create="P2M")]
         new_policy = await client.update_key_rotation_policy(key_name, lifetime_actions=new_actions)
         new_fetched_policy = await client.get_key_rotation_policy(key_name)
         _assert_rotation_policies_equal(new_policy, new_fetched_policy)
+
+        new_policy_actions = new_policy.lifetime_actions[0]
+        new_fetched_policy_actions = new_fetched_policy.lifetime_actions[0]
+        assert new_policy_actions.action == KeyRotationPolicyAction.NOTIFY
+        assert new_policy_actions.time_after_create == "P2M"
+        assert new_policy_actions.time_before_expiry is None
+        _assert_lifetime_actions_equal(new_policy_actions, new_fetched_policy_actions)
 
 
 @pytest.mark.asyncio
