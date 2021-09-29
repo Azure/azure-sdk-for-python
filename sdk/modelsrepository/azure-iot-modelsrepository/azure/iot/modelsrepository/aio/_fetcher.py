@@ -19,7 +19,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     raise_with_traceback,
 )
-from ..dtmi_conventions import _get_metadata_uri, _convert_dtmi_to_path
+from ..dtmi_conventions import METADATA_FILE, _convert_dtmi_to_path
 from .._common import ErrorFetchingModelContent, FetchingModelContent
 
 _LOGGER = logging.getLogger(__name__)
@@ -59,7 +59,7 @@ class Fetcher(object):
         :returns: JSON object representing the repository metadata
         :rtype: JSON object
         """
-        return await self._fetch_model_data(_get_metadata_uri())
+        return self._fetch_model_data(METADATA_FILE)
 
     @abc.abstractmethod
     @distributed_trace_async
@@ -67,11 +67,13 @@ class Fetcher(object):
         pass
 
     @abc.abstractmethod
-    def __enter__(self):
+    @distributed_trace_async
+    async def __aenter__(self):
         pass
 
     @abc.abstractmethod
-    def __exit__(self, *exc_details):
+    @distributed_trace_async
+    async def __aexit__(self, *exc_details):
         pass
 
 
@@ -83,17 +85,19 @@ class HttpFetcher(Fetcher):
     def __init__(self, base_url, pipeline):
         """
         :param pipeline: Pipeline (pre-configured)
-        :type pipeline: :class:`azure.core.pipeline.Pipeline`
+        :type pipeline: :class:`azure.core.pipeline.AsyncPipeline`
         """
         self.pipeline = pipeline
         self.base_url = base_url
 
-    def __enter__(self):
-        self.pipeline.__enter__()
+    @distributed_trace_async
+    async def __aenter__(self):
+        await self.pipeline.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        self.pipeline.__exit__(*exc_details)
+    @distributed_trace_async
+    async def __aexit__(self, *exc_details):
+        await self.pipeline.__aexit__(*exc_details)
 
     @distributed_trace_async
     async def _fetch_model_data(self, path=""):
@@ -115,7 +119,9 @@ class HttpFetcher(Fetcher):
         # Fetch
         request = HttpRequest("GET", url)
         _LOGGER.debug("GET %s", url)
-        response = self.pipeline.run(request).http_response
+
+        pipeline_result = await self.pipeline.run(request)
+        response = pipeline_result.http_response
         if response.status_code != 200:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
             raise HttpResponseError(
@@ -138,11 +144,13 @@ class FilesystemFetcher(Fetcher):
         """
         self.base_filepath = base_filepath
 
-    def __enter__(self):
+    @distributed_trace_async
+    async def __aenter__(self):
         # Nothing is required here for filesystem
         return self
 
-    def __exit__(self, *exc_details):
+    @distributed_trace_async
+    async def __aexit__(self, *exc_details):
         # Nothing is required here for filesystem
         pass
 

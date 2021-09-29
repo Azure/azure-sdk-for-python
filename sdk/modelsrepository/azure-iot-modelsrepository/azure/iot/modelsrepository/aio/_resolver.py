@@ -5,10 +5,11 @@
 # --------------------------------------------------------------------------
 import logging
 import os
+import re
 from queue import Queue
 import six.moves.urllib as urllib
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import RequestsTransport
+from azure.core.pipeline import AsyncPipeline
+from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.pipeline.policies import (
     UserAgentPolicy,
     HeadersPolicy,
@@ -16,7 +17,6 @@ from azure.core.pipeline.policies import (
     RedirectPolicy,
     NetworkTraceLoggingPolicy,
     ProxyPolicy,
-    BearerTokenCredentialPolicy,
 )
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ..dtmi_conventions import is_valid_dtmi
@@ -45,12 +45,14 @@ class DtmiResolver(object):
         """
         self.fetcher = _create_fetcher(location, **kwargs)
 
-    def __enter__(self):
-        self.fetcher.__enter__()
+    @distributed_trace_async
+    async def __aenter__(self):
+        await self.fetcher.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        self.fetcher.__exit__(*exc_details)
+    @distributed_trace_async
+    async def __aexit__(self, *exc_details):
+        await self.fetcher.__aexit__(*exc_details)
 
     @distributed_trace_async
     async def resolve(self, dtmis, dependency_resolution=DependencyModeType.enabled.value):
@@ -85,14 +87,18 @@ class DtmiResolver(object):
                 continue
 
             dtdl, expanded_result = await self.fetcher.fetch(target_dtmi, try_from_expanded=try_from_expanded)
+
+            # Add dependencies if the result is expanded
+            if expanded_result:
+                for item in dtdl:
+                    model_metadata = ModelQuery(item).parse_model()
+                    if model_metadata.id not in processed_models:
+                        processed_models[model_metadata.id] = item
+
+                continue
+
             model_metadata = ModelQuery(dtdl).parse_model()
             dependencies = model_metadata.dependencies
-
-            # Add dependencies if the result has them
-            if expanded_result:
-                for name in dependencies:
-                    if name not in processed_models:
-                        processed_models[name] = dependencies[name]
 
             # Add dependencies to to_process_queue if manual resolution is needed
             if dependency_resolution == DependencyModeType.enabled.value and not expanded_result:
@@ -166,20 +172,12 @@ def _create_fetcher(location, **kwargs):
 
 def _create_pipeline(base_url=None, credential=None, transport=None, **kwargs):
     """Creates and returns a PipelineClient configured for the provided base_url and kwargs"""
-    transport = transport if transport else kwargs.get("transport", RequestsTransport(**kwargs))
+    transport = transport if transport else kwargs.get("transport", AioHttpTransport(**kwargs))
 
     if kwargs.get('policies'):
         policies = kwargs['policies']
     else:
-        if credential and hasattr(credential, "get_token"):
-            scope = base_url.strip("/") + "/.default"
-            authentication_policy = BearerTokenCredentialPolicy(credential, scope)
-        elif credential:
-            raise ValueError(
-                "Please provide an instance from azure-identity or a class that implement the 'get_token protocol"
-            )
-        else:
-            authentication_policy = kwargs.get("authentication_policy")
+        authentication_policy = kwargs.get("authentication_policy")
         policies = [
             kwargs.get("user_agent_policy", UserAgentPolicy(USER_AGENT, **kwargs)),
             kwargs.get("headers_policy", HeadersPolicy(**kwargs)),
@@ -189,7 +187,7 @@ def _create_pipeline(base_url=None, credential=None, transport=None, **kwargs):
             kwargs.get("logging_policy", NetworkTraceLoggingPolicy(**kwargs)),
             kwargs.get("proxy_policy", ProxyPolicy(**kwargs)),
         ]
-    return Pipeline(policies=policies, transport=transport)
+    return AsyncPipeline(policies=policies, transport=transport)
 
 
 def _sanitize_filesystem_path(path):
