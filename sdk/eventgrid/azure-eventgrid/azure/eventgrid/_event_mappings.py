@@ -110,11 +110,11 @@ class SystemEventNames(str, Enum):
 
     ApiManagementProductUpdatedEventName = 'Microsoft.ApiManagement.ProductUpdated'
 
-    ApiManagementSubscriptionCreatedEventName = 'Microsoft.ApiManagement.SubscriptionCreated'       
+    ApiManagementSubscriptionCreatedEventName = 'Microsoft.ApiManagement.SubscriptionCreated'
 
-    ApiManagementSubscriptionDeletedEventName = 'Microsoft.ApiManagement.SubscriptionDeleted'       
+    ApiManagementSubscriptionDeletedEventName = 'Microsoft.ApiManagement.SubscriptionDeleted'
 
-    ApiManagementSubscriptionUpdatedEventName = 'Microsoft.ApiManagement.SubscriptionUpdated'       
+    ApiManagementSubscriptionUpdatedEventName = 'Microsoft.ApiManagement.SubscriptionUpdated'
 
     ApiManagementUserCreatedEventName = 'Microsoft.ApiManagement.UserCreated'
 
