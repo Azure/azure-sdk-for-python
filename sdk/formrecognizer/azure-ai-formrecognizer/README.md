@@ -149,16 +149,15 @@ document_analysis_client = DocumentAnalysisClient(
 `DocumentAnalysisClient` provides operations for analyzing input documents using custom and prebuilt models through the `begin_analyze_document` and `begin_analyze_document_from_url` APIs.
 Use the `model` parameter to select the type of model for analysis.
 
-|Model | Features
+|Model| Features
 |-|-
-
-|"prebuilt-layout" | Text extraction, selection marks, tables
-|"prebuilt-document" | Text extraction, selection marks, tables, key-value pairs and entities
-|"prebuilt-invoices" | Text extraction, selection marks, tables, and pre-trained fields and values pertaining to English invoices
-|"prebuilt-businessCard" | Text extraction and pre-trained fields and values pertaining to English business cards
-|"prebuilt-idDocument" | Text extraction and pre-trained fields and values pertaining to US driver licenses and international passports
-|"prebuilt-receipt" | Text extraction and pre-trained fields and values pertaining to English sales receipts
-|"{custom-model-id}" | Text extraction, selection marks, tables, labeled fields and values from your custom documents
+|"prebuilt-layout"| Text extraction, selection marks, tables
+|"prebuilt-document"| Text extraction, selection marks, tables, key-value pairs and entities
+|"prebuilt-invoices"| Text extraction, selection marks, tables, and pre-trained fields and values pertaining to English invoices
+|"prebuilt-businessCard"| Text extraction and pre-trained fields and values pertaining to English business cards
+|"prebuilt-idDocument"| Text extraction and pre-trained fields and values pertaining to US driver licenses and international passports
+|"prebuilt-receipt"| Text extraction and pre-trained fields and values pertaining to English sales receipts
+|"{custom-model-id}"| Text extraction, selection marks, tables, labeled fields and values from your custom documents
 
 Sample code snippets are provided to illustrate using a DocumentAnalysisClient [here](#examples "Examples").
 
@@ -275,7 +274,7 @@ for table_idx, table in enumerate(result.tables):
 ### Using Prebuilt Models
 Extract fields from select document types such as receipts, invoices, business cards, and identity documents using prebuilt models provided by the Form Recognizer service.
 
-For example, to extract fields from a sales receipt, use the prebuilt receipt model provided by passing `model="prebuilt-receipt"` into the `begin_analyze_documents` method:
+For example, to analyze fields from a sales receipt, use the prebuilt receipt model provided by passing `model="prebuilt-receipt"` into the `begin_analyze_documents` method:
 
 ```python
 from azure.ai.formrecognizer import DocumentAnalysisClient
