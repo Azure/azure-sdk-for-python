@@ -53,6 +53,7 @@ from .constants import (
     TRACE_ENQUEUED_TIME_PROPERTY,
     SPAN_ENQUEUED_TIME_PROPERTY,
     SPAN_NAME_RECEIVE,
+    AAD_TOKEN_REFRESH_WINDOW_IN_SECONDS,
 )
 from ..amqp import AmqpAnnotatedMessage
 
@@ -184,6 +185,7 @@ def create_authentication(client):
         timeout=client._config.auth_timeout,
         http_proxy=client._config.http_proxy,
         transport_type=client._config.transport_type,
+        override_token_refresh_window=AAD_TOKEN_REFRESH_WINDOW_IN_SECONDS,
     )
 
 

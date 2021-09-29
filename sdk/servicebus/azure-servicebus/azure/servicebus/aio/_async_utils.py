@@ -10,7 +10,12 @@ import functools
 
 from uamqp import authentication
 
-from .._common.constants import JWT_TOKEN_SCOPE, TOKEN_TYPE_JWT, TOKEN_TYPE_SASTOKEN
+from .._common.constants import (
+    JWT_TOKEN_SCOPE,
+    TOKEN_TYPE_JWT,
+    TOKEN_TYPE_SASTOKEN,
+    AAD_TOKEN_REFRESH_WINDOW_IN_SECONDS,
+)
 
 
 _log = logging.getLogger(__name__)
@@ -64,4 +69,5 @@ async def create_authentication(client):
         timeout=client._config.auth_timeout,
         http_proxy=client._config.http_proxy,
         transport_type=client._config.transport_type,
+        override_token_refresh_window=AAD_TOKEN_REFRESH_WINDOW_IN_SECONDS,
     )
