@@ -33,6 +33,8 @@ jobs:
             - Name: $(DocRepoOwner)/$(DocRepoName)
               WorkingDirectory: $(DocRepoLocation)
 
+      # Set $(DefaultBranch) for use in condition on "Update Docs Onboarding"
+      - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
       # Call update docs ci script to onboard packages
       - task: Powershell@2
         inputs:
@@ -40,7 +42,16 @@ jobs:
           filePath: eng/common/scripts/Update-DocsMsPackages.ps1
           arguments: -DocRepoLocation $(DocRepoLocation)
         displayName: Update Docs Onboarding
-
+        condition: >-
+          and(
+            succeeded(),
+            or(
+              eq(variables['Build.Reason'], 'Schedule'),
+              eq(variables['Force.MainUpdate'], 'true'),
+              eq(variables['Build.SourceBranchName'], variables['DefaultBranch'])
+            )
+          )
+          
       # Push changes to docs repo
       - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
         parameters:
