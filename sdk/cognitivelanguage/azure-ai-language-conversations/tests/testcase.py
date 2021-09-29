@@ -107,7 +107,5 @@ class GlobalConversationAccountPreparer(AzureMgmtPreparer):
             'conv_account': TEST_ENDPOINT,
             'conv_key': TEST_KEY,
             'conv_project': TEST_PROJECT,
-            'qna_project': TEST_QNA,
             'workflow_project': TEST_WORKFLOW
-
         }
