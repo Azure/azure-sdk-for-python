@@ -31,6 +31,7 @@ from multidict import CIMultiDict
 from ._http_response_impl_async import AsyncHttpResponseImpl, AsyncHttpResponseBackcompatMixin
 from ..pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
 from ..utils._pipeline_transport_rest_shared import _pad_attr_name, _aiohttp_body_helper
+from ..exceptions import ResponseNotReadError
 
 class _ItemsView(collections.abc.ItemsView):
     def __init__(self, ref):
@@ -181,7 +182,7 @@ class RestAioHttpTransportResponse(AsyncHttpResponseImpl, _RestAioHttpTransportR
             self._stream_download_check()
             self._content = await self._internal_response.read()
         await self._set_read_checks()
-        return self._content
+        return _aiohttp_body_helper(self)
 
     async def close(self) -> None:
         """Close the response.
