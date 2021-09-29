@@ -172,7 +172,7 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
                 ],
                 dimensions=[
                     DataFeedDimension(name="category"),
-                    DataFeedDimension(name="city")
+                    DataFeedDimension(name="region")
                 ],
             ),
             ingestion_settings="2019-10-01T00:00:00Z",
@@ -220,7 +220,7 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
                 ],
                 dimensions=[
                     DataFeedDimension(name="category", display_name="display category"),
-                    DataFeedDimension(name="city", display_name="display city")
+                    DataFeedDimension(name="region", display_name="display city")
                 ],
                 timestamp_column="Timestamp"
             ),
@@ -276,7 +276,7 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
                         detection_configuration_id=detection_config.id,
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="SeriesGroup",
-                            series_group_in_scope={'city': 'Shenzhen'}
+                            series_group_in_scope={'region': 'Shenzhen'}
                         ),
                         alert_conditions=MetricAnomalyAlertConditions(
                             severity_condition=SeverityCondition(
@@ -344,7 +344,7 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
                     )
                 ),
                 series_detection_conditions=[MetricSingleSeriesDetectionCondition(
-                    series_key={"city": "Shenzhen", "category": "Jewelry"},
+                    series_key={"region": "Shenzhen", "category": "Jewelry"},
                     smart_detection_condition=SmartDetectionCondition(
                         anomaly_detector_direction="Both",
                         sensitivity=63,
@@ -355,7 +355,7 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
                     )
                 )],
                 series_group_detection_conditions=[MetricSeriesGroupDetectionCondition(
-                    series_group_key={"city": "Sao Paulo"},
+                    series_group_key={"region": "Sao Paulo"},
                     smart_detection_condition=SmartDetectionCondition(
                         anomaly_detector_direction="Both",
                         sensitivity=63,
