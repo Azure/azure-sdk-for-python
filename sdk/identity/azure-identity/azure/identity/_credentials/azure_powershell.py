@@ -4,7 +4,6 @@
 # ------------------------------------
 import base64
 import logging
-import os
 import platform
 import subprocess
 import sys
@@ -19,7 +18,6 @@ from .azure_cli import get_safe_working_dir
 from .. import CredentialUnavailableError
 from .._internal import _scopes_to_resource, resolve_tenant
 from .._internal.decorators import log_get_token
-from .._constants import EnvironmentVariables
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
@@ -69,7 +67,7 @@ class AzurePowerShellCredential(object):
         """Calling this method is unnecessary."""
 
     @log_get_token("AzurePowerShellCredential")
-    def get_token(self, *scopes, **kwargs):
+    def get_token(self, *scopes, **kwargs): # pylint: disable=no-self-use
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 

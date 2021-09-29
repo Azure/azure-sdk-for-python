@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING
 from azure.core.exceptions import ClientAuthenticationError
 from .._internal import AsyncContextManager
 from .._internal.decorators import log_get_token_async
-from ..._constants import EnvironmentVariables
 from ... import CredentialUnavailableError
 from ..._credentials.azure_cli import (
     AzureCliCredential as _SyncAzureCliCredential,

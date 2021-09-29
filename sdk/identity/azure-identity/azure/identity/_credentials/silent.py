@@ -18,7 +18,6 @@ from .._internal.decorators import wrap_exceptions
 from .._internal.msal_client import MsalClient
 from .._internal.shared_token_cache import NO_TOKEN
 from .._persistent_cache import _load_persistent_cache, TokenCachePersistenceOptions
-from .._constants import EnvironmentVariables
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
