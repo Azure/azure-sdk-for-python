@@ -172,12 +172,23 @@ function ValidatePackage($packageName, $packageVersion, $workingDirectory) {
   # possible
   # https://github.com/Azure/azure-sdk-for-python/issues/20109
   try {
-    Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder"
-    $pipInstallOutput = pip `
+    $pipInstallOutput = ""
+    if ($PackageSourceOverride) {
+      Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder --extra-index-url=$PackageSourceOverride"
+      $pipInstallOutput = pip `
+      install `
+      $packageExpression `
+      --no-cache-dir `
+      --target $installTargetFolder 2>&1 --extra-index-url=$PackageSourceOverride
+    }
+    else {
+      Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder"
+      $pipInstallOutput = pip `
       install `
       $packageExpression `
       --no-cache-dir `
       --target $installTargetFolder 2>&1
+    }
     if ($LASTEXITCODE -ne 0) {
       LogWarning "pip install failed for $packageExpression"
       Write-Host $pipInstallOutput
@@ -201,7 +212,7 @@ $PackageExclusions = @{
   'azure-monitor-query' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/19417';
   'azure-mgmt-network' = 'Manual process used to build';
 }
-function Update-python-DocsMsPackages($DocsRepoLocation, $DocsMetadata) {
+function Update-python-DocsMsPackages($DocsRepoLocation, $DocsMetadata, $DevVersionUpdate = $False) {
   Write-Host "Excluded packages:"
   foreach ($excludedPackage in $PackageExclusions.Keys) {
     Write-Host "  $excludedPackage - $($PackageExclusions[$excludedPackage])"
@@ -231,7 +242,6 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
   $outputPackages = @()
   foreach ($package in $packageConfig.packages) {
     $packageName = $package.package_info.name
-
     if (!$packageName) { 
       Write-Host "Keeping package with no name: $($package.package_info)"
       $outputPackages += $package
@@ -301,6 +311,15 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
         -Value $packageVersion `
         -PassThru `
         -Force 
+      if ($PackageSourceOverride) {
+        $package.package_info = Add-Member `
+          -InputObject $package.package_info `
+          -MemberType NoteProperty `
+          -Name 'extra_index_url' `
+          -Value $PackageSourceOverride `
+          -PassThru `
+          -Force 
+      }
     }
 
     Write-Host "Keeping tracked package: $packageName."
@@ -334,7 +353,6 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
     if ($Mode -eq 'preview') {
       $packageVersion = "==$($package.VersionPreview)"
     }
-
     if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion -workingDirectory $installValidationFolder)) {
       LogWarning "Package is not valid: $packageName. Cannot onboard."
       continue
