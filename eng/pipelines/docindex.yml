@@ -47,8 +47,7 @@ jobs:
             succeeded(),
             or(
               eq(variables['Build.Reason'], 'Schedule'),
-              eq(variables['Force.MainUpdate'], 'true'),
-              eq(variables['Build.SourceBranchName'], variables['DefaultBranch'])
+              eq(variables['Force.MainUpdate'], 'true')
             )
           )
           
