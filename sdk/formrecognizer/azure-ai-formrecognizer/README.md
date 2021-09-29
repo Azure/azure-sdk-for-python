@@ -325,7 +325,7 @@ document_model_admin_client = DocumentModelAdministrationClient(endpoint, creden
 
 container_sas_url = "<container-sas-url>"  # training documents uploaded to blob storage
 poller = document_model_admin_client.begin_build_model(
-    source=container_sas_url, model_id="my first model"
+    source=container_sas_url, model_id="my-first-model"
 )
 model = poller.result()
 
@@ -361,8 +361,8 @@ poller = document_analysis_client.begin_analyze_document(model=model_id, documen
 result = poller.result()
 
 for analyzed_document in result.documents:
+    print("Document was analyzed by model with ID {}".format(result.model_id))
     print("Document has confidence {}".format(analyzed_document.confidence))
-    print("Document was analyzed by model with ID {}".format(analyzed_document.model_id))
     for name, field in analyzed_document.fields.items():
         print("Field '{}' has value '{}' with confidence of {}".format(name, field.value, field.confidence))
     
