@@ -6,3 +6,4 @@
 # --------------------------------------------------------------------------
 from .v2_0.models import *
 from .v2_1.models import *
+from .v3_0_preview_1.models import *

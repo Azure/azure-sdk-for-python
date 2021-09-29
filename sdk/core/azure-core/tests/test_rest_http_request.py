@@ -10,8 +10,19 @@
 import io
 import pytest
 import sys
-import collections
+try:
+    import collections.abc as collections
+except ImportError:
+    import collections  # type: ignore
+
+from azure.core.configuration import Configuration
 from azure.core.rest import HttpRequest
+from azure.core.pipeline.policies import (
+    CustomHookPolicy, UserAgentPolicy, SansIOHTTPPolicy, RetryPolicy
+)
+from utils import is_rest
+from rest_client import TestRestClient
+from azure.core import PipelineClient
 
 @pytest.fixture
 def assert_iterator_body():
@@ -283,6 +294,113 @@ def test_use_custom_json_encoder():
     # we pass in bytes and check that they are serialized
     request = HttpRequest("GET", "/headers", json=bytearray("mybytes", "utf-8"))
     assert request.content == '"bXlieXRlcw=="'
+
+def test_request_policies_raw_request_hook(port):
+    # test that the request all the way through the pipeline is a new request
+    request = HttpRequest("GET", "/headers")
+    def callback(request):
+        assert is_rest(request.http_request)
+        raise ValueError("I entered the callback!")
+    custom_hook_policy = CustomHookPolicy(raw_request_hook=callback)
+    policies = [
+        UserAgentPolicy("myuseragent"),
+        custom_hook_policy
+    ]
+    client = TestRestClient(port=port, policies=policies)
+
+    with pytest.raises(ValueError) as ex:
+        client.send_request(request)
+    assert "I entered the callback!" in str(ex.value)
+
+@pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
+def test_request_policies_chain(port):
+    class OldPolicyModifyBody(SansIOHTTPPolicy):
+        def on_request(self, request):
+            assert is_rest(request.http_request) # first make sure this is a new request
+            # deals with request like an old request
+            request.http_request.set_json_body({"hello": "world"})
+
+    class NewPolicyModifyHeaders(SansIOHTTPPolicy):
+        def on_request(self, request):
+            assert is_rest(request.http_request)
+            assert request.http_request.content == '{"hello": "world"}'
+
+            # modify header to know we entered this callback
+            request.http_request.headers = {
+                "x-ms-date": "Thu, 14 Jun 2018 16:46:54 GMT",
+                "Authorization": "SharedKey account:G4jjBXA7LI/RnWKIOQ8i9xH4p76pAQ+4Fs4R1VxasaE=",
+                "Content-Length": "0",
+            }
+
+    class OldPolicySerializeRequest(SansIOHTTPPolicy):
+        def on_request(self, request):
+            assert is_rest(request.http_request)
+            # don't want to deal with content in serialize, so let's first just remove it
+            request.http_request.data = None
+            expected = (
+                b'DELETE http://localhost:5000/container0/blob0 HTTP/1.1\r\n'
+                b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+                b'Authorization: SharedKey account:G4jjBXA7LI/RnWKIOQ8i9xH4p76pAQ+4Fs4R1VxasaE=\r\n'
+                b'Content-Length: 0\r\n'
+                b'\r\n'
+            )
+            assert request.http_request.serialize() == expected
+            raise ValueError("Passed through the policies!")
+
+    policies = [
+        OldPolicyModifyBody(),
+        NewPolicyModifyHeaders(),
+        OldPolicySerializeRequest(),
+    ]
+    request = HttpRequest("DELETE", "/container0/blob0")
+    client = TestRestClient(port="5000", policies=policies)
+    with pytest.raises(ValueError) as ex:
+        client.send_request(
+            request,
+            content="I should be overriden",
+        )
+    assert "Passed through the policies!" in str(ex.value)
+
+
+def test_per_call_policies_old_then_new(port):
+    config = Configuration()
+    retry_policy = RetryPolicy()
+    config.retry_policy = retry_policy
+
+    class OldPolicy(SansIOHTTPPolicy):
+        """A policy that deals with a rest request thinking that it's an old request"""
+
+        def on_request(self, pipeline_request):
+            request = pipeline_request.http_request
+            assert is_rest(request)
+            assert request.body == '{"hello": "world"}'  # old request has property body
+            request.set_text_body("change to me!")
+            return pipeline_request
+
+    class NewPolicy(SansIOHTTPPolicy):
+
+        def on_request(self, pipeline_request):
+            request = pipeline_request.http_request
+            assert is_rest(request)
+            assert request.content == 'change to me!'  # new request has property content
+            raise ValueError("I entered the policies!")
+
+    pipeline_client = PipelineClient(
+        base_url="http://localhost:{}".format(port),
+        config=config,
+        per_call_policies=[OldPolicy(), NewPolicy()]
+    )
+    client = TestRestClient(port=port)
+    client._client = pipeline_client
+
+    with pytest.raises(ValueError) as ex:
+        client.send_request(HttpRequest("POST", "/basic/anything", json={"hello": "world"}))
+
+    # since we don't have all policies set up, the call ends up failing
+    # but that's ok with us, we want to make sure that chaining the requests
+    # work
+    assert "I entered the policies!" in str(ex.value)
+
 
 # NOTE: For files, we don't allow list of tuples yet, just dict. Will uncomment when we add this capability
 # def test_multipart_multiple_files_single_input_content():
