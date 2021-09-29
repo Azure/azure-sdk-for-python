@@ -5,7 +5,7 @@ It includes the following main features:
 
 * Layout - Extract text, table structures, and selection marks, along with their bounding region coordinates, from documents.
 * Document - Analyze entities, key-value pairs, tables, and selection marks from documents using the general prebuilt document model. 
-* Prebuilt - Analyze data from certain types of common documents (such as receipts, invoices, business cards, or identity documents) using pre-trained models.
+* Prebuilt - Analyze data from certain types of common documents (such as receipts, invoices, business cards, or identity documents) using prebuilt models.
 * Custom - Build custom models to extract text, field values, selection marks, and table data from documents. Custom models are built with your own data, so they're tailored to your documents.
 
 [Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][python-fr-ref-docs] | [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
