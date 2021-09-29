@@ -33,8 +33,7 @@ def sample_add_feedback():
     service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
     subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
     api_key = os.getenv("METRICS_ADVISOR_API_KEY")
-    # metric_id = os.getenv("METRICS_ADVISOR_METRIC_ID")
-    metric_id = "390d1139-98fb-45af-b831-8d5ad61b150a"
+    metric_id = os.getenv("METRICS_ADVISOR_METRIC_ID")
     client = MetricsAdvisorClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
 
@@ -45,27 +44,27 @@ def sample_add_feedback():
                                        value="NotAnomaly")
     client.add_feedback(anomaly_feedback)
 
-    # change_point_feedback = ChangePointFeedback(metric_id=metric_id,
-    #                                             dimension_key={"category": "Shoes Handbags & Sunglasses"},
-    #                                             start_time=datetime.datetime(2021, 8, 5),
-    #                                             end_time=datetime.datetime(2021, 8, 7),
-    #                                             value="NotChangePoint")
-    # client.add_feedback(change_point_feedback)
-    #
-    # comment_feedback = CommentFeedback(metric_id=metric_id,
-    #                                    dimension_key={"category": "Shoes Handbags & Sunglasses"},
-    #                                    start_time=datetime.datetime(2021, 8, 5),
-    #                                    end_time=datetime.datetime(2021, 8, 7),
-    #                                    value="comment")
-    # client.add_feedback(comment_feedback)
-    #
-    # period_feedback = PeriodFeedback(metric_id=metric_id,
-    #                                  dimension_key={"category": "Shoes Handbags & Sunglasses"},
-    #                                  start_time=datetime.datetime(2021, 8, 5),
-    #                                  end_time=datetime.datetime(2021, 8, 7),
-    #                                  period_type="AssignValue",
-    #                                  value=2)
-    # client.add_feedback(period_feedback)
+    change_point_feedback = ChangePointFeedback(metric_id=metric_id,
+                                                dimension_key={"category": "Shoes Handbags & Sunglasses"},
+                                                start_time=datetime.datetime(2021, 8, 5),
+                                                end_time=datetime.datetime(2021, 8, 7),
+                                                value="NotChangePoint")
+    client.add_feedback(change_point_feedback)
+
+    comment_feedback = CommentFeedback(metric_id=metric_id,
+                                       dimension_key={"category": "Shoes Handbags & Sunglasses"},
+                                       start_time=datetime.datetime(2021, 8, 5),
+                                       end_time=datetime.datetime(2021, 8, 7),
+                                       value="comment")
+    client.add_feedback(comment_feedback)
+
+    period_feedback = PeriodFeedback(metric_id=metric_id,
+                                     dimension_key={"category": "Shoes Handbags & Sunglasses"},
+                                     start_time=datetime.datetime(2021, 8, 5),
+                                     end_time=datetime.datetime(2021, 8, 7),
+                                     period_type="AssignValue",
+                                     value=2)
+    client.add_feedback(period_feedback)
     # [END add_feedback]
 
 
@@ -93,8 +92,7 @@ def sample_list_feedback():
     service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
     subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
     api_key = os.getenv("METRICS_ADVISOR_API_KEY")
-    # metric_id = os.getenv("METRICS_ADVISOR_METRIC_ID")
-    metric_id = "390d1139-98fb-45af-b831-8d5ad61b150a"
+    metric_id = os.getenv("METRICS_ADVISOR_METRIC_ID")
 
     client = MetricsAdvisorClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
@@ -110,6 +108,6 @@ if __name__ == '__main__':
     sample_add_feedback()
     print("Feedback successfully created...")
     print("\n---Get a feedback...")
-    # sample_get_feedback()
+    sample_get_feedback()
     print("\n---List feedbacks...")
     sample_list_feedback()

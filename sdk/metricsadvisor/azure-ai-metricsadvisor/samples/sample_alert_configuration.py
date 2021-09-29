@@ -293,20 +293,20 @@ def sample_delete_alert_config(alert_config_id):
 
 if __name__ == '__main__':
     print("---Creating anomaly alert configuration...")
-    # alert_config = sample_create_alert_config()
+    alert_config = sample_create_alert_config()
     print("Anomaly alert configuration successfully created...")
     print("\n---Get an anomaly alert configuration...")
-    # sample_get_alert_config(alert_config.id)
+    sample_get_alert_config(alert_config.id)
     print("\n---List anomaly alert configurations...")
-    # sample_list_alert_configs()
+    sample_list_alert_configs()
     print("\n---Query anomaly detection results...")
-    alerts = sample_list_alerts("1c1575d8-b09e-40c3-a3c0-d459c64d8382")
+    alerts = sample_list_alerts(alert_config.id)
     if len(alerts) > 0:
         print("\n---Query anomalies using alert id...")
         alert_id = alerts[0].id
         print("alert_id: " + alert_id)
-        sample_list_anomalies_for_alert("1c1575d8-b09e-40c3-a3c0-d459c64d8382", alert_id)
+        sample_list_anomalies_for_alert(alert_config.id, alert_id)
     print("\n---Update an anomaly alert configuration...")
-    # sample_update_alert_config(alert_config)
+    sample_update_alert_config(alert_config)
     print("\n---Delete an anomaly alert configuration...")
-    # sample_delete_alert_config(alert_config.id)
+    sample_delete_alert_config(alert_config.id)

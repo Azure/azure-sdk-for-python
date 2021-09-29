@@ -61,8 +61,8 @@ def sample_list_incident_root_cause():
     service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
     subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
     api_key = os.getenv("METRICS_ADVISOR_API_KEY")
-    detection_configuration_id = "efaee305-f049-43ec-9f9b-76026d55c14a"
-    incident_id = "aee0225fd93cfe42ec4acd365613c857-17bb8679000"
+    detection_configuration_id = os.getenv("METRICS_ADVISOR_DETECTION_CONFIGURATION_ID")
+    incident_id = os.getenv("METRICS_ADVISOR_INCIDENT_ID")
 
     client = MetricsAdvisorClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
@@ -102,9 +102,9 @@ def sample_list_incidents_for_alert():
 
 if __name__ == '__main__':
     print("---List incidents for detection configuration...")
-    # sample_list_incidents_for_detection_configuration()
+    sample_list_incidents_for_detection_configuration()
     print("---List root causes...")
     sample_list_incident_root_cause()
     print("---List incidents for alert configuration...")
-    # sample_list_incidents_for_alert()
+    sample_list_incidents_for_alert()
 
