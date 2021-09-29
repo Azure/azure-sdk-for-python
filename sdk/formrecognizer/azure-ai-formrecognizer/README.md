@@ -363,7 +363,6 @@ result = poller.result()
 for analyzed_document in result.documents:
     print("Document has confidence {}".format(analyzed_document.confidence))
     print("Document was analyzed by model with ID {}".format(analyzed_document.model_id))
-    print("Document was analyzed with model with ID {}".format(analyzed_document.model_id))
     for name, field in analyzed_document.fields.items():
         print("Field '{}' has value '{}' with confidence of {}".format(name, field.value, field.confidence))
     
