@@ -42,6 +42,13 @@ class ProjectKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     CONVERSATION = "conversation"
     WORKFLOW = "workflow"
 
+class ResolutionKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of an entity resolution.
+    """
+
+    #: Dictionary normalized entities.
+    DICTIONARY_NORMALIZED_VALUE = "DictionaryNormalizedValue"
+
 class TargetKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of a target service.
     """

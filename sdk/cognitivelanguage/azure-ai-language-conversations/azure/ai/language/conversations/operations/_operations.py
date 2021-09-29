@@ -34,7 +34,7 @@ def build_analyze_conversations_request(
     # type: (...) -> HttpRequest
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     project_name = kwargs.pop('project_name')  # type: str
-    deployment_name = kwargs.pop('deployment_name')  # type: str
+    deployment_name = kwargs.pop('deployment_name', None)  # type: Optional[str]
 
     api_version = "2021-07-15-preview"
     accept = "application/json"
@@ -44,7 +44,8 @@ def build_analyze_conversations_request(
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     query_parameters['projectName'] = _SERIALIZER.query("project_name", project_name, 'str')
-    query_parameters['deploymentName'] = _SERIALIZER.query("deployment_name", deployment_name, 'str')
+    if deployment_name is not None:
+        query_parameters['deploymentName'] = _SERIALIZER.query("deployment_name", deployment_name, 'str')
     query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
@@ -67,24 +68,24 @@ class ConversationAnalysisClientOperationsMixin(object):
     @distributed_trace
     def analyze_conversations(
         self,
-        conversation_analysis_input,  # type: "_models.ConversationAnalysisInput"
+        analyze_conversation_options,  # type: "_models.AnalyzeConversationOptions"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.ConversationAnalysisResult"
+        # type: (...) -> "_models.AnalyzeConversationResult"
         """Analyzes the input conversation utterance.
 
-        :param conversation_analysis_input: Post body of the request.
-        :type conversation_analysis_input:
-         ~azure.ai.language.conversations.models.ConversationAnalysisInput
-        :keyword project_name: The project name.
+        :param analyze_conversation_options: Post body of the request.
+        :type analyze_conversation_options:
+         ~azure.ai.language.conversations.models.AnalyzeConversationOptions
+        :keyword project_name: The name of the project to use.
         :paramtype project_name: str
-        :keyword deployment_name: The deployment name/deployed version.
+        :keyword deployment_name: The name of the specific deployment of the project to use.
         :paramtype deployment_name: str
-        :return: ConversationAnalysisResult
-        :rtype: ~azure.ai.language.conversations.models.ConversationAnalysisResult
+        :return: AnalyzeConversationResult
+        :rtype: ~azure.ai.language.conversations.models.AnalyzeConversationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConversationAnalysisResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeConversationResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -92,9 +93,9 @@ class ConversationAnalysisClientOperationsMixin(object):
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         project_name = kwargs.pop('project_name')  # type: str
-        deployment_name = kwargs.pop('deployment_name')  # type: str
+        deployment_name = kwargs.pop('deployment_name', None)  # type: Optional[str]
 
-        json = self._serialize.body(conversation_analysis_input, 'ConversationAnalysisInput')
+        json = self._serialize.body(analyze_conversation_options, 'AnalyzeConversationOptions')
 
         request = build_analyze_conversations_request(
             content_type=content_type,
@@ -108,15 +109,15 @@ class ConversationAnalysisClientOperationsMixin(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('ConversationAnalysisResult', pipeline_response)
+        deserialized = self._deserialize('AnalyzeConversationResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
