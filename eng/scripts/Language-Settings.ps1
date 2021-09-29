@@ -212,7 +212,7 @@ $PackageExclusions = @{
   'azure-monitor-query' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/19417';
   'azure-mgmt-network' = 'Manual process used to build';
 }
-function Update-python-DocsMsPackages($DocsRepoLocation, $DocsMetadata, $DevVersionUpdate = $False) {
+function Update-python-DocsMsPackages($DocsRepoLocation, $DocsMetadata) {
   Write-Host "Excluded packages:"
   foreach ($excludedPackage in $PackageExclusions.Keys) {
     Write-Host "  $excludedPackage - $($PackageExclusions[$excludedPackage])"
@@ -353,6 +353,7 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
     if ($Mode -eq 'preview') {
       $packageVersion = "==$($package.VersionPreview)"
     }
+    
     if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion -workingDirectory $installValidationFolder)) {
       LogWarning "Package is not valid: $packageName. Cannot onboard."
       continue
