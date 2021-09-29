@@ -38,7 +38,7 @@ class AzureCliCredential(object):
     This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.
     """
 
-    def __init__(self, **kwargs):   # pylint: disable=unused-import
+    def __init__(self, **kwargs):   # pylint: disable=unused-argument
         disable_multitenant = os.environ.get(EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH, False)
         self._allow_multitenant = not disable_multitenant
 
