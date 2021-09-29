@@ -14,8 +14,8 @@ from asynctestcase import AsyncConversationTest
 
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
-    ConversationAnalysisInput,
-    ConversationAnalysisResult,
+    AnalyzeConversationOptions,
+    AnalyzeConversationResult,
     DeepstackPrediction
 )
 
@@ -27,7 +27,7 @@ class ConversationAppAsyncTests(AsyncConversationTest):
 
         # prepare data
         query = "One california maki please."
-        input = ConversationAnalysisInput(
+        input = AnalyzeConversationOptions(
             query=query,
         )
 
@@ -41,7 +41,7 @@ class ConversationAppAsyncTests(AsyncConversationTest):
             )
         
         # assert
-        assert isinstance(result, ConversationAnalysisResult)
+        assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
         assert isinstance(result.prediction, DeepstackPrediction)
         assert result.prediction.project_kind == 'conversation'
@@ -73,7 +73,7 @@ class ConversationAppAsyncTests(AsyncConversationTest):
             )
         
         # assert
-        assert isinstance(result, ConversationAnalysisResult)
+        assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
         assert isinstance(result.prediction, DeepstackPrediction)
         assert result.prediction.project_kind == 'conversation'

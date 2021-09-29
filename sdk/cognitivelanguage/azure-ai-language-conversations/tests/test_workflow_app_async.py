@@ -14,10 +14,10 @@ from asynctestcase import AsyncConversationTest
 
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
-    ConversationAnalysisInput,
-    ConversationAnalysisResult,
-    ConversationAnalysisInput,
-    ConversationAnalysisResult,
+    AnalyzeConversationOptions,
+    AnalyzeConversationResult,
+    AnalyzeConversationOptions,
+    AnalyzeConversationResult,
     QuestionAnsweringParameters,
     DeepstackParameters,
     DeepstackCallingOptions,
@@ -43,7 +43,7 @@ class WorkflowAppAsyncTests(AsyncConversationTest):
             )
         
             # assert
-            assert isinstance(result, ConversationAnalysisResult)
+            assert isinstance(result, AnalyzeConversationResult)
             assert result.query == query
             assert isinstance(result.prediction, WorkflowPrediction)
             assert result.prediction.project_kind == "workflow"
@@ -59,7 +59,7 @@ class WorkflowAppAsyncTests(AsyncConversationTest):
             )
         
             # assert
-            assert isinstance(result, ConversationAnalysisResult)
+            assert isinstance(result, AnalyzeConversationResult)
             assert result.query == query
             assert isinstance(result.prediction, WorkflowPrediction)
             assert result.prediction.project_kind == "workflow"
@@ -72,7 +72,7 @@ class WorkflowAppAsyncTests(AsyncConversationTest):
 
         # prepare data
         query = "How do you make sushi rice?",
-        input = ConversationAnalysisInput(
+        input = AnalyzeConversationOptions(
             query=query,
             parameters={
                 "SushiMaking": QuestionAnsweringParameters(
@@ -100,7 +100,7 @@ class WorkflowAppAsyncTests(AsyncConversationTest):
             )
         
         # assert
-        assert isinstance(result, ConversationAnalysisResult)
+        assert isinstance(result, AnalyzeConversationResult)
         # assert result.query == query --> weird behavior here!
         assert isinstance(result.prediction, WorkflowPrediction)
         assert result.prediction.project_kind == "workflow"
@@ -113,7 +113,7 @@ class WorkflowAppAsyncTests(AsyncConversationTest):
 
         # prepare data
         query = "How do you make sushi rice?"
-        input = ConversationAnalysisInput(
+        input = AnalyzeConversationOptions(
             query=query,
             parameters={
                 "SushiMaking": QuestionAnsweringParameters(
@@ -141,7 +141,7 @@ class WorkflowAppAsyncTests(AsyncConversationTest):
             )
         
         # assert
-        assert isinstance(result, ConversationAnalysisResult)
+        assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
         assert isinstance(result.prediction, WorkflowPrediction)
         assert result.prediction.project_kind == "workflow"
