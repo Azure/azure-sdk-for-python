@@ -1,22 +1,18 @@
 interactions:
 - request:
-    body: '{"query": "How do you make sushi rice?", "directTarget": "SushiMaking",
-      "parameters": {"SushiMaking": {"targetType": "question_answering", "projectParameters":
-      {"question": "How do you make sushi rice?", "top": 1, "confidenceScoreThreshold":
-      0.1}}}}'
+    body: '{"query": "How do you make sushi rice?", "parameters": {"SushiMaking":
+      {"targetKind": "question_answering", "callingOptions": {"question": "How do
+      you make sushi rice?", "top": 1, "confidence_score_threshold": 0.1}}, "SushiOrder":
+      {"targetKind": "luis_deepstack", "callingOptions": {"verbose": true}}}}'
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
-      - '249'
+      - '302'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-conversations/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-language-conversations/1.0.0b1 Python/3.9.7 (Windows-10-10.0.19043-SP0)
     method: POST
     uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?projectName=test-workflow&deploymentName=production&api-version=2021-07-15-preview
   response:
@@ -101,39 +97,31 @@ interactions:
         you ever eat ice cream?\",\n                \"have you ever eaten ice cream?\",\n
         \               \"do you ever eat tofu?\",\n                \"do you ever
         eat steak?\"\n              ],\n              \"answer\": \"I only do food
-        for thought.\",\n              \"score\": 10.86,\n              \"id\": 12,\n
+        for thought.\",\n              \"score\": 10.71,\n              \"id\": 12,\n
         \             \"source\": \"qna_chitchat_Friendly.tsv\",\n              \"isDocumentText\":
         false,\n              \"metadata\": [\n                {\n                  \"name\":
         \"editorial\",\n                  \"value\": \"chitchat\"\n                }\n
         \             ],\n              \"context\": {\n                \"isContextOnly\":
         false,\n                \"prompts\": []\n              }\n            }\n
         \         ],\n          \"activeLearningEnabled\": true\n        },\n        \"confidenceScore\":
-        1\n      }\n    },\n    \"topIntent\": \"SushiMaking\",\n    \"projectType\":
-        \"workflow\"\n  }\n}"
+        0.564024\n      },\n      \"SushiOrder\": {\n        \"targetType\": \"luis_deepstack\",\n
+        \       \"confidenceScore\": 0.435976\n      },\n      \"None\": {\n        \"targetType\":
+        \"non_linked\",\n        \"confidenceScore\": 0\n      }\n    },\n    \"topIntent\":
+        \"SushiMaking\",\n    \"projectType\": \"workflow\"\n  }\n}"
     headers:
-      apim-request-id:
-      - e06ff7b7-6ecd-492d-aae1-db28a7ffa92f
-      cache-control:
-      - no-store, proxy-revalidate, no-cache, max-age=0, private
-      content-type:
-      - application/json; charset=utf-8
-      csp-billing-usage:
-      - CognitiveServices.TextAnalytics.OrchestrationLUISTransaction=0
-      date:
-      - Fri, 10 Sep 2021 14:28:34 GMT
-      pragma:
-      - no-cache
-      request-id:
-      - e06ff7b7-6ecd-492d-aae1-db28a7ffa92f
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '159'
+      apim-request-id: 3c4b5bfd-cdfe-48f4-9502-6edbc5dddc8c
+      cache-control: no-store, proxy-revalidate, no-cache, max-age=0, private
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.OrchestrationLUISTransaction=0
+      date: Wed, 29 Sep 2021 15:00:22 GMT
+      pragma: no-cache
+      request-id: 3c4b5bfd-cdfe-48f4-9502-6edbc5dddc8c
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '213'
     status:
       code: 200
       message: OK
+    url: https://antischsdktest.cognitiveservices.azure.com/language/:analyze-conversations?projectName=antischTwo&deploymentName=production&api-version=2021-07-15-preview
 version: 1
