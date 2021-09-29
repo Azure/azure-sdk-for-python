@@ -11,19 +11,19 @@ interactions:
   response:
     body:
       string: '{"Code":400,"Detail":"SubCode=40000, UnknownType:The request is invalid.
-        [MGResponseHttpError=BadRequest]. TrackingId:de4a6cfb-75e6-4a81-985a-45fdfc3fe627_G14,
-        SystemTracker:swathip-test-eh-schemaregistry.servicebus.windows.net:$schemagroups\/getSchemaById\/a,
-        Timestamp:2021-09-27T23:08:58"}'
+        [MGResponseHttpError=BadRequest]. TrackingId:dbfa19f5-29c4-4278-a562-7abb97e16e07_G27,
+        SystemTracker:swathip-test-eventhubs.servicebus.windows.net:$schemagroups\/getSchemaById\/a,
+        Timestamp:2021-09-29T16:52:41"}'
     headers:
       content-type: application/json
-      date: Mon, 27 Sep 2021 23:08:58 GMT
+      date: Wed, 29 Sep 2021 16:52:41 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
     status:
       code: 400
       message: Bad Request
-    url: https://swathip-test-eh-schemaregistry.servicebus.windows.net/$schemagroups/getSchemaById/a?api-version=2020-09-01-preview
+    url: https://swathip-test-eventhubs.servicebus.windows.net/$schemagroups/getSchemaById/a?api-version=2020-09-01-preview
 - request:
     body: null
     headers:
@@ -36,16 +36,16 @@ interactions:
   response:
     body:
       string: '{"Code":404,"Detail":"Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does
-        not exist. TrackingId:6d76239e-8072-4fbe-b3b1-d23506c68938_G14, SystemTracker:swathip-test-eh-schemaregistry.servicebus.windows.net:$schemagroups\/getSchemaById\/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
-        Timestamp:2021-09-27T23:08:59"}'
+        not exist. TrackingId:87072604-c61d-4dce-bd60-077162e0aa78_G27, SystemTracker:swathip-test-eventhubs.servicebus.windows.net:$schemagroups\/getSchemaById\/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
+        Timestamp:2021-09-29T16:52:41"}'
     headers:
       content-type: application/json
-      date: Mon, 27 Sep 2021 23:08:58 GMT
+      date: Wed, 29 Sep 2021 16:52:41 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
     status:
       code: 404
       message: Not Found
-    url: https://swathip-test-eh-schemaregistry.servicebus.windows.net/$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2020-09-01-preview
+    url: https://swathip-test-eventhubs.servicebus.windows.net/$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2020-09-01-preview
 version: 1
