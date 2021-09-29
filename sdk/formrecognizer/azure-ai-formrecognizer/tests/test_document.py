@@ -141,18 +141,18 @@ class TestDocumentFromStream(FormRecognizerTest):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             document = fd.read()
 
-        poller = client.begin_analyze_document("prebuilt-document", document, pages=["1"])
+        poller = client.begin_analyze_document("prebuilt-document", document, pages="1")
         result = poller.result()
         assert len(result.pages) == 1
 
-        poller = client.begin_analyze_document("prebuilt-document", document, pages=["1", "3"])
+        poller = client.begin_analyze_document("prebuilt-document", document, pages="1, 3")
         result = poller.result()
         assert len(result.pages) == 2
 
-        poller = client.begin_analyze_document("prebuilt-document", document, pages=["1-2"])
+        poller = client.begin_analyze_document("prebuilt-document", document, pages="1-2")
         result = poller.result()
         assert len(result.pages) == 2
 
-        poller = client.begin_analyze_document("prebuilt-document", document, pages=["1-2", "3"])
+        poller = client.begin_analyze_document("prebuilt-document", document, pages="1-2, 3")
         result = poller.result()
         assert len(result.pages) == 3
