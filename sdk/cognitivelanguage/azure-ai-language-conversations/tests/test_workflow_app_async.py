@@ -9,13 +9,13 @@ import pytest
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 
-from testcase import (
-    ConversationTest,
-    GlobalConversationAccountPreparer
-)
+from testcase import GlobalConversationAccountPreparer
+from asynctestcase import AsyncConversationTest
 
-from azure.ai.language.conversations import ConversationAnalysisClient
+from azure.ai.language.conversations.aio import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
+    ConversationAnalysisInput,
+    ConversationAnalysisResult,
     ConversationAnalysisInput,
     ConversationAnalysisResult,
     QuestionAnsweringParameters,
@@ -26,17 +26,17 @@ from azure.ai.language.conversations.models import (
     DSTargetIntentResult
 )
 
-class WorkflowAppTests(ConversationTest):
+class WorkflowAppAsyncTests(AsyncConversationTest):
 
     @GlobalConversationAccountPreparer()
-    def test_workflow_app(self, conv_account, conv_key, workflow_project):
+    async def test_workflow_app(self, conv_account, conv_key, workflow_project):
 
         client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
-        with client:
+        async with client:
 
             # analyze query
             query = "How do you make sushi rice?"
-            result = client.analyze_conversations(
+            result = await client.analyze_conversations(
                 {"query": query},
                 project_name=workflow_project,
                 deployment_name='production',
@@ -52,7 +52,7 @@ class WorkflowAppTests(ConversationTest):
 
             # analyze query
             query = "I will have sashimi"
-            result = client.analyze_conversations(
+            result = await client.analyze_conversations(
                 {"query": query},
                 project_name=workflow_project,
                 deployment_name='production',
@@ -68,7 +68,7 @@ class WorkflowAppTests(ConversationTest):
 
 
     @GlobalConversationAccountPreparer()
-    def test_workflow_app_with_parameters(self, conv_account, conv_key, workflow_project):
+    async def test_workflow_app_with_parameters(self, conv_account, conv_key, workflow_project):
 
         # prepare data
         query = "How do you make sushi rice?",
@@ -92,8 +92,8 @@ class WorkflowAppTests(ConversationTest):
 
         # run quey
         client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
-        with client:
-            result = client.analyze_conversations(
+        async with client:
+            result = await client.analyze_conversations(
                 input,
                 project_name=workflow_project,
                 deployment_name='production',
@@ -109,7 +109,7 @@ class WorkflowAppTests(ConversationTest):
 
 
     @GlobalConversationAccountPreparer()
-    def test_workflow_app_with_model(self, conv_account, conv_key, workflow_project):
+    async def test_workflow_app_with_model(self, conv_account, conv_key, workflow_project):
 
         # prepare data
         query = "How do you make sushi rice?"
@@ -133,8 +133,8 @@ class WorkflowAppTests(ConversationTest):
 
         # analyze query
         client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
-        with client:
-            result = client.analyze_conversations(
+        async with client:
+            result = await client.analyze_conversations(
                 input,
                 project_name=workflow_project,
                 deployment_name='production',
