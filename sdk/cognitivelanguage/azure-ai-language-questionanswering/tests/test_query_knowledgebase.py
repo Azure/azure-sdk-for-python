@@ -351,9 +351,26 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
 
             assert len(output.answers) == 1
 
-    def test_query_knowledge_base_overload_positional_and_kwarg(self):
+    def test_query_knowledgebase_overload_positional_and_kwarg(self):
         with QuestionAnsweringClient("http://fake.com", AzureKeyCredential("123")) as client:
             with pytest.raises(TypeError):
                 client.query_knowledge_base("positional_one", "positional_two")
             with pytest.raises(TypeError):
                 client.query_knowledge_base("positional_options_bag", options="options bag by name")
+
+    def test_query_knowledge_question_or_qna_id(self):
+        with QuestionAnsweringClient("http://fake.com", AzureKeyCredential("123")) as client:
+
+            options = QueryKnowledgeBaseOptions()
+            with pytest.raises(TypeError):
+                client.query_knowledge_base(
+                    options,
+                    project_name="hello",
+                    deployment_name='test'
+                )
+
+            with pytest.raises(TypeError):
+                client.query_knowledge_base(
+                    project_name="hello",
+                    deployment_name='test'
+                )
