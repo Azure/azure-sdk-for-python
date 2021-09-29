@@ -25,7 +25,6 @@ from azure.ai.language.conversations.models import (
     DSTargetIntentResult,
     LUISTargetIntentResult
 )
-from azure.ai.language.questionanswering.models import KnowledgeBaseQueryOptions
 
 
 class WorkflowAppDirectTests(ConversationTest):
@@ -80,11 +79,11 @@ class WorkflowAppDirectTests(ConversationTest):
             direct_target=target_intent,
             parameters={
                 "SushiMaking": QuestionAnsweringParameters(
-                    project_parameters=KnowledgeBaseQueryOptions(
-                        question=query,
-                        top=1,
-                        confidence_score_threshold=0.1
-                    )
+                    caling_options={
+                        "question":query,
+                        "top":1,
+                        "confidence_score_threshold":0.1
+                    }
                 )
             }
         )
