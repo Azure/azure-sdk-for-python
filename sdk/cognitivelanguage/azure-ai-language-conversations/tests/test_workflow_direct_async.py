@@ -14,8 +14,8 @@ from asynctestcase import AsyncConversationTest
 
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
-    ConversationAnalysisInput,
-    ConversationAnalysisResult,
+    AnalyzeConversationOptions,
+    AnalyzeConversationResult,
     QuestionAnsweringParameters,
     DeepstackParameters,
     WorkflowPrediction,
@@ -33,7 +33,7 @@ class WorkflowAppDirectAsyncTests(AsyncConversationTest):
         # prepare data
         query = "How do you make sushi rice?"
         target_intent = "SushiMaking"
-        input = ConversationAnalysisInput(
+        input = AnalyzeConversationOptions(
             query=query,
             direct_target=target_intent,
             parameters={
@@ -57,7 +57,7 @@ class WorkflowAppDirectAsyncTests(AsyncConversationTest):
             )
         
         # assert
-        assert isinstance(result, ConversationAnalysisResult)
+        assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
         assert isinstance(result.prediction, WorkflowPrediction)
         assert result.prediction.project_kind == "workflow"
@@ -71,7 +71,7 @@ class WorkflowAppDirectAsyncTests(AsyncConversationTest):
         # prepare data
         query = "How do you make sushi rice?"
         target_intent = "SushiMaking"
-        input = ConversationAnalysisInput(
+        input = AnalyzeConversationOptions(
             query=query,
             direct_target=target_intent,
             parameters={
@@ -95,7 +95,7 @@ class WorkflowAppDirectAsyncTests(AsyncConversationTest):
             )
         
         # assert
-        assert isinstance(result, ConversationAnalysisResult)
+        assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
         assert isinstance(result.prediction, WorkflowPrediction)
         assert result.prediction.project_kind == "workflow"
@@ -110,7 +110,7 @@ class WorkflowAppDirectAsyncTests(AsyncConversationTest):
         query = "I will have the oyako donburi please."
         target_intent = "SushiOrder"
         client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
-        input = ConversationAnalysisInput(
+        input = AnalyzeConversationOptions(
             query=query,
             direct_target=target_intent,
             parameters={
@@ -131,7 +131,7 @@ class WorkflowAppDirectAsyncTests(AsyncConversationTest):
             )
         
         # assert
-        assert isinstance(result, ConversationAnalysisResult)
+        assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
         assert isinstance(result.prediction, WorkflowPrediction)
         assert result.prediction.project_kind == "workflow"
@@ -146,7 +146,7 @@ class WorkflowAppDirectAsyncTests(AsyncConversationTest):
         query = "I will have the oyako donburi please."
         target_intent = "SushiOrder"
         client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
-        input = ConversationAnalysisInput(
+        input = AnalyzeConversationOptions(
             query=query,
             direct_target=target_intent,
             parameters={
@@ -167,7 +167,7 @@ class WorkflowAppDirectAsyncTests(AsyncConversationTest):
             )
         
         # assert
-        assert isinstance(result, ConversationAnalysisResult)
+        assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
         assert isinstance(result.prediction, WorkflowPrediction)
         assert result.prediction.project_kind == "workflow"
