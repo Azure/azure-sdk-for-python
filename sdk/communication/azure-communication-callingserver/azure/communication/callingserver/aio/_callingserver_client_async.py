@@ -41,6 +41,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from .._models import CreateCallOptions, JoinCallOptions, PlayAudioOptions
 
+from ..utils._utils import CallingServerUtils
+
 class CallingServerClient:
     """A client to interact with the AzureCommunicationService Calling Server.
 
@@ -231,8 +233,12 @@ class CallingServerClient:
             raise ValueError("call_locator can not be None")
         if not audio_file_uri:
             raise ValueError("audio_file_uri can not be None")
+        if not CallingServerUtils.is_valid_url(audio_file_uri):
+            raise ValueError("audio_file_uri is invalid")
         if not play_audio_options:
             raise ValueError("options can not be None")
+        if not CallingServerUtils.is_valid_url(play_audio_options.callback_uri):
+            raise ValueError("callback_uri is invalid")
 
         play_audio_request = PlayAudioWithCallLocatorRequestConverter.convert(
             serialize_call_locator(call_locator),
@@ -261,8 +267,12 @@ class CallingServerClient:
             raise ValueError("participant can not be None")
         if not audio_file_uri:
             raise ValueError("audio_file_uri can not be None")
+        if not CallingServerUtils.is_valid_url(audio_file_uri):
+            raise ValueError("audio_file_uri is invalid")
         if not play_audio_options:
             raise ValueError("play_audio_options can not be None")
+        if not CallingServerUtils.is_valid_url(play_audio_options.callback_uri):
+            raise ValueError("callback_uri is invalid")
 
         play_audio_to_participant_request = PlayAudioToParticipantWithCallLocatorRequestConverter.convert(
             serialize_call_locator(call_locator),
@@ -291,6 +301,8 @@ class CallingServerClient:
             raise ValueError("call_locator can not be None")
         if not participant:
             raise ValueError("participant can not be None")
+        if not CallingServerUtils.is_valid_url(callback_uri):
+            raise ValueError("callback_uri is invalid")
 
         alternate_caller_id = (None
             if alternate_caller_id is None

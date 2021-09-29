@@ -34,6 +34,8 @@ if TYPE_CHECKING:
     from .._generated.aio.operations import CallConnectionsOperations
     from .._models import PlayAudioOptions
 
+from ..utils._utils import CallingServerUtils
+
 class CallConnection:
     def __init__(
             self,
@@ -83,8 +85,17 @@ class CallConnection:
         if not audio_file_uri:
             raise ValueError("audio_file_uri can not be None")
 
+        if not CallingServerUtils.is_valid_url(audio_file_uri):
+            raise ValueError("audio_file_uri is invalid")
+
         if not play_audio_options:
             raise ValueError("options can not be None")
+
+        if not play_audio_options.audio_file_id:
+            raise ValueError("audio_file_id can not be None")
+
+        if not CallingServerUtils.is_valid_url(play_audio_options.callback_uri):
+            raise ValueError("callback_uri is invalid")
 
         play_audio_request = PlayAudioRequestConverter.convert(audio_file_uri, play_audio_options)
 
@@ -154,8 +165,17 @@ class CallConnection:
         if not audio_file_uri:
             raise ValueError("audio_file_uri can not be None")
 
+        if not CallingServerUtils.is_valid_url(audio_file_uri):
+            raise ValueError("audio_file_uri is invalid")
+
         if not play_audio_options:
             raise ValueError("play_audio_options can not be None")
+
+        if not play_audio_options.audio_file_id:
+            raise ValueError("audio_file_id can not be None")
+
+        if not CallingServerUtils.is_valid_url(play_audio_options.callback_uri):
+            raise ValueError("callback_uri is invalid")
 
         play_audio_to_participant_request = PlayAudioToParticipantRequestConverter.convert(
             identifier=serialize_identifier(participant),

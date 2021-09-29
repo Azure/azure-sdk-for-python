@@ -10,6 +10,7 @@ import base64
 import hmac
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from .utils import get_current_utc_time
+from urllib.parse import urlparse
 
 class HMACCredentialsPolicy(SansIOHTTPPolicy):
     """Implementation of HMAC authentication policy.
@@ -47,10 +48,7 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
 
         # Get the path and query from url, which looks like https://host/path/query
         query_url = str(request.http_request.url[len(self._host) + 8:])
-
-        if self._decode_url:
-            query_url = urllib.parse.unquote(query_url)
-
+        
         signed_headers = "x-ms-date;host;x-ms-content-sha256"
 
         utc_now = get_current_utc_time()
@@ -61,6 +59,18 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
         ).digest()
         content_hash = base64.b64encode(content_digest).decode("utf-8")
 
+        uri_to_sign_with = request.http_request.headers.get("UriToSignWith")
+        if uri_to_sign_with:
+            host = urlparse(uri_to_sign_with).hostname
+            query_url = urlparse(request.http_request.url).path
+
+            request.http_request.headers["host"] = host
+        else:
+            host = self._host
+
+        if self._decode_url:
+            query_url = urllib.parse.unquote(query_url)
+
         string_to_sign = (
             verb
             + "\n"
@@ -68,7 +78,7 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
             + "\n"
             + utc_now
             + ";"
-            + self._host
+            + host
             + ";"
             + content_hash
         )

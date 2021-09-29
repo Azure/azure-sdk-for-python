@@ -16,7 +16,10 @@ from ._generated.models import (
     CreateCallRequest,
     PhoneNumberIdentifierModel,
     PlayAudioResult,
-    AddParticipantResult
+    AddParticipantResult,
+    StartCallRecordingResult,
+    StartCallRecordingRequest,
+    CallRecordingProperties
     )
 from ._shared.models import CommunicationIdentifier
 from ._models import CallLocator
@@ -35,7 +38,12 @@ from ._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from ._models import CreateCallOptions, JoinCallOptions, PlayAudioOptions
+    from ._models import CreateCallOptions, JoinCallOptions, PlayAudioOptions, ParallelDownloadOptions
+
+from ._content_downloader import ContentDownloader
+from ._download import ContentStreamDownloader
+from .utils._utils import CallingServerUtils
+from azure.core.pipeline.transport import AsyncHttpResponse
 
 class CallingServerClient(object):
     """A client to interact with the AzureCommunicationService Calling Server.
@@ -224,8 +232,12 @@ class CallingServerClient(object):
             raise ValueError("call_locator can not be None")
         if not audio_file_uri:
             raise ValueError("audio_file_uri can not be None")
+        if not CallingServerUtils.is_valid_url(audio_file_uri):
+            raise ValueError("audio_file_uri is invalid")
         if not play_audio_options:
             raise ValueError("options can not be None")
+        if not CallingServerUtils.is_valid_url(play_audio_options.callback_uri):
+            raise ValueError("callback_uri is invalid")
 
         play_audio_request = PlayAudioWithCallLocatorRequestConverter.convert(
             serialize_call_locator(call_locator),
@@ -254,8 +266,12 @@ class CallingServerClient(object):
             raise ValueError("participant can not be None")
         if not audio_file_uri:
             raise ValueError("audio_file_uri can not be None")
+        if not CallingServerUtils.is_valid_url(audio_file_uri):
+            raise ValueError("audio_file_uri is invalid")
         if not play_audio_options:
             raise ValueError("play_audio_options can not be None")
+        if not CallingServerUtils.is_valid_url(play_audio_options.callback_uri):
+            raise ValueError("callback_uri is invalid")
 
         play_audio_to_participant_request = PlayAudioToParticipantWithCallLocatorRequestConverter.convert(
             serialize_call_locator(call_locator),
@@ -369,3 +385,147 @@ class CallingServerClient(object):
             cancel_participant_media_operation_request=cancel_participant_media_operation_request,
             **kwargs
             )
+
+    @distributed_trace()
+    def start_recording(
+        self,
+        server_call_id,  # type: str
+        recording_state_callback_uri,  # type: str
+        **kwargs  # type: Any
+    ):  # type: (...) -> StartCallRecordingResult
+
+        if not server_call_id:
+            raise ValueError("server_call_id cannot be None")
+        if not CallingServerUtils.is_valid_url(recording_state_callback_uri):
+            raise ValueError("recording_state_callback_uri is invalid")
+
+        start_call_recording_request = StartCallRecordingRequest(
+            recording_state_callback_uri=recording_state_callback_uri,
+            **kwargs
+        )
+
+        return self._server_call_client.start_recording(
+            server_call_id=self.server_call_id,
+            request=start_call_recording_request,
+            **kwargs
+        )
+
+    @distributed_trace()
+    def pause_recording(
+        self,
+        server_call_id,  # type: str
+        recording_id,  # type: str
+        **kwargs  # type: Any
+    ):  # type: (...) -> AsyncHttpResponse
+
+        if not server_call_id:
+            raise ValueError("server_call_id cannot be None")
+
+        if not recording_id:
+            raise ValueError("recording_id cannot be None")
+
+        return self._server_call_client.pause_recording(
+            server_call_id=self.server_call_id,
+            recording_id=recording_id,
+            **kwargs
+        )
+
+    @distributed_trace()
+    def resume_recording(
+        self,
+        server_call_id,  # type: str
+        recording_id,  # type: str
+        **kwargs  # type: Any
+    ):  # type: (...) -> AsyncHttpResponse
+
+        if not server_call_id:
+            raise ValueError("server_call_id cannot be None")
+
+        if not recording_id:
+            raise ValueError("recording_id cannot be None")
+
+        return self._server_call_client.resume_recording(
+            server_call_id=self.server_call_id,
+            recording_id=recording_id,
+            **kwargs
+        )
+
+    @distributed_trace()
+    def stop_recording(
+        self,
+        server_call_id,  # type: str
+        recording_id,  # type: str
+        **kwargs  # type: Any
+    ):  # type: (...) -> AsyncHttpResponse
+
+        if not server_call_id:
+            raise ValueError("server_call_id cannot be None")
+
+        if not recording_id:
+            raise ValueError("recording_id cannot be None")
+
+        return self._server_call_client.stop_recording(
+            server_call_id=self.server_call_id,
+            recording_id=recording_id,
+            **kwargs
+        )
+
+    @distributed_trace()
+    def get_recording_properities(
+        self,
+        server_call_id,  # type: str
+        recording_id,  # type: str
+        **kwargs  # type: Any
+    ):  # type: (...) -> CallRecordingProperties
+
+        if not server_call_id:
+            raise ValueError("server_call_id cannot be None")
+
+        if not recording_id:
+            raise ValueError("recording_id cannot be None")
+
+        return self._server_call_client.get_recording_properties(
+            server_call_id=self.server_call_id,
+            recording_id=recording_id,
+            **kwargs
+        )
+
+    @distributed_trace()
+    def download(
+        self,
+        content_url,  # type: str
+        start_range=None,  # type: int
+        end_range=None,  # type: int
+        parallel_download_options=None,  # type: ParallelDownloadOptions
+        **kwargs  # type: Any
+    ):  # type: (...) -> ContentStreamDownloader
+        """Download using content url.
+
+        :param str content_url:
+            The content url.
+        :returns: ContentStreamDownloader for a successful download request.
+        :rtype: ~ContentStreamDownloader
+        """
+        if not content_url:
+            raise ValueError("content_url can not be None")
+
+        if not CallingServerUtils.is_valid_url(content_url):
+            raise ValueError("content_url is invalid")
+
+        content_downloader = ContentDownloader(
+            self._callingserver_service_client._client,
+            self._callingserver_service_client._serialize,
+            self._callingserver_service_client._deserialize,
+            self._callingserver_service_client._config)
+        stream_downloader = ContentStreamDownloader(
+            content_downloader,
+            self._callingserver_service_client._config,
+            start_range,
+            end_range,
+            endpoint=content_url,
+            parallel_download_options=parallel_download_options,
+            **kwargs
+        )
+        stream_downloader._setup()
+
+        return stream_downloader
