@@ -16,8 +16,8 @@ from testcase import (
 
 from azure.ai.language.conversations import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
-    ConversationAnalysisInput,
-    ConversationAnalysisResult,
+    AnalyzeConversationOptions,
+    AnalyzeConversationResult,
     DeepstackPrediction
 )
 
@@ -29,7 +29,7 @@ class ConversationAppTests(ConversationTest):
 
         # prepare data
         query = "One california maki please."
-        input = ConversationAnalysisInput(
+        input = AnalyzeConversationOptions(
             query=query,
         )
 
@@ -43,7 +43,7 @@ class ConversationAppTests(ConversationTest):
             )
         
         # assert
-        assert isinstance(result, ConversationAnalysisResult)
+        assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
         assert isinstance(result.prediction, DeepstackPrediction)
         assert result.prediction.project_kind == 'conversation'
@@ -76,7 +76,7 @@ class ConversationAppTests(ConversationTest):
             )
         
         # assert
-        assert isinstance(result, ConversationAnalysisResult)
+        assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
         assert isinstance(result.prediction, DeepstackPrediction)
         assert result.prediction.project_kind == 'conversation'
