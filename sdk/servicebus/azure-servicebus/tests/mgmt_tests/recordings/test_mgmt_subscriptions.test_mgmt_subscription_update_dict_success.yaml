@@ -9,18 +9,18 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://servicebustestsbname.servicebus.windows.net/$Resources/topics?$skip=0&$top=100&api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/$Resources/topics?$skip=0&$top=100&api-version=2021-05
   response:
     body:
-      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Topics</title><id>https://servicebustestf27vchuqgf.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2021-04-22T15:04:58Z</updated><link
-        rel="self" href="https://servicebustestf27vchuqgf.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2017-04"/></feed>
+      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Topics</title><id>https://servicebustestappwyrpk4k.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2021-05</id><updated>2021-09-28T19:05:15Z</updated><link
+        rel="self" href="https://servicebustestappwyrpk4k.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2021-05"/></feed>
     headers:
       content-type:
       - application/atom+xml;type=feed;charset=utf-8
       date:
-      - Thu, 22 Apr 2021 15:04:58 GMT
+      - Tue, 28 Sep 2021 19:05:15 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -45,21 +45,21 @@ interactions:
       Content-Type:
       - application/atom+xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://servicebustestsbname.servicebus.windows.net/fjruid?api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/fjruid?api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestf27vchuqgf.servicebus.windows.net/fjruid?api-version=2017-04</id><title
-        type="text">fjruid</title><published>2021-04-22T15:04:59Z</published><updated>2021-04-22T15:04:59Z</updated><author><name>servicebustestf27vchuqgf</name></author><link
-        rel="self" href="https://servicebustestf27vchuqgf.servicebus.windows.net/fjruid?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestappwyrpk4k.servicebus.windows.net/fjruid?api-version=2021-05</id><title
+        type="text">fjruid</title><published>2021-09-28T19:05:16Z</published><updated>2021-09-28T19:05:16Z</updated><author><name>servicebustestappwyrpk4k</name></author><link
+        rel="self" href="https://servicebustestappwyrpk4k.servicebus.windows.net/fjruid?api-version=2021-05"/><content
         type="application/xml"><TopicDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><FilteringMessagesBeforePublishing>false</FilteringMessagesBeforePublishing><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2021-04-22T15:04:59.14Z</CreatedAt><UpdatedAt>2021-04-22T15:04:59.19Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableSubscriptionPartitioning>false</EnableSubscriptionPartitioning><EnableExpress>false</EnableExpress></TopicDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><FilteringMessagesBeforePublishing>false</FilteringMessagesBeforePublishing><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2021-09-28T19:05:16.04Z</CreatedAt><UpdatedAt>2021-09-28T19:05:16.08Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableSubscriptionPartitioning>false</EnableSubscriptionPartitioning><EnableExpress>false</EnableExpress><MaxMessageSizeInKilobytes>256</MaxMessageSizeInKilobytes></TopicDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 22 Apr 2021 15:04:59 GMT
+      - Tue, 28 Sep 2021 19:05:16 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -86,23 +86,23 @@ interactions:
       Content-Type:
       - application/atom+xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://servicebustestsbname.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestf27vchuqgf.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2017-04</id><title
-        type="text">eqkovcd</title><published>2021-04-22T15:04:59Z</published><updated>2021-04-22T15:04:59Z</updated><link
-        rel="self" href="https://servicebustestf27vchuqgf.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestappwyrpk4k.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2021-05</id><title
+        type="text">eqkovcd</title><published>2021-09-28T19:05:16Z</published><updated>2021-09-28T19:05:16Z</updated><link
+        rel="self" href="https://servicebustestappwyrpk4k.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2021-05"/><content
         type="application/xml"><SubscriptionDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2021-04-22T15:04:59.8631553Z</CreatedAt><UpdatedAt>2021-04-22T15:04:59.8631553Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2021-09-28T19:05:16.5321735Z</CreatedAt><UpdatedAt>2021-09-28T19:05:16.5321735Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><IsClientAffine>false</IsClientAffine></SubscriptionDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 22 Apr 2021 15:04:59 GMT
+      - Tue, 28 Sep 2021 19:05:16 GMT
       etag:
-      - '637547006991900000'
+      - '637684527160800000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -131,23 +131,23 @@ interactions:
       If-Match:
       - '*'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://servicebustestsbname.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestf27vchuqgf.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2017-04</id><title
-        type="text">eqkovcd</title><published>2021-04-22T15:05:00Z</published><updated>2021-04-22T15:05:00Z</updated><link
-        rel="self" href="https://servicebustestf27vchuqgf.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestappwyrpk4k.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2021-05</id><title
+        type="text">eqkovcd</title><published>2021-09-28T19:05:16Z</published><updated>2021-09-28T19:05:16Z</updated><link
+        rel="self" href="https://servicebustestappwyrpk4k.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2021-05"/><content
         type="application/xml"><SubscriptionDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT2M</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.477539S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2021-04-22T15:05:00.2068751Z</CreatedAt><UpdatedAt>2021-04-22T15:05:00.2068751Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><AutoDeleteOnIdle>P10675199DT2H48M5.477539S</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT2M</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.477539S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2021-09-28T19:05:16.7196705Z</CreatedAt><UpdatedAt>2021-09-28T19:05:16.7196705Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><AutoDeleteOnIdle>P10675199DT2H48M5.477539S</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><IsClientAffine>false</IsClientAffine></SubscriptionDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 22 Apr 2021 15:04:59 GMT
+      - Tue, 28 Sep 2021 19:05:16 GMT
       etag:
-      - '637547006991900000'
+      - '637684527160800000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -167,24 +167,24 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://servicebustestsbname.servicebus.windows.net/fjruid/subscriptions/eqkovcd?enrich=false&api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/fjruid/subscriptions/eqkovcd?enrich=false&api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustestf27vchuqgf.servicebus.windows.net/fjruid/subscriptions/eqkovcd?enrich=false&amp;api-version=2017-04</id><title
-        type="text">eqkovcd</title><published>2021-04-22T15:04:59Z</published><updated>2021-04-22T15:05:00Z</updated><link
-        rel="self" href="sb://servicebustestf27vchuqgf.servicebus.windows.net/fjruid/subscriptions/eqkovcd?enrich=false&amp;api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustestappwyrpk4k.servicebus.windows.net/fjruid/subscriptions/eqkovcd?enrich=false&amp;api-version=2021-05</id><title
+        type="text">eqkovcd</title><published>2021-09-28T19:05:16Z</published><updated>2021-09-28T19:05:16Z</updated><link
+        rel="self" href="sb://servicebustestappwyrpk4k.servicebus.windows.net/fjruid/subscriptions/eqkovcd?enrich=false&amp;api-version=2021-05"/><content
         type="application/xml"><SubscriptionDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT2M</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.477539S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2021-04-22T15:04:59.8612051Z</CreatedAt><UpdatedAt>2021-04-22T15:05:00.2049828Z</UpdatedAt><AccessedAt>2021-04-22T15:04:59.8612051Z</AccessedAt><CountDetails
-        xmlns:d3p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d3p1:ActiveMessageCount>0</d3p1:ActiveMessageCount><d3p1:DeadLetterMessageCount>0</d3p1:DeadLetterMessageCount><d3p1:ScheduledMessageCount>0</d3p1:ScheduledMessageCount><d3p1:TransferMessageCount>0</d3p1:TransferMessageCount><d3p1:TransferDeadLetterMessageCount>0</d3p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>P10675199DT2H48M5.477539S</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT2M</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.477539S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2021-09-28T19:05:16.5392247Z</CreatedAt><UpdatedAt>2021-09-28T19:05:16.7581952Z</UpdatedAt><AccessedAt>2021-09-28T19:05:16.54Z</AccessedAt><CountDetails
+        xmlns:d3p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d3p1:ActiveMessageCount>0</d3p1:ActiveMessageCount><d3p1:DeadLetterMessageCount>0</d3p1:DeadLetterMessageCount><d3p1:ScheduledMessageCount>0</d3p1:ScheduledMessageCount><d3p1:TransferMessageCount>0</d3p1:TransferMessageCount><d3p1:TransferDeadLetterMessageCount>0</d3p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>P10675199DT2H48M5.477539S</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><IsClientAffine>false</IsClientAffine></SubscriptionDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 22 Apr 2021 15:05:00 GMT
+      - Tue, 28 Sep 2021 19:05:16 GMT
       etag:
-      - '637547006991900000'
+      - '637684527160800000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -213,23 +213,23 @@ interactions:
       If-Match:
       - '*'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://servicebustestsbname.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestf27vchuqgf.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2017-04</id><title
-        type="text">eqkovcd</title><published>2021-04-22T15:05:00Z</published><updated>2021-04-22T15:05:00Z</updated><link
-        rel="self" href="https://servicebustestf27vchuqgf.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestappwyrpk4k.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2021-05</id><title
+        type="text">eqkovcd</title><published>2021-09-28T19:05:16Z</published><updated>2021-09-28T19:05:16Z</updated><link
+        rel="self" href="https://servicebustestappwyrpk4k.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2021-05"/><content
         type="application/xml"><SubscriptionDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT12S</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2021-04-22T15:05:00.7589009Z</CreatedAt><UpdatedAt>2021-04-22T15:05:00.7589009Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT12S</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2021-09-28T19:05:16.8446667Z</CreatedAt><UpdatedAt>2021-09-28T19:05:16.8446667Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><IsClientAffine>false</IsClientAffine></SubscriptionDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 22 Apr 2021 15:05:00 GMT
+      - Tue, 28 Sep 2021 19:05:16 GMT
       etag:
-      - '637547006991900000'
+      - '637684527160800000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -249,24 +249,24 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://servicebustestsbname.servicebus.windows.net/fjruid/subscriptions/eqkovcd?enrich=false&api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/fjruid/subscriptions/eqkovcd?enrich=false&api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustestf27vchuqgf.servicebus.windows.net/fjruid/subscriptions/eqkovcd?enrich=false&amp;api-version=2017-04</id><title
-        type="text">eqkovcd</title><published>2021-04-22T15:04:59Z</published><updated>2021-04-22T15:05:00Z</updated><link
-        rel="self" href="sb://servicebustestf27vchuqgf.servicebus.windows.net/fjruid/subscriptions/eqkovcd?enrich=false&amp;api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustestappwyrpk4k.servicebus.windows.net/fjruid/subscriptions/eqkovcd?enrich=false&amp;api-version=2021-05</id><title
+        type="text">eqkovcd</title><published>2021-09-28T19:05:16Z</published><updated>2021-09-28T19:05:16Z</updated><link
+        rel="self" href="sb://servicebustestappwyrpk4k.servicebus.windows.net/fjruid/subscriptions/eqkovcd?enrich=false&amp;api-version=2021-05"/><content
         type="application/xml"><SubscriptionDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT12S</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2021-04-22T15:04:59.8612051Z</CreatedAt><UpdatedAt>2021-04-22T15:05:00.8768405Z</UpdatedAt><AccessedAt>2021-04-22T15:04:59.8612051Z</AccessedAt><CountDetails
-        xmlns:d3p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d3p1:ActiveMessageCount>0</d3p1:ActiveMessageCount><d3p1:DeadLetterMessageCount>0</d3p1:DeadLetterMessageCount><d3p1:ScheduledMessageCount>0</d3p1:ScheduledMessageCount><d3p1:TransferMessageCount>0</d3p1:TransferMessageCount><d3p1:TransferDeadLetterMessageCount>0</d3p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT12S</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2021-09-28T19:05:16.5392247Z</CreatedAt><UpdatedAt>2021-09-28T19:05:16.8835796Z</UpdatedAt><AccessedAt>2021-09-28T19:05:16.54Z</AccessedAt><CountDetails
+        xmlns:d3p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d3p1:ActiveMessageCount>0</d3p1:ActiveMessageCount><d3p1:DeadLetterMessageCount>0</d3p1:DeadLetterMessageCount><d3p1:ScheduledMessageCount>0</d3p1:ScheduledMessageCount><d3p1:TransferMessageCount>0</d3p1:TransferMessageCount><d3p1:TransferDeadLetterMessageCount>0</d3p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><IsClientAffine>false</IsClientAffine></SubscriptionDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 22 Apr 2021 15:05:00 GMT
+      - Tue, 28 Sep 2021 19:05:16 GMT
       etag:
-      - '637547006991900000'
+      - '637684527160800000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -280,7 +280,7 @@ interactions:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
       <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
-      type="application/xml"><SubscriptionDescription><LockDuration>PT12S</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><ForwardTo>sb://servicebustestf27vchuqgf.servicebus.windows.net/fjruid</ForwardTo><ForwardDeadLetteredMessagesTo>sb://servicebustestf27vchuqgf.servicebus.windows.net/fjruid</ForwardDeadLetteredMessagesTo><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></ns0:content></ns0:entry>'
+      type="application/xml"><SubscriptionDescription><LockDuration>PT12S</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><ForwardTo>sb://servicebustestappwyrpk4k.servicebus.windows.net/fjruid</ForwardTo><ForwardDeadLetteredMessagesTo>sb://servicebustestappwyrpk4k.servicebus.windows.net/fjruid</ForwardDeadLetteredMessagesTo><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
@@ -295,27 +295,27 @@ interactions:
       If-Match:
       - '*'
       ServiceBusDlqSupplementaryAuthorization:
-      - SharedAccessSignature sr=sb%3A%2F%2Fservicebustestf27vchuqgf.servicebus.windows.net%2Ffjruid&sig=FwaFbEXORavfgL47hbYM5djMQSSvoy4%2bQ6XOjrEujI8%3d&se=1619107501&skn=RootManageSharedAccessKey
+      - SharedAccessSignature sr=sb%3A%2F%2Fservicebustestappwyrpk4k.servicebus.windows.net%2Ffjruid&sig=XwmCkZBJX5aDufNd3%2bC6mDzGEOtt5xoEmFj9kUqNLUM%3d&se=1632859516&skn=RootManageSharedAccessKey
       ServiceBusSupplementaryAuthorization:
-      - SharedAccessSignature sr=sb%3A%2F%2Fservicebustestf27vchuqgf.servicebus.windows.net%2Ffjruid&sig=FwaFbEXORavfgL47hbYM5djMQSSvoy4%2bQ6XOjrEujI8%3d&se=1619107501&skn=RootManageSharedAccessKey
+      - SharedAccessSignature sr=sb%3A%2F%2Fservicebustestappwyrpk4k.servicebus.windows.net%2Ffjruid&sig=XwmCkZBJX5aDufNd3%2bC6mDzGEOtt5xoEmFj9kUqNLUM%3d&se=1632859516&skn=RootManageSharedAccessKey
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://servicebustestsbname.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestf27vchuqgf.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2017-04</id><title
-        type="text">eqkovcd</title><published>2021-04-22T15:05:01Z</published><updated>2021-04-22T15:05:01Z</updated><link
-        rel="self" href="https://servicebustestf27vchuqgf.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestappwyrpk4k.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2021-05</id><title
+        type="text">eqkovcd</title><published>2021-09-28T19:05:16Z</published><updated>2021-09-28T19:05:16Z</updated><link
+        rel="self" href="https://servicebustestappwyrpk4k.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2021-05"/><content
         type="application/xml"><SubscriptionDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT12S</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><ForwardTo>sb://servicebustestf27vchuqgf.servicebus.windows.net/fjruid</ForwardTo><CreatedAt>2021-04-22T15:05:01.4307831Z</CreatedAt><UpdatedAt>2021-04-22T15:05:01.4307831Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><ForwardDeadLetteredMessagesTo>sb://servicebustestf27vchuqgf.servicebus.windows.net/fjruid</ForwardDeadLetteredMessagesTo><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT12S</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><ForwardTo>sb://servicebustestappwyrpk4k.servicebus.windows.net/fjruid</ForwardTo><CreatedAt>2021-09-28T19:05:16.9696671Z</CreatedAt><UpdatedAt>2021-09-28T19:05:16.9696671Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><ForwardDeadLetteredMessagesTo>sb://servicebustestappwyrpk4k.servicebus.windows.net/fjruid</ForwardDeadLetteredMessagesTo><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><IsClientAffine>false</IsClientAffine></SubscriptionDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 22 Apr 2021 15:05:01 GMT
+      - Tue, 28 Sep 2021 19:05:16 GMT
       etag:
-      - '637547006991900000'
+      - '637684527160800000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -335,24 +335,24 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://servicebustestsbname.servicebus.windows.net/fjruid/subscriptions/eqkovcd?enrich=false&api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/fjruid/subscriptions/eqkovcd?enrich=false&api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustestf27vchuqgf.servicebus.windows.net/fjruid/subscriptions/eqkovcd?enrich=false&amp;api-version=2017-04</id><title
-        type="text">eqkovcd</title><published>2021-04-22T15:04:59Z</published><updated>2021-04-22T15:05:01Z</updated><link
-        rel="self" href="sb://servicebustestf27vchuqgf.servicebus.windows.net/fjruid/subscriptions/eqkovcd?enrich=false&amp;api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustestappwyrpk4k.servicebus.windows.net/fjruid/subscriptions/eqkovcd?enrich=false&amp;api-version=2021-05</id><title
+        type="text">eqkovcd</title><published>2021-09-28T19:05:16Z</published><updated>2021-09-28T19:05:16Z</updated><link
+        rel="self" href="sb://servicebustestappwyrpk4k.servicebus.windows.net/fjruid/subscriptions/eqkovcd?enrich=false&amp;api-version=2021-05"/><content
         type="application/xml"><SubscriptionDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT12S</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><ForwardTo>sb://servicebustestf27vchuqgf.servicebus.windows.net/fjruid</ForwardTo><CreatedAt>2021-04-22T15:04:59.8612051Z</CreatedAt><UpdatedAt>2021-04-22T15:05:01.4393735Z</UpdatedAt><AccessedAt>2021-04-22T15:04:59.8612051Z</AccessedAt><CountDetails
-        xmlns:d3p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d3p1:ActiveMessageCount>0</d3p1:ActiveMessageCount><d3p1:DeadLetterMessageCount>0</d3p1:DeadLetterMessageCount><d3p1:ScheduledMessageCount>0</d3p1:ScheduledMessageCount><d3p1:TransferMessageCount>0</d3p1:TransferMessageCount><d3p1:TransferDeadLetterMessageCount>0</d3p1:TransferDeadLetterMessageCount></CountDetails><ForwardDeadLetteredMessagesTo>sb://servicebustestf27vchuqgf.servicebus.windows.net/fjruid</ForwardDeadLetteredMessagesTo><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT12S</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><ForwardTo>sb://servicebustestappwyrpk4k.servicebus.windows.net/fjruid</ForwardTo><CreatedAt>2021-09-28T19:05:16.5392247Z</CreatedAt><UpdatedAt>2021-09-28T19:05:16.9773627Z</UpdatedAt><AccessedAt>2021-09-28T19:05:16.54Z</AccessedAt><CountDetails
+        xmlns:d3p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d3p1:ActiveMessageCount>0</d3p1:ActiveMessageCount><d3p1:DeadLetterMessageCount>0</d3p1:DeadLetterMessageCount><d3p1:ScheduledMessageCount>0</d3p1:ScheduledMessageCount><d3p1:TransferMessageCount>0</d3p1:TransferMessageCount><d3p1:TransferDeadLetterMessageCount>0</d3p1:TransferDeadLetterMessageCount></CountDetails><ForwardDeadLetteredMessagesTo>sb://servicebustestappwyrpk4k.servicebus.windows.net/fjruid</ForwardDeadLetteredMessagesTo><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><IsClientAffine>false</IsClientAffine></SubscriptionDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 22 Apr 2021 15:05:01 GMT
+      - Tue, 28 Sep 2021 19:05:16 GMT
       etag:
-      - '637547006991900000'
+      - '637684527160800000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -381,23 +381,23 @@ interactions:
       If-Match:
       - '*'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://servicebustestsbname.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestf27vchuqgf.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2017-04</id><title
-        type="text">eqkovcd</title><published>2021-04-22T15:05:01Z</published><updated>2021-04-22T15:05:01Z</updated><link
-        rel="self" href="https://servicebustestf27vchuqgf.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestappwyrpk4k.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2021-05</id><title
+        type="text">eqkovcd</title><published>2021-09-28T19:05:17Z</published><updated>2021-09-28T19:05:17Z</updated><link
+        rel="self" href="https://servicebustestappwyrpk4k.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2021-05"/><content
         type="application/xml"><SubscriptionDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT17S</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>PT16M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>15</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2021-04-22T15:05:01.9777217Z</CreatedAt><UpdatedAt>2021-04-22T15:05:01.9777217Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><AutoDeleteOnIdle>PT15M</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT17S</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>PT16M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>15</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2021-09-28T19:05:17.1415451Z</CreatedAt><UpdatedAt>2021-09-28T19:05:17.1415451Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><AutoDeleteOnIdle>PT15M</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><IsClientAffine>false</IsClientAffine></SubscriptionDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 22 Apr 2021 15:05:01 GMT
+      - Tue, 28 Sep 2021 19:05:16 GMT
       etag:
-      - '637547006991900000'
+      - '637684527160800000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -417,24 +417,24 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://servicebustestsbname.servicebus.windows.net/fjruid/subscriptions/eqkovcd?enrich=false&api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/fjruid/subscriptions/eqkovcd?enrich=false&api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustestf27vchuqgf.servicebus.windows.net/fjruid/subscriptions/eqkovcd?enrich=false&amp;api-version=2017-04</id><title
-        type="text">eqkovcd</title><published>2021-04-22T15:04:59Z</published><updated>2021-04-22T15:05:02Z</updated><link
-        rel="self" href="sb://servicebustestf27vchuqgf.servicebus.windows.net/fjruid/subscriptions/eqkovcd?enrich=false&amp;api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustestappwyrpk4k.servicebus.windows.net/fjruid/subscriptions/eqkovcd?enrich=false&amp;api-version=2021-05</id><title
+        type="text">eqkovcd</title><published>2021-09-28T19:05:16Z</published><updated>2021-09-28T19:05:17Z</updated><link
+        rel="self" href="sb://servicebustestappwyrpk4k.servicebus.windows.net/fjruid/subscriptions/eqkovcd?enrich=false&amp;api-version=2021-05"/><content
         type="application/xml"><SubscriptionDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT17S</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>PT16M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>15</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2021-04-22T15:04:59.8612051Z</CreatedAt><UpdatedAt>2021-04-22T15:05:02.0018556Z</UpdatedAt><AccessedAt>2021-04-22T15:04:59.8612051Z</AccessedAt><CountDetails
-        xmlns:d3p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d3p1:ActiveMessageCount>0</d3p1:ActiveMessageCount><d3p1:DeadLetterMessageCount>0</d3p1:DeadLetterMessageCount><d3p1:ScheduledMessageCount>0</d3p1:ScheduledMessageCount><d3p1:TransferMessageCount>0</d3p1:TransferMessageCount><d3p1:TransferDeadLetterMessageCount>0</d3p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>PT15M</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT17S</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>PT16M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>15</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2021-09-28T19:05:16.5392247Z</CreatedAt><UpdatedAt>2021-09-28T19:05:17.1648524Z</UpdatedAt><AccessedAt>2021-09-28T19:05:16.54Z</AccessedAt><CountDetails
+        xmlns:d3p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d3p1:ActiveMessageCount>0</d3p1:ActiveMessageCount><d3p1:DeadLetterMessageCount>0</d3p1:DeadLetterMessageCount><d3p1:ScheduledMessageCount>0</d3p1:ScheduledMessageCount><d3p1:TransferMessageCount>0</d3p1:TransferMessageCount><d3p1:TransferDeadLetterMessageCount>0</d3p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>PT15M</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><IsClientAffine>false</IsClientAffine></SubscriptionDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 22 Apr 2021 15:05:01 GMT
+      - Tue, 28 Sep 2021 19:05:16 GMT
       etag:
-      - '637547006991900000'
+      - '637684527160800000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -456,9 +456,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://servicebustestsbname.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/fjruid/subscriptions/eqkovcd?api-version=2021-05
   response:
     body:
       string: ''
@@ -466,9 +466,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Apr 2021 15:05:02 GMT
+      - Tue, 28 Sep 2021 19:05:16 GMT
       etag:
-      - '637547006991900000'
+      - '637684527160800000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -488,9 +488,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://servicebustestsbname.servicebus.windows.net/fjruid?api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/fjruid?api-version=2021-05
   response:
     body:
       string: ''
@@ -498,9 +498,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Apr 2021 15:05:02 GMT
+      - Tue, 28 Sep 2021 19:05:17 GMT
       etag:
-      - '637547006991900000'
+      - '637684527160800000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
