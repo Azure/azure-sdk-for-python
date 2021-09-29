@@ -36,7 +36,7 @@ This table shows the relationship between SDK versions and supported API version
 
 > Note: Starting with version 2021-09-30-preview, a new set of clients were introduced to leverage the newest features
 > of the Form Recognizer service. Please see the [Migration Guide](TODO) for detailed instructions on how to update application
-> code from client library version 3.1.X or lower to the latest version. Additionally, see the [Changelog](TODO) for more detailed information.
+> code from client library version 3.1.X or lower to the latest version. Additionally, see the [Changelog][changelog] for more detailed information.
 > The below table describes the relationship of each client and its supported API version(s):
 
 |API version|Supported clients
@@ -521,6 +521,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [service_recognize_identity_documents]: https://aka.ms/formrecognizer/iddocumentfields
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
 [sample_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples
+[changelog]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/CHANGELOG.md
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
