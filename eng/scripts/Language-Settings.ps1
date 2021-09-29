@@ -354,7 +354,6 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
     if ($Mode -eq 'preview') {
       $packageVersion = "==$($package.VersionPreview)"
     }
-    
     if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion -workingDirectory $installValidationFolder)) {
       LogWarning "Package is not valid: $packageName. Cannot onboard."
       continue
