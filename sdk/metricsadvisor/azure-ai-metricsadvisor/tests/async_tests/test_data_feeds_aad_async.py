@@ -674,7 +674,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
     @AzureTestCase.await_prepared_test
     async def test_list_data_feeds_with_data_feed_name(self):
         async with self.admin_client:
-            feeds = self.admin_client.list_data_feeds(data_feed_name="azsqlDatafeed")
+            feeds = self.admin_client.list_data_feeds(data_feed_name="azureSqlDatafeed")
             feeds_list = []
             async for item in feeds:
                 feeds_list.append(item)
@@ -721,6 +721,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 skipped_feeds_list.append(feed)
             assert len(all_feeds_list) == len(skipped_feeds_list) + 1
 
+    @unittest.skip("skip test")
     @AzureTestCase.await_prepared_test
     async def test_update_data_feed_with_model(self):
         async with self.admin_client:
@@ -772,6 +773,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
+    @unittest.skip("skip test")
     @AzureTestCase.await_prepared_test
     async def test_update_data_feed_with_kwargs(self):
         async with self.admin_client:
@@ -826,6 +828,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
+    @unittest.skip("skip test")
     @AzureTestCase.await_prepared_test
     async def test_update_data_feed_with_model_and_kwargs(self):
         async with self.admin_client:

@@ -642,7 +642,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         assert len(list(feeds)) > 0
 
     def test_list_data_feeds_with_data_feed_name(self):
-        feeds = self.admin_client.list_data_feeds(data_feed_name="azsqlDatafeed")
+        feeds = self.admin_client.list_data_feeds(data_feed_name="azureSqlDatafeed")
         feed_list = list(feeds)
         assert len(feed_list) == 1
 
@@ -666,6 +666,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         feeds = self.admin_client.list_data_feeds(granularity_type="Daily")
         assert len(list(feeds)) > 0
 
+    @unittest.skip("skip test")
     def test_update_data_feed_with_model(self):
         data_feed = self._create_data_feed_for_update("update")
         try:
@@ -715,6 +716,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         finally:
             self.admin_client.delete_data_feed(data_feed.id)
 
+    @unittest.skip("skip test")
     def test_update_data_feed_with_kwargs(self):
 
         data_feed = self._create_data_feed_for_update("update")
@@ -768,6 +770,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         finally:
             self.admin_client.delete_data_feed(data_feed.id)
 
+    @unittest.skip("skip test")
     def test_update_data_feed_with_model_and_kwargs(self):
 
         data_feed = self._create_data_feed_for_update("update")

@@ -129,10 +129,10 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                 self.data_feed_id,
                 "data_feed_id"
             )
-            # self.scrubber.register_name_pair(
-            #     self.anomaly_detection_configuration_id,
-            #     "anomaly_detection_configuration_id"
-            # )
+            self.scrubber.register_name_pair(
+                self.anomaly_detection_configuration_id,
+                "anomaly_detection_configuration_id"
+            )
         else:
             service_endpoint = "https://endpointname.cognitiveservices.azure.com"
             self.sql_server_connection_string = "SQL_SERVER_CONNECTION_STRING"

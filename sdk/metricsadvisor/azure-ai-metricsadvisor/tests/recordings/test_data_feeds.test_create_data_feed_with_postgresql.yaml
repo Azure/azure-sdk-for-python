@@ -12,7 +12,7 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       Content-Length:
@@ -20,29 +20,29 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b5 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds
+    uri: https://ga-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 99795482-06d3-4eb3-8557-97f8c202f677
+      - 347db86c-d7e5-4f17-8262-933b5330cd7a
       content-length:
       - '0'
       date:
-      - Fri, 11 Jun 2021 23:31:17 GMT
+      - Wed, 29 Sep 2021 19:35:10 GMT
       location:
-      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/cc93c321-b5f3-42eb-9466-d4413343e44b
+      - https://ga-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/461aff51-06c6-497a-b603-3e1ab58a8143
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '723'
+      - '469'
       x-request-id:
-      - 99795482-06d3-4eb3-8557-97f8c202f677
+      - 347db86c-d7e5-4f17-8262-933b5330cd7a
     status:
       code: 201
       message: Created
@@ -52,34 +52,34 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b5 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/cc93c321-b5f3-42eb-9466-d4413343e44b
+    uri: https://ga-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/461aff51-06c6-497a-b603-3e1ab58a8143
   response:
     body:
-      string: '{"dataFeedId":"cc93c321-b5f3-42eb-9466-d4413343e44b","dataFeedName":"postgresql419b159b","metrics":[{"metricId":"5bc18e09-4fa3-4810-b6ea-faebc79a6089","metricName":"cost","metricDisplayName":"cost","metricDescription":""},{"metricId":"1926d914-c7ab-4530-851f-233b0c1e455d","metricName":"revenue","metricDisplayName":"revenue","metricDescription":""}],"dimension":[{"dimensionName":"category","dimensionDisplayName":"category"},{"dimensionName":"city","dimensionDisplayName":"city"}],"dataStartFrom":"2019-01-01T00:00:00Z","dataSourceType":"PostgreSql","timestampColumn":"","startOffsetInSeconds":0,"maxQueryPerMinute":30.0,"granularityName":"Daily","needRollup":"NoRollup","fillMissingPointType":"PreviousValue","fillMissingPointValue":0.0,"rollUpMethod":"None","dataFeedDescription":"","stopRetryAfterInSeconds":-1,"minRetryIntervalInSeconds":-1,"maxConcurrency":-1,"viewMode":"Private","admins":["krpratic@microsoft.com"],"viewers":[],"creator":"krpratic@microsoft.com","status":"Active","createdTime":"2021-06-11T23:31:17Z","isAdmin":true,"actionLinkTemplate":"","dataSourceParameter":{"query":"''select
+      string: '{"dataFeedId":"461aff51-06c6-497a-b603-3e1ab58a8143","dataFeedName":"postgresql419b159b","metrics":[{"metricId":"519ab263-715d-4301-8677-c9ed32936b2e","metricName":"cost","metricDisplayName":"cost","metricDescription":""},{"metricId":"464e1d4e-69de-4462-8aaf-f32acf7065a6","metricName":"revenue","metricDisplayName":"revenue","metricDescription":""}],"dimension":[{"dimensionName":"category","dimensionDisplayName":"category"},{"dimensionName":"city","dimensionDisplayName":"city"}],"dataStartFrom":"2019-01-01T00:00:00Z","dataSourceType":"PostgreSql","timestampColumn":"","startOffsetInSeconds":0,"maxQueryPerMinute":30.0,"granularityName":"Daily","needRollup":"NoRollup","fillMissingPointType":"PreviousValue","fillMissingPointValue":0.0,"rollUpMethod":"None","dataFeedDescription":"","stopRetryAfterInSeconds":-1,"minRetryIntervalInSeconds":-1,"maxConcurrency":-1,"viewMode":"Private","admins":["xiangyan@microsoft.com"],"viewers":[],"creator":"xiangyan@microsoft.com","status":"Active","createdTime":"2021-09-29T19:35:10Z","isAdmin":true,"actionLinkTemplate":"","dataSourceParameter":{"query":"''select
         * from adsample2 where Timestamp = @StartTime''"},"authenticationType":"Basic"}'
     headers:
       apim-request-id:
-      - fc0dacb0-1eac-455d-b9cf-89161b7c1197
+      - 6a85a3c1-025d-4b80-91b1-1bfb737321fc
       content-length:
       - '1184'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Jun 2021 23:31:17 GMT
+      - Wed, 29 Sep 2021 19:35:10 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '173'
+      - '155'
       x-request-id:
-      - fc0dacb0-1eac-455d-b9cf-89161b7c1197
+      - 6a85a3c1-025d-4b80-91b1-1bfb737321fc
     status:
       code: 200
       message: OK
@@ -89,33 +89,33 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b5 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/cc93c321-b5f3-42eb-9466-d4413343e44b
+    uri: https://ga-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/461aff51-06c6-497a-b603-3e1ab58a8143
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 4017451d-ea60-416d-bf72-96f64f9758f4
+      - 24c671f1-9150-49bb-ab6e-94ce4be008ed
       content-length:
       - '0'
       date:
-      - Fri, 11 Jun 2021 23:31:18 GMT
+      - Wed, 29 Sep 2021 19:35:10 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '362'
+      - '317'
       x-request-id:
-      - 4017451d-ea60-416d-bf72-96f64f9758f4
+      - 24c671f1-9150-49bb-ab6e-94ce4be008ed
     status:
       code: 204
       message: No Content
