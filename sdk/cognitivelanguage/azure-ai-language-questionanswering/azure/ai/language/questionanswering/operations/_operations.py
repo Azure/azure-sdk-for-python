@@ -257,14 +257,14 @@ class QuestionAnsweringClientOperationsMixin(object):
     @overload
     def query_text(
         self,
-        options,  # type: "_models.TextQueryOptions"
+        options,  # type: "_models.QueryTextOptions"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.TextAnswers"
         """Answers the specified question using the provided text in the body.
 
         :param options: Positional-only post body of the request.
-        :type options: ~azure.ai.language.questionanswering.models.TextQueryOptions
+        :type options: ~azure.ai.language.questionanswering.models.QueryTextOptions
         :return: TextAnswers
         :rtype: ~azure.ai.language.questionanswering.models.TextAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -287,11 +287,6 @@ class QuestionAnsweringClientOperationsMixin(object):
         example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
         default.
         :paramtype language: str
-        :keyword string_index_type: Specifies the method used to interpret string offsets.  Defaults to
-        Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
-        https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
-        "UnicodeCodePoint", "Utf16CodeUnit". Default value: "TextElements_v8".
-        :paramtype string_index_type: str or ~azure.ai.language.questionanswering.models.StringIndexType
         :return: TextAnswers
         :rtype: ~azure.ai.language.questionanswering.models.TextAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -300,7 +295,7 @@ class QuestionAnsweringClientOperationsMixin(object):
 
     def query_text(
         self,
-        *args,  # type: "_models.TextQueryOptions"
+        *args,  # type: "_models.QueryTextOptions"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.TextAnswers"
@@ -308,7 +303,7 @@ class QuestionAnsweringClientOperationsMixin(object):
 
         :param options: Post body of the request. Provide either `options`, OR
          individual keyword arguments. If both are provided, only the options object will be used.
-        :type options: ~azure.ai.language.questionanswering.models.TextQueryOptions
+        :type options: ~azure.ai.language.questionanswering.models.QueryTextOptions
         :keyword question: User question to query against the given text records. Provide either `options`,
          OR individual keyword arguments. If both are provided, only the options object will be used.
         :paramtype question: str
@@ -318,20 +313,14 @@ class QuestionAnsweringClientOperationsMixin(object):
         :keyword language: Language of the text records. This is BCP-47 representation of a language. For
          example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as default.
         :paramtype language: str
-        :keyword string_index_type: Specifies the method used to interpret string offsets.  Defaults to
-         Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
-         https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
-         "UnicodeCodePoint", "Utf16CodeUnit". Default value: "TextElements_v8".
-        :paramtype string_index_type: str or ~azure.ai.language.questionanswering.models.StringIndexType
         :return: TextAnswers
         :rtype: ~azure.ai.language.questionanswering.models.TextAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        options = _get_positional_body(*args, **kwargs) or _models.TextQueryOptions(
+        options = _get_positional_body(*args, **kwargs) or _models.QueryTextOptions(
             question=kwargs.pop("question"),
             records=kwargs.pop("records"),
             language=kwargs.pop("language", None),
-            string_index_type=kwargs.pop("string_index_type", "TextElements_v8")
         )
         try:
             options['records'] = _validate_text_records(options['records'])
@@ -343,7 +332,7 @@ class QuestionAnsweringClientOperationsMixin(object):
         error_map.update(kwargs.pop("error_map", {}))
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(options, "TextQueryOptions")
+        json = self._serialize.body(options, "QueryTextOptions")
 
         request = build_query_text_request(
             content_type=content_type,

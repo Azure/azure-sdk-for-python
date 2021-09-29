@@ -197,11 +197,11 @@ class QuestionAnsweringClientOperationsMixin:
     query_knowledge_base.metadata = {"url": "/:query-knowledgebases"}  # type: ignore
 
     @overload
-    async def query_text(self, options: "_models.TextQueryOptions", **kwargs: Any) -> "_models.TextAnswers":
+    async def query_text(self, options: "_models.QueryTextOptions", **kwargs: Any) -> "_models.TextAnswers":
         """Answers the specified question using the provided text in the body.
 
         :param options: Positional-only post body of the request.
-        :type options: ~azure.ai.language.questionanswering.models.TextQueryOptions
+        :type options: ~azure.ai.language.questionanswering.models.QueryTextOptions
         :return: TextAnswers
         :rtype: ~azure.ai.language.questionanswering.models.TextAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -246,7 +246,7 @@ class QuestionAnsweringClientOperationsMixin:
 
         :param options: Post body of the request. Provide either `options`, OR
          individual keyword arguments. If both are provided, only the options object will be used.
-        :type options: ~azure.ai.language.questionanswering.models.TextQueryOptions
+        :type options: ~azure.ai.language.questionanswering.models.QueryTextOptions
         :keyword question: User question to query against the given text records. Provide either `options`, OR
          individual keyword arguments. If both are provided, only the options object will be used.
         :paramtype question: str
@@ -265,7 +265,7 @@ class QuestionAnsweringClientOperationsMixin:
         :rtype: ~azure.ai.language.questionanswering.models.TextAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        options = _get_positional_body(*args, **kwargs) or _models.TextQueryOptions(
+        options = _get_positional_body(*args, **kwargs) or _models.QueryTextOptions(
             question=kwargs.pop("question"),
             records=kwargs.pop("records"),
             language=kwargs.pop("language", None),
@@ -281,7 +281,7 @@ class QuestionAnsweringClientOperationsMixin:
         error_map.update(kwargs.pop("error_map", {}))
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(options, "TextQueryOptions")
+        json = self._serialize.body(options, "QueryTextOptions")
 
         request = build_query_text_request(
             content_type=content_type,

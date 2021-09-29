@@ -17,7 +17,7 @@ from testcase import (
 from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
 from azure.ai.language.questionanswering.operations._operations import build_query_text_request, build_query_knowledge_base_request
 from azure.ai.language.questionanswering.models import (
-    TextQueryOptions,
+    QueryTextOptions,
     TextRecord
 )
 
@@ -69,7 +69,7 @@ class QnATests(QuestionAnsweringTest):
     @GlobalQuestionAnsweringAccountPreparer()
     async def test_query_text(self, qna_account, qna_key):
         client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
-        params = TextQueryOptions(
+        params = QueryTextOptions(
             question="What is the meaning of life?",
             records=[
                 TextRecord(

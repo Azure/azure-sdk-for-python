@@ -17,7 +17,7 @@ from testcase import (
 from azure.ai.language.questionanswering import QuestionAnsweringClient
 from azure.ai.language.questionanswering.operations._operations import build_query_text_request, build_query_knowledge_base_request
 from azure.ai.language.questionanswering.models import (
-    TextQueryOptions,
+    QueryTextOptions,
     TextRecord
 )
 
@@ -67,7 +67,7 @@ class QnATests(QuestionAnsweringTest):
     @GlobalQuestionAnsweringAccountPreparer()
     def test_query_text(self, qna_account, qna_key):
         client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
-        params = TextQueryOptions(
+        params = QueryTextOptions(
             question="What is the meaning of life?",
             records=[
                 TextRecord(
@@ -187,4 +187,3 @@ class QnATests(QuestionAnsweringTest):
                 client.query_text("positional_one", "positional_two")
             with pytest.raises(TypeError):
                 client.query_text("positional_options_bag", options="options bag by name")
-            
