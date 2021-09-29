@@ -50,7 +50,6 @@ from ._question_answering_client_enums import (
     InnerErrorCode,
     LogicalOperationKind,
     RankerType,
-    StringIndexType,
 )
 
 __all__ = [
@@ -76,5 +75,4 @@ __all__ = [
     "InnerErrorCode",
     "LogicalOperationKind",
     "RankerType",
-    "StringIndexType",
 ]

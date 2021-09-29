@@ -97,3 +97,13 @@ directive:
     transform: >
         $["x-ms-client-name"] = "QueryTextOptions";
 ```
+
+### Delete `StringIndexType`
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["TextQueryOptions"]
+    transform: >
+        delete $.properties["stringIndexType"]
+```

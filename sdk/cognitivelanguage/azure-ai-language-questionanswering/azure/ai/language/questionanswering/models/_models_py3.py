@@ -706,11 +706,6 @@ class QueryTextOptions(msrest.serialization.Model):
      example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
      default.
     :vartype language: str
-    :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
-     Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
-     https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
-     "UnicodeCodePoint", "Utf16CodeUnit". Default value: "TextElements_v8".
-    :vartype string_index_type: str or ~azure.ai.language.questionanswering.models.StringIndexType
     """
 
     _validation = {
@@ -725,15 +720,7 @@ class QueryTextOptions(msrest.serialization.Model):
         "string_index_type": {"key": "stringIndexType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        question: str,
-        records: List["TextRecord"],
-        language: Optional[str] = None,
-        string_index_type: Optional[Union[str, "StringIndexType"]] = "TextElements_v8",
-        **kwargs
-    ):
+    def __init__(self, *, question: str, records: List["TextRecord"], language: Optional[str] = None, **kwargs):
         """
         :keyword question: Required. User question to query against the given text records.
         :paramtype question: str
@@ -743,18 +730,12 @@ class QueryTextOptions(msrest.serialization.Model):
          For example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
          default.
         :paramtype language: str
-        :keyword string_index_type: Specifies the method used to interpret string offsets.  Defaults to
-         Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
-         https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
-         "UnicodeCodePoint", "Utf16CodeUnit". Default value: "TextElements_v8".
-        :paramtype string_index_type: str or
-         ~azure.ai.language.questionanswering.models.StringIndexType
         """
         super(QueryTextOptions, self).__init__(**kwargs)
         self.question = question
         self.records = records
         self.language = language
-        self.string_index_type = string_index_type
+        self.string_index_type = "UnicodeCodePoint"
 
 
 class TextAnswer(msrest.serialization.Model):

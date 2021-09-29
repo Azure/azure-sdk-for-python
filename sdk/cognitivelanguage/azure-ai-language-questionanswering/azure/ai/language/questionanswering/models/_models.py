@@ -617,11 +617,6 @@ class QueryTextOptions(msrest.serialization.Model):
      example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
      default.
     :vartype language: str
-    :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
-     Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
-     https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
-     "UnicodeCodePoint", "Utf16CodeUnit". Default value: "TextElements_v8".
-    :vartype string_index_type: str or ~azure.ai.language.questionanswering.models.StringIndexType
     """
 
     _validation = {
@@ -646,18 +641,12 @@ class QueryTextOptions(msrest.serialization.Model):
          For example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
          default.
         :paramtype language: str
-        :keyword string_index_type: Specifies the method used to interpret string offsets.  Defaults to
-         Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
-         https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
-         "UnicodeCodePoint", "Utf16CodeUnit". Default value: "TextElements_v8".
-        :paramtype string_index_type: str or
-         ~azure.ai.language.questionanswering.models.StringIndexType
         """
         super(QueryTextOptions, self).__init__(**kwargs)
         self.question = kwargs["question"]
         self.records = kwargs["records"]
         self.language = kwargs.get("language", None)
-        self.string_index_type = kwargs.get("string_index_type", "TextElements_v8")
+        self.string_index_type = "UnicodeCodePoint"
 
 
 class TextAnswer(msrest.serialization.Model):
