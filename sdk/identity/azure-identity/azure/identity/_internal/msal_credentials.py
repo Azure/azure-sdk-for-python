@@ -10,6 +10,7 @@ from .msal_client import MsalClient
 from .._constants import EnvironmentVariables
 from .._internal import get_default_authority, normalize_authority, resolve_tenant, validate_tenant_id
 from .._persistent_cache import _load_persistent_cache
+from .._constants import EnvironmentVariables
 
 try:
     from typing import TYPE_CHECKING
@@ -33,7 +34,11 @@ class MsalCredential(object):
         )
         self._tenant_id = kwargs.pop("tenant_id", None) or "organizations"
         validate_tenant_id(self._tenant_id)
-        self._allow_multitenant = kwargs.pop("allow_multitenant_authentication", False)
+        if self._tenant_id == "adfs":
+            self._allow_multitenant = False
+        else:
+            disable_multitenant = os.environ.get(EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH, False)
+            self._allow_multitenant = not disable_multitenant
 
         self._client = MsalClient(**kwargs)
         self._client_applications = {}  # type: Dict[str, msal.ClientApplication]

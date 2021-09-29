@@ -20,6 +20,7 @@ from azure.core.exceptions import ClientAuthenticationError
 from .. import CredentialUnavailableError
 from .._internal import _scopes_to_resource, resolve_tenant
 from .._internal.decorators import log_get_token
+from .._constants import EnvironmentVariables
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
@@ -35,14 +36,11 @@ class AzureCliCredential(object):
     """Authenticates by requesting a token from the Azure CLI.
 
     This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.
-
-    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
-        the identity logged in to the Azure CLI is registered in. When False, which is the default, the credential will
-        acquire tokens only from the tenant of the Azure CLI's active subscription.
     """
 
     def __init__(self, **kwargs):
-        self._allow_multitenant = kwargs.get("allow_multitenant_authentication", False)
+        disable_multitenant = os.environ.get(EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH, False)
+        self._allow_multitenant = not disable_multitenant
 
     def __enter__(self):
         return self
@@ -63,8 +61,7 @@ class AzureCliCredential(object):
         also handle token caching because this credential doesn't cache the tokens it acquires.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
-        :keyword str tenant_id: optional tenant to include in the token request. If **allow_multitenant_authentication**
-            is False, specifying a tenant with this argument may raise an exception.
+        :keyword str tenant_id: optional tenant to include in the token request.
 
         :rtype: :class:`azure.core.credentials.AccessToken`
 

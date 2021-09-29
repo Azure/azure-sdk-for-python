@@ -3,11 +3,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
+import os
 import sys
 from typing import cast, TYPE_CHECKING
 
 from .._internal import AsyncContextManager
 from .._internal.decorators import log_get_token_async
+from ..._constants import EnvironmentVariables
 from ... import CredentialUnavailableError
 from ..._credentials.azure_powershell import (
     AzurePowerShellCredential as _SyncCredential,
@@ -28,14 +30,11 @@ class AzurePowerShellCredential(AsyncContextManager):
     """Authenticates by requesting a token from Azure PowerShell.
 
     This requires previously logging in to Azure via "Connect-AzAccount", and will use the currently logged in identity.
-
-    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
-        the identity logged in to Azure PowerShell is registered in. When False, which is the default, the credential
-        will acquire tokens only from the tenant of Azure PowerShell's active subscription.
     """
 
     def __init__(self, **kwargs: "Any") -> None:
-        self._allow_multitenant = kwargs.get("allow_multitenant_authentication", False)
+        disable_multitenant = os.environ.get(EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH, False)
+        self._allow_multitenant = not disable_multitenant
 
     @log_get_token_async
     async def get_token(
@@ -47,8 +46,7 @@ class AzurePowerShellCredential(AsyncContextManager):
         also handle token caching because this credential doesn't cache the tokens it acquires.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
-        :keyword str tenant_id: optional tenant to include in the token request. If **allow_multitenant_authentication**
-            is False, specifying a tenant with this argument may raise an exception.
+        :keyword str tenant_id: optional tenant to include in the token request.
 
         :rtype: :class:`azure.core.credentials.AccessToken`
 

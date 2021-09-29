@@ -93,8 +93,6 @@ class RecordedTests(OboRecordedTestCase):
 
 
 def test_allow_multitenant_authentication():
-    """When allow_multitenant_authentication is True, the credential should respect get_token(tenant_id=...)"""
-
     first_tenant = "first-tenant"
     first_token = "***"
     second_tenant = "second-tenant"
@@ -113,7 +111,7 @@ def test_allow_multitenant_authentication():
 
     transport = Mock(send=Mock(wraps=send))
     credential = OnBehalfOfCredential(
-        first_tenant, "client-id", "secret", "assertion", allow_multitenant_authentication=True, transport=transport
+        first_tenant, "client-id", "secret", "assertion", transport=transport
     )
     token = credential.get_token("scope")
     assert token.token == first_token

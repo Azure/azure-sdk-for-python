@@ -7,7 +7,8 @@ import os
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
-from azure.identity import CertificateCredential, RegionalAuthority, TokenCachePersistenceOptions
+from azure.identity import CertificateCredential, TokenCachePersistenceOptions
+from azure.identity._enums import RegionalAuthority
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._credentials.certificate import load_pkcs12_certificate
 from azure.identity._internal.user_agent import USER_AGENT
@@ -360,8 +361,6 @@ def test_certificate_arguments():
 
 @pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
 def test_allow_multitenant_authentication(cert_path, cert_password):
-    """When allow_multitenant_authentication is True, the credential should respect get_token(tenant_id=...)"""
-
     first_tenant = "first-tenant"
     first_token = "***"
     second_tenant = "second-tenant"
@@ -382,7 +381,6 @@ def test_allow_multitenant_authentication(cert_path, cert_password):
         "client-id",
         cert_path,
         password=cert_password,
-        allow_multitenant_authentication=True,
         transport=Mock(send=send),
     )
     token = credential.get_token("scope")
@@ -401,8 +399,6 @@ def test_allow_multitenant_authentication(cert_path, cert_password):
 
 @pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
 def test_multitenant_authentication_backcompat(cert_path, cert_password):
-    """When allow_multitenant_authentication is True, the credential should respect get_token(tenant_id=...)"""
-
     expected_tenant = "expected-tenant"
     expected_token = "***"
 
@@ -426,13 +422,12 @@ def test_multitenant_authentication_backcompat(cert_path, cert_password):
     token = credential.get_token("scope", tenant_id=expected_tenant)
     assert token.token == expected_token
 
-    # but any other tenant should get an error
-    with pytest.raises(ClientAuthenticationError, match="allow_multitenant_authentication"):
-        credential.get_token("scope", tenant_id="un" + expected_tenant)
+    token = credential.get_token("scope", tenant_id="un" + expected_tenant)
+    assert token.token == expected_token
 
     # ...unless the compat switch is enabled
     with patch.dict(
-        os.environ, {EnvironmentVariables.AZURE_IDENTITY_ENABLE_LEGACY_TENANT_SELECTION: "true"}, clear=True
+        os.environ, {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}, clear=True
     ):
-        token = credential.get_token("scope", tenant_id="un" + expected_tenant)
-    assert token.token == expected_token, "credential should ignore tenant_id kwarg when the compat switch is enabled"
+        with pytest.raises(ClientAuthenticationError, match="multitenant_authentication"):
+            token = credential.get_token("scope", tenant_id="un" + expected_tenant)

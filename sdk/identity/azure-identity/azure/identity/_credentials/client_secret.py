@@ -21,15 +21,11 @@ class ClientSecretCredential(ClientCredentialBase):
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
-    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
-        the application is registered in. When False, which is the default, the credential will acquire tokens only from
-        the tenant specified by **tenant_id**.
     :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
-    :keyword ~azure.identity.RegionalAuthority regional_authority: a :class:`~azure.identity.RegionalAuthority` to
-        which the credential will authenticate. This argument should be used only by applications deployed to Azure
-        VMs.
+    :keyword str regional_authority: to which the credential will authenticate.
+        This argument should be used only by applications deployed to Azure VMs.
     """
 
     def __init__(self, tenant_id, client_id, client_secret, **kwargs):

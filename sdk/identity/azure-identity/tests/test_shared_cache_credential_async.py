@@ -607,8 +607,6 @@ async def test_initialization():
 
 @pytest.mark.asyncio
 async def test_allow_multitenant_authentication():
-    """When allow_multitenant_authentication is True, the credential should respect get_token(tenant_id=...)"""
-
     first_token = "***"
     second_tenant = "second-tenant"
     second_token = first_token * 2
@@ -630,7 +628,7 @@ async def test_allow_multitenant_authentication():
     cache = populated_cache(expected_account)
 
     credential = SharedTokenCacheCredential(
-        allow_multitenant_authentication=True, authority=authority, transport=Mock(send=send), _cache=cache
+        authority=authority, transport=Mock(send=send), _cache=cache
     )
     token = await credential.get_token("scope")
     assert token.token == first_token
@@ -644,46 +642,3 @@ async def test_allow_multitenant_authentication():
     # should still default to the first tenant
     token = await credential.get_token("scope")
     assert token.token == first_token
-
-
-@pytest.mark.asyncio
-async def test_multitenant_authentication_not_allowed():
-    """get_token(tenant_id=...) should raise when allow_multitenant_authentication is False (the default)"""
-
-    default_tenant = "organizations"
-    expected_token = "***"
-
-    async def send(request, **_):
-        parsed = urlparse(request.url)
-        tenant_id = parsed.path.split("/")[1]
-        assert tenant_id == default_tenant
-        return mock_response(
-            json_payload=build_aad_response(
-                access_token=expected_token,
-                id_token_claims=id_token_claims(aud="...", iss="...", sub="..."),
-            )
-        )
-
-    authority = "localhost"
-    expected_account = get_account_event(
-        "user", "object-id", "tenant-id", authority=authority, client_id="client-id", refresh_token="**"
-    )
-    cache = populated_cache(expected_account)
-
-    credential = SharedTokenCacheCredential(authority=authority, transport=Mock(send=send), _cache=cache)
-
-    token = await credential.get_token("scope")
-    assert token.token == expected_token
-
-    # explicitly specifying the configured tenant is okay
-    token = await credential.get_token("scope", tenant_id=default_tenant)
-    assert token.token == expected_token
-
-    # but any other tenant should get an error
-    with pytest.raises(ClientAuthenticationError, match="allow_multitenant_authentication"):
-        await credential.get_token("scope", tenant_id="some tenant")
-
-    # ...unless the compat switch is enabled
-    with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_ENABLE_LEGACY_TENANT_SELECTION: "true"}):
-        token = await credential.get_token("scope", tenant_id="some tenant")
-    assert token.token == expected_token, "credential should ignore tenant_id kwarg when the compat switch is enabled"

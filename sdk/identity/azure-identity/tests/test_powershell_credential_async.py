@@ -245,8 +245,6 @@ async def test_windows_powershell_fallback():
 
 
 async def test_allow_multitenant_authentication():
-    """When allow_multitenant_authentication is True, the credential should respect get_token(tenant_id=...)"""
-
     first_token = "***"
     second_tenant = "second-tenant"
     second_token = first_token * 2
@@ -266,7 +264,7 @@ async def test_allow_multitenant_authentication():
         communicate = Mock(return_value=get_completed_future((stdout.encode(), b"")))
         return Mock(communicate=communicate, returncode=0)
 
-    credential = AzurePowerShellCredential(allow_multitenant_authentication=True)
+    credential = AzurePowerShellCredential()
     with patch(CREATE_SUBPROCESS_EXEC, fake_exec):
         token = await credential.get_token("scope")
         assert token.token == first_token
@@ -277,38 +275,3 @@ async def test_allow_multitenant_authentication():
         # should still default to the first tenant
         token = await credential.get_token("scope")
         assert token.token == first_token
-
-
-async def test_multitenant_authentication_not_allowed():
-    """get_token(tenant_id=...) should raise when allow_multitenant_authentication is False (the default)"""
-
-    expected_token = "***"
-
-    async def fake_exec(*args, **_):
-        command = args[2]
-        assert command.startswith("pwsh -NonInteractive -EncodedCommand ")
-        encoded_script = command.split()[-1]
-        decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
-        match = re.search(r"Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
-        tenant = match[2]
-
-        assert tenant is None, "credential shouldn't accept an explicit tenant ID"
-        stdout = "azsdk%{}%{}".format(expected_token, int(time.time()) + 3600)
-        communicate = Mock(return_value=get_completed_future((stdout.encode(), b"")))
-        return Mock(communicate=communicate, returncode=0)
-
-    credential = AzurePowerShellCredential()
-    with patch(CREATE_SUBPROCESS_EXEC, fake_exec):
-        token = await credential.get_token("scope")
-        assert token.token == expected_token
-
-        # specifying a tenant should get an error
-        with pytest.raises(ClientAuthenticationError, match="allow_multitenant_authentication"):
-            await credential.get_token("scope", tenant_id="some tenant")
-
-        # ...unless the compat switch is enabled
-        with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_ENABLE_LEGACY_TENANT_SELECTION: "true"}):
-            token = await credential.get_token("scope", tenant_id="some tenant")
-        assert (
-            token.token == expected_token
-        ), "credential should ignore tenant_id kwarg when the compat switch is enabled"

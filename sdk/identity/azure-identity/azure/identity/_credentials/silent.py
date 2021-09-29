@@ -18,6 +18,7 @@ from .._internal.decorators import wrap_exceptions
 from .._internal.msal_client import MsalClient
 from .._internal.shared_token_cache import NO_TOKEN
 from .._persistent_cache import _load_persistent_cache, TokenCachePersistenceOptions
+from .._constants import EnvironmentVariables
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
@@ -35,7 +36,11 @@ class SilentAuthenticationCredential(object):
         # authenticate in the tenant that produced the record unless "tenant_id" specifies another
         self._tenant_id = kwargs.pop("tenant_id", None) or self._auth_record.tenant_id
         validate_tenant_id(self._tenant_id)
-        self._allow_multitenant = kwargs.pop("allow_multitenant_authentication", False)
+        if self._tenant_id == "adfs":
+            self._allow_multitenant = False
+        else:
+            disable_multitenant = os.environ.get(EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH, False)
+            self._allow_multitenant = not disable_multitenant
         self._cache = kwargs.pop("_cache", None)
         self._client_applications = {}  # type: Dict[str, PublicClientApplication]
         self._client = MsalClient(**kwargs)
