@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-conversations/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-language-conversations/1.0.0b1 Python/3.9.7 (Windows-10-10.0.19043-SP0)
     method: POST
     uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?projectName=test-project&deploymentName=production&api-version=2021-07-15-preview
   response:
@@ -22,21 +22,21 @@ interactions:
         {\n    \"intents\": [\n      {\n        \"category\": \"Order\",\n        \"confidenceScore\":
         1\n      }\n    ],\n    \"entities\": [\n      {\n        \"category\": \"OrderItem\",\n
         \       \"text\": \"california maki\",\n        \"offset\": 4,\n        \"length\":
-        15,\n        \"confidenceScore\": 0.49083808\n      }\n    ],\n    \"topIntent\":
-        \"Order\",\n    \"projectType\": \"conversation\"\n  }\n}"
+        15,\n        \"confidenceScore\": 1\n      }\n    ],\n    \"topIntent\": \"Order\",\n
+        \   \"projectType\": \"conversation\"\n  }\n}"
     headers:
       apim-request-id:
-      - 4629b73e-3f69-4624-bdec-3e10affbadaa
+      - 88e0df12-bdfe-4a76-8cf1-63279d2c017c
       cache-control:
       - no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Sep 2021 14:28:29 GMT
+      - Wed, 29 Sep 2021 15:00:10 GMT
       pragma:
       - no-cache
       request-id:
-      - 4629b73e-3f69-4624-bdec-3e10affbadaa
+      - 88e0df12-bdfe-4a76-8cf1-63279d2c017c
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -44,7 +44,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '651'
+      - '40'
     status:
       code: 200
       message: OK
