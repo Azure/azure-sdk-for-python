@@ -270,7 +270,7 @@ def test_certificate_arguments():
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
-async def test_allow_multitenant_authentication(cert_path, cert_password):
+async def test_multitenant_authentication(cert_path, cert_password):
     first_tenant = "first-tenant"
     first_token = "***"
     second_tenant = "second-tenant"
@@ -329,9 +329,3 @@ async def test_multitenant_authentication_backcompat(cert_path, cert_password):
 
     token = await credential.get_token("scope", tenant_id="un" + expected_tenant)
     assert token.token == expected_token * 2
-
-    with patch.dict(
-        "os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}, clear=True
-    ):
-        with pytest.raises(ClientAuthenticationError, match="multitenant_authentication"):
-            token = await credential.get_token("scope", tenant_id="un" + expected_tenant)

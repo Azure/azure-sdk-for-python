@@ -47,13 +47,12 @@ class AadClientBase(ABC):
     _POST = ["POST"]
 
     def __init__(
-        self, tenant_id, client_id, authority=None, cache=None, allow_multitenant=True, **kwargs
+        self, tenant_id, client_id, authority=None, cache=None, **kwargs
     ):
         # type: (str, str, Optional[str], Optional[TokenCache], bool, **Any) -> None
         self._authority = normalize_authority(authority) if authority else get_default_authority()
 
         self._tenant_id = tenant_id
-        self._allow_multitenant = allow_multitenant
 
         self._cache = cache or TokenCache()
         self._client_id = client_id

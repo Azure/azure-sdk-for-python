@@ -28,9 +28,7 @@ class MsalCredential(object):
         # type: (str, Optional[Union[str, Dict]], **Any) -> None
         authority = kwargs.pop("authority", None)
         self._authority = normalize_authority(authority) if authority else get_default_authority()
-        self._regional_authority = kwargs.pop(
-            "regional_authority", os.environ.get(EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME)
-        )
+        self._regional_authority = os.environ.get(EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME)
         self._tenant_id = kwargs.pop("tenant_id", None) or "organizations"
         validate_tenant_id(self._tenant_id)
         self._client = MsalClient(**kwargs)

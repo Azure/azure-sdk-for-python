@@ -24,8 +24,6 @@ class ClientSecretCredential(ClientCredentialBase):
     :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
-    :keyword str regional_authority: to which the credential will authenticate.
-        This argument should be used only by applications deployed to Azure VMs.
     """
 
     def __init__(self, tenant_id, client_id, client_secret, **kwargs):

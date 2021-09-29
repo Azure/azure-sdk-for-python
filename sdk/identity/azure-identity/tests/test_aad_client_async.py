@@ -312,8 +312,3 @@ async def test_multitenant_cache():
     assert client_c.get_cached_access_token([scope]) is None
     token = client_c.get_cached_access_token([scope], tenant_id=tenant_a)
     assert token.token == expected_token
-    with patch.dict(
-        "os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}, clear=True
-    ):
-        with pytest.raises(ClientAuthenticationError, match="multitenant_authentication"):
-            token = client_c.get_cached_access_token([scope], tenant_id=tenant_a)

@@ -79,10 +79,7 @@ def resolve_tenant(default_tenant, tenant_id=None, **_):
     if default_tenant == "adfs":
         disable_multitenant = True
     if disable_multitenant:
-        raise ClientAuthenticationError(
-            'The specified tenant for this token request, "{}", does not match'.format(tenant_id)
-            + ' the configured tenant, and "multitenant_authentication" is disabled.'
-        )
+        return default_tenant
     return tenant_id
 
 

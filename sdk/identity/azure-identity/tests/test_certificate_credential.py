@@ -152,17 +152,6 @@ def test_regional_authority():
     for region in RegionalAuthority:
         mock_confidential_client.reset_mock()
 
-        with patch.dict("os.environ", {}, clear=True):
-            credential = CertificateCredential("tenant", "client-id", PEM_CERT_PATH, regional_authority=region)
-        with patch("msal.ConfidentialClientApplication", mock_confidential_client):
-            # must call get_token because the credential constructs the MSAL application lazily
-            credential.get_token("scope")
-
-        assert mock_confidential_client.call_count == 1
-        _, kwargs = mock_confidential_client.call_args
-        assert kwargs["azure_region"] == region
-        mock_confidential_client.reset_mock()
-
         # region can be configured via environment variable
         with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: region}, clear=True):
             credential = CertificateCredential("tenant", "client-id", PEM_CERT_PATH)
@@ -360,7 +349,7 @@ def test_certificate_arguments():
 
 
 @pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
-def test_allow_multitenant_authentication(cert_path, cert_password):
+def test_multitenant_authentication(cert_path, cert_password):
     first_tenant = "first-tenant"
     first_token = "***"
     second_tenant = "second-tenant"
@@ -424,10 +413,3 @@ def test_multitenant_authentication_backcompat(cert_path, cert_password):
 
     token = credential.get_token("scope", tenant_id="un" + expected_tenant)
     assert token.token == expected_token
-
-    # ...unless the compat switch is enabled
-    with patch.dict(
-        os.environ, {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}, clear=True
-    ):
-        with pytest.raises(ClientAuthenticationError, match="multitenant_authentication"):
-            token = credential.get_token("scope", tenant_id="un" + expected_tenant)

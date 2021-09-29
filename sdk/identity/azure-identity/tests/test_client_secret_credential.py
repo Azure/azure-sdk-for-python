@@ -129,17 +129,6 @@ def test_regional_authority():
     for region in RegionalAuthority:
         mock_confidential_client.reset_mock()
 
-        with patch.dict("os.environ", {}, clear=True):
-            credential = ClientSecretCredential("tenant", "client-id", "secret", regional_authority=region)
-        with patch("msal.ConfidentialClientApplication", mock_confidential_client):
-            # must call get_token because the credential constructs the MSAL application lazily
-            credential.get_token("scope")
-
-        assert mock_confidential_client.call_count == 1
-        _, kwargs = mock_confidential_client.call_args
-        assert kwargs["azure_region"] == region
-        mock_confidential_client.reset_mock()
-
         # region can be configured via environment variable
         with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: region}, clear=True):
             credential = ClientSecretCredential("tenant", "client-id", "secret")
@@ -243,33 +232,3 @@ def test_multitenant_authentication():
     # should still default to the first tenant
     token = credential.get_token("scope")
     assert token.token == first_token
-
-
-def test_multitenant_authentication_not_allowed():
-    expected_tenant = "expected-tenant"
-    expected_token = "***"
-
-    def send(request, **_):
-        parsed = urlparse(request.url)
-        if "/oauth2/v2.0/token" not in parsed.path:
-            return get_discovery_response("https://{}/{}".format(parsed.netloc, expected_tenant))
-
-        tenant = parsed.path.split("/")[1]
-        token = expected_token if tenant == expected_tenant else expected_token * 2
-        return mock_response(json_payload=build_aad_response(access_token=token))
-
-    credential = ClientSecretCredential(expected_tenant, "client-id", "secret", transport=Mock(send=send))
-
-    token = credential.get_token("scope")
-    assert token.token == expected_token
-
-    # explicitly specifying the configured tenant is okay
-    token = credential.get_token("scope", tenant_id=expected_tenant)
-    assert token.token == expected_token
-
-    token = credential.get_token("scope", tenant_id="un" + expected_tenant)
-    assert token.token == expected_token
-
-    with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
-        with pytest.raises(ClientAuthenticationError, match="multitenant_authentication"):
-            token = credential.get_token("scope", tenant_id="un" + expected_tenant)

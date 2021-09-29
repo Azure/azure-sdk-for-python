@@ -865,7 +865,7 @@ def test_multitenant_authentication():
     assert token.token == first_token
 
 
-def test_allow_multitenant_authentication_auth_record():
+def test_multitenant_authentication_auth_record():
     default_tenant = "organizations"
     first_token = "***"
     second_tenant = "second-tenant"

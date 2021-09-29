@@ -39,6 +39,7 @@ class AzureCliCredential(object):
 
     def __init__(self, **kwargs):   # pylint: disable=unused-argument
         pass
+
     def __enter__(self):
         return self
 
