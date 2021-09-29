@@ -537,7 +537,7 @@ class MetricsAdvisorClient(object):
 
         skip = kwargs.pop("skip", None)
         dimension = kwargs.pop("dimension_filter", None)
-        dimension_filter = DimensionGroupIdentity(dimension=dimension)
+        dimension_filter = DimensionGroupIdentity(dimension=dimension) if dimension else None
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
         anomaly_dimension_query = AnomalyDimensionQuery(
