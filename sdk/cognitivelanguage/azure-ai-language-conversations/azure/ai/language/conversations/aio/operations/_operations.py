@@ -26,26 +26,26 @@ class ConversationAnalysisClientOperationsMixin:
     @distributed_trace_async
     async def analyze_conversations(
         self,
-        conversation_analysis_input: "_models.ConversationAnalysisInput",
+        analyze_conversation_options: "_models.AnalyzeConversationOptions",
         *,
         project_name: str,
-        deployment_name: str,
+        deployment_name: Optional[str] = None,
         **kwargs: Any
-    ) -> "_models.ConversationAnalysisResult":
+    ) -> "_models.AnalyzeConversationResult":
         """Analyzes the input conversation utterance.
 
-        :param conversation_analysis_input: Post body of the request.
-        :type conversation_analysis_input:
-         ~azure.ai.language.conversations.models.ConversationAnalysisInput
-        :keyword project_name: The project name.
+        :param analyze_conversation_options: Post body of the request.
+        :type analyze_conversation_options:
+         ~azure.ai.language.conversations.models.AnalyzeConversationOptions
+        :keyword project_name: The name of the project to use.
         :paramtype project_name: str
-        :keyword deployment_name: The deployment name/deployed version.
+        :keyword deployment_name: The name of the specific deployment of the project to use.
         :paramtype deployment_name: str
-        :return: ConversationAnalysisResult
-        :rtype: ~azure.ai.language.conversations.models.ConversationAnalysisResult
+        :return: AnalyzeConversationResult
+        :rtype: ~azure.ai.language.conversations.models.AnalyzeConversationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConversationAnalysisResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeConversationResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -53,7 +53,7 @@ class ConversationAnalysisClientOperationsMixin:
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(conversation_analysis_input, 'ConversationAnalysisInput')
+        json = self._serialize.body(analyze_conversation_options, 'AnalyzeConversationOptions')
 
         request = build_analyze_conversations_request(
             content_type=content_type,
@@ -67,15 +67,15 @@ class ConversationAnalysisClientOperationsMixin:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('ConversationAnalysisResult', pipeline_response)
+        deserialized = self._deserialize('AnalyzeConversationResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
