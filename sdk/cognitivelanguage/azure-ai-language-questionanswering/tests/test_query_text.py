@@ -180,3 +180,11 @@ class QnATests(QuestionAnsweringTest):
             confident_answers = [a for a in output.answers if a.confidence_score > 0.9]
             assert len(confident_answers) == 2
             assert confident_answers[0].answer_span.text == "two to four hours"
+
+    def test_query_text_overload_positional_and_kwarg(self):
+        with QuestionAnsweringClient("http://fake.com", AzureKeyCredential("123")) as client:
+            with pytest.raises(TypeError):
+                client.query_text("positional_one", "positional_two")
+            with pytest.raises(TypeError):
+                client.query_text("positional_options_bag", options="options bag by name")
+            

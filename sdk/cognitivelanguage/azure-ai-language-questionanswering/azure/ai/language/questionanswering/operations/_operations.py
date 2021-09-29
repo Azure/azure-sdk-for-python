@@ -22,7 +22,7 @@ from azure.core.rest import HttpRequest
 from msrest import Serializer
 
 from .. import models as _models
-from .._patch import _validate_text_records
+from .._patch import _validate_text_records, _get_positional_body
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -108,7 +108,7 @@ class QuestionAnsweringClientOperationsMixin(object):
         # type: (...) -> "_models.KnowledgeBaseAnswers"
         """Answers the specified question using your knowledge base.
 
-        :param options: Post body of the request.
+        :param options: Positional-only post body of the request.
         :type options:
          ~azure.ai.language.questionanswering.models.KnowledgeBaseQueryOptions
         :keyword project_name: The name of the project to use.
@@ -204,21 +204,18 @@ class QuestionAnsweringClientOperationsMixin(object):
         :rtype: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if args:
-            options = args[0]
-        else:
-            options = _models.KnowledgeBaseQueryOptions(
-                qna_id=kwargs.pop("qna_id", None),
-                question=kwargs.pop("question", None),
-                top=kwargs.pop("top", None),
-                user_id=kwargs.pop("user_id", None),
-                confidence_score_threshold=kwargs.pop("confidence_score_threshold", None),
-                context=kwargs.pop("context", None),
-                ranker_type=kwargs.pop("ranker_type", None),
-                strict_filters=kwargs.pop("strict_filters", None),
-                answer_span_request=kwargs.pop("answer_span_request", None),
-                include_unstructured_sources=kwargs.pop("include_unstructured_sources", None)
-            )
+        options = _get_positional_body(*args, **kwargs) or _models.KnowledgeBaseQueryOptions(
+            qna_id=kwargs.pop("qna_id", None),
+            question=kwargs.pop("question", None),
+            top=kwargs.pop("top", None),
+            user_id=kwargs.pop("user_id", None),
+            confidence_score_threshold=kwargs.pop("confidence_score_threshold", None),
+            context=kwargs.pop("context", None),
+            ranker_type=kwargs.pop("ranker_type", None),
+            strict_filters=kwargs.pop("strict_filters", None),
+            answer_span_request=kwargs.pop("answer_span_request", None),
+            include_unstructured_sources=kwargs.pop("include_unstructured_sources", None)
+        )
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.KnowledgeBaseAnswers"]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
@@ -266,7 +263,7 @@ class QuestionAnsweringClientOperationsMixin(object):
         # type: (...) -> "_models.TextAnswers"
         """Answers the specified question using the provided text in the body.
 
-        :param options: Post body of the request.
+        :param options: Positional-only post body of the request.
         :type options: ~azure.ai.language.questionanswering.models.TextQueryOptions
         :return: TextAnswers
         :rtype: ~azure.ai.language.questionanswering.models.TextAnswers
@@ -330,15 +327,12 @@ class QuestionAnsweringClientOperationsMixin(object):
         :rtype: ~azure.ai.language.questionanswering.models.TextAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if args:
-            options = args[0]
-        else:
-            options = _models.TextQueryOptions(
-                question=kwargs.pop("question"),
-                records=kwargs.pop("records"),
-                language=kwargs.pop("language", None),
-                string_index_type=kwargs.pop("string_index_type", "TextElements_v8")
-            )
+        options = _get_positional_body(*args, **kwargs) or _models.TextQueryOptions(
+            question=kwargs.pop("question"),
+            records=kwargs.pop("records"),
+            language=kwargs.pop("language", None),
+            string_index_type=kwargs.pop("string_index_type", "TextElements_v8")
+        )
         try:
             options['records'] = _validate_text_records(options['records'])
         except TypeError:

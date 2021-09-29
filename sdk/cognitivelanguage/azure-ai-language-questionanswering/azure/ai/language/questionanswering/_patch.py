@@ -36,3 +36,12 @@ def _validate_text_records(records):
         else:
             request_batch.append(doc)
     return request_batch
+
+def _get_positional_body(*args, **kwargs):
+    if len(args) > 1:
+        raise TypeError("There can only be one positional argument, which is the post body of this request.")
+    if args and "options" in kwargs:
+        raise TypeError(
+            "You have already supplied the request body as a positional parameter, you can not supply it as a kwarg as well."
+        )
+    return args[0] if args else None

@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-
+import pytest
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 
@@ -350,3 +350,10 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
             )
 
             assert len(output.answers) == 1
+
+    def test_query_knowledge_base_overload_positional_and_kwarg(self):
+        with QuestionAnsweringClient("http://fake.com", AzureKeyCredential("123")) as client:
+            with pytest.raises(TypeError):
+                client.query_knowledge_base("positional_one", "positional_two")
+            with pytest.raises(TypeError):
+                client.query_knowledge_base("positional_options_bag", options="options bag by name")

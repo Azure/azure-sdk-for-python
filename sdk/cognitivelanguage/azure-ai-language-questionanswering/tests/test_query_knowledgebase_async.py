@@ -348,3 +348,10 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
             )
 
             assert len(output.answers) == 1
+
+    async def test_query_knowledge_base_overload_positional_and_kwarg(self):
+        async with QuestionAnsweringClient("http://fake.com", AzureKeyCredential("123")) as client:
+            with pytest.raises(TypeError):
+                await client.query_knowledge_base("positional_one", "positional_two")
+            with pytest.raises(TypeError):
+                await client.query_knowledge_base("positional_options_bag", options="options bag by name")
