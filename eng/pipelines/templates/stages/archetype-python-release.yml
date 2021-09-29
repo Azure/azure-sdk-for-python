@@ -167,11 +167,10 @@ stages:
                             parameters:
                               PackageInfoLocations:
                                 - $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/${{artifact.name}}.json
-                              RepoId: $(Build.Repository.Name)
                               WorkingDirectory: $(System.DefaultWorkingDirectory)
                               TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
                               TargetDocRepoName: ${{parameters.TargetDocRepoName}}
-                              Language: 'javascript'
+                              Language: 'python'
                               SparseCheckoutPaths:
                                 - docs-ref-services/
                                 - metadata/
@@ -281,7 +280,6 @@ stages:
             PackageInfoLocations:
               - ${{ each artifact in parameters.Artifacts }}:
                 - $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/${{artifact.name}}.json
-            RepoId: Azure/azure-sdk-for-python
             WorkingDirectory: $(System.DefaultWorkingDirectory)
             TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
             TargetDocRepoName: ${{parameters.TargetDocRepoName}}
