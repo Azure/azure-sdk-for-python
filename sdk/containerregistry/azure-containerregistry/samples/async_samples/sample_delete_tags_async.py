@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_delete_old_tags_async.py
+FILE: sample_delete_tags_async.py
 
 DESCRIPTION:
-    These samples demonstrates deleting the three oldest tags for each repository asynchronously.
+    This sample demonstrates deleting all but the most recent three tags for each repository.
 
 USAGE:
-    python sample_delete_old_tags_async.py
+    python sample_delete_tags_async.py
 
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
@@ -23,23 +23,21 @@ import asyncio
 from dotenv import find_dotenv, load_dotenv
 import os
 
+from azure.containerregistry import TagOrder
+from azure.containerregistry.aio import ContainerRegistryClient
+from azure.identity.aio import DefaultAzureCredential
 
-class DeleteOperations(object):
+
+class DeleteTagsAsync(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
-    async def delete_old_tags(self):
-        from azure.containerregistry import TagOrder
-        from azure.containerregistry.aio import (
-            ContainerRegistryClient,
-        )
-        from azure.identity.aio import DefaultAzureCredential
-
+    async def delete_tags(self):
         # [START list_repository_names]
+        audience = "https://management.azure.com"
         account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         credential = DefaultAzureCredential()
-        client = ContainerRegistryClient(account_url, credential)
+        client = ContainerRegistryClient(account_url, credential, audience=audience)
 
         async with client:
             async for repository in client.list_repository_names():
@@ -57,8 +55,8 @@ class DeleteOperations(object):
 
 
 async def main():
-    sample = DeleteOperations()
-    await sample.delete_old_tags()
+    sample = DeleteTagsAsync()
+    await sample.delete_tags()
 
 
 if __name__ == "__main__":

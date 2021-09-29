@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_delete_old_tags.py
+FILE: sample_delete_tags.py
 
 DESCRIPTION:
-    These samples demonstrates deleting the three oldest tags for each repository
+    This sample demonstrates deleting all but the most recent three tags for each repository.
 
 USAGE:
-    python sample_delete_old_tags.py
+    python sample_delete_tags.py
 
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
@@ -22,20 +22,20 @@ USAGE:
 from dotenv import find_dotenv, load_dotenv
 import os
 
+from azure.containerregistry import ContainerRegistryClient, TagOrder
+from azure.identity import DefaultAzureCredential
 
-class DeleteOperations(object):
+
+class DeleteTags(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
-    def delete_old_tags(self):
-        from azure.containerregistry import ContainerRegistryClient, TagOrder
-        from azure.identity import DefaultAzureCredential
-
-        # [START list_repository_names]
+    def delete_tags(self):
+        # [START list_repository_names]      
+        audience = "https://management.azure.com"
         account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         credential = DefaultAzureCredential()
-        client = ContainerRegistryClient(account_url, credential)
+        client = ContainerRegistryClient(account_url, credential, audience=audience)
 
         for repository in client.list_repository_names():
             print(repository)
@@ -54,5 +54,5 @@ class DeleteOperations(object):
 
 
 if __name__ == "__main__":
-    sample = DeleteOperations()
-    sample.delete_old_tags()
+    sample = DeleteTags()
+    sample.delete_tags()
