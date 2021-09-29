@@ -16,14 +16,12 @@ class ModelsRepositoryClient(object):
 
     def __init__(
         self,
-        credential=None,
         repository_location=DEFAULT_LOCATION,
         **kwargs
     ):  # pylint: disable=missing-client-constructor-parameter-credential
-        # type: (TokenCredential, str, Any) -> None
+        # type: (str, Any) -> None
         """
         :param credential: Credentials to use when connecting to the service.
-        :type credential: ~azure.core.credentials.TokenCredential
         :param repository_location: Location of the Models Repository you wish to access.
             This location can be a remote HTTP/HTTPS URL, or a local filesystem path.
             If omitted, will default to using "https://devicemodels.azure.com".
@@ -43,17 +41,20 @@ class ModelsRepositoryClient(object):
         # Store api version here (for now). Currently doesn't do anything
         self._api_version = kwargs.get("api_version", DEFAULT_API_VERSION)
 
-    def __enter__(self):
-        self.resolver.__enter__()
+    @distributed_trace_async
+    async def __aenter__(self):
+        await self.resolver.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        self.resolver.__exit__(*exc_details)
+    @distributed_trace_async
+    async def __aexit__(self, *exc_details):
+        await self.resolver.__aexit__(*exc_details)
 
-    def close(self):
+    @distributed_trace_async
+    async def close(self):
         # type: () -> None
         """Close the client, preventing future operations"""
-        self.__exit__()
+        await self.__aexit__()
 
     @distributed_trace_async
     async def get_models(self, dtmis, dependency_resolution=DependencyModeType.enabled.value, **kwargs):

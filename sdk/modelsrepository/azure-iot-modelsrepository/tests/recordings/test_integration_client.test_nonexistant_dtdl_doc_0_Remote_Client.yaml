@@ -1,0 +1,64 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-modelsrepository/1.0.0b2 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://raw.githubusercontent.com/Azure/iot-plugandplay-models/main/dtmi/com/example/thermojax-999.json
+  response:
+    body:
+      string: '404: Not Found'
+    headers:
+      accept-ranges:
+      - bytes
+      access-control-allow-origin:
+      - '*'
+      connection:
+      - keep-alive
+      content-length:
+      - '14'
+      content-security-policy:
+      - default-src 'none'; style-src 'unsafe-inline'; sandbox
+      content-type:
+      - text/plain; charset=utf-8
+      date:
+      - Wed, 29 Sep 2021 01:22:54 GMT
+      expires:
+      - Wed, 29 Sep 2021 01:27:54 GMT
+      source-age:
+      - '0'
+      strict-transport-security:
+      - max-age=31536000
+      vary:
+      - Authorization,Accept-Encoding,Origin
+      via:
+      - 1.1 varnish
+      x-cache:
+      - MISS
+      x-cache-hits:
+      - '0'
+      x-content-type-options:
+      - nosniff
+      x-fastly-request-id:
+      - 6a1600bdcf1bf6031a4308359a984ca65da0f68e
+      x-frame-options:
+      - deny
+      x-github-request-id:
+      - 9F9E:08A4:19296:22C48:6153BFEE
+      x-served-by:
+      - cache-sea4454-SEA
+      x-timer:
+      - S1632878575.833305,VS0,VE144
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 404
+      message: Not Found
+version: 1

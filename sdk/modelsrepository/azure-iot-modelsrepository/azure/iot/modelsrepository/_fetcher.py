@@ -19,8 +19,8 @@ from azure.core.exceptions import (
     raise_with_traceback,
 )
 from .dtmi_conventions import (
-    _get_metadata_uri,
-    _convert_dtmi_to_path
+    _convert_dtmi_to_path,
+    METADATA_FILE
 )
 from ._common import (
     ErrorFetchingModelContent,
@@ -47,14 +47,14 @@ class Fetcher(object):
         dtdl_path = _convert_dtmi_to_path(dtmi, expanded=try_from_expanded)
         if try_from_expanded:
             try:
-                return (self._fetch_model_metadata(dtdl_path), True)
+                return (self._fetch_model_data(dtdl_path), True)
             except:
                 # Fallback to non expanded model
                 _LOGGER.debug(ErrorFetchingModelContent.format(dtmi))
                 dtdl_path = _convert_dtmi_to_path(dtmi, expanded=False)
 
         # Let errors from this bubble up
-        return (self._fetch_model_metadata(dtdl_path), False)
+        return (self._fetch_model_data(dtdl_path), False)
 
     def fetch_metadata(self):
         """Fetch and return the repository metadata
@@ -62,10 +62,10 @@ class Fetcher(object):
         :returns: JSON object representing the repository metadata
         :rtype: JSON object
         """
-        self._fetch_model_metadata(_get_metadata_uri())
+        return self._fetch_model_data(METADATA_FILE)
 
     @abc.abstractmethod
-    def _fetch_model_metadata(self, path):
+    def _fetch_model_data(self, path):
         pass
 
     @abc.abstractmethod
@@ -97,7 +97,7 @@ class HttpFetcher(Fetcher):
     def __exit__(self, *exc_details):
         self.pipeline.__exit__(*exc_details)
 
-    def _fetch_model_metadata(self, path=""):
+    def _fetch_model_data(self, path=""):
         """Fetch and return the contents of a JSON file at a given web path.
 
         :param str path: Path to JSON file (relative to the base_filepath of the Fetcher)
@@ -147,7 +147,7 @@ class FilesystemFetcher(Fetcher):
         # Nothing is required here for filesystem
         pass
 
-    def _fetch_model_metadata(self, path=""):
+    def _fetch_model_data(self, path=""):
         """Fetch and return the contents of a JSON file at a given filesystem path.
 
         :param str path: Path to JSON file (relative to the base_filepath of the Fetcher)

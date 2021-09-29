@@ -83,14 +83,18 @@ class DtmiResolver(object):
                 continue
 
             dtdl, expanded_result = self.fetcher.fetch(target_dtmi, try_from_expanded=try_from_expanded)
+
+            # Add dependencies if the result is expanded
+            if expanded_result:
+                for item in dtdl:
+                    model_metadata = ModelQuery(item).parse_model()
+                    if model_metadata.id not in processed_models:
+                        processed_models[model_metadata.id] = item
+
+                continue
+
             model_metadata = ModelQuery(dtdl).parse_model()
             dependencies = model_metadata.dependencies
-
-            # Add dependencies if the result has them
-            if expanded_result:
-                for name in dependencies:
-                    if name not in processed_models:
-                        processed_models[name] = dependencies[name]
 
             # Add dependencies to to_process_queue if manual resolution is needed
             if dependency_resolution == DependencyModeType.enabled.value and not expanded_result:
