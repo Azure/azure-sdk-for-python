@@ -66,9 +66,9 @@ class LogsQueryClient(object):
     @distributed_trace
     def query_workspace(self, workspace_id, query, **kwargs):
         # type: (str, str, Any) -> Union[LogsQueryResult, LogsQueryPartialResult]
-        """Execute an Analytics query.
+        """Execute a Kusto query.
 
-        Executes an Analytics query for data.
+        Executes a Kusto query for data.
 
         :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
          Azure portal.
@@ -146,7 +146,7 @@ class LogsQueryClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[LogsQueryResult, LogsQueryPartialResult, LogsQueryError]]
-        """Execute a list of analytics queries. Each request can be either a LogsBatchQuery
+        """Execute a list of Kusto queries. Each request can be either a LogsBatchQuery
         object or an equivalent serialized model.
 
         **NOTE**: The response is returned in the same order as that of the requests sent.
