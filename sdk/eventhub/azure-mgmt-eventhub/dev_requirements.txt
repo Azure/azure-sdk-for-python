@@ -1,3 +1,5 @@
 -e ../../../tools/azure-sdk-tools
-aiohttp>=3.0; python_version >= '3.5'
+../../core/azure-core
+../azure-eventhub
+../../tables/azure-data-tables
 -e ../../../tools/azure-devtools

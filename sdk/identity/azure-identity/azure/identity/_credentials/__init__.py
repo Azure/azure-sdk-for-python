@@ -12,6 +12,7 @@ from .client_secret import ClientSecretCredential
 from .default import DefaultAzureCredential
 from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
+from .on_behalf_of import OnBehalfOfCredential
 from .shared_cache import SharedTokenCacheCredential
 from .azure_cli import AzureCliCredential
 from .device_code import DeviceCodeCredential
@@ -32,6 +33,7 @@ __all__ = [
     "EnvironmentCredential",
     "InteractiveBrowserCredential",
     "ManagedIdentityCredential",
+    "OnBehalfOfCredential",
     "SharedTokenCacheCredential",
     "AzureCliCredential",
     "UsernamePasswordCredential",

@@ -1,8 +1,15 @@
 pip==20.3
 
+# manually published packages
+https://docsupport.blob.core.windows.net/repackaged/cffi-1.14.6-cp310-cp310-win_amd64.whl; sys_platform=='win32' and python_version >= '3.10'
+https://docsupport.blob.core.windows.net/repackaged/multidict-5.1.0-cp310-cp310-win_amd64.whl; sys_platform=='win32' and python_version >= '3.10'
+https://docsupport.blob.core.windows.net/repackaged/pywin32-301.1-cp310-cp310-win_amd64.whl; sys_platform=='win32' and python_version >= '3.10'
+https://docsupport.blob.core.windows.net/repackaged/yarl-1.6.3-cp310-cp310-win_amd64.whl; sys_platform=='win32' and python_version >= '3.10'
+
 # requirements leveraged by ci for testing
 pytest==4.6.9; python_version == '2.7'
-pytest==5.4.2; python_version >= '3.5'
+pytest==5.4.2; python_version >= '3.5' and python_version <= '3.9'
+pytest==6.2.4; python_version >= '3.10'
 pytest-asyncio==0.12.0; python_version >= '3.5'
 pytest-cov==2.8.1
 pytest-custom-exit-code==0.3.0
@@ -10,6 +17,7 @@ pytest-xdist==1.32.0
 # we pin coverage to 4.5.4 because there is an bug with `pytest-cov`. the generated coverage files cannot be `coverage combine`ed
 coverage==4.5.4
 bandit==1.6.2
+protobuf==3.17.3; python_version == '2.7'
 
 # locking packages defined as deps from azure-sdk-tools or azure-devtools
 pytoml==0.1.21

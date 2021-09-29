@@ -44,6 +44,16 @@ class AzureCliCredential(object):
     def __init__(self, **kwargs):
         self._allow_multitenant = kwargs.get("allow_multitenant_authentication", False)
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        pass
+
+    def close(self):
+        # type: () -> None
+        """Calling this method is unnecessary."""
+
     @log_get_token("AzureCliCredential")
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
@@ -73,7 +83,10 @@ class AzureCliCredential(object):
         token = parse_token(output)
         if not token:
             sanitized_output = sanitize_output(output)
-            raise ClientAuthenticationError(message="Unexpected output from Azure CLI: '{}'".format(sanitized_output))
+            raise ClientAuthenticationError(
+                message="Unexpected output from Azure CLI: '{}'. \n"
+                        "To mitigate this issue, please refer to the troubleshooting guidelines here at "
+                        "https://aka.ms/azsdk/python/identity/azclicredential/troubleshoot.".format(sanitized_output))
 
         return token
 

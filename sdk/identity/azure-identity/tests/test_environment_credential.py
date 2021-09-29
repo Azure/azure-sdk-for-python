@@ -9,7 +9,7 @@ from azure.identity import CredentialUnavailableError, EnvironmentCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
 
-from helpers import mock, mock_response, Request, validating_transport
+from helpers import mock
 
 
 ALL_VARIABLES = {

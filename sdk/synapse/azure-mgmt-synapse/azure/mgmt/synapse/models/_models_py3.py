@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -187,6 +187,121 @@ class Resource(msrest.serialization.Model):
         self.type = None
 
 
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class AzureADOnlyAuthentication(ProxyResource):
+    """Azure Active Directory Only Authentication Info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :param azure_ad_only_authentication: Azure Active Directory only Authentication enabled.
+    :type azure_ad_only_authentication: bool
+    :ivar state: property configuration state. Possible values include: "Consistent",
+     "InConsistent", "Updating".
+    :vartype state: str or ~azure.mgmt.synapse.models.StateValue
+    :ivar creation_date: property configuration date.
+    :vartype creation_date: ~datetime.datetime
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'state': {'readonly': True},
+        'creation_date': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'azure_ad_only_authentication': {'key': 'properties.azureADOnlyAuthentication', 'type': 'bool'},
+        'state': {'key': 'properties.state', 'type': 'str'},
+        'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        *,
+        azure_ad_only_authentication: Optional[bool] = None,
+        **kwargs
+    ):
+        super(AzureADOnlyAuthentication, self).__init__(**kwargs)
+        self.azure_ad_only_authentication = azure_ad_only_authentication
+        self.state = None
+        self.creation_date = None
+
+
+class AzureADOnlyAuthenticationListResult(msrest.serialization.Model):
+    """A list of active directory only authentications.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.synapse.models.AzureADOnlyAuthentication]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[AzureADOnlyAuthentication]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureADOnlyAuthenticationListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
 class AzureEntityResource(Resource):
     """The resource model definition for an Azure Resource Manager resource with an etag.
 
@@ -339,7 +454,7 @@ class BigDataPoolResourceInfo(TrackedResource):
     :param custom_libraries: List of custom libraries/packages associated with the spark pool.
     :type custom_libraries: list[~azure.mgmt.synapse.models.LibraryInfo]
     :param spark_config_properties: Spark configuration file to specify additional properties.
-    :type spark_config_properties: ~azure.mgmt.synapse.models.LibraryRequirements
+    :type spark_config_properties: ~azure.mgmt.synapse.models.SparkConfigProperties
     :param spark_version: The Apache Spark version.
     :type spark_version: str
     :param default_spark_log_folder: The default folder where Spark logs will be written.
@@ -348,7 +463,7 @@ class BigDataPoolResourceInfo(TrackedResource):
      values include: "None", "Small", "Medium", "Large", "XLarge", "XXLarge", "XXXLarge".
     :type node_size: str or ~azure.mgmt.synapse.models.NodeSize
     :param node_size_family: The kind of nodes that the Big Data pool provides. Possible values
-     include: "None", "MemoryOptimized".
+     include: "None", "MemoryOptimized", "HardwareAcceleratedFPGA", "HardwareAcceleratedGPU".
     :type node_size_family: str or ~azure.mgmt.synapse.models.NodeSizeFamily
     :ivar last_succeeded_timestamp: The time when the Big Data pool was updated successfully.
     :vartype last_succeeded_timestamp: ~datetime.datetime
@@ -380,7 +495,7 @@ class BigDataPoolResourceInfo(TrackedResource):
         'node_count': {'key': 'properties.nodeCount', 'type': 'int'},
         'library_requirements': {'key': 'properties.libraryRequirements', 'type': 'LibraryRequirements'},
         'custom_libraries': {'key': 'properties.customLibraries', 'type': '[LibraryInfo]'},
-        'spark_config_properties': {'key': 'properties.sparkConfigProperties', 'type': 'LibraryRequirements'},
+        'spark_config_properties': {'key': 'properties.sparkConfigProperties', 'type': 'SparkConfigProperties'},
         'spark_version': {'key': 'properties.sparkVersion', 'type': 'str'},
         'default_spark_log_folder': {'key': 'properties.defaultSparkLogFolder', 'type': 'str'},
         'node_size': {'key': 'properties.nodeSize', 'type': 'str'},
@@ -405,7 +520,7 @@ class BigDataPoolResourceInfo(TrackedResource):
         node_count: Optional[int] = None,
         library_requirements: Optional["LibraryRequirements"] = None,
         custom_libraries: Optional[List["LibraryInfo"]] = None,
-        spark_config_properties: Optional["LibraryRequirements"] = None,
+        spark_config_properties: Optional["SparkConfigProperties"] = None,
         spark_version: Optional[str] = None,
         default_spark_log_folder: Optional[str] = None,
         node_size: Optional[Union[str, "NodeSize"]] = None,
@@ -561,9 +676,9 @@ class CmdkeySetup(CustomSetupBase):
     :param type: Required. The type of custom setup.Constant filled by server.
     :type type: str
     :param target_name: Required. The server name of data source access.
-    :type target_name: object
+    :type target_name: any
     :param user_name: Required. The user name of data source access.
-    :type user_name: object
+    :type user_name: any
     :param password: Required. The password of data source access.
     :type password: ~azure.mgmt.synapse.models.SecretBase
     """
@@ -585,8 +700,8 @@ class CmdkeySetup(CustomSetupBase):
     def __init__(
         self,
         *,
-        target_name: object,
-        user_name: object,
+        target_name: Any,
+        user_name: Any,
         password: "SecretBase",
         **kwargs
     ):
@@ -661,6 +776,27 @@ class CreateSqlPoolRestorePointDefinition(msrest.serialization.Model):
         self.restore_point_label = restore_point_label
 
 
+class CspWorkspaceAdminProperties(msrest.serialization.Model):
+    """Initial workspace AAD admin properties for a CSP subscription.
+
+    :param initial_workspace_admin_object_id: AAD object ID of initial workspace admin.
+    :type initial_workspace_admin_object_id: str
+    """
+
+    _attribute_map = {
+        'initial_workspace_admin_object_id': {'key': 'initialWorkspaceAdminObjectId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        initial_workspace_admin_object_id: Optional[str] = None,
+        **kwargs
+    ):
+        super(CspWorkspaceAdminProperties, self).__init__(**kwargs)
+        self.initial_workspace_admin_object_id = initial_workspace_admin_object_id
+
+
 class CustomerManagedKeyDetails(msrest.serialization.Model):
     """Details of the customer managed key associated with the workspace.
 
@@ -670,6 +806,8 @@ class CustomerManagedKeyDetails(msrest.serialization.Model):
     :vartype status: str
     :param key: The key object of the workspace.
     :type key: ~azure.mgmt.synapse.models.WorkspaceKeyDetails
+    :param kek_identity: Key encryption key.
+    :type kek_identity: ~azure.mgmt.synapse.models.KekIdentityProperties
     """
 
     _validation = {
@@ -679,17 +817,20 @@ class CustomerManagedKeyDetails(msrest.serialization.Model):
     _attribute_map = {
         'status': {'key': 'status', 'type': 'str'},
         'key': {'key': 'key', 'type': 'WorkspaceKeyDetails'},
+        'kek_identity': {'key': 'kekIdentity', 'type': 'KekIdentityProperties'},
     }
 
     def __init__(
         self,
         *,
         key: Optional["WorkspaceKeyDetails"] = None,
+        kek_identity: Optional["KekIdentityProperties"] = None,
         **kwargs
     ):
         super(CustomerManagedKeyDetails, self).__init__(**kwargs)
         self.status = None
         self.key = key
+        self.kek_identity = kek_identity
 
 
 class DataLakeStorageAccountDetails(msrest.serialization.Model):
@@ -699,11 +840,18 @@ class DataLakeStorageAccountDetails(msrest.serialization.Model):
     :type account_url: str
     :param filesystem: Filesystem name.
     :type filesystem: str
+    :param resource_id: ARM resource Id of this storage account.
+    :type resource_id: str
+    :param create_managed_private_endpoint: Create managed private endpoint to this storage account
+     or not.
+    :type create_managed_private_endpoint: bool
     """
 
     _attribute_map = {
         'account_url': {'key': 'accountUrl', 'type': 'str'},
         'filesystem': {'key': 'filesystem', 'type': 'str'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'create_managed_private_endpoint': {'key': 'createManagedPrivateEndpoint', 'type': 'bool'},
     }
 
     def __init__(
@@ -711,45 +859,15 @@ class DataLakeStorageAccountDetails(msrest.serialization.Model):
         *,
         account_url: Optional[str] = None,
         filesystem: Optional[str] = None,
+        resource_id: Optional[str] = None,
+        create_managed_private_endpoint: Optional[bool] = None,
         **kwargs
     ):
         super(DataLakeStorageAccountDetails, self).__init__(**kwargs)
         self.account_url = account_url
         self.filesystem = filesystem
-
-
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
+        self.resource_id = resource_id
+        self.create_managed_private_endpoint = create_managed_private_endpoint
 
 
 class DataMaskingPolicy(ProxyResource):
@@ -1228,7 +1346,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {
@@ -1396,9 +1514,8 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
      database, and should not be used in combination with other groups as this will result in
      duplicate audit logs.
     
-     For more information, see `Database-Level Audit Action Groups <https://docs.microsoft.com/en-
-     us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-
-     actions#database-level-audit-action-groups>`_.
+     For more information, see `Database-Level Audit Action Groups
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
     
      For Database auditing policy, specific Actions can also be specified (note that Actions cannot
      be specified for Server auditing policy). The supported actions to audit are:
@@ -1422,9 +1539,8 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
      SELECT on DATABASE::myDatabase by public
      SELECT on SCHEMA::mySchema by public
     
-     For more information, see `Database-Level Audit Actions <https://docs.microsoft.com/en-
-     us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-
-     actions#database-level-audit-actions>`_.
+     For more information, see `Database-Level Audit Actions
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
     :type audit_actions_and_groups: list[str]
     :param storage_account_subscription_id: Specifies the blob storage subscription Id.
     :type storage_account_subscription_id: str
@@ -1442,8 +1558,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
     
      Diagnostic Settings URI format:
      PUT
-     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-
-     version=2017-05-01-preview
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
     
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -1615,9 +1730,8 @@ class ExtendedSqlPoolBlobAuditingPolicy(ProxyResource):
      database, and should not be used in combination with other groups as this will result in
      duplicate audit logs.
     
-     For more information, see `Database-Level Audit Action Groups <https://docs.microsoft.com/en-
-     us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-
-     actions#database-level-audit-action-groups>`_.
+     For more information, see `Database-Level Audit Action Groups
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
     
      For Database auditing policy, specific Actions can also be specified (note that Actions cannot
      be specified for Server auditing policy). The supported actions to audit are:
@@ -1641,9 +1755,8 @@ class ExtendedSqlPoolBlobAuditingPolicy(ProxyResource):
      SELECT on DATABASE::myDatabase by public
      SELECT on SCHEMA::mySchema by public
     
-     For more information, see `Database-Level Audit Actions <https://docs.microsoft.com/en-
-     us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-
-     actions#database-level-audit-actions>`_.
+     For more information, see `Database-Level Audit Actions
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
     :type audit_actions_and_groups: list[str]
     :param storage_account_subscription_id: Specifies the blob storage subscription Id.
     :type storage_account_subscription_id: str
@@ -1661,8 +1774,7 @@ class ExtendedSqlPoolBlobAuditingPolicy(ProxyResource):
     
      Diagnostic Settings URI format:
      PUT
-     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-
-     version=2017-05-01-preview
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
     
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -1865,7 +1977,7 @@ class IntegrationRuntime(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
      include: "Managed", "SelfHosted".
     :type type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
@@ -1890,7 +2002,7 @@ class IntegrationRuntime(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, object]] = None,
+        additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         **kwargs
     ):
@@ -1931,10 +2043,10 @@ class IntegrationRuntimeComputeProperties(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param location: The location for managed integration runtime. The supported regions could be
-     found on https://docs.microsoft.com/en-us/azure/data-factory/data-factory-data-movement-
-     activities.
+     found on
+     https://docs.microsoft.com/en-us/azure/data-factory/data-factory-data-movement-activities.
     :type location: str
     :param node_size: The node size requirement to managed integration runtime.
     :type node_size: str
@@ -1967,7 +2079,7 @@ class IntegrationRuntimeComputeProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, object]] = None,
+        additional_properties: Optional[Dict[str, Any]] = None,
         location: Optional[str] = None,
         node_size: Optional[str] = None,
         number_of_nodes: Optional[int] = None,
@@ -1993,7 +2105,7 @@ class IntegrationRuntimeConnectionInfo(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar service_token: The token generated in service. Callers use this token to authenticate to
      integration runtime.
     :vartype service_token: str
@@ -2033,7 +2145,7 @@ class IntegrationRuntimeConnectionInfo(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, object]] = None,
+        additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(IntegrationRuntimeConnectionInfo, self).__init__(**kwargs)
@@ -2078,7 +2190,7 @@ class IntegrationRuntimeDataFlowProperties(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param compute_type: Compute type of the cluster which will execute data flow job. Possible
      values include: "General", "MemoryOptimized", "ComputeOptimized".
     :type compute_type: str or ~azure.mgmt.synapse.models.DataFlowComputeType
@@ -2088,6 +2200,9 @@ class IntegrationRuntimeDataFlowProperties(msrest.serialization.Model):
     :param time_to_live: Time to live (in minutes) setting of the cluster which will execute data
      flow job.
     :type time_to_live: int
+    :param cleanup: Cluster will not be recycled and it will be used in next data flow activity run
+     until TTL (time to live) is reached if this is set as false. Default is true.
+    :type cleanup: bool
     """
 
     _validation = {
@@ -2099,15 +2214,17 @@ class IntegrationRuntimeDataFlowProperties(msrest.serialization.Model):
         'compute_type': {'key': 'computeType', 'type': 'str'},
         'core_count': {'key': 'coreCount', 'type': 'int'},
         'time_to_live': {'key': 'timeToLive', 'type': 'int'},
+        'cleanup': {'key': 'cleanup', 'type': 'bool'},
     }
 
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, object]] = None,
+        additional_properties: Optional[Dict[str, Any]] = None,
         compute_type: Optional[Union[str, "DataFlowComputeType"]] = None,
         core_count: Optional[int] = None,
         time_to_live: Optional[int] = None,
+        cleanup: Optional[bool] = None,
         **kwargs
     ):
         super(IntegrationRuntimeDataFlowProperties, self).__init__(**kwargs)
@@ -2115,6 +2232,7 @@ class IntegrationRuntimeDataFlowProperties(msrest.serialization.Model):
         self.compute_type = compute_type
         self.core_count = core_count
         self.time_to_live = time_to_live
+        self.cleanup = cleanup
 
 
 class IntegrationRuntimeDataProxyProperties(msrest.serialization.Model):
@@ -2238,7 +2356,7 @@ class IntegrationRuntimeNodeMonitoringData(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar node_name: Name of the integration runtime node.
     :vartype node_name: str
     :ivar available_memory_in_mb: Available memory (MB) on the integration runtime node.
@@ -2284,7 +2402,7 @@ class IntegrationRuntimeNodeMonitoringData(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, object]] = None,
+        additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(IntegrationRuntimeNodeMonitoringData, self).__init__(**kwargs)
@@ -2297,6 +2415,103 @@ class IntegrationRuntimeNodeMonitoringData(msrest.serialization.Model):
         self.max_concurrent_jobs = None
         self.sent_bytes = None
         self.received_bytes = None
+
+
+class IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint(msrest.serialization.Model):
+    """Azure-SSIS integration runtime outbound network dependency endpoints for one category.
+
+    :param category: The category of outbound network dependency.
+    :type category: str
+    :param endpoints: The endpoints for outbound network dependency.
+    :type endpoints:
+     list[~azure.mgmt.synapse.models.IntegrationRuntimeOutboundNetworkDependenciesEndpoint]
+    """
+
+    _attribute_map = {
+        'category': {'key': 'category', 'type': 'str'},
+        'endpoints': {'key': 'endpoints', 'type': '[IntegrationRuntimeOutboundNetworkDependenciesEndpoint]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        category: Optional[str] = None,
+        endpoints: Optional[List["IntegrationRuntimeOutboundNetworkDependenciesEndpoint"]] = None,
+        **kwargs
+    ):
+        super(IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint, self).__init__(**kwargs)
+        self.category = category
+        self.endpoints = endpoints
+
+
+class IntegrationRuntimeOutboundNetworkDependenciesEndpoint(msrest.serialization.Model):
+    """The endpoint for Azure-SSIS integration runtime outbound network dependency.
+
+    :param domain_name: The domain name of endpoint.
+    :type domain_name: str
+    :param endpoint_details: The details of endpoint.
+    :type endpoint_details:
+     list[~azure.mgmt.synapse.models.IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails]
+    """
+
+    _attribute_map = {
+        'domain_name': {'key': 'domainName', 'type': 'str'},
+        'endpoint_details': {'key': 'endpointDetails', 'type': '[IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        domain_name: Optional[str] = None,
+        endpoint_details: Optional[List["IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails"]] = None,
+        **kwargs
+    ):
+        super(IntegrationRuntimeOutboundNetworkDependenciesEndpoint, self).__init__(**kwargs)
+        self.domain_name = domain_name
+        self.endpoint_details = endpoint_details
+
+
+class IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails(msrest.serialization.Model):
+    """The details of Azure-SSIS integration runtime outbound network dependency endpoint.
+
+    :param port: The port of endpoint.
+    :type port: int
+    """
+
+    _attribute_map = {
+        'port': {'key': 'port', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        *,
+        port: Optional[int] = None,
+        **kwargs
+    ):
+        super(IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails, self).__init__(**kwargs)
+        self.port = port
+
+
+class IntegrationRuntimeOutboundNetworkDependenciesEndpointsResponse(msrest.serialization.Model):
+    """Azure-SSIS integration runtime outbound network dependency endpoints.
+
+    :param value: The list of outbound network dependency endpoints.
+    :type value:
+     list[~azure.mgmt.synapse.models.IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint"]] = None,
+        **kwargs
+    ):
+        super(IntegrationRuntimeOutboundNetworkDependenciesEndpointsResponse, self).__init__(**kwargs)
+        self.value = value
 
 
 class IntegrationRuntimeRegenerateKeyParameters(msrest.serialization.Model):
@@ -2411,7 +2626,7 @@ class IntegrationRuntimeSsisCatalogInfo(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param catalog_server_endpoint: The catalog database server URL.
     :type catalog_server_endpoint: str
     :param catalog_admin_user_name: The administrator user name of catalog database.
@@ -2441,7 +2656,7 @@ class IntegrationRuntimeSsisCatalogInfo(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, object]] = None,
+        additional_properties: Optional[Dict[str, Any]] = None,
         catalog_server_endpoint: Optional[str] = None,
         catalog_admin_user_name: Optional[str] = None,
         catalog_admin_password: Optional["SecureString"] = None,
@@ -2461,7 +2676,7 @@ class IntegrationRuntimeSsisProperties(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param catalog_info: Catalog information for managed dedicated integration runtime.
     :type catalog_info: ~azure.mgmt.synapse.models.IntegrationRuntimeSsisCatalogInfo
     :param license_type: License type for bringing your own license scenario. Possible values
@@ -2495,7 +2710,7 @@ class IntegrationRuntimeSsisProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, object]] = None,
+        additional_properties: Optional[Dict[str, Any]] = None,
         catalog_info: Optional["IntegrationRuntimeSsisCatalogInfo"] = None,
         license_type: Optional[Union[str, "IntegrationRuntimeLicenseType"]] = None,
         custom_setup_script_properties: Optional["IntegrationRuntimeCustomSetupScriptProperties"] = None,
@@ -2526,7 +2741,7 @@ class IntegrationRuntimeStatus(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
      include: "Managed", "SelfHosted".
     :type type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
@@ -2558,7 +2773,7 @@ class IntegrationRuntimeStatus(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, object]] = None,
+        additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(IntegrationRuntimeStatus, self).__init__(**kwargs)
@@ -2607,7 +2822,7 @@ class IntegrationRuntimeVNetProperties(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param v_net_id: The ID of the VNet that this integration runtime will join.
     :type v_net_id: str
     :param subnet: The name of the subnet this integration runtime will join.
@@ -2615,6 +2830,9 @@ class IntegrationRuntimeVNetProperties(msrest.serialization.Model):
     :param public_i_ps: Resource IDs of the public IP addresses that this integration runtime will
      use.
     :type public_i_ps: list[str]
+    :param subnet_id: The ID of subnet, to which this Azure-SSIS integration runtime will be
+     joined.
+    :type subnet_id: str
     """
 
     _attribute_map = {
@@ -2622,15 +2840,17 @@ class IntegrationRuntimeVNetProperties(msrest.serialization.Model):
         'v_net_id': {'key': 'vNetId', 'type': 'str'},
         'subnet': {'key': 'subnet', 'type': 'str'},
         'public_i_ps': {'key': 'publicIPs', 'type': '[str]'},
+        'subnet_id': {'key': 'subnetId', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, object]] = None,
+        additional_properties: Optional[Dict[str, Any]] = None,
         v_net_id: Optional[str] = None,
         subnet: Optional[str] = None,
         public_i_ps: Optional[List[str]] = None,
+        subnet_id: Optional[str] = None,
         **kwargs
     ):
         super(IntegrationRuntimeVNetProperties, self).__init__(**kwargs)
@@ -2638,6 +2858,7 @@ class IntegrationRuntimeVNetProperties(msrest.serialization.Model):
         self.v_net_id = v_net_id
         self.subnet = subnet
         self.public_i_ps = public_i_ps
+        self.subnet_id = subnet_id
 
 
 class IpFirewallRuleInfo(ProxyResource):
@@ -2756,6 +2977,33 @@ class IpFirewallRuleProperties(msrest.serialization.Model):
         self.start_ip_address = start_ip_address
 
 
+class KekIdentityProperties(msrest.serialization.Model):
+    """Key encryption key properties.
+
+    :param user_assigned_identity: User assigned identity resource Id.
+    :type user_assigned_identity: str
+    :param use_system_assigned_identity: Boolean specifying whether to use system assigned identity
+     or not.
+    :type use_system_assigned_identity: any
+    """
+
+    _attribute_map = {
+        'user_assigned_identity': {'key': 'userAssignedIdentity', 'type': 'str'},
+        'use_system_assigned_identity': {'key': 'useSystemAssignedIdentity', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        *,
+        user_assigned_identity: Optional[str] = None,
+        use_system_assigned_identity: Optional[Any] = None,
+        **kwargs
+    ):
+        super(KekIdentityProperties, self).__init__(**kwargs)
+        self.user_assigned_identity = user_assigned_identity
+        self.use_system_assigned_identity = use_system_assigned_identity
+
+
 class Key(ProxyResource):
     """A workspace key.
 
@@ -2838,8 +3086,8 @@ class LibraryInfo(msrest.serialization.Model):
     :type path: str
     :param container_name: Storage blob container name.
     :type container_name: str
-    :ivar uploaded_timestamp: The last update time of the library.
-    :vartype uploaded_timestamp: ~datetime.datetime
+    :param uploaded_timestamp: The last update time of the library.
+    :type uploaded_timestamp: ~datetime.datetime
     :param type: Type of the library.
     :type type: str
     :ivar provisioning_status: Provisioning status of the library/package.
@@ -2849,7 +3097,6 @@ class LibraryInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'uploaded_timestamp': {'readonly': True},
         'provisioning_status': {'readonly': True},
         'creator_id': {'readonly': True},
     }
@@ -2870,6 +3117,7 @@ class LibraryInfo(msrest.serialization.Model):
         name: Optional[str] = None,
         path: Optional[str] = None,
         container_name: Optional[str] = None,
+        uploaded_timestamp: Optional[datetime.datetime] = None,
         type: Optional[str] = None,
         **kwargs
     ):
@@ -2877,7 +3125,7 @@ class LibraryInfo(msrest.serialization.Model):
         self.name = name
         self.path = path
         self.container_name = container_name
-        self.uploaded_timestamp = None
+        self.uploaded_timestamp = uploaded_timestamp
         self.type = type
         self.provisioning_status = None
         self.creator_id = None
@@ -2972,8 +3220,8 @@ class LibraryResource(SubResource):
     :type path: str
     :param container_name: Storage blob container name.
     :type container_name: str
-    :ivar uploaded_timestamp: The last update time of the library.
-    :vartype uploaded_timestamp: ~datetime.datetime
+    :param uploaded_timestamp: The last update time of the library.
+    :type uploaded_timestamp: ~datetime.datetime
     :param type_properties_type: Type of the library.
     :type type_properties_type: str
     :ivar provisioning_status: Provisioning status of the library/package.
@@ -2987,7 +3235,6 @@ class LibraryResource(SubResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'etag': {'readonly': True},
-        'uploaded_timestamp': {'readonly': True},
         'provisioning_status': {'readonly': True},
         'creator_id': {'readonly': True},
     }
@@ -3012,6 +3259,7 @@ class LibraryResource(SubResource):
         name_properties_name: Optional[str] = None,
         path: Optional[str] = None,
         container_name: Optional[str] = None,
+        uploaded_timestamp: Optional[datetime.datetime] = None,
         type_properties_type: Optional[str] = None,
         **kwargs
     ):
@@ -3019,7 +3267,7 @@ class LibraryResource(SubResource):
         self.name_properties_name = name_properties_name
         self.path = path
         self.container_name = container_name
-        self.uploaded_timestamp = None
+        self.uploaded_timestamp = uploaded_timestamp
         self.type_properties_type = type_properties_type
         self.provisioning_status = None
         self.creator_id = None
@@ -3355,8 +3603,11 @@ class ManagedIdentity(msrest.serialization.Model):
     :ivar tenant_id: The tenant ID of the workspace managed identity.
     :vartype tenant_id: str
     :param type: The type of managed identity for the workspace. Possible values include: "None",
-     "SystemAssigned".
+     "SystemAssigned", "SystemAssigned,UserAssigned".
     :type type: str or ~azure.mgmt.synapse.models.ResourceIdentityType
+    :param user_assigned_identities: The user assigned managed identities.
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.synapse.models.UserAssignedManagedIdentity]
     """
 
     _validation = {
@@ -3368,18 +3619,21 @@ class ManagedIdentity(msrest.serialization.Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedManagedIdentity}'},
     }
 
     def __init__(
         self,
         *,
         type: Optional[Union[str, "ResourceIdentityType"]] = None,
+        user_assigned_identities: Optional[Dict[str, "UserAssignedManagedIdentity"]] = None,
         **kwargs
     ):
         super(ManagedIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
+        self.user_assigned_identities = user_assigned_identities
 
 
 class ManagedIdentitySqlControlSettingsModel(ProxyResource):
@@ -3466,7 +3720,7 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
      include: "Managed", "SelfHosted".
     :type type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
@@ -3499,7 +3753,7 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, object]] = None,
+        additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         compute_properties: Optional["IntegrationRuntimeComputeProperties"] = None,
         ssis_properties: Optional["IntegrationRuntimeSsisProperties"] = None,
@@ -3519,7 +3773,7 @@ class ManagedIntegrationRuntimeError(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar time: The time when the error occurred.
     :vartype time: ~datetime.datetime
     :ivar code: Error code.
@@ -3548,7 +3802,7 @@ class ManagedIntegrationRuntimeError(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, object]] = None,
+        additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(ManagedIntegrationRuntimeError, self).__init__(**kwargs)
@@ -3566,7 +3820,7 @@ class ManagedIntegrationRuntimeNode(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar node_id: The managed integration runtime node id.
     :vartype node_id: str
     :ivar status: The managed integration runtime node status. Possible values include: "Starting",
@@ -3591,7 +3845,7 @@ class ManagedIntegrationRuntimeNode(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, object]] = None,
+        additional_properties: Optional[Dict[str, Any]] = None,
         errors: Optional[List["ManagedIntegrationRuntimeError"]] = None,
         **kwargs
     ):
@@ -3609,7 +3863,7 @@ class ManagedIntegrationRuntimeOperationResult(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar type: The operation type. Could be start or stop.
     :vartype type: str
     :ivar start_time: The start time of the operation.
@@ -3646,7 +3900,7 @@ class ManagedIntegrationRuntimeOperationResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, object]] = None,
+        additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(ManagedIntegrationRuntimeOperationResult, self).__init__(**kwargs)
@@ -3668,7 +3922,7 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
      include: "Managed", "SelfHosted".
     :type type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
@@ -3712,7 +3966,7 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, object]] = None,
+        additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(ManagedIntegrationRuntimeStatus, self).__init__(additional_properties=additional_properties, **kwargs)
@@ -3970,7 +4224,7 @@ class OperationResource(msrest.serialization.Model):
      "Canceled".
     :type status: str or ~azure.mgmt.synapse.models.OperationStatus
     :param properties: Operation properties.
-    :type properties: object
+    :type properties: any
     :param error: Errors from the operation.
     :type error: ~azure.mgmt.synapse.models.ErrorDetail
     :param start_time: Operation start time.
@@ -3998,7 +4252,7 @@ class OperationResource(msrest.serialization.Model):
         id: Optional[str] = None,
         name: Optional[str] = None,
         status: Optional[Union[str, "OperationStatus"]] = None,
-        properties: Optional[object] = None,
+        properties: Optional[Any] = None,
         error: Optional["ErrorDetail"] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
@@ -5282,7 +5536,7 @@ class SelfHostedIntegrationRuntime(IntegrationRuntime):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
      include: "Managed", "SelfHosted".
     :type type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
@@ -5306,7 +5560,7 @@ class SelfHostedIntegrationRuntime(IntegrationRuntime):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, object]] = None,
+        additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         linked_info: Optional["LinkedIntegrationRuntimeType"] = None,
         **kwargs
@@ -5323,7 +5577,7 @@ class SelfHostedIntegrationRuntimeNode(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar node_name: Name of the integration runtime node.
     :vartype node_name: str
     :ivar machine_name: Machine name of the integration runtime node.
@@ -5414,7 +5668,7 @@ class SelfHostedIntegrationRuntimeNode(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, object]] = None,
+        additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(SelfHostedIntegrationRuntimeNode, self).__init__(**kwargs)
@@ -5448,7 +5702,7 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
      include: "Managed", "SelfHosted".
     :type type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
@@ -5551,7 +5805,7 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, object]] = None,
+        additional_properties: Optional[Dict[str, Any]] = None,
         nodes: Optional[List["SelfHostedIntegrationRuntimeNode"]] = None,
         links: Optional[List["LinkedIntegrationRuntime"]] = None,
         **kwargs
@@ -5853,9 +6107,8 @@ class ServerBlobAuditingPolicy(ProxyResource):
      database, and should not be used in combination with other groups as this will result in
      duplicate audit logs.
     
-     For more information, see `Database-Level Audit Action Groups <https://docs.microsoft.com/en-
-     us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-
-     actions#database-level-audit-action-groups>`_.
+     For more information, see `Database-Level Audit Action Groups
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
     
      For Database auditing policy, specific Actions can also be specified (note that Actions cannot
      be specified for Server auditing policy). The supported actions to audit are:
@@ -5879,9 +6132,8 @@ class ServerBlobAuditingPolicy(ProxyResource):
      SELECT on DATABASE::myDatabase by public
      SELECT on SCHEMA::mySchema by public
     
-     For more information, see `Database-Level Audit Actions <https://docs.microsoft.com/en-
-     us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-
-     actions#database-level-audit-actions>`_.
+     For more information, see `Database-Level Audit Actions
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
     :type audit_actions_and_groups: list[str]
     :param storage_account_subscription_id: Specifies the blob storage subscription Id.
     :type storage_account_subscription_id: str
@@ -5899,8 +6151,7 @@ class ServerBlobAuditingPolicy(ProxyResource):
     
      Diagnostic Settings URI format:
      PUT
-     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-
-     version=2017-05-01-preview
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
     
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -6312,6 +6563,152 @@ class Sku(msrest.serialization.Model):
         self.capacity = capacity
 
 
+class SparkConfigProperties(msrest.serialization.Model):
+    """SparkConfig Properties for a Big Data pool powered by Apache Spark.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar time: The last update time of the spark config properties file.
+    :vartype time: ~datetime.datetime
+    :param content: The spark config properties.
+    :type content: str
+    :param filename: The filename of the spark config properties file.
+    :type filename: str
+    :param configuration_type: The type of the spark config properties file. Possible values
+     include: "File", "Artifact".
+    :type configuration_type: str or ~azure.mgmt.synapse.models.ConfigurationType
+    """
+
+    _validation = {
+        'time': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'time': {'key': 'time', 'type': 'iso-8601'},
+        'content': {'key': 'content', 'type': 'str'},
+        'filename': {'key': 'filename', 'type': 'str'},
+        'configuration_type': {'key': 'configurationType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        content: Optional[str] = None,
+        filename: Optional[str] = None,
+        configuration_type: Optional[Union[str, "ConfigurationType"]] = None,
+        **kwargs
+    ):
+        super(SparkConfigProperties, self).__init__(**kwargs)
+        self.time = None
+        self.content = content
+        self.filename = filename
+        self.configuration_type = configuration_type
+
+
+class SparkConfigurationListResponse(msrest.serialization.Model):
+    """A list of SparkConfiguration resources.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. List of SparkConfiguration.
+    :type value: list[~azure.mgmt.synapse.models.SparkConfigurationResource]
+    :param next_link: The link to the next page of results, if any remaining results exist.
+    :type next_link: str
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[SparkConfigurationResource]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: List["SparkConfigurationResource"],
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        super(SparkConfigurationListResponse, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class SparkConfigurationResource(SubResource):
+    """SparkConfiguration response details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    :param description: Description about the SparkConfiguration.
+    :type description: str
+    :param configs: Required. SparkConfiguration configs.
+    :type configs: dict[str, str]
+    :param annotations: Annotations for SparkConfiguration.
+    :type annotations: list[str]
+    :param notes: additional Notes.
+    :type notes: str
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created: The timestamp of resource creation.
+    :type created: ~datetime.datetime
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+        'configs': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'configs': {'key': 'properties.configs', 'type': '{str}'},
+        'annotations': {'key': 'properties.annotations', 'type': '[str]'},
+        'notes': {'key': 'properties.notes', 'type': 'str'},
+        'created_by': {'key': 'properties.createdBy', 'type': 'str'},
+        'created': {'key': 'properties.created', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        *,
+        configs: Dict[str, str],
+        description: Optional[str] = None,
+        annotations: Optional[List[str]] = None,
+        notes: Optional[str] = None,
+        created_by: Optional[str] = None,
+        created: Optional[datetime.datetime] = None,
+        **kwargs
+    ):
+        super(SparkConfigurationResource, self).__init__(**kwargs)
+        self.description = description
+        self.configs = configs
+        self.annotations = annotations
+        self.notes = notes
+        self.created_by = created_by
+        self.created = created
+
+
 class SqlPool(TrackedResource):
     """A SQL Analytics pool.
 
@@ -6354,6 +6751,8 @@ class SqlPool(TrackedResource):
     :param storage_account_type: The storage account type used to store backups for this sql pool.
      Possible values include: "GRS", "LRS", "ZRS".
     :type storage_account_type: str or ~azure.mgmt.synapse.models.StorageAccountType
+    :param source_database_deletion_date: Specifies the time that the sql pool was deleted.
+    :type source_database_deletion_date: ~datetime.datetime
     """
 
     _validation = {
@@ -6380,6 +6779,7 @@ class SqlPool(TrackedResource):
         'create_mode': {'key': 'properties.createMode', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'storage_account_type': {'key': 'properties.storageAccountType', 'type': 'str'},
+        'source_database_deletion_date': {'key': 'properties.sourceDatabaseDeletionDate', 'type': 'iso-8601'},
     }
 
     def __init__(
@@ -6398,6 +6798,7 @@ class SqlPool(TrackedResource):
         create_mode: Optional[str] = None,
         creation_date: Optional[datetime.datetime] = None,
         storage_account_type: Optional[Union[str, "StorageAccountType"]] = None,
+        source_database_deletion_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
         super(SqlPool, self).__init__(tags=tags, location=location, **kwargs)
@@ -6412,6 +6813,7 @@ class SqlPool(TrackedResource):
         self.create_mode = create_mode
         self.creation_date = creation_date
         self.storage_account_type = storage_account_type
+        self.source_database_deletion_date = source_database_deletion_date
 
 
 class SqlPoolBlobAuditingPolicy(ProxyResource):
@@ -6483,9 +6885,8 @@ class SqlPoolBlobAuditingPolicy(ProxyResource):
      database, and should not be used in combination with other groups as this will result in
      duplicate audit logs.
     
-     For more information, see `Database-Level Audit Action Groups <https://docs.microsoft.com/en-
-     us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-
-     actions#database-level-audit-action-groups>`_.
+     For more information, see `Database-Level Audit Action Groups
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
     
      For Database auditing policy, specific Actions can also be specified (note that Actions cannot
      be specified for Server auditing policy). The supported actions to audit are:
@@ -6509,9 +6910,8 @@ class SqlPoolBlobAuditingPolicy(ProxyResource):
      SELECT on DATABASE::myDatabase by public
      SELECT on SCHEMA::mySchema by public
     
-     For more information, see `Database-Level Audit Actions <https://docs.microsoft.com/en-
-     us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-
-     actions#database-level-audit-actions>`_.
+     For more information, see `Database-Level Audit Actions
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
     :type audit_actions_and_groups: list[str]
     :param storage_account_subscription_id: Specifies the blob storage subscription Id.
     :type storage_account_subscription_id: str
@@ -6529,8 +6929,7 @@ class SqlPoolBlobAuditingPolicy(ProxyResource):
     
      Diagnostic Settings URI format:
      PUT
-     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-
-     version=2017-05-01-preview
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
     
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -6965,6 +7364,8 @@ class SqlPoolPatchInfo(msrest.serialization.Model):
     :param storage_account_type: The storage account type used to store backups for this sql pool.
      Possible values include: "GRS", "LRS", "ZRS".
     :type storage_account_type: str or ~azure.mgmt.synapse.models.StorageAccountType
+    :param source_database_deletion_date: Specifies the time that the sql pool was deleted.
+    :type source_database_deletion_date: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -6981,6 +7382,7 @@ class SqlPoolPatchInfo(msrest.serialization.Model):
         'create_mode': {'key': 'properties.createMode', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'storage_account_type': {'key': 'properties.storageAccountType', 'type': 'str'},
+        'source_database_deletion_date': {'key': 'properties.sourceDatabaseDeletionDate', 'type': 'iso-8601'},
     }
 
     def __init__(
@@ -6999,6 +7401,7 @@ class SqlPoolPatchInfo(msrest.serialization.Model):
         create_mode: Optional[str] = None,
         creation_date: Optional[datetime.datetime] = None,
         storage_account_type: Optional[Union[str, "StorageAccountType"]] = None,
+        source_database_deletion_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
         super(SqlPoolPatchInfo, self).__init__(**kwargs)
@@ -7015,6 +7418,7 @@ class SqlPoolPatchInfo(msrest.serialization.Model):
         self.create_mode = create_mode
         self.creation_date = creation_date
         self.storage_account_type = storage_account_type
+        self.source_database_deletion_date = source_database_deletion_date
 
 
 class SqlPoolSchema(ProxyResource):
@@ -8216,6 +8620,36 @@ class UpdateIntegrationRuntimeRequest(msrest.serialization.Model):
         self.update_delay_offset = update_delay_offset
 
 
+class UserAssignedManagedIdentity(msrest.serialization.Model):
+    """User Assigned Managed Identity.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar client_id: The client ID.
+    :vartype client_id: str
+    :ivar principal_id: The principal ID.
+    :vartype principal_id: str
+    """
+
+    _validation = {
+        'client_id': {'readonly': True},
+        'principal_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'client_id': {'key': 'clientId', 'type': 'str'},
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(UserAssignedManagedIdentity, self).__init__(**kwargs)
+        self.client_id = None
+        self.principal_id = None
+
+
 class VirtualNetworkProfile(msrest.serialization.Model):
     """Virtual Network Profile.
 
@@ -8642,7 +9076,7 @@ class Workspace(TrackedResource):
     :ivar workspace_uid: The workspace unique identifier.
     :vartype workspace_uid: str
     :ivar extra_properties: Workspace level configs and feature flags.
-    :vartype extra_properties: dict[str, object]
+    :vartype extra_properties: dict[str, any]
     :param managed_virtual_network_settings: Managed Virtual Network Settings.
     :type managed_virtual_network_settings:
      ~azure.mgmt.synapse.models.ManagedVirtualNetworkSettings
@@ -8653,9 +9087,17 @@ class Workspace(TrackedResource):
     :type purview_configuration: ~azure.mgmt.synapse.models.PurviewConfiguration
     :ivar adla_resource_id: The ADLA resource ID.
     :vartype adla_resource_id: str
-    :param public_network_access: Enable or Disable pubic network access to workspace. Possible
+    :param public_network_access: Enable or Disable public network access to workspace. Possible
      values include: "Enabled", "Disabled".
     :type public_network_access: str or ~azure.mgmt.synapse.models.WorkspacePublicNetworkAccess
+    :param csp_workspace_admin_properties: Initial workspace AAD admin properties for a CSP
+     subscription.
+    :type csp_workspace_admin_properties: ~azure.mgmt.synapse.models.CspWorkspaceAdminProperties
+    :ivar settings: Workspace settings.
+    :vartype settings: dict[str, any]
+    :param azure_ad_only_authentication: Enable or Disable AzureADOnlyAuthentication on All
+     Workspace subresource.
+    :type azure_ad_only_authentication: bool
     """
 
     _validation = {
@@ -8667,6 +9109,7 @@ class Workspace(TrackedResource):
         'workspace_uid': {'readonly': True},
         'extra_properties': {'readonly': True},
         'adla_resource_id': {'readonly': True},
+        'settings': {'readonly': True},
     }
 
     _attribute_map = {
@@ -8693,6 +9136,9 @@ class Workspace(TrackedResource):
         'purview_configuration': {'key': 'properties.purviewConfiguration', 'type': 'PurviewConfiguration'},
         'adla_resource_id': {'key': 'properties.adlaResourceId', 'type': 'str'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'csp_workspace_admin_properties': {'key': 'properties.cspWorkspaceAdminProperties', 'type': 'CspWorkspaceAdminProperties'},
+        'settings': {'key': 'properties.settings', 'type': '{object}'},
+        'azure_ad_only_authentication': {'key': 'properties.azureADOnlyAuthentication', 'type': 'bool'},
     }
 
     def __init__(
@@ -8714,6 +9160,8 @@ class Workspace(TrackedResource):
         workspace_repository_configuration: Optional["WorkspaceRepositoryConfiguration"] = None,
         purview_configuration: Optional["PurviewConfiguration"] = None,
         public_network_access: Optional[Union[str, "WorkspacePublicNetworkAccess"]] = None,
+        csp_workspace_admin_properties: Optional["CspWorkspaceAdminProperties"] = None,
+        azure_ad_only_authentication: Optional[bool] = None,
         **kwargs
     ):
         super(Workspace, self).__init__(tags=tags, location=location, **kwargs)
@@ -8735,6 +9183,9 @@ class Workspace(TrackedResource):
         self.purview_configuration = purview_configuration
         self.adla_resource_id = None
         self.public_network_access = public_network_access
+        self.csp_workspace_admin_properties = csp_workspace_admin_properties
+        self.settings = None
+        self.azure_ad_only_authentication = azure_ad_only_authentication
 
 
 class WorkspaceAadAdminInfo(ProxyResource):
@@ -8867,7 +9318,7 @@ class WorkspacePatchInfo(msrest.serialization.Model):
     :vartype provisioning_state: str
     :param encryption: The encryption details of the workspace.
     :type encryption: ~azure.mgmt.synapse.models.EncryptionDetails
-    :param public_network_access: Enable or Disable pubic network access to workspace. Possible
+    :param public_network_access: Enable or Disable public network access to workspace. Possible
      values include: "Enabled", "Disabled".
     :type public_network_access: str or ~azure.mgmt.synapse.models.WorkspacePublicNetworkAccess
     """

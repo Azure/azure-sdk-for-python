@@ -24,9 +24,32 @@ from helpers import mock_response, Request, validating_transport
 from test_shared_cache_credential import build_aad_response, get_account_event, populated_cache
 
 try:
-    from unittest.mock import Mock, patch
+    from unittest.mock import MagicMock, Mock, patch
 except ImportError:  # python < 3.3
-    from mock import Mock, patch  # type: ignore
+    from mock import MagicMock, Mock, patch  # type: ignore
+
+
+def test_close():
+    transport = MagicMock()
+    credential = DefaultAzureCredential(transport=transport)
+    assert not transport.__enter__.called
+    assert not transport.__exit__.called
+
+    credential.close()
+    assert not transport.__enter__.called
+    assert transport.__exit__.called  # call count depends on the chain's composition
+
+
+def test_context_manager():
+    transport = MagicMock()
+    credential = DefaultAzureCredential(transport=transport)
+
+    with credential:
+        assert transport.__enter__.called  # call count depends on the chain's composition
+        assert not transport.__exit__.called
+
+    assert transport.__enter__.called
+    assert transport.__exit__.called
 
 
 def test_iterates_only_once():
@@ -362,6 +385,21 @@ def test_interactive_browser_tenant_id():
                 exclude_interactive_browser_credential=False, interactive_browser_tenant_id=tenant_id
             )
     validate_tenant_id(mock_credential)
+
+
+def test_interactive_browser_client_id():
+    """the credential should allow configuring a client ID for InteractiveBrowserCredential by kwarg"""
+
+    client_id = "client-id"
+
+    def validate_client_id(credential):
+        assert len(credential.call_args_list) == 1, "InteractiveBrowserCredential should be instantiated once"
+        _, kwargs = credential.call_args
+        assert kwargs["client_id"] == client_id
+
+    with patch(DefaultAzureCredential.__module__ + ".InteractiveBrowserCredential") as mock_credential:
+        DefaultAzureCredential(exclude_interactive_browser_credential=False, interactive_browser_client_id=client_id)
+    validate_client_id(mock_credential)
 
 
 @pytest.mark.parametrize("expected_value", (True, False))

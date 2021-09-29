@@ -131,6 +131,8 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'backup_secret'".format(api_version))
         mixin_instance = OperationClass()
@@ -538,6 +540,8 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'delete_secret'".format(api_version))
         mixin_instance = OperationClass()
@@ -1166,6 +1170,8 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_deleted_secret'".format(api_version))
         mixin_instance = OperationClass()
@@ -1206,6 +1212,8 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_deleted_secrets'".format(api_version))
         mixin_instance = OperationClass()
@@ -1504,6 +1512,8 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_secret'".format(api_version))
         mixin_instance = OperationClass()
@@ -1547,6 +1557,8 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_secret_versions'".format(api_version))
         mixin_instance = OperationClass()
@@ -1588,6 +1600,8 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_secrets'".format(api_version))
         mixin_instance = OperationClass()
@@ -1885,6 +1899,8 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'purge_deleted_secret'".format(api_version))
         mixin_instance = OperationClass()
@@ -2069,6 +2085,8 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'recover_deleted_secret'".format(api_version))
         mixin_instance = OperationClass()
@@ -2254,6 +2272,8 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'restore_secret'".format(api_version))
         mixin_instance = OperationClass()
@@ -2442,6 +2462,8 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'set_secret'".format(api_version))
         mixin_instance = OperationClass()
@@ -2845,6 +2867,8 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'update_secret'".format(api_version))
         mixin_instance = OperationClass()

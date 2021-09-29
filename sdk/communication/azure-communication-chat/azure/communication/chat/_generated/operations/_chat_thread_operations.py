@@ -78,7 +78,7 @@ class ChatThreadOperations(object):
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-05-preview6"
+        api_version = "2021-09-07"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -168,7 +168,7 @@ class ChatThreadOperations(object):
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-05-preview6"
+        api_version = "2021-09-07"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -235,7 +235,7 @@ class ChatThreadOperations(object):
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-05-preview6"
+        api_version = "2021-09-07"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -309,7 +309,7 @@ class ChatThreadOperations(object):
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-05-preview6"
+        api_version = "2021-09-07"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -399,7 +399,7 @@ class ChatThreadOperations(object):
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-05-preview6"
+        api_version = "2021-09-07"
         accept = "application/json"
 
         # Construct URL
@@ -468,7 +468,7 @@ class ChatThreadOperations(object):
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-05-preview6"
+        api_version = "2021-09-07"
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         accept = "application/json"
 
@@ -536,7 +536,7 @@ class ChatThreadOperations(object):
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-05-preview6"
+        api_version = "2021-09-07"
         accept = "application/json"
 
         # Construct URL
@@ -602,7 +602,7 @@ class ChatThreadOperations(object):
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-05-preview6"
+        api_version = "2021-09-07"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -693,7 +693,7 @@ class ChatThreadOperations(object):
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-05-preview6"
+        api_version = "2021-09-07"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -760,7 +760,7 @@ class ChatThreadOperations(object):
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-05-preview6"
+        api_version = "2021-09-07"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -830,7 +830,7 @@ class ChatThreadOperations(object):
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-05-preview6"
+        api_version = "2021-09-07"
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         accept = "application/json"
 
@@ -894,7 +894,7 @@ class ChatThreadOperations(object):
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-05-preview6"
+        api_version = "2021-09-07"
         accept = "application/json"
 
         # Construct URL
@@ -959,7 +959,7 @@ class ChatThreadOperations(object):
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-05-preview6"
+        api_version = "2021-09-07"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

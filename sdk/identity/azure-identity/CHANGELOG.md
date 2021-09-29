@@ -1,6 +1,6 @@
 # Release History
 
-## 1.7.0b4 (Unreleased)
+## 1.7.0b5 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,33 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.7.0b4 (2021-09-09)
+
+### Features Added
+- `CertificateCredential` accepts certificates in PKCS12 format
+  ([#13540](https://github.com/Azure/azure-sdk-for-python/issues/13540))
+- `OnBehalfOfCredential` supports the on-behalf-of authentication flow for
+  accessing resources on behalf of users
+  ([#19308](https://github.com/Azure/azure-sdk-for-python/issues/19308))
+- `DefaultAzureCredential` allows specifying the client ID of interactive browser via keyword argument `interactive_browser_client_id`
+  ([#20487](https://github.com/Azure/azure-sdk-for-python/issues/20487))
+
+### Other Changes
+- Added context manager methods and `close()` to credentials in the
+  `azure.identity` namespace. At the end of a `with` block, or when `close()`
+  is called, these credentials close their underlying transport sessions.
+  ([#18798](https://github.com/Azure/azure-sdk-for-python/issues/18798))
+
+
+## 1.6.1 (2021-08-19)
+
+### Other Changes
+- Persistent cache implementations are now loaded on demand, enabling
+  workarounds when importing transitive dependencies such as pywin32
+  fails
+  ([#19989](https://github.com/Azure/azure-sdk-for-python/issues/19989))
+
 
 ## 1.7.0b3 (2021-08-10)
 

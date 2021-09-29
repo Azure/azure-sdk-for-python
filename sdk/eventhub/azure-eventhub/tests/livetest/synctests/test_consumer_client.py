@@ -17,7 +17,7 @@ def test_receive_no_partition(connstr_senders):
 
     def on_event(partition_context, event):
         on_event.received += 1
-        partition_context.update_checkpoint(event, fake_kwarg="arg")    # ignores fake_kwarg
+        partition_context.update_checkpoint(event)
         on_event.namespace = partition_context.fully_qualified_namespace
         on_event.eventhub_name = partition_context.eventhub_name
         on_event.consumer_group = partition_context.consumer_group

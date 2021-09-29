@@ -2346,13 +2346,13 @@ class RoutingTwin(msrest.serialization.Model):
     """Twin reference input parameter. This is an optional parameter.
 
     :param tags: A set of tags. Twin Tags.
-    :type tags: str
+    :type tags: any
     :param properties:
     :type properties: ~azure.mgmt.iothub.v2020_03_01.models.RoutingTwinProperties
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': 'object'},
         'properties': {'key': 'properties', 'type': 'RoutingTwinProperties'},
     }
 
@@ -2369,14 +2369,14 @@ class RoutingTwinProperties(msrest.serialization.Model):
     """RoutingTwinProperties.
 
     :param desired: Twin desired properties.
-    :type desired: str
+    :type desired: any
     :param reported: Twin desired properties.
-    :type reported: str
+    :type reported: any
     """
 
     _attribute_map = {
-        'desired': {'key': 'desired', 'type': 'str'},
-        'reported': {'key': 'reported', 'type': 'str'},
+        'desired': {'key': 'desired', 'type': 'object'},
+        'reported': {'key': 'reported', 'type': 'object'},
     }
 
     def __init__(

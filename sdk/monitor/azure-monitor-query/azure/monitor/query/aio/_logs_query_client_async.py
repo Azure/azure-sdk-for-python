@@ -5,22 +5,31 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from datetime import timedelta
-from typing import Any, Union, Sequence, Dict, Optional, TYPE_CHECKING
+from datetime import datetime, timedelta
+from typing import Any, Tuple, Union, Sequence, Dict, List, TYPE_CHECKING
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
+
 from .._generated.aio._monitor_query_client import MonitorQueryClient
 
 from .._generated.models import BatchRequest, QueryBody as LogsQueryBody
-from .._helpers import process_error, construct_iso8601, order_results
-from .._models import LogsQueryResult, LogsBatchQuery, LogsBatchQueryResult
+from .._helpers import construct_iso8601, order_results, process_error, process_prefer
+from .._models import LogsQueryResult, LogsBatchQuery, LogsQueryPartialResult
 from ._helpers_asyc import get_authentication_policy
+from .._exceptions import LogsQueryError
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
 class LogsQueryClient(object):
-    """LogsQueryClient
+    """LogsQueryClient. Use this client to collect and organize log and performance data from
+    monitored resources. Data from different sources such as platform logs from Azure services,
+    log and performance data from virtual machines agents, and usage and performance data from
+    apps can be consolidated into a single Azure Log Analytics workspace.
+
+    The various data types can be analyzed together using the
+    [Kusto Query Language](https://docs.microsoft.com/azure/data-explorer/kusto/query/)
 
     :param credential: The credential to authenticate the client
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
@@ -29,7 +38,7 @@ class LogsQueryClient(object):
     """
 
     def __init__(self, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
-        self._endpoint = kwargs.pop('endpoint', 'https://api.loganalytics.io/v1')
+        self._endpoint = kwargs.pop("endpoint", "https://api.loganalytics.io/v1")
         self._client = MonitorQueryClient(
             credential=credential,
             authentication_policy=get_authentication_policy(credential),
@@ -38,114 +47,118 @@ class LogsQueryClient(object):
         )
         self._query_op = self._client.query
 
-    async def query(
+    @distributed_trace_async
+    async def query_workspace(
         self,
         workspace_id: str,
         query: str,
-        duration: Optional[timedelta] = None,
-        **kwargs: Any) -> LogsQueryResult:
+        *,
+        timespan: Union[
+            timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]
+        ],
+        **kwargs: Any
+    ) -> Union[LogsQueryResult, LogsQueryPartialResult]:
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
 
-        **Note**: Although the start_time, end_time, duration are optional parameters, it is highly
-        recommended to specify the timespan. If not, the entire dataset is queried.
-
         :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
          Azure portal.
         :type workspace_id: str
-        :param query: The Analytics query. Learn more about the `Analytics query syntax
-         <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
+        :param query: The Kusto query. Learn more about the `Kusto query syntax
+         <https://docs.microsoft.com/azure/data-explorer/kusto/query/>`_.
         :type query: str
-        :param ~datetime.timedelta duration: The duration for which to query the data. This can also be accompanied
-         with either start_time or end_time. If start_time or end_time is not provided, the current time is
-         taken as the end time.
-        :keyword datetime start_time: The start time from which to query the data. This should be accompanied
-         with either end_time or duration.
-        :keyword datetime end_time: The end time till which to query the data. This should be accompanied
-         with either start_time or duration.
-        :keyword int server_timeout: the server timeout. The default timeout is 3 minutes,
+        :keyword timespan: Required. The timespan for which to query the data. This can be a timedelta,
+         a timedelta and a start datetime, or a start datetime/end datetime.
+        :paramtype timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
+         or tuple[~datetime.datetime, ~datetime.datetime]
+        :keyword int server_timeout: the server timeout in seconds. The default timeout is 3 minutes,
          and the maximum timeout is 10 minutes.
         :keyword bool include_statistics: To get information about query statistics.
         :keyword bool include_visualization: In the query language, it is possible to specify different
          visualization options. By default, the API does not return information regarding the type of
          visualization to show. If your client requires this information, specify the preference
         :keyword additional_workspaces: A list of workspaces that are included in the query.
-         These can be qualified workspace names, workspsce Ids or Azure resource Ids.
+         These can be qualified workspace names, workspace Ids, or Azure resource Ids.
         :paramtype additional_workspaces: list[str]
-        :return: QueryResults, or the result of cls(response)
-        :rtype: ~azure.monitor.query.LogsQueryResult
+        :return: LogsQueryResult if there is a success or LogsQueryPartialResult when there is a partial success.
+        :rtype: ~azure.monitor.query.LogsQueryResult or ~azure.monitor.query.LogsQueryPartialResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        start = kwargs.pop('start_time', None)
-        end = kwargs.pop('end_time', None)
-        timespan = construct_iso8601(start, end, duration)
+        timespan = construct_iso8601(timespan)
         include_statistics = kwargs.pop("include_statistics", False)
         include_visualization = kwargs.pop("include_visualization", False)
         server_timeout = kwargs.pop("server_timeout", None)
         additional_workspaces = kwargs.pop("additional_workspaces", None)
 
-        prefer = ""
-        if server_timeout:
-            prefer += "wait=" + str(server_timeout)
-        if include_statistics:
-            if len(prefer) > 0:
-                prefer += ","
-            prefer += "include-statistics=true"
-        if include_visualization:
-            if len(prefer) > 0:
-                prefer += ","
-            prefer += "include-render=true"
+        prefer = process_prefer(
+            server_timeout, include_statistics, include_visualization
+        )
 
         body = LogsQueryBody(
-            query=query,
-            timespan=timespan,
-            workspaces=additional_workspaces,
-            **kwargs
+            query=query, timespan=timespan, workspaces=additional_workspaces, **kwargs
         )
 
         try:
-            return LogsQueryResult._from_generated(await self._query_op.execute( # pylint: disable=protected-access
-                workspace_id=workspace_id,
-                body=body,
-                prefer=prefer,
-                **kwargs
-            ))
-        except HttpResponseError as e:
-            process_error(e)
+            generated_response = (
+                await self._query_op.execute(  # pylint: disable=protected-access
+                    workspace_id=workspace_id, body=body, prefer=prefer, **kwargs
+                )
+            )
+        except HttpResponseError as err:
+            process_error(err, LogsQueryError)
+        response = None
+        if not generated_response.error:
+            response = LogsQueryResult._from_generated( # pylint: disable=protected-access
+                generated_response
+            )
+        else:
+            response = LogsQueryPartialResult._from_generated( # pylint: disable=protected-access
+                generated_response, LogsQueryError
+            )
+        return response
 
+    @distributed_trace_async
     async def query_batch(
-        self,
-        queries: Union[Sequence[Dict], Sequence[LogsBatchQuery]],
-        **kwargs: Any
-        ) -> Sequence[LogsBatchQueryResult]:
-        """Execute a list of analytics queries. Each request can be either a LogQueryRequest
+        self, queries: Union[Sequence[Dict], Sequence[LogsBatchQuery]], **kwargs: Any
+    ) -> List[Union[LogsQueryResult, LogsQueryError, LogsQueryPartialResult]]:
+        """Execute a list of analytics queries. Each request can be either a LogsBatchQuery
         object or an equivalent serialized model.
 
-        The response is returned in the same order as that of the requests sent.
+        **NOTE**: The response is returned in the same order as that of the requests sent.
 
-        :param queries: The list of queries that should be processed
+        :param queries: The list of Kusto queries to execute.
         :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQuery]
-        :return: BatchResponse, or the result of cls(response)
-        :rtype: ~list[~azure.monitor.query.LogsBatchQueryResult]
+        :return: List of LogsQueryResult, LogsQueryPartialResult and LogsQueryError.
+         For a given query, a LogsQueryResult is returned if the response is a success, LogsQueryPartialResult
+         is returned when there is a partial success and a LogsQueryError is returned when there is a failure.
+         The status of each response can be checked using `LogsQueryStatus` enum.
+        :rtype: list[~azure.monitor.query.LogsQueryResult or ~azure.monitor.query.LogsQueryPartialResult
+         or ~azure.monitor.query.LogsQueryError]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         try:
-            queries = [LogsBatchQuery(**q) for q in queries]
+            queries = [LogsBatchQuery(**q) for q in queries]  # type: ignore
         except (KeyError, TypeError):
             pass
-        queries = [q._to_generated() for q in queries] # pylint: disable=protected-access
+        queries = [
+            q._to_generated() for q in queries # pylint: disable=protected-access
+        ]
         try:
             request_order = [req.id for req in queries]
         except AttributeError:
-            request_order = [req['id'] for req in queries]
+            request_order = [req["id"] for req in queries]
         batch = BatchRequest(requests=queries)
         generated = await self._query_op.batch(batch, **kwargs)
+        mapping = {item.id: item for item in generated.responses}
         return order_results(
             request_order,
-            [
-                LogsBatchQueryResult._from_generated(rsp) for rsp in generated.responses # pylint: disable=protected-access
-            ])
+            mapping,
+            obj=LogsQueryResult,
+            err=LogsQueryError,
+            partial_err=LogsQueryPartialResult,
+            raise_with=LogsQueryError,
+        )
 
     async def __aenter__(self) -> "LogsQueryClient":
         await self._client.__aenter__()

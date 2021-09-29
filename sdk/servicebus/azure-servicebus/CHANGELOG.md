@@ -1,14 +1,19 @@
 # Release History
 
-## 7.3.3 (Unreleased)
+## 7.4.0b1 (2021-10-05)
 
 ### Features Added
 
-### Breaking Changes
+- Added support to create and update queues and topics of large message size to `ServiceBusAdministrationClient`. This feature is only available for Service Bus of Premium Tier.
+  - Methods`create_queue`, `create_topic`, `update_queue`, `update_topic` on `ServiceBusAdministrationClient` now take a new keyword argument `max_message_size_in_kilobytes`.
+  - `QueueProperties` and `TopicProperties` now have a new instance variable `max_message_size_in_kilobytes`.
+
+## 7.3.3 (2021-09-08)
 
 ### Bugs Fixed
 
-### Other Changes
+- Improved memory usage of `ServiceBusClient` to automatically discard spawned `ServiceBusSender` or `ServiceBusReceiver` from its handler set when no strong reference to the sender or receiver exists anymore.
+- Reduced CPU load of `azure.servicebus.AutoLockRenewer` during lock renewal.
 
 ## 7.3.2 (2021-08-10)
 

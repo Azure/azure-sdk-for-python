@@ -40,6 +40,10 @@ class KeyVaultDataAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     WRITE_ROLE_ASSIGNMENT = "Microsoft.KeyVault/managedHsm/roleAssignments/write/action"
     #: Get role definition.
     READ_ROLE_DEFINITION = "Microsoft.KeyVault/managedHsm/roleDefinitions/read/action"
+    #: Create or update role definition.
+    WRITE_ROLE_DEFINITION = "Microsoft.KeyVault/managedHsm/roleDefinitions/write/action"
+    #: Delete role definition.
+    DELETE_ROLE_DEFINITION = "Microsoft.KeyVault/managedHsm/roleDefinitions/delete/action"
     #: Encrypt using an HSM key.
     ENCRYPT_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/encrypt/action"
     #: Decrypt using an HSM key.
@@ -58,12 +62,16 @@ class KeyVaultDataAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DELETE_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/delete"
     #: Export an HSM key.
     EXPORT_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/export/action"
+    #: Release an HSM key using Secure Key Release.
+    RELEASE_KEY = "Microsoft.KeyVault/managedHsm/keys/release/action"
     #: Import an HSM key.
     IMPORT_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/import/action"
     #: Purge a deleted HSM key.
     PURGE_DELETED_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/deletedKeys/delete"
     #: Download an HSM security domain.
     DOWNLOAD_HSM_SECURITY_DOMAIN = "Microsoft.KeyVault/managedHsm/securitydomain/download/action"
+    #: Check status of HSM security domain download.
+    DOWNLOAD_HSM_SECURITY_DOMAIN_STATUS = "Microsoft.KeyVault/managedHsm/securitydomain/download/read"
     #: Upload an HSM security domain.
     UPLOAD_HSM_SECURITY_DOMAIN = "Microsoft.KeyVault/managedHsm/securitydomain/upload/action"
     #: Check the status of the HSM security domain exchange file.
@@ -78,3 +86,5 @@ class KeyVaultDataAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     READ_HSM_BACKUP_STATUS = "Microsoft.KeyVault/managedHsm/backup/status/action"
     #: Read an HSM restore status.
     READ_HSM_RESTORE_STATUS = "Microsoft.KeyVault/managedHsm/restore/status/action"
+    #: Generate random numbers.
+    RANDOM_NUMBERS_GENERATE = "Microsoft.KeyVault/managedHsm/rng/action"

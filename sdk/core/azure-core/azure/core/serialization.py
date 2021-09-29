@@ -105,8 +105,11 @@ class AzureJSONEncoder(JSONEncoder):
                 if hasattr(o, "year") and hasattr(o, "hour"):
                     # astimezone() fails for naive times in Python 2.7, so make make sure o is aware (tzinfo is set)
                     if not o.tzinfo:
-                        return o.replace(tzinfo=TZ_UTC).isoformat()
-                    return o.astimezone(TZ_UTC).isoformat()
+                        iso_formatted = o.replace(tzinfo=TZ_UTC).isoformat()
+                    else:
+                        iso_formatted = o.astimezone(TZ_UTC).isoformat()
+                    # Replace the trailing "+00:00" UTC offset with "Z" (RFC 3339: https://www.ietf.org/rfc/rfc3339.txt)
+                    return iso_formatted.replace("+00:00", "Z")
                 # Next try datetime.date or datetime.time
                 return o.isoformat()
             except AttributeError:
