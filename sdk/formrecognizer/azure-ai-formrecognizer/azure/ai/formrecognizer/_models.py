@@ -3965,8 +3965,10 @@ class DocumentAnalysisError(object):
             code=data.get("code", None),
             message=data.get("message", None),
             target=data.get("target", None),
-            details=[DocumentAnalysisError.from_dict(e) for e in data.get("details")] if data.get("details") else [],
-            innererror=DocumentAnalysisInnerError.from_dict(data.get("innererror")) if data.get("innererror") else None
+            details=[DocumentAnalysisError.from_dict(e) for e in data.get("details")]  # type: ignore
+            if data.get("details") else [],
+            innererror=DocumentAnalysisInnerError.from_dict(data.get("innererror"))  # type: ignore
+            if data.get("innererror") else None
         )
 
 
@@ -4031,5 +4033,6 @@ class DocumentAnalysisInnerError(object):
         return cls(
             code=data.get("code", None),
             message=data.get("message", None),
-            innererror=DocumentAnalysisInnerError.from_dict(data.get("innererror")) if data.get("innererror") else None
+            innererror=DocumentAnalysisInnerError.from_dict(data.get("innererror"))  # type: ignore
+            if data.get("innererror") else None
         )
