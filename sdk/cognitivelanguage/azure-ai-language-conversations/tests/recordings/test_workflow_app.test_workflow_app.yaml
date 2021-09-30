@@ -111,7 +111,7 @@ interactions:
         \"SushiMaking\",\n    \"projectType\": \"workflow\"\n  }\n}"
     headers:
       apim-request-id:
-      - 8f82f82b-f9b7-40de-a856-77c96160ede3
+      - 31b69f99-da40-416f-a9b0-fe79e4070005
       cache-control:
       - no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type:
@@ -119,11 +119,11 @@ interactions:
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.OrchestrationLUISTransaction=0
       date:
-      - Wed, 29 Sep 2021 15:00:15 GMT
+      - Thu, 30 Sep 2021 16:56:57 GMT
       pragma:
       - no-cache
       request-id:
-      - 8f82f82b-f9b7-40de-a856-77c96160ede3
+      - 31b69f99-da40-416f-a9b0-fe79e4070005
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -131,7 +131,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '285'
+      - '927'
     status:
       code: 200
       message: OK
@@ -187,7 +187,7 @@ interactions:
         \"SushiMaking\",\n    \"projectType\": \"workflow\"\n  }\n}"
     headers:
       apim-request-id:
-      - 949d76ed-3b1e-4680-8e35-daa50ea1c339
+      - 717134da-8a94-4b15-ab4f-6a554653471b
       cache-control:
       - no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type:
@@ -195,11 +195,11 @@ interactions:
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.OrchestrationLUISTransaction=0
       date:
-      - Wed, 29 Sep 2021 15:00:15 GMT
+      - Thu, 30 Sep 2021 16:56:58 GMT
       pragma:
       - no-cache
       request-id:
-      - 949d76ed-3b1e-4680-8e35-daa50ea1c339
+      - 717134da-8a94-4b15-ab4f-6a554653471b
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -207,7 +207,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '176'
+      - '614'
     status:
       code: 200
       message: OK

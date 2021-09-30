@@ -114,7 +114,7 @@ interactions:
         \"SushiMaking\",\n    \"projectType\": \"workflow\"\n  }\n}"
     headers:
       apim-request-id:
-      - dddb7ab4-88fa-433a-9da1-044b01e47960
+      - bf2f43f3-3a0d-4486-9bbe-2bf0fd31e40a
       cache-control:
       - no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type:
@@ -122,11 +122,11 @@ interactions:
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.OrchestrationLUISTransaction=0
       date:
-      - Wed, 29 Sep 2021 15:00:18 GMT
+      - Thu, 30 Sep 2021 16:57:01 GMT
       pragma:
       - no-cache
       request-id:
-      - dddb7ab4-88fa-433a-9da1-044b01e47960
+      - bf2f43f3-3a0d-4486-9bbe-2bf0fd31e40a
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -134,7 +134,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '191'
+      - '770'
     status:
       code: 200
       message: OK
