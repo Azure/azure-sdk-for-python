@@ -88,6 +88,7 @@ try:
     from ._models_py3 import PIIDetectionSkill
     from ._models_py3 import PathHierarchyTokenizerV2
     from ._models_py3 import Paths1Cj7DxmIndexersIndexernameSearchResetdocsPostRequestbodyContentApplicationJsonSchema
+    from ._models_py3 import Paths1Ju2XepSkillsetsSkillsetnameSearchResetskillsPostRequestbodyContentApplicationJsonSchema
     from ._models_py3 import PatternAnalyzer
     from ._models_py3 import PatternCaptureTokenFilter
     from ._models_py3 import PatternReplaceCharFilter
@@ -233,6 +234,7 @@ except (SyntaxError, ImportError):
     from ._models import PIIDetectionSkill  # type: ignore
     from ._models import PathHierarchyTokenizerV2  # type: ignore
     from ._models import Paths1Cj7DxmIndexersIndexernameSearchResetdocsPostRequestbodyContentApplicationJsonSchema  # type: ignore
+    from ._models import Paths1Ju2XepSkillsetsSkillsetnameSearchResetskillsPostRequestbodyContentApplicationJsonSchema  # type: ignore
     from ._models import PatternAnalyzer  # type: ignore
     from ._models import PatternCaptureTokenFilter  # type: ignore
     from ._models import PatternReplaceCharFilter  # type: ignore
@@ -424,6 +426,7 @@ __all__ = [
     'PIIDetectionSkill',
     'PathHierarchyTokenizerV2',
     'Paths1Cj7DxmIndexersIndexernameSearchResetdocsPostRequestbodyContentApplicationJsonSchema',
+    'Paths1Ju2XepSkillsetsSkillsetnameSearchResetskillsPostRequestbodyContentApplicationJsonSchema',
     'PatternAnalyzer',
     'PatternCaptureTokenFilter',
     'PatternReplaceCharFilter',

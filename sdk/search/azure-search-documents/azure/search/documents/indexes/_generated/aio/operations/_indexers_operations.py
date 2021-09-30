@@ -86,7 +86,7 @@ class IndexersOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -155,7 +155,7 @@ class IndexersOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -207,7 +207,7 @@ class IndexersOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -223,8 +223,8 @@ class IndexersOperations:
         indexer: "_models.SearchIndexer",
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
+        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         disable_cache_reprocessing_change_detection: Optional[bool] = None,
-        ignore_reset_requirements: Optional[bool] = None,
         request_options: Optional["_models.RequestOptions"] = None,
         **kwargs: Any
     ) -> "_models.SearchIndexer":
@@ -240,11 +240,11 @@ class IndexersOperations:
         :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
          if the ETag on the server does not match this value.
         :type if_none_match: str
+        :param skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements.
+        :type skip_indexer_reset_requirement_for_cache: bool
         :param disable_cache_reprocessing_change_detection: Disables cache reprocessing change
          detection.
         :type disable_cache_reprocessing_change_detection: bool
-        :param ignore_reset_requirements: Ignores cache reset requirements.
-        :type ignore_reset_requirements: bool
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -271,8 +271,8 @@ class IndexersOperations:
             x_ms_client_request_id=_x_ms_client_request_id,
             if_match=if_match,
             if_none_match=if_none_match,
+            skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
             disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
-            ignore_reset_requirements=ignore_reset_requirements,
             json=json,
             template_url=self.create_or_update.metadata['url'],
         )._to_pipeline_transport_request()
@@ -286,7 +286,7 @@ class IndexersOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if response.status_code == 200:
@@ -356,7 +356,7 @@ class IndexersOperations:
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -408,7 +408,7 @@ class IndexersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SearchIndexer', pipeline_response)
@@ -466,7 +466,7 @@ class IndexersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('ListIndexersResult', pipeline_response)
@@ -526,7 +526,7 @@ class IndexersOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SearchIndexer', pipeline_response)
@@ -582,7 +582,7 @@ class IndexersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SearchIndexerStatus', pipeline_response)
