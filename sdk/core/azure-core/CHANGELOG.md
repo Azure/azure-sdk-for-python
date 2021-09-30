@@ -1,8 +1,8 @@
+Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691
+
 # Release History
 
 ## 1.19.0 (2021-09-30)
-
-### Features Added
 
 ### Breaking Changes in the Provisional `azure.core.rest` package
 
@@ -11,10 +11,6 @@ your transport responses should inherit from them and implement them.
 - The properties of the `azure.core.rest` responses are now all read-only
 
 - HttpLoggingPolicy integrates logs into one record #19925
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.18.0 (2021-09-02)
 
