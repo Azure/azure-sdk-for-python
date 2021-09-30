@@ -6,6 +6,10 @@ Question Answering is a cloud-based API service that lets you create a conversat
 
 [Source code][questionanswering_client_src] | [Package (PyPI)][questionanswering_pypi_package] | [API reference documentation][questionanswering_refdocs] | [Product documentation][questionanswering_docs] | [Samples][questionanswering_samples]
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 ## Getting started
 
 ### Prerequisites
