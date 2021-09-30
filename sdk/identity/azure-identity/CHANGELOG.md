@@ -4,10 +4,11 @@
 
 ### Breaking Changes
 
-- `allow_multitenant_authentication` argument is deprecated and the setting is always on. To
-    disable it, set environment variable
-    AZURE_IDENTITY_DISABLE_MULTITENANTAUTH to "True".
+- The `allow_multitenant_authentication` argument has been removed and the default behavior is now as if it were true.
+  The multitenant authentication feature can be totally disabled by setting the environment variable 
+  `AZURE_IDENTITY_DISABLE_MULTITENANTAUTH` to `True`.
 - `azure.identity.RegionalAuthority` is removed.
+- `regional_authority` argument is removed for `CertificateCredential` and `ClientSecretCredential`
 
 ## 1.7.0b4 (2021-09-09)
 
