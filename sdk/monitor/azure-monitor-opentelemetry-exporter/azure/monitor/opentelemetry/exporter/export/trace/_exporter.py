@@ -184,7 +184,7 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                         path,
                     )
                 except Exception:  # pylint: disable=broad-except
-                    logger.warning("Error while parsing url.")
+                    pass
             else:
                 envelope.tags["ai.operation.name"] = span.name
             if SpanAttributes.HTTP_STATUS_CODE in span.attributes:
@@ -297,7 +297,7 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                         else:
                             target_from_url = parse_url.netloc
                     except Exception:  # pylint: disable=broad-except
-                        logger.warning("Error while parsing url.")
+                        pass
                 # http specific logic for name
                 if path:
                     data.name = "{} {}".format(
