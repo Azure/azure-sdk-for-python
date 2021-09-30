@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 from typing import Any, TYPE_CHECKING, Union
 
-from ._common._constants import SerializationType
+from ._common._constants import SchemaFormat
 from ._common._schema import Schema, SchemaProperties
 from ._common._response_handlers import (
     _parse_response_schema,
@@ -44,7 +44,8 @@ class SchemaRegistryClient(object):
     SchemaRegistryClient is as a central schema repository for enterprise-level data infrastructure,
     complete with support for versioning and management.
 
-    :param str endpoint: The Schema Registry service endpoint, for example my-namespace.servicebus.windows.net.
+    :param str fully_qualified_namespace: The Schema Registry service fully qualified host name,
+     for example my-namespace.servicebus.windows.net.
     :param credential: To authenticate to manage the entities of the SchemaRegistry namespace.
     :type credential: TokenCredential
 
@@ -59,13 +60,11 @@ class SchemaRegistryClient(object):
 
     """
 
-    def __init__(self, endpoint, credential, **kwargs):
+    def __init__(self, fully_qualified_namespace, credential, **kwargs):
         # type: (str, TokenCredential, Any) -> None
         self._generated_client = AzureSchemaRegistry(
-            credential=credential, endpoint=endpoint, **kwargs
+            credential=credential, endpoint=fully_qualified_namespace, **kwargs
         )
-        self._description_to_properties = {}
-        self._id_to_schema = {}
 
     def __enter__(self):
         # type: () -> SchemaRegistryClient
@@ -84,22 +83,20 @@ class SchemaRegistryClient(object):
         self._generated_client.close()
 
     def register_schema(
-        self, schema_group, schema_name, serialization_type, schema_content, **kwargs
+        self, group_name, name, schema_definition, format, **kwargs  # pylint:disable=redefined-builtin
     ):
-        # type: (str, str, Union[str, SerializationType], str, Any) -> SchemaProperties
+        # type: (str, str, str, Union[str, SchemaFormat], Any) -> SchemaProperties
         """
         Register new schema. If schema of specified name does not exist in specified group,
         schema is created at version 1. If schema of specified name exists already in specified group,
         schema is created at latest version + 1.
 
-        :param str schema_group: Schema group under which schema should be registered.
-        :param str schema_name: Name of schema being registered.
-        :param serialization_type: Serialization type for the schema being registered.
-         For now Avro is the only supported serialization type by the service.
-        :type serialization_type: Union[str, SerializationType]
-        :param str schema_content: String representation of the schema being registered.
-        :keyword content_type: The content type of the request. Default value is 'application/json'.
-        :paramtype content_type: str
+        :param str group_name: Schema group under which schema should be registered.
+        :param str name: Name of schema being registered.
+        :param str schema_definition: String representation of the schema being registered.
+        :param format: Format for the schema being registered.
+         For now Avro is the only supported schema format by the service.
+        :type format: Union[str, SchemaFormat]
         :rtype: SchemaProperties
 
         .. admonition:: Example:
@@ -113,43 +110,30 @@ class SchemaRegistryClient(object):
 
         """
         try:
-            serialization_type = serialization_type.value
+            format = format.value
         except AttributeError:
             pass
 
         request = schema_rest.build_register_request(
-            group_name=schema_group,
-            schema_name=schema_name,
-            content=schema_content,
-            serialization_type=serialization_type,
+            group_name=group_name,
+            schema_name=name,
+            content=schema_definition,
+            serialization_type=format,
             content_type=kwargs.pop("content_type", "application/json"),
             **kwargs
         )
 
         response = self._generated_client.send_request(request)
         response.raise_for_status()
-        schema_properties = _parse_response_schema_properties(response)
+        return _parse_response_schema_properties(response)
 
-        schema_description = (
-            schema_group,
-            schema_name,
-            serialization_type,
-            schema_content,
-        )
-        self._id_to_schema[schema_properties.schema_id] = Schema(
-            schema_content, schema_properties
-        )
-        self._description_to_properties[schema_description] = schema_properties
-
-        return schema_properties
-
-    def get_schema(self, schema_id, **kwargs):
+    def get_schema(self, id, **kwargs):  # pylint:disable=redefined-builtin
         # type: (str, Any) -> Schema
         """
         Gets a registered schema by its unique ID.
         Azure Schema Registry guarantees that ID is unique within a namespace.
 
-        :param str schema_id: References specific schema in registry namespace.
+        :param str id: References specific schema in registry namespace.
         :rtype: Schema
 
         .. admonition:: Example:
@@ -162,31 +146,24 @@ class SchemaRegistryClient(object):
                 :caption: Get schema by id.
 
         """
-        try:
-            return self._id_to_schema[schema_id]
-        except KeyError:
-            request = schema_rest.build_get_by_id_request(schema_id=schema_id)
-            response = self._generated_client.send_request(request, **kwargs)
-            response.raise_for_status()
-            schema = _parse_response_schema(response)
-            self._id_to_schema[schema_id] = schema
-            return schema
+        request = schema_rest.build_get_by_id_request(schema_id=id)
+        response = self._generated_client.send_request(request, **kwargs)
+        response.raise_for_status()
+        return _parse_response_schema(response)
 
-    def get_schema_id(
-        self, schema_group, schema_name, serialization_type, schema_content, **kwargs
+    def get_schema_properties(
+        self, group_name, name, schema_definition, format, **kwargs  # pylint:disable=redefined-builtin
     ):
-        # type: (str, str, Union[str, SerializationType], str, Any) -> SchemaProperties
+        # type: (str, str, str, Union[str, SchemaFormat], Any) -> SchemaProperties
         """
         Gets the ID referencing an existing schema within the specified schema group,
-        as matched by schema content comparison.
+        as matched by schema definition comparison.
 
-        :param str schema_group: Schema group under which schema should be registered.
-        :param str schema_name: Name of schema being registered.
-        :param serialization_type: Serialization type for the schema being registered.
-        :type serialization_type: Union[str, SerializationType]
-        :param str schema_content: String representation of the schema being registered.
-        :keyword content_type: The content type of the request. Default value is 'application/json'.
-        :paramtype content_type: str
+        :param str group_name: Schema group under which schema should be registered.
+        :param str name: Name of schema being registered.
+        :param str schema_definition: String representation of the schema being registered.
+        :param format: Format for the schema being registered.
+        :type format: Union[str, SchemaFormat]
         :rtype: SchemaProperties
 
         .. admonition:: Example:
@@ -200,34 +177,19 @@ class SchemaRegistryClient(object):
 
         """
         try:
-            serialization_type = serialization_type.value
+            format = format.value
         except AttributeError:
             pass
 
-        try:
-            properties = self._description_to_properties[
-                (schema_group, schema_name, serialization_type, schema_content)
-            ]
-            return properties
-        except KeyError:
-            request = schema_rest.build_query_id_by_content_request(
-                group_name=schema_group,
-                schema_name=schema_name,
-                content=schema_content,
-                serialization_type=serialization_type,
-                content_type=kwargs.pop("content_type", "application/json"),
-                **kwargs
-            )
+        request = schema_rest.build_query_id_by_content_request(
+            group_name=group_name,
+            schema_name=name,
+            content=schema_definition,
+            serialization_type=format,
+            content_type=kwargs.pop("content_type", "application/json"),
+            **kwargs
+        )
 
-            response = self._generated_client.send_request(request, **kwargs)
-            response.raise_for_status()
-            schema_properties = _parse_response_schema_properties(response)
-
-            if not self._id_to_schema.get(schema_properties.schema_id):
-                self._id_to_schema[schema_properties.schema_id] = Schema(schema_content, schema_properties)
-            else:
-                schema_properties = self._id_to_schema[schema_properties.schema_id].schema_properties
-            self._description_to_properties[
-                (schema_group, schema_name, serialization_type, schema_content)
-            ] = schema_properties
-            return schema_properties
+        response = self._generated_client.send_request(request, **kwargs)
+        response.raise_for_status()
+        return _parse_response_schema_properties(response)

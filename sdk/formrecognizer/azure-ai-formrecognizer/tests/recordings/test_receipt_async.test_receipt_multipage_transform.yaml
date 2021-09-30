@@ -6,353 +6,394 @@ interactions:
       Accept:
       - application/json
       Content-Type:
-      - application/pdf
+      - application/octet-stream
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/receipt/analyze?includeTextDetails=true
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 0737a657-4a8d-418f-8a4c-95af9d1d7cdd
+      apim-request-id: 3f534a72-3780-4a63-b50a-1de22a4a7d8b
       content-length: '0'
-      date: Tue, 11 May 2021 03:08:22 GMT
-      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/receipt/analyzeResults/0737a657-4a8d-418f-8a4c-95af9d1d7cdd
+      date: Tue, 14 Sep 2021 22:18:39 GMT
+      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/3f534a72-3780-4a63-b50a-1de22a4a7d8b?api-version=2021-09-30-preview
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '79'
+      x-envoy-upstream-service-time: '295'
     status:
       code: 202
       message: Accepted
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/receipt/analyze?includeTextDetails=true
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/receipt/analyzeResults/0737a657-4a8d-418f-8a4c-95af9d1d7cdd
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/3f534a72-3780-4a63-b50a-1de22a4a7d8b?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-05-11T03:08:22Z",
-        "lastUpdatedDateTime": "2021-05-11T03:08:26Z", "analyzeResult": {"version":
-        "2.1.0", "readResults": [{"page": 1, "angle": 0.5617, "width": 8.5, "height":
-        11, "unit": "inch", "lines": [{"text": "Contoso", "boundingBox": [1.9036,
-        2.6918, 2.5677, 2.8691, 2.5124, 3.0685, 1.8594, 2.8912], "words": [{"text":
-        "Contoso", "boundingBox": [1.9147, 2.6918, 2.5677, 2.8691, 2.5124, 3.0685,
-        1.8704, 2.8912], "confidence": 0.383}], "appearance": {"style": {"name": "other",
-        "confidence": 0.878}}}, {"text": "Contoso", "boundingBox": [2.8776, 2.5146,
-        4.2611, 2.3817, 4.2943, 2.6918, 2.8997, 2.8248], "words": [{"text": "Contoso",
-        "boundingBox": [2.8776, 2.5257, 4.2168, 2.3927, 4.2389, 2.7029, 2.9108, 2.8248],
-        "confidence": 0.996}], "appearance": {"style": {"name": "other", "confidence":
-        0.878}}}, {"text": "123 Main Street", "boundingBox": [1.8815, 3.0131, 3.11,
-        3.2679, 3.0547, 3.4894, 1.8483, 3.2457], "words": [{"text": "123", "boundingBox":
-        [1.8926, 3.0242, 2.125, 3.0685, 2.0918, 3.3011, 1.8483, 3.2568], "confidence":
-        0.986}, {"text": "Main", "boundingBox": [2.1693, 3.0796, 2.5566, 3.1682, 2.5124,
-        3.3897, 2.1361, 3.3122], "confidence": 0.994}, {"text": "Street", "boundingBox":
-        [2.6009, 3.1682, 3.099, 3.279, 3.0547, 3.4894, 2.5566, 3.3897], "confidence":
-        0.996}], "appearance": {"style": {"name": "other", "confidence": 0.878}}},
-        {"text": "Redmond, WA 98052", "boundingBox": [1.8594, 3.3454, 3.4863, 3.5559,
-        3.4531, 3.7996, 1.8372, 3.6002], "words": [{"text": "Redmond,", "boundingBox":
-        [1.8704, 3.3454, 2.623, 3.4783, 2.6009, 3.711, 1.8372, 3.5891], "confidence":
-        0.979}, {"text": "WA", "boundingBox": [2.6673, 3.4783, 2.9108, 3.5116, 2.8887,
-        3.7442, 2.6452, 3.7221], "confidence": 0.996}, {"text": "98052", "boundingBox":
-        [2.9551, 3.5227, 3.4753, 3.567, 3.4531, 3.7885, 2.9329, 3.7553], "confidence":
-        0.994}], "appearance": {"style": {"name": "other", "confidence": 0.878}}},
-        {"text": "987-654-3210", "boundingBox": [1.8151, 3.9879, 2.9661, 4.143, 2.9329,
-        4.3756, 1.793, 4.2205], "words": [{"text": "987-654-3210", "boundingBox":
-        [1.8151, 3.999, 2.9661, 4.1541, 2.9329, 4.3756, 1.793, 4.2205], "confidence":
-        0.967}], "appearance": {"style": {"name": "other", "confidence": 0.878}}},
-        {"text": "6/10/2019 13:59", "boundingBox": [1.7708, 4.6636, 3.0547, 4.7523,
-        3.0326, 5.0181, 1.7487, 4.9295], "words": [{"text": "6/10/2019", "boundingBox":
-        [1.7819, 4.6636, 2.5456, 4.7301, 2.5234, 4.996, 1.7598, 4.9406], "confidence":
-        0.982}, {"text": "13:59", "boundingBox": [2.6009, 4.7412, 3.0436, 4.7744,
-        3.0215, 5.0181, 2.5677, 4.996], "confidence": 0.996}], "appearance": {"style":
-        {"name": "other", "confidence": 0.878}}}, {"text": "Sales Associate: Paul",
-        "boundingBox": [1.7487, 5.0292, 3.597, 5.1067, 3.5859, 5.3615, 1.7376, 5.284],
-        "words": [{"text": "Sales", "boundingBox": [1.7708, 5.0403, 2.2135, 5.0735,
-        2.2025, 5.3061, 1.7487, 5.2618], "confidence": 0.996}, {"text": "Associate:",
-        "boundingBox": [2.2578, 5.0735, 3.1211, 5.1067, 3.11, 5.3505, 2.2467, 5.3061],
-        "confidence": 0.841}, {"text": "Paul", "boundingBox": [3.1654, 5.1067, 3.597,
-        5.1178, 3.597, 5.3615, 3.1543, 5.3505], "confidence": 0.992}], "appearance":
-        {"style": {"name": "other", "confidence": 0.878}}}, {"text": "1 Cappuccino",
-        "boundingBox": [1.6934, 5.7382, 2.9993, 5.7936, 2.9883, 6.0705, 1.6823, 6.0262],
-        "words": [{"text": "1", "boundingBox": [1.6934, 5.7382, 1.8372, 5.7492, 1.8372,
-        6.0373, 1.6934, 6.0262], "confidence": 0.995}, {"text": "Cappuccino", "boundingBox":
-        [1.8926, 5.7492, 2.9883, 5.7936, 2.9772, 6.0705, 1.8926, 6.0373], "confidence":
-        0.727}], "appearance": {"style": {"name": "other", "confidence": 0.878}}},
-        {"text": "$2.20", "boundingBox": [4.2943, 5.7382, 4.8034, 5.716, 4.8034, 5.9597,
-        4.3053, 5.9929], "words": [{"text": "$2.20", "boundingBox": [4.3053, 5.7382,
-        4.8034, 5.716, 4.8145, 5.9597, 4.3164, 5.9929], "confidence": 0.994}], "appearance":
-        {"style": {"name": "other", "confidence": 0.878}}}, {"text": "1 BACON & EGGS",
-        "boundingBox": [1.6491, 6.4914, 3.2096, 6.4914, 3.2096, 6.7684, 1.6491, 6.7573],
-        "words": [{"text": "1", "boundingBox": [1.6602, 6.4914, 1.804, 6.4914, 1.804,
-        6.7684, 1.6602, 6.7684], "confidence": 0.996}, {"text": "BACON", "boundingBox":
-        [1.8704, 6.5025, 2.4902, 6.5136, 2.4792, 6.7684, 1.8594, 6.7684], "confidence":
-        0.996}, {"text": "&", "boundingBox": [2.5456, 6.5136, 2.6784, 6.5136, 2.6563,
-        6.7684, 2.5345, 6.7684], "confidence": 0.994}, {"text": "EGGS", "boundingBox":
-        [2.7227, 6.5136, 3.2207, 6.5136, 3.1986, 6.7684, 2.7116, 6.7684], "confidence":
-        0.994}], "appearance": {"style": {"name": "other", "confidence": 0.878}}},
-        {"text": "Sunny-side-up", "boundingBox": [1.9811, 6.9124, 3.2539, 6.9124,
-        3.2539, 7.1893, 1.9811, 7.1782], "words": [{"text": "Sunny-side-up", "boundingBox":
-        [2.0033, 6.9124, 3.265, 6.9235, 3.2539, 7.2004, 2.0033, 7.1893], "confidence":
-        0.994}], "appearance": {"style": {"name": "other", "confidence": 0.878}}},
-        {"text": "$9.5", "boundingBox": [4.3607, 6.8459, 4.8145, 6.8348, 4.8145, 7.1229,
-        4.3717, 7.1339], "words": [{"text": "$9.5", "boundingBox": [4.3828, 6.8459,
-        4.7923, 6.8348, 4.8034, 7.1229, 4.3939, 7.1339], "confidence": 0.983}], "appearance":
-        {"style": {"name": "other", "confidence": 0.878}}}, {"text": "Sub-Total",
-        "boundingBox": [2.291, 7.6878, 3.3092, 7.6657, 3.3092, 7.9426, 2.291, 7.9758],
-        "words": [{"text": "Sub-Total", "boundingBox": [2.3021, 7.6878, 3.3092, 7.6657,
-        3.3092, 7.9537, 2.3021, 7.9869], "confidence": 0.798}], "appearance": {"style":
-        {"name": "other", "confidence": 0.878}}}, {"text": "$ 11.70", "boundingBox":
-        [4.2611, 7.6546, 4.9251, 7.6546, 4.9141, 7.9537, 4.2721, 7.9648], "words":
-        [{"text": "$", "boundingBox": [4.2611, 7.6546, 4.3385, 7.6546, 4.3385, 7.9648,
-        4.2611, 7.9648], "confidence": 0.994}, {"text": "11.70", "boundingBox": [4.3939,
-        7.6546, 4.9141, 7.6546, 4.9251, 7.9537, 4.4049, 7.9648], "confidence": 0.996}],
-        "appearance": {"style": {"name": "other", "confidence": 0.878}}}, {"text":
-        "Tax", "boundingBox": [2.3021, 8.1088, 2.6895, 8.1088, 2.7005, 8.3746, 2.3021,
-        8.3857], "words": [{"text": "Tax", "boundingBox": [2.3021, 8.1088, 2.6895,
-        8.1088, 2.6895, 8.3857, 2.3021, 8.3857], "confidence": 0.994}], "appearance":
-        {"style": {"name": "other", "confidence": 0.878}}}, {"text": "$ 1.17", "boundingBox":
-        [4.3717, 8.0423, 4.9362, 8.0534, 4.9251, 8.3746, 4.3717, 8.3746], "words":
-        [{"text": "$", "boundingBox": [4.3717, 8.0423, 4.4492, 8.0423, 4.4492, 8.3746,
-        4.3717, 8.3635], "confidence": 0.994}, {"text": "1.17", "boundingBox": [4.5156,
-        8.0423, 4.9251, 8.0423, 4.9251, 8.3746, 4.5156, 8.3746], "confidence": 0.985}],
-        "appearance": {"style": {"name": "other", "confidence": 0.878}}}, {"text":
-        "Tip", "boundingBox": [2.2689, 8.4965, 2.612, 8.5076, 2.6009, 8.8399, 2.2689,
-        8.8288], "words": [{"text": "Tip", "boundingBox": [2.2799, 8.4965, 2.6009,
-        8.5076, 2.5898, 8.8399, 2.2799, 8.8288], "confidence": 0.994}], "appearance":
-        {"style": {"name": "other", "confidence": 0.878}}}, {"text": "$ 1.623", "boundingBox":
-        [4.084, 8.4079, 4.8809, 8.4079, 4.8698, 8.7845, 4.0729, 8.7734], "words":
-        [{"text": "$", "boundingBox": [4.0729, 8.4079, 4.1393, 8.4079, 4.1393, 8.7845,
-        4.0729, 8.7734], "confidence": 0.998}, {"text": "1.623", "boundingBox": [4.2168,
-        8.4079, 4.8698, 8.4079, 4.8698, 8.7845, 4.2168, 8.7845], "confidence": 0.425}],
-        "appearance": {"style": {"name": "handwriting", "confidence": 0.909}}}, {"text":
-        "Total", "boundingBox": [2.2799, 8.9507, 2.8223, 8.9285, 2.8223, 9.2165, 2.2799,
-        9.2387], "words": [{"text": "Total", "boundingBox": [2.2799, 8.9507, 2.8223,
-        8.9285, 2.8333, 9.2054, 2.291, 9.2276], "confidence": 0.988}], "appearance":
-        {"style": {"name": "other", "confidence": 0.878}}}, {"text": "$14.52", "boundingBox":
-        [4.0951, 8.8731, 5.1576, 8.9174, 5.1465, 9.2719, 4.0729, 9.2276], "words":
-        [{"text": "$14.52", "boundingBox": [4.1061, 8.8731, 5.1243, 8.9174, 5.1022,
-        9.283, 4.084, 9.2387], "confidence": 0.623}], "appearance": {"style": {"name":
-        "other", "confidence": 0.505}}}]}, {"page": 2, "angle": 0.4374, "width": 8.5,
-        "height": 11, "unit": "inch", "lines": [{"text": "Contoso", "boundingBox":
-        [2.8112, 1.8499, 4.1393, 1.8278, 4.1504, 2.1601, 2.8223, 2.1934], "words":
-        [{"text": "Contoso", "boundingBox": [2.8223, 1.8499, 4.1283, 1.8389, 4.1393,
-        2.1601, 2.8223, 2.2044], "confidence": 0.994}], "appearance": {"style": {"name":
-        "other", "confidence": 0.878}}}, {"text": "Contoso", "boundingBox": [1.959,
-        2.7583, 2.5234, 2.7915, 2.5124, 2.9688, 1.9479, 2.9355], "words": [{"text":
-        "Contoso", "boundingBox": [1.9701, 2.7694, 2.5013, 2.7915, 2.4902, 2.9688,
-        1.959, 2.9466], "confidence": 0.938}], "appearance": {"style": {"name": "other",
-        "confidence": 0.878}}}, {"text": "123 Main Street", "boundingBox": [1.959,
-        3.0574, 2.944, 3.0796, 2.944, 3.2679, 1.959, 3.2568], "words": [{"text": "123",
-        "boundingBox": [1.9701, 3.0685, 2.1361, 3.0685, 2.125, 3.2679, 1.959, 3.2679],
-        "confidence": 0.994}, {"text": "Main", "boundingBox": [2.1693, 3.0796, 2.4792,
-        3.0796, 2.4681, 3.2679, 2.1582, 3.2679], "confidence": 0.994}, {"text": "Street",
-        "boundingBox": [2.5124, 3.0796, 2.9551, 3.0906, 2.944, 3.279, 2.5124, 3.2679],
-        "confidence": 0.996}], "appearance": {"style": {"name": "other", "confidence":
-        0.878}}}, {"text": "Redmond, WA 98052", "boundingBox": [1.9258, 3.3676, 3.265,
-        3.3676, 3.265, 3.578, 1.9258, 3.578], "words": [{"text": "Redmond,", "boundingBox":
-        [1.9368, 3.3786, 2.5566, 3.3897, 2.5456, 3.578, 1.9258, 3.567], "confidence":
-        0.878}, {"text": "WA", "boundingBox": [2.5898, 3.3897, 2.778, 3.3786, 2.7669,
-        3.578, 2.5788, 3.578], "confidence": 0.998}, {"text": "98052", "boundingBox":
-        [2.8112, 3.3786, 3.265, 3.3676, 3.2539, 3.578, 2.8001, 3.578], "confidence":
-        0.988}], "appearance": {"style": {"name": "other", "confidence": 0.878}}},
-        {"text": "123-456-7890", "boundingBox": [1.8926, 3.9879, 2.8776, 4.0101, 2.8665,
-        4.2205, 1.8926, 4.1873], "words": [{"text": "123-456-7890", "boundingBox":
-        [1.8926, 3.9879, 2.8665, 4.0211, 2.8555, 4.2205, 1.8926, 4.1984], "confidence":
-        0.986}], "appearance": {"style": {"name": "other", "confidence": 0.878}}},
-        {"text": "6/10/2019 13:59", "boundingBox": [1.8704, 4.6526, 2.8997, 4.6526,
-        2.8997, 4.8741, 1.8704, 4.863], "words": [{"text": "6/10/2019", "boundingBox":
-        [1.8815, 4.6526, 2.4792, 4.6636, 2.4792, 4.8741, 1.8926, 4.8741], "confidence":
-        0.994}, {"text": "13:59", "boundingBox": [2.5234, 4.6636, 2.9108, 4.6636,
-        2.8997, 4.8741, 2.5234, 4.8741], "confidence": 0.996}], "appearance": {"style":
-        {"name": "other", "confidence": 0.878}}}, {"text": "Sales Associate: Paul",
-        "boundingBox": [1.8704, 4.996, 3.3203, 4.996, 3.3203, 5.2064, 1.8704, 5.1954],
-        "words": [{"text": "Sales", "boundingBox": [1.8926, 4.996, 2.2135, 5.007,
-        2.2135, 5.2064, 1.8926, 5.1954], "confidence": 0.996}, {"text": "Associate:",
-        "boundingBox": [2.2578, 5.007, 2.9219, 5.007, 2.9219, 5.2064, 2.2578, 5.2064],
-        "confidence": 0.994}, {"text": "Paul", "boundingBox": [2.9661, 5.007, 3.3203,
-        5.007, 3.3203, 5.2064, 2.9551, 5.2064], "confidence": 0.992}], "appearance":
-        {"style": {"name": "other", "confidence": 0.878}}}, {"text": "1 Surface Pro
-        6", "boundingBox": [1.9811, 5.6606, 3.0436, 5.6717, 3.0326, 5.8822, 1.9701,
-        5.8711], "words": [{"text": "1", "boundingBox": [1.9811, 5.6606, 2.0475, 5.6606,
-        2.0475, 5.8711, 1.9811, 5.8711], "confidence": 0.994}, {"text": "Surface",
-        "boundingBox": [2.0918, 5.6606, 2.612, 5.6717, 2.6009, 5.8822, 2.0918, 5.8711],
-        "confidence": 0.996}, {"text": "Pro", "boundingBox": [2.6563, 5.6717, 2.8776,
-        5.6717, 2.8665, 5.8822, 2.6452, 5.8822], "confidence": 0.878}, {"text": "6",
-        "boundingBox": [2.9219, 5.6717, 3.0436, 5.6828, 3.0326, 5.8822, 2.9108, 5.8822],
-        "confidence": 0.996}], "appearance": {"style": {"name": "other", "confidence":
-        0.878}}}, {"text": "256GB /Intel Core i5 /", "boundingBox": [2.0807, 5.9929,
-        3.5306, 6.004, 3.5306, 6.2256, 2.0807, 6.2145], "words": [{"text": "256GB",
-        "boundingBox": [2.0918, 6.004, 2.4902, 6.004, 2.4902, 6.2145, 2.0918, 6.2145],
-        "confidence": 0.994}, {"text": "/Intel", "boundingBox": [2.5345, 6.004, 2.9108,
-        6.004, 2.9108, 6.2256, 2.5345, 6.2145], "confidence": 0.845}, {"text": "Core",
-        "boundingBox": [2.9551, 6.004, 3.2539, 6.004, 3.2539, 6.2256, 2.9551, 6.2256],
-        "confidence": 0.991}, {"text": "i5", "boundingBox": [3.2982, 6.004, 3.4089,
-        6.004, 3.3978, 6.2256, 3.2871, 6.2256], "confidence": 0.98}, {"text": "/",
-        "boundingBox": [3.4531, 6.004, 3.5306, 6.004, 3.5195, 6.2256, 3.4421, 6.2256],
-        "confidence": 0.959}], "appearance": {"style": {"name": "other", "confidence":
-        0.878}}}, {"text": "8GB RAM (Black)", "boundingBox": [2.0697, 6.3364, 3.2096,
-        6.3474, 3.2096, 6.569, 2.0697, 6.5468], "words": [{"text": "8GB", "boundingBox":
-        [2.0807, 6.3474, 2.3242, 6.3474, 2.3242, 6.5468, 2.0697, 6.5468], "confidence":
-        0.991}, {"text": "RAM", "boundingBox": [2.3685, 6.3474, 2.6563, 6.3474, 2.6563,
-        6.5579, 2.3574, 6.5579], "confidence": 0.997}, {"text": "(Black)", "boundingBox":
-        [2.7005, 6.3474, 3.2096, 6.3474, 3.1986, 6.569, 2.6895, 6.5579], "confidence":
-        0.991}], "appearance": {"style": {"name": "other", "confidence": 0.878}}},
-        {"text": "$ 999.00", "boundingBox": [3.7962, 6.3696, 4.4271, 6.3807, 4.416,
-        6.5801, 3.7852, 6.5801], "words": [{"text": "$", "boundingBox": [3.7962, 6.3696,
-        3.8626, 6.3696, 3.8626, 6.5801, 3.7962, 6.569], "confidence": 0.997}, {"text":
-        "999.00", "boundingBox": [3.9069, 6.3696, 4.4049, 6.3696, 4.4049, 6.5801,
-        3.9069, 6.5801], "confidence": 0.996}], "appearance": {"style": {"name": "other",
-        "confidence": 0.878}}}, {"text": "1 SurfacePen", "boundingBox": [1.9368, 7.0453,
-        2.8997, 7.0342, 2.8997, 7.2447, 1.9368, 7.2558], "words": [{"text": "1", "boundingBox":
-        [1.9368, 7.0453, 2.0033, 7.0453, 2.0143, 7.2669, 1.9479, 7.2669], "confidence":
-        0.995}, {"text": "SurfacePen", "boundingBox": [2.0475, 7.0453, 2.8997, 7.0342,
-        2.8997, 7.2447, 2.0586, 7.2669], "confidence": 0.994}], "appearance": {"style":
-        {"name": "other", "confidence": 0.878}}}, {"text": "$ 99.99", "boundingBox":
-        [3.8737, 7.0675, 4.4049, 7.0675, 4.3939, 7.289, 3.8737, 7.289], "words": [{"text":
-        "$", "boundingBox": [3.8737, 7.0675, 3.9622, 7.0675, 3.9622, 7.289, 3.8737,
-        7.289], "confidence": 0.994}, {"text": "99.99", "boundingBox": [4.0065, 7.0675,
-        4.4049, 7.0675, 4.4049, 7.289, 4.0065, 7.289], "confidence": 0.995}], "appearance":
-        {"style": {"name": "other", "confidence": 0.878}}}, {"text": "Sub-Total",
-        "boundingBox": [2.3796, 7.721, 3.0768, 7.721, 3.0768, 7.9315, 2.3796, 7.9204],
-        "words": [{"text": "Sub-Total", "boundingBox": [2.3906, 7.721, 3.0768, 7.7321,
-        3.0768, 7.9315, 2.3906, 7.9315], "confidence": 0.994}], "appearance": {"style":
-        {"name": "other", "confidence": 0.878}}}, {"text": "$ 1098.99", "boundingBox":
-        [3.752, 7.7654, 4.416, 7.7543, 4.416, 7.9537, 3.752, 7.9869], "words": [{"text":
-        "$", "boundingBox": [3.752, 7.7654, 3.8184, 7.7654, 3.8184, 7.9869, 3.763,
-        7.9869], "confidence": 0.997}, {"text": "1098.99", "boundingBox": [3.8626,
-        7.7654, 4.4049, 7.7543, 4.416, 7.9648, 3.8626, 7.9869], "confidence": 0.995}],
-        "appearance": {"style": {"name": "other", "confidence": 0.878}}}, {"text":
-        "Tax", "boundingBox": [2.7005, 8.0644, 2.9661, 8.0755, 2.9551, 8.2528, 2.6895,
-        8.2417], "words": [{"text": "Tax", "boundingBox": [2.7005, 8.0644, 2.9551,
-        8.0755, 2.9551, 8.2528, 2.6895, 8.2417], "confidence": 0.997}], "appearance":
-        {"style": {"name": "other", "confidence": 0.878}}}, {"text": "$ 104.40", "boundingBox":
-        [3.8073, 8.0977, 4.4049, 8.0977, 4.4049, 8.3082, 3.8073, 8.3192], "words":
-        [{"text": "$", "boundingBox": [3.8073, 8.0977, 3.8737, 8.0977, 3.8737, 8.3192,
-        3.8073, 8.3192], "confidence": 0.994}, {"text": "104.40", "boundingBox": [3.918,
-        8.0977, 4.3939, 8.0977, 4.3939, 8.3192, 3.918, 8.3192], "confidence": 0.995}],
-        "appearance": {"style": {"name": "other", "confidence": 0.878}}}, {"text":
-        "Total", "boundingBox": [2.623, 8.7734, 2.9993, 8.7623, 2.9993, 8.9617, 2.6341,
-        8.9728], "words": [{"text": "Total", "boundingBox": [2.623, 8.7734, 2.9883,
-        8.7623, 2.9993, 8.9617, 2.6341, 8.9728], "confidence": 0.958}], "appearance":
-        {"style": {"name": "other", "confidence": 0.878}}}, {"text": "$ 1203.39",
-        "boundingBox": [3.7188, 8.7623, 4.3828, 8.8177, 4.3717, 9.0282, 3.7077, 8.9728],
-        "words": [{"text": "$", "boundingBox": [3.7298, 8.7623, 3.7962, 8.7734, 3.7852,
-        8.9839, 3.7188, 8.9839], "confidence": 0.994}, {"text": "1203.39", "boundingBox":
-        [3.8405, 8.7734, 4.3828, 8.8288, 4.3717, 9.0393, 3.8294, 8.995], "confidence":
-        0.995}], "appearance": {"style": {"name": "other", "confidence": 0.878}}}]}],
-        "documentResults": [{"docType": "prebuilt:receipt", "pageRange": [1, 1], "fields":
-        {"Items": {"type": "array", "valueArray": [{"type": "object", "valueObject":
-        {"Name": {"type": "string", "valueString": "Cappuccino", "text": "Cappuccino",
-        "boundingBox": [1.8926, 5.7492, 2.9883, 5.7936, 2.9772, 6.0705, 1.8926, 6.0373],
-        "page": 1, "confidence": 0.835, "elements": ["#/readResults/0/lines/7/words/1"]},
-        "Quantity": {"type": "number", "valueNumber": 1, "text": "1", "boundingBox":
-        [1.6934, 5.7382, 1.8372, 5.7492, 1.8372, 6.0373, 1.6934, 6.0262], "page":
-        1, "confidence": 0.968, "elements": ["#/readResults/0/lines/7/words/0"]},
-        "TotalPrice": {"type": "number", "valueNumber": 2.2, "text": "$2.20", "boundingBox":
-        [4.3053, 5.7382, 4.8034, 5.716, 4.8145, 5.9597, 4.3164, 5.9929], "page": 1,
-        "confidence": 0.979, "elements": ["#/readResults/0/lines/8/words/0"]}}}, {"type":
-        "object", "valueObject": {"Name": {"type": "string", "valueString": "BACON
-        & EGGS", "text": "BACON & EGGS", "boundingBox": [1.8594, 6.5025, 3.2207, 6.5025,
-        3.2207, 6.7684, 1.8594, 6.7684], "page": 1, "confidence": 0.921, "elements":
-        ["#/readResults/0/lines/9/words/1", "#/readResults/0/lines/9/words/2", "#/readResults/0/lines/9/words/3"]},
-        "Quantity": {"type": "number", "valueNumber": 1, "text": "1", "boundingBox":
-        [1.6602, 6.4914, 1.804, 6.4914, 1.804, 6.7684, 1.6602, 6.7684], "page": 1,
-        "confidence": 0.968, "elements": ["#/readResults/0/lines/9/words/0"]}, "TotalPrice":
-        {"type": "number", "valueNumber": 9.5, "text": "$9.5", "boundingBox": [4.3828,
-        6.8459, 4.7923, 6.8348, 4.8034, 7.1229, 4.3939, 7.1339], "page": 1, "confidence":
-        0.925, "elements": ["#/readResults/0/lines/11/words/0"]}}}]}, "MerchantAddress":
-        {"type": "string", "valueString": "123 Main Street Redmond, WA 98052", "text":
-        "123 Main Street Redmond, WA 98052", "boundingBox": [1.8916, 3.024, 3.5384,
-        3.3306, 3.4348, 3.8865, 1.7881, 3.58], "page": 1, "confidence": 0.967, "elements":
-        ["#/readResults/0/lines/2/words/0", "#/readResults/0/lines/2/words/1", "#/readResults/0/lines/2/words/2",
-        "#/readResults/0/lines/3/words/0", "#/readResults/0/lines/3/words/1", "#/readResults/0/lines/3/words/2"]},
-        "MerchantName": {"type": "string", "valueString": "Contoso", "text": "Contoso",
-        "boundingBox": [1.9147, 2.6918, 2.5677, 2.8691, 2.5124, 3.0685, 1.8704, 2.8912],
-        "page": 1, "confidence": 0.967, "elements": ["#/readResults/0/lines/0/words/0"]},
-        "MerchantPhoneNumber": {"type": "phoneNumber", "valuePhoneNumber": "+19876543210",
-        "text": "987-654-3210", "boundingBox": [1.8151, 3.999, 2.9661, 4.1541, 2.9329,
-        4.3756, 1.793, 4.2205], "page": 1, "confidence": 0.986, "elements": ["#/readResults/0/lines/4/words/0"]},
-        "ReceiptType": {"type": "string", "valueString": "Itemized", "confidence":
-        0.989}, "Subtotal": {"type": "number", "valueNumber": 11.7, "text": "$ 11.70",
-        "boundingBox": [4.2611, 7.6546, 4.9251, 7.6546, 4.9251, 7.9648, 4.2611, 7.9648],
-        "page": 1, "confidence": 0.724, "elements": ["#/readResults/0/lines/13/words/0",
-        "#/readResults/0/lines/13/words/1"]}, "Tax": {"type": "number", "valueNumber":
-        1.17, "text": "$ 1.17", "boundingBox": [4.3745, 8.0029, 4.9488, 8.044, 4.9227,
-        8.4085, 4.3484, 8.3674], "page": 1, "confidence": 0.985, "elements": ["#/readResults/0/lines/15/words/0",
-        "#/readResults/0/lines/15/words/1"]}, "Tip": {"type": "number", "valueNumber":
-        1.623, "text": "1.623", "boundingBox": [4.2168, 8.4079, 4.8698, 8.4079, 4.8698,
-        8.7845, 4.2168, 8.7845], "page": 1, "confidence": 0.948, "elements": ["#/readResults/0/lines/17/words/1"]},
-        "Total": {"type": "number", "valueNumber": 14.52, "text": "$14.52", "boundingBox":
-        [4.1061, 8.8731, 5.1243, 8.9174, 5.1022, 9.283, 4.084, 9.2387], "page": 1,
-        "confidence": 0.971, "elements": ["#/readResults/0/lines/19/words/0"]}, "TransactionDate":
-        {"type": "date", "valueDate": "2019-06-10", "text": "6/10/2019", "boundingBox":
-        [1.7819, 4.6636, 2.5456, 4.7301, 2.5234, 4.996, 1.7598, 4.9406], "page": 1,
-        "confidence": 0.985, "elements": ["#/readResults/0/lines/5/words/0"]}, "TransactionTime":
-        {"type": "time", "valueTime": "13:59:00", "text": "13:59", "boundingBox":
-        [2.6009, 4.7412, 3.0436, 4.7744, 3.0215, 5.0181, 2.5677, 4.996], "page": 1,
-        "confidence": 0.982, "elements": ["#/readResults/0/lines/5/words/1"]}}}, {"docType":
-        "prebuilt:receipt", "pageRange": [2, 2], "fields": {"Items": {"type": "array",
-        "valueArray": [{"type": "object", "valueObject": {"Name": {"type": "string",
-        "valueString": "Surface Pro 6", "text": "Surface Pro 6", "boundingBox": [2.0919,
-        5.6538, 3.0438, 5.6743, 3.0391, 5.8917, 2.0873, 5.8711], "page": 2, "confidence":
-        0.976, "elements": ["#/readResults/1/lines/7/words/1", "#/readResults/1/lines/7/words/2",
-        "#/readResults/1/lines/7/words/3"]}, "Quantity": {"type": "number", "valueNumber":
-        1, "text": "1", "boundingBox": [1.9811, 5.6606, 2.0475, 5.6606, 2.0475, 5.8711,
-        1.9811, 5.8711], "page": 2, "confidence": 0.978, "elements": ["#/readResults/1/lines/7/words/0"]},
-        "TotalPrice": {"type": "number", "valueNumber": 999, "text": "$ 999.00", "boundingBox":
-        [3.8004, 6.3191, 4.4224, 6.3711, 4.4011, 6.6251, 3.7792, 6.5731], "page":
-        2, "confidence": 0.986, "elements": ["#/readResults/1/lines/10/words/0", "#/readResults/1/lines/10/words/1"]}}},
+      string: '{"status": "succeeded", "createdDateTime": "2021-09-14T22:18:39Z",
+        "lastUpdatedDateTime": "2021-09-14T22:18:44Z", "analyzeResult": {"apiVersion":
+        "2021-09-30-preview", "modelId": "prebuilt-receipt", "stringIndexType": "unicodeCodePoint",
+        "content": "Contoso\nContoso\n123 Main Street\nRedmond, WA 98052\n987-654-3210\n6/10/2019
+        13:59\nSales Associate: Paul\n1 Cappuccino\n1 BACON & EGGS\n$2.20\nSunny-side-up\n$9.5\nSub-Total\nTax\nTip\nTotal\n--\n$
+        11.70\n1.17\n$ 1.63\n$14,50\nContoso\nContoso\n123 Main Street\nRedmond, WA
+        98052\n123-456-7890\n6/10/2019 13:59\nSales Associate: Paul\n1 Surface Pro
+        6\n256GB / Intel Core i5 /\n8GB RAM (Black)\n1 SurfacePen\nSub-Total\nTax\nTotal\n1999.00\n$
+        99.99\n$1098.99\n$ 104.40\n$ 1203.39", "pages": [{"pageNumber": 1, "angle":
+        1.4879, "width": 8.5, "height": 11, "unit": "inch", "words": [{"content":
+        "Contoso", "boundingBox": [2.9177, 2.5352, 4.1736, 2.4158, 4.207, 2.6641,
+        2.9129, 2.793], "confidence": 0.997, "span": {"offset": 0, "length": 7}},
+        {"content": "Contoso", "boundingBox": [1.9197, 2.7166, 2.5404, 2.8789, 2.4975,
+        3.0508, 1.8767, 2.8885], "confidence": 0.66, "span": {"offset": 8, "length":
+        7}}, {"content": "123", "boundingBox": [1.9101, 3.0317, 2.1393, 3.0842, 2.0963,
+        3.2799, 1.8624, 3.2274], "confidence": 0.988, "span": {"offset": 16, "length":
+        3}}, {"content": "Main", "boundingBox": [2.1775, 3.0938, 2.55, 3.1797, 2.507,
+        3.3754, 2.1346, 3.2895], "confidence": 0.992, "span": {"offset": 20, "length":
+        4}}, {"content": "Street", "boundingBox": [2.5882, 3.1845, 3.0992, 3.3038,
+        3.0562, 3.49, 2.5452, 3.385], "confidence": 0.997, "span": {"offset": 25,
+        "length": 6}}, {"content": "Redmond,", "boundingBox": [1.8767, 3.3468, 2.6264,
+        3.4948, 2.6025, 3.7049, 1.8433, 3.5378], "confidence": 0.96, "span": {"offset":
+        32, "length": 8}}, {"content": "WA", "boundingBox": [2.6646, 3.4996, 2.9034,
+        3.5282, 2.8843, 3.7383, 2.6407, 3.7096], "confidence": 0.998, "span": {"offset":
+        41, "length": 2}}, {"content": "98052", "boundingBox": [2.9416, 3.533, 3.4525,
+        3.5616, 3.4382, 3.7622, 2.9225, 3.7431], "confidence": 0.995, "span": {"offset":
+        44, "length": 5}}, {"content": "987-654-3210", "boundingBox": [1.8242, 4.0056,
+        2.9511, 4.1632, 2.9272, 4.3637, 1.7955, 4.2109], "confidence": 0.988, "span":
+        {"offset": 50, "length": 12}}, {"content": "6/10/2019", "boundingBox": [1.7812,
+        4.6836, 2.5357, 4.7409, 2.5261, 4.9939, 1.7669, 4.9366], "confidence": 0.993,
+        "span": {"offset": 63, "length": 9}}, {"content": "13:59", "boundingBox":
+        [2.5882, 4.7457, 3.0275, 4.7839, 3.018, 5.0178, 2.5739, 4.9987], "confidence":
+        0.995, "span": {"offset": 73, "length": 5}}, {"content": "Sales", "boundingBox":
+        [1.7716, 5.0417, 2.2205, 5.0751, 2.2014, 5.2852, 1.7525, 5.247], "confidence":
+        0.995, "span": {"offset": 79, "length": 5}}, {"content": "Associate:", "boundingBox":
+        [2.2587, 5.0799, 3.1087, 5.1228, 3.1039, 5.3281, 2.2444, 5.2899], "confidence":
+        0.994, "span": {"offset": 85, "length": 10}}, {"content": "Paul", "boundingBox":
+        [3.1517, 5.1276, 3.5815, 5.1324, 3.5815, 5.3377, 3.1469, 5.3329], "confidence":
+        0.991, "span": {"offset": 96, "length": 4}}, {"content": "1", "boundingBox":
+        [1.7334, 5.7578, 1.8337, 5.7626, 1.8337, 6.0204, 1.7287, 6.0156], "confidence":
+        0.931, "span": {"offset": 101, "length": 1}}, {"content": "Cappuccino", "boundingBox":
+        [1.8862, 5.7626, 2.9654, 5.8103, 2.9654, 6.0681, 1.8815, 6.0204], "confidence":
+        0.993, "span": {"offset": 103, "length": 10}}, {"content": "1", "boundingBox":
+        [1.6857, 6.5169, 1.8242, 6.5169, 1.8146, 6.7509, 1.6761, 6.7509], "confidence":
+        0.996, "span": {"offset": 114, "length": 1}}, {"content": "BACON", "boundingBox":
+        [1.8671, 6.5169, 2.4927, 6.5217, 2.4879, 6.7556, 1.8624, 6.7509], "confidence":
+        0.995, "span": {"offset": 116, "length": 5}}, {"content": "&", "boundingBox":
+        [2.5404, 6.5217, 2.6789, 6.5217, 2.6694, 6.7556, 2.5309, 6.7556], "confidence":
+        0.974, "span": {"offset": 122, "length": 1}}, {"content": "EGGS", "boundingBox":
+        [2.7219, 6.5217, 3.2138, 6.5313, 3.2042, 6.7556, 2.7124, 6.7556], "confidence":
+        0.991, "span": {"offset": 124, "length": 4}}, {"content": "$2.20", "boundingBox":
+        [4.3169, 5.753, 4.7992, 5.7339, 4.8087, 5.9488, 4.3264, 5.9727], "confidence":
+        0.995, "span": {"offset": 129, "length": 5}}, {"content": "Sunny-side-up",
+        "boundingBox": [2.039, 6.9323, 3.2424, 6.9323, 3.2424, 7.1758, 2.0438, 7.1615],
+        "confidence": 0.993, "span": {"offset": 135, "length": 13}}, {"content": "$9.5",
+        "boundingBox": [4.4076, 6.8607, 4.7944, 6.8559, 4.7992, 7.1042, 4.4124, 7.1137],
+        "confidence": 0.992, "span": {"offset": 149, "length": 4}}, {"content": "Sub-Total",
+        "boundingBox": [2.3112, 7.701, 3.2949, 7.6723, 3.3045, 7.9444, 2.3208, 7.9779],
+        "confidence": 0.993, "span": {"offset": 154, "length": 9}}, {"content": "Tax",
+        "boundingBox": [2.3256, 8.1211, 2.6694, 8.1259, 2.6646, 8.3503, 2.3256, 8.3407],
+        "confidence": 0.993, "span": {"offset": 164, "length": 3}}, {"content": "Tip",
+        "boundingBox": [2.2969, 8.4935, 2.6312, 8.4744, 2.6503, 8.8086, 2.3208, 8.8277],
+        "confidence": 0.998, "span": {"offset": 168, "length": 3}}, {"content": "Total",
+        "boundingBox": [2.2969, 8.9518, 2.8126, 8.9375, 2.8222, 9.2192, 2.2969, 9.2335],
+        "confidence": 0.993, "span": {"offset": 172, "length": 5}}, {"content": "--",
+        "boundingBox": [4.7848, 7.3906, 4.909, 7.3859, 4.9042, 7.4384, 4.7801, 7.4384],
+        "confidence": 0.99, "span": {"offset": 178, "length": 2}}, {"content": "$",
+        "boundingBox": [4.2834, 7.6532, 4.3455, 7.6532, 4.3264, 7.9397, 4.2643, 7.9349],
+        "confidence": 0.784, "span": {"offset": 181, "length": 1}}, {"content": "11.70",
+        "boundingBox": [4.4076, 7.6532, 4.9329, 7.658, 4.9138, 7.9731, 4.3885, 7.9397],
+        "confidence": 0.994, "span": {"offset": 183, "length": 5}}, {"content": "1.17",
+        "boundingBox": [4.5699, 8.0972, 4.9233, 8.1068, 4.9138, 8.3264, 4.5652, 8.3168],
+        "confidence": 0.956, "span": {"offset": 189, "length": 4}}, {"content": "$",
+        "boundingBox": [4.0542, 8.4123, 4.1211, 8.4123, 4.1115, 8.7752, 4.0447, 8.7752],
+        "confidence": 0.99, "span": {"offset": 194, "length": 1}}, {"content": "1.63",
+        "boundingBox": [4.1927, 8.4171, 4.866, 8.4314, 4.8565, 8.7943, 4.1831, 8.7799],
+        "confidence": 0.075, "span": {"offset": 196, "length": 4}}, {"content": "$14,50",
+        "boundingBox": [4.0638, 8.8468, 5.1048, 8.8993, 5.0857, 9.2765, 4.0447, 9.2192],
+        "confidence": 0.649, "span": {"offset": 201, "length": 6}}], "lines": [{"content":
+        "Contoso", "boundingBox": [2.9129, 2.5352, 4.2691, 2.4015, 4.2978, 2.6784,
+        2.9129, 2.793], "spans": [{"offset": 0, "length": 7}]}, {"content": "Contoso",
+        "boundingBox": [1.9197, 2.7118, 2.55, 2.8741, 2.5022, 3.0508, 1.8719, 2.8837],
+        "spans": [{"offset": 8, "length": 7}]}, {"content": "123 Main Street", "boundingBox":
+        [1.9053, 3.0317, 3.0992, 3.2943, 3.0514, 3.49, 1.8624, 3.2274], "spans": [{"offset":
+        16, "length": 15}]}, {"content": "Redmond, WA 98052", "boundingBox": [1.8671,
+        3.3468, 3.4621, 3.5616, 3.4334, 3.7622, 1.8385, 3.5951], "spans": [{"offset":
+        32, "length": 17}]}, {"content": "987-654-3210", "boundingBox": [1.8194, 4.0056,
+        2.9607, 4.1584, 2.932, 4.3637, 1.7955, 4.2109], "spans": [{"offset": 50, "length":
+        12}]}, {"content": "6/10/2019 13:59", "boundingBox": [1.7812, 4.6788, 3.0419,
+        4.7743, 3.0275, 5.0178, 1.7621, 4.9319], "spans": [{"offset": 63, "length":
+        15}]}, {"content": "Sales Associate: Paul", "boundingBox": [1.7573, 5.0369,
+        3.5862, 5.1324, 3.5815, 5.3377, 1.7478, 5.2613], "spans": [{"offset": 79,
+        "length": 21}]}, {"content": "1 Cappuccino", "boundingBox": [1.7334, 5.753,
+        2.975, 5.8103, 2.9654, 6.0681, 1.7239, 6.0109], "spans": [{"offset": 101,
+        "length": 12}]}, {"content": "1 BACON & EGGS", "boundingBox": [1.6761, 6.5169,
+        3.2281, 6.5217, 3.2233, 6.7556, 1.6761, 6.7461], "spans": [{"offset": 114,
+        "length": 14}]}, {"content": "$2.20", "boundingBox": [4.3169, 5.753, 4.8039,
+        5.7339, 4.8135, 5.9488, 4.3312, 5.9727], "spans": [{"offset": 129, "length":
+        5}]}, {"content": "Sunny-side-up", "boundingBox": [2.039, 6.9275, 3.2424,
+        6.9323, 3.2376, 7.171, 2.039, 7.1615], "spans": [{"offset": 135, "length":
+        13}]}, {"content": "$9.5", "boundingBox": [4.3933, 6.8655, 4.7896, 6.8559,
+        4.7992, 7.1089, 4.3933, 7.1137], "spans": [{"offset": 149, "length": 4}]},
+        {"content": "Sub-Total", "boundingBox": [2.3112, 7.701, 3.2997, 7.6675, 3.3093,
+        7.9397, 2.316, 7.9731], "spans": [{"offset": 154, "length": 9}]}, {"content":
+        "Tax", "boundingBox": [2.3256, 8.1211, 2.6885, 8.1354, 2.6837, 8.3455, 2.3303,
+        8.3455], "spans": [{"offset": 164, "length": 3}]}, {"content": "Tip", "boundingBox":
+        [2.2874, 8.4935, 2.6503, 8.4744, 2.6598, 8.8038, 2.2969, 8.8277], "spans":
+        [{"offset": 168, "length": 3}]}, {"content": "Total", "boundingBox": [2.2969,
+        8.9614, 2.8317, 8.9375, 2.8365, 9.2192, 2.2969, 9.2287], "spans": [{"offset":
+        172, "length": 5}]}, {"content": "--", "boundingBox": [4.7705, 7.3859, 4.9615,
+        7.3859, 4.9615, 7.4336, 4.7705, 7.4384], "spans": [{"offset": 178, "length":
+        2}]}, {"content": "$ 11.70", "boundingBox": [4.2596, 7.6532, 4.9376, 7.658,
+        4.9233, 7.9731, 4.2596, 7.9015], "spans": [{"offset": 181, "length": 7}]},
+        {"content": "1.17", "boundingBox": [4.5556, 8.0972, 4.9233, 8.1068, 4.9233,
+        8.3264, 4.5556, 8.3168], "spans": [{"offset": 189, "length": 4}]}, {"content":
+        "$ 1.63", "boundingBox": [4.0638, 8.4123, 4.9472, 8.441, 4.9329, 8.7943, 4.0447,
+        8.7752], "spans": [{"offset": 194, "length": 6}]}, {"content": "$14,50", "boundingBox":
+        [4.0733, 8.8468, 5.1669, 8.9136, 5.143, 9.2765, 4.0447, 9.224], "spans": [{"offset":
+        201, "length": 6}]}], "spans": [{"offset": 0, "length": 207}]}, {"pageNumber":
+        2, "angle": 0.289, "width": 8.5, "height": 11, "unit": "inch", "words": [{"content":
+        "Contoso", "boundingBox": [2.8413, 1.8477, 4.102, 1.819, 4.1115, 2.1723, 2.8413,
+        2.1914], "confidence": 0.993, "span": {"offset": 208, "length": 7}}, {"content":
+        "Contoso", "boundingBox": [1.9674, 2.7643, 2.4879, 2.8025, 2.4784, 2.9601,
+        1.9579, 2.9219], "confidence": 0.781, "span": {"offset": 216, "length": 7}},
+        {"content": "123", "boundingBox": [1.9531, 3.0699, 2.1298, 3.0747, 2.1346,
+        3.2561, 1.9531, 3.2561], "confidence": 0.988, "span": {"offset": 224, "length":
+        3}}, {"content": "Main", "boundingBox": [2.168, 3.0747, 2.4688, 3.0794, 2.4688,
+        3.2609, 2.168, 3.2561], "confidence": 0.991, "span": {"offset": 228, "length":
+        4}}, {"content": "Street", "boundingBox": [2.5022, 3.0794, 2.9463, 3.089,
+        2.9416, 3.2704, 2.5022, 3.2609], "confidence": 0.997, "span": {"offset": 233,
+        "length": 6}}, {"content": "Redmond,", "boundingBox": [1.9292, 3.3802, 2.5452,
+        3.3898, 2.5452, 3.5712, 1.9292, 3.5616], "confidence": 0.993, "span": {"offset":
+        240, "length": 8}}, {"content": "WA", "boundingBox": [2.5787, 3.3898, 2.7649,
+        3.3898, 2.7649, 3.5664, 2.5787, 3.5712], "confidence": 0.999, "span": {"offset":
+        249, "length": 2}}, {"content": "98052", "boundingBox": [2.8031, 3.3898, 3.2424,
+        3.3802, 3.2424, 3.5521, 2.8031, 3.5664], "confidence": 0.995, "span": {"offset":
+        252, "length": 5}}, {"content": "123-456-7890", "boundingBox": [1.9101, 4.0056,
+        2.8508, 4.0343, 2.8508, 4.2109, 1.9053, 4.1918], "confidence": 0.989, "span":
+        {"offset": 258, "length": 12}}, {"content": "6/10/2019", "boundingBox": [1.8958,
+        4.6597, 2.4831, 4.6693, 2.4784, 4.8698, 1.9006, 4.865], "confidence": 0.993,
+        "span": {"offset": 271, "length": 9}}, {"content": "13:59", "boundingBox":
+        [2.5213, 4.6693, 2.8843, 4.6788, 2.8795, 4.8746, 2.5213, 4.8698], "confidence":
+        0.995, "span": {"offset": 281, "length": 5}}, {"content": "Sales", "boundingBox":
+        [1.8958, 5.0035, 2.2157, 5.0035, 2.211, 5.1897, 1.8958, 5.1849], "confidence":
+        0.976, "span": {"offset": 287, "length": 5}}, {"content": "Associate:", "boundingBox":
+        [2.2492, 5.0035, 2.9272, 5.0082, 2.9225, 5.1992, 2.2492, 5.1897], "confidence":
+        0.995, "span": {"offset": 293, "length": 10}}, {"content": "Paul", "boundingBox":
+        [2.9607, 5.0082, 3.3045, 5.0082, 3.3045, 5.1992, 2.9607, 5.1992], "confidence":
+        0.991, "span": {"offset": 304, "length": 4}}, {"content": "1", "boundingBox":
+        [1.9817, 5.6862, 2.0295, 5.6862, 2.0343, 5.8628, 1.9865, 5.8628], "confidence":
+        0.938, "span": {"offset": 309, "length": 1}}, {"content": "Surface", "boundingBox":
+        [2.0677, 5.6814, 2.6121, 5.6814, 2.6073, 5.8628, 2.0677, 5.8628], "confidence":
+        0.997, "span": {"offset": 311, "length": 7}}, {"content": "Pro", "boundingBox":
+        [2.6455, 5.6814, 2.8747, 5.6862, 2.8699, 5.8676, 2.6455, 5.8628], "confidence":
+        0.997, "span": {"offset": 319, "length": 3}}, {"content": "6", "boundingBox":
+        [2.9081, 5.6862, 3.0132, 5.6862, 3.0084, 5.8676, 2.9034, 5.8676], "confidence":
+        0.994, "span": {"offset": 323, "length": 1}}, {"content": "256GB", "boundingBox":
+        [2.1107, 6.0156, 2.4975, 6.0156, 2.4927, 6.2161, 2.1059, 6.2114], "confidence":
+        0.995, "span": {"offset": 325, "length": 5}}, {"content": "/", "boundingBox":
+        [2.5357, 6.0156, 2.5787, 6.0156, 2.5691, 6.2161, 2.5309, 6.2161], "confidence":
+        0.993, "span": {"offset": 331, "length": 1}}, {"content": "Intel", "boundingBox":
+        [2.6169, 6.0156, 2.9225, 6.0156, 2.9177, 6.2209, 2.6121, 6.2161], "confidence":
+        0.963, "span": {"offset": 333, "length": 5}}, {"content": "Core", "boundingBox":
+        [2.9607, 6.0156, 3.2567, 6.0156, 3.2472, 6.2209, 2.9559, 6.2209], "confidence":
+        0.991, "span": {"offset": 339, "length": 4}}, {"content": "i5", "boundingBox":
+        [3.2949, 6.0156, 3.4143, 6.0204, 3.4048, 6.2257, 3.2854, 6.2209], "confidence":
+        0.993, "span": {"offset": 344, "length": 2}}, {"content": "/", "boundingBox":
+        [3.4525, 6.0204, 3.5337, 6.0204, 3.5242, 6.2257, 3.4478, 6.2257], "confidence":
+        0.988, "span": {"offset": 347, "length": 1}}, {"content": "8GB", "boundingBox":
+        [2.0772, 6.3546, 2.3256, 6.3546, 2.3303, 6.5456, 2.0868, 6.5408], "confidence":
+        0.993, "span": {"offset": 349, "length": 3}}, {"content": "RAM", "boundingBox":
+        [2.3638, 6.3546, 2.6646, 6.3594, 2.6646, 6.5551, 2.3685, 6.5503], "confidence":
+        0.997, "span": {"offset": 353, "length": 3}}, {"content": "(Black)", "boundingBox":
+        [2.7028, 6.3594, 3.1947, 6.3594, 3.1947, 6.5647, 2.7028, 6.5551], "confidence":
+        0.993, "span": {"offset": 357, "length": 7}}, {"content": "1", "boundingBox":
+        [1.9435, 7.0564, 1.9913, 7.0564, 1.9961, 7.2378, 1.9483, 7.2378], "confidence":
+        0.966, "span": {"offset": 365, "length": 1}}, {"content": "SurfacePen", "boundingBox":
+        [2.0295, 7.0564, 2.8699, 7.0516, 2.8652, 7.2283, 2.0343, 7.2378], "confidence":
+        0.995, "span": {"offset": 367, "length": 10}}, {"content": "Sub-Total", "boundingBox":
+        [2.4067, 7.7296, 3.0992, 7.7392, 3.0896, 7.9253, 2.4067, 7.911], "confidence":
+        0.763, "span": {"offset": 378, "length": 9}}, {"content": "Tax", "boundingBox":
+        [2.698, 8.059, 2.9463, 8.0686, 2.9368, 8.2452, 2.6933, 8.2309], "confidence":
+        0.994, "span": {"offset": 388, "length": 3}}, {"content": "Total", "boundingBox":
+        [2.6264, 8.7799, 2.9893, 8.7656, 2.9941, 8.9423, 2.6312, 8.9566], "confidence":
+        0.601, "span": {"offset": 392, "length": 5}}, {"content": "1999.00", "boundingBox":
+        [3.8919, 6.3785, 4.3885, 6.388, 4.3837, 6.5694, 3.8919, 6.5599], "confidence":
+        0.235, "span": {"offset": 398, "length": 7}}, {"content": "$", "boundingBox":
+        [3.8966, 7.0755, 3.9492, 7.0755, 3.9492, 7.2713, 3.8966, 7.2665], "confidence":
+        0.996, "span": {"offset": 406, "length": 1}}, {"content": "99.99", "boundingBox":
+        [3.9874, 7.0755, 4.3789, 7.0755, 4.3789, 7.2713, 3.9874, 7.2713], "confidence":
+        0.994, "span": {"offset": 408, "length": 5}}, {"content": "$1098.99", "boundingBox":
+        [3.8154, 7.7821, 4.3933, 7.7678, 4.398, 7.954, 3.8202, 7.9683], "confidence":
+        0.39, "span": {"offset": 414, "length": 8}}, {"content": "$", "boundingBox":
+        [3.8107, 8.1115, 3.8871, 8.1115, 3.8823, 8.3025, 3.8059, 8.3025], "confidence":
+        0.983, "span": {"offset": 423, "length": 1}}, {"content": "104.40", "boundingBox":
+        [3.9253, 8.1115, 4.398, 8.102, 4.4028, 8.2977, 3.9205, 8.3073], "confidence":
+        0.993, "span": {"offset": 425, "length": 6}}, {"content": "$", "boundingBox":
+        [3.739, 8.7799, 3.8107, 8.7847, 3.7963, 8.9566, 3.7295, 8.9518], "confidence":
+        0.996, "span": {"offset": 432, "length": 1}}, {"content": "1203.39", "boundingBox":
+        [3.8441, 8.7847, 4.3694, 8.8468, 4.3407, 9.0282, 3.8298, 8.9614], "confidence":
+        0.997, "span": {"offset": 434, "length": 7}}], "lines": [{"content": "Contoso",
+        "boundingBox": [2.8365, 1.8429, 4.164, 1.8142, 4.1688, 2.1628, 2.8365, 2.1914],
+        "spans": [{"offset": 208, "length": 7}]}, {"content": "Contoso", "boundingBox":
+        [1.9674, 2.7643, 2.4927, 2.7977, 2.4784, 2.9553, 1.9531, 2.9171], "spans":
+        [{"offset": 216, "length": 7}]}, {"content": "123 Main Street", "boundingBox":
+        [1.9483, 3.0651, 2.9511, 3.0842, 2.9463, 3.2704, 1.9483, 3.2513], "spans":
+        [{"offset": 224, "length": 15}]}, {"content": "Redmond, WA 98052", "boundingBox":
+        [1.9292, 3.3802, 3.2424, 3.3802, 3.2424, 3.5616, 1.9292, 3.5664], "spans":
+        [{"offset": 240, "length": 17}]}, {"content": "123-456-7890", "boundingBox":
+        [1.9101, 4.0009, 2.8556, 4.0247, 2.8508, 4.2109, 1.9053, 4.1871], "spans":
+        [{"offset": 258, "length": 12}]}, {"content": "6/10/2019 13:59", "boundingBox":
+        [1.891, 4.6597, 2.889, 4.6693, 2.889, 4.8746, 1.891, 4.8602], "spans": [{"offset":
+        271, "length": 15}]}, {"content": "Sales Associate: Paul", "boundingBox":
+        [1.891, 5.0035, 3.314, 5.0082, 3.3093, 5.1944, 1.891, 5.1849], "spans": [{"offset":
+        287, "length": 21}]}, {"content": "1 Surface Pro 6", "boundingBox": [1.9817,
+        5.6766, 3.0275, 5.6814, 3.0228, 5.8628, 1.9817, 5.8581], "spans": [{"offset":
+        309, "length": 15}]}, {"content": "256GB / Intel Core i5 /", "boundingBox":
+        [2.1059, 6.0109, 3.5337, 6.0156, 3.5289, 6.2209, 2.1059, 6.2114], "spans":
+        [{"offset": 325, "length": 23}]}, {"content": "8GB RAM (Black)", "boundingBox":
+        [2.0772, 6.3498, 3.1994, 6.3546, 3.1947, 6.5599, 2.0772, 6.5456], "spans":
+        [{"offset": 349, "length": 15}]}, {"content": "1 SurfacePen", "boundingBox":
+        [1.9435, 7.0469, 2.8747, 7.0421, 2.8747, 7.2235, 1.9435, 7.2331], "spans":
+        [{"offset": 365, "length": 12}]}, {"content": "Sub-Total", "boundingBox":
+        [2.4067, 7.7296, 3.0944, 7.7392, 3.0944, 7.9206, 2.4067, 7.9063], "spans":
+        [{"offset": 378, "length": 9}]}, {"content": "Tax", "boundingBox": [2.698,
+        8.059, 2.9559, 8.0734, 2.9463, 8.2452, 2.6933, 8.2357], "spans": [{"offset":
+        388, "length": 3}]}, {"content": "Total", "boundingBox": [2.6264, 8.7847,
+        2.9989, 8.7656, 2.9989, 8.9423, 2.636, 8.9566], "spans": [{"offset": 392,
+        "length": 5}]}, {"content": "1999.00", "boundingBox": [3.8919, 6.3785, 4.398,
+        6.388, 4.3885, 6.5694, 3.8919, 6.5599], "spans": [{"offset": 398, "length":
+        7}]}, {"content": "$ 99.99", "boundingBox": [3.8966, 7.0755, 4.3885, 7.0803,
+        4.3837, 7.2713, 3.8966, 7.2713], "spans": [{"offset": 406, "length": 7}]},
+        {"content": "$1098.99", "boundingBox": [3.8154, 7.7773, 4.398, 7.763, 4.4028,
+        7.9492, 3.8202, 7.9635], "spans": [{"offset": 414, "length": 8}]}, {"content":
+        "$ 104.40", "boundingBox": [3.8059, 8.1068, 4.398, 8.0972, 4.4028, 8.293,
+        3.8059, 8.3073], "spans": [{"offset": 423, "length": 8}]}, {"content": "$
+        1203.39", "boundingBox": [3.739, 8.7752, 4.3742, 8.842, 4.3503, 9.0234, 3.7247,
+        8.9518], "spans": [{"offset": 432, "length": 9}]}], "spans": [{"offset": 207,
+        "length": 234}]}], "styles": [{"isHandwritten": true, "confidence": 0.9, "spans":
+        [{"offset": 194, "length": 6}]}], "documents": [{"docType": "prebuilt:receipt",
+        "boundingRegions": [{"pageNumber": 1, "boundingBox": [0, 0, 8.5, 0, 8.5, 11,
+        0, 11]}], "fields": {"Items": {"type": "array", "valueArray": [{"type": "object",
+        "valueObject": {"Name": {"type": "string", "valueString": "Cappuccino", "content":
+        "Cappuccino", "boundingRegions": [{"pageNumber": 1, "boundingBox": [1.8862,
+        5.7626, 2.9654, 5.8103, 2.9654, 6.0681, 1.8815, 6.0204]}], "confidence": 0.979,
+        "spans": [{"offset": 103, "length": 10}]}, "Quantity": {"type": "number",
+        "valueNumber": 1, "content": "1", "boundingRegions": [{"pageNumber": 1, "boundingBox":
+        [1.7334, 5.7578, 1.8337, 5.7626, 1.8337, 6.0204, 1.7287, 6.0156]}], "confidence":
+        0.983, "spans": [{"offset": 101, "length": 1}]}, "TotalPrice": {"type": "number",
+        "valueNumber": 2.2, "content": "$2.20", "boundingRegions": [{"pageNumber":
+        1, "boundingBox": [4.3169, 5.753, 4.7992, 5.7339, 4.8087, 5.9488, 4.3264,
+        5.9727]}], "confidence": 0.988, "spans": [{"offset": 129, "length": 5}]}}},
         {"type": "object", "valueObject": {"Name": {"type": "string", "valueString":
-        "SurfacePen", "text": "SurfacePen", "boundingBox": [2.0475, 7.0453, 2.8997,
-        7.0342, 2.8997, 7.2447, 2.0586, 7.2669], "page": 2, "confidence": 0.824, "elements":
-        ["#/readResults/1/lines/11/words/1"]}, "Quantity": {"type": "number", "valueNumber":
-        1, "text": "1", "boundingBox": [1.9368, 7.0453, 2.0033, 7.0453, 2.0143, 7.2669,
-        1.9479, 7.2669], "page": 2, "confidence": 0.979, "elements": ["#/readResults/1/lines/11/words/0"]},
-        "TotalPrice": {"type": "number", "valueNumber": 99.99, "text": "$ 99.99",
-        "boundingBox": [3.8737, 7.0675, 4.4049, 7.0675, 4.4049, 7.289, 3.8737, 7.289],
-        "page": 2, "confidence": 0.986, "elements": ["#/readResults/1/lines/12/words/0",
-        "#/readResults/1/lines/12/words/1"]}}}]}, "MerchantAddress": {"type": "string",
-        "valueString": "123 Main Street Redmond, WA 98052", "text": "123 Main Street
-        Redmond, WA 98052", "boundingBox": [1.9258, 3.0685, 3.265, 3.0685, 3.265,
-        3.578, 1.9258, 3.578], "page": 2, "confidence": 0.973, "elements": ["#/readResults/1/lines/2/words/0",
-        "#/readResults/1/lines/2/words/1", "#/readResults/1/lines/2/words/2", "#/readResults/1/lines/3/words/0",
-        "#/readResults/1/lines/3/words/1", "#/readResults/1/lines/3/words/2"]}, "MerchantName":
-        {"type": "string", "valueString": "Contoso", "text": "Contoso", "boundingBox":
-        [1.9701, 2.7694, 2.5013, 2.7915, 2.4902, 2.9688, 1.959, 2.9466], "page": 2,
-        "confidence": 0.977, "elements": ["#/readResults/1/lines/1/words/0"]}, "MerchantPhoneNumber":
-        {"type": "phoneNumber", "text": "123-456-7890", "boundingBox": [1.8926, 3.9879,
-        2.8665, 4.0211, 2.8555, 4.2205, 1.8926, 4.1984], "page": 2, "confidence":
-        0.987, "elements": ["#/readResults/1/lines/4/words/0"]}, "ReceiptType": {"type":
-        "string", "valueString": "Itemized", "confidence": 0.99}, "Subtotal": {"type":
-        "number", "valueNumber": 1098.99, "text": "$ 1098.99", "boundingBox": [3.752,
-        7.7543, 4.416, 7.7543, 4.416, 7.9869, 3.752, 7.9869], "page": 2, "confidence":
-        0.805, "elements": ["#/readResults/1/lines/14/words/0", "#/readResults/1/lines/14/words/1"]},
-        "Tax": {"type": "number", "valueNumber": 104.4, "text": "$ 104.40", "boundingBox":
-        [3.8073, 8.0977, 4.3939, 8.0977, 4.3939, 8.3192, 3.8073, 8.3192], "page":
-        2, "confidence": 0.986, "elements": ["#/readResults/1/lines/16/words/0", "#/readResults/1/lines/16/words/1"]},
-        "Total": {"type": "number", "valueNumber": 1203.39, "text": "$ 1203.39", "boundingBox":
-        [3.7298, 8.7623, 4.3916, 8.8231, 4.3712, 9.0448, 3.7094, 8.984], "page": 2,
-        "confidence": 0.974, "elements": ["#/readResults/1/lines/18/words/0", "#/readResults/1/lines/18/words/1"]},
-        "TransactionDate": {"type": "date", "valueDate": "2019-06-10", "text": "6/10/2019",
-        "boundingBox": [1.8815, 4.6526, 2.4792, 4.6636, 2.4792, 4.8741, 1.8926, 4.8741],
-        "page": 2, "confidence": 0.987, "elements": ["#/readResults/1/lines/5/words/0"]},
-        "TransactionTime": {"type": "time", "valueTime": "13:59:00", "text": "13:59",
-        "boundingBox": [2.5234, 4.6636, 2.9108, 4.6636, 2.8997, 4.8741, 2.5234, 4.8741],
-        "page": 2, "confidence": 0.986, "elements": ["#/readResults/1/lines/5/words/1"]}}}]}}'
+        "BACON & EGGS", "content": "BACON & EGGS", "boundingRegions": [{"pageNumber":
+        1, "boundingBox": [1.8642, 6.5152, 3.2138, 6.5254, 3.2121, 6.7611, 1.8624,
+        6.7509]}], "confidence": 0.979, "spans": [{"offset": 116, "length": 12}]},
+        "Quantity": {"type": "number", "valueNumber": 1, "content": "1", "boundingRegions":
+        [{"pageNumber": 1, "boundingBox": [1.6857, 6.5169, 1.8242, 6.5169, 1.8146,
+        6.7509, 1.6761, 6.7509]}], "confidence": 0.983, "spans": [{"offset": 114,
+        "length": 1}]}, "TotalPrice": {"type": "number", "valueNumber": 9.5, "content":
+        "$9.5", "boundingRegions": [{"pageNumber": 1, "boundingBox": [4.4076, 6.8607,
+        4.7944, 6.8559, 4.7992, 7.1042, 4.4124, 7.1137]}], "confidence": 0.988, "spans":
+        [{"offset": 149, "length": 4}]}}}]}, "Locale": {"type": "string", "valueString":
+        "en-US", "confidence": 0.99}, "MerchantAddress": {"type": "string", "valueString":
+        "123 Main Street Redmond, WA 98052", "content": "123 Main Street Redmond,
+        WA 98052", "boundingRegions": [{"pageNumber": 1, "boundingBox": [1.9056, 3.0307,
+        3.5209, 3.3852, 3.4118, 3.8825, 1.7964, 3.528]}], "confidence": 0.943, "spans":
+        [{"offset": 16, "length": 33}]}, "MerchantName": {"type": "string", "valueString":
+        "Contoso", "content": "Contoso", "boundingRegions": [{"pageNumber": 1, "boundingBox":
+        [1.9197, 2.7166, 2.5404, 2.8789, 2.4975, 3.0508, 1.8767, 2.8885]}], "confidence":
+        0.96, "spans": [{"offset": 8, "length": 7}]}, "MerchantPhoneNumber": {"type":
+        "phoneNumber", "valuePhoneNumber": "+19876543210", "content": "987-654-3210",
+        "boundingRegions": [{"pageNumber": 1, "boundingBox": [1.8242, 4.0056, 2.9511,
+        4.1632, 2.9272, 4.3637, 1.7955, 4.2109]}], "confidence": 0.989, "spans": [{"offset":
+        50, "length": 12}]}, "ReceiptType": {"type": "string", "valueString": "Itemized",
+        "confidence": 0.977}, "Subtotal": {"type": "number", "valueNumber": 11.7,
+        "content": "$ 11.70", "boundingRegions": [{"pageNumber": 1, "boundingBox":
+        [4.276, 7.6326, 4.9329, 7.658, 4.9207, 7.9734, 4.2638, 7.948]}], "confidence":
+        0.965, "spans": [{"offset": 181, "length": 7}]}, "Tax": {"type": "number",
+        "valueNumber": 1.17, "content": "1.17", "boundingRegions": [{"pageNumber":
+        1, "boundingBox": [4.5699, 8.0972, 4.9233, 8.1068, 4.9138, 8.3264, 4.5652,
+        8.3168]}], "confidence": 0.984, "spans": [{"offset": 189, "length": 4}]},
+        "Tip": {"type": "number", "valueNumber": 1.63, "content": "$ 1.63", "boundingRegions":
+        [{"pageNumber": 1, "boundingBox": [4.0525, 8.4108, 4.8661, 8.4282, 4.8583,
+        8.7943, 4.0447, 8.777]}], "confidence": 0.903, "spans": [{"offset": 194, "length":
+        6}]}, "Total": {"type": "number", "valueNumber": 14.5, "content": "$14,50",
+        "boundingRegions": [{"pageNumber": 1, "boundingBox": [4.0638, 8.8468, 5.1048,
+        8.8993, 5.0857, 9.2765, 4.0447, 9.2192]}], "confidence": 0.976, "spans": [{"offset":
+        201, "length": 6}]}, "TransactionDate": {"type": "date", "valueDate": "2019-06-10",
+        "content": "6/10/2019", "boundingRegions": [{"pageNumber": 1, "boundingBox":
+        [1.7812, 4.6836, 2.5357, 4.7409, 2.5261, 4.9939, 1.7669, 4.9366]}], "confidence":
+        0.99, "spans": [{"offset": 63, "length": 9}]}, "TransactionTime": {"type":
+        "time", "valueTime": "13:59:00", "content": "13:59", "boundingRegions": [{"pageNumber":
+        1, "boundingBox": [2.5882, 4.7457, 3.0275, 4.7839, 3.018, 5.0178, 2.5739,
+        4.9987]}], "confidence": 0.988, "spans": [{"offset": 73, "length": 5}]}},
+        "confidence": 1, "spans": [{"offset": 0, "length": 207}]}, {"docType": "prebuilt:receipt",
+        "boundingRegions": [{"pageNumber": 2, "boundingBox": [0, 0, 8.5, 0, 8.5, 11,
+        0, 11]}], "fields": {"Items": {"type": "array", "valueArray": [{"type": "object",
+        "valueObject": {"Name": {"type": "string", "valueString": "Surface Pro 6",
+        "content": "Surface Pro 6", "boundingRegions": [{"pageNumber": 2, "boundingBox":
+        [2.0677, 5.6814, 3.0132, 5.6814, 3.0132, 5.8676, 2.0677, 5.8676]}], "confidence":
+        0.983, "spans": [{"offset": 311, "length": 13}]}, "Quantity": {"type": "number",
+        "valueNumber": 1, "content": "1", "boundingRegions": [{"pageNumber": 2, "boundingBox":
+        [1.9817, 5.6862, 2.0295, 5.6862, 2.0343, 5.8628, 1.9865, 5.8628]}], "confidence":
+        0.983, "spans": [{"offset": 309, "length": 1}]}, "TotalPrice": {"type": "number",
+        "valueNumber": 1999, "content": "1999.00", "boundingRegions": [{"pageNumber":
+        2, "boundingBox": [3.8919, 6.3785, 4.3885, 6.388, 4.3837, 6.5694, 3.8919,
+        6.5599]}], "confidence": 0.96, "spans": [{"offset": 398, "length": 7}]}}},
+        {"type": "object", "valueObject": {"Name": {"type": "string", "valueString":
+        "SurfacePen", "content": "SurfacePen", "boundingRegions": [{"pageNumber":
+        2, "boundingBox": [2.0295, 7.0564, 2.8699, 7.0516, 2.8652, 7.2283, 2.0343,
+        7.2378]}], "confidence": 0.979, "spans": [{"offset": 367, "length": 10}]},
+        "Quantity": {"type": "number", "valueNumber": 1, "content": "1", "boundingRegions":
+        [{"pageNumber": 2, "boundingBox": [1.9435, 7.0564, 1.9913, 7.0564, 1.9961,
+        7.2378, 1.9483, 7.2378]}], "confidence": 0.975, "spans": [{"offset": 365,
+        "length": 1}]}, "TotalPrice": {"type": "number", "valueNumber": 99.99, "content":
+        "$ 99.99", "boundingRegions": [{"pageNumber": 2, "boundingBox": [3.8976, 7.0535,
+        4.3878, 7.0759, 4.378, 7.2909, 3.8878, 7.2685]}], "confidence": 0.974, "spans":
+        [{"offset": 406, "length": 7}]}}}]}, "Locale": {"type": "string", "valueString":
+        "en-US", "confidence": 0.995}, "MerchantAddress": {"type": "string", "valueString":
+        "123 Main Street Redmond, WA 98052", "content": "123 Main Street Redmond,
+        WA 98052", "boundingRegions": [{"pageNumber": 2, "boundingBox": [1.934, 3.0696,
+        3.2496, 3.0901, 3.2419, 3.5821, 1.9264, 3.5616]}], "confidence": 0.977, "spans":
+        [{"offset": 224, "length": 33}]}, "MerchantName": {"type": "string", "valueString":
+        "Contoso", "content": "Contoso", "boundingRegions": [{"pageNumber": 2, "boundingBox":
+        [1.9674, 2.7643, 2.4879, 2.8025, 2.4784, 2.9601, 1.9579, 2.9219]}], "confidence":
+        0.975, "spans": [{"offset": 216, "length": 7}]}, "MerchantPhoneNumber": {"type":
+        "phoneNumber", "content": "123-456-7890", "boundingRegions": [{"pageNumber":
+        2, "boundingBox": [1.9101, 4.0056, 2.8508, 4.0343, 2.8508, 4.2109, 1.9053,
+        4.1918]}], "confidence": 0.989, "spans": [{"offset": 258, "length": 12}]},
+        "ReceiptType": {"type": "string", "valueString": "Itemized", "confidence":
+        0.979}, "Subtotal": {"type": "number", "valueNumber": 1098.99, "content":
+        "$1098.99", "boundingRegions": [{"pageNumber": 2, "boundingBox": [3.8154,
+        7.7821, 4.3933, 7.7678, 4.398, 7.954, 3.8202, 7.9683]}], "confidence": 0.984,
+        "spans": [{"offset": 414, "length": 8}]}, "Tax": {"type": "number", "valueNumber":
+        104.4, "content": "104.40", "boundingRegions": [{"pageNumber": 2, "boundingBox":
+        [3.9253, 8.1115, 4.398, 8.102, 4.4028, 8.2977, 3.9205, 8.3073]}], "confidence":
+        0.987, "spans": [{"offset": 425, "length": 6}]}, "Total": {"type": "number",
+        "valueNumber": 1203.39, "content": "$ 1203.39", "boundingRegions": [{"pageNumber":
+        2, "boundingBox": [3.7404, 8.7686, 4.3694, 8.8468, 4.3467, 9.029, 3.7178,
+        8.9507]}], "confidence": 0.982, "spans": [{"offset": 432, "length": 9}]},
+        "TransactionDate": {"type": "date", "valueDate": "2019-06-10", "content":
+        "6/10/2019", "boundingRegions": [{"pageNumber": 2, "boundingBox": [1.8958,
+        4.6597, 2.4831, 4.6693, 2.4784, 4.8698, 1.9006, 4.865]}], "confidence": 0.989,
+        "spans": [{"offset": 271, "length": 9}]}, "TransactionTime": {"type": "time",
+        "valueTime": "13:59:00", "content": "13:59", "boundingRegions": [{"pageNumber":
+        2, "boundingBox": [2.5213, 4.6693, 2.8843, 4.6788, 2.8795, 4.8746, 2.5213,
+        4.8698]}], "confidence": 0.988, "spans": [{"offset": 281, "length": 5}]}},
+        "confidence": 1, "spans": [{"offset": 207, "length": 234}]}]}}'
     headers:
-      apim-request-id: e65714df-6c16-4e19-814c-bfdc63ebb86b
-      content-length: '22257'
+      apim-request-id: f2452243-e7e3-4dd5-a933-27b44226bac6
       content-type: application/json; charset=utf-8
-      date: Tue, 11 May 2021 03:08:27 GMT
+      date: Tue, 14 Sep 2021 22:18:45 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '32'
+      x-envoy-upstream-service-time: '319'
     status:
       code: 200
       message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/receipt/analyzeResults/0737a657-4a8d-418f-8a4c-95af9d1d7cdd
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/3f534a72-3780-4a63-b50a-1de22a4a7d8b?api-version=2021-09-30-preview
 version: 1

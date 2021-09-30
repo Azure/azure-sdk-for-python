@@ -1,31 +1,32 @@
 interactions:
 - request:
-    body: 'b''{"source": "b\''\\\\x89PNG\''"}'''
+    body: 'b''{"urlSource": "b\''\\\\x89PNG\''"}'''
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '25'
+      - '28'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
   response:
     body:
-      string: '{"error": {"code": "InvalidImageURL", "innerError": {"requestId": "280db172-b8e0-4617-a445-fc235a52ebb7"},
-        "message": "Image URL is badly formatted."}}'
+      string: '{"error": {"code": "InvalidArgument", "message": "Invalid argument.",
+        "innererror": {"code": "InvalidContentSourceFormat", "message": "Invalid content
+        source: Url must be http or https."}}}'
     headers:
-      apim-request-id: 280db172-b8e0-4617-a445-fc235a52ebb7
-      content-length: '144'
+      apim-request-id: d93f5a6e-f030-4f15-9760-0cfed562b796
       content-type: application/json; charset=utf-8
-      date: Tue, 11 May 2021 03:13:16 GMT
+      date: Tue, 14 Sep 2021 00:28:59 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '8'
+      x-envoy-upstream-service-time: '11'
     status:
       code: 400
       message: Bad Request
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/receipt/analyze?includeTextDetails=false
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
 version: 1

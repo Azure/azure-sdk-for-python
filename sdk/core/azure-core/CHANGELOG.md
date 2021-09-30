@@ -1,14 +1,14 @@
 # Release History
 
-## 1.18.1 (Unreleased)
+## 1.19.0 (2021-09-30)
 
-### Features Added
+### Breaking Changes in the Provisional `azure.core.rest` package
 
-### Breaking Changes
+- `azure.core.rest.HttpResponse` and `azure.core.rest.AsyncHttpResponse` are now abstract base classes. They should not be initialized directly, instead
+your transport responses should inherit from them and implement them.
+- The properties of the `azure.core.rest` responses are now all read-only
 
-### Bugs Fixed
-
-### Other Changes
+- HttpLoggingPolicy integrates logs into one record #19925
 
 ## 1.18.0 (2021-09-02)
 

@@ -23,21 +23,17 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Optional
+from typing import Any
 
 
 class SchemaProperties(object):
     """
     Meta properties of a schema.
 
-    :ivar schema_id: References specific schema in registry namespace.
-    :type schema_id: str
-    :ivar location: URL location of schema, identified by schema group, schema name, and version.
-    :type location: str
-    :ivar location_by_id: URL location of schema, identified by schema ID.
-    :type location_by_id: str
-    :ivar serialization_type: Serialization type for the schema being stored.
-    :type serialization_type: str
+    :ivar id: References specific schema in registry namespace.
+    :type id: str
+    :ivar format: Format for the schema being stored.
+    :type format: str
     :ivar version: Version of the returned schema.
     :type version: int
 
@@ -54,25 +50,22 @@ class SchemaProperties(object):
 
     def __init__(
         self,
-        schema_id=None,
         **kwargs
     ):
-        # type: (Optional[str], Any) -> None
-        self.schema_id = schema_id
-        self.location = kwargs.get('location')
-        self.location_by_id = kwargs.get('location_by_id')
-        self.serialization_type = kwargs.get('serialization_type')
-        self.version = kwargs.get('version')
+        # type: (Any) -> None
+        self.id = kwargs.pop('id')
+        self.format = kwargs.pop('format')
+        self.version = kwargs.pop('version')
 
 
 class Schema(object):
     """
     The schema content of a schema, along with id and meta properties.
 
-    :ivar schema_content: The content of the schema.
-    :type schema_content: str
-    :ivar schema_properties: The properties of the schema.
-    :type schema_properties: SchemaProperties
+    :ivar schema_definition: The content of the schema.
+    :type schema_definition: str
+    :ivar properties: The properties of the schema.
+    :type properties: SchemaProperties
 
     .. admonition:: Example:
 
@@ -87,9 +80,8 @@ class Schema(object):
 
     def __init__(
         self,
-        schema_content,
-        schema_properties,
+        **kwargs
     ):
-        # type: (str, SchemaProperties) -> None
-        self.schema_content = schema_content
-        self.schema_properties = schema_properties
+        # type: (Any) -> None
+        self.schema_definition = kwargs.pop("schema_definition")
+        self.properties = kwargs.pop("properties")

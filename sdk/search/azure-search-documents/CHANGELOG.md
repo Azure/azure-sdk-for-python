@@ -1,6 +1,23 @@
 # Release History
 
-## 11.3.0b3 (Unreleased)
+## 11.3.0b4 (Unreleased)
+
+### Features Added
+
+- Added properties to `SearchClient`: `query_answer`, `query_answer_count`,
+  `query_caption`, `query_caption_highlight` and `semantic_fields`.
+
+### Breaking Changes
+
+- Renamed `SearchClient.speller` to `SearchClient.query_speller`.
+- Removed keyword arguments from `SearchClient`: `answers` and `captions`.
+- `SentimentSkill`, `EntityRecognitionSkill`: added client-side validation to prevent sending unsupported parameters.
+
+### Bugs Fixed
+
+### Other Changes
+
+## 11.3.0b3 (2021-09-08)
 
 ### Features Added
 

@@ -29,12 +29,12 @@ from azure.identity import ClientSecretCredential
 from azure.schemaregistry import SchemaRegistryClient
 from azure.schemaregistry.serializer.avroserializer import SchemaRegistryAvroSerializer
 
-TENANT_ID=os.environ['SCHEMA_REGISTRY_AZURE_TENANT_ID']
-CLIENT_ID=os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_ID']
-CLIENT_SECRET=os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_SECRET']
+TENANT_ID=os.environ['AZURE_TENANT_ID']
+CLIENT_ID=os.environ['AZURE_CLIENT_ID']
+CLIENT_SECRET=os.environ['AZURE_CLIENT_SECRET']
 
-SCHEMA_REGISTRY_ENDPOINT=os.environ['SCHEMA_REGISTRY_ENDPOINT']
-SCHEMA_GROUP=os.environ['SCHEMA_REGISTRY_GROUP']
+SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE=os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
+GROUP_NAME=os.environ['SCHEMAREGISTRY_GROUP']
 SCHEMA_STRING = """
 {"namespace": "example.avro",
  "type": "record",
@@ -59,9 +59,9 @@ def serialize(serializer):
     dict_data_alice = {"name": u"Alice", "favorite_number": 15, "favorite_color": u"green"}
 
     # Schema would be automatically registered into Schema Registry and cached locally.
-    payload_ben = serializer.serialize(dict_data_ben, SCHEMA_STRING)
+    payload_ben = serializer.serialize(dict_data_ben, schema=SCHEMA_STRING)
     # The second call won't trigger a service call.
-    payload_alice = serializer.serialize(dict_data_alice, SCHEMA_STRING)
+    payload_alice = serializer.serialize(dict_data_alice, schema=SCHEMA_STRING)
 
     print('Encoded bytes are: ', payload_ben)
     print('Encoded bytes are: ', payload_alice)
@@ -79,8 +79,8 @@ def deserialize(serializer, bytes_payload):
 
 
 if __name__ == '__main__':
-    schema_registry = SchemaRegistryClient(endpoint=SCHEMA_REGISTRY_ENDPOINT, credential=token_credential)
-    serializer = SchemaRegistryAvroSerializer(schema_registry, SCHEMA_GROUP)
+    schema_registry = SchemaRegistryClient(endpoint=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE, credential=token_credential)
+    serializer = SchemaRegistryAvroSerializer(client=schema_registry, group_name=GROUP_NAME, auto_register_schemas=True)
     bytes_data_ben, bytes_data_alice = serialize(serializer)
     dict_data_ben = deserialize(serializer, bytes_data_ben)
     dict_data_alice = deserialize(serializer, bytes_data_alice)

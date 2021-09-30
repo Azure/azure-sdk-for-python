@@ -13,6 +13,7 @@ from azure.storage.queue import (
     QueueServiceClient,
     QueueClient
 )
+from azure.storage.queue._serialize import _SUPPORTED_API_VERSIONS
 from _shared.testcase import GlobalStorageAccountPreparer, StorageTestCase
 
 # ------------------------------------------------------------------------------
@@ -21,7 +22,7 @@ class StorageClientTest(StorageTestCase):
     def setUp(self):
         super(StorageClientTest, self).setUp()
         self.api_version_1 = "2019-02-02"
-        self.api_version_2 = '2018-03-28'
+        self.api_version_2 = _SUPPORTED_API_VERSIONS[-1]
 
     # --Test Cases--------------------------------------------------------------
 
@@ -46,7 +47,7 @@ class StorageClientTest(StorageTestCase):
         self.assertEqual(queue_client.api_version, self.api_version_1)
         self.assertEqual(queue_client._client._config.version, self.api_version_1)
 
-    def test_blob_client_api_version_property(self):
+    def test_queue_client_api_version_property(self):
         queue_client = QueueClient(
             "https://foo.queue.core.windows.net/account",
             "queue_name",

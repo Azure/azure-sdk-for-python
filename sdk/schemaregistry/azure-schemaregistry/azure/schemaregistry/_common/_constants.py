@@ -26,5 +26,5 @@
 from enum import Enum
 
 
-class SerializationType(str, Enum):
+class SchemaFormat(str, Enum):
     AVRO = "avro"
