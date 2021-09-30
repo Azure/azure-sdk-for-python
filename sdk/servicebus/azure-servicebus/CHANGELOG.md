@@ -8,6 +8,10 @@
   - Methods`create_queue`, `create_topic`, `update_queue`, `update_topic` on `ServiceBusAdministrationClient` now take a new keyword argument `max_message_size_in_kilobytes`.
   - `QueueProperties` and `TopicProperties` now have a new instance variable `max_message_size_in_kilobytes`.
 
+### Other Changes
+
+- Updated uAMQP dependency to 1.4.3.
+
 ## 7.3.3 (2021-09-08)
 
 ### Bugs Fixed
