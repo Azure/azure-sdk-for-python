@@ -178,6 +178,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                 assert op.result is None
                 assert error.code
                 assert error.message
+                assert error.details
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
