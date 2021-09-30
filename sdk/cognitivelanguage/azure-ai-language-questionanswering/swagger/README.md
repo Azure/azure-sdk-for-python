@@ -20,7 +20,7 @@ autorest
 ### Settings
 
 ```yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/feature/cognitiveservices/language/specification/cognitiveservices/data-plane/Language/preview/2021-07-15-preview/questionanswering.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/68e7988aba481206f08019d3efb585683d5bc577/specification/cognitiveservices/data-plane/Language/preview/2021-07-15-preview/questionanswering.json
 output-folder: ../azure/ai/language/questionanswering
 namespace: azure.ai.language.questionanswering
 package-name: azure-ai-language-questionanswering
