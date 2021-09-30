@@ -64,7 +64,7 @@ async def analyze_business_card_async():
                         contact_name.value["FirstName"].value,
                         contact_name.value[
                             "FirstName"
-                        ].confidence,  # TODO confidence is None
+                        ].confidence,
                     )
                 )
                 print(
@@ -72,7 +72,7 @@ async def analyze_business_card_async():
                         contact_name.value["LastName"].value,
                         contact_name.value[
                             "LastName"
-                        ].confidence,  # TODO confidence is None
+                        ].confidence,
                     )
                 )
         company_names = business_card.fields.get("CompanyNames")
@@ -128,7 +128,7 @@ async def analyze_business_card_async():
                     "Mobile phone number: {} has confidence: {}".format(
                         phone.content, phone.confidence
                     )
-                )  # TODO value not getting populated
+                )
         faxes = business_card.fields.get("Faxes")
         if faxes:
             for fax in faxes.value:
@@ -136,7 +136,7 @@ async def analyze_business_card_async():
                     "Fax number: {} has confidence: {}".format(
                         fax.content, fax.confidence
                     )
-                )  # TODO value not getting populated
+                )
         work_phones = business_card.fields.get("WorkPhones")
         if work_phones:
             for work_phone in work_phones.value:
@@ -144,7 +144,7 @@ async def analyze_business_card_async():
                     "Work phone number: {} has confidence: {}".format(
                         work_phone.content, work_phone.confidence
                     )
-                )  # TODO value not getting populated
+                )
         other_phones = business_card.fields.get("OtherPhones")
         if other_phones:
             for other_phone in other_phones.value:
