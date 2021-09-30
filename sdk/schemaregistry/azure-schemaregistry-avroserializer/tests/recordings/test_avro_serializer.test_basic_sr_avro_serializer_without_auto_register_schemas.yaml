@@ -23,12 +23,12 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/example.avro.User?api-version=2017-04
   response:
     body:
-      string: '{"id":"fc61e4d3e31b46f6a758fa1b67f35cc5"}'
+      string: '{"id":"f666e373299048fabaa4296f5dbfed46"}'
     headers:
       content-type:
       - application/json
       date:
-      - Fri, 24 Sep 2021 19:54:47 GMT
+      - Tue, 28 Sep 2021 22:27:26 GMT
       location:
       - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/example.avro.User/versions/1?api-version=2017-04
       server:
@@ -38,9 +38,9 @@ interactions:
       transfer-encoding:
       - chunked
       x-schema-id:
-      - fc61e4d3e31b46f6a758fa1b67f35cc5
+      - f666e373299048fabaa4296f5dbfed46
       x-schema-id-location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/fc61e4d3e31b46f6a758fa1b67f35cc5?api-version=2017-04
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/f666e373299048fabaa4296f5dbfed46?api-version=2017-04
       x-schema-type:
       - Avro
       x-schema-version:

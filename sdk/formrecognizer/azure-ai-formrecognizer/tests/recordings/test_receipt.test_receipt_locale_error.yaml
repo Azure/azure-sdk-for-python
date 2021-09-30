@@ -12,31 +12,31 @@ interactions:
       Content-Length:
       - '154512'
       Content-Type:
-      - image/jpeg
+      - application/octet-stream
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/receipt/analyze?includeTextDetails=false&locale=not%20a%20locale
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt:analyze?locale=not%20a%20locale&stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
   response:
     body:
-      string: '{"error": {"code": "UnsupportedLocale", "innerError": {"requestId":
-        "c6836b61-db64-4355-8b25-e1948f564d44"}, "message": "Locale unsupported. Supported
-        locales include en-AU, en-CA, en-GB, en-IN and en-US."}}'
+      string: '{"error": {"code": "InvalidArgument", "message": "Invalid argument.",
+        "innererror": {"code": "InvalidParameter", "message": "The parameter Locale
+        is invalid: The language code is invalid or not supported."}}}'
     headers:
       apim-request-id:
-      - c6836b61-db64-4355-8b25-e1948f564d44
-      content-length:
-      - '200'
+      - edf133b9-e46e-458e-a38e-3a148a6ed1f2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 30 Aug 2021 23:48:59 GMT
+      - Thu, 30 Sep 2021 17:06:02 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '113'
+      - '135'
     status:
       code: 400
       message: Bad Request
