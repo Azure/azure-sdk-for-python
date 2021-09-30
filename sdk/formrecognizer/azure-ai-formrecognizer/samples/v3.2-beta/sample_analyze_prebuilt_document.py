@@ -7,18 +7,14 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_document.py
+FILE: sample_analyze_prebuilt_document.py
 
 DESCRIPTION:
     This sample demonstrates how to extract general document information from a document
     given through a file.
 
-    Note that selection marks returned from begin_analyze_document() do not return the text associated with
-    the checkbox. For the API to return this information, build a custom model to analyze the checkbox and its text.
-    See sample_build_model.py for more information.
-
 USAGE:
-    python sample_analyze_document.py
+    python sample_analyze_prebuilt_document.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -127,7 +123,7 @@ def analyze_document():
             )
             for region in cell.bounding_regions:
                 print(
-                    "...content on page {} is within bounding box '{}'".format(
+                    "...content on page {} is within bounding box '{}'\n".format(
                         region.page_number,
                         format_bounding_box(region.bounding_box),
                     )
@@ -138,7 +134,7 @@ def analyze_document():
         print("Entity of category '{}' with sub-category '{}'".format(entity.category, entity.sub_category))
         print("...has content '{}'".format(entity.content))
         print("...within '{}' bounding regions".format(format_bounding_region(entity.bounding_regions)))
-        print("...with confidence {}".format(entity.confidence))
+        print("...with confidence {}\n".format(entity.confidence))
 
     print("----Key-value pairs found in document----")
     for kv_pair in result.key_value_pairs:
@@ -151,7 +147,7 @@ def analyze_document():
                 )
         if kv_pair.value:
             print(
-                    "Value '{}' found within '{}' bounding regions".format(
+                    "Value '{}' found within '{}' bounding regions\n".format(
                         kv_pair.value.content,
                         format_bounding_region(kv_pair.value.bounding_regions),
                     )
