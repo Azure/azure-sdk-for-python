@@ -12,16 +12,16 @@ import warnings
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
-from azure.core.pipeline.transport._base import _format_url_section
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from msrest import Serializer
 
 from .. import models as _models
+from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -225,6 +225,45 @@ def build_create_request(
         **kwargs
     )
 
+
+def build_reset_skills_request(
+    skillset_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
+
+    api_version = "2021-04-30-Preview"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/skillsets(\'{skillsetName}\')/search.resetskills')
+    path_format_arguments = {
+        "skillsetName": _SERIALIZER.url("skillset_name", skillset_name, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if x_ms_client_request_id is not None:
+        header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("x_ms_client_request_id", x_ms_client_request_id, 'str')
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
 # fmt: on
 class SkillsetsOperations(object):
     """SkillsetsOperations operations.
@@ -309,7 +348,8 @@ class SkillsetsOperations(object):
             ignore_reset_requirements=ignore_reset_requirements,
             json=json,
             template_url=self.create_or_update.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -320,7 +360,7 @@ class SkillsetsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if response.status_code == 200:
@@ -380,7 +420,8 @@ class SkillsetsOperations(object):
             if_match=if_match,
             if_none_match=if_none_match,
             template_url=self.delete.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -391,7 +432,7 @@ class SkillsetsOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -433,7 +474,8 @@ class SkillsetsOperations(object):
             skillset_name=skillset_name,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.get.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -444,7 +486,7 @@ class SkillsetsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SearchIndexerSkillset', pipeline_response)
@@ -492,7 +534,8 @@ class SkillsetsOperations(object):
             select=select,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.list.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -503,7 +546,7 @@ class SkillsetsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('ListSkillsetsResult', pipeline_response)
@@ -553,7 +596,8 @@ class SkillsetsOperations(object):
             x_ms_client_request_id=_x_ms_client_request_id,
             json=json,
             template_url=self.create.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -564,7 +608,7 @@ class SkillsetsOperations(object):
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SearchIndexerSkillset', pipeline_response)
@@ -575,4 +619,67 @@ class SkillsetsOperations(object):
         return deserialized
 
     create.metadata = {'url': '/skillsets'}  # type: ignore
+
+
+    @distributed_trace
+    def reset_skills(
+        self,
+        skillset_name,  # type: str
+        skill_names=None,  # type: Optional[List[str]]
+        request_options=None,  # type: Optional["_models.RequestOptions"]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Reset an existing skillset in a search service.
+
+        :param skillset_name: The name of the skillset to reset.
+        :type skillset_name: str
+        :param skill_names: the names of skills to be reset.
+        :type skill_names: list[str]
+        :param request_options: Parameter group.
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _x_ms_client_request_id = None
+        if request_options is not None:
+            _x_ms_client_request_id = request_options.x_ms_client_request_id
+        _skill_names = _models.Paths1Ju2XepSkillsetsSkillsetnameSearchResetskillsPostRequestbodyContentApplicationJsonSchema(skill_names=skill_names)
+        json = self._serialize.body(_skill_names, 'Paths1Ju2XepSkillsetsSkillsetnameSearchResetskillsPostRequestbodyContentApplicationJsonSchema')
+
+        request = build_reset_skills_request(
+            skillset_name=skillset_name,
+            content_type=content_type,
+            x_ms_client_request_id=_x_ms_client_request_id,
+            json=json,
+            template_url=self.reset_skills.metadata['url'],
+        )
+        request = _convert_request(request)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    reset_skills.metadata = {'url': '/skillsets(\'{skillsetName}\')/search.resetskills'}  # type: ignore
 
