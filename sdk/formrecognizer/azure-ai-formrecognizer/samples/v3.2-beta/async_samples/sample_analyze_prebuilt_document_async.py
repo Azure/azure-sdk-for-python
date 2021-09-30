@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_general_document.py
+FILE: sample_analyze_prebuilt_document_async.py
 
 DESCRIPTION:
     This sample demonstrates how to extract general document information from a document
     given through a file.
 
 USAGE:
-    python sample_analyze_general_document.py
+    python sample_analyze_prebuilt_document_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -22,6 +22,7 @@ USAGE:
 """
 
 import os
+import asyncio
 
 def format_bounding_region(bounding_regions):
     if not bounding_regions:
@@ -34,10 +35,11 @@ def format_bounding_box(bounding_box):
     return ", ".join(["[{}, {}]".format(p.x, p.y) for p in bounding_box])
 
 
-def analyze_document():
+async def analyze_document():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
+            "..",
             "..",
             "..",
             "./sample_forms/forms/form_selection_mark.png",
@@ -45,7 +47,7 @@ def analyze_document():
     )
     # [START analyze_document]
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.formrecognizer import DocumentAnalysisClient
+    from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -53,11 +55,13 @@ def analyze_document():
     document_analysis_client = DocumentAnalysisClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
-    with open(path_to_sample_documents, "rb") as f:
-        poller = document_analysis_client.begin_analyze_document(
-            "prebuilt-document", document=f
-        )
-    result = poller.result()
+
+    async with document_analysis_client:
+        with open(path_to_sample_documents, "rb") as f:
+            poller = await document_analysis_client.begin_analyze_document(
+                "prebuilt-document", document=f
+            )
+        result = await poller.result()
 
     for idx, style in enumerate(result.styles):
         print(
@@ -66,8 +70,8 @@ def analyze_document():
             )
         )
 
-    for page in result.pages:
-        print("----Analyzing document from page #{}----".format(page.page_number))
+    for idx, page in enumerate(result.pages):
+        print("----Analyzing document from page #{}----".format(idx + 1))
         print(
             "Page has width: {} and height: {}, measured with unit: {}".format(
                 page.width, page.height, page.unit
@@ -76,7 +80,7 @@ def analyze_document():
 
         for line_idx, line in enumerate(page.lines):
             print(
-                "...Line # {} has text content '{}' within bounding box '{}'".format(
+                "Line # {} has text content '{}' within bounding box '{}'".format(
                     line_idx,
                     line.content,
                     format_bounding_box(line.bounding_box),
@@ -92,7 +96,7 @@ def analyze_document():
 
         for selection_mark in page.selection_marks:
             print(
-                "...Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
+                "Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
                     selection_mark.state,
                     format_bounding_box(selection_mark.bounding_box),
                     selection_mark.confidence,
@@ -115,7 +119,7 @@ def analyze_document():
             )
         for cell in table.cells:
             print(
-                "...Cell[{}][{}] has content '{}'".format(
+                "...Cell[{}][{}] has text '{}'".format(
                     cell.row_index,
                     cell.column_index,
                     cell.content,
@@ -123,21 +127,21 @@ def analyze_document():
             )
             for region in cell.bounding_regions:
                 print(
-                    "...content on page {} is within bounding box '{}'".format(
+                    "...content on page {} is within bounding box '{}'\n".format(
                         region.page_number,
                         format_bounding_box(region.bounding_box),
                     )
                 )
 
     print("----Entities found in document----")
-    for entity in result.entities:
+    for idx, entity in enumerate(result.entities):
         print("Entity of category '{}' with sub-category '{}'".format(entity.category, entity.sub_category))
         print("...has content '{}'".format(entity.content))
         print("...within '{}' bounding regions".format(format_bounding_region(entity.bounding_regions)))
-        print("...with confidence {}".format(entity.confidence))
+        print("...with confidence {}\n".format(entity.confidence))
 
     print("----Key-value pairs found in document----")
-    for kv_pair in result.key_value_pairs:
+    for idx, kv_pair in enumerate(result.key_value_pairs):
         if kv_pair.key:
             print(
                     "Key '{}' found within '{}' bounding regions".format(
@@ -147,7 +151,7 @@ def analyze_document():
                 )
         if kv_pair.value:
             print(
-                    "\nValue '{}' found within '{}' bounding regions".format(
+                    "Value '{}' found within '{}' bounding regions\n".format(
                         kv_pair.value.content,
                         format_bounding_region(kv_pair.value.bounding_regions),
                     )
@@ -157,5 +161,9 @@ def analyze_document():
     # [END analyze_document]
 
 
+async def main():
+    await analyze_document()
+
 if __name__ == "__main__":
-    analyze_document()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
