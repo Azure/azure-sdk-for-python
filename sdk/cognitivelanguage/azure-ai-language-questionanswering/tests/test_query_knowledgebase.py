@@ -241,7 +241,7 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
                 deployment_name='test'
             )
 
-        assert len(output.answers) == 3
+        assert len(output.answers) == 2
         confident_answers = [a for a in output.answers if a.confidence_score > 0.9]
         assert len(confident_answers) == 1
         assert confident_answers[0].source == "surface-pro-4-user-guide-EN.pdf"
@@ -265,7 +265,7 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
                 include_unstructured_sources=True
             )
 
-        assert len(output.answers) == 3
+        assert len(output.answers) == 2
         confident_answers = [a for a in output.answers if a.confidence_score > 0.9]
         assert len(confident_answers) == 1
         assert confident_answers[0].source == "surface-pro-4-user-guide-EN.pdf"
@@ -319,9 +319,9 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
             )
 
             assert len(output.answers) == 2
-            confident_answers = [a for a in output.answers if a.confidence_score > 0.6]
+            confident_answers = [a for a in output.answers if a.confidence_score > 0.5]
             assert len(confident_answers) == 1
-            assert confident_answers[0].answer_span.text == "two to four hours"
+            assert confident_answers[0].answer_span.text == " two to four hours"
 
 
     @GlobalQuestionAnsweringAccountPreparer()

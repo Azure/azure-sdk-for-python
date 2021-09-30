@@ -40,14 +40,14 @@ interactions:
         {\n        \"isContextOnly\": false,\n        \"prompts\": []\n      }\n    }\n
         \ ]\n}"
     headers:
-      apim-request-id: c381395f-d6a2-4c9c-9cd8-f80373269209
+      apim-request-id: e958c124-6d15-41c7-93a5-0a242f6b01b1
       content-length: '1622'
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
-      date: Thu, 30 Sep 2021 15:37:26 GMT
+      date: Thu, 30 Sep 2021 15:52:35 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '384'
+      x-envoy-upstream-service-time: '1503'
     status:
       code: 200
       message: OK
