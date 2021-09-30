@@ -132,7 +132,7 @@ class SearchClient(HeadersMixin):
 
         :param key: The primary key value for the document to retrieve
         :type key: str
-        :param selected_fields: a whitelist of fields to include in the results
+        :param selected_fields: a allowlist of fields to include in the results
         :type selected_fields: List[str]
         :rtype:  dict
 

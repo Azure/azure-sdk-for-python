@@ -32,6 +32,8 @@ class QuestionAnsweringClient(QuestionAnsweringClientOperationsMixin):
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.AzureKeyCredential
+    :keyword str default_language: Sets the default language to use for all operations.
+     Defaults to "en".
     """
 
     def __init__(
@@ -49,6 +51,7 @@ class QuestionAnsweringClient(QuestionAnsweringClientOperationsMixin):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
+        self._default_language = kwargs.pop("default_language", "en")
 
     def send_request(
         self,

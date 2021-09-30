@@ -133,7 +133,7 @@ class TablesRetryPolicy(RetryPolicy):
         self.retry_to_secondary = kwargs.get('retry_to_secondary', False)
 
     def is_retry(self, settings, response):
-        """Is this method/status code retryable? (Based on whitelists and control
+        """Is this method/status code retryable? (Based on allowlists and control
         variables such as the number of total retries to allow, whether to
         respect the Retry-After header, whether this header is present, and
         whether the returned status code is on the list of status codes to

@@ -14,7 +14,7 @@ DESCRIPTION:
     using a pre-trained receipt model.
 
     See fields found on a receipt here:
-    https://aka.ms/formrecognizer/receiptfields
+    https://aka.ms/azsdk/formrecognizer/receiptfieldschema
 
 USAGE:
     python sample_analyze_receipts.py
