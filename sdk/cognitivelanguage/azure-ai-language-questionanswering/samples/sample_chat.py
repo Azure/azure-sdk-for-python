@@ -51,8 +51,8 @@ def sample_chit_chat():
             deployment_name="test"
         )
         best_candidate = [a for a in output.answers if a.confidence_score > 0.9][0]
-        print("Q: {}".format(first_question.question))
-        print("A: {}".format(best_candidate.answer))
+        print(u"Q: {}".format(first_question.question))
+        print(u"A: {}".format(best_candidate.answer))
 
         followup_question = qna.QueryKnowledgeBaseOptions(
             question="How long it takes to charge Surface?",
@@ -75,8 +75,8 @@ def sample_chit_chat():
             project_name=knowledge_base_project,
             deployment_name="test"
         )
-        print("Q: {}".format(followup_question.question))
-        print("A: {}".format(output.answers[0].answer))
+        print(u"Q: {}".format(followup_question.question))
+        print(u"A: {}".format(output.answers[0].answer))
 
     # [END chit_chat]
 

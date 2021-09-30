@@ -50,8 +50,8 @@ def sample_query_text():
         output = client.query_text(input)
 
         best_answer = [a for a in output.answers if a.confidence_score > 0.9][0]
-        print("Q: {}".format(input.question))
-        print("A: {}".format(best_answer.answer))
+        print(u"Q: {}".format(input.question))
+        print(u"A: {}".format(best_answer.answer))
 
     # [END query_text]
 
