@@ -103,6 +103,7 @@ what you can do with the Azure Form Recognizer client library.
 [python-fr-ref-docs]: https://aka.ms/azsdk/python/formrecognizer/docs
 [get-endpoint-instructions]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/README.md#looking-up-the-endpoint
 [get-key-instructions]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/README.md#get-the-api-key
+[changelog]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/CHANGELOG.md
 
 <!-- V3.2-beta links -->
 
