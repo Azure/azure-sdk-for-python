@@ -25,7 +25,8 @@ from ._models import (
     PlayAudioOptions,
     CallLocator,
     GroupCallLocator,
-    ServerCallLocator
+    ServerCallLocator,
+    CallingServerEventType
     )
 from ._shared.models import CommunicationIdentifier, CommunicationUserIdentifier, PhoneNumberIdentifier
 
@@ -59,6 +60,7 @@ __all__ = [
     'CommunicationUserIdentifierModel',
     'AddParticipantResultEvent',
     'CallConnectionState',
-    'ToneValue'
+    'ToneValue',
+    'CallingServerEventType'
 ]
 __version__ = VERSION

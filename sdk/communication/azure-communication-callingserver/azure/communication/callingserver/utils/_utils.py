@@ -10,7 +10,7 @@ class CallingServerUtils(object):
 
     @staticmethod
     def is_valid_url(
-        url, # type: str
+        url # type: str
     ): # type: (...) -> bool
         result = validators.url(url)
 
