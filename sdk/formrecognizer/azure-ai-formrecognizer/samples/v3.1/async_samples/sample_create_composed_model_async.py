@@ -53,7 +53,7 @@ class ComposedModelSampleAsync(object):
         po_furniture = os.environ['PURCHASE_ORDER_OFFICE_FURNITURE_SAS_URL_V2']
         po_cleaning_supplies = os.environ['PURCHASE_ORDER_OFFICE_CLEANING_SUPPLIES_SAS_URL_V2']
 
-        form_training_client = FormTrainingClient(endpoint=endpoint, credential=AzureKeyCredential(key), api_version="2.1")
+        form_training_client = FormTrainingClient(endpoint=endpoint, credential=AzureKeyCredential(key))
         async with form_training_client:
             supplies_poller = await form_training_client.begin_training(
                 po_supplies, use_training_labels=True, model_name="Purchase order - Office supplies"

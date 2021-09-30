@@ -46,7 +46,7 @@ class RecognizeContentSample(object):
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-        form_recognizer_client = FormRecognizerClient(endpoint=endpoint, credential=AzureKeyCredential(key), api_version="2.1")
+        form_recognizer_client = FormRecognizerClient(endpoint=endpoint, credential=AzureKeyCredential(key))
         with open(path_to_sample_forms, "rb") as f:
             poller = form_recognizer_client.begin_recognize_content(form=f)
         form_pages = poller.result()
