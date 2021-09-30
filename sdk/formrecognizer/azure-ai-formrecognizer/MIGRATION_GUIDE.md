@@ -1,6 +1,6 @@
-# Guide for migrating azure-ai-formrecognizer to 3.2.0 from 3.1.2 and below
+# Guide for migrating azure-ai-formrecognizer to version 3.2.x from versions 3.1.x and below
 
-This guide is intended to assist in the migration to `azure-ai-formrecognizer (3.2.0b1)` from versions `3.1.x` and below. It will focus on side-by-side comparisons for similar operations between versions, please note that version `3.1.2` will be used for comparison with `3.2.0b1`.
+This guide is intended to assist in the migration to `azure-ai-formrecognizer (3.2.x)` from versions `3.1.x` and below. It will focus on side-by-side comparisons for similar operations between versions, please note that version `3.1.2` will be used for comparison with `3.2.0b1`.
 
 Familiariy with `azure-ai-formrecognizer (3.1.x and below)` package is assumed. For those new to the Azure Form Recognizer SDK please refer to the [README](README) rather than this guide.
 
@@ -13,7 +13,7 @@ Familiariy with `azure-ai-formrecognizer (3.1.x and below)` package is assumed. 
 
 A natural question to ask when considering whether or not to adopt a new version or library is what the benefits of doing so would be. As Azure Form Recognizer has matured and been embraced by a more diverse group of developers, we have been focused on learning the patterns and practices to best support developer productivity and add value to our customers.
 
-The benefit of the new design of the `azure-ai-formrecognizer (3.2.0b1)` library is that it introduces two new clients `DocumentAnalysisClient` and the `DocumentModelAdministrationClient` with unified methods for analyzing documents and provides support for the new features added by the service in version `2021-09-30-preview`.
+The benefit of the new design of the `azure-ai-formrecognizer (3.2.x)` library is that it introduces two new clients `DocumentAnalysisClient` and the `DocumentModelAdministrationClient` with unified methods for analyzing documents and provides support for the new features added by the service in version `2021-09-30-preview`.
 Please refer to the [README](README) for more information on these new clients. 
 
 ## Important changes
@@ -48,7 +48,7 @@ Differences between the versions:
 - Along with more consolidated analysis methods in the `DocumentAnalysisClient`, the return types have also been improved and remove the hierarchical dependencies between elements. An instance of the `AnalyzeResult` model is now returned which moves important document elements to the top level of the returned model.
 - The `include_field_elements` kwarg does not exist with the `DocumentAnalysisClient`, text details are automatically included with service version `2021-09-30-preview`.
 
-Analyzing prebuilt models like business cards, identity documents, invoices and receipts in `3.1.x`:
+Analyzing prebuilt models like business cards, identity documents, invoices and receipts with `3.1.x`:
 ```python
 with open(path_to_sample_forms, "rb") as f:
     poller = form_recognizer_client.begin_recognize_receipts(receipt=f, locale="en-US")
@@ -59,7 +59,7 @@ for idx, receipt in enumerate(receipts):
     # process receipt
 ```
 
-Analyzing prebuilt models like business cards, identity documents, invoices and receipts in `3.2.x`:
+Analyzing prebuilt models like business cards, identity documents, invoices and receipts with `3.2.x`:
 ```python
 with open(path_to_sample_documents, "rb") as f:
     poller = document_analysis_client.begin_analyze_document(
@@ -72,7 +72,7 @@ for idx, receipt in enumerate(receipts.documents):
     # process receipt
 ```
 
-Analyzing document content in `3.1.x`:
+Analyzing document content with `3.1.x`:
 ```python
 with open(path_to_sample_forms, "rb") as f:
     poller = form_recognizer_client.begin_recognize_content(form=f)
@@ -94,7 +94,7 @@ for idx, content in enumerate(form_pages):
 ```
 
 
-Analyzing document layout in `3.2.x`:
+Analyzing document layout with `3.2.x`:
 ```python
 with open(path_to_sample_documents, "rb") as f:
     poller = document_analysis_client.begin_analyze_document(
@@ -116,7 +116,7 @@ for table_idx, table in enumerate(result.tables):
     # process tables found in document
 ```
 
-Analyzing general document types in `3.2.x`:
+Analyzing general document types with `3.2.x`:
 ```python
 with open(path_to_sample_documents, "rb") as f:
     poller = document_analysis_client.begin_analyze_document(
@@ -150,7 +150,7 @@ Differences between the versions:
 - In order to analyze a custom model with `FormRecognizerClient` the `begin_recognize_custom_models` and its corresponding URL methods are used.
 - The `include_field_elements` kwarg does not exist with the `DocumentAnalysisClient`, text details are automatically included with service version `2021-09-30-preview`.
 
-Analyze custom document in `3.1.x`:
+Analyze custom document with `3.1.x`:
 ```python
 with open(path_to_sample_forms, "rb") as f:
     poller = form_recognizer_client.begin_recognize_custom_forms(
@@ -159,7 +159,7 @@ with open(path_to_sample_forms, "rb") as f:
 forms = poller.result()
 ```
 
-Analyze custom document in `3.2.x`:
+Analyze custom document with `3.2.x`:
 ```python
 with open(path_to_sample_documents, "rb") as f:
     poller = document_analysis_client.begin_analyze_document(
@@ -170,10 +170,75 @@ result = poller.result()
 
 ### Training a custom model
 
+Differences between the versions:
+- Files for building a new model for version `3.2.x` can be created using the new labeling tool found [here](TODO).
+- In version `3.1.x` the `use_training_labels` kwarg was used to indicate whether custom labeling was when creating the new models.
+- In version `3.2.x` the `use_training_labels` kwargs is not supported since training must be carried out with labeled training documents. In order to extract key-value pairs from a document, please refer to the prebuilt model "prebuilt-document" which extracts entities, key-value pairs, and layout from a document. 
+
+Train a custom model with `3.1.x`:
+```python
+form_training_client = FormTrainingClient(endpoint, AzureKeyCredential(key), api_version="2.1")
+poller = form_training_client.begin_training(
+    container_sas_url, use_training_labels=True, model_name="mymodel"
+)
+model = poller.result()
+
+# Custom model information
+print("Model ID: {}".format(model.model_id))
+print("Status: {}".format(model.status))
+print("Model name: {}".format(model.model_name))
+print("Is this a composed model?: {}".format(model.properties.is_composed_model))
+print("Training started on: {}".format(model.training_started_on))
+print("Training completed on: {}".format(model.training_completed_on))
+
+print("Recognized fields:")
+# looping through the submodels, which contains the fields they were trained on
+# The labels are based on the ones you gave the training document.
+for submodel in model.submodels:
+    print("...The submodel has model ID: {}".format(submodel.model_id))
+    print("...The submodel with form type {} has an average accuracy '{}'".format(
+        submodel.form_type, submodel.accuracy
+    ))
+    for name, field in submodel.fields.items():
+        print("...The model found the field '{}' with an accuracy of {}".format(
+            name, field.accuracy
+        ))
+
+# Training result information
+for doc in model.training_documents:
+    print("Document name: {}".format(doc.name))
+    print("Document status: {}".format(doc.status))
+    print("Document page count: {}".format(doc.page_count))
+    print("Document errors: {}".format(doc.errors))
+```
+
+Train a custom model with `3.2.x`:
+```python
+document_model_admin_client = DocumentModelAdministrationClient(endpoint, AzureKeyCredential(key))
+poller = document_model_admin_client.begin_build_model(
+    container_sas_url, description="my model description"
+)
+model = poller.result()
+
+print("Model ID: {}".format(model.model_id))
+print("Description: {}".format(model.description))
+print("Model created on: {}\n".format(model.created_on))
+print("Doc types the model can recognize:")
+for name, doc_type in model.doc_types.items():
+    print("\nDoc Type: '{}' which has the following fields:".format(name))
+    for field_name, field in doc_type.field_schema.items():
+        print("Field: '{}' has type '{}' and confidence score {}".format(
+            field_name, field["type"], doc_type.field_confidence[field_name]
+        ))
+```
+
+### Other differences
+
+- The service has introduced the concept of a `BoundingRegion` which groups elements or documents through the bounding boxes in which they appear per page.
 
 ## Additional samples
 
-For additional samples please take a look at the [Samples README](SAMPLES_README) for more guidance.
+For additional samples please take a look at the [Form Recognizer Samples](Samples-README) for more guidance.
 
 [README]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/README.md
-[SAMPLES_README]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/README.md
+[Samples-README]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/README.md
