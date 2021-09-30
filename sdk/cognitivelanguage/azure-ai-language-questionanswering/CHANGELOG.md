@@ -20,7 +20,7 @@ considered positional only.
 ### Features Added
 
 * The method `QuestionAnsweringClient.query_text` now supports a list of records as strings, where the ID value will be automatically populated.
-* Added kwarg `default_language` onto `QuestionAnsweringClient`, which has default value `'en'`. The default language for any operation call will
+* Added keyword argument `default_language` onto `QuestionAnsweringClient`, which has default value `'en'`. The default language for any operation call will
 be this default language value.
 
 
