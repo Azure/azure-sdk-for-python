@@ -116,7 +116,7 @@ for table_idx, table in enumerate(result.tables):
     # process tables found in document
 ```
 
-Analyzing general document types with `3.2.x`:
+Analyzing general prebuilt document types with `3.2.x`:
 ```python
 with open(path_to_sample_documents, "rb") as f:
     poller = document_analysis_client.begin_analyze_document(
