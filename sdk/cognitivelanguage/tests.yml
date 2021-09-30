@@ -4,7 +4,7 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       AllocateResourceGroup: false
-      BuildTargetingString: $(BuildTargetingString)
+      BuildTargetingString: azure*
       ServiceDirectory: cognitivelanguage
       MatrixReplace:
         - TestSamples=.*/true
