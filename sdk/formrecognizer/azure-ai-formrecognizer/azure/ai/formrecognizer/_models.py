@@ -3973,7 +3973,7 @@ class DocumentAnalysisError(object):
 
 
 class DocumentAnalysisInnerError(object):
-    """Inner error details.
+    """Inner error details for the DocumentAnalysisError.
 
     :ivar code: Error code.
     :vartype code: str
