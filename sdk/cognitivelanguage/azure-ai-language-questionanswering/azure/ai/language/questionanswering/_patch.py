@@ -60,3 +60,5 @@ def _verify_qna_id_and_question(query_knowledgebase_options):
         raise TypeError(
             "You need to pass in either `qna_id` or `question`."
         )
+    if qna_id and question:
+        raise TypeError("You can not specify both `qna_id` and `question`.")
