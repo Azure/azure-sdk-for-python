@@ -17,7 +17,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Optional, Union
+    from typing import Any, Iterable, Optional, Union
     from azure.core.paging import ItemPaged
     from azure.core.polling import LROPoller
     from ._models import JsonWebKey
@@ -730,13 +730,14 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_key_rotation_policy(self, name, **kwargs):
-        # type: (str, **Any) -> Optional[KeyRotationPolicy]
+        # type: (str, **Any) -> KeyRotationPolicy
         """Get the rotation policy of a Key Vault key.
 
         :param str name: The name of the key.
 
-        :return: The key rotation policy, or None if there is no policy.
-        :rtype: ~azure.keyvault.keys.KeyRotationPolicy or None
+        :return: The key rotation policy.
+        :rtype: ~azure.keyvault.keys.KeyRotationPolicy
+        :raises: :class: `~azure.core.exceptions.HttpResponseError`
         """
         policy = self._client.get_key_rotation_policy(vault_base_url=self._vault_url, key_name=name, **kwargs)
         return KeyRotationPolicy._from_generated(policy)

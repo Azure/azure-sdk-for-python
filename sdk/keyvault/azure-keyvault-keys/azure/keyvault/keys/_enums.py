@@ -43,7 +43,7 @@ class KeyRotationPolicyAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     """The action that will be executed in a key rotation policy"""
 
     ROTATE = "Rotate"  #: Rotate the key based on the key policy.
-    NOTIFY = "Notify"  #: Trigger Event Grid events. Not configurable in preview; defaults to 30 days before expiry.
+    NOTIFY = "Notify"  #: Trigger Event Grid events.
 
 
 class KeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
