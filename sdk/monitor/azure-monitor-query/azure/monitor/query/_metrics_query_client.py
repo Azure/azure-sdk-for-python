@@ -55,7 +55,6 @@ class MetricsQueryClient(object):
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
-       
         self._client = MonitorQueryClient(
             credential=credential,
             base_url=self._endpoint,
