@@ -37,9 +37,6 @@ class AzureCliCredential(object):
     This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.
     """
 
-    def __init__(self, **kwargs):   # pylint: disable=unused-argument
-        pass
-
     def __enter__(self):
         return self
 

@@ -53,9 +53,6 @@ class AzurePowerShellCredential(object):
     This requires previously logging in to Azure via "Connect-AzAccount", and will use the currently logged in identity.
     """
 
-    def __init__(self, **kwargs):   # pylint: disable=unused-argument
-        pass
-
     def __enter__(self):
         return self
 

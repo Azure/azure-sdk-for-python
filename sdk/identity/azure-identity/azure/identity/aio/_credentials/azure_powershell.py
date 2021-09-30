@@ -30,9 +30,6 @@ class AzurePowerShellCredential(AsyncContextManager):
     This requires previously logging in to Azure via "Connect-AzAccount", and will use the currently logged in identity.
     """
 
-    def __init__(self, **kwargs: "Any") -> None:    # pylint: disable=unused-argument
-        pass
-
     @log_get_token_async
     async def get_token(
         self, *scopes: str, **kwargs: "Any"

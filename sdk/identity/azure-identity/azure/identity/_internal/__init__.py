@@ -69,15 +69,11 @@ def resolve_tenant(default_tenant, tenant_id=None, **_):
     """Returns the correct tenant for a token request given a credential's configuration"""
     if (
         tenant_id is None
-        or tenant_id == default_tenant
+        or default_tenant == "adfs"
+        or os.environ.get(EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH)
     ):
         return default_tenant
 
-    disable_multitenant = os.environ.get(EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH, False)
-    if default_tenant == "adfs":
-        disable_multitenant = True
-    if disable_multitenant:
-        return default_tenant
     return tenant_id
 
 

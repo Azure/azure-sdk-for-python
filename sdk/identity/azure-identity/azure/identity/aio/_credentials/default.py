@@ -118,9 +118,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if not exclude_visual_studio_code_credential:
             credentials.append(VisualStudioCodeCredential(**vscode_args))
         if not exclude_cli_credential:
-            credentials.append(AzureCliCredential(**kwargs))
+            credentials.append(AzureCliCredential())
         if not exclude_powershell_credential:
-            credentials.append(AzurePowerShellCredential(**kwargs))
+            credentials.append(AzurePowerShellCredential())
 
         super().__init__(*credentials)
 

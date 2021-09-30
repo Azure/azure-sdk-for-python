@@ -33,9 +33,6 @@ class AzureCliCredential(AsyncContextManager):
     This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.
     """
 
-    def __init__(self, **kwargs: "Any") -> None:    # pylint: disable=unused-argument
-        pass
-
     @log_get_token_async
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Request an access token for `scopes`.
