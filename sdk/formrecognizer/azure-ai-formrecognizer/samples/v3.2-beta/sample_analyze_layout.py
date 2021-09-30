@@ -66,8 +66,8 @@ def analyze_layout():
             )
         )
 
-    for idx, page in enumerate(result.pages):
-        print("----Analyzing layout from page #{}----".format(idx + 1))
+    for page in result.pages:
+        print("----Analyzing layout from page #{}----".format(page.page_number))
         print(
             "Page has width: {} and height: {}, measured with unit: {}".format(
                 page.width, page.height, page.unit
@@ -76,7 +76,7 @@ def analyze_layout():
 
         for line_idx, line in enumerate(page.lines):
             print(
-                "Line # {} has text content '{}' within bounding box '{}'".format(
+                "...Line # {} has text content '{}' within bounding box '{}'".format(
                     line_idx,
                     line.content,
                     format_bounding_box(line.bounding_box),
@@ -92,7 +92,7 @@ def analyze_layout():
 
         for selection_mark in page.selection_marks:
             print(
-                "Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
+                "...Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
                     selection_mark.state,
                     format_bounding_box(selection_mark.bounding_box),
                     selection_mark.confidence,
@@ -115,7 +115,7 @@ def analyze_layout():
             )
         for cell in table.cells:
             print(
-                "...Cell[{}][{}] has text '{}'".format(
+                "...Cell[{}][{}] has content '{}'".format(
                     cell.row_index,
                     cell.column_index,
                     cell.content,
