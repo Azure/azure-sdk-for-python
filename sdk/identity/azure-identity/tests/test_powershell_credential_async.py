@@ -275,3 +275,28 @@ async def test_multitenant_authentication():
         # should still default to the first tenant
         token = await credential.get_token("scope")
         assert token.token == first_token
+
+async def test_multitenant_authentication_not_allowed():
+    expected_token = "***"
+
+    async def fake_exec(*args, **_):
+        command = args[2]
+        assert command.startswith("pwsh -NonInteractive -EncodedCommand ")
+        encoded_script = command.split()[-1]
+        decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
+        match = re.search(r"Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
+        tenant = match[2]
+
+        assert tenant is None, "credential shouldn't accept an explicit tenant ID"
+        stdout = "azsdk%{}%{}".format(expected_token, int(time.time()) + 3600)
+        communicate = Mock(return_value=get_completed_future((stdout.encode(), b"")))
+        return Mock(communicate=communicate, returncode=0)
+
+    credential = AzurePowerShellCredential()
+    with patch(CREATE_SUBPROCESS_EXEC, fake_exec):
+        token = await credential.get_token("scope")
+        assert token.token == expected_token
+
+        with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
+            token = await credential.get_token("scope", tenant_id="some tenant")
+            assert token.token == expected_token

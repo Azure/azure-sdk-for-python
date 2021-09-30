@@ -642,3 +642,37 @@ async def test_multitenant_authentication():
     # should still default to the first tenant
     token = await credential.get_token("scope")
     assert token.token == first_token
+
+@pytest.mark.asyncio
+async def test_multitenant_authentication_not_allowed():
+    default_tenant = "organizations"
+    expected_token = "***"
+
+    async def send(request, **_):
+        parsed = urlparse(request.url)
+        tenant_id = parsed.path.split("/")[1]
+        assert tenant_id == default_tenant
+        return mock_response(
+            json_payload=build_aad_response(
+                access_token=expected_token,
+                id_token_claims=id_token_claims(aud="...", iss="...", sub="..."),
+            )
+        )
+
+    authority = "localhost"
+    expected_account = get_account_event(
+        "user", "object-id", "tenant-id", authority=authority, client_id="client-id", refresh_token="**"
+    )
+    cache = populated_cache(expected_account)
+
+    credential = SharedTokenCacheCredential(authority=authority, transport=Mock(send=send), _cache=cache)
+
+    token = await credential.get_token("scope")
+    assert token.token == expected_token
+
+    token = await credential.get_token("scope", tenant_id=default_tenant)
+    assert token.token == expected_token
+
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
+        token = await credential.get_token("scope", tenant_id="some tenant")
+        assert token.token == expected_token

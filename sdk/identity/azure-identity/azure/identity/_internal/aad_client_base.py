@@ -49,7 +49,7 @@ class AadClientBase(ABC):
     def __init__(
         self, tenant_id, client_id, authority=None, cache=None, **kwargs
     ):
-        # type: (str, str, Optional[str], Optional[TokenCache], bool, **Any) -> None
+        # type: (str, str, Optional[str], Optional[TokenCache], **Any) -> None
         self._authority = normalize_authority(authority) if authority else get_default_authority()
 
         self._tenant_id = tenant_id

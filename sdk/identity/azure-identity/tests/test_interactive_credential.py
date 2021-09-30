@@ -325,3 +325,38 @@ def test_multitenant_authentication():
     # should still default to the first tenant
     token = credential.get_token("scope")
     assert token.token == first_token
+
+def test_multitenant_authentication_not_allowed():
+    expected_tenant = "expected-tenant"
+    expected_token = "***"
+
+    def request_token(*_, **__):
+        return build_aad_response(
+            access_token=expected_token,
+            id_token_claims=id_token_claims(
+                aud="...",
+                iss="http://localhost/tenant",
+                sub="subject",
+                preferred_username="...",
+                tenant_id="...",
+                object_id="...",
+            ),
+        )
+
+    def send(request, **_):
+        assert "/oauth2/v2.0/token" not in request.url, 'mock "request_token" should prevent sending a token request'
+        parsed = urlparse(request.url)
+        tenant = parsed.path.split("/")[1]
+        return get_discovery_response("https://{}/{}".format(parsed.netloc, tenant))
+
+    credential = MockCredential(tenant_id=expected_tenant, transport=Mock(send=send), request_token=request_token)
+
+    token = credential.get_token("scope")
+    assert token.token == expected_token
+
+    token = credential.get_token("scope", tenant_id=expected_tenant)
+    assert token.token == expected_token
+
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
+        token = credential.get_token("scope", tenant_id="un" + expected_tenant)
+        assert token.token == expected_token

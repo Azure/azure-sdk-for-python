@@ -220,3 +220,30 @@ async def test_multitenant_authentication():
         # should still default to the first tenant
         token = await credential.get_token("scope")
         assert token.token == first_token
+
+async def test_multitenant_authentication_not_allowed():
+    expected_tenant = "expected-tenant"
+    expected_token = "***"
+
+    async def fake_exec(*args, **_):
+        match = re.search("--tenant (.*)", args[-1])
+        assert match is None or match[1] == expected_tenant
+        output = json.dumps(
+            {
+                "expiresOn": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
+                "accessToken": expected_token,
+                "subscription": "some-guid",
+                "tenant": expected_token,
+                "tokenType": "Bearer",
+            }
+        ).encode()
+        return mock.Mock(communicate=mock.Mock(return_value=get_completed_future((output, b""))), returncode=0)
+
+    credential = AzureCliCredential()
+    with mock.patch(SUBPROCESS_EXEC, fake_exec):
+        token = await credential.get_token("scope")
+        assert token.token == expected_token
+
+        with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
+            token = await credential.get_token("scope", tenant_id="un" + expected_tenant)
+        assert token.token == expected_token
