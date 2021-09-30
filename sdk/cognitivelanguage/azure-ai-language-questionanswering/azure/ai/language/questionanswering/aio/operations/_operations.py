@@ -66,7 +66,7 @@ class QuestionAnsweringClientOperationsMixin:
         confidence_score_threshold: Optional[float] = None,
         context: Optional["_models.KnowledgeBaseAnswerRequestContext"] = None,
         ranker_type: Optional[Union[str, "_models.RankerType"]] = None,
-        strict_filters: Optional["_models.StrictFilters"] = None,
+        filters: Optional["_models.QueryFilters"] = None,
         answer_span_request: Optional["_models.AnswerSpanRequest"] = None,
         include_unstructured_sources: Optional[bool] = None,
         **kwargs: Any
@@ -94,8 +94,8 @@ class QuestionAnsweringClientOperationsMixin:
         :keyword ranker_type: (Optional) Set to 'QuestionOnly' for using a question only Ranker. Possible
         values include: "Default", "QuestionOnly".
         :paramtype ranker_type: str or ~azure.ai.language.questionanswering.models.RankerType
-        :keyword strict_filters: Filter QnAs based on give metadata list and knowledge base source names.
-        :paramtype strict_filters: ~azure.ai.language.questionanswering.models.StrictFilters
+        :keyword filters: Filter QnAs based on give metadata list and knowledge base source names.
+        :paramtype filters: ~azure.ai.language.questionanswering.models.QueryFilters
         :keyword answer_span_request: To configure Answer span prediction feature.
         :paramtype answer_span_request: ~azure.ai.language.questionanswering.models.AnswerSpanRequest
         :keyword include_unstructured_sources: (Optional) Flag to enable Query over Unstructured Sources.
@@ -136,8 +136,8 @@ class QuestionAnsweringClientOperationsMixin:
         :keyword ranker_type: (Optional) Set to 'QuestionOnly' for using a question only Ranker. Possible
          values include: "Default", "QuestionOnly".
         :paramtype ranker_type: str or ~azure.ai.language.questionanswering.models.RankerType
-        :keyword strict_filters: Filter QnAs based on give metadata list and knowledge base source names.
-        :paramtype strict_filters: ~azure.ai.language.questionanswering.models.StrictFilters
+        :keyword filters: Filter QnAs based on give metadata list and knowledge base source names.
+        :paramtype filters: ~azure.ai.language.questionanswering.models.QueryFilters
         :keyword answer_span_request: To configure Answer span prediction feature.
         :paramtype answer_span_request: ~azure.ai.language.questionanswering.models.AnswerSpanRequest
         :keyword include_unstructured_sources: (Optional) Flag to enable Query over Unstructured Sources.
@@ -154,7 +154,7 @@ class QuestionAnsweringClientOperationsMixin:
             confidence_score_threshold=kwargs.pop("confidence_score_threshold", None),
             context=kwargs.pop("context", None),
             ranker_type=kwargs.pop("ranker_type", None),
-            strict_filters=kwargs.pop("strict_filters", None),
+            filters=kwargs.pop("filters", None),
             answer_span_request=kwargs.pop("answer_span_request", None),
             include_unstructured_sources=kwargs.pop("include_unstructured_sources", None)
         )
