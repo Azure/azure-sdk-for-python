@@ -13,7 +13,7 @@ try:
 except ImportError:  # python < 3.3
     import mock  # type: ignore
 
-from azure.ai.formrecognizer import FormRecognizerClient, FormTrainingClient
+from azure.ai.formrecognizer import DocumentAnalysisClient, DocumentModelAdministrationClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 from testcase import FormRecognizerTest
@@ -27,20 +27,20 @@ class MockHandler(logging.Handler):
     def emit(self, record):
         self.messages.append(record)
 
-@pytest.mark.skip
+
 class TestLogging(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @pytest.mark.live_test_only
-    def test_logging_info_fr_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
-        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
+    def test_logging_info_dac_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+        client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
         logger.addHandler(mock_handler)
         logger.setLevel(logging.INFO)
 
-        poller = client.begin_recognize_invoices_from_url(self.receipt_url_jpg)
+        poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
         result = poller.result()
 
         for message in mock_handler.messages:
@@ -53,15 +53,15 @@ class TestLogging(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @pytest.mark.live_test_only
-    def test_logging_info_ft_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
-        client = FormTrainingClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
+    def test_logging_info_dmac_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+        client = DocumentModelAdministrationClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
         logger.addHandler(mock_handler)
         logger.setLevel(logging.INFO)
 
-        result = client.get_account_properties()
+        result = client.get_account_info()
 
         for message in mock_handler.messages:
             if message.levelname == "INFO":
@@ -86,10 +86,10 @@ class TestLogging(FormRecognizerTest):
         response.content_type = "application/json"
         transport = mock.Mock(send=lambda request, **kwargs: response)
 
-        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), transport=transport)
+        client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), transport=transport)
 
         with pytest.raises(HttpResponseError) as e:
-            poller = client.begin_recognize_receipts_from_url(self.receipt_url_jpg)
+            poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
         assert e.value.status_code == 403
         assert e.value.error.message == 'Out of call volume quota for FormRecognizer F0 pricing tier. Please retry after 1 day. To increase your call volume switch to a paid tier.'
 
@@ -108,9 +108,9 @@ class TestLogging(FormRecognizerTest):
         response.content_type = "application/json"
         transport = mock.Mock(send=lambda request, **kwargs: response)
 
-        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), transport=transport)
+        client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), transport=transport)
 
         with pytest.raises(HttpResponseError) as e:
-            poller = client.begin_recognize_receipts_from_url(self.receipt_url_jpg)
+            poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
         assert e.value.status_code == 429
         assert e.value.error.message == 'Out of call volume quota for FormRecognizer F0 pricing tier. Please retry after 1 day. To increase your call volume switch to a paid tier.'
