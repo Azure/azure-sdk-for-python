@@ -1,4 +1,4 @@
-# Guide for migration azure-ai-formrecognizer to v2021-09-30-preview from v2.1 and below
+# Guide for migrating azure-ai-formrecognizer to 3.2.0 from 3.1.2 and below
 
 This guide is intended to assist in the migration to `azure-ai-formrecognizer (3.2.0b1)` from versions `3.1.x` and below. It will focus on side-by-side comparisons for similar operations between versions, please note that version `3.1.2` will be used for comparison with `3.2.0b1`.
 
