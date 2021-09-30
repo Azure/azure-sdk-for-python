@@ -7,7 +7,7 @@
 from typing import Any, Union, TYPE_CHECKING
 from azure.core.pipeline.policies import HttpLoggingPolicy
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
-from ._api_versions import FormRecognizerApiVersion, validate_api_version
+from ._api_versions import validate_api_version
 from ._helpers import _get_deserialize, get_authentication_policy, POLLING_INTERVAL, QuotaExceededPolicy
 from ._user_agent import USER_AGENT
 
@@ -20,10 +20,16 @@ class FormRecognizerClientBase(object):
         # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
         self._endpoint = endpoint
         self._credential = credential
-        self._api_version = kwargs.pop("api_version", FormRecognizerApiVersion.V2_1)
+        self._api_version = kwargs.pop("api_version", None)
+        if not self._api_version:
+            raise ValueError(
+                "'api_version' must be specified."
+            )
         if self._api_version.startswith("v"):  # v2.0 released with this option
             self._api_version = self._api_version[1:]
-        validate_api_version(self._api_version)
+
+        client_kind = kwargs.pop("client_kind")
+        validate_api_version(self._api_version, client_kind)
 
         authentication_policy = get_authentication_policy(credential)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
@@ -50,6 +56,8 @@ class FormRecognizerClientBase(object):
                 "op",
                 "pages",
                 "readingOrder",
+                "stringIndexType",
+                "api-version"
             }
         )
 

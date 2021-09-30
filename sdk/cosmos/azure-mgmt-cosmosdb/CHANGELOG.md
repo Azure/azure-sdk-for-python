@@ -1,5 +1,58 @@
 # Release History
 
+## 7.0.0b1 (2021-09-17)
+
+**Features**
+
+  - Model SqlContainerCreateUpdateParameters has a new parameter identity
+  - Model TableGetResults has a new parameter identity
+  - Model SqlTriggerCreateUpdateParameters has a new parameter identity
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter diagnostic_log_settings
+  - Model SqlTriggerGetResults has a new parameter identity
+  - Model SqlDatabaseGetResults has a new parameter identity
+  - Model GremlinGraphGetResults has a new parameter identity
+  - Model SqlStoredProcedureGetResults has a new parameter identity
+  - Model TableCreateUpdateParameters has a new parameter identity
+  - Model PeriodicModeProperties has a new parameter backup_storage_redundancy
+  - Model CassandraKeyspaceCreateUpdateParameters has a new parameter identity
+  - Model SqlContainerGetResults has a new parameter identity
+  - Model DatabaseAccountGetResults has a new parameter diagnostic_log_settings
+  - Model SqlStoredProcedureCreateUpdateParameters has a new parameter identity
+  - Model CassandraKeyspaceGetResults has a new parameter identity
+  - Model ThroughputSettingsUpdateParameters has a new parameter identity
+  - Model GremlinDatabaseCreateUpdateParameters has a new parameter identity
+  - Model ThroughputSettingsGetResults has a new parameter identity
+  - Model MongoDBCollectionGetResults has a new parameter identity
+  - Model SqlDatabaseCreateUpdateParameters has a new parameter identity
+  - Model ARMResourceProperties has a new parameter identity
+  - Model SqlUserDefinedFunctionCreateUpdateParameters has a new parameter identity
+  - Model GremlinDatabaseGetResults has a new parameter identity
+  - Model GremlinGraphCreateUpdateParameters has a new parameter identity
+  - Model MongoDBCollectionCreateUpdateParameters has a new parameter identity
+  - Model CassandraTableCreateUpdateParameters has a new parameter identity
+  - Model CassandraTableGetResults has a new parameter identity
+  - Model MongoDBDatabaseGetResults has a new parameter identity
+  - Model SqlUserDefinedFunctionGetResults has a new parameter identity
+  - Model MongoDBDatabaseCreateUpdateParameters has a new parameter identity
+  - Model DatabaseAccountUpdateParameters has a new parameter diagnostic_log_settings
+  - Added operation CassandraResourcesOperations.begin_create_update_cassandra_view
+  - Added operation CassandraResourcesOperations.get_cassandra_view_throughput
+  - Added operation CassandraResourcesOperations.get_cassandra_view
+  - Added operation CassandraResourcesOperations.list_cassandra_views
+  - Added operation CassandraResourcesOperations.begin_migrate_cassandra_view_to_manual_throughput
+  - Added operation CassandraResourcesOperations.begin_migrate_cassandra_view_to_autoscale
+  - Added operation CassandraResourcesOperations.begin_delete_cassandra_view
+  - Added operation CassandraResourcesOperations.begin_update_cassandra_view_throughput
+  - Added operation group CassandraClustersOperations
+  - Added operation group CassandraDataCentersOperations
+  - Added operation group ServiceOperations
+  - Added operation group CosmosDBManagementClientOperationsMixin
+  - Added operation group GraphResourcesOperations
+
+**Breaking changes**
+
+  - Parameter create_mode of model DatabaseAccountCreateUpdateParameters is now required
+
 ## 6.4.0 (2021-06-22)
 
 **Features**

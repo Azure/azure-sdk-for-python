@@ -12,7 +12,7 @@ from typing import Any, Optional, List
 from ._helpers import construct_iso8601, process_row
 from ._generated.models import (
     BatchQueryRequest as InternalLogQueryRequest,
-    BatchQueryResponse
+    BatchQueryResponse,
 )
 
 
@@ -26,24 +26,26 @@ class LogsTable(object):
     :ivar columns: The labels of columns in this table.
     :vartype columns: list[str]
     :ivar column_types: The types of columns in this table.
-    :vartype columns: list[object]
+    :vartype column_types: list[object]
     :ivar rows: Required. The resulting rows from this query.
     :vartype rows: list[~azure.monitor.query.LogsTableRow]
     """
+
     def __init__(self, **kwargs):
         # type: (Any) -> None
-        self.name = kwargs.pop('name', None) # type: str
-        self.columns = kwargs.pop('columns', None) # type: Optional[str]
-        self.columns_types = kwargs.pop('column_types', None) # type: Optional[Any]
-        _rows = kwargs.pop('rows', None)
+        self.name = kwargs.pop("name", None)  # type: str
+        self.columns = kwargs.pop("columns", None)  # type: Optional[str]
+        self.columns_types = kwargs.pop("column_types", None)  # type: Optional[Any]
+        _rows = kwargs.pop("rows", None)
         self.rows = [
             LogsTableRow(
                 row=row,
                 row_index=ind,
                 col_types=self.columns_types,
-                columns=self.columns
-                ) for ind, row in enumerate(_rows)
-            ]
+                columns=self.columns,
+            )
+            for ind, row in enumerate(_rows)
+        ]
 
     @classmethod
     def _from_generated(cls, generated):
@@ -51,48 +53,51 @@ class LogsTable(object):
             name=generated.name,
             columns=[col.name for col in generated.columns],
             column_types=[col.type for col in generated.columns],
-            rows=generated.rows
+            rows=generated.rows,
         )
 
 
 class LogsTableRow(object):
     """Represents a single row in logs table.
+    This type is gettable by both column name and column index.
 
-    ivar list row: The collection of values in the row.
-    ivar int row_index: The index of the row in the table
+    :ivar int index: The index of the row in the table
     """
+
     def __init__(self, **kwargs):
         # type: (Any) -> None
-        _col_types = kwargs['col_types']
-        row = kwargs['row']
-        self.row = process_row(_col_types, row)
-        self.row_index = kwargs['row_index']
-        _columns = kwargs['columns']
-        self._row_dict = {
-            _columns[i]: self.row[i] for i in range(len(self.row))
-        }
+        _col_types = kwargs["col_types"]
+        row = kwargs["row"]
+        self._row = process_row(_col_types, row)
+        self.index = kwargs["row_index"]
+        _columns = kwargs["columns"]
+        self._row_dict = {_columns[i]: self._row[i] for i in range(len(self._row))}
 
     def __iter__(self):
-        """This will iterate over the row directly.
-        """
-        return iter(self.row)
+        """This will iterate over the row directly."""
+        return iter(self._row)
+
+    def __len__(self):
+        return len(self._row)
+
+    def __repr__(self):
+        return repr(self._row)
 
     def __getitem__(self, column):
         """This type must be subscriptable directly to row.
-        Must be gettableby both column name and row index
-        Example: row[0] -> returns the first element of row and
-        row[column_name] -> returns the row element against the given column name.
+        Must be gettable by both column name and row index
+
+        :param column: The name of the column or the index of the element in a row.
+        :type column: str or int
         """
         try:
             return self._row_dict[column]
         except KeyError:
-            return self.row[column]
+            return self._row[column]
 
 
 class MetricsResult(object):
     """The response to a metrics query.
-
-    All required parameters must be populated in order to send to Azure.
 
     :ivar cost: The integer value representing the cost of the query, for data case.
     :vartype cost: int
@@ -111,6 +116,7 @@ class MetricsResult(object):
     :ivar metrics: Required. The value of the collection.
     :vartype metrics: list[~azure.monitor.query.Metric]
     """
+
     def __init__(self, **kwargs):
         # type: (Any) -> None
         self.cost = kwargs.get("cost", None)
@@ -130,20 +136,43 @@ class MetricsResult(object):
             granularity=generated.interval,
             namespace=generated.namespace,
             resource_region=generated.resourceregion,
-            metrics=[Metric._from_generated(m) for m in generated.value] # pylint: disable=protected-access
+            metrics=MetricsList(metrics=[
+                Metric._from_generated(m) for m in generated.value # pylint: disable=protected-access
+            ]),
         )
 
-class LogsBatchQuery(object):
-    """A single request in a batch.
+class MetricsList(list):
+    """Custom list for metrics
+    """
+    def __init__(self, **kwargs): # pylint: disable=super-init-not-called
+        self._metrics = kwargs['metrics']
+        self._metric_names = {val.name: ind for ind, val in enumerate(self._metrics)}
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    def __iter__(self):
+        return iter(self._metrics)
+
+    def __len__(self):
+        return len(self._metrics)
+
+    def __repr__(self):
+        return repr(self._metrics)
+
+    def __getitem__(self, metric):
+        try:
+            return self._metrics[metric]
+        except TypeError: # TypeError: list indices must be integers or slices, not str
+            return self._metrics[self._metric_names[metric]]
+
+
+class LogsBatchQuery(object):
+    """A single request in a batch. The batch query API accepts a list of these objects.
 
     :param workspace_id: Workspace Id to be included in the query.
     :type workspace_id: str
     :param query: The Analytics query. Learn more about the `Analytics query syntax
      <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
     :type query: str
-    :keyword timespan: The timespan for which to query the data. This can be a timedelta,
+    :keyword timespan: Required. The timespan for which to query the data. This can be a timedelta,
      a timedelta and a start datetime, or a start datetime/end datetime.
     :paramtype timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
      or tuple[~datetime.datetime, ~datetime.datetime]
@@ -158,10 +187,14 @@ class LogsBatchQuery(object):
      visualization to show.
     """
 
-    def __init__(self, workspace_id, query, **kwargs): #pylint: disable=super-init-not-called
+    def __init__(
+        self, workspace_id, query, **kwargs
+    ):  # pylint: disable=super-init-not-called
         # type: (str, str, Any) -> None
-        if 'timespan' not in kwargs:
-            raise TypeError("LogsBatchQuery() missing 1 required keyword-only argument: 'timespan'")
+        if "timespan" not in kwargs:
+            raise TypeError(
+                "LogsBatchQuery() missing 1 required keyword-only argument: 'timespan'"
+            )
         include_statistics = kwargs.pop("include_statistics", False)
         include_visualization = kwargs.pop("include_visualization", False)
         server_timeout = kwargs.pop("server_timeout", None)
@@ -177,26 +210,26 @@ class LogsBatchQuery(object):
                 prefer += ","
             prefer += "include-render=true"
 
-        headers = {'Prefer': prefer}
-        timespan = construct_iso8601(kwargs.pop('timespan'))
+        headers = {"Prefer": prefer}
+        timespan = construct_iso8601(kwargs.pop("timespan"))
         additional_workspaces = kwargs.pop("additional_workspaces", None)
         self.id = str(uuid.uuid4())
         self.body = {
-            "query": query, "timespan": timespan, "workspaces": additional_workspaces
+            "query": query,
+            "timespan": timespan,
+            "workspaces": additional_workspaces,
         }
         self.headers = headers
         self.workspace = workspace_id
 
     def _to_generated(self):
         return InternalLogQueryRequest(
-            id=self.id,
-            body=self.body,
-            headers=self.headers,
-            workspace=self.workspace
+            id=self.id, body=self.body, headers=self.headers, workspace=self.workspace
         )
 
+
 class LogsQueryResult(object):
-    """The LogsQueryResult.
+    """The LogsQueryResult type is returned when the response of a query is a success.
 
     :ivar tables: The list of tables, columns and rows.
     :vartype tables: list[~azure.monitor.query.LogsTable]
@@ -206,21 +239,16 @@ class LogsQueryResult(object):
     :ivar visualization: This will include a visualization property in the response that specifies the type of
      visualization selected by the query and any properties for that visualization.
     :vartype visualization: object
-    :ivar partial_error: Any error info. This is none except in the case where `allow_partial_errors`
-     is explicitly set to True.
-    :vartype partial_error: ~azure.core.exceptions.HttpResponseError
-    :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a LogsQueryResult.
+    :ivar status: The status of the result.
+     Always 'Success' for an instance of a LogsQueryResult.
+    :vartype status: ~azure.monitor.query.LogsQueryStatus
     """
-    def __init__(
-        self,
-        **kwargs
-    ):
-        self.tables = kwargs.get('tables', None)
-        self.partial_error = None
-        self.statistics = kwargs.get('statistics', None)
-        self.visualization = kwargs.get('visualization', None)
-        self.is_error = False
+
+    def __init__(self, **kwargs):
+        self.tables = kwargs.get("tables", None)
+        self.statistics = kwargs.get("statistics", None)
+        self.visualization = kwargs.get("visualization", None)
+        self.status = LogsQueryStatus.SUCCESS
 
     def __iter__(self):
         return iter(self.tables)
@@ -234,10 +262,9 @@ class LogsQueryResult(object):
             generated = generated.body
         if generated.tables is not None:
             tables = [
-                LogsTable._from_generated( # pylint: disable=protected-access
-                    table
-                    ) for table in generated.tables
-                ]
+                LogsTable._from_generated(table)  # pylint: disable=protected-access
+                for table in generated.tables
+            ]
         return cls(
             tables=tables,
             statistics=generated.statistics,
@@ -246,8 +273,7 @@ class LogsQueryResult(object):
 
 
 class MetricNamespaceClassification(str, Enum):
-    """Kind of namespace
-    """
+    """Kind of namespace"""
 
     PLATFORM = "Platform"
     CUSTOM = "Custom"
@@ -268,15 +294,13 @@ class MetricNamespace(object):
     :ivar namespace_classification: Kind of namespace. Possible values include: "Platform", "Custom", "Qos".
     :vartype namespace_classification: str or ~azure.monitor.query.MetricNamespaceClassification
     """
-    def __init__(
-        self,
-        **kwargs
-    ):
-        self.id = kwargs.get('id', None)
-        self.type = kwargs.get('type', None)
-        self.name = kwargs.get('name', None)
-        self.fully_qualified_namespace = kwargs.get('fully_qualified_namespace', None)
-        self.namespace_classification = kwargs.get('namespace_classification', None)
+
+    def __init__(self, **kwargs):
+        self.id = kwargs.get("id", None)
+        self.type = kwargs.get("type", None)
+        self.name = kwargs.get("name", None)
+        self.fully_qualified_namespace = kwargs.get("fully_qualified_namespace", None)
+        self.namespace_classification = kwargs.get("namespace_classification", None)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -290,13 +314,12 @@ class MetricNamespace(object):
             type=generated.type,
             name=generated.name,
             fully_qualified_namespace=fully_qualified_namespace,
-            namespace_classification=generated.classification
+            namespace_classification=generated.classification,
         )
 
 
 class MetricClass(str, Enum):
-    """The class of the metric.
-    """
+    """The class of the metric."""
 
     AVAILABILITY = "Availability"
     TRANSACTIONS = "Transactions"
@@ -305,7 +328,7 @@ class MetricClass(str, Enum):
     SATURATION = "Saturation"
 
 
-class MetricDefinition(object): #pylint: disable=too-many-instance-attributes
+class MetricDefinition(object):  # pylint: disable=too-many-instance-attributes
     """Metric definition class specifies the metadata for a metric.
 
     :ivar dimension_required: Flag to indicate whether the dimension is required.
@@ -338,22 +361,28 @@ class MetricDefinition(object): #pylint: disable=too-many-instance-attributes
      string.
     :vartype dimensions: list[str]
     """
-    def __init__(
-        self,
-        **kwargs
-    ):
+
+    def __init__(self, **kwargs):
         # type: (Any) -> None
-        self.dimension_required = kwargs.get('dimension_required', None) # type: Optional[bool]
-        self.resource_id = kwargs.get('resource_id', None) # type: Optional[str]
-        self.namespace = kwargs.get('namespace', None) # type: Optional[str]
-        self.name = kwargs.get('name', None) # type: Optional[str]
-        self.unit = kwargs.get('unit', None) # type: Optional[str]
-        self.primary_aggregation_type = kwargs.get('primary_aggregation_type', None) # type: Optional[str]
-        self.supported_aggregation_types = kwargs.get('supported_aggregation_types', None) # type: Optional[str]
-        self.metric_availabilities = kwargs.get('metric_availabilities', None) # type: List[MetricAvailability]
-        self.id = kwargs.get('id', None) # type: Optional[str]
-        self.dimensions = kwargs.get('dimensions', None) # type: Optional[List[str]]
-        self.metric_class = kwargs.get('metric_class', None) # type: Optional[str]
+        self.dimension_required = kwargs.get(
+            "dimension_required", None
+        )  # type: Optional[bool]
+        self.resource_id = kwargs.get("resource_id", None)  # type: Optional[str]
+        self.namespace = kwargs.get("namespace", None)  # type: Optional[str]
+        self.name = kwargs.get("name", None)  # type: Optional[str]
+        self.unit = kwargs.get("unit", None)  # type: Optional[str]
+        self.primary_aggregation_type = kwargs.get(
+            "primary_aggregation_type", None
+        )  # type: Optional[str]
+        self.supported_aggregation_types = kwargs.get(
+            "supported_aggregation_types", None
+        )  # type: Optional[str]
+        self.metric_availabilities = kwargs.get(
+            "metric_availabilities", None
+        )  # type: List[MetricAvailability]
+        self.id = kwargs.get("id", None)  # type: Optional[str]
+        self.dimensions = kwargs.get("dimensions", None)  # type: Optional[List[str]]
+        self.metric_class = kwargs.get("metric_class", None)  # type: Optional[str]
 
     @classmethod
     def _from_generated(cls, generated):
@@ -372,20 +401,20 @@ class MetricDefinition(object): #pylint: disable=too-many-instance-attributes
             supported_aggregation_types=generated.supported_aggregation_types,
             metric_class=generated.metric_class,
             metric_availabilities=[
-                MetricAvailability._from_generated( # pylint: disable=protected-access
+                MetricAvailability._from_generated(  # pylint: disable=protected-access
                     val
-                    ) for val in generated.metric_availabilities
-                ],
+                )
+                for val in generated.metric_availabilities
+            ],
             id=generated.id,
-            dimensions=dimensions
+            dimensions=dimensions,
         )
+
 
 class MetricValue(object):
     """Represents a metric value.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar timestamp: Required. The timestamp for the metric value in ISO 8601 format.
+    :ivar timestamp: The timestamp for the metric value.
     :vartype timestamp: ~datetime.datetime
     :ivar average: The average value in the time range.
     :vartype average: float
@@ -399,17 +428,15 @@ class MetricValue(object):
      values that contributed to the average value.
     :vartype count: float
     """
-    def __init__(
-        self,
-        **kwargs
-    ):
+
+    def __init__(self, **kwargs):
         # type: (Any) -> None
-        self.timestamp = kwargs['timestamp']
-        self.average = kwargs.get('average', None)
-        self.minimum = kwargs.get('minimum', None)
-        self.maximum = kwargs.get('maximum', None)
-        self.total = kwargs.get('total', None)
-        self.count = kwargs.get('count', None)
+        self.timestamp = kwargs["timestamp"]
+        self.average = kwargs.get("average", None)
+        self.minimum = kwargs.get("minimum", None)
+        self.maximum = kwargs.get("maximum", None)
+        self.total = kwargs.get("total", None)
+        self.count = kwargs.get("count", None)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -421,40 +448,38 @@ class MetricValue(object):
             minimum=generated.minimum,
             maximum=generated.maximum,
             total=generated.total,
-            count=generated.count
+            count=generated.count,
         )
 
+
 class Metric(object):
-    """The result data of a query.
+    """The result data of a single metric name.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Required. The metric Id.
+    :ivar id: The metric Id.
     :vartype id: str
-    :ivar type: Required. The resource type of the metric resource.
+    :ivar type: The resource type of the metric resource.
     :vartype type: str
-    :ivar name: Required. The name of the metric.
+    :ivar name: The name of the metric.
     :vartype name: str
-    :ivar unit: Required. The unit of the metric. Possible values include: "Count", "Bytes",
+    :ivar unit: The unit of the metric. To access these values, use the MetricUnit enum.
+     Possible values include: "Count", "Bytes",
      "Seconds", "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds",
      "Unspecified", "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
     :vartype unit: str
-    :ivar timeseries: Required. The time series returned when a data query is performed.
+    :ivar timeseries: The time series returned when a data query is performed.
     :vartype timeseries: list[~azure.monitor.query.TimeSeriesElement]
     :ivar display_description: Detailed description of this metric.
     :vartype display_description: str
     """
-    def __init__(
-        self,
-        **kwargs
-    ):
+
+    def __init__(self, **kwargs):
         # type: (Any) -> None
-        self.id = kwargs['id']
-        self.type = kwargs['type']
-        self.name = kwargs['name']
-        self.unit = kwargs['unit']
-        self.timeseries = kwargs['timeseries']
-        self.display_description = kwargs['display_description']
+        self.id = kwargs["id"]
+        self.type = kwargs["type"]
+        self.name = kwargs["name"]
+        self.unit = kwargs["unit"]
+        self.timeseries = kwargs["timeseries"]
+        self.display_description = kwargs["display_description"]
 
     @classmethod
     def _from_generated(cls, generated):
@@ -466,8 +491,9 @@ class Metric(object):
             name=generated.name.value,
             unit=generated.unit,
             timeseries=[
-                TimeSeriesElement._from_generated(t) for t in generated.timeseries # pylint: disable=protected-access
-                ],
+                TimeSeriesElement._from_generated(t) # pylint: disable=protected-access
+                for t in generated.timeseries
+            ],
             display_description=generated.display_description,
         )
 
@@ -481,19 +507,10 @@ class TimeSeriesElement(object):
      a result type of data is specified.
     :vartype data: list[~azure.monitor.query.MetricValue]
     """
-
-    _attribute_map = {
-        'metadata_values': {'key': 'metadata_values', 'type': '[MetadataValue]'},
-        'data': {'key': 'data', 'type': '[MetricValue]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         # type: (Any) -> None
-        self.metadata_values = kwargs.get('metadatavalues', None)
-        self.data = kwargs.get('data', None)
+        self.metadata_values = kwargs.get("metadatavalues", None)
+        self.data = kwargs.get("data", None)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -503,7 +520,9 @@ class TimeSeriesElement(object):
             metadata_values={
                 obj.name.value: obj.value for obj in generated.metadatavalues
             },
-            data=[MetricValue._from_generated(val) for val in generated.data] # pylint: disable=protected-access
+            data=[
+                MetricValue._from_generated(val) for val in generated.data # pylint: disable=protected-access
+            ],
         )
 
 
@@ -511,34 +530,26 @@ class MetricAvailability(object):
     """Metric availability specifies the time grain (aggregation interval or frequency)
     and the retention period for that time grain.
 
-    :ivar granularity: the time grain specifies the aggregation interval for the metric. Expressed
-     as a duration 'PT1M', 'P1D', etc.
+    :ivar granularity: the time grain specifies the aggregation interval for the metric.
     :vartype granularity: ~datetime.timedelta
-    :ivar retention: the retention period for the metric at the specified timegrain. Expressed as
-     a duration 'PT1M', 'P1D', etc.
+    :ivar retention: the retention period for the metric at the specified timegrain.
     :vartype retention: ~datetime.timedelta
     """
-    def __init__(
-        self,
-        **kwargs
-    ):
+
+    def __init__(self, **kwargs):
         # type: (Any) -> None
-        self.granularity = kwargs.get('granularity', None)
-        self.retention = kwargs.get('retention', None)
+        self.granularity = kwargs.get("granularity", None)
+        self.retention = kwargs.get("retention", None)
 
     @classmethod
     def _from_generated(cls, generated):
         if not generated:
             return cls()
-        return cls(
-            granularity=generated.time_grain,
-            retention=generated.retention
-        )
+        return cls(granularity=generated.time_grain, retention=generated.retention)
 
 
 class MetricAggregationType(str, Enum):
-    """The aggregation type of the metric.
-    """
+    """The aggregation type of the metric."""
 
     NONE = "None"
     AVERAGE = "Average"
@@ -549,8 +560,7 @@ class MetricAggregationType(str, Enum):
 
 
 class MetricUnit(str, Enum):
-    """The unit of the metric.
-    """
+    """The unit of the metric."""
 
     COUNT = "Count"
     BYTES = "Bytes"
@@ -565,3 +575,59 @@ class MetricUnit(str, Enum):
     MILLI_CORES = "MilliCores"
     NANO_CORES = "NanoCores"
     BITS_PER_SECOND = "BitsPerSecond"
+
+
+class LogsQueryPartialResult(object):
+    """The LogsQueryPartialResult type is returned when the response of a query is a
+    partial success (or partial failure).
+
+    :ivar partial_data: The list of tables, columns and rows.
+    :vartype partial_data: list[~azure.monitor.query.LogsTable]
+    :ivar statistics: This will include a statistics property in the response that describes various
+     performance statistics such as query execution time and resource usage.
+    :vartype statistics: object
+    :ivar visualization: This will include a visualization property in the response that specifies the type of
+     visualization selected by the query and any properties for that visualization.
+    :vartype visualization: object
+    :ivar partial_error: The partial errror info
+    :vartype partial_error: ~azure.monitor.query.LogsQueryError
+    :ivar status: The status of the result. Always 'PartialError' for an instance of a LogsQueryPartialResult.
+    :vartype status: ~azure.monitor.query.LogsQueryStatus
+    """
+
+    def __init__(self, **kwargs):
+        self.partial_data = kwargs.get("partial_data", None)
+        self.partial_error = kwargs.get("partial_error", None)
+        self.statistics = kwargs.get("statistics", None)
+        self.visualization = kwargs.get("visualization", None)
+        self.status = LogsQueryStatus.PARTIAL
+
+    def __iter__(self):
+        return iter(self.partial_data)
+
+    @classmethod
+    def _from_generated(cls, generated, error): # pylint: disable=arguments-differ
+        if not generated:
+            return cls()
+        partial_data = None
+        if isinstance(generated, BatchQueryResponse):
+            generated = generated.body
+        if generated.tables is not None:
+            partial_data = [
+                LogsTable._from_generated(table)  # pylint: disable=protected-access
+                for table in generated.tables
+            ]
+        return cls(
+            partial_data=partial_data,
+            partial_error=error._from_generated(generated.error), # pylint: disable=protected-access
+            statistics=generated.statistics,
+            visualization=generated.render,
+        )
+
+
+class LogsQueryStatus(str, Enum):
+    """The status of the result object."""
+
+    PARTIAL = "PartialError"
+    SUCCESS = "Success"
+    FAILURE = "Failure"

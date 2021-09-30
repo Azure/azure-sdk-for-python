@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import copy
 import codecs
 import cgi
 from json import dumps
@@ -35,12 +36,12 @@ from typing import (
     Union,
     Mapping,
     Sequence,
-    List,
     Tuple,
     IO,
     Any,
     Dict,
     Iterable,
+    MutableMapping,
 )
 import xml.etree.ElementTree as ET
 import six
@@ -65,8 +66,6 @@ PrimitiveData = Optional[Union[str, int, float, bool]]
 
 
 ParamsType = Mapping[str, Union[PrimitiveData, Sequence[PrimitiveData]]]
-
-HeadersType = Mapping[str, str]
 
 FileContent = Union[str, bytes, IO[str], IO[bytes]]
 FileType = Union[
@@ -129,8 +128,8 @@ def set_xml_body(content):
     return headers, body
 
 def _shared_set_content_body(content):
-    # type: (Any) -> Tuple[HeadersType, Optional[ContentTypeBase]]
-    headers = {}  # type: HeadersType
+    # type: (Any) -> Tuple[MutableMapping[str, str], Optional[ContentTypeBase]]
+    headers = {}  # type: MutableMapping[str, str]
 
     if isinstance(content, ET.Element):
         # XML body
@@ -372,3 +371,7 @@ class HttpRequestBackcompatMixin(object):
         :rtype: bytes
         """
         return _serialize_request(self)
+
+    def _add_backcompat_properties(self, request, memo):
+        """While deepcopying, we also need to add the private backcompat attrs"""
+        request._multipart_mixed_info = copy.deepcopy(self._multipart_mixed_info, memo)  # pylint: disable=protected-access

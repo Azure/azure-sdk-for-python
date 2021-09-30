@@ -25,7 +25,7 @@ async def test_logs_auth():
     summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
     # returns LogsQueryResult 
-    response = await client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
+    response = await client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
 
     assert response is not None
     assert response.tables is not None
@@ -41,7 +41,7 @@ async def test_logs_auth_no_timespan():
 
     # returns LogsQueryResult 
     with pytest.raises(TypeError):
-        await client.query(os.environ['LOG_WORKSPACE_ID'], query)
+        await client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query)
 
 
 @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/19917")
@@ -50,7 +50,7 @@ async def test_logs_auth_no_timespan():
 async def test_logs_server_timeout():
     client = LogsQueryClient(_credential())
     with pytest.raises(HttpResponseError) as e:
-        response = await client.query(
+        response = await client.query_workspace(
             os.environ['LOG_WORKSPACE_ID'],
             "range x from 1 to 10000000000 step 1 | count",
             timespan=None,
@@ -111,7 +111,7 @@ async def test_logs_single_query_additional_workspaces_async():
     query = "union * | where TimeGenerated > ago(100d) | project TenantId | summarize count() by TenantId"
 
     # returns LogsQueryResult 
-    response = await client.query(
+    response = await client.query_workspace(
         os.environ['LOG_WORKSPACE_ID'],
         query,
         timespan=None,
@@ -162,7 +162,7 @@ async def test_logs_single_query_with_render():
     query = """AppRequests"""
 
     # returns LogsQueryResult 
-    response = await client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, include_visualization=True)
+    response = await client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, include_visualization=True)
 
     assert response.visualization is not None
 
@@ -174,7 +174,7 @@ async def test_logs_single_query_with_render_and_stats():
     query = """AppRequests"""
 
     # returns LogsQueryResult 
-    response = await client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, include_visualization=True, include_statistics=True)
+    response = await client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, include_visualization=True, include_statistics=True)
 
     assert response.visualization is not None
     assert response.statistics is not None
@@ -186,7 +186,7 @@ async def test_logs_query_result_iterate_over_tables():
 
     query = "AppRequests; AppRequests | take 5"
 
-    response = await client.query(
+    response = await client.query_workspace(
         os.environ['LOG_WORKSPACE_ID'],
         query,
         timespan=None,
@@ -210,7 +210,7 @@ async def test_logs_query_result_row_type():
 
     query = "AppRequests | take 5"
 
-    response = await client.query(
+    response = await client.query_workspace(
         os.environ['LOG_WORKSPACE_ID'],
         query,
         timespan=None,

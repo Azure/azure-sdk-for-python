@@ -1,11 +1,11 @@
 {
-  "autorest": "3.4.2",
+  "autorest": "3.4.5",
   "use": [
-    "@autorest/python@5.8.0",
+    "@autorest/python@5.8.4",
     "@autorest/modelerfour@4.19.2"
   ],
-  "commit": "f780b571abddf2fc99233212a00510d3bef6878d",
+  "commit": "f7bdc95b45115dd1d5d7aec82d1b88ea17a938a7",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest_command": "autorest specification/cosmos-db/resource-manager/readme.md --multiapi --python --python-mode=update --python-sdks-folder=/home/vsts/work/1/s/azure-sdk-for-python/sdk --track2 --use=@autorest/python@5.8.0 --use=@autorest/modelerfour@4.19.2 --version=3.4.2",
+  "autorest_command": "autorest specification/cosmos-db/resource-manager/readme.md --multiapi --python --python-mode=update --python-sdks-folder=/home/vsts/work/1/s/azure-sdk-for-python/sdk --track2 --use=@autorest/python@5.8.4 --use=@autorest/modelerfour@4.19.2 --version=3.4.5",
   "readme": "specification/cosmos-db/resource-manager/readme.md"
 }

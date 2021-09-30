@@ -10,14 +10,17 @@
 import io
 import pytest
 import sys
-import collections
+try:
+    import collections.abc as collections
+except ImportError:
+    import collections  # type: ignore
 
 from azure.core.configuration import Configuration
 from azure.core.rest import HttpRequest
 from azure.core.pipeline.policies import (
     CustomHookPolicy, UserAgentPolicy, SansIOHTTPPolicy, RetryPolicy
 )
-from utils import is_rest
+from azure.core.pipeline._tools import is_rest
 from rest_client import TestRestClient
 from azure.core import PipelineClient
 
