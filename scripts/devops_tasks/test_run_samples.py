@@ -125,6 +125,10 @@ IGNORED_SAMPLES = {
         "sample_list_translations_with_filters.py",
         "sample_translation_with_custom_model.py",
         "sample_translation_with_custom_model_async.py",
+    ],
+    "azure-ai-formrecognizer": [
+        "sample_manage_custom_models.py",
+        "sample_manage_custom_models_async.py",
     ]
 }
 
