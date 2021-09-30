@@ -21,16 +21,16 @@ interactions:
         15,\n        \"confidenceScore\": 1\n      }\n    ],\n    \"topIntent\": \"Order\",\n
         \   \"projectType\": \"conversation\"\n  }\n}"
     headers:
-      apim-request-id: aae5ce10-8eea-4f79-b0e9-960d80a5d548
+      apim-request-id: 577adef9-402b-4f6a-ae8b-abc1c82660a4
       cache-control: no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Sep 2021 15:00:13 GMT
+      date: Thu, 30 Sep 2021 16:56:53 GMT
       pragma: no-cache
-      request-id: aae5ce10-8eea-4f79-b0e9-960d80a5d548
+      request-id: 577adef9-402b-4f6a-ae8b-abc1c82660a4
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '33'
+      x-envoy-upstream-service-time: '303'
     status:
       code: 200
       message: OK

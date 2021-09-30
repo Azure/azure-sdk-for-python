@@ -109,17 +109,17 @@ interactions:
         \"non_linked\",\n        \"confidenceScore\": 0\n      }\n    },\n    \"topIntent\":
         \"SushiMaking\",\n    \"projectType\": \"workflow\"\n  }\n}"
     headers:
-      apim-request-id: 3c4b5bfd-cdfe-48f4-9502-6edbc5dddc8c
+      apim-request-id: dedc30b9-bec0-48c0-8f54-0e40b3964ebe
       cache-control: no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.OrchestrationLUISTransaction=0
-      date: Wed, 29 Sep 2021 15:00:22 GMT
+      date: Thu, 30 Sep 2021 16:57:05 GMT
       pragma: no-cache
-      request-id: 3c4b5bfd-cdfe-48f4-9502-6edbc5dddc8c
+      request-id: dedc30b9-bec0-48c0-8f54-0e40b3964ebe
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '213'
+      x-envoy-upstream-service-time: '364'
     status:
       code: 200
       message: OK

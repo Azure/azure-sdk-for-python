@@ -106,17 +106,17 @@ interactions:
         \"non_linked\",\n        \"confidenceScore\": 0\n      }\n    },\n    \"topIntent\":
         \"SushiMaking\",\n    \"projectType\": \"workflow\"\n  }\n}"
     headers:
-      apim-request-id: 3812e341-fa79-42c7-b4eb-9f25ad6049cf
+      apim-request-id: 1685ca0c-6a9e-407b-883c-3edabb16a15d
       cache-control: no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.OrchestrationLUISTransaction=0
-      date: Wed, 29 Sep 2021 15:00:21 GMT
+      date: Thu, 30 Sep 2021 16:57:03 GMT
       pragma: no-cache
-      request-id: 3812e341-fa79-42c7-b4eb-9f25ad6049cf
+      request-id: 1685ca0c-6a9e-407b-883c-3edabb16a15d
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '1258'
+      x-envoy-upstream-service-time: '246'
     status:
       code: 200
       message: OK
@@ -168,17 +168,17 @@ interactions:
         \"non_linked\",\n        \"confidenceScore\": 0\n      }\n    },\n    \"topIntent\":
         \"SushiMaking\",\n    \"projectType\": \"workflow\"\n  }\n}"
     headers:
-      apim-request-id: 8cebca4d-909b-4004-a033-92a157f2cb59
+      apim-request-id: d71eeb28-556b-4b94-a0fe-b650f982bf05
       cache-control: no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.OrchestrationLUISTransaction=0
-      date: Wed, 29 Sep 2021 15:00:21 GMT
+      date: Thu, 30 Sep 2021 16:57:03 GMT
       pragma: no-cache
-      request-id: 8cebca4d-909b-4004-a033-92a157f2cb59
+      request-id: d71eeb28-556b-4b94-a0fe-b650f982bf05
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '201'
+      x-envoy-upstream-service-time: '204'
     status:
       code: 200
       message: OK
