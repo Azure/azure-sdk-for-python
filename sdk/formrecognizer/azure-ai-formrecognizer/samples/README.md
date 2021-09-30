@@ -64,7 +64,7 @@ All of these samples need the endpoint to your Form Recognizer resource ([instru
 
 ## Samples for client library versions 3.0.0 and below
 
-Please see the samples [here][v3.0.0-samples-tag]
+Please see the samples [here][v3.0.0-samples-tag].
 
 ## Prerequisites
 * Python 2.7, or 3.6 or later is required to use this package (3.6 or later if using asyncio)
