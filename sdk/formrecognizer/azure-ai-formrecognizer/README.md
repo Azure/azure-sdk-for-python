@@ -191,6 +191,7 @@ The following section provides several code snippets covering some of the most c
 
 * [Extract layout](#extract-layout "Extract Layout")
 * [Using Prebuilt Models](#using-prebuilt-models "Using Prebuilt Models")
+* [Using Prebuilt Document](#using-prebuilt-document "Using Prebuilt Document")
 * [Build a Model](#build-a-model "Build a model")
 * [Analyze Documents Using a Custom Model](#analyze-documents-using-a-custom-model "Analyze Documents Using a Custom Model")
 * [Manage Your Models](#manage-your-models "Manage Your Models")
@@ -309,6 +310,85 @@ You are not limited to receipts! There are a few prebuilt models to choose from,
 - Analyze business cards using the `prebuilt-businessCard` model (fields recognized by the service can be found [here][service_recognize_business_cards]).
 - Analyze invoices using the `prebuilt-invoice` model (fields recognized by the service can be found [here][service_recognize_invoice]).
 - Analyze identity documents using the `prebuilt-idDocuments` model (fields recognized by the service can be found [here][service_recognize_identity_documents]).
+
+### Using Prebuilt Document
+Analyze entities, key-value pairs, tables, styles, and selection marks from documents using the general prebuilt document model provided by the Form Recognizer service.
+Select the Prebuilt Document model by passing `model="prebuilt-document"` into the `begin_analyze_documents` method:
+
+```python
+from azure.ai.formrecognizer import DocumentAnalysisClient
+from azure.core.credentials import AzureKeyCredential
+
+endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
+credential = AzureKeyCredential("<api_key>")
+
+document_analysis_client = DocumentAnalysisClient(endpoint, credential)
+
+with open("<path to your document>", "rb") as fd:
+    document = fd.read()
+
+poller = document_analysis_client.begin_analyze_document("prebuilt-document", document)
+result = poller.result()
+
+print("----Entities found in document----")
+for entity in result.entities:
+    print("Entity '{}' has category '{}' with sub-category '{}'".format(
+        entity.content, entity.category, entity.sub_category
+    ))
+    print("...with confidence {}\n".format(entity.confidence))
+
+print("----Key-value pairs found in document----")
+for kv_pair in result.key_value_pairs:
+    if kv_pair.key:
+        print(
+                "Key '{}' found within '{}' bounding regions".format(
+                    kv_pair.key.content,
+                    kv_pair.key.bounding_regions,
+                )
+            )
+    if kv_pair.value:
+        print(
+                "Value '{}' found within '{}' bounding regions\n".format(
+                    kv_pair.value.content,
+                    kv_pair.value.bounding_regions,
+                )
+            )
+
+print("----Tables found in document----")
+for table_idx, table in enumerate(result.tables):
+    print(
+        "Table # {} has {} rows and {} columns".format(
+            table_idx, table.row_count, table.column_count
+        )
+    )
+    for region in table.bounding_regions:
+        print(
+            "Table # {} location on page: {} is {}".format(
+                table_idx,
+                region.page_number,
+                region.bounding_box,
+            )
+        )
+
+print("----Styles found in document----")
+for style in result.styles:
+    print(
+        "Document contains {} content".format(
+            "handwritten" if style.is_handwritten else "no handwritten"
+        )
+    )
+
+print("----Selection marks found in document----")
+for page in result.pages:
+    for selection_mark in page.selection_marks:
+        print(
+            "...Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
+                selection_mark.state,
+                selection_mark.bounding_box,
+                selection_mark.confidence,
+            )
+        )
+```
 
 ### Build a model
 Build a custom model on your own document type. The resulting model can be used to analyze values from the types of documents it was trained on.
