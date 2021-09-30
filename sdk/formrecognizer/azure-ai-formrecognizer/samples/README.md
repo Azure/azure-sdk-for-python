@@ -11,18 +11,18 @@ urlFragment: formrecognizer-samples
 
 # Samples for Azure Form Recognizer client library for Python
 
+> Note: Starting with version 2021-09-30-preview, a new set of clients were introduced to leverage the newest features
+> of the Form Recognizer service. Please see the [Migration Guide](TODO) for detailed instructions on how to update application
+> code from client library version 3.1.X or lower to the latest version. Additionally, see the [Changelog][changelog] for more detailed information.
+
 These code samples show common scenario operations with the Azure Form Recognizer client library.
 The async versions of the samples require Python 3.6 or later.
 
 These sample programs show common scenarios for the Form Recognizer client's offerings.
 
-> Note: Starting with version 2021-09-30-preview, a new set of clients were introduced to leverage the newest features
-> of the Form Recognizer service. Please see the [Migration Guide](TODO) for detailed instructions on how to update application
-> code from client library version 3.1.X or lower to the latest version. Additionally, see the [Changelog][changelog] for more detailed information.
-
 All of these samples need the endpoint to your Form Recognizer resource ([instructions on how to get endpoint][get-endpoint-instructions]), and your Form Recognizer API key ([instructions on how to get key][get-key-instructions]).
 
-## Samples for azure-ai-formrecognizer client library versions 3.2.0b1 and later
+## Samples for client library versions 3.2.0b1 and later
 
 |**File Name**|**Description**|
 |----------------|-------------|
@@ -40,7 +40,7 @@ All of these samples need the endpoint to your Form Recognizer resource ([instru
 |[sample_get_operations.py][sample_get_operations] and [sample_get_operations_async.py][sample_get_operations_async]|Get and list the document model operations created within the past 24 hours|
 |[sample_copy_model.py][sample_copy] and [sample_copy_model_async.py][sample_copy_async]|Copy a custom model from one Form Recognizer resource to another|
 
-## Samples for azure-ai-formrecognizer client library versions 3.1.X and below
+## Samples for client library versions 3.1.X
 
 |**File Name**|**Description**|
 |----------------|-------------|
@@ -57,14 +57,14 @@ All of these samples need the endpoint to your Form Recognizer resource ([instru
 |[sample_manage_custom_models.py][sample_manage_custom_models] and [sample_manage_custom_models_async.py][sample_manage_custom_models_async]|Manage the custom models in your account|
 |[sample_copy_model.py][sample_copy_model] and [sample_copy_model_async.py][sample_copy_model_async]|Copy a custom model from one Form Recognizer resource to another|
 |[sample_create_composed_model.py][sample_create_composed_model] and [sample_create_composed_model_async.py][sample_create_composed_model_async]|Create a composed model from a collection of existing models trained with labels|
-
-|**Advanced Sample File Name**|**Description**|
-|----------------|-------------|
 |[sample_strongly_typing_recognized_form.py][sample_strongly_typing_recognized_form] and [sample_strongly_typing_recognized_form_async.py][sample_strongly_typing_recognized_form_async]|Use the fields in your recognized forms to create an object with strongly-typed fields|
 |[sample_get_bounding_boxes.py][sample_get_bounding_boxes] and [sample_get_bounding_boxes_async.py][sample_get_bounding_boxes_async]|Get info to visualize the outlines of form content and fields, which can be used for manual validation|
 |[sample_differentiate_output_models_trained_with_and_without_labels.py][sample_differentiate_output_models_trained_with_and_without_labels] and [sample_differentiate_output_models_trained_with_and_without_labels_async.py][sample_differentiate_output_models_trained_with_and_without_labels_async]|See the differences in output when using a custom model trained with labeled data and one trained with unlabeled data|
 |[sample_differentiate_output_labeled_tables.py][sample_differentiate_output_labeled_tables] and [sample_differentiate_output_labeled_tables_async.py][sample_differentiate_output_labeled_tables_async]|See the differences in output when using a custom model trained with fixed vs. dynamic table tags|
 
+## Samples for client library versions 3.0.0 and below
+
+Please see the samples [here][v3.0.0-samples-tag]
 
 ## Prerequisites
 * Python 2.7, or 3.6 or later is required to use this package (3.6 or later if using asyncio)
@@ -104,6 +104,7 @@ what you can do with the Azure Form Recognizer client library.
 [get-endpoint-instructions]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/README.md#looking-up-the-endpoint
 [get-key-instructions]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/README.md#get-the-api-key
 [changelog]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/CHANGELOG.md
+[v3.0.0-samples-tag]: https://github.com/Azure/azure-sdk-for-python/tree/azure-ai-formrecognizer_3.0.0/sdk/formrecognizer/azure-ai-formrecognizer/samples
 
 <!-- V3.2-beta links -->
 
