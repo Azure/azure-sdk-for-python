@@ -17,7 +17,7 @@
 # Service team
 ####
 # PRLabel: %Azure.Identity
-/sdk/identity/                                                       @chlowell @mccoyp @schaabs
+/sdk/identity/                                                       @chlowell @mccoyp @schaabs @xiangyan99
 
 # PRLabel: %Event Hubs
 /sdk/eventhub/                                                       @annatisch @yunhaoling @swathipil @rakshith91
@@ -101,7 +101,7 @@
 /sdk/servicebus/                                                     @annatisch @yunhaoling @swathipil @rakshith91
 
 # PRLabel: %Synapse
-/sdk/synapse/                                                        @aim-for-better @idear1203
+/sdk/synapse/                                                        @wonner @idear1203 @xiangyan99
 
 # PRLabel: %EngSys
 /sdk/template/                                                       @Azure/azure-sdk-eng

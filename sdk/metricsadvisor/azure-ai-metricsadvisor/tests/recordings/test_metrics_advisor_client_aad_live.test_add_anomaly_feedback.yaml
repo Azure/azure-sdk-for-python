@@ -1,43 +1,43 @@
 interactions:
 - request:
     body: '{"feedbackType": "Anomaly", "metricId": "metric_id", "dimensionFilter":
-      {"dimension": {"dimension_name": "Los Angeles"}}, "startTime": "2020-08-05T00:00:00.000Z",
-      "endTime": "2020-10-21T00:00:00.000Z", "value": {"anomalyValue": "NotAnomaly"}}'
+      {"dimension": {"category": "Shoes Handbags & Sunglasses"}}, "startTime": "2021-08-05T00:00:00.000Z",
+      "endTime": "2021-09-09T00:00:00.000Z", "value": {"anomalyValue": "NotAnomaly"}}'
     headers:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       Content-Length:
-      - '259'
+      - '279'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b5 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric
+    uri: https://ga-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 524720cb-4305-43b6-8e11-a49fc2d7ef30
+      - 6a2dd492-cc37-4fa8-9854-2771688ca6d4
       content-length:
       - '0'
       date:
-      - Fri, 11 Jun 2021 23:36:13 GMT
+      - Wed, 29 Sep 2021 19:37:41 GMT
       location:
-      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/44228987-b0ac-4940-b8f5-3678d2770391
+      - https://ga-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/57385a0d-4659-413e-83e6-c33750701392
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '192'
+      - '580'
       x-request-id:
-      - 524720cb-4305-43b6-8e11-a49fc2d7ef30
+      - 6a2dd492-cc37-4fa8-9854-2771688ca6d4
     status:
       code: 201
       message: Created
