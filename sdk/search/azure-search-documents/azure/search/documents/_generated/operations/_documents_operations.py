@@ -514,7 +514,7 @@ class DocumentsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('long', pipeline_response)
@@ -646,7 +646,7 @@ class DocumentsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SearchDocumentsResult', pipeline_response)
@@ -708,7 +708,7 @@ class DocumentsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SearchDocumentsResult', pipeline_response)
@@ -771,7 +771,7 @@ class DocumentsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('object', pipeline_response)
@@ -866,7 +866,7 @@ class DocumentsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SuggestDocumentsResult', pipeline_response)
@@ -928,7 +928,7 @@ class DocumentsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SuggestDocumentsResult', pipeline_response)
@@ -991,7 +991,7 @@ class DocumentsOperations(object):
 
         if response.status_code not in [200, 207]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if response.status_code == 200:
@@ -1086,7 +1086,7 @@ class DocumentsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('AutocompleteResult', pipeline_response)
@@ -1148,7 +1148,7 @@ class DocumentsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('AutocompleteResult', pipeline_response)
