@@ -44,15 +44,22 @@ class MetricsQueryClient(object):
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword endpoint: The endpoint to connect to. Defaults to 'https://management.azure.com'.
     :paramtype endpoint: str
+    :keyword audience: URL to use for credential authentication with AAD.
+    :paramtype audience: str
     """
 
     def __init__(self, credential, **kwargs):
         # type: (TokenCredential, Any) -> None
+        audience = kwargs.pop("audience", None)
         endpoint = kwargs.pop("endpoint", "https://management.azure.com")
+        if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
+            endpoint = "https://" + endpoint
+        self._endpoint = endpoint
+       
         self._client = MonitorQueryClient(
             credential=credential,
-            base_url=endpoint,
-            authentication_policy=get_metrics_authentication_policy(credential),
+            base_url=self._endpoint,
+            authentication_policy=get_metrics_authentication_policy(credential, audience),
             **kwargs
         )
         self._metrics_op = self._client.metrics
