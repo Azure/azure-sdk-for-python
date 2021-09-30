@@ -144,7 +144,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
             Use this to specify the custom model ID or prebuilt model ID. Prebuilt model IDs to use are:
             "prebuilt-receipt", "prebuilt-invoice", "prebuilt-idDocument", "prebuilt-businessCard",
             "prebuilt-document", "prebuilt-layout".
-        :param str document_url: The URL of the document to analyze. The input must be a valid, endocded, and
+        :param str document_url: The URL of the document to analyze. The input must be a valid, encoded, and
             publicly accessible URL of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
         :keyword str pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
             and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
