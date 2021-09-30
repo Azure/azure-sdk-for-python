@@ -28,11 +28,17 @@ if TYPE_CHECKING:
 
 
 class LogsQueryClient(object):
-    """LogsQueryClient
+    """LogsQueryClient. Use this client to collect and organize log and performance data from
+    monitored resources. Data from different sources such as platform logs from Azure services,
+    log and performance data from virtual machines agents, and usage and performance data from
+    apps can be consolidated into a single Azure Log Analytics workspace.
+
+    The various data types can be analyzed together using the
+    [Kusto Query Language](https://docs.microsoft.com/azure/data-explorer/kusto/query/)
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/sample_log_query_client.py
+    .. literalinclude:: ../samples/sample_single_logs_query.py
         :start-after: [START client_auth_with_token_cred]
         :end-before: [END client_auth_with_token_cred]
         :language: python
@@ -60,9 +66,9 @@ class LogsQueryClient(object):
     @distributed_trace
     def query_workspace(self, workspace_id, query, **kwargs):
         # type: (str, str, Any) -> Union[LogsQueryResult, LogsQueryPartialResult]
-        """Execute an Analytics query.
+        """Execute a Kusto query.
 
-        Executes an Analytics query for data.
+        Executes a Kusto query for data.
 
         :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
          Azure portal.
@@ -83,13 +89,13 @@ class LogsQueryClient(object):
         :keyword additional_workspaces: A list of workspaces that are included in the query.
          These can be qualified workspace names, workspace Ids, or Azure resource Ids.
         :paramtype additional_workspaces: list[str]
-        :return: LogsQueryResult, or the result of cls(response)
+        :return: LogsQueryResult if there is a success or LogsQueryPartialResult when there is a partial success.
         :rtype: Union[~azure.monitor.query.LogsQueryResult, ~azure.monitor.query.LogsQueryPartialResult]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
 
-        .. literalinclude:: ../samples/sample_log_query_client.py
+        .. literalinclude:: ../samples/sample_single_logs_query.py
             :start-after: [START send_logs_query]
             :end-before: [END send_logs_query]
             :language: python
@@ -131,7 +137,7 @@ class LogsQueryClient(object):
             response = LogsQueryPartialResult._from_generated( # pylint: disable=protected-access
                 generated_response, LogsQueryError
             )
-        return response
+        return cast(Union[LogsQueryResult, LogsQueryPartialResult], response)
 
     @distributed_trace
     def query_batch(
@@ -140,14 +146,17 @@ class LogsQueryClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[LogsQueryResult, LogsQueryPartialResult, LogsQueryError]]
-        """Execute a list of analytics queries. Each request can be either a LogQueryRequest
+        """Execute a list of Kusto queries. Each request can be either a LogsBatchQuery
         object or an equivalent serialized model.
 
-        The response is returned in the same order as that of the requests sent.
+        **NOTE**: The response is returned in the same order as that of the requests sent.
 
         :param queries: The list of Kusto queries to execute.
         :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQuery]
-        :return: List of LogsQueryResult, or the result of cls(response)
+        :return: List of LogsQueryResult, LogsQueryPartialResult and LogsQueryError.
+         For a given query, a LogsQueryResult is returned if the response is a success, LogsQueryPartialResult
+         is returned when there is a partial success and a LogsQueryError is returned when there is a failure.
+         The status of each response can be checked using `LogsQueryStatus` enum.
         :rtype: list[Union[~azure.monitor.query.LogsQueryResult, ~azure.monitor.query.LogsQueryPartialResult,
          ~azure.monitor.query.LogsQueryError]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -162,7 +171,7 @@ class LogsQueryClient(object):
             :caption: Get a response for multiple Log Queries.
         """
         try:
-            queries = [LogsBatchQuery(**q) for q in queries]
+            queries = [LogsBatchQuery(**cast(Dict, q)) for q in queries]
         except (KeyError, TypeError):
             pass
         queries = [
@@ -174,7 +183,7 @@ class LogsQueryClient(object):
             request_order = [req["id"] for req in queries]
         batch = BatchRequest(requests=queries)
         generated = self._query_op.batch(batch, **kwargs)
-        mapping = {item.id: item for item in generated.responses}
+        mapping = {item.id: item for item in generated.responses} # type: ignore
         return order_results(
             request_order,
             mapping,

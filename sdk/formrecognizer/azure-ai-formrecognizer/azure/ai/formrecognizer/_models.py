@@ -8,7 +8,7 @@
 
 from enum import Enum
 from collections import namedtuple
-from ._generated.models import ModelInfo, Error
+from ._generated.v2021_09_30_preview.models import ModelInfo, Error
 from ._helpers import (
     adjust_value_type,
     adjust_confidence,
@@ -1730,15 +1730,6 @@ class FormRecognizerError(object):
             else []
         )
 
-    @classmethod
-    def _from_generated_v3(cls, err):
-        if err.innererror:
-            return cls(
-                code=err.innererror.code,
-                message=err.innererror.message,
-            )
-        return cls(code=err.code, message=err.message)
-
     def __repr__(self):
         return "FormRecognizerError(code={}, message={})".format(
             self.code, self.message
@@ -2080,7 +2071,8 @@ class BoundingRegion(object):
     :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
         A list of 4 points representing the quadrilateral bounding box
         that outlines the text. The points are listed in clockwise
-        order: top-left, top-right, bottom-right, bottom-left.
+        order relative to the text orientation: top-left, top-right,
+        bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF.
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
@@ -2598,8 +2590,12 @@ class DocumentKeyValuePair(object):
     @classmethod
     def _from_generated(cls, key_value_pair):
         return cls(
-            key=DocumentKeyValueElement._from_generated(key_value_pair.key),
-            value=DocumentKeyValueElement._from_generated(key_value_pair.value),
+            key=DocumentKeyValueElement._from_generated(key_value_pair.key)
+            if key_value_pair.key
+            else None,
+            value=DocumentKeyValueElement._from_generated(key_value_pair.value)
+            if key_value_pair.value
+            else None,
             confidence=key_value_pair.confidence,
         )
 
@@ -2875,7 +2871,9 @@ class DocumentSelectionMark(DocumentElement):
         return cls(
             state=mark.state,
             bounding_box=get_bounding_box(mark),
-            span=DocumentSpan._from_generated(mark.span),
+            span=DocumentSpan._from_generated(mark.span)
+            if mark.span
+            else None,
             confidence=mark.confidence,
         )
 
@@ -3320,9 +3318,9 @@ class ModelOperation(ModelOperationInfo):
     :vartype kind: str
     :ivar resource_location: URL of the resource targeted by this operation.
     :vartype resource_location: str
-    :ivar error: Encountered error, includes the error code and message for why
+    :ivar error: Encountered error, includes the error code, message, and details for why
         the operation failed.
-    :vartype error: ~azure.ai.formrecognizer.FormRecognizerError
+    :vartype error: ~azure.ai.formrecognizer.DocumentAnalysisError
     :ivar result: Operation result upon success. Returns a DocumentModel which contains
         all information about the model including the doc types
         and fields it can analyze from documents.
@@ -3387,7 +3385,7 @@ class ModelOperation(ModelOperationInfo):
             kind=data.get("kind", None),
             resource_location=data.get("resource_location", None),
             result=DocumentModel.from_dict(data.get("result")) if data.get("result") else None,  # type: ignore
-            error=FormRecognizerError.from_dict(data.get("error")) if data.get("error") else None,  # type: ignore
+            error=DocumentAnalysisError.from_dict(data.get("error")) if data.get("error") else None,  # type: ignore
         )
 
     @classmethod
@@ -3403,7 +3401,7 @@ class ModelOperation(ModelOperationInfo):
             resource_location=op.resource_location,
             result=DocumentModel._from_generated(deserialize(ModelInfo, op.result))
             if op.result else None,
-            error=FormRecognizerError._from_generated_v3(deserialize(Error, op.error))
+            error=DocumentAnalysisError._from_generated(deserialize(Error, op.error))
             if op.error else None
         )
 
@@ -3433,7 +3431,9 @@ class DocumentWord(DocumentElement):
         return cls(
             content=word.content,
             bounding_box=get_bounding_box(word),
-            span=DocumentSpan._from_generated(word.span),
+            span=DocumentSpan._from_generated(word.span)
+            if word.span
+            else None,
             confidence=word.confidence,
         )
 
@@ -3525,7 +3525,9 @@ class AnalyzeResult(object):
             api_version=response.api_version,
             model_id=response.model_id,
             content=response.content,
-            pages=[DocumentPage._from_generated(page) for page in response.pages],
+            pages=[DocumentPage._from_generated(page) for page in response.pages]
+            if response.pages
+            else [],
             tables=[DocumentTable._from_generated(table) for table in response.tables]
             if response.tables
             else [],
@@ -3887,4 +3889,151 @@ class AccountInfo(object):
         return cls(
             model_count=data.get("model_count", None),
             model_limit=data.get("model_limit", None),
+        )
+
+
+class DocumentAnalysisError(object):
+    """DocumentAnalysisError contains the details of the error returned by the service.
+
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message.
+    :vartype message: str
+    :ivar target: Target of the error.
+    :vartype target: str
+    :ivar details: List of detailed errors.
+    :vartype details: list[~azure.ai.formrecognizer.DocumentAnalysisError]
+    :ivar innererror: Detailed error.
+    :vartype innererror: ~azure.ai.formrecognizer.DocumentAnalysisInnerError
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.target = kwargs.get('target', None)
+        self.details = kwargs.get('details', None)
+        self.innererror = kwargs.get('innererror', None)
+
+    def __repr__(self):
+        return (
+            "DocumentAnalysisError(code={}, message={}, target={}, details={}, innererror={})".format(
+                self.code,
+                self.message,
+                self.target,
+                repr(self.details),
+                repr(self.innererror)
+            )
+        )
+
+    @classmethod
+    def _from_generated(cls, err):
+        return cls(
+            code=err.code,
+            message=err.message,
+            target=err.target,
+            details=[DocumentAnalysisError._from_generated(e) for e in err.details] if err.details else [],
+            innererror=DocumentAnalysisInnerError._from_generated(err.innererror) if err.innererror else None
+        )
+
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of DocumentAnalysisError.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "code": self.code,
+            "message": self.message,
+            "target": self.target,
+            "details": [detail.to_dict() for detail in self.details] if self.details else [],
+            "innererror": self.innererror.to_dict() if self.innererror else None
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> DocumentAnalysisError
+        """Converts a dict in the shape of a DocumentAnalysisError to the model itself.
+
+        :param dict data: A dictionary in the shape of DocumentAnalysisError.
+        :return: DocumentAnalysisError
+        :rtype: DocumentAnalysisError
+        """
+        return cls(
+            code=data.get("code", None),
+            message=data.get("message", None),
+            target=data.get("target", None),
+            details=[DocumentAnalysisError.from_dict(e) for e in data.get("details")]  # type: ignore
+            if data.get("details") else [],
+            innererror=DocumentAnalysisInnerError.from_dict(data.get("innererror"))  # type: ignore
+            if data.get("innererror") else None
+        )
+
+
+class DocumentAnalysisInnerError(object):
+    """Inner error details for the DocumentAnalysisError.
+
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message.
+    :ivar innererror: Detailed error.
+    :vartype innererror: ~azure.ai.formrecognizer.DocumentAnalysisInnerError
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.innererror = kwargs.get('innererror', None)
+
+    def __repr__(self):
+        return (
+            "DocumentAnalysisInnerError(code={}, message={}, innererror={})".format(
+                self.code,
+                self.message,
+                repr(self.innererror)
+            )
+        )
+
+    @classmethod
+    def _from_generated(cls, ierr):
+        return cls(
+            code=ierr.code,
+            message=ierr.message,
+            innererror=DocumentAnalysisInnerError._from_generated(ierr.innererror) if ierr.innererror else None
+        )
+
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of DocumentAnalysisInnerError.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "code": self.code,
+            "message": self.message,
+            "innererror": self.innererror.to_dict() if self.innererror else None
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> DocumentAnalysisInnerError
+        """Converts a dict in the shape of a DocumentAnalysisInnerError to the model itself.
+
+        :param dict data: A dictionary in the shape of DocumentAnalysisInnerError.
+        :return: DocumentAnalysisInnerError
+        :rtype: DocumentAnalysisInnerError
+        """
+        return cls(
+            code=data.get("code", None),
+            message=data.get("message", None),
+            innererror=DocumentAnalysisInnerError.from_dict(data.get("innererror"))  # type: ignore
+            if data.get("innererror") else None
         )

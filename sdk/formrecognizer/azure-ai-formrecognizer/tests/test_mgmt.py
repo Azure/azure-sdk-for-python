@@ -167,6 +167,7 @@ class TestManagement(FormRecognizerTest):
             error = op.error
             assert error.code
             assert error.message
+            assert error.details
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()

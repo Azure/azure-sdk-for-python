@@ -9,7 +9,8 @@ import functools
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import FormContentType, _models
 from azure.ai.formrecognizer.aio import FormRecognizerClient, FormTrainingClient, DocumentAnalysisClient, DocumentModelAdministrationClient
-from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult, AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
+from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer import AnalyzeResult
 from azure.ai.formrecognizer._response_handlers import prepare_form_result
 from preparers import FormRecognizerPreparer
@@ -38,14 +39,14 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    async def test_custom_form_unlabeled(self, client, formrecognizer_storage_container_sas_url):
+    async def test_custom_form_unlabeled(self, client, formrecognizer_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
 
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
 
         async with client:
-            training_poller = await client.begin_training(formrecognizer_storage_container_sas_url, use_training_labels=False)
+            training_poller = await client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
             model = await training_poller.result()
 
             async with fr_client:
@@ -56,13 +57,13 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    async def test_custom_form_multipage_unlabeled(self, client, formrecognizer_multipage_storage_container_sas_url):
+    async def test_custom_form_multipage_unlabeled(self, client, formrecognizer_multipage_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
         with open(self.multipage_invoice_pdf, "rb") as fd:
             myfile = fd.read()
 
         async with client:
-            training_poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url, use_training_labels=False)
+            training_poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=False)
             model = await training_poller.result()
 
             async with fr_client:
@@ -81,14 +82,14 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    async def test_custom_form_multipage_labeled(self, client, formrecognizer_multipage_storage_container_sas_url):
+    async def test_custom_form_multipage_labeled(self, client, formrecognizer_multipage_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
         with open(self.multipage_invoice_pdf, "rb") as fd:
             myfile = fd.read()
 
         async with client:
             training_poller = await client.begin_training(
-                formrecognizer_multipage_storage_container_sas_url,
+                formrecognizer_multipage_storage_container_sas_url_v2,
                 use_training_labels=True
             )
             model = await training_poller.result()
@@ -107,7 +108,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    async def test_custom_forms_multipage_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url):
+    async def test_custom_forms_multipage_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
 
         responses = []
@@ -122,7 +123,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
 
         async with client:
-            training_poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url, use_training_labels=False)
+            training_poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=False)
             model = await training_poller.result()
 
             async with fr_client:
@@ -243,13 +244,13 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @pytest.mark.live_test_only
-    async def test_custom_form_continuation_token(self, client, formrecognizer_storage_container_sas_url):
+    async def test_custom_form_continuation_token(self, client, formrecognizer_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
 
         async with client:
-            poller = await client.begin_training(formrecognizer_storage_container_sas_url, use_training_labels=False)
+            poller = await client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
             model = await poller.result()
 
             async with fr_client:
@@ -270,7 +271,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    async def test_custom_form_multipage_vendor_set_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2):
+    async def test_custom_form_multipage_vendor_set_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2_v2):
         fr_client = client.get_form_recognizer_client()
 
         responses = []
@@ -285,7 +286,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
 
         async with client:
-            poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_2, use_training_labels=False)
+            poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_2_v2, use_training_labels=False)
             model = await poller.result()
 
             async with fr_client:
@@ -311,7 +312,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    async def test_custom_form_multipage_vendor_set_labeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2):
+    async def test_custom_form_multipage_vendor_set_labeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2_v2):
         fr_client = client.get_form_recognizer_client()
 
         responses = []
@@ -326,7 +327,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             responses.append(form)
 
         async with client:
-            poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_2, use_training_labels=True)
+            poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_2_v2, use_training_labels=True)
             model = await poller.result()
 
             async with fr_client:
@@ -409,7 +410,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             model = await build_poller.result()
 
             async with fr_client:
-                poller = await fr_client.begin_analyze_document(model.model_id, myfile, pages=["1"])
+                poller = await fr_client.begin_analyze_document(model.model_id, myfile, pages="1")
                 assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
                 result = await poller.result()
                 assert result
