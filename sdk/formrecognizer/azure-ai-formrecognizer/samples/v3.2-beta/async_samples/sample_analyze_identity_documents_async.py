@@ -13,7 +13,7 @@ DESCRIPTION:
     This sample demonstrates how to analyze an identity document.
 
     See fields found on identity documents here:
-    https://aka.ms/formrecognizer/iddocumentfields
+    https://aka.ms/azsdk/formrecognizer/iddocumentfieldschema
 
 USAGE:
     python sample_analyze_identity_documents_async.py

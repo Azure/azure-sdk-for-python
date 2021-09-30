@@ -13,7 +13,7 @@ DESCRIPTION:
     This sample demonstrates how to analyze business cards.
 
     See fields found on a business card here:
-    https://aka.ms/formrecognizer/businesscardfields
+    https://aka.ms/azsdk/formrecognizer/businesscardfieldschema
 
 USAGE:
     python sample_analyze_business_cards.py
