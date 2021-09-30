@@ -20,7 +20,7 @@ autorest
 ### Settings
 
 ```yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/feature/cognitiveservices/language/specification/cognitiveservices/data-plane/Language/preview/2021-07-15-preview/questionanswering.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/68e7988aba481206f08019d3efb585683d5bc577/specification/cognitiveservices/data-plane/Language/preview/2021-07-15-preview/questionanswering.json
 output-folder: ../azure/ai/language/questionanswering
 namespace: azure.ai.language.questionanswering
 package-name: azure-ai-language-questionanswering
@@ -58,3 +58,65 @@ directive:
         $["operationId"] = "queryText";
 ```
 
+### Rename `KnowledgeBasedQueryOptions` -> `Options`
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["parameters"]["KnowledgeBaseQueryOptions"]
+    transform: >
+        $["x-ms-client-name"] = "Options";
+```
+
+### Rename `TextQueryOptions` -> `Options`
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["parameters"]["TextQueryOptions"]
+    transform: >
+        $["x-ms-client-name"] = "Options";
+```
+
+### Rename `KnowledgeBaseQueryOptions` -> `QueryKnowledgeBaseOptions`
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["KnowledgeBaseQueryOptions"]
+    transform: >
+        $["x-ms-client-name"] = "QueryKnowledgeBaseOptions";
+```
+
+### Rename `TextQueryOptions` -> `QueryTextOptions`
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["TextQueryOptions"]
+    transform: >
+        $["x-ms-client-name"] = "QueryTextOptions";
+```
+
+### Delete `StringIndexType`
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["TextQueryOptions"]
+    transform: >
+        delete $.properties["stringIndexType"]
+```
+
+### Make `MetadataFilter`'s `metadata` property a list of string
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+        delete $["MetadataFilter"]["properties"]["metadata"]["items"]["$ref"];
+        $["MetadataFilter"]["properties"]["metadata"]["items"]["type"] = "array";
+        $["MetadataFilter"]["properties"]["metadata"]["items"]["items"] = {"type": "string"};
+        delete $["MetadataRecord"];
+```

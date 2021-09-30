@@ -32,7 +32,7 @@ async def sample_query_text():
 
     client = QuestionAnsweringClient(endpoint, AzureKeyCredential(key))
     async with client:
-        input = qna.TextQueryOptions(
+        input = qna.QueryTextOptions(
             question="How long it takes to charge surface?",
             records=[
                 qna.TextRecord(

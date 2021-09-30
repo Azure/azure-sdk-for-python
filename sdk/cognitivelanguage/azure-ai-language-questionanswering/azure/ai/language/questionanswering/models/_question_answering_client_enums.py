@@ -11,13 +11,6 @@ from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CompoundOperationKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """(Optional) Set to 'OR' for joining metadata using 'OR' operation."""
-
-    AND_ENUM = "AND"
-    OR_ENUM = "OR"
-
-
 class ErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Human-readable error code."""
 
@@ -42,26 +35,15 @@ class InnerErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     EXTRACTION_FAILURE = "ExtractionFailure"
 
 
+class LogicalOperationKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Set to 'OR' or 'AND' for using corresponding logical operation."""
+
+    AND_ENUM = "AND"
+    OR_ENUM = "OR"
+
+
 class RankerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """(Optional) Set to 'QuestionOnly' for using a question only Ranker."""
 
     DEFAULT = "Default"
     QUESTION_ONLY = "QuestionOnly"
-
-
-class StringIndexType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Specifies the method used to interpret string offsets.  Defaults to Text Elements (Graphemes)
-    according to Unicode v8.0.0. For additional information see
-    https://aka.ms/text-analytics-offsets.
-    """
-
-    #: Returned offset and length values will correspond to TextElements (Graphemes and Grapheme
-    #: clusters) confirming to the Unicode 8.0.0 standard. Use this option if your application is
-    #: written in .Net Framework or .Net Core and you will be using StringInfo.
-    TEXT_ELEMENTS_V8 = "TextElements_v8"
-    #: Returned offset and length values will correspond to Unicode code points. Use this option if
-    #: your application is written in a language that support Unicode, for example Python.
-    UNICODE_CODE_POINT = "UnicodeCodePoint"
-    #: Returned offset and length values will correspond to UTF-16 code units. Use this option if your
-    #: application is written in a language that support Unicode, for example Java, JavaScript.
-    UTF16_CODE_UNIT = "Utf16CodeUnit"
