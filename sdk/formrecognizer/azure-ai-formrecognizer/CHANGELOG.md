@@ -1,6 +1,6 @@
 # Release History
 
-## 3.2.0b1 (Unreleased)
+## 3.2.0b1 (2021-10-05)
 
 This version of the SDK defaults to the latest supported API version, which currently is v2021-09-30-preview.
 
@@ -12,10 +12,6 @@ API version to analyze documents, with prebuilt and custom models.
 - Added new models to use with the new `DocumentModelAdministrationClient`: `DocumentModel`, `DocumentModelInfo`, `DocTypeInfo`, `ModelOperation`, `ModelOperationInfo`, `AccountInfo`.
 - Added samples using the `DocumentAnalysisClient` and `DocumentModelAdministrationClient` under `/samples/v3.2-beta`.
 - Added `DocumentAnalysisApiVersion` to be used with `DocumentAnalysisClient` and `DocumentModelAdministrationClient`.
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 - Python 3.5 is no longer supported in this release.
