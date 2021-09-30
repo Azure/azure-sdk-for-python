@@ -40,7 +40,7 @@ class QuestionAnsweringClientOperationsMixin:
     ) -> "_models.KnowledgeBaseAnswers":
         """Answers the specified question using your knowledge base.
 
-        :param options: Positional-only post body of the request.
+        :param options: Positional-only POST body of the request.
         :type options:
          ~azure.ai.language.questionanswering.models.QueryKnowledgeBaseOptions
         :keyword project_name: The name of the project to use.
@@ -112,7 +112,7 @@ class QuestionAnsweringClientOperationsMixin:
     ) -> "_models.KnowledgeBaseAnswers":
         """Answers the specified question using your knowledge base.
 
-        :param options: Post body of the request. Provide either `options`, OR
+        :param options: POST body of the request. Provide either `options`, OR
          individual keyword arguments. If both are provided, only the options object will be used.
         :type options:
          ~azure.ai.language.questionanswering.models.QueryKnowledgeBaseOptions
@@ -201,7 +201,7 @@ class QuestionAnsweringClientOperationsMixin:
     async def query_text(self, options: "_models.QueryTextOptions", **kwargs: Any) -> "_models.TextAnswers":
         """Answers the specified question using the provided text in the body.
 
-        :param options: Positional-only post body of the request.
+        :param options: Positional-only POST body of the request.
         :type options: ~azure.ai.language.questionanswering.models.QueryTextOptions
         :return: TextAnswers
         :rtype: ~azure.ai.language.questionanswering.models.TextAnswers
@@ -239,7 +239,7 @@ class QuestionAnsweringClientOperationsMixin:
     ) -> "_models.TextAnswers":
         """Answers the specified question using the provided text in the body.
 
-        :param options: Post body of the request. Provide either `options`, OR
+        :param options: POST body of the request. Provide either `options`, OR
          individual keyword arguments. If both are provided, only the options object will be used.
         :type options: ~azure.ai.language.questionanswering.models.QueryTextOptions
         :keyword question: User question to query against the given text records. Provide either `options`, OR
