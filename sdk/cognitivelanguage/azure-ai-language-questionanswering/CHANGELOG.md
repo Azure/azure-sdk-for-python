@@ -12,16 +12,13 @@
 * The filters model `StrictFilters` is renamed to `QueryFilters`
 * Enum `CompoundOperationKind` is renamed to `LogicalOperationKind`
 * We have removed the `string_index_type` input to all models and operations. We have also removed the `StringIndexType` enum.
-* The type of input `metadata` to `MetadataFilter` has changed from a dictionary of strings to a list of key-value tuples.
-For example, the input has changed from `{"key": "value"}` to `[("key", "value")]`.
-* The input to the `query_knowledge_base` and `query_text` overloads that take in a positional model for the body should be
-considered positional only.
+* The type of input `metadata` to `MetadataFilter` has changed from a dictionary of strings to a list of key-value tuples. For example, the input has changed from `{"key": "value"}` to `[("key", "value")]`.
+* The input to the `query_knowledge_base` and `query_text` overloads that take in a positional model for the body should be considered positional only.
 
 ### Features Added
 
 * The method `QuestionAnsweringClient.query_text` now supports a list of records as strings, where the ID value will be automatically populated.
-* Added keyword argument `default_language` onto `QuestionAnsweringClient`, which has default value `'en'`. The default language for any operation call will
-be this default language value.
+* Added keyword argument `default_language` onto `QuestionAnsweringClient`, which has default value `'en'`. The default language for any operation call will be this default language value.
 
 
 ## 1.0.0b1 (2021-07-27)
