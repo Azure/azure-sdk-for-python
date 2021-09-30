@@ -18,7 +18,6 @@ try:
     from ._models_py3 import KnowledgeBaseAnswerRequestContext
     from ._models_py3 import KnowledgeBaseAnswers
     from ._models_py3 import MetadataFilter
-    from ._models_py3 import MetadataRecord
     from ._models_py3 import QueryFilters
     from ._models_py3 import QueryKnowledgeBaseOptions
     from ._models_py3 import QueryTextOptions
@@ -37,7 +36,6 @@ except (SyntaxError, ImportError):
     from ._models import KnowledgeBaseAnswerRequestContext  # type: ignore
     from ._models import KnowledgeBaseAnswers  # type: ignore
     from ._models import MetadataFilter  # type: ignore
-    from ._models import MetadataRecord  # type: ignore
     from ._models import QueryFilters  # type: ignore
     from ._models import QueryKnowledgeBaseOptions  # type: ignore
     from ._models import QueryTextOptions  # type: ignore
@@ -64,7 +62,6 @@ __all__ = [
     "KnowledgeBaseAnswerRequestContext",
     "KnowledgeBaseAnswers",
     "MetadataFilter",
-    "MetadataRecord",
     "QueryFilters",
     "QueryKnowledgeBaseOptions",
     "QueryTextOptions",

@@ -107,3 +107,15 @@ directive:
     transform: >
         delete $.properties["stringIndexType"]
 ```
+
+### Make `MetadataFilter`'s `metadata` property a list of string
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+        delete $["MetadataFilter"]["properties"]["metadata"]["items"]["$ref"];
+        $["MetadataFilter"]["properties"]["metadata"]["items"]["type"] = "string";
+        delete $["MetadataRecord"];
+```

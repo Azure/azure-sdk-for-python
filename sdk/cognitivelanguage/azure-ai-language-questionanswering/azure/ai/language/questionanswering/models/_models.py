@@ -421,7 +421,7 @@ class MetadataFilter(msrest.serialization.Model):
     """Find QnAs that are associated with the given list of metadata.
 
     :ivar metadata:
-    :vartype metadata: list[~azure.ai.language.questionanswering.models.MetadataRecord]
+    :vartype metadata: list[tuple[str]]
     :ivar logical_operation: Operation used to join metadata filters. Possible values include:
      "AND", "OR".
     :vartype logical_operation: str or
@@ -429,14 +429,14 @@ class MetadataFilter(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "metadata": {"key": "metadata", "type": "[MetadataRecord]"},
+        "metadata": {"key": "metadata", "type": "[[str]]"},
         "logical_operation": {"key": "logicalOperation", "type": "str"},
     }
 
     def __init__(self, **kwargs):
         """
         :keyword metadata:
-        :paramtype metadata: list[~azure.ai.language.questionanswering.models.MetadataRecord]
+        :paramtype metadata: list[tuple[str]]
         :keyword logical_operation: Operation used to join metadata filters. Possible values include:
          "AND", "OR".
         :paramtype logical_operation: str or
@@ -445,39 +445,6 @@ class MetadataFilter(msrest.serialization.Model):
         super(MetadataFilter, self).__init__(**kwargs)
         self.metadata = kwargs.get("metadata", None)
         self.logical_operation = kwargs.get("logical_operation", None)
-
-
-class MetadataRecord(msrest.serialization.Model):
-    """Object to provide the key value pair for each metadata.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar key: Required. Metadata Key from Metadata dictionary used in the QnA.
-    :vartype key: str
-    :ivar value: Required. Metadata Value from Metadata dictionary used in the QnA.
-    :vartype value: str
-    """
-
-    _validation = {
-        "key": {"required": True},
-        "value": {"required": True},
-    }
-
-    _attribute_map = {
-        "key": {"key": "key", "type": "str"},
-        "value": {"key": "value", "type": "str"},
-    }
-
-    def __init__(self, **kwargs):
-        """
-        :keyword key: Required. Metadata Key from Metadata dictionary used in the QnA.
-        :paramtype key: str
-        :keyword value: Required. Metadata Value from Metadata dictionary used in the QnA.
-        :paramtype value: str
-        """
-        super(MetadataRecord, self).__init__(**kwargs)
-        self.key = kwargs["key"]
-        self.value = kwargs["value"]
 
 
 class QueryFilters(msrest.serialization.Model):
