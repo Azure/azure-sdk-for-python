@@ -7,8 +7,6 @@ from typing import TYPE_CHECKING
 
 from six.moves.urllib_parse import urlparse
 
-from azure.core.exceptions import ClientAuthenticationError
-
 from .._constants import EnvironmentVariables, KnownAuthorities
 
 if TYPE_CHECKING:
