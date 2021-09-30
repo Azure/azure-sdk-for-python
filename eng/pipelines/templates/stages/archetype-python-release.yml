@@ -147,7 +147,7 @@ stages:
                   displayName: Docs.MS Release
                   condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
                   environment: githubio
-                  dependsOn: PublishPackage
+                  #dependsOn: PublishPackage
 
                   pool:
                     name: azsdk-pool-mms-ubuntu-2004-general
