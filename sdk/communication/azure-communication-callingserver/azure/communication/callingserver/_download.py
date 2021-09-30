@@ -352,8 +352,6 @@ class ContentStreamDownloader():  # pylint: disable=too-many-instance-attributes
                 raise ValueError(error_message) from ex
 
         # Write the content to the user stream
-        # current_content = await self._current_content.read()
-
         stream.write(self._current_content)
         if self._download_complete:
             return self.size
