@@ -39,7 +39,7 @@ This table shows the relationship between SDK versions and supported API version
 |3.0.0| 2.0
 
 > Note: Starting with version 2021-09-30-preview, a new set of clients were introduced to leverage the newest features
-> of the Form Recognizer service. Please see the [Migration Guide](TODO) for detailed instructions on how to update application
+> of the Form Recognizer service. Please see the Migration Guide for detailed instructions on how to update application
 > code from client library version 3.1.X or lower to the latest version. Additionally, see the [Changelog][changelog] for more detailed information.
 > The below table describes the relationship of each client and its supported API version(s):
 
