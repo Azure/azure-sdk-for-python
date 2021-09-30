@@ -1,8 +1,6 @@
 # Release History
 
-## 1.19.0 (Unreleased)
-
-### Features Added
+## 1.19.0 (2021-09-30)
 
 ### Breaking Changes in the Provisional `azure.core.rest` package
 
@@ -11,10 +9,6 @@ your transport responses should inherit from them and implement them.
 - The properties of the `azure.core.rest` responses are now all read-only
 
 - HttpLoggingPolicy integrates logs into one record #19925
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.18.0 (2021-09-02)
 
