@@ -202,17 +202,17 @@ class SearchClient(HeadersMixin):
         :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
         :keyword query_speller: A value that specified the type of the speller to use to spell-correct
          individual search query terms. Possible values include: "none", "lexicon".
-        :paramtype query_speller: str or ~azure.search.documents.models.Speller
+        :paramtype query_speller: str or ~azure.search.documents.models.QuerySpellerType
         :keyword query_answer: This parameter is only valid if the query type is 'semantic'. If set,
          the query returns answers extracted from key passages in the highest ranked documents.
          Possible values include: "none", "extractive".
-        :paramtype query_answer: str or ~azure.search.documents.models.Answers
+        :paramtype query_answer: str or ~azure.search.documents.models.QueryAnswerType
         :keyword int query_answer_count: This parameter is only valid if the query type is 'semantic' and
          query answer is 'extractive'. Configures the number of answers returned. Default count is 1.
         :keyword query_caption: This parameter is only valid if the query type is 'semantic'. If set, the
          query returns captions extracted from key passages in the highest ranked documents.
          Defaults to 'None'. Possible values include: "none", "extractive".
-        :paramtype query_caption: str or ~azure.search.documents.models.Captions
+        :paramtype query_caption: str or ~azure.search.documents.models.QueryCaptionType
         :keyword bool query_caption_highlight: This parameter is only valid if the query type is 'semantic' when
          query caption is set to 'extractive'. Determines whether highlighting is enabled.
          Defaults to 'true'.
