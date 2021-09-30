@@ -2071,7 +2071,8 @@ class BoundingRegion(object):
     :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
         A list of 4 points representing the quadrilateral bounding box
         that outlines the text. The points are listed in clockwise
-        order: top-left, top-right, bottom-right, bottom-left.
+        order relative to the text orientation: top-left, top-right,
+        bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF.
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
