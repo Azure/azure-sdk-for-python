@@ -19,6 +19,9 @@ from azure.ai.language.questionanswering.models import (
     QueryKnowledgeBaseOptions,
     KnowledgeBaseAnswerRequestContext,
     AnswerSpanRequest,
+    MetadataFilter,
+    LogicalOperationKind,
+    QueryFilters,
 )
 
 
@@ -358,7 +361,7 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
             with pytest.raises(TypeError):
                 client.query_knowledge_base("positional_options_bag", options="options bag by name")
 
-    def test_query_knowledge_question_or_qna_id(self):
+    def test_query_knowledgebase_question_or_qna_id(self):
         with QuestionAnsweringClient("http://fake.com", AzureKeyCredential("123")) as client:
 
             options = QueryKnowledgeBaseOptions()
@@ -374,3 +377,31 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
                     project_name="hello",
                     deployment_name='test'
                 )
+
+    @GlobalQuestionAnsweringAccountPreparer()
+    def test_query_knowledgebase_filter(self, qna_account, qna_key, qna_project):
+        """Thanks to @heaths for this test!"""
+        filters = QueryFilters(
+            metadata_filter=MetadataFilter(
+                metadata=[
+                    ("explicitlytaggedheading", "check the battery level"),
+                    ("explicitlytaggedheading", "make your battery last")
+                ],
+            ),
+            logical_operation=LogicalOperationKind.OR_ENUM
+        )
+        with QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key)) as client:
+            response = client.query_knowledge_base(
+                project_name=qna_project,
+                deployment_name='test',
+                question="Battery life",
+                filters=filters,
+                top=3,
+            )
+            assert len(response.answers) == 3
+            assert any(
+                [a for a in response.answers if a.metadata.get('explicitlytaggedheading') == "check the battery level"]
+            )
+            assert any(
+                [a for a in response.answers if a.metadata.get('explicitlytaggedheading') == "make your battery last"]
+            )
