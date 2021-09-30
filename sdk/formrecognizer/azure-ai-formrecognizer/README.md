@@ -518,10 +518,10 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
-[service_recognize_receipt]: https://aka.ms/formrecognizer/receiptfields
-[service_recognize_business_cards]: https://aka.ms/formrecognizer/businesscardfields
-[service_recognize_invoice]: https://aka.ms/formrecognizer/invoicefields
-[service_recognize_identity_documents]: https://aka.ms/formrecognizer/iddocumentfields
+[service_recognize_receipt]: https://aka.ms/azsdk/formrecognizer/receiptfieldschema
+[service_recognize_business_cards]: https://aka.ms/azsdk/formrecognizer/businesscardfieldschema
+[service_recognize_invoice]: https://aka.ms/azsdk/formrecognizer/invoicefieldschema
+[service_recognize_identity_documents]: https://aka.ms/azsdk/formrecognizer/iddocumentfieldschema
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
 [sample_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples
 [changelog]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/CHANGELOG.md
