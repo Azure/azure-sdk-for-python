@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_document.py
+FILE: sample_analyze_general_document.py
 
 DESCRIPTION:
     This sample demonstrates how to extract general document information from a document
     given through a file.
 
 USAGE:
-    python sample_analyze_document.py
+    python sample_analyze_general_document.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
