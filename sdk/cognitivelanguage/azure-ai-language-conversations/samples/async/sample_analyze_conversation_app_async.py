@@ -22,6 +22,8 @@ USAGE:
     4) AZURE_CONVERSATIONS_WORKFLOW_PROJECT - the name of your CLU workflow project.
 """
 
+import asyncio
+
 async def sample_analyze_conversation_app_async():
     # [START analyze_conversation_app_async]
     # import libraries
@@ -51,22 +53,25 @@ async def sample_analyze_conversation_app_async():
             deployment_name='production'
         )
     
-    # view result
-    print("query: {}".format(result.query))
-    print("project kind: {}\n".format(result.prediction.project_kind))
+        # view result
+        print("query: {}".format(result.query))
+        print("project kind: {}\n".format(result.prediction.project_kind))
 
-    print("view top intent:")
-    print("top intent: {}".format(result.prediction.top_intent))
-    print("\tcategory: {}".format(result.prediction.intents[0].category))
-    print("\tconfidence score: {}\n".format(result.prediction.intents[0].confidence_score))
+        print("view top intent:")
+        print("top intent: {}".format(result.prediction.top_intent))
+        print("\tcategory: {}".format(result.prediction.intents[0].category))
+        print("\tconfidence score: {}\n".format(result.prediction.intents[0].confidence_score))
 
-    print("view entities:")
-    for entity in result.prediction.entities:
-        print("\tcategory: {}".format(entity.category))
-        print("\ttext: {}".format(entity.text))
-        print("\tconfidence score: {}".format(entity.confidence_score))
+        print("view entities:")
+        for entity in result.prediction.entities:
+            print("\tcategory: {}".format(entity.category))
+            print("\ttext: {}".format(entity.text))
+            print("\tconfidence score: {}".format(entity.confidence_score))
     # [END analyze_conversation_app_async]
-    
-    
+
+async def main():
+    await sample_analyze_conversation_app_async()
+
 if __name__ == '__main__':
-    sample_analyze_conversation_app_async()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

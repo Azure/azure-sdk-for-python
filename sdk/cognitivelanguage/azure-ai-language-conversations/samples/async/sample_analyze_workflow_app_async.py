@@ -5,7 +5,7 @@
 # ------------------------------------
 
 """
-FILE: sample_analyze_workflow_appasync.py
+FILE: sample_analyze_workflow_app_async.py
 
 DESCRIPTION:
     This sample demonstrates how to analyze user query using an orchestration/workflow project.
@@ -14,7 +14,7 @@ DESCRIPTION:
     For more info about how to setup a CLU workflow project, see the README.
 
 USAGE:
-    python sample_analyze_workflow_appasync.py
+    python sample_analyze_workflow_app_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_CONVERSATIONS_ENDPOINT - the endpoint to your CLU resource.
@@ -22,7 +22,9 @@ USAGE:
     3) AZURE_CONVERSATIONS_WORKFLOW_PROJECT - the name of your CLU workflow project.
 """
 
-async def sample_analyze_workflow_app():
+import asyncio
+
+async def sample_analyze_workflow_app_async():
     # [START analyze_workflow_app]
     # import libraries
     import os
@@ -51,18 +53,22 @@ async def sample_analyze_workflow_app():
             deployment_name='production',
         )
     
-    # view result
-    print("query: {}".format(result.query))
-    print("project kind: {}\n".format(result.prediction.project_kind))
+        # view result
+        print("query: {}".format(result.query))
+        print("project kind: {}\n".format(result.prediction.project_kind))
 
-    print("view top intent:")
-    print("top intent: {}".format(result.prediction.top_intent))
-    print("\tcategory: {}".format(result.prediction.intents[0].category))
-    print("\tconfidence score: {}\n".format(result.prediction.intents[0].confidence_score))
+        print("view top intent:")
+        print("top intent: {}".format(result.prediction.top_intent))
+        print("\tcategory: {}".format(result.prediction.intents[0].category))
+        print("\tconfidence score: {}\n".format(result.prediction.intents[0].confidence_score))
 
-    print("view qna result:")
-    print("\tresult: {}\n".format(result.prediction.intents[0].result))
+        print("view qna result:")
+        print("\tresult: {}\n".format(result.prediction.intents[0].result))
     # [START analyze_workflow_app]
 
+async def main():
+    await sample_analyze_workflow_app_async()
+
 if __name__ == '__main__':
-    sample_analyze_workflow_app()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

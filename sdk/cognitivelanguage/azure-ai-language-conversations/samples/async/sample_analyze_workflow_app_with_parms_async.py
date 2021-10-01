@@ -5,17 +5,16 @@
 # ------------------------------------
 
 """
-FILE: sample_analyze_workflow_app_directasync.py
+FILE: sample_analyze_workflow_app_with_parms_async.py
 
 DESCRIPTION:
     This sample demonstrates how to analyze user query using an orchestration/workflow project.
-    In this sample, we direct the orchestrator project to use a specifc subproject using the "direct_target" parameter.
-    The "direct_target" in our case will be a Qna project.
+    In this sample, worflow project's top intent will map to a Qna project.
     
     For more info about how to setup a CLU workflow project, see the README.
 
 USAGE:
-    python sample_analyze_workflow_app_directasync.py
+    python sample_analyze_workflow_app_with_parms_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_CONVERSATIONS_ENDPOINT - the endpoint to your CLU resource.
@@ -23,8 +22,10 @@ USAGE:
     3) AZURE_CONVERSATIONS_WORKFLOW_PROJECT - the name of your CLU workflow project.
 """
 
-async def sample_analyze_workflow_app_direct():
-    # [START analyze_workflow_app_direct]
+import asyncio
+
+async def sample_analyze_workflow_app_with_parms_async():
+    # [START analyze_workflow_app_with_parms]
     # import libraries
     import os
     from azure.core.credentials import AzureKeyCredential
@@ -39,16 +40,19 @@ async def sample_analyze_workflow_app_direct():
 
     # prepare data
     query = "How do you make sushi rice?",
-    target_intent = "SushiMaking"
     input = AnalyzeConversationOptions(
         query=query,
-        direct_target=target_intent,
         parameters={
             "SushiMaking": QuestionAnsweringParameters(
                 calling_options={
                     "question": query,
                     "top": 1,
                     "confidenceScoreThreshold": 0.1
+                }
+            ),
+            "SushiOrder": DeepstackParameters(
+                calling_options={
+                    "verbose": True
                 }
             )
         }
@@ -63,19 +67,23 @@ async def sample_analyze_workflow_app_direct():
             deployment_name='production',
         )
     
-    # view result
-    print("query: {}".format(result.query))
-    print("project kind: {}\n".format(result.prediction.project_kind))
+        # view result
+        print("query: {}".format(result.query))
+        print("project kind: {}\n".format(result.prediction.project_kind))
 
-    print("view top intent:")
-    print("top intent: {}".format(result.prediction.top_intent))
-    print("\tcategory: {}".format(result.prediction.intents[0].category))
-    print("\tconfidence score: {}\n".format(result.prediction.intents[0].confidence_score))
+        print("view top intent:")
+        print("top intent: {}".format(result.prediction.top_intent))
+        print("\tcategory: {}".format(result.prediction.intents[0].category))
+        print("\tconfidence score: {}\n".format(result.prediction.intents[0].confidence_score))
 
-    print("view qna result:")
-    print("\tresult: {}\n".format(result.prediction.intents[0].result))
-    # [START analyze_workflow_app_direct]
+        print("view qna result:")
+        print("\tresult: {}\n".format(result.prediction.intents[0].result))
+    # [START analyze_workflow_app_with_parms]
 
+
+async def main():
+    await sample_analyze_workflow_app_with_parms_async()
 
 if __name__ == '__main__':
-    sample_analyze_workflow_app_direct()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
