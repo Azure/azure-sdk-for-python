@@ -11,6 +11,10 @@ Conversational Language Understanding, aka LUIS vNext and **CLU** for short, is 
 
 [Source code][conversationallanguage_client_src] | [Package (PyPI)][conversationallanguage_pypi_package] | [API reference documentation][conversationallanguage_refdocs] | [Product documentation][conversationallanguage_docs] | [Samples][conversationallanguage_samples]
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 
 ## Getting started
 
