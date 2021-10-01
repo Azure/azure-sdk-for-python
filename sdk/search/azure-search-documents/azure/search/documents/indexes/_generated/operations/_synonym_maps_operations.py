@@ -300,7 +300,7 @@ class SynonymMapsOperations(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
@@ -372,7 +372,7 @@ class SynonymMapsOperations(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204, 404]:
@@ -426,7 +426,7 @@ class SynonymMapsOperations(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -486,7 +486,7 @@ class SynonymMapsOperations(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -548,7 +548,7 @@ class SynonymMapsOperations(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
