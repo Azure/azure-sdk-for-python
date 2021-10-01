@@ -69,14 +69,15 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
     packages=find_packages(exclude=[
         'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
-        'azure',
         'azure.ai',
+        'azure.ai.language',
     ]),
     install_requires=[
         "azure-core<2.0.0,>=1.19.0",
@@ -85,7 +86,11 @@ setup(
         'six>=1.11.0',
     ],
     extras_require={
-        ":python_version<'3.0'": ['azure-ai-nspkg'],
+        ":python_version<'3.0'": ['azure-ai-language-nspkg'],
         ":python_version<'3.5'": ['typing'],
+    },
+    project_urls={
+        'Bug Reports': 'https://github.com/Azure/azure-sdk-for-python/issues',
+        'Source': 'https://github.com/Azure/azure-sdk-python',
     }
 )
