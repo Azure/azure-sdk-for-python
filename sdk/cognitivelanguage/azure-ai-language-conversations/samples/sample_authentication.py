@@ -50,7 +50,7 @@ def sample_authentication_api_key():
 
 
 def sample_authentication_with_azure_active_directory():
-    # [START create_dt_client_with_aad]
+    # [START create_clu_client_with_aad]
     """DefaultAzureCredential will use the values from these environment
     variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
     """
@@ -61,7 +61,7 @@ def sample_authentication_with_azure_active_directory():
     credential = DefaultAzureCredential()
 
     clu_client = ConversationAnalysisClient(endpoint, credential)
-    # [END create_dt_client_with_aad]
+    # [END create_clu_client_with_aad]
 
 
 if __name__ == '__main__':

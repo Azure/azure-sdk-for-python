@@ -19,11 +19,10 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_CONVERSATIONS_ENDPOINT - the endpoint to your CLU resource.
     2) AZURE_CONVERSATIONS_KEY - your CLU API key.
-    3) AZURE_CONVERSATIONS_PROJECT - the name of your CLU conversations project.
-    4) AZURE_CONVERSATIONS_WORKFLOW_PROJECT - the name of your CLU workflow project.
+    3) AZURE_CONVERSATIONS_WORKFLOW_PROJECT - the name of your CLU workflow project.
 """
 
-def sample_analyze_workflow_app(self, conv_account, conv_key, workflow_project):
+def sample_analyze_workflow_app():
     # [START analyze_workflow_app]
     # import libraries
     import os
