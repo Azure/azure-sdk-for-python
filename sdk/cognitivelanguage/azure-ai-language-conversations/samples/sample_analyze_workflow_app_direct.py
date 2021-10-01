@@ -74,7 +74,7 @@ def sample_analyze_workflow_app_direct():
 
     print("view qna result:")
     print("\tresult: {}\n".format(result.prediction.intents[0].result))
-    # [START analyze_workflow_app_direct]
+    # [END analyze_workflow_app_direct]
 
 
 if __name__ == '__main__':

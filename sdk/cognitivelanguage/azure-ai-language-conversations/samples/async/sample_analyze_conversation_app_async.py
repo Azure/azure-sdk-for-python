@@ -19,7 +19,6 @@ USAGE:
     1) AZURE_CONVERSATIONS_ENDPOINT - the endpoint to your CLU resource.
     2) AZURE_CONVERSATIONS_KEY - your CLU API key.
     3) AZURE_CONVERSATIONS_PROJECT - the name of your CLU conversations project.
-    4) AZURE_CONVERSATIONS_WORKFLOW_PROJECT - the name of your CLU workflow project.
 """
 
 import asyncio

@@ -76,7 +76,7 @@ async def sample_analyze_workflow_app_direct_async():
 
         print("view Question Answering result:")
         print("\tresult: {}\n".format(result.prediction.intents[0].result))
-    # [START analyze_workflow_app_direct]
+    # [END analyze_workflow_app_direct]
 
 
 async def main():

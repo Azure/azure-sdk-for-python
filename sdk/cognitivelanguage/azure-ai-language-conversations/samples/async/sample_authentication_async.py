@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_authentication_asyncasync.py
+FILE: sample_authentication_async.py
 
 DESCRIPTION:
     This sample demonstrates how to authenticate to the Conversation Language Understanding (CLU) service.
@@ -22,7 +22,7 @@ DESCRIPTION:
     https://<NAME-OF-YOUR-RESOURCE>.cognitiveservices.azure.com/
 
 USAGE:
-    python sample_authentication_asyncasync.py
+    python sample_authentication_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_CONVERSATIONS_ENDPOINT - the endpoint to your Conversational Language Understanding resource.

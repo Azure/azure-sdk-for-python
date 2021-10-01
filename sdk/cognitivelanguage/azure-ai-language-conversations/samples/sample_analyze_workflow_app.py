@@ -9,7 +9,7 @@ FILE: sample_analyze_workflow_app.py
 
 DESCRIPTION:
     This sample demonstrates how to analyze user query using an orchestration/workflow project.
-    In this sample, worflow project's top intent will map to a Qna project.
+    In this sample, workflow project's top intent will map to a Qna project.
     
     For more info about how to setup a CLU workflow project, see the README.
 
@@ -62,7 +62,7 @@ def sample_analyze_workflow_app():
 
     print("view qna result:")
     print("\tresult: {}\n".format(result.prediction.intents[0].result))
-    # [START analyze_workflow_app]
+    # [END analyze_workflow_app]
 
 if __name__ == '__main__':
     sample_analyze_workflow_app()

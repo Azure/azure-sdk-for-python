@@ -9,7 +9,7 @@ FILE: sample_analyze_workflow_app_async.py
 
 DESCRIPTION:
     This sample demonstrates how to analyze user query using an orchestration/workflow project.
-    In this sample, worflow project's top intent will map to a Question Answering project.
+    In this sample, workflow project's top intent will map to a Question Answering project.
     
     For more info about how to setup a CLU workflow project, see the README.
 
@@ -64,7 +64,7 @@ async def sample_analyze_workflow_app_async():
 
         print("view Question Answering result:")
         print("\tresult: {}\n".format(result.prediction.intents[0].result))
-    # [START analyze_workflow_app]
+    # [END analyze_workflow_app]
 
 async def main():
     await sample_analyze_workflow_app_async()

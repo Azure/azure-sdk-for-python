@@ -76,7 +76,7 @@ def sample_analyze_workflow_app_with_parms():
 
     print("view qna result:")
     print("\tresult: {}\n".format(result.prediction.intents[0].result))
-    # [START analyze_workflow_app_with_parms]
+    # [END analyze_workflow_app_with_parms]
 
 
 if __name__ == '__main__':

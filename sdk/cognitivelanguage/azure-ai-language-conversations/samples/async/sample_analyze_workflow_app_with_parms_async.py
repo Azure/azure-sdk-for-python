@@ -78,7 +78,7 @@ async def sample_analyze_workflow_app_with_parms_async():
 
         print("view Question Answering result:")
         print("\tresult: {}\n".format(result.prediction.intents[0].result))
-    # [START analyze_workflow_app_with_parms]
+    # [END analyze_workflow_app_with_parms]
 
 
 async def main():
