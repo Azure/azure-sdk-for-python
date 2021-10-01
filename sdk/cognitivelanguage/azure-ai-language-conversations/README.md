@@ -4,7 +4,7 @@
 Conversational Language Understanding, aka **CLU** for short, is a cloud-based conversational AI service which is mainly used in bots to extract useful information from user utterance (natural language processing).
 The CLU **analyze api** encompasses two projects; deepstack, and workflow projects.
 You can use the "deepstack" project if you want to extract intents (intention behind a user utterance), and custom entities.
-You can also use the "workflow" project which orchestrates multiple language apps to get the best response (language apps like Qna Maker, Luis, and Deepstack).
+You can also use the "workflow" project which orchestrates multiple language apps to get the best response (language apps like Question Answering, Luis, and Deepstack).
 
 [Source code][conversationallanguage_client_src] | [Package (PyPI)][conversationallanguage_pypi_package] | [API reference documentation][conversationallanguage_refdocs] | [Product documentation][conversationallanguage_docs] | [Samples][conversationallanguage_samples]
 
@@ -114,7 +114,7 @@ for entity in result.prediction.entities:
 ```
 
 ### Analzye conversation with a Workflow App
-If you would like to pass the user utterance to your orchestrator (worflow) app, you can call the `client.analyze_conversations()` method with your workflow's project name. The orchestrator project simply orchestrates the submitted user utterance between your language apps (Luis, Deepstack, and Qna) to get the best response according to the user intent. See the next example:
+If you would like to pass the user utterance to your orchestrator (worflow) app, you can call the `client.analyze_conversations()` method with your workflow's project name. The orchestrator project simply orchestrates the submitted user utterance between your language apps (Luis, Deepstack, and Question Answering) to get the best response according to the user intent. See the next example:
 
 ```python
 # import libraries
@@ -153,7 +153,7 @@ print("top intent: {}".format(result.prediction.top_intent))
 print("\tcategory: {}".format(result.prediction.intents[0].category))
 print("\tconfidence score: {}\n".format(result.prediction.intents[0].confidence_score))
 
-print("view qna result:")
+print("view Question Answering result:")
 print("\tresult: {}\n".format(result.prediction.intents[0].result))
 ```
 
@@ -208,7 +208,7 @@ print("top intent: {}".format(result.prediction.top_intent))
 print("\tcategory: {}".format(result.prediction.intents[0].category))
 print("\tconfidence score: {}\n".format(result.prediction.intents[0].confidence_score))
 
-print("view qna result:")
+print("view Question Answering result:")
 print("\tresult: {}\n".format(result.prediction.intents[0].result))
 ```
 

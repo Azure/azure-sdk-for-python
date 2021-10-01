@@ -44,7 +44,7 @@ async def sample_analyze_conversation_app_async():
         query=query
     )
 
-    # analyze quey
+    # analyze query
     client = ConversationAnalysisClient(conv_endpoint, AzureKeyCredential(conv_key))
     async with client:
         result = await client.analyze_conversations(

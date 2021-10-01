@@ -10,7 +10,7 @@ FILE: sample_analyze_workflow_app_direct_async.py
 DESCRIPTION:
     This sample demonstrates how to analyze user query using an orchestration/workflow project.
     In this sample, we direct the orchestrator project to use a specifc subproject using the "direct_target" parameter.
-    The "direct_target" in our case will be a Qna project.
+    The "direct_target" in our case will be a Question Answering project.
     
     For more info about how to setup a CLU workflow project, see the README.
 
@@ -74,7 +74,7 @@ async def sample_analyze_workflow_app_direct_async():
         print("\tcategory: {}".format(result.prediction.intents[0].category))
         print("\tconfidence score: {}\n".format(result.prediction.intents[0].confidence_score))
 
-        print("view qna result:")
+        print("view Question Answering result:")
         print("\tresult: {}\n".format(result.prediction.intents[0].result))
     # [START analyze_workflow_app_direct]
 

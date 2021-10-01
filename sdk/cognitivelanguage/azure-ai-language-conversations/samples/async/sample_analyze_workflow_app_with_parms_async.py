@@ -9,7 +9,7 @@ FILE: sample_analyze_workflow_app_with_parms_async.py
 
 DESCRIPTION:
     This sample demonstrates how to analyze user query using an orchestration/workflow project.
-    In this sample, worflow project's top intent will map to a Qna project.
+    In this sample, worflow project's top intent will map to a Question Answering project.
     
     For more info about how to setup a CLU workflow project, see the README.
 
@@ -76,7 +76,7 @@ async def sample_analyze_workflow_app_with_parms_async():
         print("\tcategory: {}".format(result.prediction.intents[0].category))
         print("\tconfidence score: {}\n".format(result.prediction.intents[0].confidence_score))
 
-        print("view qna result:")
+        print("view Question Answering result:")
         print("\tresult: {}\n".format(result.prediction.intents[0].result))
     # [START analyze_workflow_app_with_parms]
 
