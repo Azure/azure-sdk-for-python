@@ -11,7 +11,7 @@ Familiarity with `azure-ai-formrecognizer (3.1.x and below)` package is assumed.
 
 ## Migration benefits
 
-A natural question to ask when considering whether or not to adopt a new version or library is what the benefits of doing so would be. As Azure Form Recognizer has matured and been embraced by a more diverse group of developers, we have been focused on learning the patterns and practices to best support developer productivity and add value to our customers.
+A natural question to ask when considering whether or not to adopt a new version of the library is what the benefits of doing so would be. As Azure Form Recognizer has matured and been embraced by a more diverse group of developers, we have been focused on learning the patterns and practices to best support developer productivity and add value to our customers.
 
 There are many benefits to using the new design of the `azure-ai-formrecognizer (3.2.x)` library. This new version of the library introduces two new clients `DocumentAnalysisClient` and the `DocumentModelAdministrationClient` with unified methods for analyzing documents and provides support for the new features added by the service in API version `2021-09-30-preview`.
 
@@ -55,11 +55,11 @@ document_model_admin_client = DocumentModelAdministrationClient(
 ### Analyzing documents
 
 Differences between the versions:
-- In `DocumentAnalysisClient` all prebuilt model methods along with custom model, layout and general prebuilt document analysis are unified into two methods called
+- In `DocumentAnalysisClient` all prebuilt model methods along with custom model, layout, and general prebuilt document analysis are unified into two methods called
 `begin_analyze_document` and `begin_analyze_document_from_url`.
 - `begin_analyze_document` and `begin_analyze_document_from_url` accept a string with the desired model id for analysis. The model id can be any of the prebuilt model ids or a custom model id.
 - In `FormRecognizerClient` there are two methods (a stream and URL method) for each of the prebuilt models supported by the service, this results in two methods for business card, receipt, identity document, and invoice models, along with a pair of methods for recognizing custom documents and for recognizing content/layout. 
-- Along with more consolidated analysis methods in the `DocumentAnalysisClient`, the return types have also been improved and remove the hierarchical dependencies between elements. An instance of the `AnalyzeResult` model is now returned which showcases important document elements, such as key-value pairs, entities, tables, and documents, among others, at the top level of the returned model. This can be contrasted with `RecognizedForm` which included more hierarchical relationships, for instance tables were an element of a `FormPage` and not a top-level element.
+- Along with more consolidated analysis methods in the `DocumentAnalysisClient`, the return types have also been improved and remove the hierarchical dependencies between elements. An instance of the `AnalyzeResult` model is now returned which showcases important document elements, such as key-value pairs, entities, tables, and document fields and values, among others, at the top level of the returned model. This can be contrasted with `RecognizedForm` which included more hierarchical relationships, for instance tables were an element of a `FormPage` and not a top-level element.
 - In the new version of the library, the functionality of `begin_recognize_content` has been added as a prebuilt model and can be called in library version `azure-ai-formrecognizer (3.2.x)` with `begin_analyze_document` by passing in the `prebuilt-layout` model id. Similarly, to get general prebuilt document information, such as key-value pairs, entities, and text layout, the `prebuilt-document` model id can be used with `begin_analyze_document`.
 - When calling `begin_analyze_document` and `begin_analyze_document_from_url` the returned type is an `AnalyzeResult` object, while the various methods used with `FormRecognizerClient` return a list of `RecognizedForm`.
 - The `pages` kwarg is string with library version `azure-ai-formrecognizer (3.2.x)`. In `azure-ai-formrecognizer (3.1.x)`, pages was a list of strings.
