@@ -5,8 +5,8 @@ languages:
 products:
   - azure
   - azure-cognitive-services
-  - azure-ai-language-conversations
-urlFragment: conversationslanhguageunderstanding-samples
+  - azure-ai-language-understanding
+urlFragment: conversationslanguageunderstanding-samples
 ---
 
 # Samples for Azure Conversational Language Understanding client library for Python
@@ -23,7 +23,7 @@ These sample programs show common scenarios for the Conversational Language Unde
 |----------------|-------------|
 |[sample_analyze_conversation_app.py][sample_analyze_conversation_app] and [sample_analyze_conversation_app_async.py][sample_analyze_conversation_app_async]|Analyze intents and entities in your utterance using a deepstack (conversation) project|
 |[sample_analyze_workflow_app.py][sample_analyze_workflow_app] and [sample_analyze_workflow_app_async.py][sample_analyze_workflow_app_async]|Analyze user utterance using an orchestrator (workflow) project, which uses the best candidate from one of your different apps to analyze user query (ex: Qna, DeepStack, and Luis)|
-|
+
 
 
 ## Prerequisites
@@ -58,7 +58,6 @@ what you can do with the Azure Conversational Language Understanding client libr
 |----------------|-------------|
 |[sample_analyze_workflow_app_with_parms.py][sample_analyze_workflow_app_with_parms] and [sample_analyze_workflow_app_with_parms_async.py][sample_analyze_workflow_app_with_parms_async]|Same as workflow sample, but with ability to customize call with parameters|
 |[sample_analyze_workflow_app_direct.py][sample_analyze_workflow_app_direct] and [sample_analyze_workflow_app_direct_async.py][sample_analyze_workflow_app_direct_async]|Same as workflow app, but with ability to target a specific app within your orchestrator project|
-|
 
 
 
