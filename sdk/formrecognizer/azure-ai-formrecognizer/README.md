@@ -160,7 +160,7 @@ Use the `model` parameter to select the type of model for analysis.
 |"{custom-model-id}"| Text extraction, selection marks, tables, labeled fields and values from your custom documents
 
 Sample code snippets are provided to illustrate using a DocumentAnalysisClient [here](#examples "Examples").
-More information about analyzing documents, including supported features and locales can be found in the [service documentation][TODO].
+More information about analyzing documents, including supported features and locales can be found in the [service documentation][fr-models].
 
 ### DocumentModelAdministrationClient
 `DocumentModelAdministrationClient` provides operations for:
@@ -533,7 +533,7 @@ except ResourceNotFoundError:
 
 ### General
 Form Recognizer client library will raise exceptions defined in [Azure Core][azure_core_exceptions].
-Error codes and messages raised by the Form Recognizer service can be found in the [service documentation][TODO].
+Error codes and messages raised by the Form Recognizer service can be found in the [service documentation][fr-errors].
 
 ### Logging
 This library uses the standard
@@ -586,6 +586,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [fr-labeling-tool]: https://aka.ms/azsdk/formrecognizer/labelingtool
 [fr-build-model]: https://aka.ms/azsdk/formrecognizer/buildmodel
 [fr-build-training-set]: https://aka.ms/azsdk/formrecognizer/buildtrainingset
+[fr-models]: https://aka.ms/azsdk/formrecognizer/models
+[fr-errors]: https://aka.ms/azsdk/formrecognizer/errors
 
 [azure_core_ref_docs]: https://aka.ms/azsdk/python/core/docs
 [azure_core_exceptions]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
