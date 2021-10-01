@@ -17,35 +17,35 @@ Familiarity with `azure-ai-formrecognizer (3.1.x and below)` package is assumed.
 
 A natural question to ask when considering whether or not to adopt a new version of the library is what the benefits of doing so would be. As Azure Form Recognizer has matured and been embraced by a more diverse group of developers, we have been focused on learning the patterns and practices to best support developer productivity and add value to our customers.
 
-There are many benefits to using the new design of the `azure-ai-formrecognizer (3.2.x)` library. This new version of the library introduces two new clients `DocumentAnalysisClient` and the `DocumentModelAdministrationClient` with unified methods for analyzing documents and provides support for the new features added by the service in API version `2021-09-30-preview`.
+There are many benefits to using the new design of the `azure-ai-formrecognizer (3.2.x)` library. This new version of the library introduces two new clients `DocumentAnalysisClient` and the `DocumentModelAdministrationClient` with unified methods for analyzing documents and provides support for the new features added by the service in API version `2021-09-30-preview` and later.
 
-New features provided by the `DocumentAnalysisClient` include having one consolidated function for analyzing general document layout, having a general prebuilt document model type, along with the same prebuilt model types that we included previously (receipts, invoices, business cards, identity documents), and custom models. Moreover, the models used in the newer version of the library, such as `AnalyzeResult`, remove many hierarchical dependencies between document elements and move them to a more top level and easily accesible position. The service has further improved how to define where elements are found on documents by moving towards `BoundingRegion` definitions where an element is returned with the bounding box per page where it is found. Document element fields are returned with more information, such as content and spans. 
+New features provided by the `DocumentAnalysisClient` include one consolidated method for analyzing document layout, a general prebuilt document model type, along with the same prebuilt models that were included previously (receipts, invoices, business cards, identity documents), and custom models. Moreover, the models introduced in the latest version of the library, such as `AnalyzeResult`, remove hierarchical dependencies between document elements and move them to a more top level and easily accessible position. The service has further improved how to define where elements are located on documents by moving towards `BoundingRegion` definitions allowing for cross-page elements. Document element fields are returned with more information, such as content and spans. 
 
-When using the `DocumentModelAdministrationClient` to build or compose new models users can now assign their own model ids and specify a description. Listing models on the administation client includes both prebuilt and custom models. When using `get_model()`, users can get the field schema for the model they specified, this includes prebuilt models. This client also provides functions for getting information from model operations.
+When using the `DocumentModelAdministrationClient` to build, compose, or copy models, users can now assign their own model IDs and specify a description. Listing models on the administration client now includes both prebuilt and custom models. When using `get_model()`, users can get the field schema (field names and types that the model can extract) for the model they specified, including for prebuilt models. This client also provides functions for getting information from model operations.
 
-This table shows the relationship between SDK versions and supported API versions of the service
+The below table describes the relationship of each client and its supported API version(s):
 
-|SDK version|Supported API version of service
+|API version|Supported clients
 |-|-
-|3.2.0b1 - Latest beta release | 2.0, 2.1, 2021-09-30-preview
-|3.1.X - Latest GA release| 2.0, 2.1 (default)
-|3.0.0| 2.0
+|2021-09-30-preview | DocumentAnalysisClient and DocumentModelAdministrationClient
+|2.1 | FormRecognizerClient and FormTrainingClient
+|2.0 | FormRecognizerClient and FormTrainingClient
 
-Please refer to the [README](README) for more information on these new clients.
+Please refer to the [README][readme] for more information on these new clients.
 
 ## Important changes
 
 ### Client usage
 
-We continue to support API key and AAD authentication methods when creating our clients. Below are the differences between the two versions:
+We continue to support API key and AAD authentication methods when creating the clients. Below are the differences between the two versions:
 
 - In `3.2.x`, we have added `DocumentAnalysisClient` and `DocumentModelAdministrationClient` which support API version `2021-09-30-preview` and later.
-- `FormRecognizerClient` and `FormTrainingClient` will return an error if called with an API version of `2021-09-30-preview` or later. 
+- `FormRecognizerClient` and `FormTrainingClient` will raise an error if called with an API version of `2021-09-30-preview` and later. 
 - In `DocumentAnalysisClient` all prebuilt model methods along with custom model, layout, and a prebuilt document analysis model are unified into two methods called
 `begin_analyze_document` and `begin_analyze_document_from_url`.
 - In `FormRecognizerClient` there are two methods (a stream and URL method) for each of the prebuilt models supported by the service. This results in two methods for business card, receipt, identity document, and invoice models, along with a pair of methods for recognizing custom documents and for recognizing content/layout. 
 
-Creating a new clients in `3.1.x`:
+Creating new clients in `3.1.x`:
 ```python
 form_recognizer_client = FormRecognizerClient(
     endpoint=endpoint, credential=AzureKeyCredential(key)
@@ -56,7 +56,7 @@ form_training_client = FormTrainingClient(
 )
 ```
 
-Creating a new clients in `3.2.x`:
+Creating new clients in `3.2.x`:
 ```python
 document_analysis_client = DocumentAnalysisClient(
     endpoint=endpoint, credential=AzureKeyCredential(key)
@@ -70,13 +70,13 @@ document_model_admin_client = DocumentModelAdministrationClient(
 ### Analyzing documents
 
 Differences between the versions:
-- `begin_analyze_document` and `begin_analyze_document_from_url` accept a string with the desired model id for analysis. The model id can be any of the prebuilt model ids or a custom model id.
+- `begin_analyze_document` and `begin_analyze_document_from_url` accept a string with the desired model ID for analysis. The model ID can be any of the prebuilt model IDs or a custom model ID.
 - Along with more consolidated analysis methods in the `DocumentAnalysisClient`, the return types have also been improved and remove the hierarchical dependencies between elements. An instance of the `AnalyzeResult` model is now returned which showcases important document elements, such as key-value pairs, entities, tables, and document fields and values, among others, at the top level of the returned model. This can be contrasted with `RecognizedForm` which included more hierarchical relationships, for instance tables were an element of a `FormPage` and not a top-level element.
-- In the new version of the library, the functionality of `begin_recognize_content` has been added as a prebuilt model and can be called in library version `azure-ai-formrecognizer (3.2.x)` with `begin_analyze_document` by passing in the `prebuilt-layout` model id. Similarly, to get general prebuilt document information, such as key-value pairs, entities, and text layout, the `prebuilt-document` model id can be used with `begin_analyze_document`.
+- In the new version of the library, the functionality of `begin_recognize_content` has been added as a prebuilt model and can be called in library version `azure-ai-formrecognizer (3.2.x)` with `begin_analyze_document` by passing in the `prebuilt-layout` model ID. Similarly, to get general prebuilt document information, such as key-value pairs, entities, and text layout, the `prebuilt-document` model ID can be used with `begin_analyze_document`.
 - When calling `begin_analyze_document` and `begin_analyze_document_from_url` the returned type is an `AnalyzeResult` object, while the various methods used with `FormRecognizerClient` return a list of `RecognizedForm`.
-- The `pages` kwarg is string with library version `azure-ai-formrecognizer (3.2.x)`. In `azure-ai-formrecognizer (3.1.x)`, pages was a list of strings.
-- The `include_field_elements` kwarg does not exist with the `DocumentAnalysisClient`, text details are automatically included with API version `2021-09-30-preview`.
-- The `reading_order` kwarg does not exist on `begin_analyze_document` and `begin_analyze_document_from_url`. The service uses `natural` reading order to analyze data.
+- The `pages` keyword argument is a string with library version `azure-ai-formrecognizer (3.2.x)`. In `azure-ai-formrecognizer (3.1.x)`, `pages` was a list of strings.
+- The `include_field_elements` keyword argument is not supported with the `DocumentAnalysisClient`, text details are automatically included with API version `2021-09-30-preview` and later.
+- The `reading_order` keyword argument does not exist on `begin_analyze_document` and `begin_analyze_document_from_url`. The service uses `natural` reading order to analyze data.
 
 Analyzing prebuilt models like business cards, identity documents, invoices and receipts with `3.1.x`:
 ```python
@@ -210,7 +210,7 @@ for idx, receipt in enumerate(receipts.documents):
 
 Analyzing document content with `3.1.x`:
 
-> NOTE: With version `3.1.x` of the library this method was called with a `language` kwarg to hint at the language for the document, whereas in version `3.2.x` of the library `locale` is used for this purpose.
+> NOTE: With version `3.1.x` of the library this method was called with a `language` keyword argument to hint at the language for the document, whereas in version `3.2.x` of the library `locale` is used for this purpose.
 
 ```python
 with open(path_to_sample_forms, "rb") as f:
@@ -340,6 +340,9 @@ print("----------------------------------------")
 ```
 
 Analyzing general prebuilt document types with `3.2.x`:
+
+> NOTE: Analyzing a document with the `prebuilt-document` model replaces training without labels in version `3.1.x` of the library.
+
 ```python
 with open(path_to_sample_documents, "rb") as f:
     poller = document_analysis_client.begin_analyze_document(
@@ -347,7 +350,7 @@ with open(path_to_sample_documents, "rb") as f:
     )
 result = poller.result()
 
-for idx, style in enumerate(result.styles):
+for style in result.styles:
     print(
         "Document contains {} content".format(
             "handwritten" if style.is_handwritten else "no handwritten"
@@ -449,8 +452,8 @@ print("----------------------------------------")
 
 Differences between the versions:
 - Analyzing a custom model with `DocumentAnalysisClient` uses the general `begin_analyze_document` and `begin_analyze_document_from_url` methods.
-- In order to analyze a custom model with `FormRecognizerClient` the `begin_recognize_custom_models` and its corresponding URL methods is used.
-- The `include_field_elements` kwarg does not exist with the `DocumentAnalysisClient`, text details are automatically included with API version `2021-09-30-preview`.
+- In order to analyze a custom model with `FormRecognizerClient` the `begin_recognize_custom_models` and its corresponding URL methods are used.
+- The `include_field_elements` keyword argument is not supported with the `DocumentAnalysisClient`, text details are automatically included with API version `2021-09-30-preview` and later.
 
 Analyze custom document with `3.1.x`:
 ```python
@@ -562,10 +565,10 @@ print("-----------------------------------")
 
 Differences between the versions:
 - Files for building a new model for version `3.2.x` can be created using the labeling tool found [here][fr_labeling_tool].
-- In version `3.1.x` the `use_training_labels` kwarg was used to indicate whether to use labeled data when creating the custom model.
-- In version `3.2.x` the `use_training_labels` kwargs is not supported since training must be carried out with labeled training documents. In order to extract key-value pairs from a document, please refer to the prebuilt model "prebuilt-document" which extracts entities, key-value pairs, and layout from a document. 
-- When using the latest service API version `2021-09-30-preview` models no longer include submodels, instead a model can analyze different document types.
-- When building or composing new models users can now assign their own model ids and specify a description.
+- In version `3.1.x` the `use_training_labels` keyword argument was used to indicate whether to use labeled data when creating the custom model.
+- In version `3.2.x` the `use_training_labels` keyword argument is not supported since training must be carried out with labeled training documents. In order to extract key-value pairs from a document, please refer to the prebuilt model "prebuilt-document" which extracts entities, key-value pairs, and layout from a document. 
+- When using API version `2021-09-30-preview` and later models no longer include submodels, instead a model can analyze different document types.
+- When building or composing new models users can now assign their own model IDs and specify a description.
 
 Train a custom model with `3.1.x`:
 ```python
