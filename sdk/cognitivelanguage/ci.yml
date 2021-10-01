@@ -3,9 +3,9 @@
 trigger:
   branches:
     include:
-    - master
     - main
     - hotfix/*
+    - feature/*
     - release/*
   paths:
     include:
