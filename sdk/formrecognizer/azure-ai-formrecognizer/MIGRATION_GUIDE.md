@@ -1,6 +1,6 @@
 # Guide for migrating azure-ai-formrecognizer to version 3.2.x from versions 3.1.x and below
 
-This guide is intended to assist in the migration to `azure-ai-formrecognizer (3.2.x)` from versions `3.1.x` and below. It will focus on side-by-side comparisons for similar operations between versions, please note that version `3.1.2` will be used for comparison with `3.2.0b1`.
+This guide is intended to assist in the migration to `azure-ai-formrecognizer (3.2.x)` from versions `3.1.x` and below. It will focus on side-by-side comparisons for similar operations between versions. Please note that version `3.2.0b1` will be used for comparison with `3.1.2`.
 
 Familiarity with `azure-ai-formrecognizer (3.1.x and below)` package is assumed. For those new to the Azure Form Recognizer client library for Python please refer to the [README](README) rather than this guide.
 
@@ -19,7 +19,7 @@ New features provided by the `DocumentAnalysisClient` include having one consoli
 
 When using the `DocumentModelAdministrationClient` to build or compose new models users can now assign their own model ids and specify a description. Listing models on the administation client includes both prebuilt and custom models. When using `get_model()`, users can get the field schema for the model they specified, this includes prebuilt models. This client also provides functions for getting information from model operations.
 
-Please refer to the [README](README) and [service documentation](TODO) for more information on these new clients.
+Please refer to the [README](README) for more information on these new clients.
 
 ## Important changes
 
@@ -55,7 +55,7 @@ document_model_admin_client = DocumentModelAdministrationClient(
 ### Analyzing documents
 
 Differences between the versions:
-- In `DocumentAnalysisClient` all prebuilt model methods along with custom model, layout, and general prebuilt document analysis are unified into two methods called
+- In `DocumentAnalysisClient` all prebuilt model methods along with custom model, layout, and a prebuilt document analysis model are unified into two methods called
 `begin_analyze_document` and `begin_analyze_document_from_url`.
 - `begin_analyze_document` and `begin_analyze_document_from_url` accept a string with the desired model id for analysis. The model id can be any of the prebuilt model ids or a custom model id.
 - In `FormRecognizerClient` there are two methods (a stream and URL method) for each of the prebuilt models supported by the service, this results in two methods for business card, receipt, identity document, and invoice models, along with a pair of methods for recognizing custom documents and for recognizing content/layout. 
@@ -73,7 +73,44 @@ receipts = poller.result()
 
 for idx, receipt in enumerate(receipts):
     print("--------Recognizing receipt #{}--------".format(idx+1))
-    # process receipt
+    receipt_type = receipt.fields.get("ReceiptType")
+    if receipt_type:
+        print("Receipt Type: {} has confidence: {}".format(receipt_type.value, receipt_type.confidence))
+    merchant_name = receipt.fields.get("MerchantName")
+    if merchant_name:
+        print("Merchant Name: {} has confidence: {}".format(merchant_name.value, merchant_name.confidence))
+    transaction_date = receipt.fields.get("TransactionDate")
+    if transaction_date:
+        print("Transaction Date: {} has confidence: {}".format(transaction_date.value, transaction_date.confidence))
+    if receipt.fields.get("Items"):
+        print("Receipt items:")
+        for idx, item in enumerate(receipt.fields.get("Items").value):
+            print("...Item #{}".format(idx+1))
+            item_name = item.value.get("Name")
+            if item_name:
+                print("......Item Name: {} has confidence: {}".format(item_name.value, item_name.confidence))
+            item_quantity = item.value.get("Quantity")
+            if item_quantity:
+                print("......Item Quantity: {} has confidence: {}".format(item_quantity.value, item_quantity.confidence))
+            item_price = item.value.get("Price")
+            if item_price:
+                print("......Individual Item Price: {} has confidence: {}".format(item_price.value, item_price.confidence))
+            item_total_price = item.value.get("TotalPrice")
+            if item_total_price:
+                print("......Total Item Price: {} has confidence: {}".format(item_total_price.value, item_total_price.confidence))
+    subtotal = receipt.fields.get("Subtotal")
+    if subtotal:
+        print("Subtotal: {} has confidence: {}".format(subtotal.value, subtotal.confidence))
+    tax = receipt.fields.get("Tax")
+    if tax:
+        print("Tax: {} has confidence: {}".format(tax.value, tax.confidence))
+    tip = receipt.fields.get("Tip")
+    if tip:
+        print("Tip: {} has confidence: {}".format(tip.value, tip.confidence))
+    total = receipt.fields.get("Total")
+    if total:
+        print("Total: {} has confidence: {}".format(total.value, total.confidence))
+    print("--------------------------------------")
 ```
 
 Analyzing prebuilt models like business cards, identity documents, invoices and receipts with `3.2.x`:
@@ -84,9 +121,78 @@ with open(path_to_sample_documents, "rb") as f:
     )
 receipts = poller.result()
 
-for receipt in receipts.documents:
-    print("--------Recognizing receipt--------")
-    # process receipt
+for idx, receipt in enumerate(receipts.documents):
+    print("--------Recognizing receipt #{}--------".format(idx + 1))
+    receipt_type = receipt.fields.get("ReceiptType")
+    if receipt_type:
+        print(
+            "Receipt Type: {} has confidence: {}".format(
+                receipt_type.value, receipt_type.confidence
+            )
+        )
+    merchant_name = receipt.fields.get("MerchantName")
+    if merchant_name:
+        print(
+            "Merchant Name: {} has confidence: {}".format(
+                merchant_name.value, merchant_name.confidence
+            )
+        )
+    transaction_date = receipt.fields.get("TransactionDate")
+    if transaction_date:
+        print(
+            "Transaction Date: {} has confidence: {}".format(
+                transaction_date.value, transaction_date.confidence
+            )
+        )
+    if receipt.fields.get("Items"):
+        print("Receipt items:")
+        for idx, item in enumerate(receipt.fields.get("Items").value):
+            print("...Item #{}".format(idx + 1))
+            item_name = item.value.get("Name")
+            if item_name:
+                print(
+                    "......Item Name: {} has confidence: {}".format(
+                        item_name.value, item_name.confidence
+                    )
+                )
+            item_quantity = item.value.get("Quantity")
+            if item_quantity:
+                print(
+                    "......Item Quantity: {} has confidence: {}".format(
+                        item_quantity.value, item_quantity.confidence
+                    )
+                )
+            item_price = item.value.get("Price")
+            if item_price:
+                print(
+                    "......Individual Item Price: {} has confidence: {}".format(
+                        item_price.value, item_price.confidence
+                    )
+                )
+            item_total_price = item.value.get("TotalPrice")
+            if item_total_price:
+                print(
+                    "......Total Item Price: {} has confidence: {}".format(
+                        item_total_price.value, item_total_price.confidence
+                    )
+                )
+    subtotal = receipt.fields.get("Subtotal")
+    if subtotal:
+        print(
+            "Subtotal: {} has confidence: {}".format(
+                subtotal.value, subtotal.confidence
+            )
+        )
+    tax = receipt.fields.get("Tax")
+    if tax:
+        print("Tax: {} has confidence: {}".format(tax.value, tax.confidence))
+    tip = receipt.fields.get("Tip")
+    if tip:
+        print("Tip: {} has confidence: {}".format(tip.value, tip.confidence))
+    total = receipt.fields.get("Total")
+    if total:
+        print("Total: {} has confidence: {}".format(total.value, total.confidence))
+    print("--------------------------------------")
 ```
 
 Analyzing document content with `3.1.x`:
@@ -100,17 +206,42 @@ form_pages = poller.result()
 
 for idx, content in enumerate(form_pages):
     print("----Recognizing content from page #{}----".format(idx+1))
-    # process document layout by parsing content in pages
+    print("Page has width: {} and height: {}, measured with unit: {}".format(
+        content.width,
+        content.height,
+        content.unit
+    ))
     for table_idx, table in enumerate(content.tables):
-        # process document tables
+        print("Table # {} has {} rows and {} columns".format(table_idx, table.row_count, table.column_count))
+        print("Table # {} location on page: {}".format(table_idx, format_bounding_box(table.bounding_box)))
+        for cell in table.cells:
+            print("...Cell[{}][{}] has text '{}' within bounding box '{}'".format(
+                cell.row_index,
+                cell.column_index,
+                cell.text,
+                format_bounding_box(cell.bounding_box)
+            ))
 
     for line_idx, line in enumerate(content.lines):
-        # process lines
+        print("Line # {} has word count '{}' and text '{}' within bounding box '{}'".format(
+            line_idx,
+            len(line.words),
+            line.text,
+            format_bounding_box(line.bounding_box)
+        ))
+        if line.appearance:
+            if line.appearance.style_name == "handwriting" and line.appearance.style_confidence > 0.8:
+                print("Text line '{}' is handwritten and might be a signature.".format(line.text))
         for word in line.words:
-            # process words in a line
+            print("...Word '{}' has a confidence of {}".format(word.text, word.confidence))
 
     for selection_mark in content.selection_marks:
-        # process selection marks that were found
+        print("Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
+            selection_mark.state,
+            format_bounding_box(selection_mark.bounding_box),
+            selection_mark.confidence
+        ))
+    print("----------------------------------------")
 ```
 
 
@@ -122,18 +253,77 @@ with open(path_to_sample_documents, "rb") as f:
     )
 result = poller.result()
 
-for style in result.styles:
-    # process document styles
+for idx, style in enumerate(result.styles):
+    print(
+        "Document contains {} content".format(
+            "handwritten" if style.is_handwritten else "no handwritten"
+        )
+    )
 
-for page in result.pages:
-    # process pages
-    for line in page.lines:
-        # process lines
+for idx, page in enumerate(result.pages):
+    print("----Analyzing layout from page #{}----".format(idx + 1))
+    print(
+        "Page has width: {} and height: {}, measured with unit: {}".format(
+            page.width, page.height, page.unit
+        )
+    )
+
+    for line_idx, line in enumerate(page.lines):
+        print(
+            "Line # {} has text content '{}' within bounding box '{}'".format(
+                line_idx,
+                line.content,
+                format_bounding_box(line.bounding_box),
+            )
+        )
+
     for word in page.words:
-        # process words
+        print(
+            "...Word '{}' has a confidence of {}".format(
+                word.content, word.confidence
+            )
+        )
 
-for table in result.tables:
-    # process tables found in document
+    for selection_mark in page.selection_marks:
+        print(
+            "Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
+                selection_mark.state,
+                format_bounding_box(selection_mark.bounding_box),
+                selection_mark.confidence,
+            )
+        )
+
+for table_idx, table in enumerate(result.tables):
+    print(
+        "Table # {} has {} rows and {} columns".format(
+            table_idx, table.row_count, table.column_count
+        )
+    )
+    for region in table.bounding_regions:
+        print(
+            "Table # {} location on page: {} is {}".format(
+                table_idx,
+                region.page_number,
+                format_bounding_box(region.bounding_box),
+            )
+        )
+    for cell in table.cells:
+        print(
+            "...Cell[{}][{}] has text '{}'".format(
+                cell.row_index,
+                cell.column_index,
+                cell.content,
+            )
+        )
+        for region in cell.bounding_regions:
+            print(
+                "...content on page {} is within bounding box '{}'".format(
+                    region.page_number,
+                    format_bounding_box(region.bounding_box),
+                )
+            )
+
+print("----------------------------------------")
 ```
 
 Analyzing general prebuilt document types with `3.2.x`:
@@ -144,21 +334,100 @@ with open(path_to_sample_documents, "rb") as f:
     )
 result = poller.result()
 
-for entity in result.entities:
-    # process entities found in document
-
-for kv_pair in result.key_value_pairs:
-    # process key-value pairs found in document
+for idx, style in enumerate(result.styles):
+    print(
+        "Document contains {} content".format(
+            "handwritten" if style.is_handwritten else "no handwritten"
+        )
+    )
 
 for page in result.pages:
-    # process pages
-    for line in page.lines:
-        # process lines
-    for word in page.words:
-        # process words
+    print("----Analyzing document from page #{}----".format(page.page_number))
+    print(
+        "Page has width: {} and height: {}, measured with unit: {}".format(
+            page.width, page.height, page.unit
+        )
+    )
 
-for table in result.tables:
-    # process tables found in document
+    for line_idx, line in enumerate(page.lines):
+        print(
+            "...Line # {} has text content '{}' within bounding box '{}'".format(
+                line_idx,
+                line.content,
+                format_bounding_box(line.bounding_box),
+            )
+        )
+
+    for word in page.words:
+        print(
+            "...Word '{}' has a confidence of {}".format(
+                word.content, word.confidence
+            )
+        )
+
+    for selection_mark in page.selection_marks:
+        print(
+            "...Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
+                selection_mark.state,
+                format_bounding_box(selection_mark.bounding_box),
+                selection_mark.confidence,
+            )
+        )
+
+for table_idx, table in enumerate(result.tables):
+    print(
+        "Table # {} has {} rows and {} columns".format(
+            table_idx, table.row_count, table.column_count
+        )
+    )
+    for region in table.bounding_regions:
+        print(
+            "Table # {} location on page: {} is {}".format(
+                table_idx,
+                region.page_number,
+                format_bounding_box(region.bounding_box),
+            )
+        )
+    for cell in table.cells:
+        print(
+            "...Cell[{}][{}] has content '{}'".format(
+                cell.row_index,
+                cell.column_index,
+                cell.content,
+            )
+        )
+        for region in cell.bounding_regions:
+            print(
+                "...content on page {} is within bounding box '{}'\n".format(
+                    region.page_number,
+                    format_bounding_box(region.bounding_box),
+                )
+            )
+
+print("----Entities found in document----")
+for entity in result.entities:
+    print("Entity of category '{}' with sub-category '{}'".format(entity.category, entity.sub_category))
+    print("...has content '{}'".format(entity.content))
+    print("...within '{}' bounding regions".format(format_bounding_region(entity.bounding_regions)))
+    print("...with confidence {}\n".format(entity.confidence))
+
+print("----Key-value pairs found in document----")
+for kv_pair in result.key_value_pairs:
+    if kv_pair.key:
+        print(
+                "Key '{}' found within '{}' bounding regions".format(
+                    kv_pair.key.content,
+                    format_bounding_region(kv_pair.key.bounding_regions),
+                )
+            )
+    if kv_pair.value:
+        print(
+                "Value '{}' found within '{}' bounding regions\n".format(
+                    kv_pair.value.content,
+                    format_bounding_region(kv_pair.value.bounding_regions),
+                )
+            )
+print("----------------------------------------")
 ```
 
 > NOTE: All of these samples also work with `begin_analyze_document_from_url` when providing a valid URL to the document.
@@ -177,6 +446,52 @@ with open(path_to_sample_forms, "rb") as f:
         model_id=model_id, form=f, include_field_elements=True
     )
 forms = poller.result()
+
+for idx, form in enumerate(forms):
+    print("--------Recognizing Form #{}--------".format(idx+1))
+    print("Form has type {}".format(form.form_type))
+    print("Form has form type confidence {}".format(form.form_type_confidence))
+    print("Form was analyzed with model with ID {}".format(form.model_id))
+    for name, field in form.fields.items():
+        # each field is of type FormField
+        # label_data is populated if you are using a model trained without labels,
+        # since the service needs to make predictions for labels if not explicitly given to it.
+        if field.label_data:
+            print("...Field '{}' has label '{}' with a confidence score of {}".format(
+                name,
+                field.label_data.text,
+                field.confidence
+            ))
+
+        print("...Label '{}' has value '{}' with a confidence score of {}".format(
+            field.label_data.text if field.label_data else name, field.value, field.confidence
+        ))
+
+    # iterate over tables, lines, and selection marks on each page
+    for page in form.pages:
+        for i, table in enumerate(page.tables):
+            print("\nTable {} on page {}".format(i+1, table.page_number))
+            for cell in table.cells:
+                print("...Cell[{}][{}] has text '{}' with confidence {}".format(
+                    cell.row_index, cell.column_index, cell.text, cell.confidence
+                ))
+        print("\nLines found on page {}".format(page.page_number))
+        for line in page.lines:
+            print("...Line '{}' is made up of the following words: ".format(line.text))
+            for word in line.words:
+                print("......Word '{}' has a confidence of {}".format(
+                    word.text,
+                    word.confidence
+                ))
+        if page.selection_marks:
+            print("\nSelection marks found on page {}".format(page.page_number))
+            for selection_mark in page.selection_marks:
+                print("......Selection mark is '{}' and has a confidence of {}".format(
+                    selection_mark.state,
+                    selection_mark.confidence
+                ))
+
+    print("-----------------------------------")
 ```
 
 Analyze custom document with `3.2.x`:
@@ -186,6 +501,48 @@ with open(path_to_sample_documents, "rb") as f:
         model=model_id, document=f
     )
 result = poller.result()
+
+for idx, document in enumerate(result.documents):
+    print("--------Analyzing document #{}--------".format(idx + 1))
+    print("Document has type {}".format(document.doc_type))
+    print("Document has document type confidence {}".format(document.confidence))
+    print("Document was analyzed with model with ID {}".format(result.model_id))
+    for name, field in document.fields.items():
+        field_value = field.value if field.value else field.content
+        print("......found field of type '{}' with value '{}' and with confidence {}".format(field.value_type, field_value, field.confidence))
+
+
+# iterate over tables, lines, and selection marks on each page
+for page in result.pages:
+    print("\nLines found on page {}".format(page.page_number))
+    for line in page.lines:
+        print("...Line '{}'".format(line.content))
+    for word in page.words:
+        print(
+            "...Word '{}' has a confidence of {}".format(
+                word.content, word.confidence
+            )
+        )
+    if page.selection_marks:
+        print("\nSelection marks found on page {}".format(page.page_number))
+        for selection_mark in page.selection_marks:
+            print(
+                "...Selection mark is '{}' and has a confidence of {}".format(
+                    selection_mark.state, selection_mark.confidence
+                )
+            )
+
+for i, table in enumerate(result.tables):
+    print("\nTable {} can be found on page:".format(i + 1))
+    for region in table.bounding_regions:
+        print("...{}".format(i + 1, region.page_number))
+    for cell in table.cells:
+        print(
+            "...Cell[{}][{}] has text '{}'".format(
+                cell.row_index, cell.column_index, cell.content
+            )
+        )
+print("-----------------------------------")
 ```
 
 ### Training a custom model
@@ -245,10 +602,8 @@ print("Model created on: {}\n".format(model.created_on))
 print("Doc types the model can recognize:")
 for name, doc_type in model.doc_types.items():
     print("\nDoc Type: '{}' which has the following fields:".format(name))
-    for field_name, field in doc_type.field_schema.items():
-        print("Field: '{}' has type '{}' and confidence score {}".format(
-            field_name, field["type"], doc_type.field_confidence[field_name]
-        ))
+    for field_name, confidence in doc_type.field_confidence.items():
+        print("Field: '{}' has confidence score {}".format(field_name, confidence))
 ```
 
 ## Additional samples
