@@ -78,7 +78,7 @@ Differences between the versions:
 - The `include_field_elements` keyword argument is not supported with the `DocumentAnalysisClient`, text details are automatically included with API version `2021-09-30-preview` and later.
 - The `reading_order` keyword argument does not exist on `begin_analyze_document` and `begin_analyze_document_from_url`. The service uses `natural` reading order to analyze data.
 
-Analyzing prebuilt models like business cards, identity documents, invoices and receipts with `3.1.x`:
+Analyzing prebuilt models like business cards, identity documents, invoices, and receipts with `3.1.x`:
 ```python
 with open(path_to_sample_forms, "rb") as f:
     poller = form_recognizer_client.begin_recognize_receipts(receipt=f, locale="en-US")
@@ -126,7 +126,7 @@ for idx, receipt in enumerate(receipts):
     print("--------------------------------------")
 ```
 
-Analyzing prebuilt models like business cards, identity documents, invoices and receipts with `3.2.x`:
+Analyzing prebuilt models like business cards, identity documents, invoices, and receipts with `3.2.x`:
 ```python
 with open(path_to_sample_documents, "rb") as f:
     poller = document_analysis_client.begin_analyze_document(
