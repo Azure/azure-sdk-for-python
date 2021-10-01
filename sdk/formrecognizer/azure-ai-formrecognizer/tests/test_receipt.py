@@ -388,13 +388,12 @@ class TestReceiptFromStream(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    @pytest.mark.skip("the service is returning a different error code")
     def test_receipt_locale_error(self, client):
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
         with pytest.raises(HttpResponseError) as e:
             client.begin_analyze_document("prebuilt-receipt", receipt, locale="not a locale")
-        assert "UnsupportedLocale" == e.value.error.code
+        assert "InvalidArgument" == e.value.error.code
 
     @FormRecognizerPreparer()
     @GlobalClientPreparerV2(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})

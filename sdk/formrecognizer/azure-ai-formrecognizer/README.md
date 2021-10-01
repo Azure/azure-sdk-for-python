@@ -39,7 +39,7 @@ This table shows the relationship between SDK versions and supported API version
 |3.0.0| 2.0
 
 > Note: Starting with version 2021-09-30-preview, a new set of clients were introduced to leverage the newest features
-> of the Form Recognizer service. Please see the Migration Guide for detailed instructions on how to update application
+> of the Form Recognizer service. Please see the [Migration Guide][migration-guide] for detailed instructions on how to update application
 > code from client library version 3.1.X or lower to the latest version. Additionally, see the [Changelog][changelog] for more detailed information.
 > The below table describes the relationship of each client and its supported API version(s):
 
@@ -160,6 +160,7 @@ Use the `model` parameter to select the type of model for analysis.
 |"{custom-model-id}"| Text extraction, selection marks, tables, labeled fields and values from your custom documents
 
 Sample code snippets are provided to illustrate using a DocumentAnalysisClient [here](#examples "Examples").
+More information about analyzing documents, including supported features and locales can be found in the [service documentation][fr-models].
 
 ### DocumentModelAdministrationClient
 `DocumentModelAdministrationClient` provides operations for:
@@ -191,6 +192,7 @@ The following section provides several code snippets covering some of the most c
 
 * [Extract layout](#extract-layout "Extract Layout")
 * [Using Prebuilt Models](#using-prebuilt-models "Using Prebuilt Models")
+* [Using Prebuilt Document](#using-prebuilt-document "Using Prebuilt Document")
 * [Build a Model](#build-a-model "Build a model")
 * [Analyze Documents Using a Custom Model](#analyze-documents-using-a-custom-model "Analyze Documents Using a Custom Model")
 * [Manage Your Models](#manage-your-models "Manage Your Models")
@@ -309,6 +311,83 @@ You are not limited to receipts! There are a few prebuilt models to choose from,
 - Analyze business cards using the `prebuilt-businessCard` model (fields recognized by the service can be found [here][service_recognize_business_cards]).
 - Analyze invoices using the `prebuilt-invoice` model (fields recognized by the service can be found [here][service_recognize_invoice]).
 - Analyze identity documents using the `prebuilt-idDocuments` model (fields recognized by the service can be found [here][service_recognize_identity_documents]).
+
+### Using Prebuilt Document
+Analyze entities, key-value pairs, tables, styles, and selection marks from documents using the general prebuilt document model provided by the Form Recognizer service.
+Select the Prebuilt Document model by passing `model="prebuilt-document"` into the `begin_analyze_documents` method:
+
+```python
+from azure.ai.formrecognizer import DocumentAnalysisClient
+from azure.core.credentials import AzureKeyCredential
+
+endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
+credential = AzureKeyCredential("<api_key>")
+
+document_analysis_client = DocumentAnalysisClient(endpoint, credential)
+
+with open("<path to your document>", "rb") as fd:
+    document = fd.read()
+
+poller = document_analysis_client.begin_analyze_document("prebuilt-document", document)
+result = poller.result()
+
+print("----Entities found in document----")
+for entity in result.entities:
+    print("Entity '{}' has category '{}' with sub-category '{}'".format(
+        entity.content, entity.category, entity.sub_category
+    ))
+    print("...with confidence {}\n".format(entity.confidence))
+
+print("----Key-value pairs found in document----")
+for kv_pair in result.key_value_pairs:
+    if kv_pair.key:
+        print(
+                "Key '{}' found within '{}' bounding regions".format(
+                    kv_pair.key.content,
+                    kv_pair.key.bounding_regions,
+                )
+            )
+    if kv_pair.value:
+        print(
+                "Value '{}' found within '{}' bounding regions\n".format(
+                    kv_pair.value.content,
+                    kv_pair.value.bounding_regions,
+                )
+            )
+
+print("----Tables found in document----")
+for table_idx, table in enumerate(result.tables):
+    print(
+        "Table # {} has {} rows and {} columns".format(
+            table_idx, table.row_count, table.column_count
+        )
+    )
+    for region in table.bounding_regions:
+        print(
+            "Table # {} location on page: {} is {}".format(
+                table_idx,
+                region.page_number,
+                region.bounding_box,
+            )
+        )
+
+print("----Styles found in document----")
+for style in result.styles:
+    if style.is_handwritten:
+        print("Document contains handwritten content: ")
+        print(",".join([result.content[span.offset:span.offset + span.length] for span in style.spans]))
+
+print("----Selection marks found in document----")
+for page in result.pages:
+    for selection_mark in page.selection_marks:
+        print(
+            "...Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
+                selection_mark.state,
+                selection_mark.bounding_box,
+                selection_mark.confidence,
+            )
+        )
+```
 
 ### Build a model
 Build a custom model on your own document type. The resulting model can be used to analyze values from the types of documents it was trained on.
@@ -454,6 +533,7 @@ except ResourceNotFoundError:
 
 ### General
 Form Recognizer client library will raise exceptions defined in [Azure Core][azure_core_exceptions].
+Error codes and messages raised by the Form Recognizer service can be found in the [service documentation][fr-errors].
 
 ### Logging
 This library uses the standard
@@ -506,6 +586,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [fr-labeling-tool]: https://aka.ms/azsdk/formrecognizer/labelingtool
 [fr-build-model]: https://aka.ms/azsdk/formrecognizer/buildmodel
 [fr-build-training-set]: https://aka.ms/azsdk/formrecognizer/buildtrainingset
+[fr-models]: https://aka.ms/azsdk/formrecognizer/models
+[fr-errors]: https://aka.ms/azsdk/formrecognizer/errors
 
 [azure_core_ref_docs]: https://aka.ms/azsdk/python/core/docs
 [azure_core_exceptions]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
@@ -518,13 +600,14 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
-[service_recognize_receipt]: https://aka.ms/formrecognizer/receiptfields
-[service_recognize_business_cards]: https://aka.ms/formrecognizer/businesscardfields
-[service_recognize_invoice]: https://aka.ms/formrecognizer/invoicefields
-[service_recognize_identity_documents]: https://aka.ms/formrecognizer/iddocumentfields
+[service_recognize_receipt]: https://aka.ms/azsdk/formrecognizer/receiptfieldschema
+[service_recognize_business_cards]: https://aka.ms/azsdk/formrecognizer/businesscardfieldschema
+[service_recognize_invoice]: https://aka.ms/azsdk/formrecognizer/invoicefieldschema
+[service_recognize_identity_documents]: https://aka.ms/azsdk/formrecognizer/iddocumentfieldschema
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
 [sample_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples
 [changelog]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/CHANGELOG.md
+[migration-guide]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/MIGRATION_GUIDE.md
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

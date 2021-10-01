@@ -56,6 +56,8 @@ class FormRecognizerClientBase(object):
                 "op",
                 "pages",
                 "readingOrder",
+                "stringIndexType",
+                "api-version"
             }
         )
 

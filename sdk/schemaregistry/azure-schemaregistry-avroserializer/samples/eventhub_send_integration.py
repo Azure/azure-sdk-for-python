@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Examples to show sending event to EventHub with SchemaRegistryAvroSerializer integrated for data serialization.
+Examples to show sending event to EventHub with AvroSerializer integrated for data serialization.
 """
 
 # pylint: disable=C0111
@@ -15,7 +15,7 @@ import os
 from azure.eventhub import EventHubProducerClient, EventData
 from azure.identity import DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.serializer.avroserializer import SchemaRegistryAvroSerializer
+from azure.schemaregistry.serializer.avroserializer import AvroSerializer
 
 EVENTHUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
@@ -58,9 +58,9 @@ eventhub_producer = EventHubProducerClient.from_connection_string(
 )
 
 
-# create a SchemaRegistryAvroSerializer instance
+# create a AvroSerializer instance
 # TODO: after 'azure-schemaregistry==1.0.0b3' is released, update 'endpoint' to 'fully_qualified_namespace'
-avro_serializer = SchemaRegistryAvroSerializer(
+avro_serializer = AvroSerializer(
     client=SchemaRegistryClient(
         endpoint=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE,
         credential=DefaultAzureCredential()

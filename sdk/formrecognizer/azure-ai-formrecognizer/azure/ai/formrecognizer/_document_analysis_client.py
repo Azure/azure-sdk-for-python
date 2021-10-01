@@ -78,9 +78,8 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
         """Analyze field text and semantic values from a given document.
 
         :param str model: A unique model identifier can be passed in as a string.
-            Use this to specify the custom model ID or prebuilt model ID. Prebuilt model IDs to use are:
-            "prebuilt-receipt", "prebuilt-invoice", "prebuilt-idDocument", "prebuilt-businessCard",
-            "prebuilt-document", "prebuilt-layout".
+            Use this to specify the custom model ID or prebuilt model ID. Prebuilt model IDs supported
+            can be found here: https://aka.ms/azsdk/formrecognizer/models
         :param document: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
         :type document: bytes or IO[bytes]
         :keyword str pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
@@ -134,9 +133,8 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
         The input must be the location (URL) of the document to be analyzed.
 
         :param str model: A unique model identifier can be passed in as a string.
-            Use this to specify the custom model ID or prebuilt model ID. Prebuilt model IDs to use are:
-            "prebuilt-receipt", "prebuilt-invoice", "prebuilt-idDocument", "prebuilt-businessCard",
-            "prebuilt-document", "prebuilt-layout".
+            Use this to specify the custom model ID or prebuilt model ID. Prebuilt model IDs supported
+            can be found here: https://aka.ms/azsdk/formrecognizer/models
         :param str document_url: The URL of the document to analyze. The input must be a valid, encoded, and
             publicly accessible URL of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
         :keyword str pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers

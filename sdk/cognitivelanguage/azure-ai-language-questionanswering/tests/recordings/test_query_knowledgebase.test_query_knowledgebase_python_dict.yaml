@@ -29,21 +29,21 @@ interactions:
         []\n      }\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - 713fabed-16c6-4c14-858e-099bcfa4cbfc
+      - 845c4b78-915e-484c-af56-56ae05539a6e
       content-length:
       - '583'
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
-      - CognitiveServices.TextAnalytics.QuestionAnsweringTransaction=1
+      - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
       date:
-      - Tue, 21 Sep 2021 21:06:36 GMT
+      - Thu, 30 Sep 2021 15:52:34 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '153'
+      - '1099'
     status:
       code: 200
       message: OK
