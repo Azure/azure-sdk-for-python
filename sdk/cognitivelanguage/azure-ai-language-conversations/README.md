@@ -1,10 +1,10 @@
 [![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/azure-sdk-for-python.client?branchName=main)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=46?branchName=main)
 
 # Azure Conversational Language Understanding client library for Python
-Conversational Language Understanding, aka **CLU** for short, is a cloud-based conversational AI service which is mainly used in bots to extract useful information from user utterance.
-The CLU analyze api encompasses two projects; deepstack, and workflow projects.
+Conversational Language Understanding, aka **CLU** for short, is a cloud-based conversational AI service which is mainly used in bots to extract useful information from user utterance (natural language processing).
+The CLU **analyze api** encompasses two projects; deepstack, and workflow projects.
 You can use the "deepstack" project if you want to extract intents (intention behind a user utterance), and custom entities.
-you can also use the "workflow" project which orchestrates multiple language apps and gets the best response (language apps like Qna Maker, Luis, and Deepstack).
+You can also use the "workflow" project which orchestrates multiple language apps to get the best response (language apps like Qna Maker, Luis, and Deepstack).
 
 [Source code][conversationallanguage_client_src] | [Package (PyPI)][conversationallanguage_pypi_package] | [API reference documentation][conversationallanguage_refdocs] | [Product documentation][conversationallanguage_docs] | [Samples][conversationallanguage_samples]
 
