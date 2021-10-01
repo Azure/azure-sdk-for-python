@@ -374,7 +374,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
                 )
             else:
                 encoding = chardet.detect(body)["encoding"]
-        if not encoding:
+        if encoding == "utf-8" or encoding is None:
             encoding = "utf-8-sig"
 
         return body.decode(encoding)
