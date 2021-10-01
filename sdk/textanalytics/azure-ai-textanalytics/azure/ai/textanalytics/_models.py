@@ -2268,6 +2268,20 @@ class RecognizeCustomEntitiesAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
+    :ivar str project_name: Required.
+    :ivar str deployment_name: Required.
+    :ivar str string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
+        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+        the Text Analytics natural language processing functions. Setting this parameter to true,
+        disables input logging and may limit our ability to remediate issues that occur. Please see
+        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+        additional details, and Microsoft Responsible AI principles at
+        https://www.microsoft.com/ai/responsible-ai.
     """
 
     def __init__(
@@ -2358,14 +2372,24 @@ class RecognizeCustomEntitiesResult(DictMixin):
         )
 
 
-class ClassifyDocumentMultiCategoriesAction(DictMixin):
-    """ClassifyDocumentMultiCategoriesAction.
+class MultiCategoryClassifyAction(DictMixin):
+    """MultiCategoryClassifyAction.
 
     :param project_name: Required.
     :type project_name: str
     :param deployment_name: Required.
     :type deployment_name: str
     :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+        the Text Analytics natural language processing functions. Setting this parameter to true,
+        disables input logging and may limit our ability to remediate issues that occur. Please see
+        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+        additional details, and Microsoft Responsible AI principles at
+        https://www.microsoft.com/ai/responsible-ai.
+    :ivar str project_name: Required.
+    :ivar str deployment_name: Required.
+    :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the Text Analytics natural language processing functions. Setting this parameter to true,
@@ -2386,7 +2410,7 @@ class ClassifyDocumentMultiCategoriesAction(DictMixin):
         self.disable_service_logs = kwargs.get('disable_service_logs', None)
 
     def __repr__(self):
-        return "ClassifyDocumentMultiCategoriesAction(project_name={}, deployment_name={}, " \
+        return "MultiCategoryClassifyAction(project_name={}, deployment_name={}, " \
                "disable_service_logs={})".format(
             self.project_name,
             self.deployment_name,
@@ -2403,19 +2427,19 @@ class ClassifyDocumentMultiCategoriesAction(DictMixin):
         )
 
 
-class ClassifyDocumentMultiCategoriesResult(DictMixin):
-    """ClassifyDocumentMultiCategoriesResult.
+class MultiCategoryClassifyResult(DictMixin):
+    """MultiCategoryClassifyResult.
 
     :ivar str id: Required. Unique, non-empty document identifier.
     :ivar classifications: Required. Recognized classification results in the document.
-    :vartype classifications: list[~azure.ai.textanalytics.DocumentClassification]
+    :vartype classifications: list[~azure.ai.textanalytics.ClassificationCategory]
     :ivar warnings: Warnings encountered while processing document.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
     :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics: ~azure.ai.textanalytics.TextDocumentStatistics
     :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a ClassifyDocumentMultiCategoriesResult.
+        results. Always False for an instance of a MultiCategoryClassifyResult.
     """
 
     def __init__(
@@ -2429,7 +2453,7 @@ class ClassifyDocumentMultiCategoriesResult(DictMixin):
         self.is_error = False
 
     def __repr__(self):
-        return "ClassifyDocumentMultiCategoriesResult(id={}, classifications={}, warnings={}, statistics={}, " \
+        return "MultiCategoryClassifyResult(id={}, classifications={}, warnings={}, statistics={}, " \
                "is_error={})".format(
                 self.id,
                 repr(self.classifications),
@@ -2445,7 +2469,7 @@ class ClassifyDocumentMultiCategoriesResult(DictMixin):
         return cls(
             id=result.id,
             classifications=[
-                DocumentClassification._from_generated(e)  # pylint: disable=protected-access
+                ClassificationCategory._from_generated(e)  # pylint: disable=protected-access
                 for e in result.classifications
             ],
             warnings=[
@@ -2460,14 +2484,24 @@ class ClassifyDocumentMultiCategoriesResult(DictMixin):
         )
 
 
-class ClassifyDocumentSingleCategoryAction(DictMixin):
-    """ClassifyDocumentMultiCategoriesAction.
+class SingleCategoryClassifyAction(DictMixin):
+    """SingleCategoryClassifyAction.
 
     :param project_name: Required.
     :type project_name: str
     :param deployment_name: Required.
     :type deployment_name: str
     :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+        the Text Analytics natural language processing functions. Setting this parameter to true,
+        disables input logging and may limit our ability to remediate issues that occur. Please see
+        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+        additional details, and Microsoft Responsible AI principles at
+        https://www.microsoft.com/ai/responsible-ai.
+    :ivar str project_name: Required.
+    :ivar str deployment_name: Required.
+    :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the Text Analytics natural language processing functions. Setting this parameter to true,
@@ -2488,7 +2522,7 @@ class ClassifyDocumentSingleCategoryAction(DictMixin):
         self.disable_service_logs = kwargs.get('disable_service_logs', None)
 
     def __repr__(self):
-        return "ClassifyDocumentSingleCategoryAction(project_name={}, deployment_name={}, " \
+        return "SingleCategoryClassifyAction(project_name={}, deployment_name={}, " \
                "disable_service_logs={})".format(
             self.project_name,
             self.deployment_name,
@@ -2505,19 +2539,19 @@ class ClassifyDocumentSingleCategoryAction(DictMixin):
         )
 
 
-class ClassifyDocumentSingleCategoryResult(DictMixin):
-    """ClassifyDocumentMultiCategoriesResult.
+class SingleCategoryClassifyResult(DictMixin):
+    """SingleCategoryClassifyResult.
 
     :ivar str id: Required. Unique, non-empty document identifier.
     :ivar classification: Required. Recognized classification results in the document.
-    :vartype classification: ~azure.ai.textanalytics.DocumentClassification
+    :vartype classification: ~azure.ai.textanalytics.ClassificationCategory
     :ivar warnings: Warnings encountered while processing document.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
     :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics: ~azure.ai.textanalytics.TextDocumentStatistics
     :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a ClassifyDocumentSingleCategoryResult.
+        results. Always False for an instance of a SingleCategoryClassifyResult.
     """
 
     def __init__(
@@ -2531,7 +2565,7 @@ class ClassifyDocumentSingleCategoryResult(DictMixin):
         self.is_error = False
 
     def __repr__(self):
-        return "ClassifyDocumentSingleCategoryResult(id={}, classification={}, warnings={}, statistics={}, " \
+        return "SingleCategoryClassifyResult(id={}, classification={}, warnings={}, statistics={}, " \
                "is_error={})".format(
                 self.id,
                 repr(self.classification),
@@ -2547,7 +2581,7 @@ class ClassifyDocumentSingleCategoryResult(DictMixin):
         return cls(
             id=result.id,
             classification=
-            DocumentClassification._from_generated(result.classification),  # pylint: disable=protected-access
+            ClassificationCategory._from_generated(result.classification),  # pylint: disable=protected-access
             warnings=[
                 TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
                     w
@@ -2560,8 +2594,8 @@ class ClassifyDocumentSingleCategoryResult(DictMixin):
         )
 
 
-class DocumentClassification(DictMixin):
-    """DocumentClassification.
+class ClassificationCategory(DictMixin):
+    """ClassificationCategory.
 
     :ivar str category: Required. Classification type.
     :ivar float confidence_score: Required. Confidence score between 0 and 1 of the recognized
@@ -2576,7 +2610,7 @@ class DocumentClassification(DictMixin):
         self.confidence_score = kwargs.get('confidence_score', None)
 
     def __repr__(self):
-        return "DocumentClassification(category={}, confidence_score={})".format(
+        return "ClassificationCategory(category={}, confidence_score={})".format(
             self.category,
             self.confidence_score,
         )[:1024]

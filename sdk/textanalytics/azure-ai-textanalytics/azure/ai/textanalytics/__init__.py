@@ -55,11 +55,11 @@ from ._models import (
     SummarySentence,
     RecognizeCustomEntitiesAction,
     RecognizeCustomEntitiesResult,
-    ClassifyDocumentSingleCategoryAction,
-    ClassifyDocumentSingleCategoryResult,
-    ClassifyDocumentMultiCategoriesAction,
-    ClassifyDocumentMultiCategoriesResult,
-    DocumentClassification,
+    SingleCategoryClassifyAction,
+    SingleCategoryClassifyResult,
+    MultiCategoryClassifyAction,
+    MultiCategoryClassifyResult,
+    ClassificationCategory,
 )
 
 from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller
@@ -116,11 +116,11 @@ __all__ = [
     "SummarySentence",
     "RecognizeCustomEntitiesAction",
     "RecognizeCustomEntitiesResult",
-    "ClassifyDocumentSingleCategoryAction",
-    "ClassifyDocumentSingleCategoryResult",
-    "ClassifyDocumentMultiCategoriesAction",
-    "ClassifyDocumentMultiCategoriesResult",
-    "DocumentClassification",
+    "SingleCategoryClassifyAction",
+    "SingleCategoryClassifyResult",
+    "MultiCategoryClassifyAction",
+    "MultiCategoryClassifyResult",
+    "ClassificationCategory",
 ]
 
 __version__ = VERSION

@@ -35,8 +35,8 @@ from ._models import (
     ExtractSummaryResult,
     _AnalyzeActionsType,
     RecognizeCustomEntitiesResult,
-    ClassifyDocumentSingleCategoryResult,
-    ClassifyDocumentMultiCategoriesResult,
+    SingleCategoryClassifyResult,
+    MultiCategoryClassifyResult,
 )
 
 
@@ -276,7 +276,7 @@ def custom_entities_result(
 def custom_category_result(
     custom_category, results, *args, **kwargs
 ):  # pylint: disable=unused-argument
-    return ClassifyDocumentSingleCategoryResult._from_generated(  # pylint: disable=protected-access
+    return SingleCategoryClassifyResult._from_generated(  # pylint: disable=protected-access
         custom_category
     )
 
@@ -284,7 +284,7 @@ def custom_category_result(
 def custom_categories_result(
     custom_categories, results, *args, **kwargs
 ):  # pylint: disable=unused-argument
-    return ClassifyDocumentMultiCategoriesResult._from_generated(  # pylint: disable=protected-access
+    return MultiCategoryClassifyResult._from_generated(  # pylint: disable=protected-access
         custom_categories
     )
 
