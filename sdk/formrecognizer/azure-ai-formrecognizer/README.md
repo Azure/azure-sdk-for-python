@@ -160,6 +160,7 @@ Use the `model` parameter to select the type of model for analysis.
 |"{custom-model-id}"| Text extraction, selection marks, tables, labeled fields and values from your custom documents
 
 Sample code snippets are provided to illustrate using a DocumentAnalysisClient [here](#examples "Examples").
+More information about analyzing documents, including supported features and locales can be found in the [service documentation][TODO].
 
 ### DocumentModelAdministrationClient
 `DocumentModelAdministrationClient` provides operations for:
@@ -532,6 +533,7 @@ except ResourceNotFoundError:
 
 ### General
 Form Recognizer client library will raise exceptions defined in [Azure Core][azure_core_exceptions].
+Error codes and messages raised by the Form Recognizer service can be found in the [service documentation][TODO].
 
 ### Logging
 This library uses the standard
