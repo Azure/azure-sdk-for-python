@@ -5,6 +5,7 @@
 from functools import partial
 from azure.core.tracing.decorator import distributed_trace
 
+from .crypto import CryptographyClient
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
 from ._shared._polling import DeleteRecoverPollingMethod, KeyVaultOperationPoller
@@ -18,6 +19,7 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Iterable, Optional, Union
+    from azure.core.credentials import TokenCredential
     from azure.core.paging import ItemPaged
     from azure.core.polling import LROPoller
     from ._models import JsonWebKey
@@ -54,6 +56,21 @@ class KeyClient(KeyVaultClientBase):
                 enabled=enabled, not_before=not_before, expires=expires_on, exportable=exportable
             )
         return None
+
+    def get_cryptography_client(self, key):
+        # type: (str) -> CryptographyClient
+        """Gets a :class:`~azure.keyvault.keys.crypto.CryptographyClient` for the given key.
+
+        :param str key: The full identifier of the key used to perform cryptographic operations. This must include the
+            key version.
+
+        :returns: A :class:`~azure.keyvault.keys.crypto.CryptographyClient` using the same options, credentials, and
+            HTTP client as this :class:`~azure.keyvault.keys.KeyClient`.
+        :rtype: ~azure.keyvault.keys.crypto.CryptographyClient
+        """
+        return CryptographyClient(
+            key, object(), generated_client=self._client, generated_models=self._models  # type: ignore
+        )
 
     @distributed_trace
     def create_key(self, name, key_type, **kwargs):

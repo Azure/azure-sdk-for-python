@@ -203,13 +203,21 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             **kwargs
         )
 
+        result_iv = operation_result.iv if hasattr(operation_result, "iv") else None
+        result_tag = operation_result.authentication_tag if hasattr(operation_result, "authentication_tag") else None
+        result_aad = (
+            operation_result.additional_authenticated_data
+            if hasattr(operation_result, "additional_authenticated_data")
+            else None
+        )
+
         return EncryptResult(
             key_id=self.key_id,
             algorithm=algorithm,
             ciphertext=operation_result.result,
-            iv=operation_result.iv,
-            authentication_tag=operation_result.authentication_tag,
-            additional_authenticated_data=operation_result.additional_authenticated_data,
+            iv=result_iv,
+            authentication_tag=result_tag,
+            additional_authenticated_data=result_aad,
         )
 
     @distributed_trace_async

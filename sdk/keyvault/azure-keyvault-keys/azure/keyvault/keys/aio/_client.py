@@ -8,6 +8,7 @@ from functools import partial
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
+from ..crypto.aio import CryptographyClient
 from .._shared._polling_async import AsyncDeleteRecoverPollingMethod
 from .._shared import AsyncKeyVaultClientBase
 from .._shared.exceptions import error_map as _error_map
@@ -59,6 +60,21 @@ class KeyClient(AsyncKeyVaultClientBase):
                 enabled=enabled, not_before=not_before, expires=expires_on, exportable=exportable
             )
         return None
+
+    def get_cryptography_client(self, key):
+        # type: (str) -> CryptographyClient
+        """Gets a :class:`~azure.keyvault.keys.crypto.aio.CryptographyClient` for the given key.
+
+        :param str key: The full identifier of the key used to perform cryptographic operations. This must include the
+            key version.
+
+        :returns: A :class:`~azure.keyvault.keys.crypto.aio.CryptographyClient` using the same options, credentials, and
+            HTTP client as this :class:`~azure.keyvault.keys.aio.KeyClient`.
+        :rtype: ~azure.keyvault.keys.crypto.aio.CryptographyClient
+        """
+        return CryptographyClient(
+            key, object(), generated_client=self._client, generated_models=self._models  # type: ignore
+        )
 
     @distributed_trace_async
     async def create_key(self, name: str, key_type: "Union[str, KeyType]", **kwargs: "Any") -> KeyVaultKey:
