@@ -67,6 +67,8 @@ class FormRecognizerClientBaseAsync(object):
                 "op",
                 "pages",
                 "readingOrder",
+                "stringIndexType",
+                "api-version"
             }
         )
         self._client = FormRecognizer(

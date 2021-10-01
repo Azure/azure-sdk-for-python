@@ -35,7 +35,6 @@ class TestReceiptFromUrl(FormRecognizerTest):
         self.assertEqual(poller2._polling_method._timeout, 7)  # goes back to client default
 
     @pytest.mark.live_test_only
-    @pytest.mark.skip("aad not enabled yet in v2021-07-30")
     def test_active_directory_auth(self):
         token = self.generate_oauth_token()
         endpoint = self.get_oauth_endpoint()
@@ -300,11 +299,10 @@ class TestReceiptFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    @pytest.mark.skip("different error code being returned")
     def test_receipt_locale_error(self, client):
         with pytest.raises(HttpResponseError) as e:
             client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg, locale="not a locale")
-        assert "UnsupportedLocale" == e.value.error.code
+        assert "InvalidArgument" == e.value.error.code
 
     @FormRecognizerPreparer()
     @GlobalClientPreparerV2(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
