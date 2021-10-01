@@ -3,6 +3,8 @@
 ## 1.7.0b5 (Unreleased)
 
 ### Breaking Changes
+> These changes do not impact the API of stable versions such as 1.6.0.
+> Only code written against a beta version such as 1.7.0b1 may be affected.
 
 - The `allow_multitenant_authentication` argument has been removed and the default behavior is now as if it were true.
   The multitenant authentication feature can be totally disabled by setting the environment variable 
