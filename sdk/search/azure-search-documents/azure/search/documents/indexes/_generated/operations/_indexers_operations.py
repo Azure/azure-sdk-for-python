@@ -12,12 +12,12 @@ import warnings
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
-from azure.core.pipeline.transport._base import _format_url_section
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from msrest import Serializer
 
 from .. import models as _models
+from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -152,8 +152,8 @@ def build_create_or_update_request(
     x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
     if_match = kwargs.pop('if_match', None)  # type: Optional[str]
     if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
+    skip_indexer_reset_requirement_for_cache = kwargs.pop('skip_indexer_reset_requirement_for_cache', None)  # type: Optional[bool]
     disable_cache_reprocessing_change_detection = kwargs.pop('disable_cache_reprocessing_change_detection', None)  # type: Optional[bool]
-    ignore_reset_requirements = kwargs.pop('ignore_reset_requirements', None)  # type: Optional[bool]
 
     prefer = "return=representation"
     api_version = "2021-04-30-Preview"
@@ -169,10 +169,10 @@ def build_create_or_update_request(
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    if skip_indexer_reset_requirement_for_cache is not None:
+        query_parameters['ignoreResetRequirements'] = _SERIALIZER.query("skip_indexer_reset_requirement_for_cache", skip_indexer_reset_requirement_for_cache, 'bool')
     if disable_cache_reprocessing_change_detection is not None:
         query_parameters['disableCacheReprocessingChangeDetection'] = _SERIALIZER.query("disable_cache_reprocessing_change_detection", disable_cache_reprocessing_change_detection, 'bool')
-    if ignore_reset_requirements is not None:
-        query_parameters['ignoreResetRequirements'] = _SERIALIZER.query("ignore_reset_requirements", ignore_reset_requirements, 'bool')
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -431,7 +431,8 @@ class IndexersOperations(object):
             indexer_name=indexer_name,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.reset.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -442,7 +443,7 @@ class IndexersOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -456,7 +457,7 @@ class IndexersOperations(object):
         self,
         indexer_name,  # type: str
         overwrite=False,  # type: Optional[bool]
-        keys_or_ids=None,  # type: Optional["_models.Paths1Cj7DxmIndexersIndexernameSearchResetdocsPostRequestbodyContentApplicationJsonSchema"]
+        keys_or_ids=None,  # type: Optional["_models.DocumentKeysOrIds"]
         request_options=None,  # type: Optional["_models.RequestOptions"]
         **kwargs  # type: Any
     ):
@@ -469,8 +470,7 @@ class IndexersOperations(object):
          keys or ids in this payload will be queued to be re-ingested.
         :type overwrite: bool
         :param keys_or_ids:
-        :type keys_or_ids:
-         ~azure.search.documents.indexes.models.Paths1Cj7DxmIndexersIndexernameSearchResetdocsPostRequestbodyContentApplicationJsonSchema
+        :type keys_or_ids: ~azure.search.documents.indexes.models.DocumentKeysOrIds
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -490,7 +490,7 @@ class IndexersOperations(object):
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         if keys_or_ids is not None:
-            json = self._serialize.body(keys_or_ids, 'Paths1Cj7DxmIndexersIndexernameSearchResetdocsPostRequestbodyContentApplicationJsonSchema')
+            json = self._serialize.body(keys_or_ids, 'DocumentKeysOrIds')
         else:
             json = None
 
@@ -501,7 +501,8 @@ class IndexersOperations(object):
             x_ms_client_request_id=_x_ms_client_request_id,
             json=json,
             template_url=self.reset_docs.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -512,7 +513,7 @@ class IndexersOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -554,7 +555,8 @@ class IndexersOperations(object):
             indexer_name=indexer_name,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.run.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -565,7 +567,7 @@ class IndexersOperations(object):
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -581,8 +583,8 @@ class IndexersOperations(object):
         indexer,  # type: "_models.SearchIndexer"
         if_match=None,  # type: Optional[str]
         if_none_match=None,  # type: Optional[str]
+        skip_indexer_reset_requirement_for_cache=None,  # type: Optional[bool]
         disable_cache_reprocessing_change_detection=None,  # type: Optional[bool]
-        ignore_reset_requirements=None,  # type: Optional[bool]
         request_options=None,  # type: Optional["_models.RequestOptions"]
         **kwargs  # type: Any
     ):
@@ -599,11 +601,11 @@ class IndexersOperations(object):
         :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
          if the ETag on the server does not match this value.
         :type if_none_match: str
+        :param skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements.
+        :type skip_indexer_reset_requirement_for_cache: bool
         :param disable_cache_reprocessing_change_detection: Disables cache reprocessing change
          detection.
         :type disable_cache_reprocessing_change_detection: bool
-        :param ignore_reset_requirements: Ignores cache reset requirements.
-        :type ignore_reset_requirements: bool
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -630,11 +632,12 @@ class IndexersOperations(object):
             x_ms_client_request_id=_x_ms_client_request_id,
             if_match=if_match,
             if_none_match=if_none_match,
+            skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
             disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
-            ignore_reset_requirements=ignore_reset_requirements,
             json=json,
             template_url=self.create_or_update.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -645,7 +648,7 @@ class IndexersOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if response.status_code == 200:
@@ -705,7 +708,8 @@ class IndexersOperations(object):
             if_match=if_match,
             if_none_match=if_none_match,
             template_url=self.delete.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -716,7 +720,7 @@ class IndexersOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -758,7 +762,8 @@ class IndexersOperations(object):
             indexer_name=indexer_name,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.get.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -769,7 +774,7 @@ class IndexersOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SearchIndexer', pipeline_response)
@@ -817,7 +822,8 @@ class IndexersOperations(object):
             select=select,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.list.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -828,7 +834,7 @@ class IndexersOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('ListIndexersResult', pipeline_response)
@@ -878,7 +884,8 @@ class IndexersOperations(object):
             x_ms_client_request_id=_x_ms_client_request_id,
             json=json,
             template_url=self.create.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -889,7 +896,7 @@ class IndexersOperations(object):
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SearchIndexer', pipeline_response)
@@ -935,7 +942,8 @@ class IndexersOperations(object):
             indexer_name=indexer_name,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.get_status.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -946,7 +954,7 @@ class IndexersOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SearchIndexerStatus', pipeline_response)
