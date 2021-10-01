@@ -19,7 +19,7 @@ _Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For
 
 * Python 2.7, or 3.6 or later is required to use this package.
 * An [Azure subscription][azure_subscription]
-* An existing CLU resource
+* An existing Text Analytics resource
 
 > Note: the new unified Cognitive Language Services are not currently available for deployment.
 
@@ -35,9 +35,9 @@ pip install azure-ai-language-conversations
 In order to interact with the CLU service, you'll need to create an instance of the [ConversationAnalysisClient][conversationanalysis_client_class] class. You will need an **endpoint**, and an **API key** to instantiate a client object. For more information regarding authenticating with Cognitive Services, see [Authenticate requests to Azure Cognitive Services][cognitive_auth].
 
 #### Get an API key
-You can get the **endpoint** and an **API key** from the Cognitive Services resource or CLU resource in the [Azure Portal][azure_portal].
+You can get the **endpoint** and an **API key** from the Cognitive Services resource in the [Azure Portal][azure_portal].
 
-Alternatively, use the [Azure CLI][azure_cli] command shown below to get the API key from the Question Answering resource.
+Alternatively, use the [Azure CLI][azure_cli] command shown below to get the API key from the Cognitive Service resource.
 
 ```powershell
 az cognitiveservices account keys list --resource-group <resource-group-name> --name <resource-name>
@@ -51,9 +51,8 @@ Once you've determined your **endpoint** and **API key** you can instantiate a `
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.conversations import ConversationAnalysisClient
 
-endpoint = "https://<"my-account-name">.cognitiveservices.azure.com"
-credential = AzureKeyCredential("{api-key}")
-
+endpoint = "https://<resource-name>.api.cognitive.microsoft.com"
+credential = AzureKeyCredential("<api-key>")
 client = ConversationAnalysisClient(endpoint, credential)
 ```
 
@@ -61,7 +60,7 @@ client = ConversationAnalysisClient(endpoint, credential)
 ## Key concepts
 
 ### ConversationAnalysisClient
-The [ConversationAnalysisClient][conversationanalysis_client_class] is the primary interface used for extracting custom intents and entities from user utterance using your own CLU's pretrained models. For asynchronous operations, an async `ConversationAnalysisClient` is in the `azure.ai.language.conversation.aio` namespace.
+The [ConversationAnalysisClient][conversationanalysis_client_class] is the primary interface for making predictions using your deployed Conversations models. For asynchronous operations, an async `ConversationAnalysisClient` is in the `azure.ai.language.conversation.aio` namespace.
 
 ## Examples
 The `azure-ai-language-conversation` client library provides both synchronous and asynchronous APIs.
