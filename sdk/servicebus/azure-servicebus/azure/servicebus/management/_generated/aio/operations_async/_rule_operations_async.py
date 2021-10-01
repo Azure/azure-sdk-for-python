@@ -45,7 +45,7 @@ class RuleOperations:
         subscription_name: str,
         rule_name: str,
         enrich: Optional[bool] = False,
-        api_version: Optional[str] = "2017_04",
+        api_version: Optional[str] = "2021_05",
         **kwargs
     ) -> object:
         """Get the details about the rule of a subscription of a topic.
@@ -116,7 +116,7 @@ class RuleOperations:
         subscription_name: str,
         rule_name: str,
         request_body: object,
-        api_version: Optional[str] = "2017_04",
+        api_version: Optional[str] = "2021_05",
         if_match: Optional[str] = None,
         **kwargs
     ) -> object:
@@ -201,7 +201,7 @@ class RuleOperations:
         topic_name: str,
         subscription_name: str,
         rule_name: str,
-        api_version: Optional[str] = "2017_04",
+        api_version: Optional[str] = "2021_05",
         **kwargs
     ) -> object:
         """Delete the rule with the given topicName, subscriptionName and ruleName.

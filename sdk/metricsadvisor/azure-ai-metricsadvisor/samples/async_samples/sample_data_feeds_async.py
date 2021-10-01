@@ -66,7 +66,7 @@ async def sample_create_data_feed_async():
                 ],
                 dimensions=[
                     DataFeedDimension(name="category", display_name="Category"),
-                    DataFeedDimension(name="city", display_name="City")
+                    DataFeedDimension(name="region", display_name="region")
                 ],
                 timestamp_column="Timestamp"
             ),

@@ -22,10 +22,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 from ._form_recognizer_client_async import FormRecognizerClient
 from ._helpers_async import AsyncTransportWrapper
-from .._generated.models import (
-    CopyRequest,
-    CopyAuthorizationResult,
-)
 from .._api_versions import FormRecognizerApiVersion
 from .._models import CustomFormModelInfo, AccountProperties, CustomFormModel
 from ._form_base_client_async import FormRecognizerClientBaseAsync
@@ -419,10 +415,10 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
 
         return await self._client.begin_copy_custom_model(  # type: ignore
             model_id=model_id,
-            copy_request=CopyRequest(
+            copy_request=self._generated_models.CopyRequest(
                 target_resource_id=target["resourceId"],
                 target_resource_region=target["resourceRegion"],
-                copy_authorization=CopyAuthorizationResult(
+                copy_authorization=self._generated_models.CopyAuthorizationResult(
                     access_token=target["accessToken"],
                     model_id=target["modelId"],
                     expiration_date_time_ticks=target["expirationDateTimeTicks"],

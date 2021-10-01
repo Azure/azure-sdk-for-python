@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 from __future__ import absolute_import
 import logging
-from typing import Iterator, Optional, Any, Union, TypeVar
+from typing import Iterator, Optional, Any, Union, TypeVar, overload, TYPE_CHECKING
 import urllib3 # type: ignore
 from urllib3.util.retry import Retry # type: ignore
 from urllib3.exceptions import (
@@ -47,7 +47,10 @@ from ._base import (
     _HttpResponseBase
 )
 from ._bigger_block_size_http_adapters import BiggerBlockSizeHTTPAdapter
-from .._tools import get_block_size as _get_block_size, get_internal_response as _get_internal_response
+from .._tools import is_rest as _is_rest, handle_non_stream_rest_response as _handle_non_stream_rest_response
+
+if TYPE_CHECKING:
+    from ...rest import HttpRequest as RestHttpRequest, HttpResponse as RestHttpResponse
 
 PipelineType = TypeVar("PipelineType")
 
@@ -170,11 +173,11 @@ class StreamDownloadGenerator(object):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = _get_block_size(response)
+        self.block_size = response.block_size
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
             raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
-        internal_response = _get_internal_response(response)
+        internal_response = response.internal_response
         if decompress:
             self.iter_content_func = internal_response.iter_content(self.block_size)
         else:
@@ -188,7 +191,7 @@ class StreamDownloadGenerator(object):
         return self
 
     def __next__(self):
-        internal_response = _get_internal_response(self.response)
+        internal_response = self.response.internal_response
         try:
             chunk = next(self.iter_content_func)
             if not chunk:
@@ -284,8 +287,37 @@ class RequestsTransport(HttpTransport):
             self._session_owner = False
             self.session = None
 
-    def send(self, request, **kwargs): # type: ignore
+    @overload
+    def send(self, request, **kwargs):
         # type: (HttpRequest, Any) -> HttpResponse
+        """Send a rest request and get back a rest response.
+
+        :param request: The request object to be sent.
+        :type request: ~azure.core.pipeline.transport.HttpRequest
+        :return: An HTTPResponse object.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
+
+        :keyword requests.Session session: will override the driver session and use yours.
+         Should NOT be done unless really required. Anything else is sent straight to requests.
+        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        """
+
+    @overload
+    def send(self, request, **kwargs):
+        # type: (RestHttpRequest, Any) -> RestHttpResponse
+        """Send an `azure.core.rest` request and get back a rest response.
+
+        :param request: The request object to be sent.
+        :type request: ~azure.core.rest.HttpRequest
+        :return: An HTTPResponse object.
+        :rtype: ~azure.core.rest.HttpResponse
+
+        :keyword requests.Session session: will override the driver session and use yours.
+         Should NOT be done unless really required. Anything else is sent straight to requests.
+        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        """
+
+    def send(self, request, **kwargs): # type: ignore
         """Send request object according to configuration.
 
         :param request: The request object to be sent.
@@ -341,4 +373,14 @@ class RequestsTransport(HttpTransport):
 
         if error:
             raise error
+        if _is_rest(request):
+            from azure.core.rest._requests_basic import RestRequestsTransportResponse
+            retval = RestRequestsTransportResponse(
+                request=request,
+                internal_response=response,
+                block_size=self.connection_config.data_block_size
+            )
+            if not kwargs.get('stream'):
+                _handle_non_stream_rest_response(retval)
+            return retval
         return RequestsTransportResponse(request, response, self.connection_config.data_block_size)

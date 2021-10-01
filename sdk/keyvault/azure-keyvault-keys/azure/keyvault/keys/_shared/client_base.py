@@ -16,8 +16,7 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpTransport
-    from azure.core.configuration import Configuration
+
 
 class ApiVersion(str, Enum):
     """Key Vault API versions supported by this package"""

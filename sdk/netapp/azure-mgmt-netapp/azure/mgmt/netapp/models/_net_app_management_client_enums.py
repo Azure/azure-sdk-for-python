@@ -133,6 +133,15 @@ class MirrorState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MIRRORED = "Mirrored"
     BROKEN = "Broken"
 
+class NetworkFeatures(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Basic network, or Standard features available to the volume.
+    """
+
+    #: Basic network feature.
+    BASIC = "Basic"
+    #: Standard network feature.
+    STANDARD = "Standard"
+
 class QosType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The qos type of the pool
     """
@@ -176,3 +185,14 @@ class ServiceLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ULTRA = "Ultra"
     #: Zone redundant storage service level.
     STANDARD_ZRS = "StandardZRS"
+
+class VolumeStorageToNetworkProximity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Provides storage to network proximity information for the volume.
+    """
+
+    #: Basic storage to network connectivity.
+    DEFAULT = "Default"
+    #: Standard T1 storage to network connectivity.
+    T1 = "T1"
+    #: Standard T2 storage to network connectivity.
+    T2 = "T2"

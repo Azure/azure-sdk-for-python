@@ -10,7 +10,8 @@ from io import BytesIO
 from datetime import date, time
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult, AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
+from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
 from azure.ai.formrecognizer import DocumentAnalysisClient, FormRecognizerClient, FormContentType, FormRecognizerApiVersion, AnalyzeResult
 from testcase import FormRecognizerTest
@@ -387,13 +388,12 @@ class TestReceiptFromStream(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    @pytest.mark.skip("the service is returning a different error code")
     def test_receipt_locale_error(self, client):
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
         with pytest.raises(HttpResponseError) as e:
             client.begin_analyze_document("prebuilt-receipt", receipt, locale="not a locale")
-        assert "UnsupportedLocale" == e.value.error.code
+        assert "InvalidArgument" == e.value.error.code
 
     @FormRecognizerPreparer()
     @GlobalClientPreparerV2(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
@@ -410,7 +410,7 @@ class TestReceiptFromStream(FormRecognizerTest):
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
 
-        poller = client.begin_analyze_document("prebuilt-receipt", receipt, pages=["1"])
+        poller = client.begin_analyze_document("prebuilt-receipt", receipt, pages="1")
         assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
         result = poller.result()
         assert result
