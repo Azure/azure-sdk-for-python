@@ -9,6 +9,7 @@ FILE: sample_analyze_workflow_app.py
 
 DESCRIPTION:
     This sample demonstrates how to analyze user query using an orchestration/workflow project.
+    In this sample, worflow project's top intent will map to a Qna project.
     
     For more info about how to setup a CLU workflow project, see the README.
 
@@ -22,10 +23,7 @@ USAGE:
     4) AZURE_CONVERSATIONS_WORKFLOW_PROJECT - the name of your CLU workflow project.
 """
 
-
-
-
-def test_workflow_app_with_parameters(self, conv_account, conv_key, workflow_project):
+def sample_analyze_workflow_app(self, conv_account, conv_key, workflow_project):
     # [START analyze_workflow_app]
     # import libraries
     import os
@@ -42,21 +40,7 @@ def test_workflow_app_with_parameters(self, conv_account, conv_key, workflow_pro
     # prepare data
     query = "How do you make sushi rice?",
     input = AnalyzeConversationOptions(
-        query=query,
-        parameters={
-            "SushiMaking": QuestionAnsweringParameters(
-                calling_options={
-                    "question": query,
-                    "top": 1,
-                    "confidenceScoreThreshold": 0.1
-                }
-            ),
-            "SushiOrder": DeepstackParameters(
-                calling_options={
-                    "verbose": True
-                }
-            )
-        }
+        query=query
     )
 
     # analyze query
@@ -80,3 +64,6 @@ def test_workflow_app_with_parameters(self, conv_account, conv_key, workflow_pro
     print("view qna result:")
     print("\tresult: {}\n".format(result.prediction.intents[0].result))
     # [START analyze_workflow_app]
+
+if __name__ == '__main__':
+    sample_analyze_workflow_app()
