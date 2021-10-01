@@ -23,7 +23,11 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import BinaryIO, Union, TypeVar, Dict
+try:
+    from functools import lru_cache
+except ImportError:
+    from backports.functools_lru_cache import lru_cache
+from typing import BinaryIO, Union, TypeVar
 from io import BytesIO
 import avro
 from avro.io import DatumWriter, DatumReader, BinaryDecoder, BinaryEncoder
@@ -38,8 +42,18 @@ class AvroObjectSerializer(object):
         :param str codec: The writer codec. If None, let the avro library decides.
         """
         self._writer_codec = codec
-        self._schema_writer_cache = {}  # type: Dict[str, DatumWriter]
-        self._schema_reader_cache = {}  # type: Dict[str, DatumReader]
+
+    @lru_cache(maxsize=128)
+    def _get_schema_writer(self, schema):
+        if not isinstance(schema, avro.schema.Schema):
+            schema = avro.schema.parse(schema)
+        return DatumWriter(schema)
+
+    @lru_cache(maxsize=128)
+    def _get_schema_reader(self, schema):
+        if not isinstance(schema, avro.schema.Schema):
+            schema = avro.schema.parse(schema)
+        return DatumReader(writers_schema=schema)
 
     def serialize(
         self,
@@ -60,14 +74,7 @@ class AvroObjectSerializer(object):
         if not schema:
             raise ValueError("Schema is required in Avro serializer.")
 
-        if not isinstance(schema, avro.schema.Schema):
-            schema = avro.schema.parse(schema)
-
-        try:
-            writer = self._schema_writer_cache[str(schema)]
-        except KeyError:
-            writer = DatumWriter(schema)
-            self._schema_writer_cache[str(schema)] = writer
+        writer = self._get_schema_writer(schema)
 
         stream = BytesIO()
         with stream:
@@ -93,14 +100,7 @@ class AvroObjectSerializer(object):
         if not hasattr(data, 'read'):
             data = BytesIO(data)
 
-        if not isinstance(schema, avro.schema.Schema):
-            schema = avro.schema.parse(schema)
-
-        try:
-            reader = self._schema_reader_cache[str(schema)]
-        except KeyError:
-            reader = DatumReader(writers_schema=schema)
-            self._schema_reader_cache[str(schema)] = reader
+        reader = self._get_schema_reader(schema)
 
         with data:
             bin_decoder = BinaryDecoder(data)
