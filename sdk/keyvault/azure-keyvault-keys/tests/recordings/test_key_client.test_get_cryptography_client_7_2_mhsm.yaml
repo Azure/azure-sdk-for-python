@@ -1,0 +1,219 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey-name4bf81578/create?api-version=7.2
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      content-security-policy:
+      - default-src 'self'
+      content-type:
+      - application/json; charset=utf-8
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      www-authenticate:
+      - Bearer authorization="https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47",
+        resource="https://managedhsm.azure.net"
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-ms-server-latency:
+      - '0'
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: '{"kty": "RSA-HSM"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '18'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey-name4bf81578/create?api-version=7.2
+  response:
+    body:
+      string: '{"attributes":{"created":1633074550,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1633074550},"key":{"e":"AQAB","key_ops":["wrapKey","sign","verify","encrypt","decrypt","unwrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey-name4bf81578/e0ebf7afcdac49360a98b1a042e77018","kty":"RSA-HSM","n":"tkfFqLbweAoQMBtMx-B0mTCCv-JyNTuAWwkZRd8sGUFQW4O-vXFJW0cKVt95GrxNL3hQ6STjgEa4DR2e_WeB6DdXkMbvRUeLqe4RtK-wX0hRG5ECuRy_0bSiUwiExkziNVJubqWuRi9CHjdX0RXSK-9hJyfNkuL2OUEbkYNBif541akY3A1oC_MKuR9pA_1Vmc81kWEqFRI8hBGZYu4O9gsvtmJ8WCIfxcofkYFbMpxPXsgVvaytVA8i22QvQyQ_4pl8RowQhB0Zsa0Hey7Vk9tA5N8kDnDJ5HECI6gLeOY1HKj8PSt_yFsj50t6KI8gNM3M9DwYV1lJoXu-vg2TAw"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '734'
+      content-security-policy:
+      - default-src 'self'
+      content-type:
+      - application/json; charset=utf-8
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-ms-keyvault-network-info:
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-server-latency:
+      - '339'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey-name4bf81578/e0ebf7afcdac49360a98b1a042e77018?api-version=7.2
+  response:
+    body:
+      string: '{"attributes":{"created":1633074550,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1633074550},"key":{"e":"AQAB","key_ops":["wrapKey","verify","sign","unwrapKey","encrypt","decrypt"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey-name4bf81578/e0ebf7afcdac49360a98b1a042e77018","kty":"RSA-HSM","n":"tkfFqLbweAoQMBtMx-B0mTCCv-JyNTuAWwkZRd8sGUFQW4O-vXFJW0cKVt95GrxNL3hQ6STjgEa4DR2e_WeB6DdXkMbvRUeLqe4RtK-wX0hRG5ECuRy_0bSiUwiExkziNVJubqWuRi9CHjdX0RXSK-9hJyfNkuL2OUEbkYNBif541akY3A1oC_MKuR9pA_1Vmc81kWEqFRI8hBGZYu4O9gsvtmJ8WCIfxcofkYFbMpxPXsgVvaytVA8i22QvQyQ_4pl8RowQhB0Zsa0Hey7Vk9tA5N8kDnDJ5HECI6gLeOY1HKj8PSt_yFsj50t6KI8gNM3M9DwYV1lJoXu-vg2TAw"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '734'
+      content-security-policy:
+      - default-src 'self'
+      content-type:
+      - application/json; charset=utf-8
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-ms-build-version:
+      - 1.0.20210907-1-d3b7f466-develop
+      x-ms-keyvault-network-info:
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-server-latency:
+      - '79'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"alg": "RSA-OAEP", "value": "cGxhaW50ZXh0"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '44'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey-name4bf81578/e0ebf7afcdac49360a98b1a042e77018/encrypt?api-version=7.2
+  response:
+    body:
+      string: '{"alg":"RSA-OAEP","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey-name4bf81578/e0ebf7afcdac49360a98b1a042e77018","value":"QP9Qy_ObtB6TOnSd12me2IpyzCyrZzYSDVuioUwOPG88RmIG6z9ooan32d5mEMxiQwRsMnvJwFDbXoYyRYYsarnOVyuqOtZqkJFy3xUkwuHjY4f4OGG31wbEhSS_59nGvtJuDu-PuEPN8Jzqo130Uj8a_MCMtXw3wIL9n2Xq2GtTjlev-yMNj-xseBT6NL5aMIt-R-UJ2cD-xW1zTeMsd139ALpGoc4itsj1vY7M3UorkniS4Uuxr9PmA-tFhl7QOETgrsjl1-qE9tqR2X8jfj9_VEAqOOFZuZEj0hRkPI0RT9jU0d4ZQoNdw26PT3DhOtjSTqzLVuH4VglhKOQNAA"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '489'
+      content-security-policy:
+      - default-src 'self'
+      content-type:
+      - application/json; charset=utf-8
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-ms-keyvault-network-info:
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-server-latency:
+      - '1'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"alg": "RSA-OAEP", "value": "QP9Qy_ObtB6TOnSd12me2IpyzCyrZzYSDVuioUwOPG88RmIG6z9ooan32d5mEMxiQwRsMnvJwFDbXoYyRYYsarnOVyuqOtZqkJFy3xUkwuHjY4f4OGG31wbEhSS_59nGvtJuDu-PuEPN8Jzqo130Uj8a_MCMtXw3wIL9n2Xq2GtTjlev-yMNj-xseBT6NL5aMIt-R-UJ2cD-xW1zTeMsd139ALpGoc4itsj1vY7M3UorkniS4Uuxr9PmA-tFhl7QOETgrsjl1-qE9tqR2X8jfj9_VEAqOOFZuZEj0hRkPI0RT9jU0d4ZQoNdw26PT3DhOtjSTqzLVuH4VglhKOQNAA"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '374'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey-name4bf81578/e0ebf7afcdac49360a98b1a042e77018/decrypt?api-version=7.2
+  response:
+    body:
+      string: '{"alg":"RSA-OAEP","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey-name4bf81578/e0ebf7afcdac49360a98b1a042e77018","value":"cGxhaW50ZXh0"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '159'
+      content-security-policy:
+      - default-src 'self'
+      content-type:
+      - application/json; charset=utf-8
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-ms-keyvault-network-info:
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-server-latency:
+      - '3'
+    status:
+      code: 200
+      message: OK
+version: 1

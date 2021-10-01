@@ -1,0 +1,154 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey-name4f34158a/create?api-version=7.2
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      www-authenticate: Bearer authorization="https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47",
+        resource="https://managedhsm.azure.net"
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-server-latency: '0'
+    status:
+      code: 401
+      message: Unauthorized
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestkey-name4f34158a/create?api-version=7.2
+- request:
+    body: '{"kty": "RSA-HSM"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '18'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey-name4f34158a/create?api-version=7.2
+  response:
+    body:
+      string: '{"attributes":{"created":1633075589,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1633075589},"key":{"e":"AQAB","key_ops":["wrapKey","sign","verify","encrypt","decrypt","unwrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey-name4f34158a/48c07c75788342000afb963417f64004","kty":"RSA-HSM","n":"3membpdG0z2v7ZuYv1kgfivS_vbgOi2zPw9N1Kc4p7JQnd47fE0okJcTQNVgJ8qIrNAoyqQAu4k9DHt5_SRhOYM7_c8HDcrINMEn16wFA9u4JEk7vHiePA05ZnVxFGvgKMcglL1yzCRFOuwYQMSsjFtdMI3ryP4sYEW-Fu8V5Qaz7G87yG-0F87WMcQ63GVs9BYRgSEQwxA-rqCJyjeJ3q6HmymIfeOOZMpDvMyc8kJyRh5ZtvfGCMZ0QXGGcSJ9rgQsU8xePAsjm475vPCoRpSrmUL9XlD5OD-VCHibK4hEVjdnzshT8EMwSxgwrjoOdfX4JDfCiD9tXbmgOiAPDQ"}}'
+    headers:
+      cache-control: no-cache
+      content-length: '734'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region: westus
+      x-ms-server-latency: '297'
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestkey-name4f34158a/create?api-version=7.2
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey-name4f34158a/48c07c75788342000afb963417f64004?api-version=7.2
+  response:
+    body:
+      string: '{"attributes":{"created":1633075589,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1633075589},"key":{"e":"AQAB","key_ops":["wrapKey","verify","sign","unwrapKey","encrypt","decrypt"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey-name4f34158a/48c07c75788342000afb963417f64004","kty":"RSA-HSM","n":"3membpdG0z2v7ZuYv1kgfivS_vbgOi2zPw9N1Kc4p7JQnd47fE0okJcTQNVgJ8qIrNAoyqQAu4k9DHt5_SRhOYM7_c8HDcrINMEn16wFA9u4JEk7vHiePA05ZnVxFGvgKMcglL1yzCRFOuwYQMSsjFtdMI3ryP4sYEW-Fu8V5Qaz7G87yG-0F87WMcQ63GVs9BYRgSEQwxA-rqCJyjeJ3q6HmymIfeOOZMpDvMyc8kJyRh5ZtvfGCMZ0QXGGcSJ9rgQsU8xePAsjm475vPCoRpSrmUL9XlD5OD-VCHibK4hEVjdnzshT8EMwSxgwrjoOdfX4JDfCiD9tXbmgOiAPDQ"}}'
+    headers:
+      cache-control: no-cache
+      content-length: '734'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-build-version: 1.0.20210907-1-d3b7f466-develop
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region: westus
+      x-ms-server-latency: '71'
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestkey-name4f34158a/48c07c75788342000afb963417f64004?api-version=7.2
+- request:
+    body: '{"alg": "RSA-OAEP", "value": "cGxhaW50ZXh0"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '44'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey-name4f34158a/48c07c75788342000afb963417f64004/encrypt?api-version=7.2
+  response:
+    body:
+      string: '{"alg":"RSA-OAEP","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey-name4f34158a/48c07c75788342000afb963417f64004","value":"WO0dmyt0K6lzuoB84iUORM6SRIv174NeWs8HhRtu0Q_EnbLKSL5NtaTnb_ASrAPcMGDeCn28uKL9bPKKYPQI5zDIhZ-KyDBa6Hp7BBNSofg_sV1Z9e0pPHpK2yLyWd1tPROr-Ga1_c6_Atl6sK7njUQRnfsW3zofZZxznhO6s3dNPpG1zNc93obKhkM7AduhRTQgYCeETAZ5Kq0Buwswe0Uq0UuaNcWl3-riMtEc273pqTktW8PmC_QIbHpv6ZQ3vxDbxRyXzv0eirt_8ZISdc4tU8YkWj94fZ8lCfztPnBCjlL1ub1Kkfs9ei6Pj7kKVoyHulmzN-CudBW2UzeQ7Q"}'
+    headers:
+      cache-control: no-cache
+      content-length: '489'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region: westus
+      x-ms-server-latency: '0'
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestkey-name4f34158a/48c07c75788342000afb963417f64004/encrypt?api-version=7.2
+- request:
+    body: '{"alg": "RSA-OAEP", "value": "WO0dmyt0K6lzuoB84iUORM6SRIv174NeWs8HhRtu0Q_EnbLKSL5NtaTnb_ASrAPcMGDeCn28uKL9bPKKYPQI5zDIhZ-KyDBa6Hp7BBNSofg_sV1Z9e0pPHpK2yLyWd1tPROr-Ga1_c6_Atl6sK7njUQRnfsW3zofZZxznhO6s3dNPpG1zNc93obKhkM7AduhRTQgYCeETAZ5Kq0Buwswe0Uq0UuaNcWl3-riMtEc273pqTktW8PmC_QIbHpv6ZQ3vxDbxRyXzv0eirt_8ZISdc4tU8YkWj94fZ8lCfztPnBCjlL1ub1Kkfs9ei6Pj7kKVoyHulmzN-CudBW2UzeQ7Q"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '374'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey-name4f34158a/48c07c75788342000afb963417f64004/decrypt?api-version=7.2
+  response:
+    body:
+      string: '{"alg":"RSA-OAEP","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey-name4f34158a/48c07c75788342000afb963417f64004","value":"cGxhaW50ZXh0"}'
+    headers:
+      cache-control: no-cache
+      content-length: '159'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region: westus
+      x-ms-server-latency: '3'
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestkey-name4f34158a/48c07c75788342000afb963417f64004/decrypt?api-version=7.2
+version: 1
