@@ -30,7 +30,10 @@ except ImportError:
 from io import BytesIO
 from typing import Any, Dict, Mapping
 import avro
+from avro.schema import SchemaParseException, AvroException, InvalidName, PRIMITIVE_TYPES
+from avro.io import AvroTypeException
 
+from .exceptions import SchemaParseException as AzureSchemaParseException
 from ._constants import SCHEMA_ID_START_INDEX, SCHEMA_ID_LENGTH, DATA_START_INDEX
 from ._avro_serializer import AvroObjectSerializer
 
@@ -121,10 +124,12 @@ class SchemaRegistryAvroSerializer(object):
         Encode data with the given schema. The returns bytes are consisted of: The first 4 bytes
         denoting record format identifier. The following 32 bytes denoting schema id returned by schema registry
         service. The remaining bytes are the real data payload.
+        Schema must be a Avro RecordSchema:
+        https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
 
         :param value: The data to be encoded.
         :type value: Mapping[str, Any]
-        :keyword schema: Required. The schema used to encode the data.
+        :keyword schema: Required. The Avro RecordSchema used to encode the data.
         :paramtype schema: str
         :rtype: bytes
         """
@@ -135,12 +140,22 @@ class SchemaRegistryAvroSerializer(object):
         try:
             cached_schema = self._user_input_schema_cache[raw_input_schema]
         except KeyError:
-            parsed_schema = avro.schema.parse(raw_input_schema)
+            try:
+                parsed_schema = avro.schema.parse(raw_input_schema)
+            except (SchemaParseException, AvroTypeException, AvroException, InvalidName) as e:
+                raise AzureSchemaParseException(e)
             self._user_input_schema_cache[raw_input_schema] = parsed_schema
             cached_schema = parsed_schema
 
+        # TODO: check if there's a more pythonic way, if we need it at all
+        if cached_schema.type in PRIMITIVE_TYPES:
+            raise ValueError("Expected schema of type `Record`, got instead primitive: {}".format(raw_input_schema))
+
         record_format_identifier = b"\0\0\0\0"
-        schema_id = self._get_schema_id(cached_schema.fullname, str(cached_schema), **kwargs)
+        try:
+            schema_id = self._get_schema_id(cached_schema.fullname, str(cached_schema), **kwargs)
+        except AttributeError:
+            raise ValueError("Expected schema of type `Record`, got instead schema of type: {}".format(cached_schema.type))
         data_bytes = self._avro_serializer.serialize(value, cached_schema)
 
         stream = BytesIO()

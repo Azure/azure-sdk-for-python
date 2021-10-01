@@ -26,7 +26,9 @@
 from typing import BinaryIO, Union, TypeVar, Dict
 from io import BytesIO
 import avro
-from avro.io import DatumWriter, DatumReader, BinaryDecoder, BinaryEncoder
+from avro.schema import SchemaParseException, AvroException, InvalidName
+from avro.io import DatumWriter, DatumReader, BinaryDecoder, BinaryEncoder, AvroTypeException
+from .exceptions import SchemaParseException as AzureSchemaParseException
 
 ObjectType = TypeVar("ObjectType")
 
@@ -43,17 +45,17 @@ class AvroObjectSerializer(object):
 
     def serialize(
         self,
-        data,  # type: ObjectType
-        schema,  # type: Union[str, bytes, avro.schema.Schema]
+        data,  # type: Mapping[str, Any]
+        schema,  # type: Union[str, avro.schema.Schema]
     ):
         # type: (ObjectType, Union[str, bytes, avro.schema.Schema]) -> bytes
         """Convert the provided value to it's binary representation and write it to the stream.
         Schema must be a Avro RecordSchema:
         https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
-        :param data: An object to serialize
-        :type data: ObjectType
+        :param data: A data to serialize
+        :type data: Mapping[str, Any]
         :param schema: An Avro RecordSchema
-        :type schema: Union[str, bytes, avro.schema.Schema]
+        :type schema: Union[str, avro.schema.Schema]
         :returns: Encoded bytes
         :rtype: bytes
         """
@@ -61,7 +63,10 @@ class AvroObjectSerializer(object):
             raise ValueError("Schema is required in Avro serializer.")
 
         if not isinstance(schema, avro.schema.Schema):
-            schema = avro.schema.parse(schema)
+            try:
+                schema = avro.schema.parse(schema)
+            except (SchemaParseException, AvroTypeException, AvroException, InvalidName) as e:
+                raise AzureSchemaParseException(e)
 
         try:
             writer = self._schema_writer_cache[str(schema)]
@@ -71,22 +76,25 @@ class AvroObjectSerializer(object):
 
         stream = BytesIO()
         with stream:
-            writer.write(data, BinaryEncoder(stream))
+            try:
+                writer.write(data, BinaryEncoder(stream))
+            except AvroTypeException as e:
+                raise ValueError(e)
             encoded_data = stream.getvalue()
         return encoded_data
 
     def deserialize(
         self,
         data,  # type: Union[bytes, BinaryIO]
-        schema,  # type:  Union[str, bytes, avro.schema.Schema]
+        schema,  # type:  str
     ):
-        # type: (Union[bytes, BinaryIO], Union[str, bytes, avro.schema.Schema]) -> ObjectType
+        # type: (Union[bytes, BinaryIO], str) -> ObjectType
         """Read the binary representation into a specific type.
         Return type will be ignored, since the schema is deduced from the provided bytes.
         :param data: A stream of bytes or bytes directly
         :type data: BinaryIO or bytes
         :param schema: An Avro RecordSchema
-        :type schema: Union[str, bytes, avro.schema.Schema]
+        :type schema: str
         :returns: An instantiated object
         :rtype: ObjectType
         """
@@ -94,7 +102,10 @@ class AvroObjectSerializer(object):
             data = BytesIO(data)
 
         if not isinstance(schema, avro.schema.Schema):
-            schema = avro.schema.parse(schema)
+            try:
+                schema = avro.schema.parse(schema)
+            except (SchemaParseException, AvroTypeException, AvroException, InvalidName) as e:
+                raise AzureSchemaParseException(e)
 
         try:
             reader = self._schema_reader_cache[str(schema)]
@@ -104,6 +115,9 @@ class AvroObjectSerializer(object):
 
         with data:
             bin_decoder = BinaryDecoder(data)
-            decoded_data = reader.read(bin_decoder)
+            try:
+                decoded_data = reader.read(bin_decoder)
+            except AvroTypeException as e:
+                raise ValueError(e)
 
         return decoded_data

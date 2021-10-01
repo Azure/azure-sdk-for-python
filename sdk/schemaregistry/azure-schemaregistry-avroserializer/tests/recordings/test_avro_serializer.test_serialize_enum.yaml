@@ -1,0 +1,50 @@
+interactions:
+- request:
+    body: '"{\"type\": \"enum\", \"name\": \"Suit\", \"symbols\": [\"SPADES\", \"HEARTS\"]}"'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '81'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      X-Schema-Type:
+      - Avro
+    method: PUT
+    uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/Suit?api-version=2017-04
+  response:
+    body:
+      string: '{"id":"1e8423d98b774ebc8a0f4be3889baf52"}'
+    headers:
+      content-type:
+      - application/json
+      date:
+      - Fri, 01 Oct 2021 08:50:30 GMT
+      location:
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/Suit/versions/1?api-version=2017-04
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000
+      transfer-encoding:
+      - chunked
+      x-schema-id:
+      - 1e8423d98b774ebc8a0f4be3889baf52
+      x-schema-id-location:
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/1e8423d98b774ebc8a0f4be3889baf52?api-version=2017-04
+      x-schema-type:
+      - Avro
+      x-schema-version:
+      - '1'
+      x-schema-versions-location:
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/Suit/versions?api-version=2017-04
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -22,10 +22,12 @@ import pytest
 import uuid
 import avro
 import avro.io
+import json
 from io import BytesIO
 
 from azure.schemaregistry import SchemaRegistryClient
 from azure.schemaregistry.serializer.avroserializer import SchemaRegistryAvroSerializer
+from azure.schemaregistry.serializer.avroserializer.exceptions import SchemaParseException
 from azure.schemaregistry.serializer.avroserializer._avro_serializer import AvroObjectSerializer
 from azure.identity import ClientSecretCredential
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
@@ -67,12 +69,14 @@ class SchemaRegistryAvroSerializerTests(AzureTestCase):
 
         raw_avro_object_serializer = AvroObjectSerializer()
         dict_data_wrong_type = {"name": u"Ben", "favorite_number": u"something", "favorite_color": u"red"}
-        with pytest.raises(avro.io.AvroTypeException):
+        with pytest.raises(ValueError) as e:
             raw_avro_object_serializer.serialize(dict_data_wrong_type, schema)
+        assert "is not an example of" in str(e.value)
 
         dict_data_missing_required_field = {"favorite_number": 7, "favorite_color": u"red"}
-        with pytest.raises(avro.io.AvroTypeException):
+        with pytest.raises(ValueError) as e:
             raw_avro_object_serializer.serialize(dict_data_missing_required_field, schema)
+        assert "is not an example of" in str(e.value)
 
     @SchemaRegistryPowerShellPreparer()
     def test_basic_sr_avro_serializer_with_auto_register_schemas(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
@@ -123,3 +127,465 @@ class SchemaRegistryAvroSerializerTests(AzureTestCase):
         assert decoded_data["favorite_color"] == u"red"
 
         sr_avro_serializer.close()
+
+    ################################################################# 
+    ######################### PARSE SCHEMAS #########################
+    ################################################################# 
+
+    @SchemaRegistryPowerShellPreparer()
+    def test_parse_invalid_json_string(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_fully_qualified_namespace)
+        sr_avro_serializer = SchemaRegistryAvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
+        invalid_schema = {
+            "name":"User",
+            "type":"record",
+            "namespace":"example.avro",
+            "fields":[{"name":"name","type":"string"}]
+        }
+        invalid_schema_string = "{}".format(invalid_schema)
+        with pytest.raises(SchemaParseException):    # caught avro SchemaParseException
+            sr_avro_serializer.serialize({"name": u"Ben"}, schema=invalid_schema_string) 
+
+    ######################### UNION SCHEMA #########################
+
+    @SchemaRegistryPowerShellPreparer()
+    def test_parse_invalid_union_item(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_fully_qualified_namespace)
+        sr_avro_serializer = SchemaRegistryAvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
+
+        schema_invalid_union_item = ["""
+            "name":"User",
+            "namespace":"example.avro",
+            "type":"record",
+            "fields":[{"name":"name","type":"string"}]
+        """]
+        with pytest.raises(TypeError) as e:
+            sr_avro_serializer.serialize({}, schema=schema_invalid_union_item) 
+        assert str(e.value) == "unhashable type: 'list'"
+
+    ######################### PRIMITIVES #########################
+
+    @SchemaRegistryPowerShellPreparer()
+    def test_parse_primitive_types(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_fully_qualified_namespace)
+        sr_avro_serializer = SchemaRegistryAvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
+
+        primitive_string = "string"
+        with pytest.raises(SchemaParseException) as e:
+            sr_avro_serializer.serialize("hello", schema=primitive_string) 
+    
+        int_type = """{"type": "int", "fake_prop": "string"}"""
+        # Strange schema, valid for parsing but not for serializing. Catch early by checking for primitive
+        # before a bad schema gets registered. Otherwise, will be caught when writing data.
+        with pytest.raises(ValueError) as e:
+            sr_avro_serializer.serialize({"fake_prop": "hello"}, schema=int_type) 
+
+        null_type = """{"type": "null"}"""
+        with pytest.raises(ValueError) as e:     # was HttpResponseError: Bad Request to service, schema fails service side validation
+            sr_avro_serializer.serialize(None, schema=null_type) 
+
+    ######################### type fixed #########################
+
+    @SchemaRegistryPowerShellPreparer()
+    def test_parse_fixed_types(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_fully_qualified_namespace)
+        sr_avro_serializer = SchemaRegistryAvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
+
+        # should give warning from IgnoredLogicalType error since precision < 0
+        #fixed_type_ignore_logical_type_error = """{"type": "fixed", "size": 4, "namespace":"example.avro", "name":"User", "precision": -1}"""
+        #sr_avro_serializer.serialize({}, schema=fixed_type_ignore_logical_type_error) 
+
+        schema_no_size = """{"type": "fixed", "name":"User"}"""
+        with pytest.raises(SchemaParseException):    # caught AvroException
+            sr_avro_serializer.serialize({}, schema=schema_no_size) 
+
+        schema_no_name = """{"type": "fixed", "size": 3}"""
+        with pytest.raises(SchemaParseException):    # caught SchemaParseException
+            sr_avro_serializer.serialize({}, schema=schema_no_name) 
+
+        schema_wrong_name = """{"type": "fixed", "name": 1, "size": 3}"""
+        with pytest.raises(SchemaParseException):    # caught SchemaParseException
+            sr_avro_serializer.serialize({}, schema=schema_wrong_name) 
+
+        schema_wrong_namespace = """{"type": "fixed", "name": "User", "size": 3, "namespace": 1}"""
+        with pytest.raises(SchemaParseException):    # caught SchemaParseException
+            sr_avro_serializer.serialize({}, schema=schema_wrong_namespace) 
+
+    ######################### type enum #########################
+
+    @SchemaRegistryPowerShellPreparer()
+    def test_parse_enum_types(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_fully_qualified_namespace)
+        sr_avro_serializer = SchemaRegistryAvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
+
+        # THE FOLLOWING SHOULD RAISE AVRO SCHEMAPARSEEXCEPTION ERRORS
+        # IT HAS BEEN FIXED IN AVRO GITHUB REPO, BUT HAS NOT BEEN RELEASED YET
+        #schema_enum_wrong_no_symbols_type = """{
+        #    "type": "enum",
+        #    "name": "Suit"
+        #}"""
+        #with pytest.raises(SchemaParseException):    # caught SchemaParseException
+        #    sr_avro_serializer.serialize({}, schema=schema_enum_wrong_no_symbols_type) 
+
+        #schema_enum_wrong_symbol_item_types = """{
+        #    "type": "enum",
+        #    "name": "Suit",
+        #    "symbols": [1]
+        #}"""
+        #with pytest.raises(SchemaParseException):    # caught SchemaParseException
+        #    sr_avro_serializer.serialize({}, schema=schema_enum_wrong_symbol_item_types)
+
+        schema_enum_invalid_symbol_item_names = """{
+            "type": "enum",
+            "name": "Suit",
+            "symbols": ["9abc"]
+        }"""
+        with pytest.raises(SchemaParseException):    # caught SchemaParseException
+            sr_avro_serializer.serialize({}, schema=schema_enum_invalid_symbol_item_names)
+
+        schema_enum_duplicate_symbols = """{
+            "type": "enum",
+            "name": "Suit",
+            "symbols": ["abc", "abc"]
+        }"""
+        with pytest.raises(SchemaParseException):    # caught SchemaParseException
+            sr_avro_serializer.serialize({}, schema=schema_enum_duplicate_symbols)
+
+    ###################################################################
+
+    ## MAP, ARRAY, ERRORUNION schema except types that are already accounted for. ##
+    ## Test in the future when these are implemented ##
+
+    ######################### type unspecified #########################
+
+    @SchemaRegistryPowerShellPreparer()
+    def test_parse_invalid_type(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_fully_qualified_namespace)
+        sr_avro_serializer = SchemaRegistryAvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
+
+        schema_no_type = """{
+            "name": "User",
+            "namespace":"example.avro",
+            "fields":[{"name":"name","type":"string"}]
+        }"""
+        with pytest.raises(SchemaParseException):    # caught avro SchemaParseException    
+            sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_no_type) 
+
+        schema_wrong_type_type = """{
+            "name":"User",
+            "type":1,
+            "namespace":"example.avro",
+            "fields":[{"name":"name","type":"string"}]
+        }"""
+        with pytest.raises(SchemaParseException):
+            sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_wrong_type_type) 
+
+    ######################### RECORD SCHEMA #########################
+
+    @SchemaRegistryPowerShellPreparer()
+    def test_parse_record_name(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_fully_qualified_namespace)
+        sr_avro_serializer = SchemaRegistryAvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
+
+        schema_name_has_dot = """{
+            "namespace": "thrownaway",
+            "name":"User.avro",
+            "type":"record",
+            "fields":[{"name":"name","type":"string"}]
+        }"""
+        encoded_schema = sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_name_has_dot) 
+        schema_id = encoded_schema[4:36].decode("utf-8")
+        registered_schema = sr_client.get_schema(schema_id)
+        # TODO: change content to schema_definition below after release SR b3
+        decoded_registered_schema = json.loads(registered_schema.schema_content)
+
+        # ensure that namespace is saved as part of name before . in registered schema
+        # result, but might be bug in avro?
+        assert decoded_registered_schema["name"] == "User.avro"
+        assert decoded_registered_schema["namespace"] == "User"
+
+        schema_name_no_namespace = """{
+            "name":"User",
+            "type":"record",
+            "fields":[{"name":"name","type":"string"}]
+        }"""
+        encoded_schema = sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_name_no_namespace) 
+        schema_id = encoded_schema[4:36].decode("utf-8")
+        registered_schema = sr_client.get_schema(schema_id)
+        # TODO: change content to schema_definition below after release SR b3
+        decoded_registered_schema = json.loads(registered_schema.schema_content)
+
+        # ensure that namespace is saved as part of name before . in registered schema
+        assert decoded_registered_schema["name"] == "User"
+        assert "namespace" not in decoded_registered_schema
+
+        schema_invalid_fullname = """{
+            "name":"abc",
+            "type":"record",
+            "namespace":"9example.avro",
+            "fields":[{"name":"name","type":"string"}]
+        }"""
+        with pytest.raises(SchemaParseException):
+            sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_invalid_fullname) 
+
+        schema_invalid_name_in_fullname = """{
+            "name":"1abc",
+            "type":"record",
+            "fields":[{"name":"name","type":"string"}]
+        }"""
+        with pytest.raises(SchemaParseException):
+            sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_invalid_name_in_fullname) 
+
+        schema_invalid_name_reserved_type = """{
+            "name":"record",
+            "type":"record",
+            "fields":[{"name":"name","type":"string"}]
+        }"""
+        with pytest.raises(SchemaParseException):
+            sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_invalid_name_in_fullname) 
+
+        schema_wrong_type_name = """{
+            "name":1,
+            "type":"record",
+            "namespace":"example.avro",
+            "fields":[{"name":"name","type":"string"}]
+        }"""
+        with pytest.raises(SchemaParseException):
+            sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_wrong_type_name) 
+
+        schema_no_name = """{
+            "namespace":"example.avro",
+            "type":"record",
+            "fields":[{"name":"name","type":"string"}]
+        }"""
+        with pytest.raises(SchemaParseException):
+            sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_no_name) 
+
+    @SchemaRegistryPowerShellPreparer()
+    def test_parse_error_schema_as_record(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_fully_qualified_namespace)
+        sr_avro_serializer = SchemaRegistryAvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
+
+        schema_error_type = """{
+            "name":"User",
+            "namespace":"example.avro.error",
+            "type":"error",
+            "fields":[{"name":"name","type":"string"}]
+        }"""
+        encoded_data = sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_error_type) 
+        schema_id = encoded_data[4:36].decode("utf-8")
+        registered_schema = sr_client.get_schema(schema_id)
+        # TODO: change content to schema_definition below after release SR b3
+        decoded_registered_schema = json.loads(registered_schema.schema_content)
+        assert decoded_registered_schema["type"] == "error"
+
+    @SchemaRegistryPowerShellPreparer()
+    def test_parse_record_fields(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_fully_qualified_namespace)
+        sr_avro_serializer = SchemaRegistryAvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
+
+        schema_no_fields = """{
+            "name":"User",
+            "namespace":"example.avro",
+            "type":"record"
+        }"""
+        with pytest.raises(SchemaParseException):
+            sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_no_fields) 
+        
+        schema_wrong_type_fields = """{
+            "name":"User",
+            "namespace":"example.avro",
+            "type":"record"
+            "fields": "hello"
+        }"""
+        with pytest.raises(SchemaParseException):
+            sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_wrong_type_fields) 
+
+        schema_wrong_field_item_type = """{
+            "name":"User",
+            "namespace":"example.avro",
+            "type":"record"
+            "fields": ["hello"]
+        }"""
+        with pytest.raises(SchemaParseException):
+            sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_wrong_field_item_type) 
+
+        schema_record_field_no_name= """{
+            "name":"User",
+            "namespace":"example.avro",
+            "type":"record",
+            "fields":[{"type":"string"}]
+        }"""
+        with pytest.raises(SchemaParseException):
+            sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_record_field_no_name) 
+
+        schema_record_field_wrong_type_name= """{
+            "name":"User",
+            "namespace":"example.avro",
+            "type":"record",
+            "fields":[{"name": 1, "type":"string"}]
+        }"""
+        with pytest.raises(SchemaParseException):
+            sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_record_field_wrong_type_name) 
+
+        schema_record_field_with_invalid_order = """{
+            "name":"User",
+            "namespace":"example.avro.order",
+            "type":"record",
+            "fields":[{"name":"name","type":"string","order":"fake_order"}]
+        }"""
+        with pytest.raises(SchemaParseException):
+            sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_record_field_with_invalid_order) 
+
+        schema_record_duplicate_fields = """{
+            "name":"User",
+            "namespace":"example.avro",
+            "type":"record",
+            "fields":[{"name":"name","type":"string"}, {"name":"name","type":"string"}]
+        }"""
+        with pytest.raises(SchemaParseException):
+            sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_record_duplicate_fields) 
+
+        schema_field_type_invalid = """{
+            "name":"User",
+            "namespace":"example.avro",
+            "type":"record",
+            "fields":[{"name":"name","type":1}]
+        }"""
+        with pytest.raises(SchemaParseException):
+            sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_field_type_invalid) 
+
+    #@SchemaRegistryPowerShellPreparer()
+    #def test_parse_invalid_aliases(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+    #    sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_fully_qualified_namespace)
+    #    sr_avro_serializer = SchemaRegistryAvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
+
+        # NOT FAILING
+    #    schema_wrong_type_aliases = """{
+    #        "name":"User_aliases",
+    #        "type":"record",
+    #        "namespace":"example.avro",
+    #        "aliases":["Resu"],
+    #        "fields":[{"name":"name","type":"string"}]
+    #    }"""
+    #    with pytest.raises(SchemaParseException):
+    #        sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_wrong_type_aliases) 
+
+    ################################################################# 
+    #################### SERIALIZE AND DESERIALIZE ##################
+    ################################################################# 
+
+    @SchemaRegistryPowerShellPreparer()
+    def test_serialize_primitive(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_fully_qualified_namespace)
+        sr_avro_serializer = SchemaRegistryAvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
+
+        schema_null = """{"type": "null"}"""
+        with pytest.raises(ValueError):     # cannot serialize primitive
+            sr_avro_serializer.serialize(None, schema=schema_null)
+
+    @SchemaRegistryPowerShellPreparer()
+    def test_serialize_fixed(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_fully_qualified_namespace)
+        sr_avro_serializer = SchemaRegistryAvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
+
+        schema_fixed = """{"type": "fixed", "name":"User", "size": 39}"""
+        # WHAT KIND OF VALUE SHOULD GO BELOW TO MAKE THIS WORK?
+        #sr_avro_serializer.serialize(b"\u00ff", schema=schema_fixed) 
+        
+    @SchemaRegistryPowerShellPreparer()
+    def test_serialize_enum(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_fully_qualified_namespace)
+        sr_avro_serializer = SchemaRegistryAvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
+
+        schema_enum = """{
+            "type": "enum",
+            "name": "Suit",
+            "symbols": ["SPADES", "HEARTS"]
+        }"""
+        data = "SPADES"
+        encoded_data = sr_avro_serializer.serialize(data, schema=schema_enum)
+        decoded_data = sr_avro_serializer.deserialize(encoded_data)
+        assert decoded_data == data
+    
+    @SchemaRegistryPowerShellPreparer()
+    def test_serialize_array(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_fully_qualified_namespace)
+        sr_avro_serializer = SchemaRegistryAvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
+
+        # mapping behaves similarly
+        schema_array = """{
+            "type": "array",
+            "items": "string"
+        }"""
+        with pytest.raises(ValueError):     # cannot serialize primitive
+            sr_avro_serializer.serialize(["hi"], schema=schema_array)
+        
+    @SchemaRegistryPowerShellPreparer()
+    def test_serialize_record(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_fully_qualified_namespace)
+        sr_avro_serializer = SchemaRegistryAvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
+    
+        schema_record = """{
+            "name":"User",
+            "namespace":"example.avro.populatedrecord",
+            "type":"record",
+            "fields":[
+                {"name":"name","type":"string"},
+                {"name":"age","type":"int"},
+                {"name":"married","type":"boolean"},
+                {"name":"height","type":"float"},
+                {"name":"randb","type":"bytes"}
+            ]
+        }"""
+        # add below to schema later if possible
+        # {"name":"example.innerrec","type":"record","fields":[{"name":"a","type":"int"}]},
+        # {"name":"innerenum","type":"enum","symbols":["FOO", "BAR"]},
+        # {"name":"innerarray","type":"array","items":"int"},
+        # {"name":"innermap","type":"map","values":"int"},
+        # {"name":"innerfixed","type":"fixed","size":74}
+        data = {
+            "name": u"Ben",
+            "age": 3,
+            "married": False,
+            "height": 13.5,
+            "randb": b"\u00FF"
+        #    "innerrec": {"a":1},
+        #    "innerenum": "FOO",
+        #    "innerarray": [1],
+        #    "innermap": {"a":1},
+        #    "innerfixed": "\u00ff"
+        }
+
+        encoded_data = sr_avro_serializer.serialize(data, schema=schema_record)
+        decoded_data = sr_avro_serializer.deserialize(encoded_data)
+        assert decoded_data == data
+
+
+        # testing that "default" property in field does deserialize with default if field not in data
+        # below doesn't work, so what does "default" do?
+        #schema_record_without_default = """{
+        #    "name":"User",
+        #    "namespace":"example.avro.withoutdefault",
+        #    "type":"record",
+        #    "fields":[
+        #        {"name":"name","type":"string"}
+        #    ]
+        #}"""
+        #data = {"name":u"Ben"}
+        #encoded_data_with_envelope = sr_avro_serializer.serialize(data, schema=schema_record_without_default)
+        #encoded_data = encoded_data_with_envelope[36:]
+
+        #schema_record_with_default = """{
+        #    "name":"User",
+        #    "namespace":"example.avro.default",
+        #    "type":"record",
+        #    "fields":[
+        #        {"name":"name","type":"string"},
+        #        {"name":"age","type":"int","default":1}
+        #    ]
+        #}"""
+
+        #raw_avro_object_serializer = AvroObjectSerializer()
+        #decoded_data = raw_avro_object_serializer.deserialize(encoded_data, schema_record_with_default)
+        #assert decoded_data["age"] == 1
