@@ -65,7 +65,7 @@ what you can do with the Azure Conversational Language Understanding client libr
 
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
 [azure_subscription]: https://azure.microsoft.com/free/
-[azure_clu_account]: https://azure.microsoft.com/services/cognitive-services/text-analytics/
+[azure_clu_account]: https://language.azure.com/clu/projects
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
 [pip]: https://pypi.org/project/pip/
 
@@ -73,24 +73,19 @@ what you can do with the Azure Conversational Language Understanding client libr
 [sample_authentication]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_authentication.py
 [sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_authentication_async.py
 
-[sample_analyze_conversation_app]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_sample_analyze_conversation_app.py
-[sample_analyze_conversation_app_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_sample_analyze_conversation_app_async.py
+[sample_analyze_conversation_app]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_analyze_conversation_app.py
+[sample_analyze_conversation_app_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_analyze_conversation_app_async.py
 
 [sample_analyze_workflow_app]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_analyze_workflow_app.py
 [sample_analyze_workflow_app_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_analyze_workflow_app_async.py
-[sample_analyze_conversation_app_with_azure_blob]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_translation_with_azure_blob.py
-[sample_analyze_conversation_app_with_azure_blob_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_translation_with_azure_blob_async.py
-[sample_analyze_workflow_app_with_parms]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_translation_with_glossaries.py
-[sample_analyze_workflow_app_with_parms_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_translation_with_glossaries_async.py
+
+[sample_analyze_workflow_app_with_parms]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_analyze_workflow_app_with_parms.py
+[sample_analyze_workflow_app_with_parms_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_analyze_workflow_app_with_parms_async.py
+
 [sample_analyze_workflow_app_direct]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_sample_analyze_workflow_app_direct.py
 [sample_analyze_workflow_app_direct_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_sample_analyze_workflow_app_direct_async.py
-[list_translations]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_list_translations.py
-[list_translations_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_list_translations_async.py
 
 
-
-
-[api_reference_documentation]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
-
+[api_reference_documentation]: https://language.azure.com/clu/projects
 
 [versioning_story_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations#install-the-package
