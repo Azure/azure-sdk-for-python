@@ -34,5 +34,18 @@ setup(
     This API accepts a request and mediates among multiple language projects, such as LUIS Generally Available, Question Answering, LUIS Deepstack, and then calls the best candidate service to handle the request. At last, it returns a response with the candidate service's response as a payload.
 
  In some cases, this API needs to forward requests and responses between the caller and an upstream service.
-    """
+    """,
+    classifiers=[
+        # "Development Status :: 4 - Beta",
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'License :: OSI Approved :: MIT License',
+    ]
 )
