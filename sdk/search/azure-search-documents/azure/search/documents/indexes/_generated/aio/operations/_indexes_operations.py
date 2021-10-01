@@ -18,6 +18,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models as _models
+from ..._vendor import _convert_request
 from ...operations._indexes_operations import build_analyze_request, build_create_or_update_request, build_create_request, build_delete_request, build_get_request, build_get_statistics_request, build_list_request
 
 T = TypeVar('T')
@@ -81,7 +82,8 @@ class IndexesOperations:
             x_ms_client_request_id=_x_ms_client_request_id,
             json=json,
             template_url=self.create.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -141,7 +143,8 @@ class IndexesOperations:
                     select=select,
                     x_ms_client_request_id=_x_ms_client_request_id,
                     template_url=self.list.metadata['url'],
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -156,7 +159,8 @@ class IndexesOperations:
                     select=select,
                     x_ms_client_request_id=_x_ms_client_request_id,
                     template_url=next_link,
-                )._to_pipeline_transport_request()
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -252,7 +256,8 @@ class IndexesOperations:
             if_none_match=if_none_match,
             json=json,
             template_url=self.create_or_update.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -324,7 +329,8 @@ class IndexesOperations:
             if_match=if_match,
             if_none_match=if_none_match,
             template_url=self.delete.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -376,7 +382,8 @@ class IndexesOperations:
             index_name=index_name,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.get.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -432,7 +439,8 @@ class IndexesOperations:
             index_name=index_name,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.get_statistics.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -496,7 +504,8 @@ class IndexesOperations:
             x_ms_client_request_id=_x_ms_client_request_id,
             json=json,
             template_url=self.analyze.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }

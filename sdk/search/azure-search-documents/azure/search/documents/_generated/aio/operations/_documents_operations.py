@@ -16,6 +16,7 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models as _models
+from ..._vendor import _convert_request
 from ...operations._documents_operations import build_autocomplete_get_request, build_autocomplete_post_request, build_count_request, build_get_request, build_index_request, build_search_get_request, build_search_post_request, build_suggest_get_request, build_suggest_post_request
 
 T = TypeVar('T')
@@ -71,7 +72,8 @@ class DocumentsOperations:
         request = build_count_request(
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.count.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             "indexName": self._serialize.url("self._config.index_name", self._config.index_name, 'str'),
@@ -202,7 +204,8 @@ class DocumentsOperations:
             semantic_fields=_semantic_fields,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.search_get.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             "indexName": self._serialize.url("self._config.index_name", self._config.index_name, 'str'),
@@ -263,7 +266,8 @@ class DocumentsOperations:
             x_ms_client_request_id=_x_ms_client_request_id,
             json=json,
             template_url=self.search_post.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             "indexName": self._serialize.url("self._config.index_name", self._config.index_name, 'str'),
@@ -325,7 +329,8 @@ class DocumentsOperations:
             selected_fields=selected_fields,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.get.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             "indexName": self._serialize.url("self._config.index_name", self._config.index_name, 'str'),
@@ -419,7 +424,8 @@ class DocumentsOperations:
             top=_top,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.suggest_get.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             "indexName": self._serialize.url("self._config.index_name", self._config.index_name, 'str'),
@@ -480,7 +486,8 @@ class DocumentsOperations:
             x_ms_client_request_id=_x_ms_client_request_id,
             json=json,
             template_url=self.suggest_post.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             "indexName": self._serialize.url("self._config.index_name", self._config.index_name, 'str'),
@@ -542,7 +549,8 @@ class DocumentsOperations:
             x_ms_client_request_id=_x_ms_client_request_id,
             json=json,
             template_url=self.index.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             "indexName": self._serialize.url("self._config.index_name", self._config.index_name, 'str'),
@@ -636,7 +644,8 @@ class DocumentsOperations:
             search_fields=_search_fields,
             top=_top,
             template_url=self.autocomplete_get.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             "indexName": self._serialize.url("self._config.index_name", self._config.index_name, 'str'),
@@ -697,7 +706,8 @@ class DocumentsOperations:
             x_ms_client_request_id=_x_ms_client_request_id,
             json=json,
             template_url=self.autocomplete_post.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             "indexName": self._serialize.url("self._config.index_name", self._config.index_name, 'str'),

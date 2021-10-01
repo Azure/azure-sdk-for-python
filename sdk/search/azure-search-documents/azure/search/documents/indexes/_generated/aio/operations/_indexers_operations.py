@@ -16,6 +16,7 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models as _models
+from ..._vendor import _convert_request
 from ...operations._indexers_operations import build_create_or_update_request, build_create_request, build_delete_request, build_get_request, build_get_status_request, build_list_request, build_reset_docs_request, build_reset_request, build_run_request
 
 T = TypeVar('T')
@@ -75,7 +76,8 @@ class IndexersOperations:
             indexer_name=indexer_name,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.reset.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -143,7 +145,8 @@ class IndexersOperations:
             x_ms_client_request_id=_x_ms_client_request_id,
             json=json,
             template_url=self.reset_docs.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -195,7 +198,8 @@ class IndexersOperations:
             indexer_name=indexer_name,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.run.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -274,7 +278,8 @@ class IndexersOperations:
             disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
             json=json,
             template_url=self.create_or_update.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -344,7 +349,8 @@ class IndexersOperations:
             if_match=if_match,
             if_none_match=if_none_match,
             template_url=self.delete.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -396,7 +402,8 @@ class IndexersOperations:
             indexer_name=indexer_name,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.get.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -454,7 +461,8 @@ class IndexersOperations:
             select=select,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.list.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -514,7 +522,8 @@ class IndexersOperations:
             x_ms_client_request_id=_x_ms_client_request_id,
             json=json,
             template_url=self.create.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -570,7 +579,8 @@ class IndexersOperations:
             indexer_name=indexer_name,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.get_status.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
