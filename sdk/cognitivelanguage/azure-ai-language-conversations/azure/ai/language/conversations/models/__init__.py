@@ -7,17 +7,19 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AnalyzeConversationOptions
+    from ._models_py3 import AnalyzeConversationResult
     from ._models_py3 import AnalyzeParameters
     from ._models_py3 import BasePrediction
-    from ._models_py3 import ConversationAnalysisInput
-    from ._models_py3 import ConversationAnalysisResult
     from ._models_py3 import DSTargetIntentResult
+    from ._models_py3 import DeepStackEntityResolution
     from ._models_py3 import DeepstackCallingOptions
-    from ._models_py3 import DeepstackClassification
     from ._models_py3 import DeepstackEntity
+    from ._models_py3 import DeepstackIntent
     from ._models_py3 import DeepstackParameters
     from ._models_py3 import DeepstackPrediction
     from ._models_py3 import DeepstackResult
+    from ._models_py3 import DictionaryNormalizedValueResolution
     from ._models_py3 import Error
     from ._models_py3 import ErrorResponse
     from ._models_py3 import InnerErrorModel
@@ -29,17 +31,19 @@ try:
     from ._models_py3 import TargetIntentResult
     from ._models_py3 import WorkflowPrediction
 except (SyntaxError, ImportError):
+    from ._models import AnalyzeConversationOptions  # type: ignore
+    from ._models import AnalyzeConversationResult  # type: ignore
     from ._models import AnalyzeParameters  # type: ignore
     from ._models import BasePrediction  # type: ignore
-    from ._models import ConversationAnalysisInput  # type: ignore
-    from ._models import ConversationAnalysisResult  # type: ignore
     from ._models import DSTargetIntentResult  # type: ignore
+    from ._models import DeepStackEntityResolution  # type: ignore
     from ._models import DeepstackCallingOptions  # type: ignore
-    from ._models import DeepstackClassification  # type: ignore
     from ._models import DeepstackEntity  # type: ignore
+    from ._models import DeepstackIntent  # type: ignore
     from ._models import DeepstackParameters  # type: ignore
     from ._models import DeepstackPrediction  # type: ignore
     from ._models import DeepstackResult  # type: ignore
+    from ._models import DictionaryNormalizedValueResolution  # type: ignore
     from ._models import Error  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import InnerErrorModel  # type: ignore
@@ -54,22 +58,25 @@ except (SyntaxError, ImportError):
 from ._conversation_analysis_client_enums import (
     ErrorCode,
     InnerErrorCode,
-    ProjectType,
-    TargetType,
+    ProjectKind,
+    ResolutionKind,
+    TargetKind,
 )
 
 __all__ = [
+    'AnalyzeConversationOptions',
+    'AnalyzeConversationResult',
     'AnalyzeParameters',
     'BasePrediction',
-    'ConversationAnalysisInput',
-    'ConversationAnalysisResult',
     'DSTargetIntentResult',
+    'DeepStackEntityResolution',
     'DeepstackCallingOptions',
-    'DeepstackClassification',
     'DeepstackEntity',
+    'DeepstackIntent',
     'DeepstackParameters',
     'DeepstackPrediction',
     'DeepstackResult',
+    'DictionaryNormalizedValueResolution',
     'Error',
     'ErrorResponse',
     'InnerErrorModel',
@@ -82,6 +89,7 @@ __all__ = [
     'WorkflowPrediction',
     'ErrorCode',
     'InnerErrorCode',
-    'ProjectType',
-    'TargetType',
+    'ProjectKind',
+    'ResolutionKind',
+    'TargetKind',
 ]

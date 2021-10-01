@@ -16,50 +16,58 @@ from testcase import (
 
 from azure.ai.language.conversations import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
-    ConversationAnalysisInput,
-    ConversationAnalysisResult,
+    AnalyzeConversationOptions,
+    AnalyzeConversationResult,
     DeepstackPrediction
 )
 
 
-class DeepstackAnalysisTests(ConversationTest):
+class ConversationAppTests(ConversationTest):
 
     @GlobalConversationAccountPreparer()
-    def test_analysis(self, conv_account, conv_key, conv_project):
+    def test_conversation_app(self, conv_account, conv_key, conv_project):
 
-        client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
-        params = ConversationAnalysisInput(
-            query="One california maki please.",
+        # prepare data
+        query = "One california maki please."
+        input = AnalyzeConversationOptions(
+            query=query,
         )
 
+        # analyze quey
+        client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
         with client:
             result = client.analyze_conversations(
-                params,
+                input,
                 project_name=conv_project,
                 deployment_name='production'
             )
         
-        assert isinstance(result, ConversationAnalysisResult)
-        assert result.query == "One california maki please."
+        # assert
+        assert isinstance(result, AnalyzeConversationResult)
+        assert result.query == query
         assert isinstance(result.prediction, DeepstackPrediction)
-        assert result.prediction.project_type == 'conversation'
-        assert len(result.prediction.entities) > 0
-        assert len(result.prediction.classifications) > 0
+        assert result.prediction.project_kind == 'conversation'
         assert result.prediction.top_intent == 'Order'
-        assert result.prediction.classifications[0].category == 'Order'
-        assert result.prediction.classifications[0].confidence_score > 0
+        assert len(result.prediction.entities) > 0
+        assert len(result.prediction.intents) > 0
+        assert result.prediction.intents[0].category == 'Order'
+        assert result.prediction.intents[0].confidence_score > 0
         assert result.prediction.entities[0].category == 'OrderItem'
         assert result.prediction.entities[0].text == 'california maki'
         assert result.prediction.entities[0].confidence_score > 0
         
 
     @GlobalConversationAccountPreparer()
-    def test_analysis_with_dictparams(self, conv_account, conv_key, conv_project):
-        client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
+    def test_conversation_app_with_dictparams(self, conv_account, conv_key, conv_project):
+        
+        # prepare data
+        query = "One california maki please."
         params = {
-            "query": "One california maki please.",
+            "query": query,
         }
 
+        # analyze quey
+        client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
         with client:
             result = client.analyze_conversations(
                 params,
@@ -67,15 +75,16 @@ class DeepstackAnalysisTests(ConversationTest):
                 deployment_name='production'
             )
         
-        assert isinstance(result, ConversationAnalysisResult)
-        assert result.query == "One california maki please."
+        # assert
+        assert isinstance(result, AnalyzeConversationResult)
+        assert result.query == query
         assert isinstance(result.prediction, DeepstackPrediction)
-        assert result.prediction.project_type == 'conversation'
-        assert len(result.prediction.entities) > 0
-        assert len(result.prediction.classifications) > 0
+        assert result.prediction.project_kind == 'conversation'
         assert result.prediction.top_intent == 'Order'
-        assert result.prediction.classifications[0].category == 'Order'
-        assert result.prediction.classifications[0].confidence_score > 0
+        assert len(result.prediction.entities) > 0
+        assert len(result.prediction.intents) > 0
+        assert result.prediction.intents[0].category == 'Order'
+        assert result.prediction.intents[0].confidence_score > 0
         assert result.prediction.entities[0].category == 'OrderItem'
         assert result.prediction.entities[0].text == 'california maki'
         assert result.prediction.entities[0].confidence_score > 0

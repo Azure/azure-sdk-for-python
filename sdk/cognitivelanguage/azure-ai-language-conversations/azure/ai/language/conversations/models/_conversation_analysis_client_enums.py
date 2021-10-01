@@ -35,14 +35,21 @@ class InnerErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AZURE_COGNITIVE_SEARCH_THROTTLING = "AzureCognitiveSearchThrottling"
     EXTRACTION_FAILURE = "ExtractionFailure"
 
-class ProjectType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ProjectKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of the project.
     """
 
     CONVERSATION = "conversation"
     WORKFLOW = "workflow"
 
-class TargetType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ResolutionKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of an entity resolution.
+    """
+
+    #: Dictionary normalized entities.
+    DICTIONARY_NORMALIZED_VALUE = "DictionaryNormalizedValue"
+
+class TargetKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of a target service.
     """
 

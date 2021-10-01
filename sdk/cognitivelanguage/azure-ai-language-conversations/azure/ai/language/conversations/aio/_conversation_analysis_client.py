@@ -53,14 +53,13 @@ class ConversationAnalysisClient(ConversationAnalysisClientOperationsMixin):
     ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
-        We have helper methods to create requests specific to this service in `azure.ai.language.conversations.rest`.
-        Use these helper methods to create the request you pass to this method.
-
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = await client.send_request(request)
+        <AsyncHttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
-
-        For advanced cases, you can also create your own :class:`~azure.core.rest.HttpRequest`
-        and pass it in.
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
