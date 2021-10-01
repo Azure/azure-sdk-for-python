@@ -419,16 +419,14 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
-                messages_request = message.message.split("/n")
-                for m in messages_request:
-                    try:
-                        body = json.loads(m)
-                        expected_kty = "RSA-HSM" if is_hsm else "RSA"
-                        if body["kty"] == expected_kty:
-                            return
-                    except (ValueError, KeyError):
-                        # this means the message is not JSON or has no kty property
-                        pass
+                try:
+                    body = json.loads(message.message)
+                    expected_kty = "RSA-HSM" if is_hsm else "RSA"
+                    if body["kty"] == expected_kty:
+                        return
+                except (ValueError, KeyError):
+                    # this means the message is not JSON or has no kty property
+                    pass
 
         assert False, "Expected request body wasn't logged"
 
@@ -446,15 +444,13 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
-                messages_request = message.message.split("/n")
-                for m in messages_request:
-                    try:
-                        body = json.loads(m)
-                        expected_kty = "RSA-HSM" if is_hsm else "RSA"
-                        assert body["kty"] != expected_kty, "Client request body was logged"
-                    except (ValueError, KeyError):
-                        # this means the message is not JSON or has no kty property
-                        pass
+                try:
+                    body = json.loads(message.message)
+                    expected_kty = "RSA-HSM" if is_hsm else "RSA"
+                    assert body["kty"] != expected_kty, "Client request body was logged"
+                except (ValueError, KeyError):
+                    # this means the message is not JSON or has no kty property
+                    pass
 
     @only_hsm_7_3_preview()
     @client_setup
