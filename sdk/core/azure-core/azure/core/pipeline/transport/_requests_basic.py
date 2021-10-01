@@ -81,45 +81,6 @@ def _read_raw_stream(response, chunk_size=1):
     response._content_consumed = True  # pylint: disable=protected-access
 
 
-
-def _get_length(response):
-    """
-    Set length value for Response content if available.
-    """
-    length = response.headers.get("content-length")
-
-    if length is not None:
-        try:
-            # RFC 7230 section 3.3.2 specifies multiple content lengths can
-            # be sent in a single Content-Length header
-            # (e.g. Content-Length: 42, 42). This line ensures the values
-            # are all valid ints and that as long as the `set` length is 1,
-            # all values are the same. Otherwise, the header is invalid.
-            lengths = {int(val) for val in length.split(",")}
-            if len(lengths) > 1:
-                raise ServiceResponseError(
-                    "Content-Length contained multiple "
-                    "unmatching values (%s)" % length
-                )
-            length = lengths.pop()
-        except ValueError:
-            length = None
-        else:
-            if length < 0:
-                length = None
-
-    # Convert status to int for comparison
-    # In some cases, httplib returns a status of "_UNKNOWN"
-    status = response.status_code
-
-    request_method = response.request.method
-
-    # Check for responses that shouldn't include a body
-    if status in (204, 304) or 100 <= status < 200 or request_method == "HEAD":
-        length = 0
-
-    return length
-
 class _RequestsTransportResponseBase(_HttpResponseBase):
     """Base class for accessing response data.
 
@@ -135,16 +96,7 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
         self.content_type = requests_response.headers.get('content-type')
 
     def body(self):
-        try:
-            expect_length = _get_length(self.internal_response)
-            if expect_length:
-                actual_length = len(self.internal_response.content)
-                if actual_length < expect_length:
-                    raise IncompleteReadError("IncompleteRead({} bytes read, {} expected)".
-                                              format(actual_length, expect_length))
-            return self.internal_response.content
-        except requests.exceptions.ChunkedEncodingError as err:
-            raise IncompleteReadError(err, error=err)
+        return self.internal_response.content
 
     def text(self, encoding=None):
         # type: (Optional[str]) -> str
