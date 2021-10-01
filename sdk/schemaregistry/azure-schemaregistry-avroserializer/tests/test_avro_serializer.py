@@ -86,8 +86,6 @@ class SchemaRegistryAvroSerializerTests(AzureTestCase):
         dict_data = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
         encoded_data = sr_avro_serializer.serialize(dict_data, schema=schema_str)
 
-        assert schema_str in sr_avro_serializer._user_input_schema_cache
-
         assert encoded_data[0:4] == b'\0\0\0\0'
         schema_id = sr_client.get_schema_id(schemaregistry_group, schema.fullname, "Avro", str(schema)).schema_id
         assert encoded_data[4:36] == schema_id.encode("utf-8")
@@ -110,8 +108,6 @@ class SchemaRegistryAvroSerializerTests(AzureTestCase):
 
         dict_data = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
         encoded_data = sr_avro_serializer.serialize(dict_data, schema=schema_str)
-
-        assert schema_str in sr_avro_serializer._user_input_schema_cache
 
         assert encoded_data[0:4] == b'\0\0\0\0'
         schema_id = sr_client.get_schema_id(schemaregistry_group, schema.fullname, "Avro", str(schema)).schema_id
