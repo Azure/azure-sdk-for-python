@@ -192,12 +192,12 @@ result = poller.result()
 
 Differences between the versions:
 - Files for building a new model for version `3.2.x` can be created using the labeling tool found [here](fr-labeling-tool).
-- In version `3.1.x` the `use_training_labels` kwarg was used to indicate whether custom labeling was when creating the new models.
+- In version `3.1.x` the `use_training_labels` kwarg was used to indicate whether to use labeled data was when creating the custom model.
 - In version `3.2.x` the `use_training_labels` kwargs is not supported since training must be carried out with labeled training documents. In order to extract key-value pairs from a document, please refer to the prebuilt model "prebuilt-document" which extracts entities, key-value pairs, and layout from a document. 
 
 Train a custom model with `3.1.x`:
 ```python
-form_training_client = FormTrainingClient(endpoint, AzureKeyCredential(key), api_version="2.1")
+form_training_client = FormTrainingClient(endpoint, AzureKeyCredential(key))
 poller = form_training_client.begin_training(
     container_sas_url, use_training_labels=True, model_name="mymodel"
 )
@@ -213,7 +213,6 @@ print("Training completed on: {}".format(model.training_completed_on))
 
 print("Recognized fields:")
 # looping through the submodels, which contains the fields they were trained on
-# The labels are based on the ones you gave the training document.
 for submodel in model.submodels:
     print("...The submodel has model ID: {}".format(submodel.model_id))
     print("...The submodel with form type {} has an average accuracy '{}'".format(
@@ -236,7 +235,7 @@ Train a custom model with `3.2.x`:
 ```python
 document_model_admin_client = DocumentModelAdministrationClient(endpoint, AzureKeyCredential(key))
 poller = document_model_admin_client.begin_build_model(
-    container_sas_url, description="my model description"
+    container_sas_url, model_id="my-model-id", description="my model description"
 )
 model = poller.result()
 
@@ -251,10 +250,6 @@ for name, doc_type in model.doc_types.items():
             field_name, field["type"], doc_type.field_confidence[field_name]
         ))
 ```
-
-### Additional improvements
-
-- The service has introduced the concept of a `BoundingRegion` which groups elements or documents through the bounding boxes in which they appear per page.
 
 ## Additional samples
 
