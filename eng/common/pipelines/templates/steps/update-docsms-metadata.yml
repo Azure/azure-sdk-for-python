@@ -79,7 +79,7 @@ steps:
     Write-Host "$packageInfoJson"
     # $packageInfoLocations = ConvertFrom-Json $packageInfoJson
     ${{ parameters.ScriptDirectory }}/Update-DocsMsMetadata.ps1 `
-      -PackageInfoJsonLocations $parameters.PackageInfoLocations `
+      -PackageInfoJsonLocations $packageInfoJson `
       -DocRepoLocation "$(DocRepoLocation)" `
       -Language '${{parameters.Language}}' `
       -RepoId '${{ parameters.RepoId }}'
