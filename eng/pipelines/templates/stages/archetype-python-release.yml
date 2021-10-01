@@ -260,6 +260,7 @@ stages:
 
     - job: PublishDocsToNightlyBranch
       dependsOn: PublishPackages
+      continueOnError: true
       #condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
       pool:
         name: azsdk-pool-mms-ubuntu-2004-general
