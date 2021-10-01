@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_classify_document_single_category.py
+FILE: sample_single_category_classify.py
 
 DESCRIPTION:
     This sample demonstrates how to classify documents into a custom category. Here we several
@@ -17,7 +17,7 @@ DESCRIPTION:
     To train a model to classify your documents, see TODO
 
 USAGE:
-    python sample_classify_document_single_category.py
+    python sample_single_category_classify.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -34,7 +34,7 @@ def sample_classify_document_single_category():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import (
         TextAnalyticsClient,
-        ClassifyDocumentSingleCategoryAction
+        SingleCategoryClassifyAction
     )
 
     endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
@@ -57,7 +57,7 @@ def sample_classify_document_single_category():
     poller = text_analytics_client.begin_analyze_actions(
         documents,
         actions=[
-            ClassifyDocumentSingleCategoryAction(
+            SingleCategoryClassifyAction(
                 project_name=project_name,
                 deployment_name=deployed_model_name
             ),
