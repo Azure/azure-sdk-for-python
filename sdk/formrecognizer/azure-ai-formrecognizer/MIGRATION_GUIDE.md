@@ -7,6 +7,10 @@ Familiarity with `azure-ai-formrecognizer (3.1.x and below)` package is assumed.
 ## Table of Contents
 - [Migration benefits](#migration-benefits)
 - [Important changes](#important-changes)
+    - [Client usage](#client-usage)
+    - [Analyzing document](#analyzing-documents)
+    - [Analyzing a custom model](#analyzing-a-custom-model)
+    - [Training a custom model](#trainig-a-custom-model)
 - [Additional samples](#additional-samples)
 
 ## Migration benefits
@@ -23,7 +27,7 @@ Please refer to the [README](README) for more information on these new clients.
 
 ## Important changes
 
-### Instantiating a client
+### Client usage
 
 We continue to support API key and AAD authentication methods when creating our clients. Below are the differences between the two versions:
 
@@ -551,6 +555,7 @@ Differences between the versions:
 - Files for building a new model for version `3.2.x` can be created using the labeling tool found [here](fr-labeling-tool).
 - In version `3.1.x` the `use_training_labels` kwarg was used to indicate whether to use labeled data was when creating the custom model.
 - In version `3.2.x` the `use_training_labels` kwargs is not supported since training must be carried out with labeled training documents. In order to extract key-value pairs from a document, please refer to the prebuilt model "prebuilt-document" which extracts entities, key-value pairs, and layout from a document. 
+- In version `3.1.x`, when training without labels the service would returna model that recognized key-value pairs in the training data. When using the library with version `3.2.x`, users can instead use the prebuilt model `prebuilt-document` to get this information from documents without the need to train a new model. `prebuilt-document` returns key-value pairs, entities, text layout, among other useful information about the documents passed in for analysis.
 
 Train a custom model with `3.1.x`:
 ```python
