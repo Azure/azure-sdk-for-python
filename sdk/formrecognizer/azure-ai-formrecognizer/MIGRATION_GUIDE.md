@@ -10,7 +10,7 @@ Familiarity with `azure-ai-formrecognizer (3.1.x and below)` package is assumed.
     - [Client usage](#client-usage)
     - [Analyzing document](#analyzing-documents)
     - [Analyzing a custom model](#analyzing-a-custom-model)
-    - [Training a custom model](#trainig-a-custom-model)
+    - [Training a custom model](#training-a-custom-model)
 - [Additional samples](#additional-samples)
 
 ## Migration benefits
@@ -43,7 +43,7 @@ We continue to support API key and AAD authentication methods when creating our 
 - `FormRecognizerClient` and `FormTrainingClient` will return an error if called with an API version of `2021-09-30-preview` or later. 
 - In `DocumentAnalysisClient` all prebuilt model methods along with custom model, layout, and a prebuilt document analysis model are unified into two methods called
 `begin_analyze_document` and `begin_analyze_document_from_url`.
-- In `FormRecognizerClient` there are two methods (a stream and URL method) for each of the prebuilt models supported by the service, this results in two methods for business card, receipt, identity document, and invoice models, along with a pair of methods for recognizing custom documents and for recognizing content/layout. 
+- In `FormRecognizerClient` there are two methods (a stream and URL method) for each of the prebuilt models supported by the service. This results in two methods for business card, receipt, identity document, and invoice models, along with a pair of methods for recognizing custom documents and for recognizing content/layout. 
 
 Creating a new clients in `3.1.x`:
 ```python
@@ -76,6 +76,7 @@ Differences between the versions:
 - When calling `begin_analyze_document` and `begin_analyze_document_from_url` the returned type is an `AnalyzeResult` object, while the various methods used with `FormRecognizerClient` return a list of `RecognizedForm`.
 - The `pages` kwarg is string with library version `azure-ai-formrecognizer (3.2.x)`. In `azure-ai-formrecognizer (3.1.x)`, pages was a list of strings.
 - The `include_field_elements` kwarg does not exist with the `DocumentAnalysisClient`, text details are automatically included with API version `2021-09-30-preview`.
+- The `reading_order` kwarg does not exist on `begin_analyze_document` and `begin_analyze_document_from_url`. The service uses `natural` reading order to analyze data.
 
 Analyzing prebuilt models like business cards, identity documents, invoices and receipts with `3.1.x`:
 ```python
@@ -561,11 +562,10 @@ print("-----------------------------------")
 
 Differences between the versions:
 - Files for building a new model for version `3.2.x` can be created using the labeling tool found [here][fr_labeling_tool].
-- In version `3.1.x` the `use_training_labels` kwarg was used to indicate whether to use labeled data was when creating the custom model.
+- In version `3.1.x` the `use_training_labels` kwarg was used to indicate whether to use labeled data when creating the custom model.
 - In version `3.2.x` the `use_training_labels` kwargs is not supported since training must be carried out with labeled training documents. In order to extract key-value pairs from a document, please refer to the prebuilt model "prebuilt-document" which extracts entities, key-value pairs, and layout from a document. 
 - When using the latest service API version `2021-09-30-preview` models no longer include submodels, instead a model can analyze different document types.
-- In version `3.1.x`, when training without labels the service would returna model that recognized key-value pairs in the training data. When using the library with version `3.2.x`, users can instead use the prebuilt model `prebuilt-document` to get this information from documents without the need to train a new model. `prebuilt-document` returns key-value pairs, entities, text layout, among other useful information about the documents passed in for analysis.
-- When buildong or composing new models users can now assign their own model ids and specify a description.
+- When building or composing new models users can now assign their own model ids and specify a description.
 
 Train a custom model with `3.1.x`:
 ```python
