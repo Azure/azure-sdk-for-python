@@ -36,7 +36,7 @@ def sample_query_text():
             records=[
                 qna.TextRecord(
                     text="Power and charging. It takes two to four hours to charge the Surface Pro 4 battery fully from an empty state. " +
-                         "It can take longer if you’re using your Surface for power-intensive activities like gaming or video streaming while you’re charging it.",
+                         "It can take longer if you're using your Surface for power-intensive activities like gaming or video streaming while you're charging it.",
                     id="doc1"
                 ),
                 qna.TextRecord(
