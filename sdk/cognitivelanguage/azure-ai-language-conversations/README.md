@@ -1,13 +1,10 @@
 [![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/azure-sdk-for-python.client?branchName=main)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=46?branchName=main)
 
-# Azure Cognitive Language Services Conversational Language Understanding client library for Python
-Conversational Language Understanding, aka LUIS vNext and **CLU** for short, is a cloud-based conversational AI service that applies custom machine-learning intelligence to a user's conversational, natural language text to predict overall meaning, and pull out relevant, detailed information (namely intents and entities).
-
- Using CLU, you'll get the chance to train conversational language models with new transformer-based model with the following expectations:
--   **State-of-the-art** natural language understanding technology using advanced **neural networks**.
--   **Robust and semantically aware** classification and extraction models.
--   **Fewer** options and dials providing a **simpler** model building experience.
--   **Natively multilingual models** that enables you to train in one language and test in others.
+# Azure Conversational Language Understanding client library for Python
+Conversational Language Understanding, aka **CLU** for short, is a cloud-based conversational AI service which is mainly used in bots to extract useful information from user utterance.
+The CLU analyze api encompasses two projects; deepstack, and workflow projects.
+You can use the "deepstack" project if you want to extract intents (intention behind a user utterance), and custom entities.
+you can also use the "workflow" project which orchestrates multiple language apps and gets the best response (language apps like Qna Maker, Luis, and Deepstack).
 
 [Source code][conversationallanguage_client_src] | [Package (PyPI)][conversationallanguage_pypi_package] | [API reference documentation][conversationallanguage_refdocs] | [Product documentation][conversationallanguage_docs] | [Samples][conversationallanguage_samples]
 
@@ -54,7 +51,7 @@ Once you've determined your **endpoint** and **API key** you can instantiate a `
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.conversations import ConversationAnalysisClient
 
-endpoint = "https://{myaccount}.api.cognitive.microsoft.com"
+endpoint = "https://<"my-account-name">.cognitiveservices.azure.com"
 credential = AzureKeyCredential("{api-key}")
 
 client = ConversationAnalysisClient(endpoint, credential)
