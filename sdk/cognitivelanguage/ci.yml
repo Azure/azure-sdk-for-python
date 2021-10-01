@@ -7,24 +7,22 @@ trigger:
     - main
     - hotfix/*
     - release/*
-    - restapi*
   paths:
     include:
     - sdk/cognitivelanguage/
-    - scripts/
+    - sdk/core/
 
 pr:
   branches:
     include:
-    - master
     - main
     - feature/*
     - hotfix/*
     - release/*
-    - restapi*
   paths:
     include:
     - sdk/cognitivelanguage/
+    - sdk/core/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
