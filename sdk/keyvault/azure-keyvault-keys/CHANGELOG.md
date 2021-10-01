@@ -3,6 +3,9 @@
 ## 4.5.0b4 (Unreleased)
 
 ### Features Added
+- Added `KeyClient.get_cryptography_client`, which provides a simple way to create a
+  CryptographyClient for a given key, given its full key ID
+  ([#20621](https://github.com/Azure/azure-sdk-for-python/issues/20621))
 - Added support for automated and on-demand key rotation in Azure Key Vault
   ([#19840](https://github.com/Azure/azure-sdk-for-python/issues/19840))
   - Added `KeyClient.rotate_key` to rotate a key on-demand
