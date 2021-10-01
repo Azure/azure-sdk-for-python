@@ -47,6 +47,16 @@ This is an example setting of that narrows the default set from `whl, sdist, dep
 
 Any combination of valid valid tox environments will work. Reference either this document or the file present at `eng/tox/tox.ini` to find what options are available.
 
+## Environment variables important to CI.
+
+There are a few differences from a standard local invocation of `tox <env>`. Primarily, these differences adjust the checks to be friendly to parallel invocation. These adjustments are necessary to prevent random CI crashes.
+
+| Environment Variable | Affect on Build |
+|---|---|
+| `TF_BUILD` | EngSys uses the presence of any value in this variable as the bit indicating "in CI" or not. The primary effect of this is that all relative dev dependencies will be prebuilt prior to running the tox environments. |
+| `PREBUILT_WHEEL_DIR` | Setting this env variables means that instead of generating a fresh wheel or sdist to test, `tox` will look in this directory for the targeted package. |
+| `PIP_INDEX_URL` | Standard `pip` environment variable. During nightly `alpha` builds, this environment variable is set to a public dev feed. |
+
 ## Analyze Checks
 Analyze job in both nightly CI and pull request validation pipeline runs a set of static analysis using external and internal tools. Following are the list of these static analysis.
 

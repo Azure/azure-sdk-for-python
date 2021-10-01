@@ -166,6 +166,9 @@ class RegressionTest:
                     "install",
                     "-r",
                     test_tools_req_file,
+                    "--extra-index",
+                    "https://pypi.org/simple"
+
                 ],
                 dep_pkg_path
             )
