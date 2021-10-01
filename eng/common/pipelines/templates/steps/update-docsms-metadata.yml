@@ -75,11 +75,9 @@ steps:
       DefaultBranchVariableName: TargetBranchName
 
 - pwsh: |
-    $packageInfoJson = '${{ convertToJson(parameters.PackageInfoLocations) }}'.Trim('"')
-    Write-Host "$packageInfoJson"
-    # $packageInfoLocations = ConvertFrom-Json $packageInfoJson
+
     ${{ parameters.ScriptDirectory }}/Update-DocsMsMetadata.ps1 `
-      -PackageInfoJsonLocations $packageInfoJson `
+      -PackageInfoJsonLocations ${{parameters.PackageInfoLocations}} `
       -DocRepoLocation "$(DocRepoLocation)" `
       -Language '${{parameters.Language}}' `
       -RepoId '${{ parameters.RepoId }}'
