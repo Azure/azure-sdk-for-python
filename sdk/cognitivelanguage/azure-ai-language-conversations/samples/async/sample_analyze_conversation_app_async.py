@@ -9,7 +9,7 @@ FILE: sample_analyze_conversation_app_async.py
 
 DESCRIPTION:
     This sample demonstrates how to analyze user query for intents and entities using a deepstack project.
-    
+
     For more info about how to setup a CLU deepstack project, see the README.
 
 USAGE:
@@ -33,9 +33,9 @@ async def sample_analyze_conversation_app_async():
     from azure.ai.language.conversations.models import AnalyzeConversationOptions
 
     # get secrets
-    conv_endpoint = os.environ.get("AZURE_CONVERSATIONS_ENDPOINT"),
-    conv_key = os.environ.get("AZURE_CONVERSATIONS_KEY"),
-    conv_project = os.environ.get("AZURE_CONVERSATIONS_PROJECT"),
+    conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
+    conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
+    conv_project = os.environ["AZURE_CONVERSATIONS_PROJECT"]
 
     # prepare data
     query = "One california maki please."
@@ -51,7 +51,7 @@ async def sample_analyze_conversation_app_async():
             project_name=conv_project,
             deployment_name='production'
         )
-    
+
         # view result
         print("query: {}".format(result.query))
         print("project kind: {}\n".format(result.prediction.project_kind))

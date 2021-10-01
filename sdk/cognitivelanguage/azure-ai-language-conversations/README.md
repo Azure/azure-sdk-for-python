@@ -3,7 +3,7 @@
 # Azure Conversational Language Understanding client library for Python
 Conversational Language Understanding, aka **CLU** for short, is a cloud-based conversational AI service which is mainly used in bots to extract useful information from user utterance (natural language processing).
 The CLU **analyze api** encompasses two projects; deepstack, and workflow projects.
-You can use the "deepstack" project if you want to extract intents (intention behind a user utterance), and custom entities.
+You can use the "deepstack" project if you want to extract intents (intention behind a user utterance] and custom entities.
 You can also use the "workflow" project which orchestrates multiple language apps to get the best response (language apps like Question Answering, Luis, and Deepstack).
 
 [Source code][conversationallanguage_client_src] | [Package (PyPI)][conversationallanguage_pypi_package] | [API reference documentation][conversationallanguage_refdocs] | [Product documentation][conversationallanguage_docs] | [Samples][conversationallanguage_samples]
@@ -51,7 +51,7 @@ Once you've determined your **endpoint** and **API key** you can instantiate a `
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.conversations import ConversationAnalysisClient
 
-endpoint = "https://<resource-name>.api.cognitive.microsoft.com"
+endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
 credential = AzureKeyCredential("<api-key>")
 client = ConversationAnalysisClient(endpoint, credential)
 ```
@@ -67,8 +67,9 @@ The `azure-ai-language-conversation` client library provides both synchronous an
 
 The following examples show common scenarios using the `client` [created above](#create-conversationanalysisclient).
 
-### Analzye a conversation with a Deepstack App
+### Analyze a conversation with a Deepstack App
 If you would like to extract custom intents and entities from a user utterance, you can call the `client.analyze_conversations()` method with your deepstack's project name as follows:
+
 ```python
 # import libraries
 import os
@@ -78,9 +79,9 @@ from azure.ai.language.conversations import ConversationAnalysisClient
 from azure.ai.language.conversations.models import AnalyzeConversationOptions
 
 # get secrets
-conv_endpoint = os.environ.get("AZURE_CONVERSATIONS_ENDPOINT"),
-conv_key = os.environ.get("AZURE_CONVERSATIONS_KEY"),
-conv_project = os.environ.get("AZURE_CONVERSATIONS_PROJECT"),
+conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
+conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
+conv_project = os.environ["AZURE_CONVERSATIONS_PROJECT"]
 
 # prepare data
 query = "One california maki please."
@@ -113,7 +114,8 @@ for entity in result.prediction.entities:
     print("\tconfidence score: {}".format(entity.confidence_score))
 ```
 
-### Analzye conversation with a Workflow App
+### Analyze conversation with a Workflow App
+
 If you would like to pass the user utterance to your orchestrator (worflow) app, you can call the `client.analyze_conversations()` method with your workflow's project name. The orchestrator project simply orchestrates the submitted user utterance between your language apps (Luis, Deepstack, and Question Answering) to get the best response according to the user intent. See the next example:
 
 ```python
@@ -125,9 +127,9 @@ from azure.ai.language.conversations import ConversationAnalysisClient
 from azure.ai.language.conversations.models import AnalyzeConversationOptions
 
 # get secrets
-conv_endpoint = os.environ.get("AZURE_CONVERSATIONS_ENDPOINT"),
-conv_key = os.environ.get("AZURE_CONVERSATIONS_KEY"),
-workflow_project = os.environ.get("AZURE_CONVERSATIONS_WORKFLOW_PROJECT")
+conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
+conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
+workflow_project = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT")
 
 # prepare data
 query = "How do you make sushi rice?",
@@ -157,7 +159,8 @@ print("view Question Answering result:")
 print("\tresult: {}\n".format(result.prediction.intents[0].result))
 ```
 
-### Analzye conversation with a Workflow (Direct) App
+### Analyze conversation with a Workflow (Direct) App
+
 If you would like to use an orchestrator (workflow) app, and you want to call a specific one of your language apps directly, you can call the `client.analyze_conversations()` method with your workflow's project name and the diirect target name which corresponds to your one of you language apps as follows:
 
 ```python
@@ -169,9 +172,9 @@ from azure.ai.language.conversations import ConversationAnalysisClient
 from azure.ai.language.conversations.models import AnalyzeConversationOptions
 
 # get secrets
-conv_endpoint = os.environ.get("AZURE_CONVERSATIONS_ENDPOINT"),
-conv_key = os.environ.get("AZURE_CONVERSATIONS_KEY"),
-workflow_project = os.environ.get("AZURE_CONVERSATIONS_WORKFLOW_PROJECT")
+conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
+conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
+workflow_project = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT")
 
 # prepare data
 query = "How do you make sushi rice?",
@@ -213,16 +216,18 @@ print("\tresult: {}\n".format(result.prediction.intents[0].result))
 ```
 
 
-
 ## Optional Configuration
+
 Optional keyword arguments can be passed in at the client and per-operation level. The azure-core [reference documentation][azure_core_ref_docs] describes available configurations for retries, logging, transport protocols, and more.
 
 ## Troubleshooting
 
 ### General
 
+The Conversations client will raise exceptions defined in [Azure Core][azure_core_exceptions].
 
 ### Logging
+
 This library uses the standard
 [logging][python_logging] library for logging.
 Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
@@ -232,6 +237,34 @@ Detailed DEBUG level logging, including request/response bodies and unredacted
 headers, can be enabled on a client with the `logging_enable` argument.
 
 See full SDK logging documentation with examples [here][sdk_logging_docs].
+
+```python
+import sys
+import logging
+from azure.identity import DefaultAzureCredential
+from azure.ai.language.conversations import ConversationAnalysisClient
+
+# Create a logger for the 'azure' SDK
+logger = logging.getLogger('azure')
+logger.setLevel(logging.DEBUG)
+
+# Configure a console output
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+
+endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
+credential = DefaultAzureCredential()
+
+# This client will log detailed information about its HTTP sessions, at DEBUG level
+client = ConversationAnalysisClient(endpoint, credential, logging_enable=True)
+result = client.analyze_conversations(...)
+```
+
+Similarly, `logging_enable` can enable detailed logging for a single operation, even when it isn't enabled for the client:
+
+```python
+result = client.analyze_conversations(..., logging_enable=True)
+```
 
 ## Next steps
 
@@ -261,17 +294,11 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_core_ref_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html
 [azure_core_readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [pip_link]:https://pypi.org/project/pip/
-
 [conversationallanguage_client_src]: https://github.com/Azure/azure-sdk-for-python/main/sdk/cognitivelanguage/azure-ai-language-conversations
-
 [conversationallanguage_pypi_package]: https://github.com/Azure/azure-sdk-for-python/main/sdk/cognitivelanguage/azure-ai-language-conversations
-
 [conversationallanguage_refdocs]: https://github.com/Azure/azure-sdk-for-python/main/sdk/cognitivelanguage/azure-ai-language-conversations
-
 [conversationallanguage_docs]: https://azure.microsoft.com/services/cognitive-services/language-understanding-intelligent-service/
-
 [conversationallanguage_samples]: https://github.com/Azure/azure-sdk-for-python/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/README.md
-
 [conversationanalysis_client_class]: https://github.com/Azure/azure-sdk-for-python/main/sdk/cognitivelanguage/azure-ai-language-conversations/azure/ai/language/conversations/_conversation_analysis_client.py
-
+[azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Ftemplate%2Fazure-template%2FREADME.png)

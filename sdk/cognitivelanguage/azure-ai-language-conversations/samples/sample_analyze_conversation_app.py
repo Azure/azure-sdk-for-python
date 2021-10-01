@@ -9,7 +9,7 @@ FILE: sample_analyze_conversation_app.py
 
 DESCRIPTION:
     This sample demonstrates how to analyze user query for intents and entities using a deepstack project.
-    
+
     For more info about how to setup a CLU deepstack project, see the README.
 
 USAGE:
@@ -31,9 +31,9 @@ def sample_analyze_conversation_app():
     from azure.ai.language.conversations.models import AnalyzeConversationOptions
 
     # get secrets
-    conv_endpoint = os.environ.get("AZURE_CONVERSATIONS_ENDPOINT"),
-    conv_key = os.environ.get("AZURE_CONVERSATIONS_KEY"),
-    conv_project = os.environ.get("AZURE_CONVERSATIONS_PROJECT"),
+    conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
+    conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
+    conv_project = os.environ["AZURE_CONVERSATIONS_PROJECT"]
 
     # prepare data
     query = "One california maki please."
@@ -49,7 +49,7 @@ def sample_analyze_conversation_app():
             project_name=conv_project,
             deployment_name='production'
         )
-    
+
     # view result
     print("query: {}".format(result.query))
     print("project kind: {}\n".format(result.prediction.project_kind))
@@ -65,7 +65,7 @@ def sample_analyze_conversation_app():
         print("\ttext: {}".format(entity.text))
         print("\tconfidence score: {}".format(entity.confidence_score))
     # [END analyze_conversation_app]
-    
-    
+
+
 if __name__ == '__main__':
     sample_analyze_conversation_app()
