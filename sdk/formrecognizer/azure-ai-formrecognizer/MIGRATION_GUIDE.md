@@ -2,7 +2,7 @@
 
 This guide is intended to assist in the migration to `azure-ai-formrecognizer (3.2.x)` from versions `3.1.x` and below. It will focus on side-by-side comparisons for similar operations between versions. Please note that version `3.2.0b1` will be used for comparison with `3.1.2`.
 
-Familiarity with `azure-ai-formrecognizer (3.1.x and below)` package is assumed. For those new to the Azure Form Recognizer client library for Python please refer to the [README](readme) rather than this guide.
+Familiarity with `azure-ai-formrecognizer (3.1.x and below)` package is assumed. For those new to the Azure Form Recognizer client library for Python please refer to the [README][readme] rather than this guide.
 
 ## Table of Contents
 - [Migration benefits](#migration-benefits)
@@ -560,7 +560,7 @@ print("-----------------------------------")
 ### Training a custom model
 
 Differences between the versions:
-- Files for building a new model for version `3.2.x` can be created using the labeling tool found [here](fr_labeling_tool).
+- Files for building a new model for version `3.2.x` can be created using the labeling tool found [here][fr_labeling_tool].
 - In version `3.1.x` the `use_training_labels` kwarg was used to indicate whether to use labeled data was when creating the custom model.
 - In version `3.2.x` the `use_training_labels` kwargs is not supported since training must be carried out with labeled training documents. In order to extract key-value pairs from a document, please refer to the prebuilt model "prebuilt-document" which extracts entities, key-value pairs, and layout from a document. 
 - When using the latest service API version `2021-09-30-preview` models no longer include submodels, instead a model can analyze different document types.
@@ -623,7 +623,7 @@ for name, doc_type in model.doc_types.items():
 
 ## Additional samples
 
-For additional samples please take a look at the [Form Recognizer Samples](samples_readme) for more guidance.
+For additional samples please take a look at the [Form Recognizer Samples][samples_readme] for more guidance.
 
 [readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/README.md
 [samples_readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/README.md
