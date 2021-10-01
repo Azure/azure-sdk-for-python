@@ -9,14 +9,14 @@ Familiarity with `azure-ai-formrecognizer (3.1.x and below)` package is assumed.
 - [Important changes](#important-changes)
     - [Client usage](#client-usage)
     - [Analyzing document](#analyzing-documents)
-    - [Analyzing a custom model](#analyzing-a-custom-model)
+    - [Analyzing a document with a custom model](#analyzing-a-document-with-a-custom-model)
     - [Training a custom model](#training-a-custom-model)
     - [Manage models](#manage-models)
 - [Additional samples](#additional-samples)
 
 ## Migration benefits
 
-A natural question to ask when considering whether or not to adopt a new version of the library is what the benefits of doing so would be. As Azure Form Recognizer has matured and been embraced by a more diverse group of developers, we have been focused on learning the patterns and practices to best support developer productivity and add value to our customers.
+A natural question to ask when considering whether to adopt a new version of the library is what the benefits of doing so would be. As Azure Form Recognizer has matured and been embraced by a more diverse group of developers, we have been focused on learning the patterns and practices to best support developer productivity and add value to our customers.
 
 There are many benefits to using the new design of the `azure-ai-formrecognizer (3.2.x)` library. This new version of the library introduces two new clients `DocumentAnalysisClient` and the `DocumentModelAdministrationClient` with unified methods for analyzing documents and provides support for the new features added by the service in API version `2021-09-30-preview` and later.
 
@@ -48,6 +48,12 @@ We continue to support API key and AAD authentication methods when creating the 
 
 Creating new clients in `3.1.x`:
 ```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.formrecognizer import FormRecognizerClient, FormTrainingClient
+
+endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+
 form_recognizer_client = FormRecognizerClient(
     endpoint=endpoint, credential=AzureKeyCredential(key)
 )
@@ -59,6 +65,12 @@ form_training_client = FormTrainingClient(
 
 Creating new clients in `3.2.x`:
 ```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.formrecognizer import DocumentAnalysisClient, DocumentModelAdministrationClient
+
+endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+
 document_analysis_client = DocumentAnalysisClient(
     endpoint=endpoint, credential=AzureKeyCredential(key)
 )
@@ -77,7 +89,7 @@ Differences between the versions:
 - When calling `begin_analyze_document` and `begin_analyze_document_from_url` the returned type is an `AnalyzeResult` object, while the various methods used with `FormRecognizerClient` return a list of `RecognizedForm`.
 - The `pages` keyword argument is a string with library version `azure-ai-formrecognizer (3.2.x)`. In `azure-ai-formrecognizer (3.1.x)`, `pages` was a list of strings.
 - The `include_field_elements` keyword argument is not supported with the `DocumentAnalysisClient`, text details are automatically included with API version `2021-09-30-preview` and later.
-- The `reading_order` keyword argument does not exist on `begin_analyze_document` and `begin_analyze_document_from_url`. The service uses `natural` reading order to analyze data.
+- The `reading_order` keyword argument does not exist on `begin_analyze_document` and `begin_analyze_document_from_url`. The service uses `natural` reading order to return data.
 
 Analyzing prebuilt models like business cards, identity documents, invoices, and receipts with `3.1.x`:
 ```python
@@ -449,7 +461,7 @@ print("----------------------------------------")
 
 > NOTE: All of these samples also work with `begin_analyze_document_from_url` when providing a valid URL to the document.
 
-### Analyzing a custom model
+### Analyzing a document with a custom model
 
 Differences between the versions:
 - Analyzing a custom model with `DocumentAnalysisClient` uses the general `begin_analyze_document` and `begin_analyze_document_from_url` methods.
@@ -567,7 +579,7 @@ print("-----------------------------------")
 Differences between the versions:
 - Files for building a new model for version `3.2.x` can be created using the labeling tool found [here][fr_labeling_tool].
 - In version `3.1.x` the `use_training_labels` keyword argument was used to indicate whether to use labeled data when creating the custom model.
-- In version `3.2.x` the `use_training_labels` keyword argument is not supported since training must be carried out with labeled training documents. In order to extract key-value pairs from a document, please refer to the prebuilt model "prebuilt-document" which extracts entities, key-value pairs, and layout from a document. 
+- In version `3.2.x` the `use_training_labels` keyword argument is not supported since training must be carried out with labeled training documents. Additionally train without labels is now replaced with the prebuilt model "prebuilt-document" which extracts entities, key-value pairs, and layout from a document. 
 
 Train a custom model with `3.1.x`:
 ```python
@@ -627,8 +639,8 @@ for name, doc_type in model.doc_types.items():
 
 Differences between the versions:
 - When using API version `2021-09-30-preview` and later models no longer include submodels, instead a model can analyze different document types.
-- When building or composing new models users can now assign their own model IDs and specify a description.
-- In version `3.2.x` of the library, only models that succeeded can be retreived from get and list calls. In version `3.1.x` of the library, models that had not succeeded were still created and had to be deleted.
+- When building, composing, or copying models users can now assign their own model IDs and specify a description.
+- In version `3.2.x` of the library, only models that build successfully can be retrieved from the get and list model calls. Unsuccessful model operations can be viewed with the get and list operation methods (note that document model operation data persists for only 24 hours). In version `3.1.x` of the library, models that had not succeeded were still created, had to be deleted by the user, and were returned in the list models response.
 
 ## Additional samples
 
