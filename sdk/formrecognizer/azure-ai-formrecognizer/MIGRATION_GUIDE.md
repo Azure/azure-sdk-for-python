@@ -11,6 +11,7 @@ Familiarity with `azure-ai-formrecognizer (3.1.x and below)` package is assumed.
     - [Analyzing document](#analyzing-documents)
     - [Analyzing a custom model](#analyzing-a-custom-model)
     - [Training a custom model](#training-a-custom-model)
+    - [Manage models](#manage-models)
 - [Additional samples](#additional-samples)
 
 ## Migration benefits
@@ -567,8 +568,6 @@ Differences between the versions:
 - Files for building a new model for version `3.2.x` can be created using the labeling tool found [here][fr_labeling_tool].
 - In version `3.1.x` the `use_training_labels` keyword argument was used to indicate whether to use labeled data when creating the custom model.
 - In version `3.2.x` the `use_training_labels` keyword argument is not supported since training must be carried out with labeled training documents. In order to extract key-value pairs from a document, please refer to the prebuilt model "prebuilt-document" which extracts entities, key-value pairs, and layout from a document. 
-- When using API version `2021-09-30-preview` and later models no longer include submodels, instead a model can analyze different document types.
-- When building or composing new models users can now assign their own model IDs and specify a description.
 
 Train a custom model with `3.1.x`:
 ```python
@@ -623,6 +622,13 @@ for name, doc_type in model.doc_types.items():
     for field_name, confidence in doc_type.field_confidence.items():
         print("Field: '{}' has confidence score {}".format(field_name, confidence))
 ```
+
+### Manage models
+
+Differences between the versions:
+- When using API version `2021-09-30-preview` and later models no longer include submodels, instead a model can analyze different document types.
+- When building or composing new models users can now assign their own model IDs and specify a description.
+- In version `3.2.x` of the library, only models that succeeded can be retreived from get and list calls. In version `3.1.x` of the library, models that had not succeeded were still created and had to be deleted.
 
 ## Additional samples
 
