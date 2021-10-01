@@ -47,19 +47,6 @@ class ConversationTest(AzureTestCase):
         self.scrubber.register_name_pair(os.environ.get("AZURE_CONVERSATIONS_PROJECT"), TEST_PROJECT)
         self.scrubber.register_name_pair(os.environ.get("AZURE_CONVERSATIONS_WORKFLOW_PROJECT"), TEST_WORKFLOW)
 
-    def get_oauth_endpoint(self):
-        raise NotImplementedError()
-
-    def generate_oauth_token(self):
-        if self.is_live:
-            from azure.identity import ClientSecretCredential
-            return ClientSecretCredential(
-                self.get_settings_value("TENANT_ID"),
-                self.get_settings_value("CLIENT_ID"),
-                self.get_settings_value("CLIENT_SECRET"),
-            )
-        return self.generate_fake_token()
-
     def generate_fake_token(self):
         return FakeTokenCredential()
 

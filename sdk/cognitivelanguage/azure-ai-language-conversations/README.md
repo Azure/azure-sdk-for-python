@@ -241,7 +241,7 @@ See full SDK logging documentation with examples [here][sdk_logging_docs].
 ```python
 import sys
 import logging
-from azure.identity import DefaultAzureCredential
+from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.conversations import ConversationAnalysisClient
 
 # Create a logger for the 'azure' SDK
@@ -253,7 +253,7 @@ handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
 endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
-credential = DefaultAzureCredential()
+credential = AzureKeyCredential("<my-api-key>")
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level
 client = ConversationAnalysisClient(endpoint, credential, logging_enable=True)

@@ -14,7 +14,7 @@ urlFragment: conversationslanguageunderstanding-samples
 These code samples show common scenario operations with the Azure Conversational Language Understanding client library.
 The async versions of the samples require Python 3.6 or later.
 
-You can authenticate your client with a Conversational Language Understanding API key or through Azure Active Directory with a token credential from [azure-identity][azure_identity]:
+You can authenticate your client with a Conversational Language Understanding API key:
 
 - See [sample_authentication.py][sample_authentication] and [sample_authentication_async.py][sample_authentication_async] for how to authenticate in the above cases.
 
@@ -59,10 +59,8 @@ what you can do with the Azure Conversational Language Understanding client libr
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
 | [sample_analyze_workflow_app_with_params.py][sample_analyze_workflow_app_with_params] and [sample_analyze_workflow_app_with_params_async.py][sample_analyze_workflow_app_with_params_async] | Same as workflow sample, but with ability to customize call with parameters                      |
 
-[azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
 [azure_subscription]: https://azure.microsoft.com/free/
 [azure_clu_account]: https://language.azure.com/clu/projects
-[azure_identity_pip]: https://pypi.org/project/azure-identity/
 [pip]: https://pypi.org/project/pip/
 [sample_authentication]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_authentication.py
 [sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_authentication_async.py

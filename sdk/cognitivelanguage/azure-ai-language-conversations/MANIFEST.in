@@ -1,4 +1,3 @@
-include _meta.json
 include *.md
 include azure/__init__.py
 include azure/ai/__init__.py
