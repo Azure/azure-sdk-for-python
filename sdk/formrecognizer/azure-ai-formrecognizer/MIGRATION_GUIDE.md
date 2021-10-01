@@ -23,6 +23,14 @@ New features provided by the `DocumentAnalysisClient` include having one consoli
 
 When using the `DocumentModelAdministrationClient` to build or compose new models users can now assign their own model ids and specify a description. Listing models on the administation client includes both prebuilt and custom models. When using `get_model()`, users can get the field schema for the model they specified, this includes prebuilt models. This client also provides functions for getting information from model operations.
 
+This table shows the relationship between SDK versions and supported API versions of the service
+
+|SDK version|Supported API version of service
+|-|-
+|3.2.0b1 - Latest beta release | 2.0, 2.1, 2021-09-30-preview
+|3.1.X - Latest GA release| 2.0, 2.1 (default)
+|3.0.0| 2.0
+
 Please refer to the [README](README) for more information on these new clients.
 
 ## Important changes
@@ -33,6 +41,9 @@ We continue to support API key and AAD authentication methods when creating our 
 
 - In `3.2.x`, we have added `DocumentAnalysisClient` and `DocumentModelAdministrationClient` which support API version `2021-09-30-preview` and later.
 - `FormRecognizerClient` and `FormTrainingClient` will return an error if called with an API version of `2021-09-30-preview` or later. 
+- In `DocumentAnalysisClient` all prebuilt model methods along with custom model, layout, and a prebuilt document analysis model are unified into two methods called
+`begin_analyze_document` and `begin_analyze_document_from_url`.
+- In `FormRecognizerClient` there are two methods (a stream and URL method) for each of the prebuilt models supported by the service, this results in two methods for business card, receipt, identity document, and invoice models, along with a pair of methods for recognizing custom documents and for recognizing content/layout. 
 
 Creating a new clients in `3.1.x`:
 ```python
@@ -59,10 +70,7 @@ document_model_admin_client = DocumentModelAdministrationClient(
 ### Analyzing documents
 
 Differences between the versions:
-- In `DocumentAnalysisClient` all prebuilt model methods along with custom model, layout, and a prebuilt document analysis model are unified into two methods called
-`begin_analyze_document` and `begin_analyze_document_from_url`.
 - `begin_analyze_document` and `begin_analyze_document_from_url` accept a string with the desired model id for analysis. The model id can be any of the prebuilt model ids or a custom model id.
-- In `FormRecognizerClient` there are two methods (a stream and URL method) for each of the prebuilt models supported by the service, this results in two methods for business card, receipt, identity document, and invoice models, along with a pair of methods for recognizing custom documents and for recognizing content/layout. 
 - Along with more consolidated analysis methods in the `DocumentAnalysisClient`, the return types have also been improved and remove the hierarchical dependencies between elements. An instance of the `AnalyzeResult` model is now returned which showcases important document elements, such as key-value pairs, entities, tables, and document fields and values, among others, at the top level of the returned model. This can be contrasted with `RecognizedForm` which included more hierarchical relationships, for instance tables were an element of a `FormPage` and not a top-level element.
 - In the new version of the library, the functionality of `begin_recognize_content` has been added as a prebuilt model and can be called in library version `azure-ai-formrecognizer (3.2.x)` with `begin_analyze_document` by passing in the `prebuilt-layout` model id. Similarly, to get general prebuilt document information, such as key-value pairs, entities, and text layout, the `prebuilt-document` model id can be used with `begin_analyze_document`.
 - When calling `begin_analyze_document` and `begin_analyze_document_from_url` the returned type is an `AnalyzeResult` object, while the various methods used with `FormRecognizerClient` return a list of `RecognizedForm`.
@@ -555,7 +563,9 @@ Differences between the versions:
 - Files for building a new model for version `3.2.x` can be created using the labeling tool found [here](fr-labeling-tool).
 - In version `3.1.x` the `use_training_labels` kwarg was used to indicate whether to use labeled data was when creating the custom model.
 - In version `3.2.x` the `use_training_labels` kwargs is not supported since training must be carried out with labeled training documents. In order to extract key-value pairs from a document, please refer to the prebuilt model "prebuilt-document" which extracts entities, key-value pairs, and layout from a document. 
+- When using the latest service API version `2021-09-30-preview` models no longer include submodels, instead a model can analyze different document types.
 - In version `3.1.x`, when training without labels the service would returna model that recognized key-value pairs in the training data. When using the library with version `3.2.x`, users can instead use the prebuilt model `prebuilt-document` to get this information from documents without the need to train a new model. `prebuilt-document` returns key-value pairs, entities, text layout, among other useful information about the documents passed in for analysis.
+- When buildong or composing new models users can now assign their own model ids and specify a description.
 
 Train a custom model with `3.1.x`:
 ```python
