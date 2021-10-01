@@ -43,13 +43,15 @@ class AvroObjectSerializer(object):
         """
         self._writer_codec = codec
 
+    @classmethod
     @lru_cache(maxsize=128)
-    def _get_schema_writer(self, schema):
+    def _get_schema_writer(cls, schema):
         schema = avro.schema.parse(schema)
         return DatumWriter(schema)
 
+    @classmethod
     @lru_cache(maxsize=128)
-    def _get_schema_reader(self, schema):
+    def _get_schema_reader(cls, schema):
         schema = avro.schema.parse(schema)
         return DatumReader(writers_schema=schema)
 
@@ -72,7 +74,7 @@ class AvroObjectSerializer(object):
         if not schema:
             raise ValueError("Schema is required in Avro serializer.")
 
-        writer = self._get_schema_writer(str(schema))
+        writer = AvroObjectSerializer._get_schema_writer(str(schema))
 
         stream = BytesIO()
         with stream:
@@ -98,7 +100,7 @@ class AvroObjectSerializer(object):
         if not hasattr(data, 'read'):
             data = BytesIO(data)
 
-        reader = self._get_schema_reader(str(schema))
+        reader = AvroObjectSerializer._get_schema_reader(str(schema))
 
         with data:
             bin_decoder = BinaryDecoder(data)

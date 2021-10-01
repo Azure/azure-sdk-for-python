@@ -114,8 +114,9 @@ class AvroSerializer(object):
         ).schema_content
         return schema_str
 
+    @classmethod
     @lru_cache(maxsize=128)
-    def _parse_schema(self, schema):
+    def _parse_schema(cls, schema):
         return avro.schema.parse(schema)
 
     def serialize(self, value, **kwargs):
@@ -136,7 +137,7 @@ class AvroSerializer(object):
         except KeyError as e:
             raise TypeError("'{}' is a required keyword.".format(e.args[0]))
 
-        cached_schema = self._parse_schema(raw_input_schema)
+        cached_schema = AvroSerializer._parse_schema(raw_input_schema)
         record_format_identifier = b"\0\0\0\0"
         schema_id = self._get_schema_id(cached_schema.fullname, str(cached_schema), **kwargs)
         data_bytes = self._avro_serializer.serialize(value, cached_schema)
