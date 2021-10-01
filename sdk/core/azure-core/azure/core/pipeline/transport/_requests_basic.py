@@ -95,7 +95,7 @@ def _get_length(response):
             # (e.g. Content-Length: 42, 42). This line ensures the values
             # are all valid ints and that as long as the `set` length is 1,
             # all values are the same. Otherwise, the header is invalid.
-            lengths = set([int(val) for val in length.split(",")])
+            lengths = {int(val) for val in length.split(",")}
             if len(lengths) > 1:
                 raise ServiceResponseError(
                     "Content-Length contained multiple "
@@ -144,7 +144,7 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
                                               format(actual_length, expect_length))
             return self.internal_response.content
         except requests.exceptions.ChunkedEncodingError as err:
-            error = IncompleteReadError(err, error=err)
+            raise IncompleteReadError(err, error=err)
 
     def text(self, encoding=None):
         # type: (Optional[str]) -> str

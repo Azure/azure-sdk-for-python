@@ -29,8 +29,10 @@ async def test_async_requests_transport_short_read_raises(port):
         async with AsyncPipeline(AsyncioRequestsTransport()) as pipeline:
             response = await pipeline.run(request, stream=False)
             assert response.http_response.status_code == 200
+            response.http_response.body()
 
 
+@pytest.mark.asyncio
 def test_trio_transport_short_read_raises(port):
     request = HttpRequest("GET", "http://localhost:{}/errors/short-data".format(port))
 
@@ -39,6 +41,7 @@ def test_trio_transport_short_read_raises(port):
             async with AsyncPipeline(TrioRequestsTransport()) as pipeline:
                 response = await pipeline.run(request, stream=False)
                 assert response.http_response.status_code == 200
+                response.http_response.body()
 
     trio.run(do)
 
