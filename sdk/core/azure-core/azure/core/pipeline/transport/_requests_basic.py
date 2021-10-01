@@ -137,10 +137,11 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
     def body(self):
         try:
             expect_length = _get_length(self.internal_response)
-            actual_length = len(self.internal_response.content)
-            if actual_length < expect_length:
-                raise IncompleteReadError("IncompleteRead({} bytes read, {} expected)".
-                                          format(actual_length, expect_length))
+            if expect_length:
+                actual_length = len(self.internal_response.content)
+                if actual_length < expect_length:
+                    raise IncompleteReadError("IncompleteRead({} bytes read, {} expected)".
+                                              format(actual_length, expect_length))
             return self.internal_response.content
         except requests.exceptions.ChunkedEncodingError as err:
             error = IncompleteReadError(err, error=err)
