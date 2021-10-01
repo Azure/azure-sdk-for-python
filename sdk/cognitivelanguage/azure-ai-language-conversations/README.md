@@ -66,9 +66,152 @@ The [ConversationAnalysisClient][conversationanalysis_client_class] is the prima
 The `azure-ai-language-conversation` client library provides both synchronous and asynchronous APIs.
 
 The following examples show common scenarios using the `client` [created above](#create-conversationanalysisclient).
-- [Test Deepstack](#ask-a-question)
-- [Test Workflow](#ask-a-follow-up-question)
-- [Test Workflow Direct](#asynchronous-operations)
+
+### Analzye a conversation with a Deepstack App
+If you would like to extract custom intents and entities from a user utterance, you can call the `client.analyze_conversations()` method with your deepstack's project name as follows:
+```python
+# import libraries
+import os
+from azure.core.credentials import AzureKeyCredential
+
+from azure.ai.language.conversations import ConversationAnalysisClient
+from azure.ai.language.conversations.models import AnalyzeConversationOptions
+
+# get secrets
+conv_endpoint = os.environ.get("AZURE_CONVERSATIONS_ENDPOINT"),
+conv_key = os.environ.get("AZURE_CONVERSATIONS_KEY"),
+conv_project = os.environ.get("AZURE_CONVERSATIONS_PROJECT"),
+
+# prepare data
+query = "One california maki please."
+input = AnalyzeConversationOptions(
+    query=query
+)
+
+# analyze quey
+client = ConversationAnalysisClient(conv_endpoint, AzureKeyCredential(conv_key))
+with client:
+    result = client.analyze_conversations(
+        input,
+        project_name=conv_project,
+        deployment_name='production'
+    )
+
+# view result
+print("query: {}".format(result.query))
+print("project kind: {}\n".format(result.prediction.project_kind))
+
+print("view top intent:")
+print("top intent: {}".format(result.prediction.top_intent))
+print("\tcategory: {}".format(result.prediction.intents[0].category))
+print("\tconfidence score: {}\n".format(result.prediction.intents[0].confidence_score))
+
+print("view entities:")
+for entity in result.prediction.entities:
+    print("\tcategory: {}".format(entity.category))
+    print("\ttext: {}".format(entity.text))
+    print("\tconfidence score: {}".format(entity.confidence_score))
+```
+
+### Analzye conversation with a Workflow App
+If you would like to pass the user utterance to your orchestrator (worflow) app, you can call the `client.analyze_conversations()` method with your workflow's project name. The orchestrator project simply orchestrates the submitted user utterance between your language apps (Luis, Deepstack, and Qna) to get the best response according to the user intent. See the next example:
+
+```python
+# import libraries
+import os
+from azure.core.credentials import AzureKeyCredential
+
+from azure.ai.language.conversations import ConversationAnalysisClient
+from azure.ai.language.conversations.models import AnalyzeConversationOptions
+
+# get secrets
+conv_endpoint = os.environ.get("AZURE_CONVERSATIONS_ENDPOINT"),
+conv_key = os.environ.get("AZURE_CONVERSATIONS_KEY"),
+workflow_project = os.environ.get("AZURE_CONVERSATIONS_WORKFLOW_PROJECT")
+
+# prepare data
+query = "How do you make sushi rice?",
+input = AnalyzeConversationOptions(
+    query=query
+)
+
+# analyze query
+client = ConversationAnalysisClient(conv_endpoint, AzureKeyCredential(conv_key))
+with client:
+    result = client.analyze_conversations(
+        input,
+        project_name=workflow_project,
+        deployment_name='production',
+    )
+
+# view result
+print("query: {}".format(result.query))
+print("project kind: {}\n".format(result.prediction.project_kind))
+
+print("view top intent:")
+print("top intent: {}".format(result.prediction.top_intent))
+print("\tcategory: {}".format(result.prediction.intents[0].category))
+print("\tconfidence score: {}\n".format(result.prediction.intents[0].confidence_score))
+
+print("view qna result:")
+print("\tresult: {}\n".format(result.prediction.intents[0].result))
+```
+
+### Analzye conversation with a Workflow (Direct) App
+If you would like to use an orchestrator (workflow) app, and you want to call a specific one of your language apps directly, you can call the `client.analyze_conversations()` method with your workflow's project name and the diirect target name which corresponds to your one of you language apps as follows:
+
+```python
+# import libraries
+import os
+from azure.core.credentials import AzureKeyCredential
+
+from azure.ai.language.conversations import ConversationAnalysisClient
+from azure.ai.language.conversations.models import AnalyzeConversationOptions
+
+# get secrets
+conv_endpoint = os.environ.get("AZURE_CONVERSATIONS_ENDPOINT"),
+conv_key = os.environ.get("AZURE_CONVERSATIONS_KEY"),
+workflow_project = os.environ.get("AZURE_CONVERSATIONS_WORKFLOW_PROJECT")
+
+# prepare data
+query = "How do you make sushi rice?",
+target_intent = "SushiMaking"
+input = AnalyzeConversationOptions(
+    query=query,
+    direct_target=target_intent,
+    parameters={
+        "SushiMaking": QuestionAnsweringParameters(
+            calling_options={
+                "question": query,
+                "top": 1,
+                "confidenceScoreThreshold": 0.1
+            }
+        )
+    }
+)
+
+# analyze query
+client = ConversationAnalysisClient(conv_endpoint, AzureKeyCredential(conv_key))
+with client:
+    result = client.analyze_conversations(
+        input,
+        project_name=workflow_project,
+        deployment_name='production',
+    )
+
+# view result
+print("query: {}".format(result.query))
+print("project kind: {}\n".format(result.prediction.project_kind))
+
+print("view top intent:")
+print("top intent: {}".format(result.prediction.top_intent))
+print("\tcategory: {}".format(result.prediction.intents[0].category))
+print("\tconfidence score: {}\n".format(result.prediction.intents[0].confidence_score))
+
+print("view qna result:")
+print("\tresult: {}\n".format(result.prediction.intents[0].result))
+```
+
 
 
 ## Optional Configuration
