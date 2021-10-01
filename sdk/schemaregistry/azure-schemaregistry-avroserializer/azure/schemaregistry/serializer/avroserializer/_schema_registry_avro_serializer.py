@@ -30,7 +30,12 @@ except ImportError:
 from io import BytesIO
 from typing import Any, Dict, Mapping
 import avro
-from avro.schema import SchemaParseException, AvroException, InvalidName, PRIMITIVE_TYPES
+from avro.schema import (
+    SchemaParseException,
+    AvroException,
+    InvalidName,
+    PRIMITIVE_TYPES,
+)
 from avro.io import AvroTypeException
 
 from .exceptions import SchemaParseException as AzureSchemaParseException
@@ -56,16 +61,18 @@ class SchemaRegistryAvroSerializer(object):
         # type: (Any) -> None
         try:
             self._schema_group = kwargs.pop("group_name")
-            self._schema_registry_client = kwargs.pop("client") # type: "SchemaRegistryClient"
+            self._schema_registry_client = kwargs.pop(
+                "client"
+            )  # type: "SchemaRegistryClient"
         except KeyError as e:
             raise TypeError("'{}' is a required keyword.".format(e.args[0]))
         self._avro_serializer = AvroObjectSerializer(codec=kwargs.get("codec"))
         self._auto_register_schemas = kwargs.get("auto_register_schemas", False)
         self._auto_register_schema_func = (
-                self._schema_registry_client.register_schema
-                if self._auto_register_schemas
-                else self._schema_registry_client.get_schema_id
-            )
+            self._schema_registry_client.register_schema
+            if self._auto_register_schemas
+            else self._schema_registry_client.get_schema_id
+        )
         self._user_input_schema_cache = {}
 
     def __enter__(self):
@@ -142,20 +149,35 @@ class SchemaRegistryAvroSerializer(object):
         except KeyError:
             try:
                 parsed_schema = avro.schema.parse(raw_input_schema)
-            except (SchemaParseException, AvroTypeException, AvroException, InvalidName) as e:
+            except (
+                SchemaParseException,
+                AvroTypeException,
+                AvroException,
+                InvalidName,
+            ) as e:
                 raise AzureSchemaParseException(e)
             self._user_input_schema_cache[raw_input_schema] = parsed_schema
             cached_schema = parsed_schema
 
         # TODO: check if there's a more pythonic way, if we need it at all
         if cached_schema.type in PRIMITIVE_TYPES:
-            raise ValueError("Expected schema of type `Record`, got instead primitive: {}".format(raw_input_schema))
+            raise ValueError(
+                "Expected schema of type `Record`, got instead primitive: {}".format(
+                    raw_input_schema
+                )
+            )
 
         record_format_identifier = b"\0\0\0\0"
         try:
-            schema_id = self._get_schema_id(cached_schema.fullname, str(cached_schema), **kwargs)
+            schema_id = self._get_schema_id(
+                cached_schema.fullname, str(cached_schema), **kwargs
+            )
         except AttributeError:
-            raise ValueError("Expected schema of type `Record`, got instead schema of type: {}".format(cached_schema.type))
+            raise ValueError(
+                "Expected schema of type `Record`, got instead schema of type: {}".format(
+                    cached_schema.type
+                )
+            )
         data_bytes = self._avro_serializer.serialize(value, cached_schema)
 
         stream = BytesIO()
