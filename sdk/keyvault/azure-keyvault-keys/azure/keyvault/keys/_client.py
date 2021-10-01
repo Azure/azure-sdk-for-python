@@ -68,6 +68,7 @@ class KeyClient(KeyVaultClientBase):
             HTTP client as this :class:`~azure.keyvault.keys.KeyClient`.
         :rtype: ~azure.keyvault.keys.crypto.CryptographyClient
         """
+        # We provide a fake credential because the generated client already has the KeyClient's real credential
         return CryptographyClient(
             key, object(), generated_client=self._client, generated_models=self._models  # type: ignore
         )
