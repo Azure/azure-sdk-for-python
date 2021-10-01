@@ -45,7 +45,7 @@ from ._base_async import (
     AsyncHttpResponse,
     _ResponseStopIteration,
     _iterate_response_content)
-from ._requests_basic import RequestsTransportResponse, _read_raw_stream, _get_request_hooks
+from ._requests_basic import RequestsTransportResponse, _read_raw_stream, _get_length
 from ._base_requests_async import RequestsAsyncTransportBase
 from .._tools import is_rest as _is_rest
 from .._tools_async import handle_no_stream_rest_response as _handle_no_stream_rest_response
@@ -151,8 +151,8 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
                     timeout=kwargs.pop('connection_timeout', self.connection_config.timeout),
                     cert=kwargs.pop('connection_cert', self.connection_config.cert),
                     allow_redirects=False,
-                    hooks=_get_request_hooks(kwargs.pop('hooks', None)),
                     **kwargs))
+            response.raw.enforce_content_length = True
 
         except urllib3.exceptions.NewConnectionError as err:
             error = ServiceRequestError(err, error=err)

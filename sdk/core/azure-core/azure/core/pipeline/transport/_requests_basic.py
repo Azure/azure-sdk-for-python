@@ -81,38 +81,44 @@ def _read_raw_stream(response, chunk_size=1):
     response._content_consumed = True  # pylint: disable=protected-access
 
 
-def _set_enforce_content_length(request, *args, **kwargs):  # pylint: disable=unused-argument
-    # type: (requests.Request, Any, Any) -> None
-    """
-    Hook to set urllib3's enforce_content_length
-    """
-    # Do not modify objects if they don't look like the urllib3 connections
-    if hasattr(request.raw, "enforce_content_length"):  # mypy: ignore
-        request.raw.enforce_content_length = True   # mypy: ignore
 
-
-def _get_request_hooks(user_hooks):
-    # type: (Optional[dict]) -> dict
+def _get_length(response):
     """
-    Get an argument for the `hooks` parameter for `requests.Session.request` that
-    sets the `enforce_content_length` on the underlying urllib3 connection.
-    `user_hooks` are the hooks passed to Transport.send explicitly. They are called last,
-    so users can override the default set here if they insist.
+    Set length value for Response content if available.
     """
-    if user_hooks:
-        merged_hooks = dict(user_hooks)
-    else:
-        merged_hooks = requests.hooks.default_hooks()
-    user_response_hooks = merged_hooks.pop("response")
-    if user_response_hooks is None:
-        merged_response_hooks = [_set_enforce_content_length]
-    elif callable(user_response_hooks):
-        merged_response_hooks = [_set_enforce_content_length, user_response_hooks]
-    else:
-        merged_response_hooks = [_set_enforce_content_length] + user_response_hooks
-    merged_hooks["response"] = merged_response_hooks
-    return merged_hooks
+    length = response.headers.get("content-length")
 
+    if length is not None:
+        try:
+            # RFC 7230 section 3.3.2 specifies multiple content lengths can
+            # be sent in a single Content-Length header
+            # (e.g. Content-Length: 42, 42). This line ensures the values
+            # are all valid ints and that as long as the `set` length is 1,
+            # all values are the same. Otherwise, the header is invalid.
+            lengths = set([int(val) for val in length.split(",")])
+            if len(lengths) > 1:
+                raise ServiceResponseError(
+                    "Content-Length contained multiple "
+                    "unmatching values (%s)" % length
+                )
+            length = lengths.pop()
+        except ValueError:
+            length = None
+        else:
+            if length < 0:
+                length = None
+
+    # Convert status to int for comparison
+    # In some cases, httplib returns a status of "_UNKNOWN"
+    status = response.status_code
+
+    request_method = response.request.method
+
+    # Check for responses that shouldn't include a body
+    if status in (204, 304) or 100 <= status < 200 or request_method == "HEAD":
+        length = 0
+
+    return length
 
 class _RequestsTransportResponseBase(_HttpResponseBase):
     """Base class for accessing response data.
@@ -130,6 +136,11 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
 
     def body(self):
         try:
+            expect_length = _get_length(self.internal_response)
+            actual_length = len(self.internal_response.content)
+            if actual_length < expect_length:
+                raise IncompleteReadError("IncompleteRead({} bytes read, {} expected)".
+                                          format(actual_length, expect_length))
             return self.internal_response.content
         except requests.exceptions.ChunkedEncodingError as err:
             error = IncompleteReadError(err, error=err)
@@ -354,8 +365,8 @@ class RequestsTransport(HttpTransport):
                 timeout=timeout,
                 cert=kwargs.pop('connection_cert', self.connection_config.cert),
                 allow_redirects=False,
-                hooks=_get_request_hooks(kwargs.pop('hooks', None)),
                 **kwargs)
+            response.raw.enforce_content_length = True
 
         except (urllib3.exceptions.NewConnectionError, urllib3.exceptions.ConnectTimeoutError) as err:
             error = ServiceRequestError(err, error=err)
