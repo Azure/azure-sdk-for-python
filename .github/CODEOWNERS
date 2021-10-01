@@ -39,6 +39,8 @@
 
 # PRLabel: %Communication
 /sdk/communication/                                                  @acsdevx-msft
+/sdk/communication/azure-communication-phonenumbers/                 @RoyHerrod @danielav7 @whisper6284 @AlonsoMondal
+/sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
 
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @chlowell @mccoyp @YalinLi0312
