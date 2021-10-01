@@ -5,8 +5,8 @@ trigger:
     include:
     - main
     - hotfix/*
-    - feature/*
     - release/*
+    - restapi*
   paths:
     include:
     - sdk/cognitivelanguage/
@@ -19,6 +19,7 @@ pr:
     - feature/*
     - hotfix/*
     - release/*
+    - restapi*
   paths:
     include:
     - sdk/cognitivelanguage/
@@ -30,6 +31,6 @@ extends:
     ServiceDirectory: cognitivelanguage
     Artifacts:
     - name: azure-ai-language-questionanswering
-      safeName: questionanswering
+      safeName: azureailanguagequestionanswering
     - name: azure-ai-language-conversations
-      safeName: conversations
+      safeName: azureailanguageconversations
