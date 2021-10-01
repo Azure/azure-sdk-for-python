@@ -90,7 +90,7 @@ class WorkflowAppTests(ConversationTest):
             }
         )
 
-        # run quey
+        # analyze query
         client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
         with client:
             result = client.analyze_conversations(

@@ -90,7 +90,7 @@ class WorkflowAppAsyncTests(AsyncConversationTest):
             }
         )
 
-        # run quey
+        # analyze query
         client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
         async with client:
             result = await client.analyze_conversations(
