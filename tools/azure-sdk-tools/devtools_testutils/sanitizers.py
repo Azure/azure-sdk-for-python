@@ -27,12 +27,7 @@ def add_body_key_sanitizer(**kwargs):
         a simple replacement operation.
     """
 
-    request_args = {}
-    request_args["jsonPath"] = kwargs.get("json_path")
-    request_args["value"] = kwargs.get("value")
-    request_args["regex"] = kwargs.get("regex")
-    request_args["groupForReplace"] = kwargs.get("group_for_replace")
-
+    request_args = _get_request_args(**kwargs)
     _send_request("BodyKeySanitizer", request_args)
 
 
@@ -50,11 +45,7 @@ def add_body_regex_sanitizer(**kwargs):
         a simple replacement operation.
     """
 
-    request_args = {}
-    request_args["value"] = kwargs.get("value")
-    request_args["regex"] = kwargs.get("regex")
-    request_args["groupForReplace"] = kwargs.get("group_for_replace")
-
+    request_args = _get_request_args(**kwargs)
     _send_request("BodyRegexSanitizer", request_args)
 
 
@@ -73,11 +64,7 @@ def add_continuation_sanitizer(**kwargs):
         same value?
     """
 
-    request_args = {}
-    request_args["key"] = kwargs.get("key")
-    request_args["method"] = kwargs.get("method")
-    request_args["resetAfterFirst"] = kwargs.get("reset_after_first")
-
+    request_args = _get_request_args(**kwargs)
     _send_request("ContinuationSanitizer", request_args)
 
 
@@ -94,11 +81,7 @@ def add_general_regex_sanitizer(**kwargs):
         a simple replacement operation.
     """
 
-    request_args = {}
-    request_args["value"] = kwargs.get("value")
-    request_args["regex"] = kwargs.get("regex")
-    request_args["groupForReplace"] = kwargs.get("group_for_replace")
-
+    request_args = _get_request_args(**kwargs)
     _send_request("GeneralRegexSanitizer", request_args)
 
 
@@ -118,12 +101,7 @@ def add_header_regex_sanitizer(**kwargs):
         a simple replacement operation.
     """
 
-    request_args = {}
-    request_args["key"] = kwargs.get("key")
-    request_args["value"] = kwargs.get("value")
-    request_args["regex"] = kwargs.get("regex")
-    request_args["groupForReplace"] = kwargs.get("group_for_replace")
-
+    request_args = _get_request_args(**kwargs)
     _send_request("HeaderRegexSanitizer", request_args)
 
 
@@ -142,9 +120,7 @@ def add_remove_header_sanitizer(**kwargs):
         those lines. Don't worry about whitespace between the commas separating each key. They will be ignored.
     """
 
-    request_args = {}
-    request_args["headersForRemoval"] = kwargs.get("headers")
-
+    request_args = _get_request_args(**kwargs)
     _send_request("RemoveHeaderSanitizer", request_args)
 
 
@@ -157,9 +133,7 @@ def add_request_subscription_id_sanitizer(**kwargs):
     :keyword str value: The fake subscriptionId that will be placed where the real one is in the real request.
     """
 
-    request_args = {}
-    request_args["value"] = kwargs.get("value") or "fakevalue"
-
+    request_args = _get_request_args(**kwargs)
     _send_request("ReplaceRequestSubscriptionId", request_args)
 
 
@@ -174,14 +148,24 @@ def add_uri_regex_sanitizer(**kwargs):
         a simple replacement operation.
     """
 
-    request_args = {}
-    request_args["value"] = kwargs.get("value") or "fakevalue"
-    request_args["regex"] = (
-        kwargs.get("regex") or "(?<=\\/\\/)[a-z]+(?=(?:|-secondary)\\.(?:table|blob|queue)\\.core\\.windows\\.net)"
-    )
-    request_args["groupForReplace"] = kwargs.get("group_for_replace")
-
+    request_args = _get_request_args(**kwargs)
     _send_request("UriRegexSanitizer", request_args)
+
+
+def _get_request_args(**kwargs):
+    # type: (**Any) -> Dict
+    """Returns a dictionary of sanitizer constructor headers"""
+
+    request_args = {}
+    request_args["groupForReplace"] = kwargs.get("group_for_replace")
+    request_args["headersForRemoval"] = kwargs.get("headers")
+    request_args["jsonPath"] = kwargs.get("json_path")
+    request_args["key"] = kwargs.get("key")
+    request_args["method"] = kwargs.get("method")
+    request_args["regex"] = kwargs.get("regex")
+    request_args["resetAfterFirst"] = kwargs.get("reset_after_first")
+    request_args["value"] = kwargs.get("value")
+    return request_args
 
 
 def _send_request(sanitizer, parameters):
