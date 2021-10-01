@@ -353,7 +353,9 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         ctype = self.headers.get(aiohttp.hdrs.CONTENT_TYPE, "").lower()
         mimetype = aiohttp.helpers.parse_mimetype(ctype)
 
-        encoding = mimetype.parameters.get("charset")
+        if not encoding:
+            # extract encoding from mimetype, if caller does not specify
+            encoding = mimetype.parameters.get("charset")
         if encoding:
             try:
                 codecs.lookup(encoding)
