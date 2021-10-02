@@ -7,14 +7,10 @@
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.transport import (
     HttpRequest,
-    AsyncioRequestsTransport,
-    TrioRequestsTransport,
-    AioHttpTransport,
 )
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import IncompleteReadError
 import pytest
-import trio
 
 
 @pytest.mark.asyncio
