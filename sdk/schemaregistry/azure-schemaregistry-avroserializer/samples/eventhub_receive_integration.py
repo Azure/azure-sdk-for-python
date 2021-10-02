@@ -45,7 +45,6 @@ eventhub_consumer = EventHubConsumerClient.from_connection_string(
 
 
 # create a AvroSerializer instance
-# TODO: after 'azure-schemaregistry==1.0.0b3' is released, update 'endpoint' to 'fully_qualified_namespace'
 avro_serializer = AvroSerializer(
     client=SchemaRegistryClient(
         fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE,
