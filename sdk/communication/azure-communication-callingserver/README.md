@@ -157,7 +157,7 @@ from azure.communication.callingserver import (
     )
 
 call_locator = ServerCallLocator("<server-call-id>")
-call_connection = await call_connection_async.join_call(
+call_connection = await callingserver_client.join_call(
     call_locator=call_locator,
     source=CommunicationUserIdentifier("<user-id>"),
     join_call_options=JoinCallOptions"<...>"))
