@@ -224,24 +224,27 @@ if __name__ == "__main__":
                 requirements = get_install_requires(os.path.join(os.path.abspath(args.target_setup), "setup.py"))
                 azure_requirements = [req.split(";")[0] for req in requirements if "azure" in req]
 
-                logging.info("Found {} azure requirement(s): {}".format(len(azure_requirements), azure_requirements))
+                if azure_requirements:
+                    logging.info(
+                        "Found {} azure requirement(s): {}".format(len(azure_requirements), azure_requirements)
+                    )
 
-                download_command = [
-                    sys.executable,
-                    "-m",
-                    "pip",
-                    "download",
-                    "-d",
-                    tmp_dl_folder,
-                    "--no-deps",
-                    *azure_requirements,
-                    *commands_options,
-                ]
+                    download_command = [
+                        sys.executable,
+                        "-m",
+                        "pip",
+                        "download",
+                        "-d",
+                        tmp_dl_folder,
+                        "--no-deps",
+                        *azure_requirements,
+                        *commands_options,
+                    ]
 
-                check_call(download_command, env=dict(os.environ, PIP_EXTRA_INDEX_URL=""))
-                additional_downloaded_reqs = [
-                    os.path.abspath(os.path.join(tmp_dl_folder, pth)) for pth in os.listdir(tmp_dl_folder)
-                ]
+                    check_call(download_command, env=dict(os.environ, PIP_EXTRA_INDEX_URL=""))
+                    additional_downloaded_reqs = [
+                        os.path.abspath(os.path.join(tmp_dl_folder, pth)) for pth in os.listdir(tmp_dl_folder)
+                    ]
 
             commands = [sys.executable, "-m", "pip", "install", built_pkg_path, *additional_downloaded_reqs]
 
