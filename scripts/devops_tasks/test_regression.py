@@ -167,7 +167,7 @@ class RegressionTest:
                     "install",
                     "-r",
                     test_tools_req_file,
-                    "--extra-index",
+                    "--extra-index-url",
                     "https://pypi.org/simple",
                 ],
                 dep_pkg_path,
@@ -286,7 +286,7 @@ class RegressionTest:
                     "install",
                     "-r",
                     filtered_dev_req_path,
-                    "--extra-index",
+                    "--extra-index-url",
                     "https://pypi.org/simple",
                 ],
                 dependent_pkg_path,
@@ -295,7 +295,7 @@ class RegressionTest:
             logging.info("dev requirements is not found to install")
 
         # install dependent package which is being verified
-        run_check_call([python_executable, "-m", "pip", "install", dependent_pkg_path], temp_dir)
+        run_check_call([python_executable, "-m", "pip", "install", dependent_pkg_path, "--extra-index-url", "https://pypi.org/simple"], temp_dir)
 
     def _is_package_installed(self, package, version):
         # find env root and pacakge locations
