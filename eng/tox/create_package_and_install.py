@@ -25,8 +25,6 @@ setup_parser_path = os.path.abspath(os.path.join(os.path.abspath(__file__), ".."
 sys.path.append(setup_parser_path)
 from setup_parser import get_install_requires
 
-ORIGINAL_EIU_SETTING = os.getenv("PIP_EXTRA_INDEX_URL", "")
-
 
 def cleanup_build_artifacts(build_folder):
     # clean up egginfo
