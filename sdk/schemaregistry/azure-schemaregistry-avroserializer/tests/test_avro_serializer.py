@@ -76,8 +76,7 @@ class AvroSerializerTests(AzureTestCase):
 
     @SchemaRegistryPowerShellPreparer()
     def test_basic_sr_avro_serializer_with_auto_register_schemas(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
-        # TODO: AFTER RELEASING azure-schemaregistry=1.0.0b3, UPDATE 'endpoint' to 'fully_qualified_namespace'
-        sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_fully_qualified_namespace)
+        sr_client = self.create_basic_client(SchemaRegistryClient, fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_serializer = AvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
 
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
@@ -89,7 +88,7 @@ class AvroSerializerTests(AzureTestCase):
         assert schema_str in sr_avro_serializer._user_input_schema_cache
 
         assert encoded_data[0:4] == b'\0\0\0\0'
-        schema_id = sr_client.get_schema_id(schemaregistry_group, schema.fullname, "Avro", str(schema)).schema_id
+        schema_id = sr_client.get_schema_properties(schemaregistry_group, schema.fullname, str(schema), "Avro").id
         assert encoded_data[4:36] == schema_id.encode("utf-8")
 
         decoded_data = sr_avro_serializer.deserialize(encoded_data)
@@ -101,8 +100,7 @@ class AvroSerializerTests(AzureTestCase):
 
     @SchemaRegistryPowerShellPreparer()
     def test_basic_sr_avro_serializer_without_auto_register_schemas(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
-        # TODO: AFTER RELEASING azure-schemaregistry=1.0.0b3, UPDATE 'endpoint' to 'fully_qualified_namespace'
-        sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_fully_qualified_namespace)
+        sr_client = self.create_basic_client(SchemaRegistryClient, fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_serializer = AvroSerializer(client=sr_client, group_name=schemaregistry_group)
 
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
@@ -114,7 +112,7 @@ class AvroSerializerTests(AzureTestCase):
         assert schema_str in sr_avro_serializer._user_input_schema_cache
 
         assert encoded_data[0:4] == b'\0\0\0\0'
-        schema_id = sr_client.get_schema_id(schemaregistry_group, schema.fullname, "Avro", str(schema)).schema_id
+        schema_id = sr_client.get_schema_properties(schemaregistry_group, schema.fullname, str(schema), "Avro").id
         assert encoded_data[4:36] == schema_id.encode("utf-8")
 
         decoded_data = sr_avro_serializer.deserialize(encoded_data)

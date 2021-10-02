@@ -41,7 +41,7 @@ exclude_packages = [
         'azure.schemaregistry.serializer'
     ]
 install_packages = [
-    'azure-schemaregistry==1.0.0b2',
+    'azure-schemaregistry==1.0.0b3',
     'avro<2.0.0,>=1.10.0'
 ]
 if sys.version_info < (3,0):

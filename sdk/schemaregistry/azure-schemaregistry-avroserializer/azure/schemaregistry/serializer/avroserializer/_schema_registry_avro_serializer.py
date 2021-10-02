@@ -61,7 +61,7 @@ class AvroSerializer(object):
         self._auto_register_schema_func = (
                 self._schema_registry_client.register_schema
                 if self._auto_register_schemas
-                else self._schema_registry_client.get_schema_id
+                else self._schema_registry_client.get_schema_properties
             )
         self._user_input_schema_cache = {}
 
@@ -96,8 +96,8 @@ class AvroSerializer(object):
         :rtype: str
         """
         schema_id = self._auto_register_schema_func(
-            self._schema_group, schema_name, "Avro", schema_str, **kwargs
-        ).schema_id
+            self._schema_group, schema_name, schema_str, "Avro", **kwargs
+        ).id
         return schema_id
 
     @lru_cache(maxsize=128)
@@ -112,7 +112,7 @@ class AvroSerializer(object):
         """
         schema_str = self._schema_registry_client.get_schema(
             schema_id, **kwargs
-        ).schema_content
+        ).schema_definition
         return schema_str
 
     def serialize(self, value, **kwargs):
@@ -166,9 +166,9 @@ class AvroSerializer(object):
         schema_id = value[
             SCHEMA_ID_START_INDEX : (SCHEMA_ID_START_INDEX + SCHEMA_ID_LENGTH)
         ].decode("utf-8")
-        schema_content = self._get_schema(schema_id, **kwargs)
+        schema_definition = self._get_schema(schema_id, **kwargs)
 
         dict_value = self._avro_serializer.deserialize(
-            value[DATA_START_INDEX:], schema_content
+            value[DATA_START_INDEX:], schema_definition
         )
         return dict_value
