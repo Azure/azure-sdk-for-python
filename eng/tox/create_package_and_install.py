@@ -16,10 +16,18 @@ import logging
 import sys
 import glob
 import shutil
+import pdb
 
 from tox_helper_tasks import find_whl, find_sdist, get_package_details
 logging.getLogger().setLevel(logging.INFO)
 
+setup_parser_path = os.path.abspath(
+    os.path.join(os.path.abspath(__file__), "..", "..", "versioning")
+)
+sys.path.append(setup_parser_path)
+from setup_parser import get_install_requires
+
+ORIGINAL_EIU_SETTING = os.getenv("PIP_EXTRA_INDEX_URL", "")
 
 def cleanup_build_artifacts(build_folder):
     # clean up egginfo
@@ -64,7 +72,6 @@ def in_ci():
 
 
 def build_and_discover_package(setuppy_path, dist_dir, target_setup, package_type):
-
     if package_type == "wheel":
         check_call(
             [
@@ -106,7 +113,7 @@ if __name__ == "__main__":
         "-d",
         "--distribution-directory",
         dest="distribution_directory",
-        help="The path to the distribution directory. Should be passed $(Build.ArtifactStagingDirectory) from the devops yaml definition.",
+        help="The path to the distribution directory. This is the temporary location where packages will be built. Most commonly tox {envtmpdir}.",
         required=True,
     )
 
@@ -130,7 +137,7 @@ if __name__ == "__main__":
         "-e",
         "--extra-index-url",
         dest="extra_index_url",
-        help="Index URL to search for packages. This can be set to install package from azure devops feed",
+        help="Index URL to search for packages. This can be set to install package from azure devops feed (or pypi feed if primary index is a dev feed).",
     )
 
     parser.add_argument(
@@ -165,10 +172,26 @@ if __name__ == "__main__":
         default="wheel",
     )
 
-
     args = parser.parse_args()
 
+    commands_options = []
+    built_pkg_path = ""
     setup_py_path = os.path.join(args.target_setup, "setup.py")
+    additional_downloaded_reqs = []
+    tmp_dl_folder = os.path.join(args.distribution_directory, 'dl')
+    os.mkdir(tmp_dl_folder)
+
+    # If extra index URL is passed then set it as argument to pip command
+    if args.extra_index_url:
+        commands_options.extend(["--extra-index-url", args.extra_index_url])
+
+    # preview version is enabled when installing dev build so pip will install dev build version from devpos feed
+    if args.install_preview or os.getenv('SetDevVersion'):
+        commands_options.append("--pre")
+
+    if args.cache_dir:
+        commands_options.extend(["--cache-dir", args.cache_dir])
+
     discovered_packages = discover_packages(setup_py_path, args)
 
     if args.skip_install:
@@ -177,9 +200,6 @@ if __name__ == "__main__":
         )
     else:
         for built_package in discovered_packages:
-            # if the environment variable is set, that means that this is running where we
-            # want to use the pre-built packages
-            built_pkg_path = ""
             if os.getenv("PREBUILT_WHEEL_DIR") is not None and not args.force_create:
                 # find the prebuilt package in the set of prebuilt wheels
                 package_path = os.path.join(os.environ["PREBUILT_WHEEL_DIR"], built_package)
@@ -198,25 +218,37 @@ if __name__ == "__main__":
                 built_pkg_path = os.path.abspath(os.path.join(args.distribution_directory, built_package))
                 logging.info("Installing {w} from fresh built package.".format(w=built_package))
 
+
+            requirements = get_install_requires(os.path.join(os.path.abspath(args.target_setup), "setup.py"))
+            azure_requirements = [req.split(';')[0] for req in requirements if "azure" in req]
+
+            logging.info("Found {} azure requirement(s): {}".format(len(azure_requirements), azure_requirements))
+
+            download_command = [
+                sys.executable,
+                "-m",
+                "pip",
+                "download",
+                "-d",
+                tmp_dl_folder,
+                "--no-deps",
+                *azure_requirements,
+                *commands_options
+            ]
+
+            check_call(download_command, env=dict(os.environ, PIP_EXTRA_INDEX_URL=""))
+            additional_downloaded_reqs = [os.path.abspath(os.path.join(tmp_dl_folder, pth)) for pth in os.listdir(tmp_dl_folder)]
+
             commands = [
                 sys.executable,
                 "-m",
                 "pip",
                 "install",
-                built_pkg_path
+                built_pkg_path,
+                *additional_downloaded_reqs
             ]
 
-
-            # If extra index URL is passed then set it as argument to pip command
-            if args.extra_index_url:
-                commands.extend(["--extra-index-url", args.extra_index_url])
-
-            # preview version is enabled when installing dev build so pip will install dev build version from devpos feed
-            if args.install_preview:
-                commands.append("--pre")
-
-            if args.cache_dir:
-                commands.extend(["--cache-dir", args.cache_dir])
+            commands.extend(commands_options)
 
             if args.work_dir and os.path.exists(args.work_dir):
                 logging.info("Executing command from {0}:{1}".format(args.work_dir, commands))
