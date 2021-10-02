@@ -16,7 +16,6 @@ import logging
 import sys
 import glob
 import shutil
-import pdb
 
 from tox_helper_tasks import find_whl, find_sdist, get_package_details
 logging.getLogger().setLevel(logging.INFO)
