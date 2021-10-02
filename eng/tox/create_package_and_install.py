@@ -18,15 +18,15 @@ import glob
 import shutil
 
 from tox_helper_tasks import find_whl, find_sdist, get_package_details
+
 logging.getLogger().setLevel(logging.INFO)
 
-setup_parser_path = os.path.abspath(
-    os.path.join(os.path.abspath(__file__), "..", "..", "versioning")
-)
+setup_parser_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "versioning"))
 sys.path.append(setup_parser_path)
 from setup_parser import get_install_requires
 
 ORIGINAL_EIU_SETTING = os.getenv("PIP_EXTRA_INDEX_URL", "")
+
 
 def cleanup_build_artifacts(build_folder):
     # clean up egginfo
@@ -47,7 +47,9 @@ def discover_packages(setuppy_path, args):
     if os.getenv("PREBUILT_WHEEL_DIR") is not None and not args.force_create:
         packages = discover_prebuilt_package(os.getenv("PREBUILT_WHEEL_DIR"), setuppy_path, args.package_type)
     else:
-        packages = build_and_discover_package(setuppy_path, args.distribution_directory, args.target_setup, args.package_type)
+        packages = build_and_discover_package(
+            setuppy_path, args.distribution_directory, args.target_setup, args.package_type
+        )
     return packages
 
 
@@ -60,7 +62,11 @@ def discover_prebuilt_package(dist_directory, setuppy_path, package_type):
         prebuilt_package = find_sdist(dist_directory, pkg_name, version)
 
     if prebuilt_package is None:
-        logging.error("Package is missing in prebuilt directory {0} for package {1} and version {2}".format(dist_directory, pkg_name, version))
+        logging.error(
+            "Package is missing in prebuilt directory {0} for package {1} and version {2}".format(
+                dist_directory, pkg_name, version
+            )
+        )
         exit(1)
     packages.append(prebuilt_package)
     return packages
@@ -105,9 +111,7 @@ def build_and_discover_package(setuppy_path, dist_dir, target_setup, package_typ
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Build a package directory into wheel or sdist. Then install it."
-    )
+    parser = argparse.ArgumentParser(description="Build a package directory into wheel or sdist. Then install it.")
     parser.add_argument(
         "-d",
         "--distribution-directory",
@@ -171,13 +175,20 @@ if __name__ == "__main__":
         default="wheel",
     )
 
+    parser.add_argument(
+        "--pre-download-disable",
+        dest="pre_download",
+        help="During a dev build, we will restore package dependencies from a dev feed before installing them. The presence of this flag disables that behavior.",
+        action="store_true",
+    )
+
     args = parser.parse_args()
 
     commands_options = []
     built_pkg_path = ""
     setup_py_path = os.path.join(args.target_setup, "setup.py")
     additional_downloaded_reqs = []
-    tmp_dl_folder = os.path.join(args.distribution_directory, 'dl')
+    tmp_dl_folder = os.path.join(args.distribution_directory, "dl")
     os.mkdir(tmp_dl_folder)
 
     # If extra index URL is passed then set it as argument to pip command
@@ -185,7 +196,7 @@ if __name__ == "__main__":
         commands_options.extend(["--extra-index-url", args.extra_index_url])
 
     # preview version is enabled when installing dev build so pip will install dev build version from devpos feed
-    if args.install_preview or os.getenv('SetDevVersion'):
+    if args.install_preview or os.getenv("SetDevVersion"):
         commands_options.append("--pre")
 
     if args.cache_dir:
@@ -194,9 +205,7 @@ if __name__ == "__main__":
     discovered_packages = discover_packages(setup_py_path, args)
 
     if args.skip_install:
-        logging.info(
-            "Flag to skip install whl is passed. Skipping package installation"
-        )
+        logging.info("Flag to skip install whl is passed. Skipping package installation")
     else:
         for built_package in discovered_packages:
             if os.getenv("PREBUILT_WHEEL_DIR") is not None and not args.force_create:
@@ -207,51 +216,42 @@ if __name__ == "__main__":
                     logging.info("Installing {w} from directory".format(w=built_package))
                 # it does't exist, so we need to error out
                 else:
-                    logging.error(
-                        "{w} not present in the prebuilt package directory. Exiting.".format(
-                            w=built_package
-                        )
-                    )
+                    logging.error("{w} not present in the prebuilt package directory. Exiting.".format(w=built_package))
                     exit(1)
             else:
                 built_pkg_path = os.path.abspath(os.path.join(args.distribution_directory, built_package))
                 logging.info("Installing {w} from fresh built package.".format(w=built_package))
 
+            if not args.pre_download:
+                requirements = get_install_requires(os.path.join(os.path.abspath(args.target_setup), "setup.py"))
+                azure_requirements = [req.split(";")[0] for req in requirements if "azure" in req]
 
-            requirements = get_install_requires(os.path.join(os.path.abspath(args.target_setup), "setup.py"))
-            azure_requirements = [req.split(';')[0] for req in requirements if "azure" in req]
+                logging.info("Found {} azure requirement(s): {}".format(len(azure_requirements), azure_requirements))
 
-            logging.info("Found {} azure requirement(s): {}".format(len(azure_requirements), azure_requirements))
+                download_command = [
+                    sys.executable,
+                    "-m",
+                    "pip",
+                    "download",
+                    "-d",
+                    tmp_dl_folder,
+                    "--no-deps",
+                    *azure_requirements,
+                    *commands_options,
+                ]
 
-            download_command = [
-                sys.executable,
-                "-m",
-                "pip",
-                "download",
-                "-d",
-                tmp_dl_folder,
-                "--no-deps",
-                *azure_requirements,
-                *commands_options
-            ]
+                check_call(download_command, env=dict(os.environ, PIP_EXTRA_INDEX_URL=""))
+                additional_downloaded_reqs = [
+                    os.path.abspath(os.path.join(tmp_dl_folder, pth)) for pth in os.listdir(tmp_dl_folder)
+                ]
 
-            check_call(download_command, env=dict(os.environ, PIP_EXTRA_INDEX_URL=""))
-            additional_downloaded_reqs = [os.path.abspath(os.path.join(tmp_dl_folder, pth)) for pth in os.listdir(tmp_dl_folder)]
-
-            commands = [
-                sys.executable,
-                "-m",
-                "pip",
-                "install",
-                built_pkg_path,
-                *additional_downloaded_reqs
-            ]
+            commands = [sys.executable, "-m", "pip", "install", built_pkg_path, *additional_downloaded_reqs]
 
             commands.extend(commands_options)
 
             if args.work_dir and os.path.exists(args.work_dir):
                 logging.info("Executing command from {0}:{1}".format(args.work_dir, commands))
-                check_call(commands, cwd= args.work_dir)
+                check_call(commands, cwd=args.work_dir)
             else:
                 check_call(commands)
             logging.info("Installed {w}".format(w=built_package))
