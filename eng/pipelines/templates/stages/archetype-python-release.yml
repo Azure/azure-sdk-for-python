@@ -276,15 +276,14 @@ stages:
             Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/
           displayName: Show visible artifacts
         - pwsh: |
-            $allJsonFiles = (Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/ -Filter *.json).FullName
-            Write-Host "Here are all json files: $allJsonFiles"
-            echo "##vso[task.setvariable variable=PackageJsonFiles]$allJsonFiles"
+            $allJsonFile = (Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/ -Filter *.json).FullName
+            echo '##vso[task.setvariable variable=PackageJsonFiles]$allJsonFile'
           displayName: Get all PackageInfo json files
         - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
           parameters:
             PackageInfoLocations: 
-            - ${{ each artifact in '$(PackageJsonFiles)' }}:
-                - ${{artifact}}
+            - ${{ each artifact in PackageJsonFiles }}:
+                - ${{artifact.FullName}}
             WorkingDirectory: $(System.DefaultWorkingDirectory)
             TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
             TargetDocRepoName: ${{parameters.TargetDocRepoName}}
