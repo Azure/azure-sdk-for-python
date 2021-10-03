@@ -283,7 +283,7 @@ stages:
         - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
           parameters:
             PackageInfoLocations: 
-              - ${{ each artifact in $(PackageJsonFiles) }}:
+              - ${{ each artifact in '(Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/ -Filter *.json)' }}:
                 - ${{artifact.fullName}}
             WorkingDirectory: $(System.DefaultWorkingDirectory)
             TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
