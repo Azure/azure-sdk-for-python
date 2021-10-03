@@ -31,9 +31,12 @@ GitHub repository ID of the SDK. Typically of the form: 'Azure/azure-sdk-for-js'
 #>
 
 param(
-  [Parameter(Mandatory = $true)]
+  [Parameter(Mandatory = $false)]
   [array]$PackageInfoJsonLocations,
   
+  [Parameter(Mandatory = $false)]
+  [array]$PackageInfoJsonPath,
+
   [Parameter(Mandatory = $true)]
   [string]$DocRepoLocation, 
 
@@ -157,7 +160,9 @@ function UpdateDocsMsMetadataForPackage($packageInfoJsonLocation) {
     -Path $packageInfoLocation/$packageMetadataName `
     -Value $packageInfoJson
 }
-
+if (!$PackageInfoJsonLocations) {
+  $PackageInfoJsonLocations = Get-ChildItem $PackageInfoJsonPath -Include *.json
+}
 foreach ($packageInfo in $PackageInfoJsonLocations) {
   Write-Host "Updating metadata for package: $packageInfo"
   UpdateDocsMsMetadataForPackage $packageInfo
