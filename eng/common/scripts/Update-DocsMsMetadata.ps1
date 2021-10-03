@@ -35,7 +35,7 @@ param(
   [array]$PackageInfoJsonLocations,
   
   [Parameter(Mandatory = $false)]
-  [array]$PackageInfoJsonPath,
+  [string]$PackageInfoJsonPath,
 
   [Parameter(Mandatory = $true)]
   [string]$DocRepoLocation, 
