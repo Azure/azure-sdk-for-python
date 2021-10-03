@@ -77,15 +77,15 @@ steps:
 - pwsh: |
     Write-Host "3"
     Write-Host ${{ convertToJson(parameters.PackageInfoLocations) }}
-    Write-Host ${{ convertToJson(parameters.PackageInfoLocations) }}.GetType()
+    ${{ convertToJson(parameters.PackageInfoLocations) }}.GetType()
     $packageInfoJson = '${{ convertToJson(parameters.PackageInfoLocations) }}'.Trim('"')
     Write-Host "2"
     Write-Host $packageInfoJson
-    Write-Host $packageInfoJson.GetType()
+    # Write-Host $packageInfoJson.GetType()
     $packageInfoLocations = ConvertFrom-Json $packageInfoJson
     Write-Host "1"
     Write-Host $packageInfoLocations
-    Write-Host $packageInfoLocations.GetType()
+    # Write-Host $packageInfoLocations.GetType()
     ${{ parameters.ScriptDirectory }}/Update-DocsMsMetadata.ps1 `
       -PackageInfoJsonLocations $packageInfoLocations `
       -DocRepoLocation "$(DocRepoLocation)" `
