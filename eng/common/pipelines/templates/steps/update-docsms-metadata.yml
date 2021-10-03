@@ -3,7 +3,7 @@ parameters:
     type: object
     default: []
   - name: PackageInfoPath
-    type: String
+    type: string
     default: ''
   - name: RepoId
     type: string
