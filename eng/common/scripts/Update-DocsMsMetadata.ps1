@@ -161,7 +161,7 @@ function UpdateDocsMsMetadataForPackage($packageInfoJsonLocation) {
     -Value $packageInfoJson
 }
 if (!$PackageInfoJsonLocations) {
-  $PackageInfoJsonLocations = Get-ChildItem $PackageInfoJsonPath -Include *.json
+  $PackageInfoJsonLocations = Get-ChildItem $PackageInfoJsonPath -Filter *.json
 }
 foreach ($packageInfo in $PackageInfoJsonLocations) {
   Write-Host "Updating metadata for package: $packageInfo"
