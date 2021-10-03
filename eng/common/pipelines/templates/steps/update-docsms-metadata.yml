@@ -85,6 +85,15 @@ steps:
         -Language '${{parameters.Language}}' `
         -RepoId '${{ parameters.RepoId }}'
     }
+    elif($null -ne ${{parameters.PackageInfoLocations}}) {
+      $packageInfoJson = '${{ convertToJson(parameters.PackageInfoLocations) }}'.Trim('"')
+      $packageInfoLocations = ConvertFrom-Json $packageInfoJson
+      ${{ parameters.ScriptDirectory }}/Update-DocsMsMetadata.ps1 `
+        -PackageInfoJsonLocations $packageInfoLocations `
+        -DocRepoLocation "$(DocRepoLocation)" `
+        -Language '${{parameters.Language}}' `
+        -RepoId '${{ parameters.RepoId }}'
+    }
     else{
       Write-Host "It is missing either PackageInfoPath or PackageInfo json files information."
       exit 0

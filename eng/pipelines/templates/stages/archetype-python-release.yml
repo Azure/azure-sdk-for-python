@@ -277,7 +277,7 @@ stages:
           displayName: Show visible artifacts
         - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
           parameters:
-            PackageInfoLocations: $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/
+            PackageInfoLocations: '$(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/''
             WorkingDirectory: $(System.DefaultWorkingDirectory)
             TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
             TargetDocRepoName: ${{parameters.TargetDocRepoName}}
