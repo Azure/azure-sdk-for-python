@@ -85,11 +85,11 @@ steps:
         -Language '${{parameters.Language}}' `
         -RepoId '${{ parameters.RepoId }}'
     }
-    elif(${{parameters.PackageInfoLocations}}) {
+    elif(${{parameters.PackageInfoLocations}}.count -gt 0) {
       $packageInfoJson = '${{ convertToJson(parameters.PackageInfoLocations) }}'.Trim('"')
       $packageInfoLocations = ConvertFrom-Json $packageInfoJson
       ${{ parameters.ScriptDirectory }}/Update-DocsMsMetadata.ps1 `
-        -PackageInfoJsonLocations $$packageInfoLocations `
+        -PackageInfoJsonLocations $packageInfoLocations `
         -DocRepoLocation "$(DocRepoLocation)" `
         -Language '${{parameters.Language}}' `
         -RepoId '${{ parameters.RepoId }}'
