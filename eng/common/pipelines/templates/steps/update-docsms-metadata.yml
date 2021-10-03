@@ -79,7 +79,7 @@ steps:
 
 - pwsh: |
     $packageInfoJson = '${{ convertToJson(parameters.PackageInfoLocations) }}'.Trim('"')
-    if ($null -ne ${{parameters.PackageInfoPath}}) {
+    if ('${{parameters.PackageInfoPath}}') {
       ${{ parameters.ScriptDirectory }}/Update-DocsMsMetadata.ps1 `
         -PackageInfoJsonPath ${{parameters.PackageInfoPath}} `
         -DocRepoLocation "$(DocRepoLocation)" `
