@@ -282,7 +282,9 @@ stages:
           displayName: Get all PackageInfo json files
         - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
           parameters:
-            PackageInfoLocations: $(PackageJsonFiles)
+            PackageInfoLocations: 
+            - ${{ each artifact in '$(PackageJsonFiles)' }}:
+                - ${{artifact}}
             WorkingDirectory: $(System.DefaultWorkingDirectory)
             TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
             TargetDocRepoName: ${{parameters.TargetDocRepoName}}
