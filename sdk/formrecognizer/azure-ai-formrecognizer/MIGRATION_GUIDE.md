@@ -7,11 +7,12 @@ Familiarity with `azure-ai-formrecognizer (3.1.x and below)` package is assumed.
 ## Table of Contents
 - [Migration benefits](#migration-benefits)
 - [Important changes](#important-changes)
+    - [Terminology](#terminology)
     - [Client usage](#client-usage)
-    - [Analyzing document](#analyzing-documents)
+    - [Analyzing documents](#analyzing-documents)
     - [Analyzing a document with a custom model](#analyzing-a-document-with-a-custom-model)
     - [Training a custom model](#training-a-custom-model)
-    - [Manage models](#manage-models)
+    - [Managing models](#managing-models)
 - [Additional samples](#additional-samples)
 
 ## Migration benefits
@@ -35,6 +36,15 @@ The below table describes the relationship of each client and its supported API 
 Please refer to the [README][readme] for more information on these new clients.
 
 ## Important changes
+
+### Terminology
+
+Some terminology has changed to reflect the enhanced capabilities of the newest Form Recognizer service APIs. While the service is still called "Form Recognizer", it is capable of much more than simple recognition and is not limited to documents that are "forms". As a result, we've made the following broad changes to the terminology used throughout the SDK:
+
+- The word "Document" has broadly replaced the word "Form." The service supports a wide variety of documents and data-extraction scenarios, not merely limited to "forms."
+- The word "Analyze" has broadly replaced the word "Recognize." The document analysis operations execute a data extraction pipeline that supports more than just recognition.
+- Distinctions between "custom" and "prebuilt" models have broadly been eliminated. Prebuilt models are simply models that were created by the Form Recognizer service team and that exist within every Form Recognizer resource.
+- The concept of "model training" has broadly been replaced with "model creation", "building a model", or "model administration" (whatever is most appropriate in context), as not all model creation operations involve "training" a model from a data set. When referring to a model schema trained from a data set, we will use the term "document type" instead.
 
 ### Client usage
 
@@ -635,7 +645,7 @@ for name, doc_type in model.doc_types.items():
         print("Field: '{}' has confidence score {}".format(field_name, confidence))
 ```
 
-### Manage models
+### Managing models
 
 Differences between the versions:
 - When using API version `2021-09-30-preview` and later models no longer include submodels, instead a model can analyze different document types.

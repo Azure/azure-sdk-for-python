@@ -169,7 +169,7 @@ backports.functools-lru-cache>=1.6.4
 #override azure-security-attestation msrest>=0.6.21
 #override azure-security-attestation azure-core<2.0.0,>=1.8.2
 #override azure-data-tables msrest>=0.6.19
-#override azure-schemaregistry azure-core<2.0.0,>=1.17.1
+#override azure-schemaregistry azure-core<2.0.0,>=1.19.0
 opencensus>=0.6.0
 opencensus-ext-threading
 opencensus-ext-azure>=0.3.1
@@ -349,3 +349,5 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-authorization msrest>=0.6.21
 #override azure-mgmt-azurearcdata msrest>=0.6.21
 #override azure-mgmt-fluidrelay msrest>=0.6.21
+#override azure-ai-language-conversations azure-core<2.0.0,>=1.19.0
+#override azure-ai-language-conversations msrest>=0.6.21
