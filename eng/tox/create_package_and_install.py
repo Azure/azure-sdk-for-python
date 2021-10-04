@@ -46,7 +46,10 @@ def discover_packages(setuppy_path, args):
         packages = discover_prebuilt_package(os.getenv("PREBUILT_WHEEL_DIR"), setuppy_path, args.package_type)
     else:
         packages = build_and_discover_package(
-            setuppy_path, args.distribution_directory, args.target_setup, args.package_type
+            setuppy_path,
+            args.distribution_directory,
+            args.target_setup,
+            args.package_type,
         )
     return packages
 
@@ -109,7 +112,9 @@ def build_and_discover_package(setuppy_path, dist_dir, target_setup, package_typ
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Build a package directory into wheel or sdist. Then install it.")
+    parser = argparse.ArgumentParser(
+        description='Build a package directory into wheel or sdist. Then install it. To install dev dependencies, set environment variable "SetDevVersion" to "true" and set "PIP_INDEX_URL" to a python feed.'
+    )
     parser.add_argument(
         "-d",
         "--distribution-directory",
@@ -139,12 +144,6 @@ if __name__ == "__main__":
         "--extra-index-url",
         dest="extra_index_url",
         help="Index URL to search for packages. This can be set to install package from azure devops feed (or pypi feed if primary index is a dev feed).",
-    )
-
-    parser.add_argument(
-        "--install-preview",
-        dest="install_preview",
-        help="Install preview version of dependent packages. This is helpful when installing dev build version of packages from alternate package location",
     )
 
     parser.add_argument(
@@ -194,7 +193,7 @@ if __name__ == "__main__":
         commands_options.extend(["--extra-index-url", args.extra_index_url])
 
     # preview version is enabled when installing dev build so pip will install dev build version from devpos feed
-    if args.install_preview or os.getenv("SetDevVersion"):
+    if os.getenv("SetDevVersion"):
         commands_options.append("--pre")
 
     if args.cache_dir:
@@ -236,7 +235,7 @@ if __name__ == "__main__":
                         "download",
                         "-d",
                         tmp_dl_folder,
-                        "--no-deps"
+                        "--no-deps",
                     ]
 
                     if azure_requirements:
@@ -250,7 +249,14 @@ if __name__ == "__main__":
                         os.path.abspath(os.path.join(tmp_dl_folder, pth)) for pth in os.listdir(tmp_dl_folder)
                     ]
 
-            commands = [sys.executable, "-m", "pip", "install", built_pkg_path, *additional_downloaded_reqs]
+            commands = [
+                sys.executable,
+                "-m",
+                "pip",
+                "install",
+                built_pkg_path,
+                *additional_downloaded_reqs,
+            ]
 
             commands.extend(commands_options)
 
