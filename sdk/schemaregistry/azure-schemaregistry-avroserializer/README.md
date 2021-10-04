@@ -27,7 +27,7 @@ To use this package, you must have:
 * Python 2.7, 3.6 or later - [Install Python][python]
 
 ### Authenticate the client
-Interaction with Schema Registry Avro Serializer starts with an instance of SchemaRegistryAvroSerializer class. You need the endpoint, AAD credential and schema group name to instantiate the client object.
+Interaction with Schema Registry Avro Serializer starts with an instance of SchemaRegistryAvroSerializer class. You need the fully qualified namespace, AAD credential and schema group name to instantiate the client object.
 
 **Create client using the azure-identity library:**
 
@@ -37,9 +37,9 @@ from azure.schemaregistry.serializer.avroserializer import SchemaRegistryAvroSer
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-endpoint = '<< ENDPOINT OF THE SCHEMA REGISTRY >>'
+fully_qualified_namespace = '<< FULLY QUALIFIED NAMESPACE OF THE SCHEMA REGISTRY >>'
 schema_group = '<< GROUP NAME OF THE SCHEMA >>'
-schema_registry_client = SchemaRegistryClient(endpoint, credential)
+schema_registry_client = SchemaRegistryClient(fully_qualified_namespace, credential)
 serializer = SchemaRegistryAvroSerializer(schema_registry_client, schema_group)
 ```
 
@@ -95,10 +95,10 @@ from azure.schemaregistry.serializer.avroserializer import SchemaRegistryAvroSer
 from azure.identity import DefaultAzureCredential
 
 token_credential = DefaultAzureCredential()
-endpoint = os.environ['SCHEMA_REGISTRY_ENDPOINT']
+fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
 schema_group = "<your-group-name>"
 
-schema_registry_client = SchemaRegistryClient(endpoint, token_credential)
+schema_registry_client = SchemaRegistryClient(fully_qualified_namespace, token_credential)
 serializer = SchemaRegistryAvroSerializer(schema_registry_client, schema_group)
 
 schema_string = """
@@ -129,10 +129,10 @@ from azure.schemaregistry.serializer.avroserializer import SchemaRegistryAvroSer
 from azure.identity import DefaultAzureCredential
 
 token_credential = DefaultAzureCredential()
-endpoint = os.environ['SCHEMA_REGISTRY_ENDPOINT']
+fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
 schema_group = "<your-group-name>"
 
-schema_registry_client = SchemaRegistryClient(endpoint, token_credential)
+schema_registry_client = SchemaRegistryClient(fully_qualified_namespace, token_credential)
 serializer = SchemaRegistryAvroSerializer(schema_registry_client, schema_group)
 
 with serializer:
@@ -152,7 +152,7 @@ from azure.schemaregistry.serializer.avroserializer import SchemaRegistryAvroSer
 from azure.identity import DefaultAzureCredential
 
 token_credential = DefaultAzureCredential()
-endpoint = os.environ['SCHEMA_REGISTRY_ENDPOINT']
+fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
 schema_group = "<your-group-name>"
 eventhub_connection_str = os.environ['EVENT_HUB_CONN_STR']
 eventhub_name = os.environ['EVENT_HUB_NAME']
@@ -168,7 +168,7 @@ schema_string = """
  ]
 }"""
 
-schema_registry_client = SchemaRegistryClient(endpoint, token_credential)
+schema_registry_client = SchemaRegistryClient(fully_qualified_namespace, token_credential)
 avro_serializer = SchemaRegistryAvroSerializer(schema_registry_client, schema_group)
 
 eventhub_producer = EventHubProducerClient.from_connection_string(
@@ -196,12 +196,12 @@ from azure.schemaregistry.serializer.avroserializer import SchemaRegistryAvroSer
 from azure.identity import DefaultAzureCredential
 
 token_credential = DefaultAzureCredential()
-endpoint = os.environ['SCHEMA_REGISTRY_ENDPOINT']
+fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
 schema_group = "<your-group-name>"
 eventhub_connection_str = os.environ['EVENT_HUB_CONN_STR']
 eventhub_name = os.environ['EVENT_HUB_NAME']
 
-schema_registry_client = SchemaRegistryClient(endpoint, token_credential)
+schema_registry_client = SchemaRegistryClient(fully_qualified_namespace, token_credential)
 avro_serializer = SchemaRegistryAvroSerializer(schema_registry_client, schema_group)
 
 eventhub_consumer = EventHubConsumerClient.from_connection_string(
