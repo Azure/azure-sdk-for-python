@@ -2066,7 +2066,7 @@ class TextAppearance(object):
 
 
 class BoundingRegion(object):
-    """The bounding box corresponding to a page.
+    """The bounding region corresponding to a page.
 
     :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
         A list of 4 points representing the quadrilateral bounding box
@@ -2132,7 +2132,9 @@ class DocumentElement(object):
     :vartype content: str
     :ivar bounding_box: Bounding box of the word.
     :vartype bounding_box: list[Point]
-    :ivar str kind:
+    :ivar str kind: The kind of document element. Possible kinds are "word" or "selectionMark" which
+        correspond to a :class:`~azure.ai.formrecognizer.DocumentWord` or
+        :class:`~azure.ai.formrecognizer.DocumentSelectionMark`, respectively.
     """
 
     def __init__(self, **kwargs):
@@ -2857,7 +2859,7 @@ class DocumentSelectionMark(DocumentElement):
     :vartype span: ~azure.ai.formrecognizer.DocumentSpan
     :ivar confidence: Confidence of correctly extracting the selection mark.
     :vartype confidence: float
-    :ivar str kind:
+    :ivar str kind: For DocumentSelectionMark, this is "selectionMark".
     """
 
     def __init__(self, **kwargs):
@@ -3418,7 +3420,7 @@ class DocumentWord(DocumentElement):
     :vartype span: ~azure.ai.formrecognizer.DocumentSpan
     :ivar confidence: Confidence of correctly extracting the word.
     :vartype confidence: float
-    :ivar str kind:
+    :ivar str kind: For DocumentWord, this is "word".
     """
 
     def __init__(self, **kwargs):
