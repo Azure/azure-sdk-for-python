@@ -49,7 +49,7 @@ def parse_operation_id(location):
 class DocumentModelAdministrationLROPoller(LROPoller[PollingReturnType]):
     """Custom poller for model build operations.
 
-    .. versionadded:: v2021-09-30-preview
+    .. versionadded:: 2021-09-30-preview
         The *DocumentModelAdministrationLROPoller* poller object
     """
 

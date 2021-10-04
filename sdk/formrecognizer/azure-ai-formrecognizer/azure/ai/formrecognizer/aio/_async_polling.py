@@ -18,7 +18,7 @@ PollingReturnType = TypeVar("PollingReturnType")
 class AsyncDocumentModelAdministrationLROPoller(AsyncLROPoller[PollingReturnType]):
     """Custom poller for model build operations.
 
-    .. versionadded:: v2021-09-30-preview
+    .. versionadded:: 2021-09-30-preview
         The *AsyncDocumentModelAdministrationLROPoller* poller object
     """
 
