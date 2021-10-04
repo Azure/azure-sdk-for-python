@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 01 Oct 2021 07:49:06 GMT
+      - Mon, 04 Oct 2021 19:24:50 GMT
       expires:
       - '-1'
       pragma:
@@ -45,7 +45,7 @@ interactions:
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:
-      - 1.9.79.2
+      - 1.9.132.3
       x-powered-by:
       - ASP.NET
     status:
@@ -70,7 +70,7 @@ interactions:
     uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name61f215ee/create?api-version=7.1
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name61f215ee/652742b286b34bbb8b9f188b3ad83e49","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"0_TZ-SxU0AN5dY8-MzbNwNMViZhiDHUDP042XSgTLYZG-ominRG-Gdh3tCrbWo45j0wua3xoDrQMEJg1jT6W3QChy66oFW6dbtkOnvlH3nP4n4xMVY8JEJJhTsvpOSeTXq9EI1uZOTNrg4XMELBRsbaiBSU8JOgFVwQ8qokxAGNGHjVdK4NajnBh3KJZqgNITWdsu3HeKIR6l2UtyrGJPS46TP0GzgjfqzqE6cs0e0mhOeKhGLa7lpLifrvHRgUdM-Zbm4tRCWx9KQqFmkfOV17iGbawUGerdZHc4kP-q2Zd10N-ykQlh8-DCnC6Jr2DlQDisuFz_eKCYvPttCbFAQ","e":"AQAB"},"attributes":{"enabled":true,"created":1633074547,"updated":1633074547,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name61f215ee/fcfb920ba6b54ef093020d9398eebdb6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"wyC5qznOx9-mDynQIQS27KL3C_P2QLp13cgQCKrcmYdstGzcgNmOpvRAnpURfmekY1x70GeWOrPJtb1mjXplE5oX1-ufHkBRS_kVLgrrbPx4NC2pAsA7lV8XqMBxkOYNeUBSsCR0miWBYz8zQLFtcPxst9q7l7Wk77J9tMC_3yGf-FoJLMQYWLJBsOpX7Mozs_w7GG7Is7P0puS3xLH-38d12-B0w7W-VIeiP9LDA1GRI9BJ_CcL-1YP_Rz1Lqe0xJPkVHdCY8bVH9k4BAn7t9ibvvOwQRO9pzuST1V860b6IYMurXboU5VRq5hRpxXrghmQmgb0i4ix3tTEqJ5NAQ","e":"AQAB"},"attributes":{"enabled":true,"created":1633375491,"updated":1633375491,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -79,7 +79,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 01 Oct 2021 07:49:07 GMT
+      - Mon, 04 Oct 2021 19:24:51 GMT
       expires:
       - '-1'
       pragma:
@@ -93,7 +93,7 @@ interactions:
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:
-      - 1.9.79.2
+      - 1.9.132.3
       x-powered-by:
       - ASP.NET
     status:
@@ -111,10 +111,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name61f215ee/652742b286b34bbb8b9f188b3ad83e49?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name61f215ee/fcfb920ba6b54ef093020d9398eebdb6?api-version=7.1
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name61f215ee/652742b286b34bbb8b9f188b3ad83e49","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"0_TZ-SxU0AN5dY8-MzbNwNMViZhiDHUDP042XSgTLYZG-ominRG-Gdh3tCrbWo45j0wua3xoDrQMEJg1jT6W3QChy66oFW6dbtkOnvlH3nP4n4xMVY8JEJJhTsvpOSeTXq9EI1uZOTNrg4XMELBRsbaiBSU8JOgFVwQ8qokxAGNGHjVdK4NajnBh3KJZqgNITWdsu3HeKIR6l2UtyrGJPS46TP0GzgjfqzqE6cs0e0mhOeKhGLa7lpLifrvHRgUdM-Zbm4tRCWx9KQqFmkfOV17iGbawUGerdZHc4kP-q2Zd10N-ykQlh8-DCnC6Jr2DlQDisuFz_eKCYvPttCbFAQ","e":"AQAB"},"attributes":{"enabled":true,"created":1633074547,"updated":1633074547,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name61f215ee/fcfb920ba6b54ef093020d9398eebdb6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"wyC5qznOx9-mDynQIQS27KL3C_P2QLp13cgQCKrcmYdstGzcgNmOpvRAnpURfmekY1x70GeWOrPJtb1mjXplE5oX1-ufHkBRS_kVLgrrbPx4NC2pAsA7lV8XqMBxkOYNeUBSsCR0miWBYz8zQLFtcPxst9q7l7Wk77J9tMC_3yGf-FoJLMQYWLJBsOpX7Mozs_w7GG7Is7P0puS3xLH-38d12-B0w7W-VIeiP9LDA1GRI9BJ_CcL-1YP_Rz1Lqe0xJPkVHdCY8bVH9k4BAn7t9ibvvOwQRO9pzuST1V860b6IYMurXboU5VRq5hRpxXrghmQmgb0i4ix3tTEqJ5NAQ","e":"AQAB"},"attributes":{"enabled":true,"created":1633375491,"updated":1633375491,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -123,7 +123,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 01 Oct 2021 07:49:07 GMT
+      - Mon, 04 Oct 2021 19:24:51 GMT
       expires:
       - '-1'
       pragma:
@@ -137,7 +137,7 @@ interactions:
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:
-      - 1.9.79.2
+      - 1.9.132.3
       x-powered-by:
       - ASP.NET
     status:
@@ -159,10 +159,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name61f215ee/652742b286b34bbb8b9f188b3ad83e49/encrypt?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name61f215ee/fcfb920ba6b54ef093020d9398eebdb6/encrypt?api-version=7.1
   response:
     body:
-      string: '{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name61f215ee/652742b286b34bbb8b9f188b3ad83e49","value":"cV5TZOiAXTu56qicHmkRphzl1voPHa_I0OndJXw5sC8rSAAYdjt5ACHlEM1n8YdjHNiixEDjG51zjfdCOl1kKXuVgj2ofFxoD6pzNBcyZLeM_Oz6XDbFLmbazeYeALbDXMxa3MgERbC2Jqt_8ltpgX86_Z2TRjPaSPhsCWvG6M60dZ4-kPkkRWT2Bzk9UYKHoMGHnCiF5HIItZ918jNrsThfAncr3khZgC5oyyCF8CePJMh_esLc8vdO0fpGN1ljVMnKtsRai_KidUgk-m7tg47jjfKaObIXAzYRvHkh86qnt2_uSSWC1FzAsVf7xtMt0W7p01If6t3tASdCwhGEoQ"}'
+      string: '{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name61f215ee/fcfb920ba6b54ef093020d9398eebdb6","value":"vZd23TlS6jqzI-RUZ1wWs6FCnRmSi28Ruo3iSDbqZmIRgSW-7SW8rO_8_gKzyhEho0YuuNnzKmimPAhku4hs7ropv752OUY9SpPZOMSFSeRWiIyCEAV_ni6_D6xIJlWfIJxi1cfuWAS6bBtdJaEkNmRHBC6nydq87WQyNelm0IFfkOt8wGLnvFSXEAN4W64eLBCIxRTk_veBBsI3I9VG1ZpQ5wIE0Ni9yF4xkETAXl1Y-UDnFy5e7g_kXLzuoUqqHV9cFXI2zuvvjwOPar48vsQtzFX0gR2hpmdDX8iu2bTdBBw1PnAhuJoxG-snigFajYelRh_dqf8YyPeW9pf1YA"}'
     headers:
       cache-control:
       - no-cache
@@ -171,7 +171,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 01 Oct 2021 07:49:07 GMT
+      - Mon, 04 Oct 2021 19:24:51 GMT
       expires:
       - '-1'
       pragma:
@@ -185,14 +185,14 @@ interactions:
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:
-      - 1.9.79.2
+      - 1.9.132.3
       x-powered-by:
       - ASP.NET
     status:
       code: 200
       message: OK
 - request:
-    body: '{"alg": "RSA-OAEP", "value": "cV5TZOiAXTu56qicHmkRphzl1voPHa_I0OndJXw5sC8rSAAYdjt5ACHlEM1n8YdjHNiixEDjG51zjfdCOl1kKXuVgj2ofFxoD6pzNBcyZLeM_Oz6XDbFLmbazeYeALbDXMxa3MgERbC2Jqt_8ltpgX86_Z2TRjPaSPhsCWvG6M60dZ4-kPkkRWT2Bzk9UYKHoMGHnCiF5HIItZ918jNrsThfAncr3khZgC5oyyCF8CePJMh_esLc8vdO0fpGN1ljVMnKtsRai_KidUgk-m7tg47jjfKaObIXAzYRvHkh86qnt2_uSSWC1FzAsVf7xtMt0W7p01If6t3tASdCwhGEoQ"}'
+    body: '{"alg": "RSA-OAEP", "value": "vZd23TlS6jqzI-RUZ1wWs6FCnRmSi28Ruo3iSDbqZmIRgSW-7SW8rO_8_gKzyhEho0YuuNnzKmimPAhku4hs7ropv752OUY9SpPZOMSFSeRWiIyCEAV_ni6_D6xIJlWfIJxi1cfuWAS6bBtdJaEkNmRHBC6nydq87WQyNelm0IFfkOt8wGLnvFSXEAN4W64eLBCIxRTk_veBBsI3I9VG1ZpQ5wIE0Ni9yF4xkETAXl1Y-UDnFy5e7g_kXLzuoUqqHV9cFXI2zuvvjwOPar48vsQtzFX0gR2hpmdDX8iu2bTdBBw1PnAhuJoxG-snigFajYelRh_dqf8YyPeW9pf1YA"}'
     headers:
       Accept:
       - application/json
@@ -207,10 +207,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name61f215ee/652742b286b34bbb8b9f188b3ad83e49/decrypt?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name61f215ee/fcfb920ba6b54ef093020d9398eebdb6/decrypt?api-version=7.1
   response:
     body:
-      string: '{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name61f215ee/652742b286b34bbb8b9f188b3ad83e49","value":"cGxhaW50ZXh0"}'
+      string: '{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name61f215ee/fcfb920ba6b54ef093020d9398eebdb6","value":"cGxhaW50ZXh0"}'
     headers:
       cache-control:
       - no-cache
@@ -219,7 +219,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 01 Oct 2021 07:49:07 GMT
+      - Mon, 04 Oct 2021 19:24:51 GMT
       expires:
       - '-1'
       pragma:
@@ -233,7 +233,147 @@ interactions:
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:
-      - 1.9.79.2
+      - 1.9.132.3
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name61f215ee/?api-version=7.1
+  response:
+    body:
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name61f215ee/fcfb920ba6b54ef093020d9398eebdb6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"wyC5qznOx9-mDynQIQS27KL3C_P2QLp13cgQCKrcmYdstGzcgNmOpvRAnpURfmekY1x70GeWOrPJtb1mjXplE5oX1-ufHkBRS_kVLgrrbPx4NC2pAsA7lV8XqMBxkOYNeUBSsCR0miWBYz8zQLFtcPxst9q7l7Wk77J9tMC_3yGf-FoJLMQYWLJBsOpX7Mozs_w7GG7Is7P0puS3xLH-38d12-B0w7W-VIeiP9LDA1GRI9BJ_CcL-1YP_Rz1Lqe0xJPkVHdCY8bVH9k4BAn7t9ibvvOwQRO9pzuST1V860b6IYMurXboU5VRq5hRpxXrghmQmgb0i4ix3tTEqJ5NAQ","e":"AQAB"},"attributes":{"enabled":true,"created":1633375491,"updated":1633375491,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '694'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Oct 2021 19:24:51 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-keyvault-service-version:
+      - 1.9.132.3
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"alg": "RSA-OAEP", "value": "cGxhaW50ZXh0"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '44'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name61f215ee/fcfb920ba6b54ef093020d9398eebdb6/encrypt?api-version=7.1
+  response:
+    body:
+      string: '{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name61f215ee/fcfb920ba6b54ef093020d9398eebdb6","value":"eEmqat-PygM0bx2smIAbpM5HVqdGB5ek2QfbIVAAjhKsJ4G0SxIgLI4IkGWgVWfwosRZ8YYtZnxVuBjUXLlB7QdKpBUiEy14Bg4fcBSRq9VQ2IlWyEBn83hYkhXOy36PHD8_cmaIBpI0piaLm1PuPNcbrCiYbUiARDZMmvnOY_6P7l1xVjpucpLn6AMkR8TmRusYQT9pwtAJTXDO_iDkb3n883lb3RKyXGL6yC25ZLlgbjyJ4fjUeW0dl3Vsw9tchRsltMY2tCSbXW-4_qG4BrsnGFqMrE9yvTMSauHcDanhdupnLlqZQ7v_KYd-71Db0T_-4NJLxpc-ML7sAP6tUg"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '464'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Oct 2021 19:24:52 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-keyvault-service-version:
+      - 1.9.132.3
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"alg": "RSA-OAEP", "value": "eEmqat-PygM0bx2smIAbpM5HVqdGB5ek2QfbIVAAjhKsJ4G0SxIgLI4IkGWgVWfwosRZ8YYtZnxVuBjUXLlB7QdKpBUiEy14Bg4fcBSRq9VQ2IlWyEBn83hYkhXOy36PHD8_cmaIBpI0piaLm1PuPNcbrCiYbUiARDZMmvnOY_6P7l1xVjpucpLn6AMkR8TmRusYQT9pwtAJTXDO_iDkb3n883lb3RKyXGL6yC25ZLlgbjyJ4fjUeW0dl3Vsw9tchRsltMY2tCSbXW-4_qG4BrsnGFqMrE9yvTMSauHcDanhdupnLlqZQ7v_KYd-71Db0T_-4NJLxpc-ML7sAP6tUg"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '374'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name61f215ee/fcfb920ba6b54ef093020d9398eebdb6/decrypt?api-version=7.1
+  response:
+    body:
+      string: '{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name61f215ee/fcfb920ba6b54ef093020d9398eebdb6","value":"cGxhaW50ZXh0"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '134'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Oct 2021 19:24:52 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-keyvault-service-version:
+      - 1.9.132.3
       x-powered-by:
       - ASP.NET
     status:

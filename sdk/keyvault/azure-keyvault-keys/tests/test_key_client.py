@@ -577,19 +577,34 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         key_name = self.get_resource_name("key-name")
         key = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
 
-        crypto_client = client.get_cryptography_client(key.id)
+        # try specifying the key version
+        crypto_client = client.get_cryptography_client(key_name, version=key.properties.version)
         # both clients should use the same generated client
         assert client._client == crypto_client._client
 
         # the crypto client should successfully perform crypto operations
         plaintext = b"plaintext"
         result = crypto_client.encrypt("RSA-OAEP", plaintext)
-        self.assertEqual(result.key_id, key.id)
+        assert result.key_id == key.id
 
         result = crypto_client.decrypt(result.algorithm, result.ciphertext)
-        self.assertEqual(result.key_id, key.id)
-        self.assertEqual("RSA-OAEP", result.algorithm)
-        self.assertEqual(plaintext, result.plaintext)
+        assert result.key_id == key.id
+        assert "RSA-OAEP" == result.algorithm
+        assert plaintext == result.plaintext
+
+        # try ommitting the key version
+        crypto_client = client.get_cryptography_client(key_name)
+        # both clients should use the same generated client
+        assert client._client == crypto_client._client
+
+        # the crypto client should successfully perform crypto operations
+        result = crypto_client.encrypt("RSA-OAEP", plaintext)
+        assert result.key_id == key.id
+
+        result = crypto_client.decrypt(result.algorithm, result.ciphertext)
+        assert result.key_id == key.id
+        assert "RSA-OAEP" == result.algorithm
+        assert plaintext == result.plaintext
 
 
 def test_positive_bytes_count_required():

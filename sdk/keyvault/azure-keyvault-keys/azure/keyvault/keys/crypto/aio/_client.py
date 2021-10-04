@@ -37,7 +37,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
     :param key:
         Either a :class:`~azure.keyvault.keys.KeyVaultKey` instance as returned by
         :func:`~azure.keyvault.keys.aio.KeyClient.get_key`, or a string.
-        If a string, the value must be the full identifier of an Azure Key Vault key with a version.
+        If a string, the value must be the identifier of an Azure Key Vault key. Including a version is recommended.
     :type key: str or :class:`~azure.keyvault.keys.KeyVaultKey`
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity.aio`
@@ -69,14 +69,13 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         elif isinstance(key, str):
             self._key = None
             self._key_id = parse_key_vault_id(key)
+            if self._key_id.version is None:
+                self._key_id.version = ""  # to avoid an error and get the latest version when getting the key
             self._keys_get_forbidden = False
         elif self._jwk:
             self._key = key
         else:
-            raise ValueError("'key' must be a KeyVaultKey instance or a key ID string including a version")
-
-        if not (self._jwk or (self._key_id.version if self._key_id else None)):
-            raise ValueError("'key' must include a version")
+            raise ValueError("'key' must be a KeyVaultKey instance or a key ID string")
 
         if self._jwk:
             try:
@@ -140,7 +139,9 @@ class CryptographyClient(AsyncKeyVaultClientBase):
                     self._key_id.version if self._key_id else None,
                     **kwargs
                 )
-                self._key = KeyVaultKey._from_key_bundle(key_bundle).key  # pylint:disable=protected-access
+                key = KeyVaultKey._from_key_bundle(key_bundle)  # pylint:disable=protected-access
+                self._key = key.key
+                self._key_id = parse_key_vault_id(key.id)  # update the key ID in case we didn't have the version before
             except HttpResponseError as ex:
                 # if we got a 403, we don't have keys/get permission and won't try to get the key again
                 # (other errors may be transient)

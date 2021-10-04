@@ -19,11 +19,15 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Iterable, Optional, Union
-    from azure.core.credentials import TokenCredential
     from azure.core.paging import ItemPaged
     from azure.core.polling import LROPoller
     from ._models import JsonWebKey
     from ._enums import KeyType
+
+
+def _get_key_id(vault_url, key_name, version=None):
+    without_version = "{}/keys/{}".format(vault_url, key_name)
+    return without_version + "/" + version if version else without_version
 
 
 class KeyClient(KeyVaultClientBase):
@@ -57,20 +61,23 @@ class KeyClient(KeyVaultClientBase):
             )
         return None
 
-    def get_cryptography_client(self, key):
-        # type: (str) -> CryptographyClient
+    def get_cryptography_client(self, key_name, **kwargs):
+        # type: (str, **Any) -> CryptographyClient
         """Gets a :class:`~azure.keyvault.keys.crypto.CryptographyClient` for the given key.
 
-        :param str key: The full identifier of the key used to perform cryptographic operations. This must include the
-            key version.
+        :param str key_name: The name of the key used to perform cryptographic operations.
+
+        :keyword str version: Optional version of the key used to perform cryptographic operations.
 
         :returns: A :class:`~azure.keyvault.keys.crypto.CryptographyClient` using the same options, credentials, and
             HTTP client as this :class:`~azure.keyvault.keys.KeyClient`.
         :rtype: ~azure.keyvault.keys.crypto.CryptographyClient
         """
+        key_id = _get_key_id(self._vault_url, key_name, kwargs.get("version"))
+
         # We provide a fake credential because the generated client already has the KeyClient's real credential
         return CryptographyClient(
-            key, object(), generated_client=self._client, generated_models=self._models  # type: ignore
+            key_id, object(), generated_client=self._client, generated_models=self._models  # type: ignore
         )
 
     @distributed_trace
