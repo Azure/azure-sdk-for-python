@@ -25,7 +25,7 @@ New features provided by the `DocumentAnalysisClient` include one consolidated m
 
 When using the `DocumentModelAdministrationClient` to build, compose, or copy models, users can now assign their own model IDs and specify a description. Listing models on the administration client now includes both prebuilt and custom models. When using `get_model()`, users can get the field schema (field names and types that the model can extract) for the model they specified, including for prebuilt models. This client also provides functions for getting information from model operations.
 
-The below table describes the relationship of each client and its supported API version(s):
+The table below describes the relationship of each client and its supported API version(s):
 
 |API version|Supported clients
 |-|-
