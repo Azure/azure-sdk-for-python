@@ -1,5 +1,11 @@
 # Release History
 
+## 1.1.0 (2021-10-04)
+
+**Features**
+
+  - Added operation ConnectedClusterOperations.list_cluster_user_credential
+
 ## 1.0.0 (2021-05-19)
 
 **Features**
