@@ -140,13 +140,6 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "-e",
-        "--extra-index-url",
-        dest="extra_index_url",
-        help="Index URL to search for packages. This can be set to install package from azure devops feed (or pypi feed if primary index is a dev feed).",
-    )
-
-    parser.add_argument(
         "--cache-dir",
         dest="cache_dir",
         help="Location that, if present, will be used as the pip cache directory.",
@@ -187,10 +180,6 @@ if __name__ == "__main__":
     additional_downloaded_reqs = []
     tmp_dl_folder = os.path.join(args.distribution_directory, "dl")
     os.mkdir(tmp_dl_folder)
-
-    # If extra index URL is passed then set it as argument to pip command
-    if args.extra_index_url:
-        commands_options.extend(["--extra-index-url", args.extra_index_url])
 
     # preview version is enabled when installing dev build so pip will install dev build version from devpos feed
     if os.getenv("SetDevVersion"):
