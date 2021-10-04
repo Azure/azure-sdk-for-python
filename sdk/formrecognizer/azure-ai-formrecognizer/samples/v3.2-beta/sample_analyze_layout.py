@@ -13,9 +13,9 @@ DESCRIPTION:
     This sample demonstrates how to extract text, selection marks, and layout information from a document
     given through a file.
 
-    Note that selection marks returned from begin_analyze_document() do not return the text associated with
-    the checkbox. For the API to return this information, build a custom model to analyze the checkbox and its text.
-    See sample_build_model.py for more information.
+    Note that selection marks returned from begin_analyze_document(model="prebuilt-layout") do not return the text
+    associated with the checkbox. For the API to return this information, build a custom model to analyze the
+    checkbox and its text. See sample_build_model.py for more information.
 
 USAGE:
     python sample_analyze_layout.py
