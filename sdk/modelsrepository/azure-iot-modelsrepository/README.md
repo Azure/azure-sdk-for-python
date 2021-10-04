@@ -1,6 +1,17 @@
 # Azure IoT Models Repository client library for Python
 
-The Azure IoT Models Repository Library for Python provides functionality for working with the Azure IoT Models Repository
+The Azure IoT Models Repository enables builders to manage and share digital twin models for global consumption. The models are [JSON-LD][json_ld_reference] documents defined using the Digital Twins Definition Language ([DTDL][dtdlv2_reference]).
+
+For more info about the Azure IoT Models Repository checkout the [docs][modelsrepository_msdocs].
+
+## Introduction
+
+You can explore the models repository APIs with the client library using the samples project.
+
+The samples project demonstrates the following:
+
+- Instantiate the client
+- Get models and their dependencies from either a remote endpoint or local repository.
 
 ## Getting started
 
@@ -51,26 +62,26 @@ Alternatively, you can provide a custom location for where your repository is lo
 * Local Filesystem URI - e.g. `"file:///path/to/repository/"`
 * POSIX filepath - e.g. `"/path/to/repository/"`
 * Drive letter filepath - e.g. `"C:/path/to/repository/"`
+
+This form shows specifing a custom URI for the models repository client.
 ```python
 client = ModelsRepositoryClient(repository_location="https://contoso.com/models/")
 ```
 
-#### Dependency Resolution Mode
-The client can be configured with an optional `dependency_resolution` mode at instantiation, using one of the following values:
-* `'disabled'` - The client will not resolve model dependencies
-* `'enabled'` - The client will resolve any model dependencies
-* `'tryFromExpanded'` - The client will attempt to resolve models using an expanded model definition (falling back on `'enabled'` mode if not possible)
-
+This form shows specifing a local filesystem URI for the models repository client.
 ```python
-client = ModelsRepositoryClient(dependency_resolution="enabled")
+client = ModelsRepositoryClient(repository_location="c:/path/to/SampleModelsRepo/")
 ```
 
-If the `dependency_resolution` mode is not specified:
-* Clients configured for the Azure IoT Models Repository global endpoint will default to using `'tryFromExpanded'`
-* Clients configured for a custom location (remote or local) will default to using `'enabled'`
+#### Override options
 
-#### Additional Options
-If you need to override default pipeline behavior from the [azure-core library][azure_core_docs], you can provide various [keyword arguments][azure_core_kwargs] during instantiation.
+If you need to override pipeline behavior, such as provide your own `HttpClient` instance, you can do that via constructor that takes a [ModelsRepositoryClientOptions][modelsrepository_clientoptions] parameter.
+It provides an opportunity to override default behavior including:
+
+- Overriding [transport][azure_core_transport]
+- Enabling [diagnostics][azure_core_diagnostics]
+- Controlling [retry strategy](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/samples/README.md)
+
 
 #### Client cleanup
 When you are finished with your client, make sure to call `.close()` in order to free up resources
@@ -94,29 +105,78 @@ Calling `.get_models()` will fetch the model at the provided DTMI and potentiall
 
 ```python
 dtmi = "dtmi:com:example:TemperatureController;1"
+
+# Global endpoint client
 with ModelsRepositoryClient() as client:
+    # The output of get_models() will include at least the definition for the target dtmi.
+    # If the model dependency resolution configuration is not disabled, then models in which the
+    # target dtmi depends on will also be included in the returned dictionary.
     models = get_models(dtmi)
+
+# In this case the above dtmi has 2 model dependencies.
+# dtmi:com:example:Thermostat;1 and dtmi:azure:DeviceManagement:DeviceInformation;1
+print("{} resolved in {} interfaces".format(dtmi, len(models)))
+```
+
+GitHub pull-request workflows are a core aspect of the IoT Models Repository service. To submit models, the user is expected to fork and clone the global [models repository project][modelsrepository_github_repo] then iterate against the local copy. Changes would then be pushed to the fork (ideally in a new branch) and a PR created against the global repository.
+
+To support this workflow and similar use cases, the client supports initialization with a local file-system URI. You can use this for example, to test and ensure newly added models to the locally cloned models repository are in their proper locations.
+
+```python
+dtmi = "dtmi:com:example:TemperatureController;1"
+
+# Local endpoint client
+with ModelsRepositoryClient(repository_location="/samples/SampleModelsRepo/") as client:
+    # The output of get_models() will include at least the definition for the target dtmi.
+    # If the model dependency resolution configuration is not disabled, then models in which the
+    # target dtmi depends on will also be included in the returned dictionary.
+    models = get_models(dtmi)
+
+# In this case the above dtmi has 2 model dependencies.
+# dtmi:com:example:Thermostat;1 and dtmi:azure:DeviceManagement:DeviceInformation;1
 print("{} resolved in {} interfaces".format(dtmi, len(models)))
 ```
 
 If you provide multiple DTMIs to the method, you can retrieve multiple models (and potentially their dependencies) at once
 ```python
 dtmis = ["dtmi:com:example:TemperatureController;1", "dtmi:com:example:azuresphere:sampledevice;1"]
+
+# Global endpoint client
 with ModelsRepositoryClient() as client:
+    # When given a list of dtmis, the output of get_models() will include at
+    # least the definitions of each dtmi in the list passed in.
+    # If the model dependency resolution configuration is not disabled, then models in
+    # which each dtmi depends on will also be included in the returned dictionary.
     models = get_models(dtmis)
+
+# In this case the dtmi "dtmi:com:example:TemperatureController;1" has 2 model dependencies
+# and the dtmi "dtmi:com:example:azuresphere:sampledevice;1" has no additional dependencies.
+# The returned dictionary will include 4 models.
 print("{} resolved in {} interfaces".format(dtmi, len(models)))
 ```
 
-By default the client will use whichever [dependency resolution mode](#dependency-resolution-mode "Dependency resolution mode") it was configured with at instantiation when retrieving models. However, this behavior can be overridden by passing any of the valid options in as an optional keyword argument to `.get_models()`
+By default model dependency resolution is enabled. This can be changed by overriding the default
+value for the `dependency_resolution` parameter of the `GetModels` operation.
 
 ```python
 dtmi = "dtmi:com:example:TemperatureController;1"
-with ModelsRepositoryClient(dependency_resolution="disabled") as client:
-    models = get_models(dtmi, dependency_resolution="enabled")
+
+# Global endpoint client
+with ModelsRepositoryClient() as client:
+    # In this example model dependency resolution is disabled by passing in
+    # DependencyModeType.disabled.value as the value for the dependency_resolution parameter
+    # for get_models(). By default the parameter has a value of DependencyModeType.enabled.value.
+    # When model dependency resolution is disabled, only the input dtmi(s) will be processed
+    # and model dependencies (if any) will be ignored.
+    models = client.get_models(dtmi, dependency_resolution=DependencyModeType.disabled.value)
+
+# In this case the above dtmi has 2 model dependencies but are not returned
+# due to disabling model dependency resolution.
+print("{} resolved in {} interfaces".format(dtmi, len(models)))
 ```
 
-### DTMI Conventions
-The package contains a module called `dtmi_conventions`, which, when imported provides a series of utility operations for working with DTMIs
+### DTMI Conventions utility functions
+The package contains a module called `dtmi_conventions`, which, when imported provides a series of utility operations for working with DTMIs. These same functions are used throughout the client.
 
 ```python
 # Returns True - this is a valid DTMI
@@ -174,13 +234,14 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 
 
 <!-- LINKS -->
-[azure_core_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html
-[azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core#azure-core-library-exceptions
-[azure_core_kwargs]: https://aka.ms/azsdk/python/options
-[dtdl_spec]: https://github.com/Azure/opendigitaltwins-dtdl/blob/master/DTDL/v2/dtdlv2.md
-[global_azure_repo]: https://devicemodels.azure.com/
-[json_ld]: https://json-ld.org/
-[logging_doc]: https://docs.python.org/3.5/library/logging.html
-[pip]: https://pypi.org/project/pip/
-[repo_conventions]: https://github.com/Azure/iot-plugandplay-models-tools/wiki
-[samples_repo]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/modelsrepository/azure-iot-modelsrepository/samples/
+[modelsrepository_github_repo]: https://github.com/Azure/iot-plugandplay-models
+[modelsrepository_sample_extension]: https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/modelsrepository/Azure.IoT.ModelsRepository/samples/ModelsRepositoryClientSamples/ModelsRepositoryClientExtensions.cs
+[modelsrepository_clientoptions]: https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/modelsrepository/Azure.IoT.ModelsRepository/src/ModelsRepositoryClientOptions.cs
+[modelsrepository_msdocs]: https://docs.microsoft.com/azure/iot-pnp/concepts-model-repository
+[modelsrepository_publish_msdocs]: https://docs.microsoft.com/azure/iot-pnp/concepts-model-repository#publish-a-model
+[modelsrepository_iot_endpoint]: https://devicemodels.azure.com/
+[json_ld_reference]: https://json-ld.org
+[dtdlv2_reference]: https://github.com/Azure/opendigitaltwins-dtdl/blob/master/DTDL/v2/dtdlv2.md
+[azure_core_transport]: https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/core/Azure.Core/samples/Pipeline.md
+[azure_core_diagnostics]: https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/core/Azure.Core/samples/Diagnostics.md
+[azure_core_configuration]: https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/core/Azure.Core/samples/Configuration.md
