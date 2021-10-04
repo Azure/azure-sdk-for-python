@@ -148,7 +148,7 @@ class ServerCallTest(CommunicationTestCase):
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
             CallingServerLiveTestUtils.clean_up_connections(call_connections)
 
-    # @pytest.mark.live_test_only
+    @pytest.mark.skip(reason="Skip because the server side bits not ready")
     def test_run_all_client_functions(self):
         group_id = CallingServerLiveTestUtils.get_group_id("test_run_all_client_functions")
 
@@ -192,6 +192,7 @@ class ServerCallTest(CommunicationTestCase):
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
             CallingServerLiveTestUtils.clean_up_connections(call_connections)
 
+    @pytest.mark.skip(reason="Skip because the server side bits not ready")
     def test_start_recording_fails(self):
         invalid_server_call_id = "aHR0cHM6Ly9jb252LXVzd2UtMDkuY29udi5za3lwZS5jb20vY29udi9EZVF2WEJGVVlFV1NNZkFXYno2azN3P2k9MTEmZT02Mzc1NzIyMjk0Mjc0NTI4Nzk="
 
