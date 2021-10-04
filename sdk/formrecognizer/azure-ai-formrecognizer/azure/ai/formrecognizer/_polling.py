@@ -28,9 +28,9 @@ if TYPE_CHECKING:
         AsyncHttpResponse,
         HttpRequest,
     )
+
     ResponseType = Union[HttpResponse, AsyncHttpResponse]
     PipelineResponseType = PipelineResponse[HttpRequest, ResponseType]
-
 
 
 def raise_error(response, errors, message):
