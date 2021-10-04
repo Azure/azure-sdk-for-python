@@ -24,7 +24,9 @@
 #
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Optional, AsyncIterator as AsyncIteratorType
+from typing import (
+    Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload
+)
 from collections.abc import AsyncIterator
 try:
     import cchardet as chardet
@@ -46,7 +48,14 @@ from ._base_async import (
     AsyncHttpTransport,
     AsyncHttpResponse,
     _ResponseStopIteration)
-from .._tools import get_block_size as _get_block_size, get_internal_response as _get_internal_response
+from ...utils._pipeline_transport_rest_shared import _aiohttp_body_helper
+from .._tools import is_rest as _is_rest
+from .._tools_async import handle_no_stream_rest_response as _handle_no_stream_rest_response
+if TYPE_CHECKING:
+    from ...rest import (
+        HttpRequest as RestHttpRequest,
+        AsyncHttpResponse as RestAsyncHttpResponse,
+    )
 
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
@@ -135,7 +144,43 @@ class AioHttpTransport(AsyncHttpTransport):
             return form_data
         return request.data
 
+    @overload
     async def send(self, request: HttpRequest, **config: Any) -> Optional[AsyncHttpResponse]:
+        """Send the request using this HTTP sender.
+
+        Will pre-load the body into memory to be available with a sync method.
+        Pass stream=True to avoid this behavior.
+
+        :param request: The HttpRequest object
+        :type request: ~azure.core.pipeline.transport.HttpRequest
+        :param config: Any keyword arguments
+        :return: The AsyncHttpResponse
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+
+        :keyword bool stream: Defaults to False.
+        :keyword dict proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
+        :keyword str proxy: will define the proxy to use all the time
+        """
+
+    @overload
+    async def send(self, request: "RestHttpRequest", **config: Any) -> Optional["RestAsyncHttpResponse"]:
+        """Send the `azure.core.rest` request using this HTTP sender.
+
+        Will pre-load the body into memory to be available with a sync method.
+        Pass stream=True to avoid this behavior.
+
+        :param request: The HttpRequest object
+        :type request: ~azure.core.rest.HttpRequest
+        :param config: Any keyword arguments
+        :return: The AsyncHttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+
+        :keyword bool stream: Defaults to False.
+        :keyword dict proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
+        :keyword str proxy: will define the proxy to use all the time
+        """
+
+    async def send(self, request, **config):
         """Send the request using this HTTP sender.
 
         Will pre-load the body into memory to be available with a sync method.
@@ -168,7 +213,7 @@ class AioHttpTransport(AsyncHttpTransport):
                     config['proxy'] = proxies[protocol]
                     break
 
-        response = None
+        response: Optional["HTTPResponseType"] = None
         config['ssl'] = self._build_ssl_config(
             cert=config.pop('connection_cert', self.connection_config.cert),
             verify=config.pop('connection_verify', self.connection_config.verify)
@@ -192,11 +237,22 @@ class AioHttpTransport(AsyncHttpTransport):
                 allow_redirects=False,
                 **config
             )
-            response = AioHttpTransportResponse(request, result,
-                                                self.connection_config.data_block_size,
-                                                decompress=not auto_decompress)
-            if not stream_response:
-                await response.load_body()
+            if _is_rest(request):
+                from azure.core.rest._aiohttp import RestAioHttpTransportResponse
+                response = RestAioHttpTransportResponse(
+                    request=request,
+                    internal_response=result,
+                    block_size=self.connection_config.data_block_size,
+                    decompress=not auto_decompress
+                )
+                if not stream_response:
+                    await _handle_no_stream_rest_response(response)
+            else:
+                response = AioHttpTransportResponse(request, result,
+                                                    self.connection_config.data_block_size,
+                                                    decompress=not auto_decompress)
+                if not stream_response:
+                    await response.load_body()
         except aiohttp.client_exceptions.ClientResponseError as err:
             raise ServiceResponseError(err, error=err) from err
         except aiohttp.client_exceptions.ClientError as err:
@@ -217,9 +273,9 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = _get_block_size(response)
+        self.block_size = response.block_size
         self._decompress = decompress
-        internal_response = _get_internal_response(response)
+        internal_response = response.internal_response
         self.content_length = int(internal_response.headers.get('Content-Length', 0))
         self._decompressor = None
 
@@ -227,7 +283,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         return self.content_length
 
     async def __anext__(self):
-        internal_response = _get_internal_response(self.response)
+        internal_response = self.response.internal_response
         try:
             chunk = await internal_response.content.read(self.block_size)
             if not chunk:
@@ -274,30 +330,14 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         self.headers = CIMultiDict(aiohttp_response.headers)
         self.reason = aiohttp_response.reason
         self.content_type = aiohttp_response.headers.get('content-type')
-        self._body = None
-        self._decompressed_body = None
+        self._content = None
+        self._decompressed_content = None
         self._decompress = decompress
 
     def body(self) -> bytes:
         """Return the whole body as bytes in memory.
         """
-        if self._body is None:
-            raise ValueError("Body is not available. Call async method load_body, or do your call with stream=False.")
-        if not self._decompress:
-            return self._body
-        enc = self.headers.get('Content-Encoding')
-        if not enc:
-            return self._body
-        enc = enc.lower()
-        if enc in ("gzip", "deflate"):
-            if self._decompressed_body:
-                return self._decompressed_body
-            import zlib
-            zlib_mode = 16 + zlib.MAX_WBITS if enc == "gzip" else zlib.MAX_WBITS
-            decompressor = zlib.decompressobj(wbits=zlib_mode)
-            self._decompressed_body = decompressor.decompress(self._body)
-            return self._decompressed_body
-        return self._body
+        return _aiohttp_body_helper(self)
 
     def text(self, encoding: Optional[str] = None) -> str:
         """Return the whole body as a string.
@@ -306,7 +346,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
 
         :param str encoding: The encoding to apply.
         """
-        # super().text detects charset based on self._body() which is compressed
+        # super().text detects charset based on self._content() which is compressed
         # implement the decoding explicitly here
         body = self.body()
 
@@ -339,7 +379,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
 
     async def load_body(self) -> None:
         """Load in memory the body, so it could be accessible from sync methods."""
-        self._body = await self.internal_response.read()
+        self._content = await self.internal_response.read()
 
     def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.

@@ -26,6 +26,31 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class LivyStatementStates(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    WAITING = "waiting"
+    RUNNING = "running"
+    AVAILABLE = "available"
+    ERROR = "error"
+    CANCELLING = "cancelling"
+    CANCELLED = "cancelled"
+
+class LivyStates(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The batch state
+    """
+
+    NOT_STARTED = "not_started"
+    STARTING = "starting"
+    IDLE = "idle"
+    BUSY = "busy"
+    SHUTTING_DOWN = "shutting_down"
+    ERROR = "error"
+    DEAD = "dead"
+    KILLED = "killed"
+    SUCCESS = "success"
+    RUNNING = "running"
+    RECOVERING = "recovering"
+
 class PluginCurrentState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     PREPARATION = "Preparation"

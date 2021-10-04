@@ -14,16 +14,13 @@ from azure.core.pipeline import (
     PipelineRequest,
     PipelineContext
 )
-from azure.core.pipeline.transport import (
-    HttpResponse,
-)
 from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
 )
-from utils import HTTP_REQUESTS
+from utils import HTTP_RESPONSES, request_and_responses_product, create_http_response
 
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_http_logger(http_request):
+@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
+def test_http_logger(http_request, http_response):
 
     class MockHandler(logging.Handler):
         def __init__(self):
@@ -42,7 +39,7 @@ def test_http_logger(http_request):
     policy = HttpLoggingPolicy(logger=logger)
 
     universal_request = http_request('GET', 'http://localhost/')
-    http_response = HttpResponse(universal_request, None)
+    http_response = create_http_response(http_response, universal_request, None)
     http_response.status_code = 202
     request = PipelineRequest(universal_request, PipelineContext(None))
 
@@ -144,8 +141,8 @@ def test_http_logger(http_request):
     mock_handler.reset()
 
 
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_http_logger_operation_level(http_request):
+@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
+def test_http_logger_operation_level(http_request, http_response):
 
     class MockHandler(logging.Handler):
         def __init__(self):
@@ -165,7 +162,7 @@ def test_http_logger_operation_level(http_request):
     kwargs={'logger': logger}
 
     universal_request = http_request('GET', 'http://localhost/')
-    http_response = HttpResponse(universal_request, None)
+    http_response = create_http_response(http_response, universal_request, None)
     http_response.status_code = 202
     request = PipelineRequest(universal_request, PipelineContext(None, **kwargs))
 
@@ -221,8 +218,8 @@ def test_http_logger_operation_level(http_request):
 
     mock_handler.reset()
 
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_http_logger_with_body(http_request):
+@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
+def test_http_logger_with_body(http_request, http_response):
 
     class MockHandler(logging.Handler):
         def __init__(self):
@@ -242,7 +239,7 @@ def test_http_logger_with_body(http_request):
 
     universal_request = http_request('GET', 'http://localhost/')
     universal_request.body = "testbody"
-    http_response = HttpResponse(universal_request, None)
+    http_response = create_http_response(http_response, universal_request, None)
     http_response.status_code = 202
     request = PipelineRequest(universal_request, PipelineContext(None))
 
@@ -264,9 +261,9 @@ def test_http_logger_with_body(http_request):
     mock_handler.reset()
 
 
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
 @pytest.mark.skipif(sys.version_info < (3, 6), reason="types.AsyncGeneratorType does not exist in 3.5")
-def test_http_logger_with_generator_body(http_request):
+def test_http_logger_with_generator_body(http_request, http_response):
 
     class MockHandler(logging.Handler):
         def __init__(self):
@@ -288,7 +285,7 @@ def test_http_logger_with_generator_body(http_request):
     mock = Mock()
     mock.__class__ = types.AsyncGeneratorType
     universal_request.body = mock
-    http_response = HttpResponse(universal_request, None)
+    http_response = create_http_response(http_response, universal_request, None)
     http_response.status_code = 202
     request = PipelineRequest(universal_request, PipelineContext(None))
 

@@ -9,7 +9,7 @@ import functools
 from datetime import date
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
+from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
 from azure.ai.formrecognizer import FormRecognizerClient, FormRecognizerApiVersion, DocumentAnalysisClient
 from testcase import FormRecognizerTest

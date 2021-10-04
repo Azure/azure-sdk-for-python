@@ -21,19 +21,19 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 8579bca1-723f-48bb-8ccc-07c8dd92b56c
+      - 20128ffe-58b7-444d-b9ad-f9d83bc33c56
       content-length:
       - '0'
       date:
-      - Tue, 14 Sep 2021 00:24:51 GMT
+      - Sat, 25 Sep 2021 02:32:34 GMT
       operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/8579bca1-723f-48bb-8ccc-07c8dd92b56c?api-version=2021-09-30-preview
+      - https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/20128ffe-58b7-444d-b9ad-f9d83bc33c56?api-version=2021-09-30-preview
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '922'
+      - '852'
     status:
       code: 202
       message: Accepted
@@ -49,11 +49,11 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/8579bca1-723f-48bb-8ccc-07c8dd92b56c?api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/20128ffe-58b7-444d-b9ad-f9d83bc33c56?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-09-14T00:24:51Z",
-        "lastUpdatedDateTime": "2021-09-14T00:24:54Z", "analyzeResult": {"apiVersion":
+      string: '{"status": "succeeded", "createdDateTime": "2021-09-25T02:32:34Z",
+        "lastUpdatedDateTime": "2021-09-25T02:32:38Z", "analyzeResult": {"apiVersion":
         "2021-09-30-preview", "modelId": "prebuilt-receipt", "stringIndexType": "unicodeCodePoint",
         "content": "Contoso\nContoso\n123 Main Street\nRedmond, WA 98052\n987-654-3210\n6/10/2019
         13:59\nSales Associate: Paul\n-\n1 Cappuccino\n1 BACON & EGGS\n$2.20\nSunny-side-up\n$9.5\n-\nSub-Total\n$
@@ -217,11 +217,11 @@ interactions:
         "length": 208}]}]}}'
     headers:
       apim-request-id:
-      - 74ea5aa6-0ecd-487b-b365-abe9e6c52344
+      - 4f8a3642-f530-40d8-97d3-2d7f8bfae2cd
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 14 Sep 2021 00:24:56 GMT
+      - Sat, 25 Sep 2021 02:32:39 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -229,7 +229,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '161'
+      - '157'
     status:
       code: 200
       message: OK

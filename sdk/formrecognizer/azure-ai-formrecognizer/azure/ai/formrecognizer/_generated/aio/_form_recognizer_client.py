@@ -44,7 +44,8 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus2.api.cognitive.microsoft.com).
+    :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for
+example: https://westus2.api.cognitive.microsoft.com).
     :type endpoint: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
@@ -58,28 +59,6 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
-            'begin_analyze_business_card_async': '2.1',
-            'begin_analyze_id_document_async': '2.1',
-            'begin_analyze_invoice_async': '2.1',
-            'begin_analyze_layout_async': '2.1',
-            'begin_analyze_receipt_async': '2.1',
-            'begin_analyze_with_custom_model': '2.1',
-            'begin_compose_custom_models_async': '2.1',
-            'begin_copy_custom_model': '2.1',
-            'begin_train_custom_model_async': '2.1',
-            'delete_custom_model': '2.1',
-            'generate_model_copy_authorization': '2.1',
-            'get_analyze_business_card_result': '2.1',
-            'get_analyze_form_result': '2.1',
-            'get_analyze_id_document_result': '2.1',
-            'get_analyze_invoice_result': '2.1',
-            'get_analyze_layout_result': '2.1',
-            'get_analyze_receipt_result': '2.1',
-            'get_custom_model': '2.1',
-            'get_custom_model_copy_result': '2.1',
-            'get_custom_models': '2.1',
-            'list_custom_models': '2.1',
-            'train_custom_model_async': '2.0',
         }},
         _PROFILE_TAG + " latest"
     )
@@ -115,18 +94,18 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
+           * 2021-09-30-preview: :mod:`v2021_09_30_preview.models<azure.ai.formrecognizer.v2021_09_30_preview.models>`
            * 2.0: :mod:`v2_0.models<azure.ai.formrecognizer.v2_0.models>`
            * 2.1: :mod:`v2_1.models<azure.ai.formrecognizer.v2_1.models>`
-           * 2021-09-30-preview: :mod:`v3_0_preview_1.models<azure.ai.formrecognizer.v3_0_preview_1.models>`
         """
-        if api_version == '2.0':
+        if api_version == '2021-09-30-preview':
+            from ..v2021_09_30_preview import models
+            return models
+        elif api_version == '2.0':
             from ..v2_0 import models
             return models
         elif api_version == '2.1':
             from ..v2_1 import models
-            return models
-        elif api_version == '2021-09-30-preview':
-            from ..v3_0_preview_1 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 

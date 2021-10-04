@@ -8,6 +8,7 @@
 # Thank you httpx for your wonderful tests!
 import io
 import pytest
+import zlib
 from azure.core.rest import HttpRequest, AsyncHttpResponse
 from azure.core.rest._aiohttp import RestAioHttpTransportResponse
 from azure.core.exceptions import HttpResponseError
@@ -171,18 +172,6 @@ async def test_response_no_charset_with_iso_8859_1_content(send_request):
     assert response.text() == "Accented: �sterreich"
     assert response.encoding is None
 
-# NOTE: aiohttp isn't liking this
-# @pytest.mark.asyncio
-# async def test_response_set_explicit_encoding(send_request):
-#     response = await send_request(
-#         request=HttpRequest("GET", "/encoding/latin-1-with-utf-8"),
-#     )
-#     assert response.headers["Content-Type"] == "text/plain; charset=utf-8"
-#     response.encoding = "latin-1"
-#     await response.read()
-#     assert response.text() == "Latin 1: ÿ"
-#     assert response.encoding == "latin-1"
-
 @pytest.mark.asyncio
 async def test_json(send_request):
     response = await send_request(
@@ -309,4 +298,5 @@ async def test_readonly(send_request):
     response = await send_request(HttpRequest("GET", "/health"))
 
     assert isinstance(response, RestAioHttpTransportResponse)
-    readonly_checks(response)
+    from azure.core.pipeline.transport import AioHttpTransportResponse
+    readonly_checks(response, old_response_class=AioHttpTransportResponse)

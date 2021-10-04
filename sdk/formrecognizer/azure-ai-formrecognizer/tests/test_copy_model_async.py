@@ -8,7 +8,7 @@ import pytest
 import functools
 import uuid
 from azure.core.exceptions import HttpResponseError
-from azure.ai.formrecognizer._generated.models import GetOperationResponse, ModelInfo
+from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import GetOperationResponse, ModelInfo
 from azure.ai.formrecognizer import CustomFormModel, DocumentModel
 from azure.ai.formrecognizer.aio import FormTrainingClient, DocumentModelAdministrationClient
 from preparers import FormRecognizerPreparer

@@ -8,7 +8,7 @@
 
 from enum import Enum
 from collections import namedtuple
-from ._generated.models import ModelInfo, Error
+from ._generated.v2021_09_30_preview.models import ModelInfo, Error
 from ._helpers import (
     adjust_value_type,
     adjust_confidence,
@@ -2598,8 +2598,12 @@ class DocumentKeyValuePair(object):
     @classmethod
     def _from_generated(cls, key_value_pair):
         return cls(
-            key=DocumentKeyValueElement._from_generated(key_value_pair.key),
-            value=DocumentKeyValueElement._from_generated(key_value_pair.value),
+            key=DocumentKeyValueElement._from_generated(key_value_pair.key)
+            if key_value_pair.key
+            else None,
+            value=DocumentKeyValueElement._from_generated(key_value_pair.value)
+            if key_value_pair.value
+            else None,
             confidence=key_value_pair.confidence,
         )
 
@@ -2875,7 +2879,9 @@ class DocumentSelectionMark(DocumentElement):
         return cls(
             state=mark.state,
             bounding_box=get_bounding_box(mark),
-            span=DocumentSpan._from_generated(mark.span),
+            span=DocumentSpan._from_generated(mark.span)
+            if mark.span
+            else None,
             confidence=mark.confidence,
         )
 
@@ -3433,7 +3439,9 @@ class DocumentWord(DocumentElement):
         return cls(
             content=word.content,
             bounding_box=get_bounding_box(word),
-            span=DocumentSpan._from_generated(word.span),
+            span=DocumentSpan._from_generated(word.span)
+            if word.span
+            else None,
             confidence=word.confidence,
         )
 
@@ -3525,7 +3533,9 @@ class AnalyzeResult(object):
             api_version=response.api_version,
             model_id=response.model_id,
             content=response.content,
-            pages=[DocumentPage._from_generated(page) for page in response.pages],
+            pages=[DocumentPage._from_generated(page) for page in response.pages]
+            if response.pages
+            else [],
             tables=[DocumentTable._from_generated(table) for table in response.tables]
             if response.tables
             else [],
