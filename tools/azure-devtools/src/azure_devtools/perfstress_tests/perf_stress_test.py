@@ -6,11 +6,7 @@
 import os
 import aiohttp
 
-try:
-    from urllib.parse import urljoin
-except ImportError:
-    from urlparse import urljoin
-
+from urllib.parse import urljoin
 from ._policies import PerfTestProxyPolicy
 
 
