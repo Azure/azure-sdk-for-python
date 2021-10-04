@@ -13,7 +13,7 @@ from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.pipeline.policies import (
     UserAgentPolicy,
     HeadersPolicy,
-    RetryPolicy,
+    AsyncRetryPolicy,
     RedirectPolicy,
     NetworkTraceLoggingPolicy,
     ProxyPolicy,
@@ -70,10 +70,14 @@ class DtmiResolver(object):
         processed_models = {}
         to_process_models = await self._prepare_queue(dtmis)
         try_from_expanded = False
+        print(type(to_process_models))
+        print(to_process_models)
 
         if dependency_resolution == DependencyModeType.enabled.value:
             try:
                 metadata = await self.fetcher.fetch_metadata()
+                print(type(metadata))
+                print(metadata)
                 if metadata and metadata.get("features") and metadata["features"].get("expanded"):
                     try_from_expanded = True
             except:
@@ -182,7 +186,7 @@ def _create_pipeline(base_url=None, credential=None, transport=None, **kwargs):
             kwargs.get("user_agent_policy", UserAgentPolicy(USER_AGENT, **kwargs)),
             kwargs.get("headers_policy", HeadersPolicy(**kwargs)),
             authentication_policy,
-            kwargs.get("retry_policy", RetryPolicy(**kwargs)),
+            kwargs.get("retry_policy", AsyncRetryPolicy(**kwargs)),
             kwargs.get("redirect_policy", RedirectPolicy(**kwargs)),
             kwargs.get("logging_policy", NetworkTraceLoggingPolicy(**kwargs)),
             kwargs.get("proxy_policy", ProxyPolicy(**kwargs)),

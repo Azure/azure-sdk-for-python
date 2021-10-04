@@ -2,7 +2,8 @@
 
 ## 1.0.0b2 (Unreleased)
 
-* TBD
+* Update sdk to reflect Track 2 SDK conventions.
+* Refactorization of code
 
 ## 1.0.0b1 (2021-04-27)
 
