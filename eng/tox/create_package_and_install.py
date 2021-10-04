@@ -210,7 +210,7 @@ if __name__ == "__main__":
 
             if not args.pre_download:
                 requirements = get_install_requires(os.path.join(os.path.abspath(args.target_setup), "setup.py"))
-                azure_requirements = [req.split(";")[0] for req in requirements if req.startswith("azure") in req]
+                azure_requirements = [req.split(";")[0] for req in requirements if req.startswith("azure")]
 
                 if azure_requirements:
                     logging.info(
