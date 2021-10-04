@@ -71,9 +71,9 @@ async def send_event_data_batch(producer, serializer):
 
 async def main():
 
-    async with eventhub_producer:
-        await send_event_data_batch(eventhub_producer, avro_serializer)
+    await send_event_data_batch(eventhub_producer, avro_serializer)
     await avro_serializer.close()
+    await eventhub_producer.close()
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()

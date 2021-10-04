@@ -82,11 +82,12 @@ async def deserialize(serializer, bytes_payload):
 async def main():
     schema_registry = SchemaRegistryClient(endpoint=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE, credential=token_credential)
     serializer = AvroSerializer(client=schema_registry, group_name=GROUP_NAME, auto_register_schemas=True)
-    async with schema_registry:
-        bytes_data_ben, bytes_data_alice = await serialize(serializer)
-        dict_data_ben = await deserialize(serializer, bytes_data_ben)
-        dict_data_alice = await deserialize(serializer, bytes_data_alice)
+    bytes_data_ben, bytes_data_alice = await serialize(serializer)
+    dict_data_ben = await deserialize(serializer, bytes_data_ben)
+    dict_data_alice = await deserialize(serializer, bytes_data_alice)
     await schema_registry.close()
+    await serializer.close()
+    await token_credential.close()
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
