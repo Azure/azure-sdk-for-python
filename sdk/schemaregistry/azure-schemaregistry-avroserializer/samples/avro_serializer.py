@@ -27,14 +27,14 @@ import os
 
 from azure.identity import ClientSecretCredential
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.serializer.avroserializer import SchemaRegistryAvroSerializer
+from azure.schemaregistry.serializer.avroserializer import AvroSerializer
 
-TENANT_ID=os.environ['SCHEMA_REGISTRY_AZURE_TENANT_ID']
-CLIENT_ID=os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_ID']
-CLIENT_SECRET=os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_SECRET']
+TENANT_ID=os.environ['AZURE_TENANT_ID']
+CLIENT_ID=os.environ['AZURE_CLIENT_ID']
+CLIENT_SECRET=os.environ['AZURE_CLIENT_SECRET']
 
-SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE=os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
-GROUP_NAME=os.environ['SCHEMA_REGISTRY_GROUP']
+SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE=os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
+GROUP_NAME=os.environ['SCHEMAREGISTRY_GROUP']
 SCHEMA_STRING = """
 {"namespace": "example.avro",
  "type": "record",
@@ -79,8 +79,8 @@ def deserialize(serializer, bytes_payload):
 
 
 if __name__ == '__main__':
-    schema_registry = SchemaRegistryClient(endpoint=SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE, credential=token_credential)
-    serializer = SchemaRegistryAvroSerializer(client=schema_registry, group_name=GROUP_NAME, auto_register_schemas=True)
+    schema_registry = SchemaRegistryClient(endpoint=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE, credential=token_credential)
+    serializer = AvroSerializer(client=schema_registry, group_name=GROUP_NAME, auto_register_schemas=True)
     bytes_data_ben, bytes_data_alice = serialize(serializer)
     dict_data_ben = deserialize(serializer, bytes_data_ben)
     dict_data_alice = deserialize(serializer, bytes_data_alice)

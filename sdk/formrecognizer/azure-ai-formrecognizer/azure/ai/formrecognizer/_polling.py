@@ -28,9 +28,9 @@ if TYPE_CHECKING:
         AsyncHttpResponse,
         HttpRequest,
     )
+
     ResponseType = Union[HttpResponse, AsyncHttpResponse]
     PipelineResponseType = PipelineResponse[HttpRequest, ResponseType]
-
 
 
 def raise_error(response, errors, message):
@@ -47,7 +47,8 @@ def parse_operation_id(location):
 
 
 class DocumentModelAdministrationLROPoller(LROPoller[PollingReturnType]):
-    """Custom poller for model build operations.
+    """Custom poller for model build operations. Call `result()` on the poller to return
+    a :class:`~azure.ai.formrecognizer.DocumentModel`.
 
     .. versionadded:: v2021-09-30-preview
         The *DocumentModelAdministrationLROPoller* poller object

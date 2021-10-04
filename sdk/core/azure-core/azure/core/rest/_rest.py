@@ -179,6 +179,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
             )
             request._data = copy.deepcopy(self._data, memo)
             request._files = copy.deepcopy(self._files, memo)
+            self._add_backcompat_properties(request, memo)
             return request
         except (ValueError, TypeError):
             return copy.copy(self)

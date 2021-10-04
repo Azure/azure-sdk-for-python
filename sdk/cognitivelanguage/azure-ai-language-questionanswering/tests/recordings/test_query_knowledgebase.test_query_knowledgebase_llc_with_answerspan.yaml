@@ -77,18 +77,18 @@ interactions:
         \           \"qnaId\": 8,\n            \"displayText\": \"Memory and storage\"\n
         \         },\n          {\n            \"displayOrder\": 3,\n            \"qnaId\":
         9,\n            \"displayText\": \"Sensors\"\n          }\n        ]\n      },\n
-        \     \"answerSpan\": {\n        \"text\": \"**Ports and connectors**\\n\\nSurface
-        Pro 4 has the ports you expect in a full-feature laptop.\\n\\nFull-size USB
-        3.0 port Connect a USB accessory like a mouse, printer, Ethernet adapter,
-        USB drive, or smartphone.\",\n        \"confidenceScore\": 0.0106,\n        \"offset\":
-        0,\n        \"length\": 206\n      }\n    },\n    {\n      \"questions\":
-        [\n        \"Connect monitors, accessories, and other devices\"\n      ],\n
-        \     \"answer\": \"**Connect monitors, accessories, and other devices**\\n\\nYou
-        can connect monitors, accessories, and other devices directly to your Surface
-        Pro 4 using the USB port, Mini DisplayPort, or Bluetooth. Or, connect everything
-        to a Surface Dock (sold separately). With Surface Dock, you can switch between
-        fully connected and fully mobile with a single connector.\",\n      \"confidenceScore\":
-        0.46380000000000005,\n      \"id\": 64,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
+        \     \"answerSpan\": {\n        \"text\": \"\\nSurface Pro 4 has the ports
+        you expect in a full-feature laptop.\\n\\nFull-size USB 3.0 port Connect a
+        USB accessory like a mouse, printer, Ethernet adapter, USB drive, or smartphone\",\n
+        \       \"confidenceScore\": 0.5141,\n        \"offset\": 25,\n        \"length\":
+        180\n      }\n    },\n    {\n      \"questions\": [\n        \"Connect monitors,
+        accessories, and other devices\"\n      ],\n      \"answer\": \"**Connect
+        monitors, accessories, and other devices**\\n\\nYou can connect monitors,
+        accessories, and other devices directly to your Surface Pro 4 using the USB
+        port, Mini DisplayPort, or Bluetooth. Or, connect everything to a Surface
+        Dock (sold separately). With Surface Dock, you can switch between fully connected
+        and fully mobile with a single connector.\",\n      \"confidenceScore\": 0.4067,\n
+        \     \"id\": 64,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
         \     \"metadata\": {\n        \"explicitlytaggedheading\": \"connect monitors,
         accessories, and other devices\"\n      },\n      \"dialog\": {\n        \"isContextOnly\":
         false,\n        \"prompts\": [\n          {\n            \"displayOrder\":
@@ -104,27 +104,27 @@ interactions:
         is for video only. Audio will play from your Surface speakers unless you\u2019ve
         connected external speakers. For more info about this, see [Surface sound,](http://www.microsoft.com/surface/support/hardware-and-drivers/sound-volume-and-speakers)
         [volume, and audio accessories](http://www.microsoft.com/surface/support/hardware-and-drivers/sound-volume-and-speakers)
-        on Surface.com.\",\n      \"confidenceScore\": 0.4307,\n      \"id\": 68,\n
+        on Surface.com.\",\n      \"confidenceScore\": 0.3392,\n      \"id\": 68,\n
         \     \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
         {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
         []\n      }\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - 7d3e4c75-318d-47ac-a24f-0e6839903f5d
+      - 8ab8a1da-8fd6-4091-80e3-470885a6b2b7
       content-length:
-      - '7474'
+      - '7435'
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
-      - CognitiveServices.TextAnalytics.QuestionAnsweringTransaction=1
+      - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
       date:
-      - Tue, 21 Sep 2021 21:06:32 GMT
+      - Thu, 30 Sep 2021 15:52:35 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '902'
+      - '2624'
     status:
       code: 200
       message: OK

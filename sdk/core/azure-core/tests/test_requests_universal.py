@@ -26,8 +26,9 @@
 import concurrent.futures
 import requests.utils
 import pytest
-from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
-from utils import HTTP_REQUESTS
+from azure.core.pipeline.transport import RequestsTransport
+from utils import HTTP_REQUESTS, REQUESTS_TRANSPORT_RESPONSES, create_transport_response
+from azure.core.pipeline._tools import is_rest
 
 
 def test_threading_basic_requests():
@@ -53,7 +54,7 @@ def test_requests_auto_headers(port, http_request):
         auto_headers = response.internal_response.request.headers
         assert 'Content-Type' not in auto_headers
 
-def _create_requests_response(body_bytes, headers=None):
+def _create_requests_response(http_response, body_bytes, headers=None):
     # https://github.com/psf/requests/blob/67a7b2e8336951d527e223429672354989384197/requests/adapters.py#L255
     req_response = requests.Response()
     req_response._content = body_bytes
@@ -65,27 +66,34 @@ def _create_requests_response(body_bytes, headers=None):
         req_response.headers.update(headers)
     req_response.encoding = requests.utils.get_encoding_from_headers(req_response.headers)
 
-    response = RequestsTransportResponse(
+    response = create_transport_response(
+        http_response,
         None, # Don't need a request here
         req_response
     )
 
     return response
 
-
-def test_requests_response_text():
+@pytest.mark.parametrize("http_response", REQUESTS_TRANSPORT_RESPONSES)
+def test_requests_response_text(http_response):
 
     for encoding in ["utf-8", "utf-8-sig", None]:
 
         res = _create_requests_response(
+            http_response,
             b'\xef\xbb\xbf56',
             {'Content-Type': 'text/plain'}
         )
+        if is_rest(http_response):
+            res.read()
         assert res.text(encoding) == '56', "Encoding {} didn't work".format(encoding)
 
-def test_repr():
+@pytest.mark.parametrize("http_response", REQUESTS_TRANSPORT_RESPONSES)
+def test_repr(http_response):
     res = _create_requests_response(
+        http_response,
         b'\xef\xbb\xbf56',
         {'Content-Type': 'text/plain'}
     )
-    assert repr(res) == "<RequestsTransportResponse: 200 OK, Content-Type: text/plain>"
+    class_name = "HttpResponse" if is_rest(http_response) else "RequestsTransportResponse"
+    assert repr(res) == "<{}: 200 OK, Content-Type: text/plain>".format(class_name)

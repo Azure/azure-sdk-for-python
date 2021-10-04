@@ -28,7 +28,7 @@ class ServiceBusManagementClientOperationsMixin(object):
         topic_name,  # type: str
         skip=0,  # type: Optional[int]
         top=100,  # type: Optional[int]
-        api_version="2017_04",  # type: Optional[str]
+        api_version="2021_05",  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> object
@@ -98,7 +98,7 @@ class ServiceBusManagementClientOperationsMixin(object):
         subscription_name,  # type: str
         skip=0,  # type: Optional[int]
         top=100,  # type: Optional[int]
-        api_version="2017_04",  # type: Optional[str]
+        api_version="2021_05",  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> object
@@ -170,7 +170,7 @@ class ServiceBusManagementClientOperationsMixin(object):
         entity_type,  # type: str
         skip=0,  # type: Optional[int]
         top=100,  # type: Optional[int]
-        api_version="2017_04",  # type: Optional[str]
+        api_version="2021_05",  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> object

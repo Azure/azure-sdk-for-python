@@ -274,7 +274,7 @@ class RegressionTest:
                 "Installing filtered dev requirements from {}".format(filtered_dev_req_path)
             )
             run_check_call(
-                [python_executable, "-m", "pip", "install", "-r", filtered_dev_req_path],
+                [python_executable, "-m", "pip", "install", "-r", filtered_dev_req_path, "--extra-index", "https://pypi.org/simple"],
                 dependent_pkg_path,
             )
         else:

@@ -39,9 +39,6 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
     :param str user_assertion: the access token the credential will use as the user assertion when requesting
         on-behalf-of tokens
 
-    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
-        the application is registered in. When False, which is the default, the credential will acquire tokens only
-        from the tenant specified by **tenant_id**.
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.

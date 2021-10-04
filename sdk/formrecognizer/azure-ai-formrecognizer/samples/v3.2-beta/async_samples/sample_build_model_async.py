@@ -14,7 +14,7 @@ DESCRIPTION:
     documents found in https://aka.ms/azsdk/formrecognizer/sampletrainingfiles
 
     More details on setting up a container and required file structure can be found here:
-    https://docs.microsoft.com/azure/cognitive-services/form-recognizer/build-training-data-set
+    https://aka.ms/azsdk/formrecognizer/buildtrainingset
 
 USAGE:
     python sample_build_model_async.py

@@ -31,12 +31,12 @@ def sample_query_text():
 
     client = QuestionAnsweringClient(endpoint, AzureKeyCredential(key))
     with client:
-        input = qna.TextQueryOptions(
+        input = qna.QueryTextOptions(
             question="How long it takes to charge surface?",
             records=[
                 qna.TextRecord(
                     text="Power and charging. It takes two to four hours to charge the Surface Pro 4 battery fully from an empty state. " +
-                         "It can take longer if you’re using your Surface for power-intensive activities like gaming or video streaming while you’re charging it.",
+                         "It can take longer if you're using your Surface for power-intensive activities like gaming or video streaming while you're charging it.",
                     id="doc1"
                 ),
                 qna.TextRecord(
@@ -50,8 +50,8 @@ def sample_query_text():
         output = client.query_text(input)
 
         best_answer = [a for a in output.answers if a.confidence_score > 0.9][0]
-        print("Q: {}".format(input.question))
-        print("A: {}".format(best_answer.answer))
+        print(u"Q: {}".format(input.question))
+        print(u"A: {}".format(best_answer.answer))
 
     # [END query_text]
 

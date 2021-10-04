@@ -55,9 +55,6 @@ class DeviceCodeCredential(InteractiveCredential):
     :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
-    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
-        the user is registered in. When False, which is the default, the credential will acquire tokens only from the
-        user's home tenant or the tenant specified by **tenant_id**.
     """
 
     def __init__(self, client_id=DEVELOPER_SIGN_ON_CLIENT_ID, **kwargs):

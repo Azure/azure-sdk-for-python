@@ -5,7 +5,7 @@
 # ------------------------------------
 
 import functools
-from azure.ai.formrecognizer._generated.models import AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.ai.formrecognizer import AnalyzeResult
 from preparers import FormRecognizerPreparer
@@ -141,18 +141,18 @@ class TestLayoutFromStream(FormRecognizerTest):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             document = fd.read()
 
-        poller = client.begin_analyze_document("prebuilt-layout", document, pages=["1"])
+        poller = client.begin_analyze_document("prebuilt-layout", document, pages="1")
         result = poller.result()
         assert len(result.pages) == 1
 
-        poller = client.begin_analyze_document("prebuilt-layout", document, pages=["1", "3"])
+        poller = client.begin_analyze_document("prebuilt-layout", document, pages="1, 3")
         result = poller.result()
         assert len(result.pages) == 2
 
-        poller = client.begin_analyze_document("prebuilt-layout", document, pages=["1-2"])
+        poller = client.begin_analyze_document("prebuilt-layout", document, pages="1-2")
         result = poller.result()
         assert len(result.pages) == 2
 
-        poller = client.begin_analyze_document("prebuilt-layout", document, pages=["1-2", "3"])
+        poller = client.begin_analyze_document("prebuilt-layout", document, pages="1-2, 3")
         result = poller.result()
         assert len(result.pages) == 3

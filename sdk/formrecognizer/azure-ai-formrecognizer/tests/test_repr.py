@@ -343,6 +343,55 @@ def document_model(doc_type_info):
     return model, model_repr
 
 
+@pytest.fixture
+def document_analysis_inner_error():
+    model = _models.DocumentAnalysisInnerError(
+            code="ResourceNotFound",
+            message="Resource was not found",
+            innererror=_models.DocumentAnalysisInnerError(
+                code="ResourceNotFound",
+                message="Resource was not found",
+            )
+    )
+    model_repr = "DocumentAnalysisInnerError(code={}, message={}, innererror={})".format(
+                "ResourceNotFound",
+                "Resource was not found",
+                _models.DocumentAnalysisInnerError(
+                    code="ResourceNotFound",
+                    message="Resource was not found",
+                ))
+    assert repr(model) == model_repr
+    return model, model_repr
+
+
+@pytest.fixture
+def document_analysis_error(document_analysis_inner_error):
+    model = _models.DocumentAnalysisError(
+            code="ResourceNotFound",
+            message="Resource was not found",
+            target="resource",
+            details=[
+                _models.DocumentAnalysisError(
+                    code="ResourceNotFound",
+                    message="Resource was not found"
+                )
+            ],
+            innererror=document_analysis_inner_error[0]
+    )
+    model_repr = "DocumentAnalysisError(code={}, message={}, target={}, details={}, innererror={})".format(
+                "ResourceNotFound",
+                "Resource was not found",
+                "resource",
+                [_models.DocumentAnalysisError(
+                    code="ResourceNotFound",
+                    message="Resource was not found"
+                )],
+                document_analysis_inner_error[1]
+            )
+    assert repr(model) == model_repr
+    return model, model_repr
+
+
 class TestRepr():
     # Not inheriting form FormRecognizerTest because that doesn't allow me to define pytest fixtures in the same file
     # Not worth moving pytest fixture definitions to conftest since all I would use is assertEqual and I can just use assert
@@ -403,8 +452,8 @@ class TestRepr():
             )
         assert repr(model) == model_repr
 
-    def test_model_operation(self, form_recognizer_error, document_model):
-        model = _models.ModelOperation(operation_id="id", status="succeeded", percent_completed=99, created_on=datetime.datetime(2021, 9, 16, 10, 10, 59, 342380), last_updated_on=datetime.datetime(2021, 9, 16, 10, 10, 59, 342380), kind="documentModelCopyTo", resource_location="westus2", error=form_recognizer_error[0], result=document_model[0])
+    def test_model_operation(self, document_analysis_error, document_model):
+        model = _models.ModelOperation(operation_id="id", status="succeeded", percent_completed=99, created_on=datetime.datetime(2021, 9, 16, 10, 10, 59, 342380), last_updated_on=datetime.datetime(2021, 9, 16, 10, 10, 59, 342380), kind="documentModelCopyTo", resource_location="westus2", error=document_analysis_error[0], result=document_model[0])
         model_repr = "ModelOperation(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, kind={}, resource_location={}, result={}, error={})".format(
                     "id",
                     "succeeded",
@@ -414,7 +463,7 @@ class TestRepr():
                     "documentModelCopyTo",
                     "westus2",
                     document_model[1],
-                    form_recognizer_error[1],
+                    document_analysis_error[1],
                 )
         assert repr(model) == model_repr
 

@@ -1,16 +1,24 @@
 # Release History
 
-## 1.19.0 (Unreleased)
+## 1.19.1 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
-- HttpLoggingPolicy integrates logs into one record #19925
-
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.19.0 (2021-09-30)
+
+### Breaking Changes in the Provisional `azure.core.rest` package
+
+- `azure.core.rest.HttpResponse` and `azure.core.rest.AsyncHttpResponse` are now abstract base classes. They should not be initialized directly, instead
+your transport responses should inherit from them and implement them.
+- The properties of the `azure.core.rest` responses are now all read-only
+
+- HttpLoggingPolicy integrates logs into one record #19925
 
 ## 1.18.0 (2021-09-02)
 
@@ -24,8 +32,6 @@
 - The `text` property on `azure.core.rest.HttpResponse` and `azure.core.rest.AsyncHttpResponse` has changed to a method, which also takes
 an `encoding` parameter.
 - Removed `iter_text` and `iter_lines` from `azure.core.rest.HttpResponse` and `azure.core.rest.AsyncHttpResponse`
-- `azure.core.rest.HttpResponse` and `azure.core.rest.AsyncHttpResponse` are now abstract base classes. They should not be initialized directly, instead
-your transport responses should inherit from them and implement them.
 
 ### Bugs Fixed
 
