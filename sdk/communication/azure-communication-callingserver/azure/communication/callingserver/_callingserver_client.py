@@ -20,7 +20,9 @@ from ._generated.models import (
     PlayAudioResult,
     AddParticipantResult,
     StartCallRecordingResult,
-    CallRecordingProperties
+    CallRecordingProperties,
+    StartCallRecordingRequest,
+    StartCallRecordingWithCallLocatorRequest
     )
 from ._shared.models import CommunicationIdentifier
 from ._call_connection import CallConnection
@@ -31,8 +33,7 @@ from ._converters import (
     AddParticipantWithCallLocatorRequestConverter,
     RemoveParticipantWithCallLocatorRequestConverter,
     CancelMediaOperationWithCallLocatorRequestConverter,
-    CancelParticipantMediaOperationWithCallLocatorRequestConverter,
-    StartCallRecordingWithCallLocatorRequestConverter
+    CancelParticipantMediaOperationWithCallLocatorRequestConverter
     )
 from ._shared.utils import get_authentication_policy, parse_connection_str
 from ._version import SDK_MONIKER
@@ -402,13 +403,18 @@ class CallingServerClient(object):
         if not CallingServerUtils.is_valid_url(recording_state_callback_uri):
             raise ValueError("recording_state_callback_uri is invalid")
 
-        start_call_recording_request = StartCallRecordingWithCallLocatorRequestConverter.convert(
+        start_call_recording_request = StartCallRecordingRequest(
+            recording_state_callback_uri=recording_state_callback_uri,
+            **kwargs
+        )
+
+        start_call_recording_with_calllocator_request = StartCallRecordingWithCallLocatorRequest(
             call_locator=serialize_call_locator(call_locator),
-            recording_state_callback_uri=recording_state_callback_uri
+            start_call_recording_request=start_call_recording_request
         )
 
         return self._server_call_client.start_recording(
-           start_call_recording_with_call_locator_request=start_call_recording_request,
+           start_call_recording_with_call_locator_request=start_call_recording_with_calllocator_request,
             **kwargs
         )
 

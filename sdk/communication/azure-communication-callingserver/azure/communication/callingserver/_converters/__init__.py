@@ -13,8 +13,7 @@ from ._converter import (
     CancelMediaOperationWithCallLocatorRequestConverter,
     CancelParticipantMediaOperationRequestConverter,
     CancelParticipantMediaOperationWithCallLocatorRequestConverter,
-    TransferCallRequestConverter,
-    StartCallRecordingWithCallLocatorRequestConverter
+    TransferCallRequestConverter
     )
 
 __all__ = [
@@ -32,6 +31,5 @@ __all__ = [
     'CancelMediaOperationWithCallLocatorRequestConverter',
     'CancelParticipantMediaOperationRequestConverter',
     'CancelParticipantMediaOperationWithCallLocatorRequestConverter',
-    'TransferCallRequestConverter',
-    'StartCallRecordingWithCallLocatorRequestConverter'
+    'TransferCallRequestConverter'
 ]
