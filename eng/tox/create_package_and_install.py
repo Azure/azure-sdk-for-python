@@ -222,7 +222,7 @@ if __name__ == "__main__":
 
             if not args.pre_download:
                 requirements = get_install_requires(os.path.join(os.path.abspath(args.target_setup), "setup.py"))
-                azure_requirements = [req.split(";")[0] for req in requirements if "azure" in req]
+                azure_requirements = [req.split(";")[0] for req in requirements if req.startswith("azure") in req]
 
                 if azure_requirements:
                     logging.info(
@@ -236,10 +236,14 @@ if __name__ == "__main__":
                         "download",
                         "-d",
                         tmp_dl_folder,
-                        "--no-deps",
-                        *azure_requirements,
-                        *commands_options,
+                        "--no-deps"
                     ]
+
+                    if azure_requirements:
+                        download_command.extend(azure_requirements)
+
+                    if commands_options:
+                        download_command.extend(commands_options)
 
                     check_call(download_command, env=dict(os.environ, PIP_EXTRA_INDEX_URL=""))
                     additional_downloaded_reqs = [
