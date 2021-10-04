@@ -27,7 +27,7 @@ To use this package, you must have:
 * Python 2.7, 3.6 or later - [Install Python][python]
 
 ### Authenticate the client
-Interaction with Schema Registry starts with an instance of SchemaRegistryClient class. You need the endpoint and AAD credential to instantiate the client object.
+Interaction with Schema Registry starts with an instance of SchemaRegistryClient class. You need the fully qualified namespace and AAD credential to instantiate the client object.
 
 **Create client using the azure-identity library:**
 
