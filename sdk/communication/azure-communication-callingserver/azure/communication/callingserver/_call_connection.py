@@ -3,18 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 from typing import TYPE_CHECKING, Any, Optional  # pylint: disable=unused-import
-
 from azure.core.tracing.decorator import distributed_trace
-
+from .utils._utils import CallingServerUtils
 from ._communication_identifier_serializer import serialize_identifier
 from ._converters import (
     AddParticipantRequestConverter,
     RemoveParticipantRequestConverter,
     CancelAllMediaOperationsConverter,
     TransferCallRequestConverter,
-    CancelMediaOperationRequestConverter,
     CancelParticipantMediaOperationRequestConverter,
     PlayAudioRequestConverter,
     PlayAudioToParticipantRequestConverter
@@ -28,8 +25,6 @@ from ._shared.models import CommunicationIdentifier
 if TYPE_CHECKING:
     from ._generated.operations import CallConnectionsOperations
     from ._models import PlayAudioOptions
-
-from .utils._utils import CallingServerUtils
 
 class CallConnection(object):
     def __init__(

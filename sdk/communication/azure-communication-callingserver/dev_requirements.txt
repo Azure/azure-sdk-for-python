@@ -6,3 +6,4 @@
 ../../core/azure-core
 aiohttp>=3.0; python_version >= '3.5'
 parameterized
+validators

@@ -5,9 +5,11 @@
 # --------------------------------------------------------------------------
 
 from typing import TYPE_CHECKING, Any, List, Optional  # pylint: disable=unused-import
-
 from azure.core.tracing.decorator import distributed_trace
-
+from azure.core.pipeline.transport import AsyncHttpResponse
+from .utils._utils import CallingServerUtils
+from ._content_downloader import ContentDownloader
+from ._download import ContentStreamDownloader
 from ._communication_identifier_serializer import serialize_identifier
 from ._communication_call_locator_serializer import serialize_call_locator
 from ._generated._azure_communication_calling_server_service import \
@@ -44,11 +46,6 @@ if TYPE_CHECKING:
         ParallelDownloadOptions,
         CallLocator
     )
-
-from ._content_downloader import ContentDownloader
-from ._download import ContentStreamDownloader
-from .utils._utils import CallingServerUtils
-from azure.core.pipeline.transport import AsyncHttpResponse
 
 class CallingServerClient(object):
     """A client to interact with the AzureCommunicationService Calling Server.
@@ -209,9 +206,9 @@ class CallingServerClient(object):
             raise ValueError("call_options can not be None")
 
         join_call_request = JoinCallRequestConverter.convert(
-            serialize_call_locator(call_locator),
-            serialize_identifier(source),
-            call_options
+            call_locator=serialize_call_locator(call_locator),
+            source=serialize_identifier(source),
+            join_call_options=call_options
             )
 
         join_call_response = self._server_call_client.join_call(
@@ -245,9 +242,9 @@ class CallingServerClient(object):
             raise ValueError("callback_uri is invalid")
 
         play_audio_request = PlayAudioWithCallLocatorRequestConverter.convert(
-            serialize_call_locator(call_locator),
-            audio_file_uri,
-            play_audio_options
+            call_locator=serialize_call_locator(call_locator),
+            audio_file_uri=audio_file_uri,
+            play_audio_options=play_audio_options
             )
 
         return self._server_call_client.play_audio(
@@ -279,10 +276,10 @@ class CallingServerClient(object):
             raise ValueError("callback_uri is invalid")
 
         play_audio_to_participant_request = PlayAudioToParticipantWithCallLocatorRequestConverter.convert(
-            serialize_call_locator(call_locator),
-            serialize_identifier(participant),
-            audio_file_uri,
-            play_audio_options
+            call_locator=serialize_call_locator(call_locator),
+            identifier=serialize_identifier(participant),
+            audio_file_uri=audio_file_uri,
+            play_audio_options=play_audio_options
             )
 
         return self._server_call_client.participant_play_audio(
@@ -380,7 +377,8 @@ class CallingServerClient(object):
         if not media_operation_id:
             raise ValueError("media_operation_id can not be None")
 
-        cancel_participant_media_operation_request = CancelParticipantMediaOperationWithCallLocatorRequestConverter.convert(
+        cancel_participant_media_operation_request = \
+        CancelParticipantMediaOperationWithCallLocatorRequestConverter.convert(
             serialize_call_locator(call_locator),
             serialize_identifier(participant),
             media_operation_id=media_operation_id
@@ -403,7 +401,7 @@ class CallingServerClient(object):
             raise ValueError("call_locator cannot be None")
         if not CallingServerUtils.is_valid_url(recording_state_callback_uri):
             raise ValueError("recording_state_callback_uri is invalid")
-     
+
         start_call_recording_request = StartCallRecordingWithCallLocatorRequestConverter.convert(
             call_locator=serialize_call_locator(call_locator),
             recording_state_callback_uri=recording_state_callback_uri
@@ -497,19 +495,19 @@ class CallingServerClient(object):
             raise ValueError("content_url is invalid")
 
         content_downloader = ContentDownloader(
-            self._callingserver_service_client._client,
-            self._callingserver_service_client._serialize,
-            self._callingserver_service_client._deserialize,
-            self._callingserver_service_client._config)
+            self._callingserver_service_client._client, # pylint:disable=protected-access
+            self._callingserver_service_client._serialize, # pylint:disable=protected-access
+            self._callingserver_service_client._deserialize, # pylint:disable=protected-access
+            self._callingserver_service_client._config) # pylint:disable=protected-access
         stream_downloader = ContentStreamDownloader(
             content_downloader,
-            self._callingserver_service_client._config,
+            self._callingserver_service_client._config, # pylint:disable=protected-access
             start_range,
             end_range,
             endpoint=content_url,
             parallel_download_options=parallel_download_options,
             **kwargs
         )
-        stream_downloader._setup()
+        stream_downloader._setup() # pylint:disable=protected-access
 
         return stream_downloader

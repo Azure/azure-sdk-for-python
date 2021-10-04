@@ -9,8 +9,6 @@ import sys
 import threading
 from typing import Iterator
 from io import BytesIO
-from itertools import islice
-
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.common import with_current_context
 
