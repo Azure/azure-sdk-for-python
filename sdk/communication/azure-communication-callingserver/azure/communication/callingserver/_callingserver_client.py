@@ -6,7 +6,7 @@
 
 from typing import TYPE_CHECKING, Any, List, Optional  # pylint: disable=unused-import
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.pipeline.transport import AsyncHttpResponse
+from azure.core.pipeline.transport import HttpResponse
 from .utils._utils import CallingServerUtils
 from ._content_downloader import ContentDownloader
 from ._download import ContentStreamDownloader
@@ -417,7 +417,7 @@ class CallingServerClient(object):
         self,
         recording_id,  # type: str
         **kwargs  # type: Any
-    ):  # type: (...) -> AsyncHttpResponse
+    ):  # type: (...) -> HttpResponse
 
         if not recording_id:
             raise ValueError("recording_id cannot be None")
@@ -432,7 +432,7 @@ class CallingServerClient(object):
         self,
         recording_id,  # type: str
         **kwargs  # type: Any
-    ):  # type: (...) -> AsyncHttpResponse
+    ):  # type: (...) -> HttpResponse
 
         if not recording_id:
             raise ValueError("recording_id cannot be None")
@@ -447,7 +447,7 @@ class CallingServerClient(object):
         self,
         recording_id,  # type: str
         **kwargs  # type: Any
-    ):  # type: (...) -> AsyncHttpResponse
+    ):  # type: (...) -> HttpResponse
 
         if not recording_id:
             raise ValueError("recording_id cannot be None")
