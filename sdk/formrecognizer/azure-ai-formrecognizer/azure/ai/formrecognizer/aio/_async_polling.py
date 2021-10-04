@@ -95,10 +95,10 @@ class AsyncDocumentModelAdministrationLROPoller(AsyncLROPoller[PollingReturnType
 
     @classmethod
     def from_continuation_token(
-            cls,
-            polling_method: AsyncPollingMethod[PollingReturnType],
-            continuation_token: str,
-            **kwargs: Any
+        cls,
+        polling_method: AsyncPollingMethod[PollingReturnType],
+        continuation_token: str,
+        **kwargs: Any
     ) -> "AsyncDocumentModelAdministrationLROPoller":
         (
             client,
