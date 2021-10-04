@@ -11,6 +11,7 @@
 from typing import TYPE_CHECKING, Any, List, Optional  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.pipeline.transport import HttpResponse
 
 from .._communication_identifier_serializer import serialize_identifier
 from .._communication_call_locator_serializer import serialize_call_locator
@@ -20,7 +21,9 @@ from .._generated.models import (
     CreateCallRequest,
     PhoneNumberIdentifierModel,
     PlayAudioResult,
-    AddParticipantResult
+    AddParticipantResult,
+    StartCallRecordingResult,
+    CallRecordingProperties
     )
 from .._shared.models import CommunicationIdentifier
 from ._content_downloader_async import ContentDownloader
@@ -34,7 +37,8 @@ from .._converters import (
     AddParticipantWithCallLocatorRequestConverter,
     RemoveParticipantWithCallLocatorRequestConverter,
     CancelMediaOperationWithCallLocatorRequestConverter,
-    CancelParticipantMediaOperationWithCallLocatorRequestConverter
+    CancelParticipantMediaOperationWithCallLocatorRequestConverter,
+    StartCallRecordingWithCallLocatorRequestConverter
     )
 from .._shared.utils import get_authentication_policy, parse_connection_str
 from .._version import SDK_MONIKER
@@ -222,35 +226,6 @@ class CallingServerClient:
             self._callingserver_service_client
             )
 
-    @distributed_trace_async
-    async def download(
-            self,
-            content_url: str,
-            start_range: int = None,
-            end_range: int = None,
-            parallel_download_options: ParallelDownloadOptions = None,
-            **kwargs: Any
-        ) -> ContentStreamDownloader:
-
-        #pylint: disable=protected-access
-        content_downloader = ContentDownloader(
-            self._callingserver_service_client._client,
-            self._callingserver_service_client._config,
-            self._callingserver_service_client._serialize,
-            self._callingserver_service_client._deserialize
-        )
-        stream_downloader = ContentStreamDownloader(
-            content_downloader,
-            self._callingserver_service_client._config,
-            start_range,
-            end_range,
-            endpoint=content_url,
-            parallel_download_options=parallel_download_options,
-            **kwargs
-        )
-        await stream_downloader._setup()
-        return stream_downloader
-
     @distributed_trace_async()
     async def play_audio(
         self,
@@ -419,6 +394,118 @@ class CallingServerClient:
             cancel_participant_media_operation_request=cancel_participant_media_operation_request,
             **kwargs
             )
+
+    @distributed_trace_async()
+    async def start_recording(
+        self,
+        call_locator: CallLocator,
+        recording_state_callback_uri: str,
+        **kwargs: Any
+    ) -> StartCallRecordingResult:
+
+        if not call_locator:
+            raise ValueError("call_locator cannot be None")
+        if not CallingServerUtils.is_valid_url(recording_state_callback_uri):
+            raise ValueError("recording_state_callback_uri is invalid")
+
+        start_call_recording_request = StartCallRecordingWithCallLocatorRequestConverter.convert(
+            call_locator=serialize_call_locator(call_locator),
+            recording_state_callback_uri=recording_state_callback_uri
+        )
+
+        return await self._server_call_client.start_recording(
+           start_call_recording_with_call_locator_request=start_call_recording_request,
+            **kwargs
+        )
+
+    @distributed_trace_async()
+    async def pause_recording(
+        self,
+        recording_id: str,
+        **kwargs: Any
+    ) -> HttpResponse:
+
+        if not recording_id:
+            raise ValueError("recording_id cannot be None")
+
+        return await self._server_call_client.pause_recording(
+            recording_id=recording_id,
+            **kwargs
+        )
+
+    @distributed_trace_async()
+    async def resume_recording(
+        self,
+        recording_id: str,
+        **kwargs: Any
+    ) -> HttpResponse:
+
+        if not recording_id:
+            raise ValueError("recording_id cannot be None")
+
+        return await self._server_call_client.resume_recording(
+            recording_id=recording_id,
+            **kwargs
+        )
+
+    @distributed_trace_async()
+    async def stop_recording(
+        self,
+        recording_id: str,
+        **kwargs: Any
+    ) -> HttpResponse:
+
+        if not recording_id:
+            raise ValueError("recording_id cannot be None")
+
+        return await self._server_call_client.stop_recording(
+            recording_id=recording_id,
+            **kwargs
+        )
+
+    @distributed_trace_async()
+    async def get_recording_properities(
+        self,
+        recording_id: str,
+        **kwargs: Any
+    ) -> CallRecordingProperties:
+
+        if not recording_id:
+            raise ValueError("recording_id cannot be None")
+
+        return await self._server_call_client.get_recording_properties(
+            recording_id=recording_id,
+            **kwargs
+        )
+
+    @distributed_trace_async
+    async def download(
+            self,
+            content_url: str,
+            start_range: int = None,
+            end_range: int = None,
+            parallel_download_options: ParallelDownloadOptions = None,
+            **kwargs: Any
+        ) -> ContentStreamDownloader:
+
+        #pylint: disable=protected-access
+        content_downloader = ContentDownloader(
+            self._callingserver_service_client._client,
+            self._callingserver_service_client._config,
+            self._callingserver_service_client._serialize,
+            self._callingserver_service_client._deserialize
+        )
+        stream_downloader = ContentStreamDownloader(
+            content_downloader,
+            self._callingserver_service_client._config,
+            start_range,
+            end_range,
+            endpoint=content_url,
+            parallel_download_options=parallel_download_options,
+            **kwargs
+        )
+        await stream_downloader._setup()
+        return stream_downloader
 
     async def close(self) -> None:
         """Close the :class:

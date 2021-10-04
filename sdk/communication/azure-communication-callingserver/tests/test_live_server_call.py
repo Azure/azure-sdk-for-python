@@ -6,16 +6,12 @@
 import os, uuid, pytest
 from time import sleep
 import utils._test_constants as CONST
-from azure.communication.callingserver import CallingServerClient
 from azure.communication.callingserver import (
+    CallingServerClient,
     PlayAudioOptions,
-    CommunicationUserIdentifier
+    CommunicationUserIdentifier,
+    ServerCallLocator
     )
-from azure.communication.callingserver._models import (
-    EventSubscriptionType,
-    JoinCallOptions,
-    MediaType
-)
 from azure.communication.callingserver._shared.utils import parse_connection_str
 from azure.identity import DefaultAzureCredential
 from _shared.testcase import (
@@ -110,7 +106,7 @@ class ServerCallTest(CommunicationTestCase):
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
             CallingServerLiveTestUtils.clean_up_connections(call_connections)
 
-    @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
+    @pytest.mark.skip(reason="Skip because the server side bits not ready")
     def test_create_add_remove_hangup_scenario(self):
         # create GroupCalls
         group_id = CallingServerLiveTestUtils.get_group_id("test_create_add_remove_hangup_scenario")
@@ -169,31 +165,27 @@ class ServerCallTest(CommunicationTestCase):
             CONST.CALLBACK_URI
             )
 
-        server_call = self.callingserver_client.initialize_server_call(group_id)
-
         try:
-            start_call_recording_result = server_call.start_recording(CONST.CALLBACK_URI)
+            start_call_recording_result = self.callingserver_client.start_recording(ServerCallLocator(group_id), CONST.CALLBACK_URI)
             recording_id = start_call_recording_result.recording_id
 
-            assert server_call is not None
-            assert server_call.server_call_id is not None
             assert recording_id is not None
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
 
-            recording_state = server_call.get_recording_properities(recording_id)
+            recording_state = self.callingserver_client.get_recording_properities(recording_id)
             assert recording_state.recording_state == "active"
 
-            server_call.pause_recording(recording_id)
+            self.callingserver_client.pause_recording(recording_id)
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
-            recording_state = server_call.get_recording_properities(recording_id)
+            recording_state = self.callingserver_client.get_recording_properities(recording_id)
             assert recording_state.recording_state == "inactive"
 
-            server_call.resume_recording(recording_id)
+            self.callingserver_client.resume_recording(recording_id)
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
-            recording_state = server_call.get_recording_properities(recording_id)
+            recording_state = self.callingserver_client.get_recording_properities(recording_id)
             assert recording_state.recording_state == "active"
 
-            server_call.stop_recording(recording_id)
+            self.callingserver_client.stop_recording(recording_id)
 
         finally:
             # Clean up/Hang up
@@ -202,7 +194,6 @@ class ServerCallTest(CommunicationTestCase):
 
     def test_start_recording_fails(self):
         invalid_server_call_id = "aHR0cHM6Ly9jb252LXVzd2UtMDkuY29udi5za3lwZS5jb20vY29udi9EZVF2WEJGVVlFV1NNZkFXYno2azN3P2k9MTEmZT02Mzc1NzIyMjk0Mjc0NTI4Nzk="
-        server_call = self.callingserver_client.initialize_server_call(invalid_server_call_id)
 
         with self.assertRaises(HttpResponseError):
-            server_call.start_recording(CONST.CALLBACK_URI)
+            self.callingserver_client.start_recording(ServerCallLocator(invalid_server_call_id), CONST.CALLBACK_URI)

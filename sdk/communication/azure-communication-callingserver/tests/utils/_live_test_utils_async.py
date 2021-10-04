@@ -42,9 +42,7 @@ class CallingServerLiveTestUtilsAsync:
                 requested_media_types=[MediaType.AUDIO],
                 requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED]
             )
-            print("Before the first from call connection")
             from_call_connection = await callingserver_client.join_call(group_id, from_participant, from_options)
-            print(f"from call connection: {from_call_connection}")
             CallingServerLiveTestUtilsAsync.validate_callconnection_Async(from_call_connection)
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
 
