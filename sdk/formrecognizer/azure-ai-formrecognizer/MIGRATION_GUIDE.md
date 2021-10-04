@@ -239,13 +239,13 @@ for idx, content in enumerate(form_pages):
     ))
     for table_idx, table in enumerate(content.tables):
         print("Table # {} has {} rows and {} columns".format(table_idx, table.row_count, table.column_count))
-        print("Table # {} location on page: {}".format(table_idx, format_bounding_box(table.bounding_box)))
+        print("Table # {} location on page: {}".format(table_idx, table.bounding_box))
         for cell in table.cells:
             print("...Cell[{}][{}] has text '{}' within bounding box '{}'".format(
                 cell.row_index,
                 cell.column_index,
                 cell.text,
-                format_bounding_box(cell.bounding_box)
+                cell.bounding_box
             ))
 
     for line_idx, line in enumerate(content.lines):
@@ -253,7 +253,7 @@ for idx, content in enumerate(form_pages):
             line_idx,
             len(line.words),
             line.text,
-            format_bounding_box(line.bounding_box)
+            line.bounding_box
         ))
         if line.appearance:
             if line.appearance.style_name == "handwriting" and line.appearance.style_confidence > 0.8:
@@ -264,7 +264,7 @@ for idx, content in enumerate(form_pages):
     for selection_mark in content.selection_marks:
         print("Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
             selection_mark.state,
-            format_bounding_box(selection_mark.bounding_box),
+            selection_mark.bounding_box,
             selection_mark.confidence
         ))
     print("----------------------------------------")
@@ -299,7 +299,7 @@ for idx, page in enumerate(result.pages):
             "Line # {} has text content '{}' within bounding box '{}'".format(
                 line_idx,
                 line.content,
-                format_bounding_box(line.bounding_box),
+                line.bounding_box,
             )
         )
 
@@ -314,7 +314,7 @@ for idx, page in enumerate(result.pages):
         print(
             "Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
                 selection_mark.state,
-                format_bounding_box(selection_mark.bounding_box),
+                selection_mark.bounding_box,
                 selection_mark.confidence,
             )
         )
@@ -330,7 +330,7 @@ for table_idx, table in enumerate(result.tables):
             "Table # {} location on page: {} is {}".format(
                 table_idx,
                 region.page_number,
-                format_bounding_box(region.bounding_box),
+                region.bounding_box,
             )
         )
     for cell in table.cells:
@@ -345,7 +345,7 @@ for table_idx, table in enumerate(result.tables):
             print(
                 "...content on page {} is within bounding box '{}'".format(
                     region.page_number,
-                    format_bounding_box(region.bounding_box),
+                    region.bounding_box,
                 )
             )
 
@@ -383,7 +383,7 @@ for page in result.pages:
             "...Line # {} has text content '{}' within bounding box '{}'".format(
                 line_idx,
                 line.content,
-                format_bounding_box(line.bounding_box),
+                line.bounding_box,
             )
         )
 
@@ -398,7 +398,7 @@ for page in result.pages:
         print(
             "...Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
                 selection_mark.state,
-                format_bounding_box(selection_mark.bounding_box),
+                selection_mark.bounding_box,
                 selection_mark.confidence,
             )
         )
@@ -414,7 +414,7 @@ for table_idx, table in enumerate(result.tables):
             "Table # {} location on page: {} is {}".format(
                 table_idx,
                 region.page_number,
-                format_bounding_box(region.bounding_box),
+                region.bounding_box,
             )
         )
     for cell in table.cells:
@@ -429,7 +429,7 @@ for table_idx, table in enumerate(result.tables):
             print(
                 "...content on page {} is within bounding box '{}'\n".format(
                     region.page_number,
-                    format_bounding_box(region.bounding_box),
+                    region.bounding_box,
                 )
             )
 
@@ -437,7 +437,7 @@ print("----Entities found in document----")
 for entity in result.entities:
     print("Entity of category '{}' with sub-category '{}'".format(entity.category, entity.sub_category))
     print("...has content '{}'".format(entity.content))
-    print("...within '{}' bounding regions".format(format_bounding_region(entity.bounding_regions)))
+    print("...within '{}' bounding regions".format(entity.bounding_regions))
     print("...with confidence {}\n".format(entity.confidence))
 
 print("----Key-value pairs found in document----")
@@ -446,14 +446,14 @@ for kv_pair in result.key_value_pairs:
         print(
                 "Key '{}' found within '{}' bounding regions".format(
                     kv_pair.key.content,
-                    format_bounding_region(kv_pair.key.bounding_regions),
+                    kv_pair.key.bounding_regions,
                 )
             )
     if kv_pair.value:
         print(
                 "Value '{}' found within '{}' bounding regions\n".format(
                     kv_pair.value.content,
-                    format_bounding_region(kv_pair.value.bounding_regions),
+                    kv_pair.value.bounding_regions,
                 )
             )
 print("----------------------------------------")
