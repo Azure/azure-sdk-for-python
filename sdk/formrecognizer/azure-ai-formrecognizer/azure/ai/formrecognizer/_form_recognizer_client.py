@@ -34,7 +34,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
     URL and inputs from a stream.
 
     .. note:: FormRecognizerClient should be used with API versions <=v2.1.
-        To use API versions v2021-09-30-preview and up, instantiate a DocumentAnalysisClient.
+        To use API versions 2021-09-30-preview and up, instantiate a DocumentAnalysisClient.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
