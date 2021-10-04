@@ -106,7 +106,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         :param str source: An Azure Storage blob container's SAS URI. A container URI (without SAS)
             can be used if the container is public. For more information on setting up a training data set, see:
-            https://docs.microsoft.com/azure/cognitive-services/form-recognizer/build-training-data-set
+            https://aka.ms/azsdk/formrecognizer/buildtrainingset
         :keyword str model_id: A unique ID for your model. If not specified, a model ID will be created for you.
         :keyword str description: An optional description to add to the model.
         :keyword str prefix: A case-sensitive prefix string to filter documents in the source path.
@@ -350,7 +350,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         description, and when it was created.
 
         :return: Pageable of DocumentModelInfo.
-        :rtype: ~azure.core.paging.async_paging.AsyncItemPaged[DocumentModelInfo]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[DocumentModelInfo]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -434,7 +434,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         the document model can be accessed using the :func:`~get_model` or :func:`~list_models` APIs.
 
         :return: A pageable of ModelOperationInfo.
-        :rtype: ~azure.core.paging.async_paging.AsyncItemPaged[ModelOperationInfo]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[ModelOperationInfo]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
