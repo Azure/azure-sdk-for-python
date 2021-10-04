@@ -22,7 +22,8 @@ from azure.communication.callingserver import (
     AddParticipantResult,
     OperationStatus,
     MediaType,
-    EventSubscriptionType
+    EventSubscriptionType,
+    ServerCallLocator
     )
 
 class RequestReplacerProcessor(RecordingProcessor):
@@ -119,7 +120,7 @@ class CallingServerLiveTestUtils:
                 requested_media_types=[MediaType.AUDIO],
                 requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED]
             )
-            from_call_connection = callingserver_client.join_call(group_id, from_participant, from_options)
+            from_call_connection = callingserver_client.join_call(ServerCallLocator(group_id), from_participant, from_options)
             CallingServerLiveTestUtils.validate_callconnection(from_call_connection)
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
 
@@ -129,7 +130,7 @@ class CallingServerLiveTestUtils:
                 requested_media_types=[MediaType.AUDIO],
                 requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED]
             )
-            to_call_connection = callingserver_client.join_call(group_id, to_participant, to_options)
+            to_call_connection = callingserver_client.join_call(ServerCallLocator(group_id), to_participant, to_options)
             CallingServerLiveTestUtils.validate_callconnection(from_call_connection)
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
 
