@@ -19,7 +19,7 @@ from .. import models
 
 
 class AzureCommunicationCallingServerService(object):
-    """Azure Communication CallingServer Service.
+    """Azure Communication Service Call Automation APIs.
 
     :ivar call_connections: CallConnectionsOperations operations
     :vartype call_connections: azure.communication.callingserver.aio.operations.CallConnectionsOperations

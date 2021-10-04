@@ -1,0 +1,387 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Range:
+      - bytes=0-99
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      host:
+      - acstelephonyportaltesting.communication.azure.com
+      x-ms-date:
+      - Thu, 30 Sep 2021 23:56:08 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://storage.asm.skype.com/v1/objects/0-wus-d3-008713a3abdb3f3ae4904369277244c5/content/acsmetadata
+  response:
+    body:
+      string: "{\r\n  \"resourceId\": \"ab12b0ea-85ea-4f83-b0b6-84d90209c7c4\",\r\n
+        \ \"callId\": \"ade1a5b4-1fed-4eb0-bece-2af"
+    headers:
+      cache-control:
+      - no-cache, max-age=0, s-maxage=0, private
+      content-length:
+      - '100'
+      content-range:
+      - bytes 0-99/836
+      content-type:
+      - application/octet-stream
+      date:
+      - Thu, 30 Sep 2021 23:56:09 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Range:
+      - bytes=100-199
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      host:
+      - acstelephonyportaltesting.communication.azure.com
+      x-ms-date:
+      - Thu, 30 Sep 2021 23:56:09 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://storage.asm.skype.com/v1/objects/0-wus-d3-008713a3abdb3f3ae4904369277244c5/content/acsmetadata
+  response:
+    body:
+      string: "03a20b178\",\r\n  \"chunkDocumentId\": \"0-wus-d3-008713a3abdb3f3ae4904369277244c5\",\r\n
+        \ \"chunkIndex\": 0,\r\n"
+    headers:
+      cache-control:
+      - no-cache, max-age=0, s-maxage=0, private
+      content-length:
+      - '100'
+      content-range:
+      - bytes 100-199/836
+      content-type:
+      - application/octet-stream
+      date:
+      - Thu, 30 Sep 2021 23:56:09 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Range:
+      - bytes=200-299
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      host:
+      - acstelephonyportaltesting.communication.azure.com
+      x-ms-date:
+      - Thu, 30 Sep 2021 23:56:09 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://storage.asm.skype.com/v1/objects/0-wus-d3-008713a3abdb3f3ae4904369277244c5/content/acsmetadata
+  response:
+    body:
+      string: "  \"chunkStartTime\": \"2021-09-30T22:37:28.9321086Z\",\r\n  \"chunkDuration\":
+        7000.0,\r\n  \"pauseResumeInter"
+    headers:
+      cache-control:
+      - no-cache, max-age=0, s-maxage=0, private
+      content-length:
+      - '100'
+      content-range:
+      - bytes 200-299/836
+      content-type:
+      - application/octet-stream
+      date:
+      - Thu, 30 Sep 2021 23:56:09 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Range:
+      - bytes=300-399
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      host:
+      - acstelephonyportaltesting.communication.azure.com
+      x-ms-date:
+      - Thu, 30 Sep 2021 23:56:09 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://storage.asm.skype.com/v1/objects/0-wus-d3-008713a3abdb3f3ae4904369277244c5/content/acsmetadata
+  response:
+    body:
+      string: "vals\": [],\r\n  \"recordingInfo\": {\r\n    \"contentType\": \"mixed\",\r\n
+        \   \"channelType\": \"audioVideo\",\r\n   "
+    headers:
+      cache-control:
+      - no-cache, max-age=0, s-maxage=0, private
+      content-length:
+      - '100'
+      content-range:
+      - bytes 300-399/836
+      content-type:
+      - application/octet-stream
+      date:
+      - Thu, 30 Sep 2021 23:56:09 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Range:
+      - bytes=400-499
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      host:
+      - acstelephonyportaltesting.communication.azure.com
+      x-ms-date:
+      - Thu, 30 Sep 2021 23:56:09 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://storage.asm.skype.com/v1/objects/0-wus-d3-008713a3abdb3f3ae4904369277244c5/content/acsmetadata
+  response:
+    body:
+      string: " \"format\": \"mp4\",\r\n    \"audioConfiguration\": {\r\n      \"sampleRate\":
+        16000,\r\n      \"bitRate\": 128000,"
+    headers:
+      cache-control:
+      - no-cache, max-age=0, s-maxage=0, private
+      content-length:
+      - '100'
+      content-range:
+      - bytes 400-499/836
+      content-type:
+      - application/octet-stream
+      date:
+      - Thu, 30 Sep 2021 23:56:09 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Range:
+      - bytes=500-599
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      host:
+      - acstelephonyportaltesting.communication.azure.com
+      x-ms-date:
+      - Thu, 30 Sep 2021 23:56:09 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://storage.asm.skype.com/v1/objects/0-wus-d3-008713a3abdb3f3ae4904369277244c5/content/acsmetadata
+  response:
+    body:
+      string: "\r\n      \"channels\": 1\r\n    },\r\n    \"videoConfiguration\":
+        {\r\n      \"longerSideLength\": 1920,\r\n      \""
+    headers:
+      cache-control:
+      - no-cache, max-age=0, s-maxage=0, private
+      content-length:
+      - '100'
+      content-range:
+      - bytes 500-599/836
+      content-type:
+      - application/octet-stream
+      date:
+      - Thu, 30 Sep 2021 23:56:09 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Range:
+      - bytes=600-699
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      host:
+      - acstelephonyportaltesting.communication.azure.com
+      x-ms-date:
+      - Thu, 30 Sep 2021 23:56:09 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://storage.asm.skype.com/v1/objects/0-wus-d3-008713a3abdb3f3ae4904369277244c5/content/acsmetadata
+  response:
+    body:
+      string: "shorterSideLength\": 1080,\r\n      \"framerate\": 8,\r\n      \"bitRate\":
+        1000000\r\n    }\r\n  },\r\n  \"particip"
+    headers:
+      cache-control:
+      - no-cache, max-age=0, s-maxage=0, private
+      content-length:
+      - '100'
+      content-range:
+      - bytes 600-699/836
+      content-type:
+      - application/octet-stream
+      date:
+      - Thu, 30 Sep 2021 23:56:09 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Range:
+      - bytes=700-799
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      host:
+      - acstelephonyportaltesting.communication.azure.com
+      x-ms-date:
+      - Thu, 30 Sep 2021 23:56:09 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://storage.asm.skype.com/v1/objects/0-wus-d3-008713a3abdb3f3ae4904369277244c5/content/acsmetadata
+  response:
+    body:
+      string: "ants\": [\r\n    {\r\n      \"participantId\": \"8:acs:ab12b0ea-85ea-4f83-b0b6-84d90209c7c4_0000000c-d8bc-11"
+    headers:
+      cache-control:
+      - no-cache, max-age=0, s-maxage=0, private
+      content-length:
+      - '100'
+      content-range:
+      - bytes 700-799/836
+      content-type:
+      - application/octet-stream
+      date:
+      - Thu, 30 Sep 2021 23:56:09 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Range:
+      - bytes=800-835
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      host:
+      - acstelephonyportaltesting.communication.azure.com
+      x-ms-date:
+      - Thu, 30 Sep 2021 23:56:09 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://storage.asm.skype.com/v1/objects/0-wus-d3-008713a3abdb3f3ae4904369277244c5/content/acsmetadata
+  response:
+    body:
+      string: "76-2df4-343a0d0001bc\"\r\n    }\r\n  ]\r\n}"
+    headers:
+      cache-control:
+      - no-cache, max-age=0, s-maxage=0, private
+      content-length:
+      - '36'
+      content-range:
+      - bytes 800-835/836
+      content-type:
+      - application/octet-stream
+      date:
+      - Thu, 30 Sep 2021 23:56:09 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+    status:
+      code: 206
+      message: Partial Content
+version: 1

@@ -28,8 +28,7 @@ import asyncio
 from itertools import groupby
 from typing import AsyncIterator
 from multidict import CIMultiDict
-from . import HttpRequest, AsyncHttpResponse
-from ._helpers_py3 import iter_raw_helper, iter_bytes_helper
+from ._http_response_impl_async import AsyncHttpResponseImpl
 from ..pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
 
 class _ItemsView(collections.abc.ItemsView):
@@ -115,42 +114,26 @@ class _CIMultiDict(CIMultiDict):
             values = ", ".join(values)
         return values or default
 
-class RestAioHttpTransportResponse(AsyncHttpResponse):
+class RestAioHttpTransportResponse(AsyncHttpResponseImpl):
     def __init__(
         self,
         *,
-        request: HttpRequest,
         internal_response,
+        decompress: bool = True,
+        **kwargs
     ):
-        super().__init__(request=request, internal_response=internal_response)
-        self.status_code = internal_response.status
-        self.headers = _CIMultiDict(internal_response.headers)  # type: ignore
-        self.reason = internal_response.reason
-        self.content_type = internal_response.headers.get('content-type')
-
-    async def iter_raw(self) -> AsyncIterator[bytes]:
-        """Asynchronously iterates over the response's bytes. Will not decompress in the process
-
-        :return: An async iterator of bytes from the response
-        :rtype: AsyncIterator[bytes]
-        """
-        async for part in iter_raw_helper(AioHttpStreamDownloadGenerator, self):
-            yield part
-        await self.close()
-
-    async def iter_bytes(self) -> AsyncIterator[bytes]:
-        """Asynchronously iterates over the response's bytes. Will decompress in the process
-
-        :return: An async iterator of bytes from the response
-        :rtype: AsyncIterator[bytes]
-        """
-        async for part in iter_bytes_helper(
-            AioHttpStreamDownloadGenerator,
-            self,
-            content=self._content
-        ):
-            yield part
-        await self.close()
+        headers = _CIMultiDict(internal_response.headers)
+        super().__init__(
+            internal_response=internal_response,
+            status_code=internal_response.status,
+            headers=headers,
+            content_type=headers.get('content-type'),
+            reason=internal_response.reason,
+            stream_download_generator=AioHttpStreamDownloadGenerator,
+            content=None,
+            **kwargs
+        )
+        self._decompress = decompress
 
     def __getstate__(self):
         state = self.__dict__.copy()
@@ -165,6 +148,7 @@ class RestAioHttpTransportResponse(AsyncHttpResponse):
         :return: None
         :rtype: None
         """
-        self.is_closed = True
-        self._internal_response.close()
-        await asyncio.sleep(0)
+        if not self.is_closed:
+            self._is_closed = True
+            self._internal_response.close()
+            await asyncio.sleep(0)

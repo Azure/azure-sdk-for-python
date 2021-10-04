@@ -23,10 +23,6 @@ def create_mock_call_connection(call_connection_id, status_code, payload, use_ma
     calling_server_client = create_mock_calling_server_client(status_code, payload, use_managed_identity)
     return calling_server_client.get_call_connection(call_connection_id)
 
-def create_mock_server_call(server_call_id, status_code, payload, use_managed_identity=False):
-    calling_server_client = create_mock_calling_server_client(status_code, payload, use_managed_identity)
-    return calling_server_client.initialize_server_call(server_call_id)
-
 def create_mock_calling_server_client(status_code, payload, use_managed_identity=False):
     async def async_mock_send(*_, **__):
         return _mock_response(status_code=status_code, json_payload=payload)

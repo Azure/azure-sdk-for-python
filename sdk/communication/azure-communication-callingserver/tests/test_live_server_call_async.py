@@ -3,8 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import os, uuid
-import pytest
+import os, uuid, pytest
 from time import sleep
 
 import utils._test_constants as CONST
@@ -63,6 +62,7 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
             http_logging_policy=get_http_logging_policy()
         )
 
+    @pytest.mark.skip(reason="Skip because the server side bits not ready")
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_join_play_cancel_hangup_scenario_async(self):
         async with self.callingserver_client:

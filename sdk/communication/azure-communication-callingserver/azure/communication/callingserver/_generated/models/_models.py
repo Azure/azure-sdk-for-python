@@ -94,6 +94,122 @@ class AddParticipantResultEvent(msrest.serialization.Model):
         self.status = kwargs['status']
 
 
+class AddParticipantWithCallLocatorRequest(msrest.serialization.Model):
+    """The add participant request with call locator.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param call_locator: Required. The call locator.
+    :type call_locator: ~azure.communication.callingserver.models.CallLocatorModel
+    :param add_participant_request: Required. The add participant request.
+    :type add_participant_request: ~azure.communication.callingserver.models.AddParticipantRequest
+    """
+
+    _validation = {
+        'call_locator': {'required': True},
+        'add_participant_request': {'required': True},
+    }
+
+    _attribute_map = {
+        'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
+        'add_participant_request': {'key': 'addParticipantRequest', 'type': 'AddParticipantRequest'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AddParticipantWithCallLocatorRequest, self).__init__(**kwargs)
+        self.call_locator = kwargs['call_locator']
+        self.add_participant_request = kwargs['add_participant_request']
+
+
+class AnswerCallRequest(msrest.serialization.Model):
+    """The request payload for answering the call.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param incoming_call_context: The context associated with the call.
+    :type incoming_call_context: str
+    :param participant_capacity: The number of participant that the application can handle for the
+     call.
+    :type participant_capacity: int
+    :param callback_url: Required. The callback url.
+    :type callback_url: str
+    :param requested_media_types: The requested modalities.
+    :type requested_media_types: list[str or ~azure.communication.callingserver.models.MediaType]
+    :param requested_call_events: The requested call events to subscribe to.
+    :type requested_call_events: list[str or
+     ~azure.communication.callingserver.models.EventSubscriptionType]
+    """
+
+    _validation = {
+        'callback_url': {'required': True},
+    }
+
+    _attribute_map = {
+        'incoming_call_context': {'key': 'incomingCallContext', 'type': 'str'},
+        'participant_capacity': {'key': 'participantCapacity', 'type': 'int'},
+        'callback_url': {'key': 'callbackUrl', 'type': 'str'},
+        'requested_media_types': {'key': 'requestedMediaTypes', 'type': '[str]'},
+        'requested_call_events': {'key': 'requestedCallEvents', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AnswerCallRequest, self).__init__(**kwargs)
+        self.incoming_call_context = kwargs.get('incoming_call_context', None)
+        self.participant_capacity = kwargs.get('participant_capacity', None)
+        self.callback_url = kwargs['callback_url']
+        self.requested_media_types = kwargs.get('requested_media_types', None)
+        self.requested_call_events = kwargs.get('requested_call_events', None)
+
+
+class AnswerCallResult(msrest.serialization.Model):
+    """The response payload of the answer call operation.
+
+    :param call_connection_id: The call connection id.
+    :type call_connection_id: str
+    """
+
+    _attribute_map = {
+        'call_connection_id': {'key': 'callConnectionId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AnswerCallResult, self).__init__(**kwargs)
+        self.call_connection_id = kwargs.get('call_connection_id', None)
+
+
+class AudioRoutingGroupRequest(msrest.serialization.Model):
+    """The audio routing group request.
+
+    :param audio_routing_mode: The audio routing mode. Possible values include: "oneToOne",
+     "multicast".
+    :type audio_routing_mode: str or ~azure.communication.callingserver.models.AudioRoutingMode
+    :param targets: The target identities that would be receivers in the audio routing group.
+    :type targets: list[~azure.communication.callingserver.models.CommunicationIdentifierModel]
+    """
+
+    _attribute_map = {
+        'audio_routing_mode': {'key': 'audioRoutingMode', 'type': 'str'},
+        'targets': {'key': 'targets', 'type': '[CommunicationIdentifierModel]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AudioRoutingGroupRequest, self).__init__(**kwargs)
+        self.audio_routing_mode = kwargs.get('audio_routing_mode', None)
+        self.targets = kwargs.get('targets', None)
+
+
 class CallConnectionProperties(msrest.serialization.Model):
     """CallConnectionProperties.
 
@@ -119,8 +235,8 @@ class CallConnectionProperties(msrest.serialization.Model):
     :param requested_call_events: The requested call events to subscribe to.
     :type requested_call_events: list[str or
      ~azure.communication.callingserver.models.EventSubscriptionType]
-    :param server_call_id: The server call id.
-    :type server_call_id: str
+    :param call_locator: The locator used for joining or taking action on a call.
+    :type call_locator: ~azure.communication.callingserver.models.CallLocatorModel
     """
 
     _attribute_map = {
@@ -133,7 +249,7 @@ class CallConnectionProperties(msrest.serialization.Model):
         'callback_uri': {'key': 'callbackUri', 'type': 'str'},
         'requested_media_types': {'key': 'requestedMediaTypes', 'type': '[str]'},
         'requested_call_events': {'key': 'requestedCallEvents', 'type': '[str]'},
-        'server_call_id': {'key': 'serverCallId', 'type': 'str'},
+        'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
     }
 
     def __init__(
@@ -150,7 +266,7 @@ class CallConnectionProperties(msrest.serialization.Model):
         self.callback_uri = kwargs.get('callback_uri', None)
         self.requested_media_types = kwargs.get('requested_media_types', None)
         self.requested_call_events = kwargs.get('requested_call_events', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
+        self.call_locator = kwargs.get('call_locator', None)
 
 
 class CallConnectionStateChangedEvent(msrest.serialization.Model):
@@ -187,6 +303,34 @@ class CallConnectionStateChangedEvent(msrest.serialization.Model):
         self.server_call_id = kwargs.get('server_call_id', None)
         self.call_connection_id = kwargs.get('call_connection_id', None)
         self.call_connection_state = kwargs['call_connection_state']
+
+
+class CallLocatorModel(msrest.serialization.Model):
+    """The locator used for joining or taking action on a call.
+
+    :param group_call_id: The group call id.
+    :type group_call_id: str
+    :param server_call_id: The server call id.
+    :type server_call_id: str
+    :param kind: The call locator kind. Possible values include: "groupCallLocator",
+     "serverCallLocator".
+    :type kind: str or ~azure.communication.callingserver.models.CallLocatorKindModel
+    """
+
+    _attribute_map = {
+        'group_call_id': {'key': 'groupCallId', 'type': 'str'},
+        'server_call_id': {'key': 'serverCallId', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CallLocatorModel, self).__init__(**kwargs)
+        self.group_call_id = kwargs.get('group_call_id', None)
+        self.server_call_id = kwargs.get('server_call_id', None)
+        self.kind = kwargs.get('kind', None)
 
 
 class CallParticipant(msrest.serialization.Model):
@@ -368,6 +512,100 @@ class CancelMediaOperationRequest(msrest.serialization.Model):
     ):
         super(CancelMediaOperationRequest, self).__init__(**kwargs)
         self.media_operation_id = kwargs['media_operation_id']
+
+
+class CancelMediaOperationWithCallLocatorRequest(msrest.serialization.Model):
+    """The request payload for stopping a media operation for a participant with call locator.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param call_locator: Required. The call locator.
+    :type call_locator: ~azure.communication.callingserver.models.CallLocatorModel
+    :param cancel_media_operation_request: Required. The request payload for stopping a media
+     operation.
+    :type cancel_media_operation_request:
+     ~azure.communication.callingserver.models.CancelMediaOperationRequest
+    """
+
+    _validation = {
+        'call_locator': {'required': True},
+        'cancel_media_operation_request': {'required': True},
+    }
+
+    _attribute_map = {
+        'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
+        'cancel_media_operation_request': {'key': 'cancelMediaOperationRequest', 'type': 'CancelMediaOperationRequest'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CancelMediaOperationWithCallLocatorRequest, self).__init__(**kwargs)
+        self.call_locator = kwargs['call_locator']
+        self.cancel_media_operation_request = kwargs['cancel_media_operation_request']
+
+
+class CancelParticipantMediaOperationRequest(msrest.serialization.Model):
+    """The request payload for stopping a media operation for a participant.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param identifier: Required. The identifier of the participant.
+    :type identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
+    :param media_operation_id: Required. The operationId of the media operation to cancel.
+    :type media_operation_id: str
+    """
+
+    _validation = {
+        'identifier': {'required': True},
+        'media_operation_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'identifier': {'key': 'identifier', 'type': 'CommunicationIdentifierModel'},
+        'media_operation_id': {'key': 'mediaOperationId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CancelParticipantMediaOperationRequest, self).__init__(**kwargs)
+        self.identifier = kwargs['identifier']
+        self.media_operation_id = kwargs['media_operation_id']
+
+
+class CancelParticipantMediaOperationWithCallLocatorRequest(msrest.serialization.Model):
+    """The request payload for stopping a media operation for a participant with call locator.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param call_locator: Required. The call locator.
+    :type call_locator: ~azure.communication.callingserver.models.CallLocatorModel
+    :param cancel_participant_media_operation_request: Required. The request payload for stopping a
+     media operation.
+    :type cancel_participant_media_operation_request:
+     ~azure.communication.callingserver.models.CancelParticipantMediaOperationRequest
+    """
+
+    _validation = {
+        'call_locator': {'required': True},
+        'cancel_participant_media_operation_request': {'required': True},
+    }
+
+    _attribute_map = {
+        'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
+        'cancel_participant_media_operation_request': {'key': 'cancelParticipantMediaOperationRequest', 'type': 'CancelParticipantMediaOperationRequest'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CancelParticipantMediaOperationWithCallLocatorRequest, self).__init__(**kwargs)
+        self.call_locator = kwargs['call_locator']
+        self.cancel_participant_media_operation_request = kwargs['cancel_participant_media_operation_request']
 
 
 class CommunicationError(msrest.serialization.Model):
@@ -572,7 +810,32 @@ class CreateCallResult(msrest.serialization.Model):
         self.call_connection_id = kwargs.get('call_connection_id', None)
 
 
-class GetParticipantByIdRequest(msrest.serialization.Model):
+class GetAllParticipantsWithCallLocatorRequest(msrest.serialization.Model):
+    """The request payload for get all participants.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param call_locator: Required. The call locator.
+    :type call_locator: ~azure.communication.callingserver.models.CallLocatorModel
+    """
+
+    _validation = {
+        'call_locator': {'required': True},
+    }
+
+    _attribute_map = {
+        'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(GetAllParticipantsWithCallLocatorRequest, self).__init__(**kwargs)
+        self.call_locator = kwargs['call_locator']
+
+
+class GetParticipantRequest(msrest.serialization.Model):
     """The get participant by identifier request.
 
     All required parameters must be populated in order to send to Azure.
@@ -593,7 +856,92 @@ class GetParticipantByIdRequest(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(GetParticipantByIdRequest, self).__init__(**kwargs)
+        super(GetParticipantRequest, self).__init__(**kwargs)
+        self.identifier = kwargs['identifier']
+
+
+class GetParticipantWithCallLocatorRequest(msrest.serialization.Model):
+    """The get participant by identifier request using call locator.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param call_locator: Required. The call locator.
+    :type call_locator: ~azure.communication.callingserver.models.CallLocatorModel
+    :param get_participant_request: Required. The get participant by identifier request.
+    :type get_participant_request: ~azure.communication.callingserver.models.GetParticipantRequest
+    """
+
+    _validation = {
+        'call_locator': {'required': True},
+        'get_participant_request': {'required': True},
+    }
+
+    _attribute_map = {
+        'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
+        'get_participant_request': {'key': 'getParticipantRequest', 'type': 'GetParticipantRequest'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(GetParticipantWithCallLocatorRequest, self).__init__(**kwargs)
+        self.call_locator = kwargs['call_locator']
+        self.get_participant_request = kwargs['get_participant_request']
+
+
+class HoldMeetingAudioRequest(msrest.serialization.Model):
+    """The request payload for holding meeting audio for a participant.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param identifier: Required. The identifier of the participant.
+    :type identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
+    """
+
+    _validation = {
+        'identifier': {'required': True},
+    }
+
+    _attribute_map = {
+        'identifier': {'key': 'identifier', 'type': 'CommunicationIdentifierModel'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(HoldMeetingAudioRequest, self).__init__(**kwargs)
+        self.identifier = kwargs['identifier']
+
+
+class HoldMeetingAudioWithCallLocatorRequest(msrest.serialization.Model):
+    """The request payload for holding meeting audio for a participant.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param call_locator: Required. The call locator.
+    :type call_locator: ~azure.communication.callingserver.models.CallLocatorModel
+    :param identifier: Required. The identifier of the participant.
+    :type identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
+    """
+
+    _validation = {
+        'call_locator': {'required': True},
+        'identifier': {'required': True},
+    }
+
+    _attribute_map = {
+        'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
+        'identifier': {'key': 'identifier', 'type': 'CommunicationIdentifierModel'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(HoldMeetingAudioWithCallLocatorRequest, self).__init__(**kwargs)
+        self.call_locator = kwargs['call_locator']
         self.identifier = kwargs['identifier']
 
 
@@ -602,6 +950,8 @@ class JoinCallRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param call_locator: The call locator.
+    :type call_locator: ~azure.communication.callingserver.models.CallLocatorModel
     :param source: Required. The source of the call.
     :type source: ~azure.communication.callingserver.models.CommunicationIdentifierModel
     :param subject: The subject.
@@ -621,6 +971,7 @@ class JoinCallRequest(msrest.serialization.Model):
     }
 
     _attribute_map = {
+        'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
         'source': {'key': 'source', 'type': 'CommunicationIdentifierModel'},
         'subject': {'key': 'subject', 'type': 'str'},
         'callback_uri': {'key': 'callbackUri', 'type': 'str'},
@@ -633,6 +984,7 @@ class JoinCallRequest(msrest.serialization.Model):
         **kwargs
     ):
         super(JoinCallRequest, self).__init__(**kwargs)
+        self.call_locator = kwargs.get('call_locator', None)
         self.source = kwargs['source']
         self.subject = kwargs.get('subject', None)
         self.callback_uri = kwargs['callback_uri']
@@ -694,6 +1046,61 @@ class MicrosoftTeamsUserIdentifierModel(msrest.serialization.Model):
         self.user_id = kwargs['user_id']
         self.is_anonymous = kwargs.get('is_anonymous', None)
         self.cloud = kwargs.get('cloud', None)
+
+
+class MuteParticipantRequest(msrest.serialization.Model):
+    """The request payload for muting any participant.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param identifier: Required. The identifier of the participant to be muted in the call.
+    :type identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
+    """
+
+    _validation = {
+        'identifier': {'required': True},
+    }
+
+    _attribute_map = {
+        'identifier': {'key': 'identifier', 'type': 'CommunicationIdentifierModel'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MuteParticipantRequest, self).__init__(**kwargs)
+        self.identifier = kwargs['identifier']
+
+
+class MuteParticipantWithCallLocatorRequest(msrest.serialization.Model):
+    """The request payload for muting any participant using call locator.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param call_locator: Required. The call locator.
+    :type call_locator: ~azure.communication.callingserver.models.CallLocatorModel
+    :param identifier: Required. The identifier of the participant to be muted in the call.
+    :type identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
+    """
+
+    _validation = {
+        'call_locator': {'required': True},
+        'identifier': {'required': True},
+    }
+
+    _attribute_map = {
+        'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
+        'identifier': {'key': 'identifier', 'type': 'CommunicationIdentifierModel'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MuteParticipantWithCallLocatorRequest, self).__init__(**kwargs)
+        self.call_locator = kwargs['call_locator']
+        self.identifier = kwargs['identifier']
 
 
 class ParticipantsUpdatedEvent(msrest.serialization.Model):
@@ -862,7 +1269,192 @@ class PlayAudioResultEvent(msrest.serialization.Model):
         self.status = kwargs['status']
 
 
-class RemoveParticipantByIdRequest(msrest.serialization.Model):
+class PlayAudioToParticipantRequest(msrest.serialization.Model):
+    """The request payload for playing audio to participant.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param identifier: Required. The identifier of the participant to play audio to.
+    :type identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
+    :param audio_file_uri: The media resource uri of the play audio request.
+     Currently only Wave file (.wav) format audio prompts are supported.
+     More specifically, the audio content in the wave file must be mono (single-channel),
+     16-bit samples with a 16,000 (16KHz) sampling rate.
+    :type audio_file_uri: str
+    :param loop: Required. The flag indicating whether audio file needs to be played in loop or
+     not.
+    :type loop: bool
+    :param operation_context: The value to identify context of the operation.
+    :type operation_context: str
+    :param audio_file_id: An id for the media in the AudioFileUri, using which we cache the media
+     resource.
+    :type audio_file_id: str
+    :param callback_uri: The callback Uri to receive PlayAudio status notifications.
+    :type callback_uri: str
+    """
+
+    _validation = {
+        'identifier': {'required': True},
+        'loop': {'required': True},
+    }
+
+    _attribute_map = {
+        'identifier': {'key': 'identifier', 'type': 'CommunicationIdentifierModel'},
+        'audio_file_uri': {'key': 'audioFileUri', 'type': 'str'},
+        'loop': {'key': 'loop', 'type': 'bool'},
+        'operation_context': {'key': 'operationContext', 'type': 'str'},
+        'audio_file_id': {'key': 'audioFileId', 'type': 'str'},
+        'callback_uri': {'key': 'callbackUri', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PlayAudioToParticipantRequest, self).__init__(**kwargs)
+        self.identifier = kwargs['identifier']
+        self.audio_file_uri = kwargs.get('audio_file_uri', None)
+        self.loop = kwargs['loop']
+        self.operation_context = kwargs.get('operation_context', None)
+        self.audio_file_id = kwargs.get('audio_file_id', None)
+        self.callback_uri = kwargs.get('callback_uri', None)
+
+
+class PlayAudioToParticipantWithCallLocatorRequest(msrest.serialization.Model):
+    """The request payload for playing audio with call locator to participant.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param call_locator: Required. The call locator.
+    :type call_locator: ~azure.communication.callingserver.models.CallLocatorModel
+    :param play_audio_to_participant_request: The play audio to participant request.
+    :type play_audio_to_participant_request:
+     ~azure.communication.callingserver.models.PlayAudioToParticipantRequest
+    """
+
+    _validation = {
+        'call_locator': {'required': True},
+    }
+
+    _attribute_map = {
+        'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
+        'play_audio_to_participant_request': {'key': 'playAudioToParticipantRequest', 'type': 'PlayAudioToParticipantRequest'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PlayAudioToParticipantWithCallLocatorRequest, self).__init__(**kwargs)
+        self.call_locator = kwargs['call_locator']
+        self.play_audio_to_participant_request = kwargs.get('play_audio_to_participant_request', None)
+
+
+class PlayAudioWithCallLocatorRequest(msrest.serialization.Model):
+    """The request payload for playing audio with call locator.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param call_locator: Required. The call locator.
+    :type call_locator: ~azure.communication.callingserver.models.CallLocatorModel
+    :param play_audio_request: Required. The request payload for playing audio.
+    :type play_audio_request: ~azure.communication.callingserver.models.PlayAudioRequest
+    """
+
+    _validation = {
+        'call_locator': {'required': True},
+        'play_audio_request': {'required': True},
+    }
+
+    _attribute_map = {
+        'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
+        'play_audio_request': {'key': 'playAudioRequest', 'type': 'PlayAudioRequest'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PlayAudioWithCallLocatorRequest, self).__init__(**kwargs)
+        self.call_locator = kwargs['call_locator']
+        self.play_audio_request = kwargs['play_audio_request']
+
+
+class RedirectCallRequest(msrest.serialization.Model):
+    """The request payload for redirecting the call.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param incoming_call_context: Required. The context associated with the call.
+    :type incoming_call_context: str
+    :param targets: Required. The target identity to redirect the call to.
+    :type targets: list[~azure.communication.callingserver.models.CommunicationIdentifierModel]
+    :param callback_url: Required. The callback url.
+    :type callback_url: str
+    :param timeout: The timeout for the redirect in seconds.
+    :type timeout: int
+    """
+
+    _validation = {
+        'incoming_call_context': {'required': True},
+        'targets': {'required': True},
+        'callback_url': {'required': True},
+    }
+
+    _attribute_map = {
+        'incoming_call_context': {'key': 'incomingCallContext', 'type': 'str'},
+        'targets': {'key': 'targets', 'type': '[CommunicationIdentifierModel]'},
+        'callback_url': {'key': 'callbackUrl', 'type': 'str'},
+        'timeout': {'key': 'timeout', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RedirectCallRequest, self).__init__(**kwargs)
+        self.incoming_call_context = kwargs['incoming_call_context']
+        self.targets = kwargs['targets']
+        self.callback_url = kwargs['callback_url']
+        self.timeout = kwargs.get('timeout', None)
+
+
+class RejectCallRequest(msrest.serialization.Model):
+    """The request payload for rejecting the call.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param incoming_call_context: Required. The context associated with the call.
+    :type incoming_call_context: str
+    :param call_reject_reason: The rejection reason. Possible values include: "none", "busy",
+     "forbidden".
+    :type call_reject_reason: str or ~azure.communication.callingserver.models.CallRejectReason
+    :param callback_url: Required. The callback url.
+    :type callback_url: str
+    """
+
+    _validation = {
+        'incoming_call_context': {'required': True},
+        'callback_url': {'required': True},
+    }
+
+    _attribute_map = {
+        'incoming_call_context': {'key': 'incomingCallContext', 'type': 'str'},
+        'call_reject_reason': {'key': 'callRejectReason', 'type': 'str'},
+        'callback_url': {'key': 'callbackUrl', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RejectCallRequest, self).__init__(**kwargs)
+        self.incoming_call_context = kwargs['incoming_call_context']
+        self.call_reject_reason = kwargs.get('call_reject_reason', None)
+        self.callback_url = kwargs['callback_url']
+
+
+class RemoveParticipantRequest(msrest.serialization.Model):
     """The remove participant by identifier request.
 
     All required parameters must be populated in order to send to Azure.
@@ -883,8 +1475,39 @@ class RemoveParticipantByIdRequest(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(RemoveParticipantByIdRequest, self).__init__(**kwargs)
+        super(RemoveParticipantRequest, self).__init__(**kwargs)
         self.identifier = kwargs['identifier']
+
+
+class RemoveParticipantWithCallLocatorRequest(msrest.serialization.Model):
+    """The remove participant by identifier request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param call_locator: Required. The call locator.
+    :type call_locator: ~azure.communication.callingserver.models.CallLocatorModel
+    :param remove_participant_request: Required. The remove participant by identifier request.
+    :type remove_participant_request:
+     ~azure.communication.callingserver.models.RemoveParticipantRequest
+    """
+
+    _validation = {
+        'call_locator': {'required': True},
+        'remove_participant_request': {'required': True},
+    }
+
+    _attribute_map = {
+        'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
+        'remove_participant_request': {'key': 'removeParticipantRequest', 'type': 'RemoveParticipantRequest'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RemoveParticipantWithCallLocatorRequest, self).__init__(**kwargs)
+        self.call_locator = kwargs['call_locator']
+        self.remove_participant_request = kwargs['remove_participant_request']
 
 
 class ResultInfo(msrest.serialization.Model):
@@ -920,6 +1543,61 @@ class ResultInfo(msrest.serialization.Model):
         self.code = kwargs['code']
         self.subcode = kwargs['subcode']
         self.message = kwargs.get('message', None)
+
+
+class ResumeMeetingAudioRequest(msrest.serialization.Model):
+    """The request payload for resuming meeting audio for a participant.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param identifier: Required. The identifier of the participant.
+    :type identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
+    """
+
+    _validation = {
+        'identifier': {'required': True},
+    }
+
+    _attribute_map = {
+        'identifier': {'key': 'identifier', 'type': 'CommunicationIdentifierModel'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ResumeMeetingAudioRequest, self).__init__(**kwargs)
+        self.identifier = kwargs['identifier']
+
+
+class ResumeMeetingAudioWithCallLocatorRequest(msrest.serialization.Model):
+    """The request payload for resuming meeting audio for a participant.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param call_locator: Required. The call locator.
+    :type call_locator: ~azure.communication.callingserver.models.CallLocatorModel
+    :param identifier: Required. The identifier of the participant.
+    :type identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
+    """
+
+    _validation = {
+        'call_locator': {'required': True},
+        'identifier': {'required': True},
+    }
+
+    _attribute_map = {
+        'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
+        'identifier': {'key': 'identifier', 'type': 'CommunicationIdentifierModel'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ResumeMeetingAudioWithCallLocatorRequest, self).__init__(**kwargs)
+        self.call_locator = kwargs['call_locator']
+        self.identifier = kwargs['identifier']
 
 
 class StartCallRecordingRequest(msrest.serialization.Model):
@@ -978,9 +1656,45 @@ class StartCallRecordingResult(msrest.serialization.Model):
         self.recording_id = kwargs.get('recording_id', None)
 
 
+class StartCallRecordingWithCallLocatorRequest(msrest.serialization.Model):
+    """The request payload start for call recording operation with call locator.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param call_locator: Required. The call locator.
+    :type call_locator: ~azure.communication.callingserver.models.CallLocatorModel
+    :param start_call_recording_request: Required. The request payload for start call recording
+     operation.
+    :type start_call_recording_request:
+     ~azure.communication.callingserver.models.StartCallRecordingRequest
+    """
+
+    _validation = {
+        'call_locator': {'required': True},
+        'start_call_recording_request': {'required': True},
+    }
+
+    _attribute_map = {
+        'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
+        'start_call_recording_request': {'key': 'startCallRecordingRequest', 'type': 'StartCallRecordingRequest'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(StartCallRecordingWithCallLocatorRequest, self).__init__(**kwargs)
+        self.call_locator = kwargs['call_locator']
+        self.start_call_recording_request = kwargs['start_call_recording_request']
+
+
 class StartHoldMusicRequest(msrest.serialization.Model):
     """The request payload for playing hold music for a participant.
 
+    All required parameters must be populated in order to send to Azure.
+
+    :param identifier: Required. The identifier of the participant.
+    :type identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
     :param audio_file_uri: The media resource uri of the hold music request.
      Currently only Wave file (.wav) format audio prompts are supported.
      More specifically, the audio content in the wave file must be mono (single-channel),
@@ -991,12 +1705,20 @@ class StartHoldMusicRequest(msrest.serialization.Model):
     :type audio_file_id: str
     :param callback_uri: The callback URI.
     :type callback_uri: str
+    :param operation_context: The value to identify context of the operation.
+    :type operation_context: str
     """
 
+    _validation = {
+        'identifier': {'required': True},
+    }
+
     _attribute_map = {
+        'identifier': {'key': 'identifier', 'type': 'CommunicationIdentifierModel'},
         'audio_file_uri': {'key': 'audioFileUri', 'type': 'str'},
         'audio_file_id': {'key': 'audioFileId', 'type': 'str'},
         'callback_uri': {'key': 'callbackUri', 'type': 'str'},
+        'operation_context': {'key': 'operationContext', 'type': 'str'},
     }
 
     def __init__(
@@ -1004,9 +1726,11 @@ class StartHoldMusicRequest(msrest.serialization.Model):
         **kwargs
     ):
         super(StartHoldMusicRequest, self).__init__(**kwargs)
+        self.identifier = kwargs['identifier']
         self.audio_file_uri = kwargs.get('audio_file_uri', None)
         self.audio_file_id = kwargs.get('audio_file_id', None)
         self.callback_uri = kwargs.get('callback_uri', None)
+        self.operation_context = kwargs.get('operation_context', None)
 
 
 class StartHoldMusicResult(msrest.serialization.Model):
@@ -1047,22 +1771,52 @@ class StartHoldMusicResult(msrest.serialization.Model):
         self.result_info = kwargs.get('result_info', None)
 
 
-class StopHoldMusicRequest(msrest.serialization.Model):
-    """The request payload for playing hold music for a participant.
+class StartHoldMusicWithCallLocatorRequest(msrest.serialization.Model):
+    """The request payload for playing hold music for a participant with call locator.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param start_hold_music_operation_id: Required. The operationId of the StartHoldMusicOperation
-     to stop.
-    :type start_hold_music_operation_id: str
+    :param call_locator: Required. The call locator.
+    :type call_locator: ~azure.communication.callingserver.models.CallLocatorModel
+    :param start_hold_music_request: Required. The request payload for playing hold music for a
+     participant.
+    :type start_hold_music_request: ~azure.communication.callingserver.models.StartHoldMusicRequest
     """
 
     _validation = {
-        'start_hold_music_operation_id': {'required': True},
+        'call_locator': {'required': True},
+        'start_hold_music_request': {'required': True},
     }
 
     _attribute_map = {
-        'start_hold_music_operation_id': {'key': 'startHoldMusicOperationId', 'type': 'str'},
+        'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
+        'start_hold_music_request': {'key': 'startHoldMusicRequest', 'type': 'StartHoldMusicRequest'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(StartHoldMusicWithCallLocatorRequest, self).__init__(**kwargs)
+        self.call_locator = kwargs['call_locator']
+        self.start_hold_music_request = kwargs['start_hold_music_request']
+
+
+class StopHoldMusicRequest(msrest.serialization.Model):
+    """The request payload for removing participant from hold.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param identifier: Required. The identifier of the participant.
+    :type identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
+    """
+
+    _validation = {
+        'identifier': {'required': True},
+    }
+
+    _attribute_map = {
+        'identifier': {'key': 'identifier', 'type': 'CommunicationIdentifierModel'},
     }
 
     def __init__(
@@ -1070,7 +1824,7 @@ class StopHoldMusicRequest(msrest.serialization.Model):
         **kwargs
     ):
         super(StopHoldMusicRequest, self).__init__(**kwargs)
-        self.start_hold_music_operation_id = kwargs['start_hold_music_operation_id']
+        self.identifier = kwargs['identifier']
 
 
 class StopHoldMusicResult(msrest.serialization.Model):
@@ -1109,6 +1863,42 @@ class StopHoldMusicResult(msrest.serialization.Model):
         self.status = kwargs['status']
         self.operation_context = kwargs.get('operation_context', None)
         self.result_info = kwargs.get('result_info', None)
+
+
+class StopHoldMusicWithCallLocatorRequest(msrest.serialization.Model):
+    """The request payload for removing participant from hold using call locator.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param call_locator: Required. The call locator.
+    :type call_locator: ~azure.communication.callingserver.models.CallLocatorModel
+    :param identifier: Required. The identifier of the participant.
+    :type identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
+    :param start_hold_music_operation_id: Required. The operationId of the StartHoldMusicOperation
+     to stop.
+    :type start_hold_music_operation_id: str
+    """
+
+    _validation = {
+        'call_locator': {'required': True},
+        'identifier': {'required': True},
+        'start_hold_music_operation_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
+        'identifier': {'key': 'identifier', 'type': 'CommunicationIdentifierModel'},
+        'start_hold_music_operation_id': {'key': 'startHoldMusicOperationId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(StopHoldMusicWithCallLocatorRequest, self).__init__(**kwargs)
+        self.call_locator = kwargs['call_locator']
+        self.identifier = kwargs['identifier']
+        self.start_hold_music_operation_id = kwargs['start_hold_music_operation_id']
 
 
 class ToneInfo(msrest.serialization.Model):
@@ -1202,3 +1992,58 @@ class TransferCallRequest(msrest.serialization.Model):
         super(TransferCallRequest, self).__init__(**kwargs)
         self.target_participant = kwargs['target_participant']
         self.user_to_user_information = kwargs.get('user_to_user_information', None)
+
+
+class UnmuteParticipantRequest(msrest.serialization.Model):
+    """The request payload for unmuting any participant.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param identifier: Required. The identifier of the participant to be unmuted in the call.
+    :type identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
+    """
+
+    _validation = {
+        'identifier': {'required': True},
+    }
+
+    _attribute_map = {
+        'identifier': {'key': 'identifier', 'type': 'CommunicationIdentifierModel'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(UnmuteParticipantRequest, self).__init__(**kwargs)
+        self.identifier = kwargs['identifier']
+
+
+class UnmuteParticipantWithCallLocatorRequest(msrest.serialization.Model):
+    """The request payload for unmuting any participant.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param call_locator: Required. The call locator.
+    :type call_locator: ~azure.communication.callingserver.models.CallLocatorModel
+    :param identifier: Required. The identifier of the participant to be unmuted in the call.
+    :type identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
+    """
+
+    _validation = {
+        'call_locator': {'required': True},
+        'identifier': {'required': True},
+    }
+
+    _attribute_map = {
+        'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
+        'identifier': {'key': 'identifier', 'type': 'CommunicationIdentifierModel'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(UnmuteParticipantWithCallLocatorRequest, self).__init__(**kwargs)
+        self.call_locator = kwargs['call_locator']
+        self.identifier = kwargs['identifier']

@@ -3,18 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 from typing import TYPE_CHECKING, Any, Optional  # pylint: disable=unused-import
-
 from azure.core.tracing.decorator import distributed_trace
-
+from .utils._utils import CallingServerUtils
 from ._communication_identifier_serializer import serialize_identifier
 from ._converters import (
     AddParticipantRequestConverter,
+    RemoveParticipantRequestConverter,
     CancelAllMediaOperationsConverter,
     TransferCallRequestConverter,
-    CancelMediaOperationRequestConverter,
-    PlayAudioRequestConverter
+    CancelParticipantMediaOperationRequestConverter,
+    PlayAudioRequestConverter,
+    PlayAudioToParticipantRequestConverter
     )
 from ._generated.models import (AddParticipantResult,
                                 CancelAllMediaOperationsResult,
@@ -73,8 +73,17 @@ class CallConnection(object):
         if not audio_file_uri:
             raise ValueError("audio_file_uri can not be None")
 
+        if not CallingServerUtils.is_valid_url(audio_file_uri):
+            raise ValueError("audio_file_uri is invalid")
+
         if not play_audio_options:
             raise ValueError("options can not be None")
+
+        if not play_audio_options.audio_file_id:
+            raise ValueError("audio_file_id can not be None")
+
+        if not CallingServerUtils.is_valid_url(play_audio_options.callback_uri):
+            raise ValueError("callback_uri is invalid")
 
         play_audio_request = PlayAudioRequestConverter.convert(audio_file_uri, play_audio_options)
 
@@ -115,64 +124,77 @@ class CallConnection(object):
     @distributed_trace()
     def remove_participant(
             self,
-            participant_id,  # type: str
+            participant,  # type: CommunicationIdentifier
             **kwargs  # type: Any
         ): # type: (...) -> None
 
+        remove_participant_request = RemoveParticipantRequestConverter.convert(
+            identifier=serialize_identifier(participant)
+            )
+
         return self._call_connection_client.remove_participant(
             call_connection_id=self.call_connection_id,
-            participant_id=participant_id,
+            remove_participant_request=remove_participant_request,
             **kwargs
         )
 
     @distributed_trace()
     def play_audio_to_participant(
             self,
-            participant_id,  # type: str
+            participant,  # type: CommunicationIdentifier
             audio_file_uri,  # type: str
             play_audio_options,  # type: PlayAudioOptions
             **kwargs  # type: Any
         ): # type: (...) -> PlayAudioResult
 
-        if not participant_id:
-            raise ValueError("participant_id can not be None")
+        if not participant:
+            raise ValueError("participant can not be None")
 
         if not audio_file_uri:
             raise ValueError("audio_file_uri can not be None")
 
-        if not play_audio_options:
-            raise ValueError("options can not be None")
+        if not CallingServerUtils.is_valid_url(audio_file_uri):
+            raise ValueError("audio_file_uri is invalid")
 
-        play_audio_request = PlayAudioRequestConverter.convert(audio_file_uri, play_audio_options)
+        if not play_audio_options:
+            raise ValueError("play_audio_options can not be None")
+
+        if not CallingServerUtils.is_valid_url(play_audio_options.callback_uri):
+            raise ValueError("callback_uri is invalid")
+
+        play_audio_to_participant_request = PlayAudioToParticipantRequestConverter.convert(
+            identifier=serialize_identifier(participant),
+            audio_file_uri=audio_file_uri,
+            play_audio_options=play_audio_options
+            )
 
         return self._call_connection_client.participant_play_audio(
             call_connection_id=self.call_connection_id,
-            participant_id=participant_id,
-            play_audio_request=play_audio_request,
+            play_audio_to_participant_request=play_audio_to_participant_request,
             **kwargs
         )
 
     @distributed_trace()
     def cancel_participant_media_operation(
             self,
-            participant_id,  # type: str
+            participant,  # type: CommunicationIdentifier
             media_operation_id,  # type: str
             **kwargs  # type: Any
         ):  # type: (...) -> None
 
-        if not participant_id:
-            raise ValueError("participant_id can not be None")
+        if not participant:
+            raise ValueError("participant can not be None")
 
         if not media_operation_id:
             raise ValueError("media_operation_id can not be None")
 
-        cancel_media_operation_request = CancelMediaOperationRequestConverter.convert(
+        cancel_media_operation_request = CancelParticipantMediaOperationRequestConverter.convert(
+            identifier=serialize_identifier(participant),
             media_operation_id=media_operation_id
             )
 
         return self._call_connection_client.cancel_participant_media_operation(
             call_connection_id=self.call_connection_id,
-            participant_id=participant_id,
             cancel_media_operation_request=cancel_media_operation_request,
             **kwargs
         )

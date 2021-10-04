@@ -108,7 +108,8 @@ adding something like the following in the package's `conftest.py` file:
 ```python
 from devtools_testutils import add_sanitizer
 
-@pytest.fixture(scope="session")
+# autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
+@pytest.fixture(scope="session", autouse=True)
 def sanitize_uris():
     add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")
 ```

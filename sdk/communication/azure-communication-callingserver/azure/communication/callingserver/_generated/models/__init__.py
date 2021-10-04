@@ -10,83 +10,143 @@ try:
     from ._models_py3 import AddParticipantRequest
     from ._models_py3 import AddParticipantResult
     from ._models_py3 import AddParticipantResultEvent
+    from ._models_py3 import AddParticipantWithCallLocatorRequest
+    from ._models_py3 import AnswerCallRequest
+    from ._models_py3 import AnswerCallResult
+    from ._models_py3 import AudioRoutingGroupRequest
     from ._models_py3 import CallConnectionProperties
     from ._models_py3 import CallConnectionStateChangedEvent
+    from ._models_py3 import CallLocatorModel
     from ._models_py3 import CallParticipant
     from ._models_py3 import CallRecordingProperties
     from ._models_py3 import CallRecordingStateChangeEvent
     from ._models_py3 import CancelAllMediaOperationsRequest
     from ._models_py3 import CancelAllMediaOperationsResult
     from ._models_py3 import CancelMediaOperationRequest
+    from ._models_py3 import CancelMediaOperationWithCallLocatorRequest
+    from ._models_py3 import CancelParticipantMediaOperationRequest
+    from ._models_py3 import CancelParticipantMediaOperationWithCallLocatorRequest
     from ._models_py3 import CommunicationError
     from ._models_py3 import CommunicationErrorResponse
     from ._models_py3 import CommunicationIdentifierModel
     from ._models_py3 import CommunicationUserIdentifierModel
     from ._models_py3 import CreateCallRequest
     from ._models_py3 import CreateCallResult
-    from ._models_py3 import GetParticipantByIdRequest
+    from ._models_py3 import GetAllParticipantsWithCallLocatorRequest
+    from ._models_py3 import GetParticipantRequest
+    from ._models_py3 import GetParticipantWithCallLocatorRequest
+    from ._models_py3 import HoldMeetingAudioRequest
+    from ._models_py3 import HoldMeetingAudioWithCallLocatorRequest
     from ._models_py3 import JoinCallRequest
     from ._models_py3 import JoinCallResult
     from ._models_py3 import MicrosoftTeamsUserIdentifierModel
+    from ._models_py3 import MuteParticipantRequest
+    from ._models_py3 import MuteParticipantWithCallLocatorRequest
     from ._models_py3 import ParticipantsUpdatedEvent
     from ._models_py3 import PhoneNumberIdentifierModel
     from ._models_py3 import PlayAudioRequest
     from ._models_py3 import PlayAudioResult
     from ._models_py3 import PlayAudioResultEvent
-    from ._models_py3 import RemoveParticipantByIdRequest
+    from ._models_py3 import PlayAudioToParticipantRequest
+    from ._models_py3 import PlayAudioToParticipantWithCallLocatorRequest
+    from ._models_py3 import PlayAudioWithCallLocatorRequest
+    from ._models_py3 import RedirectCallRequest
+    from ._models_py3 import RejectCallRequest
+    from ._models_py3 import RemoveParticipantRequest
+    from ._models_py3 import RemoveParticipantWithCallLocatorRequest
     from ._models_py3 import ResultInfo
+    from ._models_py3 import ResumeMeetingAudioRequest
+    from ._models_py3 import ResumeMeetingAudioWithCallLocatorRequest
     from ._models_py3 import StartCallRecordingRequest
     from ._models_py3 import StartCallRecordingResult
+    from ._models_py3 import StartCallRecordingWithCallLocatorRequest
     from ._models_py3 import StartHoldMusicRequest
     from ._models_py3 import StartHoldMusicResult
+    from ._models_py3 import StartHoldMusicWithCallLocatorRequest
     from ._models_py3 import StopHoldMusicRequest
     from ._models_py3 import StopHoldMusicResult
+    from ._models_py3 import StopHoldMusicWithCallLocatorRequest
     from ._models_py3 import ToneInfo
     from ._models_py3 import ToneReceivedEvent
     from ._models_py3 import TransferCallRequest
+    from ._models_py3 import UnmuteParticipantRequest
+    from ._models_py3 import UnmuteParticipantWithCallLocatorRequest
 except (SyntaxError, ImportError):
     from ._models import AddParticipantRequest  # type: ignore
     from ._models import AddParticipantResult  # type: ignore
     from ._models import AddParticipantResultEvent  # type: ignore
+    from ._models import AddParticipantWithCallLocatorRequest  # type: ignore
+    from ._models import AnswerCallRequest  # type: ignore
+    from ._models import AnswerCallResult  # type: ignore
+    from ._models import AudioRoutingGroupRequest  # type: ignore
     from ._models import CallConnectionProperties  # type: ignore
     from ._models import CallConnectionStateChangedEvent  # type: ignore
+    from ._models import CallLocatorModel  # type: ignore
     from ._models import CallParticipant  # type: ignore
     from ._models import CallRecordingProperties  # type: ignore
     from ._models import CallRecordingStateChangeEvent  # type: ignore
     from ._models import CancelAllMediaOperationsRequest  # type: ignore
     from ._models import CancelAllMediaOperationsResult  # type: ignore
     from ._models import CancelMediaOperationRequest  # type: ignore
+    from ._models import CancelMediaOperationWithCallLocatorRequest  # type: ignore
+    from ._models import CancelParticipantMediaOperationRequest  # type: ignore
+    from ._models import CancelParticipantMediaOperationWithCallLocatorRequest  # type: ignore
     from ._models import CommunicationError  # type: ignore
     from ._models import CommunicationErrorResponse  # type: ignore
     from ._models import CommunicationIdentifierModel  # type: ignore
     from ._models import CommunicationUserIdentifierModel  # type: ignore
     from ._models import CreateCallRequest  # type: ignore
     from ._models import CreateCallResult  # type: ignore
-    from ._models import GetParticipantByIdRequest  # type: ignore
+    from ._models import GetAllParticipantsWithCallLocatorRequest  # type: ignore
+    from ._models import GetParticipantRequest  # type: ignore
+    from ._models import GetParticipantWithCallLocatorRequest  # type: ignore
+    from ._models import HoldMeetingAudioRequest  # type: ignore
+    from ._models import HoldMeetingAudioWithCallLocatorRequest  # type: ignore
     from ._models import JoinCallRequest  # type: ignore
     from ._models import JoinCallResult  # type: ignore
     from ._models import MicrosoftTeamsUserIdentifierModel  # type: ignore
+    from ._models import MuteParticipantRequest  # type: ignore
+    from ._models import MuteParticipantWithCallLocatorRequest  # type: ignore
     from ._models import ParticipantsUpdatedEvent  # type: ignore
     from ._models import PhoneNumberIdentifierModel  # type: ignore
     from ._models import PlayAudioRequest  # type: ignore
     from ._models import PlayAudioResult  # type: ignore
     from ._models import PlayAudioResultEvent  # type: ignore
-    from ._models import RemoveParticipantByIdRequest  # type: ignore
+    from ._models import PlayAudioToParticipantRequest  # type: ignore
+    from ._models import PlayAudioToParticipantWithCallLocatorRequest  # type: ignore
+    from ._models import PlayAudioWithCallLocatorRequest  # type: ignore
+    from ._models import RedirectCallRequest  # type: ignore
+    from ._models import RejectCallRequest  # type: ignore
+    from ._models import RemoveParticipantRequest  # type: ignore
+    from ._models import RemoveParticipantWithCallLocatorRequest  # type: ignore
     from ._models import ResultInfo  # type: ignore
+    from ._models import ResumeMeetingAudioRequest  # type: ignore
+    from ._models import ResumeMeetingAudioWithCallLocatorRequest  # type: ignore
     from ._models import StartCallRecordingRequest  # type: ignore
     from ._models import StartCallRecordingResult  # type: ignore
+    from ._models import StartCallRecordingWithCallLocatorRequest  # type: ignore
     from ._models import StartHoldMusicRequest  # type: ignore
     from ._models import StartHoldMusicResult  # type: ignore
+    from ._models import StartHoldMusicWithCallLocatorRequest  # type: ignore
     from ._models import StopHoldMusicRequest  # type: ignore
     from ._models import StopHoldMusicResult  # type: ignore
+    from ._models import StopHoldMusicWithCallLocatorRequest  # type: ignore
     from ._models import ToneInfo  # type: ignore
     from ._models import ToneReceivedEvent  # type: ignore
     from ._models import TransferCallRequest  # type: ignore
+    from ._models import UnmuteParticipantRequest  # type: ignore
+    from ._models import UnmuteParticipantWithCallLocatorRequest  # type: ignore
 
 from ._azure_communication_calling_server_service_enums import (
+    AudioRoutingMode,
     CallConnectionState,
+    CallLocatorKindModel,
     CallRecordingState,
+    CallRejectReason,
     CommunicationCloudEnvironmentModel,
+    Enum0,
+    Enum2,
+    Enum3,
     EventSubscriptionType,
     MediaType,
     OperationStatus,
@@ -100,43 +160,76 @@ __all__ = [
     'AddParticipantRequest',
     'AddParticipantResult',
     'AddParticipantResultEvent',
+    'AddParticipantWithCallLocatorRequest',
+    'AnswerCallRequest',
+    'AnswerCallResult',
+    'AudioRoutingGroupRequest',
     'CallConnectionProperties',
     'CallConnectionStateChangedEvent',
+    'CallLocatorModel',
     'CallParticipant',
     'CallRecordingProperties',
     'CallRecordingStateChangeEvent',
     'CancelAllMediaOperationsRequest',
     'CancelAllMediaOperationsResult',
     'CancelMediaOperationRequest',
+    'CancelMediaOperationWithCallLocatorRequest',
+    'CancelParticipantMediaOperationRequest',
+    'CancelParticipantMediaOperationWithCallLocatorRequest',
     'CommunicationError',
     'CommunicationErrorResponse',
     'CommunicationIdentifierModel',
     'CommunicationUserIdentifierModel',
     'CreateCallRequest',
     'CreateCallResult',
-    'GetParticipantByIdRequest',
+    'GetAllParticipantsWithCallLocatorRequest',
+    'GetParticipantRequest',
+    'GetParticipantWithCallLocatorRequest',
+    'HoldMeetingAudioRequest',
+    'HoldMeetingAudioWithCallLocatorRequest',
     'JoinCallRequest',
     'JoinCallResult',
     'MicrosoftTeamsUserIdentifierModel',
+    'MuteParticipantRequest',
+    'MuteParticipantWithCallLocatorRequest',
     'ParticipantsUpdatedEvent',
     'PhoneNumberIdentifierModel',
     'PlayAudioRequest',
     'PlayAudioResult',
     'PlayAudioResultEvent',
-    'RemoveParticipantByIdRequest',
+    'PlayAudioToParticipantRequest',
+    'PlayAudioToParticipantWithCallLocatorRequest',
+    'PlayAudioWithCallLocatorRequest',
+    'RedirectCallRequest',
+    'RejectCallRequest',
+    'RemoveParticipantRequest',
+    'RemoveParticipantWithCallLocatorRequest',
     'ResultInfo',
+    'ResumeMeetingAudioRequest',
+    'ResumeMeetingAudioWithCallLocatorRequest',
     'StartCallRecordingRequest',
     'StartCallRecordingResult',
+    'StartCallRecordingWithCallLocatorRequest',
     'StartHoldMusicRequest',
     'StartHoldMusicResult',
+    'StartHoldMusicWithCallLocatorRequest',
     'StopHoldMusicRequest',
     'StopHoldMusicResult',
+    'StopHoldMusicWithCallLocatorRequest',
     'ToneInfo',
     'ToneReceivedEvent',
     'TransferCallRequest',
+    'UnmuteParticipantRequest',
+    'UnmuteParticipantWithCallLocatorRequest',
+    'AudioRoutingMode',
     'CallConnectionState',
+    'CallLocatorKindModel',
     'CallRecordingState',
+    'CallRejectReason',
     'CommunicationCloudEnvironmentModel',
+    'Enum0',
+    'Enum2',
+    'Enum3',
     'EventSubscriptionType',
     'MediaType',
     'OperationStatus',

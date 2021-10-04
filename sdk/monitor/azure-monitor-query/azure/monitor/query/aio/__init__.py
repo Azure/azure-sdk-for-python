@@ -7,7 +7,4 @@
 from ._logs_query_client_async import LogsQueryClient
 from ._metrics_query_client_async import MetricsQueryClient
 
-__all__ = [
-    "LogsQueryClient",
-    "MetricsQueryClient"
-]
+__all__ = ["LogsQueryClient", "MetricsQueryClient"]

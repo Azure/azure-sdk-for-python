@@ -45,7 +45,7 @@ class ServerCallsOperations(object):
 
     def get_participants(
         self,
-        server_call_id,  # type: str
+        get_all_participants_with_call_locator_request,  # type: "_models.GetAllParticipantsWithCallLocatorRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> List["_models.CallParticipant"]
@@ -53,8 +53,9 @@ class ServerCallsOperations(object):
 
         Get participants from a server call.
 
-        :param server_call_id: The server call id.
-        :type server_call_id: str
+        :param get_all_participants_with_call_locator_request: The request payload for getting all the
+         participants.
+        :type get_all_participants_with_call_locator_request: ~azure.communication.callingserver.models.GetAllParticipantsWithCallLocatorRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of CallParticipant, or the result of cls(response)
         :rtype: list[~azure.communication.callingserver.models.CallParticipant]
@@ -70,14 +71,14 @@ class ServerCallsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
+        content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
         url = self.get_participants.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -87,9 +88,13 @@ class ServerCallsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        request = self._client.get(url, query_parameters, header_parameters)
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(get_all_participants_with_call_locator_request, 'GetAllParticipantsWithCallLocatorRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -103,12 +108,11 @@ class ServerCallsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_participants.metadata = {'url': '/calling/serverCalls/{serverCallId}/participants'}  # type: ignore
+    get_participants.metadata = {'url': '/calling/participants:getAll'}  # type: ignore
 
     def add_participant(
         self,
-        server_call_id,  # type: str
-        add_participant_request,  # type: "_models.AddParticipantRequest"
+        add_participant_with_call_locator_request,  # type: "_models.AddParticipantWithCallLocatorRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.AddParticipantResult"
@@ -116,10 +120,9 @@ class ServerCallsOperations(object):
 
         Add a participant to the call.
 
-        :param server_call_id: The server call id.
-        :type server_call_id: str
-        :param add_participant_request: The add participant request.
-        :type add_participant_request: ~azure.communication.callingserver.models.AddParticipantRequest
+        :param add_participant_with_call_locator_request: The add participant request using call
+         locator.
+        :type add_participant_with_call_locator_request: ~azure.communication.callingserver.models.AddParticipantWithCallLocatorRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AddParticipantResult, or the result of cls(response)
         :rtype: ~azure.communication.callingserver.models.AddParticipantResult
@@ -135,7 +138,7 @@ class ServerCallsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -143,7 +146,6 @@ class ServerCallsOperations(object):
         url = self.add_participant.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -157,7 +159,7 @@ class ServerCallsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(add_participant_request, 'AddParticipantRequest')
+        body_content = self._serialize.body(add_participant_with_call_locator_request, 'AddParticipantWithCallLocatorRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -173,12 +175,11 @@ class ServerCallsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    add_participant.metadata = {'url': '/calling/serverCalls/{serverCallId}/participants'}  # type: ignore
+    add_participant.metadata = {'url': '/calling/participants'}  # type: ignore
 
-    def remove_participant_by_id(
+    def remove_participant(
         self,
-        server_call_id,  # type: str
-        remove_participant_by_id_request,  # type: "_models.RemoveParticipantByIdRequest"
+        remove_participant_with_call_locator_request,  # type: "_models.RemoveParticipantWithCallLocatorRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -186,11 +187,9 @@ class ServerCallsOperations(object):
 
         Remove participant from the call using identifier.
 
-        :param server_call_id: The server call id.
-        :type server_call_id: str
-        :param remove_participant_by_id_request: The identifier of the participant to be removed from
-         the call.
-        :type remove_participant_by_id_request: ~azure.communication.callingserver.models.RemoveParticipantByIdRequest
+        :param remove_participant_with_call_locator_request: The identifier of the participant to be
+         removed from the call.
+        :type remove_participant_with_call_locator_request: ~azure.communication.callingserver.models.RemoveParticipantWithCallLocatorRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -206,15 +205,14 @@ class ServerCallsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
-        url = self.remove_participant_by_id.metadata['url']  # type: ignore
+        url = self.remove_participant.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -228,7 +226,7 @@ class ServerCallsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(remove_participant_by_id_request, 'RemoveParticipantByIdRequest')
+        body_content = self._serialize.body(remove_participant_with_call_locator_request, 'RemoveParticipantWithCallLocatorRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -241,12 +239,11 @@ class ServerCallsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    remove_participant_by_id.metadata = {'url': '/calling/serverCalls/{serverCallId}/participants/:removeUser'}  # type: ignore
+    remove_participant.metadata = {'url': '/calling/participants:remove'}  # type: ignore
 
-    def get_participant_by_id(
+    def get_participant(
         self,
-        server_call_id,  # type: str
-        get_participant_by_id_request,  # type: "_models.GetParticipantByIdRequest"
+        get_participant_with_call_locator_request,  # type: "_models.GetParticipantWithCallLocatorRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> List["_models.CallParticipant"]
@@ -254,10 +251,8 @@ class ServerCallsOperations(object):
 
         Get participant from the call using identifier.
 
-        :param server_call_id: The server call id.
-        :type server_call_id: str
-        :param get_participant_by_id_request: The identifier of the participant to get from the call.
-        :type get_participant_by_id_request: ~azure.communication.callingserver.models.GetParticipantByIdRequest
+        :param get_participant_with_call_locator_request: The get participant request.
+        :type get_participant_with_call_locator_request: ~azure.communication.callingserver.models.GetParticipantWithCallLocatorRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of CallParticipant, or the result of cls(response)
         :rtype: list[~azure.communication.callingserver.models.CallParticipant]
@@ -273,15 +268,14 @@ class ServerCallsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
-        url = self.get_participant_by_id.metadata['url']  # type: ignore
+        url = self.get_participant.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -295,7 +289,7 @@ class ServerCallsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(get_participant_by_id_request, 'GetParticipantByIdRequest')
+        body_content = self._serialize.body(get_participant_with_call_locator_request, 'GetParticipantWithCallLocatorRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -311,142 +305,11 @@ class ServerCallsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_participant_by_id.metadata = {'url': '/calling/serverCalls/{serverCallId}/participants/:getUser'}  # type: ignore
-
-    def get_participant(
-        self,
-        server_call_id,  # type: str
-        participant_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.CallParticipant"
-        """Get participant by participant id from a call.
-
-        Get participant by participant id from a call.
-
-        :param server_call_id: The server call id.
-        :type server_call_id: str
-        :param participant_id: The participant id.
-        :type participant_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CallParticipant, or the result of cls(response)
-        :rtype: ~azure.communication.callingserver.models.CallParticipant
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CallParticipant"]
-        error_map = {
-            409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.get_participant.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
-            'participantId': self._serialize.url("participant_id", participant_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('CallParticipant', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    get_participant.metadata = {'url': '/calling/serverCalls/{serverCallId}/participants/{participantId}'}  # type: ignore
-
-    def remove_participant(
-        self,
-        server_call_id,  # type: str
-        participant_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Remove participant from the call.
-
-        Remove participant from the call.
-
-        :param server_call_id: The server call id.
-        :type server_call_id: str
-        :param participant_id: The participant id.
-        :type participant_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.remove_participant.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
-            'participantId': self._serialize.url("participant_id", participant_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    remove_participant.metadata = {'url': '/calling/serverCalls/{serverCallId}/participants/{participantId}'}  # type: ignore
+    get_participant.metadata = {'url': '/calling/participants:get'}  # type: ignore
 
     def start_hold_music(
         self,
-        server_call_id,  # type: str
-        participant_id,  # type: str
-        request,  # type: "_models.StartHoldMusicRequest"
+        start_hold_music_request,  # type: "_models.StartHoldMusicWithCallLocatorRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.StartHoldMusicResult"
@@ -454,12 +317,8 @@ class ServerCallsOperations(object):
 
         Play hold music to a participant.
 
-        :param server_call_id: The server call id.
-        :type server_call_id: str
-        :param participant_id: The participant id.
-        :type participant_id: str
-        :param request: The start hold music request.
-        :type request: ~azure.communication.callingserver.models.StartHoldMusicRequest
+        :param start_hold_music_request: The start hold music request.
+        :type start_hold_music_request: ~azure.communication.callingserver.models.StartHoldMusicWithCallLocatorRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StartHoldMusicResult, or the result of cls(response)
         :rtype: ~azure.communication.callingserver.models.StartHoldMusicResult
@@ -475,7 +334,7 @@ class ServerCallsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -483,8 +342,6 @@ class ServerCallsOperations(object):
         url = self.start_hold_music.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
-            'participantId': self._serialize.url("participant_id", participant_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -498,7 +355,7 @@ class ServerCallsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(request, 'StartHoldMusicRequest')
+        body_content = self._serialize.body(start_hold_music_request, 'StartHoldMusicWithCallLocatorRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -514,13 +371,11 @@ class ServerCallsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    start_hold_music.metadata = {'url': '/calling/serverCalls/{serverCallId}/participants/{participantId}/:startHoldMusic'}  # type: ignore
+    start_hold_music.metadata = {'url': '/calling/participants:startHoldMusic'}  # type: ignore
 
     def stop_hold_music(
         self,
-        server_call_id,  # type: str
-        participant_id,  # type: str
-        stop_hold_music_request,  # type: "_models.StopHoldMusicRequest"
+        stop_hold_music_request,  # type: "_models.StopHoldMusicWithCallLocatorRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.StopHoldMusicResult"
@@ -528,12 +383,8 @@ class ServerCallsOperations(object):
 
         Stop hold music to a participant.
 
-        :param server_call_id: The server call id.
-        :type server_call_id: str
-        :param participant_id: The participant id.
-        :type participant_id: str
         :param stop_hold_music_request: The stop hold music request.
-        :type stop_hold_music_request: ~azure.communication.callingserver.models.StopHoldMusicRequest
+        :type stop_hold_music_request: ~azure.communication.callingserver.models.StopHoldMusicWithCallLocatorRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StopHoldMusicResult, or the result of cls(response)
         :rtype: ~azure.communication.callingserver.models.StopHoldMusicResult
@@ -549,7 +400,7 @@ class ServerCallsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -557,8 +408,6 @@ class ServerCallsOperations(object):
         url = self.stop_hold_music.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
-            'participantId': self._serialize.url("participant_id", participant_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -572,7 +421,7 @@ class ServerCallsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(stop_hold_music_request, 'StopHoldMusicRequest')
+        body_content = self._serialize.body(stop_hold_music_request, 'StopHoldMusicWithCallLocatorRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -588,13 +437,11 @@ class ServerCallsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    stop_hold_music.metadata = {'url': '/calling/serverCalls/{serverCallId}/participants/{participantId}/:stopHoldMusic'}  # type: ignore
+    stop_hold_music.metadata = {'url': '/calling/participants:stopHoldMusic'}  # type: ignore
 
     def participant_play_audio(
         self,
-        server_call_id,  # type: str
-        participant_id,  # type: str
-        play_audio_request,  # type: "_models.PlayAudioRequest"
+        play_audio_to_participant_request,  # type: "_models.PlayAudioToParticipantWithCallLocatorRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.PlayAudioResult"
@@ -602,12 +449,8 @@ class ServerCallsOperations(object):
 
         Play audio to a participant.
 
-        :param server_call_id: Server call id.
-        :type server_call_id: str
-        :param participant_id: Participant id.
-        :type participant_id: str
-        :param play_audio_request: PlayAudioRequest body.
-        :type play_audio_request: ~azure.communication.callingserver.models.PlayAudioRequest
+        :param play_audio_to_participant_request: The play audio to participant request.
+        :type play_audio_to_participant_request: ~azure.communication.callingserver.models.PlayAudioToParticipantWithCallLocatorRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PlayAudioResult, or the result of cls(response)
         :rtype: ~azure.communication.callingserver.models.PlayAudioResult
@@ -623,7 +466,7 @@ class ServerCallsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -631,8 +474,6 @@ class ServerCallsOperations(object):
         url = self.participant_play_audio.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
-            'participantId': self._serialize.url("participant_id", participant_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -646,7 +487,7 @@ class ServerCallsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(play_audio_request, 'PlayAudioRequest')
+        body_content = self._serialize.body(play_audio_to_participant_request, 'PlayAudioToParticipantWithCallLocatorRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -662,13 +503,11 @@ class ServerCallsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    participant_play_audio.metadata = {'url': '/calling/serverCalls/{serverCallId}/participants/{participantId}/:playAudio'}  # type: ignore
+    participant_play_audio.metadata = {'url': '/calling/participants:playAudio'}  # type: ignore
 
     def cancel_participant_media_operation(
         self,
-        server_call_id,  # type: str
-        participant_id,  # type: str
-        cancel_media_operation_request,  # type: "_models.CancelMediaOperationRequest"
+        cancel_participant_media_operation_request,  # type: "_models.CancelParticipantMediaOperationWithCallLocatorRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -676,12 +515,9 @@ class ServerCallsOperations(object):
 
         cancel media operation for a participant.
 
-        :param server_call_id: The server call id.
-        :type server_call_id: str
-        :param participant_id: The participant id.
-        :type participant_id: str
-        :param cancel_media_operation_request: The cancel media operation request.
-        :type cancel_media_operation_request: ~azure.communication.callingserver.models.CancelMediaOperationRequest
+        :param cancel_participant_media_operation_request: The cancel participant media operation
+         request.
+        :type cancel_participant_media_operation_request: ~azure.communication.callingserver.models.CancelParticipantMediaOperationWithCallLocatorRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -697,7 +533,7 @@ class ServerCallsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -705,8 +541,6 @@ class ServerCallsOperations(object):
         url = self.cancel_participant_media_operation.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
-            'participantId': self._serialize.url("participant_id", participant_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -720,7 +554,7 @@ class ServerCallsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(cancel_media_operation_request, 'CancelMediaOperationRequest')
+        body_content = self._serialize.body(cancel_participant_media_operation_request, 'CancelParticipantMediaOperationWithCallLocatorRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -733,12 +567,267 @@ class ServerCallsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    cancel_participant_media_operation.metadata = {'url': '/calling/serverCalls/{serverCallId}/participants/{participantId}/:cancelMediaOperation'}  # type: ignore
+    cancel_participant_media_operation.metadata = {'url': '/calling/participants:cancelMediaOperation'}  # type: ignore
+
+    def mute_participant(
+        self,
+        mute_participant_with_call_locator_request,  # type: "_models.MuteParticipantWithCallLocatorRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Mute participant in the call.
+
+        Mute participant in the call.
+
+        :param mute_participant_with_call_locator_request: The identifier of the participant to mute in
+         the call.
+        :type mute_participant_with_call_locator_request: ~azure.communication.callingserver.models.MuteParticipantWithCallLocatorRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-11-15-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.mute_participant.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(mute_participant_with_call_locator_request, 'MuteParticipantWithCallLocatorRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    mute_participant.metadata = {'url': '/calling/participants:mute'}  # type: ignore
+
+    def unmute_participant(
+        self,
+        unmute_participant_with_call_locator_request,  # type: "_models.UnmuteParticipantWithCallLocatorRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Unmute participant in the call.
+
+        Unmute participant in the call.
+
+        :param unmute_participant_with_call_locator_request: The identifier of the participant to
+         unmute in the call.
+        :type unmute_participant_with_call_locator_request: ~azure.communication.callingserver.models.UnmuteParticipantWithCallLocatorRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-11-15-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.unmute_participant.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(unmute_participant_with_call_locator_request, 'UnmuteParticipantWithCallLocatorRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    unmute_participant.metadata = {'url': '/calling/participants:unmute'}  # type: ignore
+
+    def hold_participant_meeting_audio(
+        self,
+        hold_meeting_audio_with_call_locator_request,  # type: "_models.HoldMeetingAudioWithCallLocatorRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Hold meeting audio of a participant in the call.
+
+        Hold meeting audio of a participant in the call.
+
+        :param hold_meeting_audio_with_call_locator_request: The request payload for holding meeting
+         audio for a participant.
+        :type hold_meeting_audio_with_call_locator_request: ~azure.communication.callingserver.models.HoldMeetingAudioWithCallLocatorRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-11-15-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.hold_participant_meeting_audio.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(hold_meeting_audio_with_call_locator_request, 'HoldMeetingAudioWithCallLocatorRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    hold_participant_meeting_audio.metadata = {'url': '/calling/participants:holdMeetingAudio'}  # type: ignore
+
+    def resume_participant_meeting_audio(
+        self,
+        resume_meeting_audio_with_call_locator_request,  # type: "_models.ResumeMeetingAudioWithCallLocatorRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Resume meeting audio of a participant in the call.
+
+        Resume meeting audio of a participant in the call.
+
+        :param resume_meeting_audio_with_call_locator_request: The request payload for resuming meeting
+         audio for a participant.
+        :type resume_meeting_audio_with_call_locator_request: ~azure.communication.callingserver.models.ResumeMeetingAudioWithCallLocatorRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-11-15-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.resume_participant_meeting_audio.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(resume_meeting_audio_with_call_locator_request, 'ResumeMeetingAudioWithCallLocatorRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    resume_participant_meeting_audio.metadata = {'url': '/calling/participants:resumeMeetingAudio'}  # type: ignore
 
     def start_recording(
         self,
-        server_call_id,  # type: str
-        request,  # type: "_models.StartCallRecordingRequest"
+        start_call_recording_with_call_locator_request,  # type: "_models.StartCallRecordingWithCallLocatorRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.StartCallRecordingResult"
@@ -746,10 +835,9 @@ class ServerCallsOperations(object):
 
         Start recording the call.
 
-        :param server_call_id: The server call id.
-        :type server_call_id: str
-        :param request: The request body of start call recording request.
-        :type request: ~azure.communication.callingserver.models.StartCallRecordingRequest
+        :param start_call_recording_with_call_locator_request: The request body of start call recording
+         request.
+        :type start_call_recording_with_call_locator_request: ~azure.communication.callingserver.models.StartCallRecordingWithCallLocatorRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StartCallRecordingResult, or the result of cls(response)
         :rtype: ~azure.communication.callingserver.models.StartCallRecordingResult
@@ -765,7 +853,7 @@ class ServerCallsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -773,7 +861,6 @@ class ServerCallsOperations(object):
         url = self.start_recording.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -787,7 +874,7 @@ class ServerCallsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(request, 'StartCallRecordingRequest')
+        body_content = self._serialize.body(start_call_recording_with_call_locator_request, 'StartCallRecordingWithCallLocatorRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -803,11 +890,10 @@ class ServerCallsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    start_recording.metadata = {'url': '/calling/serverCalls/{serverCallId}/recordings'}  # type: ignore
+    start_recording.metadata = {'url': '/calling/recordings'}  # type: ignore
 
     def get_recording_properties(
         self,
-        server_call_id,  # type: str
         recording_id,  # type: str
         **kwargs  # type: Any
     ):
@@ -816,8 +902,6 @@ class ServerCallsOperations(object):
 
         Get call recording properties.
 
-        :param server_call_id: The server call id.
-        :type server_call_id: str
         :param recording_id: The recording id.
         :type recording_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -835,14 +919,13 @@ class ServerCallsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.get_recording_properties.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
             'recordingId': self._serialize.url("recording_id", recording_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -869,11 +952,10 @@ class ServerCallsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_recording_properties.metadata = {'url': '/calling/serverCalls/{serverCallId}/recordings/{recordingId}'}  # type: ignore
+    get_recording_properties.metadata = {'url': '/calling/recordings/{recordingId}'}  # type: ignore
 
     def stop_recording(
         self,
-        server_call_id,  # type: str
         recording_id,  # type: str
         **kwargs  # type: Any
     ):
@@ -882,8 +964,6 @@ class ServerCallsOperations(object):
 
         Stop recording the call.
 
-        :param server_call_id: The server call id.
-        :type server_call_id: str
         :param recording_id: The recording id.
         :type recording_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -901,14 +981,13 @@ class ServerCallsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.stop_recording.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
             'recordingId': self._serialize.url("recording_id", recording_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -932,11 +1011,10 @@ class ServerCallsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    stop_recording.metadata = {'url': '/calling/serverCalls/{serverCallId}/recordings/{recordingId}'}  # type: ignore
+    stop_recording.metadata = {'url': '/calling/recordings/{recordingId}'}  # type: ignore
 
     def pause_recording(
         self,
-        server_call_id,  # type: str
         recording_id,  # type: str
         **kwargs  # type: Any
     ):
@@ -945,8 +1023,6 @@ class ServerCallsOperations(object):
 
         Pause recording the call.
 
-        :param server_call_id: The server call id.
-        :type server_call_id: str
         :param recording_id: The recording id.
         :type recording_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -964,14 +1040,13 @@ class ServerCallsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.pause_recording.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
             'recordingId': self._serialize.url("recording_id", recording_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -995,11 +1070,10 @@ class ServerCallsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    pause_recording.metadata = {'url': '/calling/serverCalls/{serverCallId}/recordings/{recordingId}/:pause'}  # type: ignore
+    pause_recording.metadata = {'url': '/calling/recordings/{recordingId}/:pause'}  # type: ignore
 
     def resume_recording(
         self,
-        server_call_id,  # type: str
         recording_id,  # type: str
         **kwargs  # type: Any
     ):
@@ -1008,8 +1082,6 @@ class ServerCallsOperations(object):
 
         Resume recording the call.
 
-        :param server_call_id: The server call id.
-        :type server_call_id: str
         :param recording_id: The recording id.
         :type recording_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1027,14 +1099,13 @@ class ServerCallsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.resume_recording.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
             'recordingId': self._serialize.url("recording_id", recording_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1058,11 +1129,10 @@ class ServerCallsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    resume_recording.metadata = {'url': '/calling/serverCalls/{serverCallId}/recordings/{recordingId}/:resume'}  # type: ignore
+    resume_recording.metadata = {'url': '/calling/recordings/{recordingId}/:resume'}  # type: ignore
 
     def join_call(
         self,
-        server_call_id,  # type: str
         call_request,  # type: "_models.JoinCallRequest"
         **kwargs  # type: Any
     ):
@@ -1071,8 +1141,6 @@ class ServerCallsOperations(object):
 
         Join a call.
 
-        :param server_call_id: The server call id.
-        :type server_call_id: str
         :param call_request: The join call request.
         :type call_request: ~azure.communication.callingserver.models.JoinCallRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1090,7 +1158,7 @@ class ServerCallsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1098,7 +1166,6 @@ class ServerCallsOperations(object):
         url = self.join_call.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1128,12 +1195,11 @@ class ServerCallsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    join_call.metadata = {'url': '/calling/serverCalls/{serverCallId}/:join'}  # type: ignore
+    join_call.metadata = {'url': '/calling:join'}  # type: ignore
 
     def play_audio(
         self,
-        server_call_id,  # type: str
-        request,  # type: "_models.PlayAudioRequest"
+        play_audio_request,  # type: "_models.PlayAudioWithCallLocatorRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.PlayAudioResult"
@@ -1141,10 +1207,8 @@ class ServerCallsOperations(object):
 
         Play audio in the call.
 
-        :param server_call_id: The server call id.
-        :type server_call_id: str
-        :param request: Play audio request.
-        :type request: ~azure.communication.callingserver.models.PlayAudioRequest
+        :param play_audio_request: Play audio request.
+        :type play_audio_request: ~azure.communication.callingserver.models.PlayAudioWithCallLocatorRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PlayAudioResult, or the result of cls(response)
         :rtype: ~azure.communication.callingserver.models.PlayAudioResult
@@ -1160,7 +1224,7 @@ class ServerCallsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1168,7 +1232,6 @@ class ServerCallsOperations(object):
         url = self.play_audio.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1182,7 +1245,7 @@ class ServerCallsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(request, 'PlayAudioRequest')
+        body_content = self._serialize.body(play_audio_request, 'PlayAudioWithCallLocatorRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -1198,12 +1261,11 @@ class ServerCallsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    play_audio.metadata = {'url': '/calling/serverCalls/{serverCallId}/:playAudio'}  # type: ignore
+    play_audio.metadata = {'url': '/calling:playAudio'}  # type: ignore
 
     def cancel_media_operation(
         self,
-        server_call_id,  # type: str
-        cancel_media_operation_request,  # type: "_models.CancelMediaOperationRequest"
+        cancel_media_operation_request,  # type: "_models.CancelMediaOperationWithCallLocatorRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -1211,10 +1273,8 @@ class ServerCallsOperations(object):
 
         cancel media operation.
 
-        :param server_call_id: The server call id.
-        :type server_call_id: str
         :param cancel_media_operation_request: The cancel media operation request.
-        :type cancel_media_operation_request: ~azure.communication.callingserver.models.CancelMediaOperationRequest
+        :type cancel_media_operation_request: ~azure.communication.callingserver.models.CancelMediaOperationWithCallLocatorRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1230,7 +1290,7 @@ class ServerCallsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1238,7 +1298,6 @@ class ServerCallsOperations(object):
         url = self.cancel_media_operation.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1252,7 +1311,7 @@ class ServerCallsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(cancel_media_operation_request, 'CancelMediaOperationRequest')
+        body_content = self._serialize.body(cancel_media_operation_request, 'CancelMediaOperationWithCallLocatorRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -1265,4 +1324,4 @@ class ServerCallsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    cancel_media_operation.metadata = {'url': '/calling/serverCalls/{serverCallId}/:cancelMediaOperation'}  # type: ignore
+    cancel_media_operation.metadata = {'url': '/calling:cancelMediaOperation'}  # type: ignore

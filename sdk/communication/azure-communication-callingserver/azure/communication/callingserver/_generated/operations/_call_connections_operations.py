@@ -16,7 +16,7 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -42,6 +42,206 @@ class CallConnectionsOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self._config = config
+
+    def get_audio_routing_groups(
+        self,
+        call_connection_id,  # type: str
+        audio_routing_mode,  # type: Union[str, "_models.Enum0"]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> List["_models.CallParticipant"]
+        """Get audio routing groups from a call.
+
+        Get audio routing groups from a call.
+
+        :param call_connection_id: The call connection id.
+        :type call_connection_id: str
+        :param audio_routing_mode: The audio routing mode.
+        :type audio_routing_mode: str or ~azure.communication.callingserver.models.Enum0
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: list of CallParticipant, or the result of cls(response)
+        :rtype: list[~azure.communication.callingserver.models.CallParticipant]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.CallParticipant"]]
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-11-15-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_audio_routing_groups.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'callConnectionId': self._serialize.url("call_connection_id", call_connection_id, 'str'),
+            'audioRoutingMode': self._serialize.url("audio_routing_mode", audio_routing_mode, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.post(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = self._deserialize('[CallParticipant]', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_audio_routing_groups.metadata = {'url': '/calling/callConnections/{callConnectionId}/audioRoutingGroups/{audioRoutingMode}'}  # type: ignore
+
+    def delete_audio_routing_group(
+        self,
+        call_connection_id,  # type: str
+        audio_routing_mode,  # type: Union[str, "_models.Enum2"]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Delete audio routing group from a call.
+
+        Delete audio routing group from a call.
+
+        :param call_connection_id: The call connection id.
+        :type call_connection_id: str
+        :param audio_routing_mode: The audio routing mode.
+        :type audio_routing_mode: str or ~azure.communication.callingserver.models.Enum2
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-11-15-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.delete_audio_routing_group.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'callConnectionId': self._serialize.url("call_connection_id", call_connection_id, 'str'),
+            'audioRoutingMode': self._serialize.url("audio_routing_mode", audio_routing_mode, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.delete(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    delete_audio_routing_group.metadata = {'url': '/calling/callConnections/{callConnectionId}/audioRoutingGroups/{audioRoutingMode}'}  # type: ignore
+
+    def update_audio_routing_group(
+        self,
+        call_connection_id,  # type: str
+        audio_routing_mode,  # type: Union[str, "_models.Enum3"]
+        audio_routing_group_request,  # type: "_models.AudioRoutingGroupRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Update audio routing group from a call.
+
+        Update audio routing group from a call.
+
+        :param call_connection_id: The call connection id.
+        :type call_connection_id: str
+        :param audio_routing_mode: The audio routing mode.
+        :type audio_routing_mode: str or ~azure.communication.callingserver.models.Enum3
+        :param audio_routing_group_request: The audio routing group request.
+        :type audio_routing_group_request: ~azure.communication.callingserver.models.AudioRoutingGroupRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-11-15-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.update_audio_routing_group.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'callConnectionId': self._serialize.url("call_connection_id", call_connection_id, 'str'),
+            'audioRoutingMode': self._serialize.url("audio_routing_mode", audio_routing_mode, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(audio_routing_group_request, 'AudioRoutingGroupRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    update_audio_routing_group.metadata = {'url': '/calling/callConnections/{callConnectionId}/audioRoutingGroups/{audioRoutingMode}'}  # type: ignore
 
     def create_call(
         self,
@@ -70,7 +270,7 @@ class CallConnectionsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -136,7 +336,7 @@ class CallConnectionsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         accept = "application/json"
 
         # Construct URL
@@ -198,7 +398,7 @@ class CallConnectionsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         accept = "application/json"
 
         # Construct URL
@@ -257,7 +457,7 @@ class CallConnectionsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         accept = "application/json"
 
         # Construct URL
@@ -319,7 +519,7 @@ class CallConnectionsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -389,7 +589,7 @@ class CallConnectionsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -456,7 +656,7 @@ class CallConnectionsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         accept = "application/json"
 
         # Construct URL
@@ -518,7 +718,7 @@ class CallConnectionsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -555,6 +755,73 @@ class CallConnectionsOperations(object):
 
     transfer.metadata = {'url': '/calling/callConnections/{callConnectionId}/:transfer'}  # type: ignore
 
+    def create_audio_routing_group(
+        self,
+        call_connection_id,  # type: str
+        audio_routing_group_request,  # type: "_models.AudioRoutingGroupRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Create audio routing groups from a call.
+
+        Create audio routing groups from a call.
+
+        :param call_connection_id: The call connection id.
+        :type call_connection_id: str
+        :param audio_routing_group_request: The audio routing group request.
+        :type audio_routing_group_request: ~azure.communication.callingserver.models.AudioRoutingGroupRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-11-15-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.create_audio_routing_group.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'callConnectionId': self._serialize.url("call_connection_id", call_connection_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(audio_routing_group_request, 'AudioRoutingGroupRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    create_audio_routing_group.metadata = {'url': '/calling/callConnections/{callConnectionId}/:createAudioRoutingGroup'}  # type: ignore
+
     def get_participants(
         self,
         call_connection_id,  # type: str
@@ -582,7 +849,7 @@ class CallConnectionsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         accept = "application/json"
 
         # Construct URL
@@ -647,7 +914,7 @@ class CallConnectionsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -687,10 +954,10 @@ class CallConnectionsOperations(object):
         return deserialized
     add_participant.metadata = {'url': '/calling/callConnections/{callConnectionId}/participants'}  # type: ignore
 
-    def remove_participant_by_id(
+    def remove_participant(
         self,
         call_connection_id,  # type: str
-        remove_participant_by_id_request,  # type: "_models.RemoveParticipantByIdRequest"
+        remove_participant_request,  # type: "_models.RemoveParticipantRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -700,9 +967,9 @@ class CallConnectionsOperations(object):
 
         :param call_connection_id: The call connection id.
         :type call_connection_id: str
-        :param remove_participant_by_id_request: The identifier of the participant to be removed from
-         the call.
-        :type remove_participant_by_id_request: ~azure.communication.callingserver.models.RemoveParticipantByIdRequest
+        :param remove_participant_request: The identifier of the participant to be removed from the
+         call.
+        :type remove_participant_request: ~azure.communication.callingserver.models.RemoveParticipantRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -718,12 +985,12 @@ class CallConnectionsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
-        url = self.remove_participant_by_id.metadata['url']  # type: ignore
+        url = self.remove_participant.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'callConnectionId': self._serialize.url("call_connection_id", call_connection_id, 'str'),
@@ -740,7 +1007,7 @@ class CallConnectionsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(remove_participant_by_id_request, 'RemoveParticipantByIdRequest')
+        body_content = self._serialize.body(remove_participant_request, 'RemoveParticipantRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -753,12 +1020,12 @@ class CallConnectionsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    remove_participant_by_id.metadata = {'url': '/calling/callConnections/{callConnectionId}/participants/:removeUser'}  # type: ignore
+    remove_participant.metadata = {'url': '/calling/callConnections/{callConnectionId}/participants:remove'}  # type: ignore
 
-    def get_participant_by_id(
+    def get_participant(
         self,
         call_connection_id,  # type: str
-        get_participant_by_id_request,  # type: "_models.GetParticipantByIdRequest"
+        get_participant_request,  # type: "_models.GetParticipantRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> List["_models.CallParticipant"]
@@ -768,8 +1035,8 @@ class CallConnectionsOperations(object):
 
         :param call_connection_id: The call connection id.
         :type call_connection_id: str
-        :param get_participant_by_id_request: The identifier of the participant to get from the call.
-        :type get_participant_by_id_request: ~azure.communication.callingserver.models.GetParticipantByIdRequest
+        :param get_participant_request: The identifier of the participant to get from the call.
+        :type get_participant_request: ~azure.communication.callingserver.models.GetParticipantRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of CallParticipant, or the result of cls(response)
         :rtype: list[~azure.communication.callingserver.models.CallParticipant]
@@ -785,12 +1052,12 @@ class CallConnectionsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
-        url = self.get_participant_by_id.metadata['url']  # type: ignore
+        url = self.get_participant.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'callConnectionId': self._serialize.url("call_connection_id", call_connection_id, 'str'),
@@ -807,7 +1074,7 @@ class CallConnectionsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(get_participant_by_id_request, 'GetParticipantByIdRequest')
+        body_content = self._serialize.body(get_participant_request, 'GetParticipantRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -823,141 +1090,11 @@ class CallConnectionsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_participant_by_id.metadata = {'url': '/calling/callConnections/{callConnectionId}/participants/:getUser'}  # type: ignore
-
-    def get_participant(
-        self,
-        call_connection_id,  # type: str
-        participant_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.CallParticipant"
-        """Get participant by participant id from the call.
-
-        Get participant by participant id from the call.
-
-        :param call_connection_id: The call connection id.
-        :type call_connection_id: str
-        :param participant_id: The participant id.
-        :type participant_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CallParticipant, or the result of cls(response)
-        :rtype: ~azure.communication.callingserver.models.CallParticipant
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CallParticipant"]
-        error_map = {
-            409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.get_participant.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'callConnectionId': self._serialize.url("call_connection_id", call_connection_id, 'str'),
-            'participantId': self._serialize.url("participant_id", participant_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('CallParticipant', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    get_participant.metadata = {'url': '/calling/callConnections/{callConnectionId}/participants/{participantId}'}  # type: ignore
-
-    def remove_participant(
-        self,
-        call_connection_id,  # type: str
-        participant_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Remove a participant from the call.
-
-        Remove a participant from the call.
-
-        :param call_connection_id: The call connection id.
-        :type call_connection_id: str
-        :param participant_id: The participant id.
-        :type participant_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.remove_participant.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'callConnectionId': self._serialize.url("call_connection_id", call_connection_id, 'str'),
-            'participantId': self._serialize.url("participant_id", participant_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    remove_participant.metadata = {'url': '/calling/callConnections/{callConnectionId}/participants/{participantId}'}  # type: ignore
+    get_participant.metadata = {'url': '/calling/callConnections/{callConnectionId}/participants:get'}  # type: ignore
 
     def start_hold_music(
         self,
         call_connection_id,  # type: str
-        participant_id,  # type: str
         request,  # type: "_models.StartHoldMusicRequest"
         **kwargs  # type: Any
     ):
@@ -968,8 +1105,6 @@ class CallConnectionsOperations(object):
 
         :param call_connection_id: The callConnectionId.
         :type call_connection_id: str
-        :param participant_id: The participant id.
-        :type participant_id: str
         :param request: The start hold music request.
         :type request: ~azure.communication.callingserver.models.StartHoldMusicRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -987,7 +1122,7 @@ class CallConnectionsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -996,7 +1131,6 @@ class CallConnectionsOperations(object):
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'callConnectionId': self._serialize.url("call_connection_id", call_connection_id, 'str'),
-            'participantId': self._serialize.url("participant_id", participant_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1026,12 +1160,12 @@ class CallConnectionsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    start_hold_music.metadata = {'url': '/calling/callConnections/{callConnectionId}/participants/{participantId}/:startHoldMusic'}  # type: ignore
+    start_hold_music.metadata = {'url': '/calling/callConnections/{callConnectionId}/participants:startHoldMusic'}  # type: ignore
 
     def stop_hold_music(
         self,
         call_connection_id,  # type: str
-        participant_id,  # type: str
+        stop_hold_music_request,  # type: "_models.StopHoldMusicRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.StopHoldMusicResult"
@@ -1041,8 +1175,8 @@ class CallConnectionsOperations(object):
 
         :param call_connection_id: The callConnectionId.
         :type call_connection_id: str
-        :param participant_id: The participant id.
-        :type participant_id: str
+        :param stop_hold_music_request: The stop hold music request.
+        :type stop_hold_music_request: ~azure.communication.callingserver.models.StopHoldMusicRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StopHoldMusicResult, or the result of cls(response)
         :rtype: ~azure.communication.callingserver.models.StopHoldMusicResult
@@ -1058,7 +1192,8 @@ class CallConnectionsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
+        content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
@@ -1066,7 +1201,6 @@ class CallConnectionsOperations(object):
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'callConnectionId': self._serialize.url("call_connection_id", call_connection_id, 'str'),
-            'participantId': self._serialize.url("participant_id", participant_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1076,9 +1210,13 @@ class CallConnectionsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        request = self._client.post(url, query_parameters, header_parameters)
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(stop_hold_music_request, 'StopHoldMusicRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -1092,13 +1230,12 @@ class CallConnectionsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    stop_hold_music.metadata = {'url': '/calling/callConnections/{callConnectionId}/participants/{participantId}/:stopHoldMusic'}  # type: ignore
+    stop_hold_music.metadata = {'url': '/calling/callConnections/{callConnectionId}/participants:stopHoldMusic'}  # type: ignore
 
     def participant_play_audio(
         self,
         call_connection_id,  # type: str
-        participant_id,  # type: str
-        play_audio_request,  # type: "_models.PlayAudioRequest"
+        play_audio_to_participant_request,  # type: "_models.PlayAudioToParticipantRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.PlayAudioResult"
@@ -1108,10 +1245,8 @@ class CallConnectionsOperations(object):
 
         :param call_connection_id: The callConnectionId.
         :type call_connection_id: str
-        :param participant_id: Participant id.
-        :type participant_id: str
-        :param play_audio_request: PlayAudioRequest body.
-        :type play_audio_request: ~azure.communication.callingserver.models.PlayAudioRequest
+        :param play_audio_to_participant_request: The play audio to participant request.
+        :type play_audio_to_participant_request: ~azure.communication.callingserver.models.PlayAudioToParticipantRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PlayAudioResult, or the result of cls(response)
         :rtype: ~azure.communication.callingserver.models.PlayAudioResult
@@ -1127,7 +1262,7 @@ class CallConnectionsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1136,7 +1271,6 @@ class CallConnectionsOperations(object):
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'callConnectionId': self._serialize.url("call_connection_id", call_connection_id, 'str'),
-            'participantId': self._serialize.url("participant_id", participant_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1150,7 +1284,7 @@ class CallConnectionsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(play_audio_request, 'PlayAudioRequest')
+        body_content = self._serialize.body(play_audio_to_participant_request, 'PlayAudioToParticipantRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -1166,26 +1300,23 @@ class CallConnectionsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    participant_play_audio.metadata = {'url': '/calling/callConnections/{callConnectionId}/participants/{participantId}/:playAudio'}  # type: ignore
+    participant_play_audio.metadata = {'url': '/calling/callConnections/{callConnectionId}/participants:playAudio'}  # type: ignore
 
     def cancel_participant_media_operation(
         self,
         call_connection_id,  # type: str
-        participant_id,  # type: str
-        cancel_media_operation_request,  # type: "_models.CancelMediaOperationRequest"
+        cancel_media_operation_request,  # type: "_models.CancelParticipantMediaOperationRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """cancel media operation for a participant.
+        """Cancel media operation for a participant.
 
-        cancel media operation for a participant.
+        Cancel media operation for a participant.
 
         :param call_connection_id: The callConnectionId.
         :type call_connection_id: str
-        :param participant_id: The participant id.
-        :type participant_id: str
-        :param cancel_media_operation_request: The cancel media operation request.
-        :type cancel_media_operation_request: ~azure.communication.callingserver.models.CancelMediaOperationRequest
+        :param cancel_media_operation_request: The cancel media operation for participant request.
+        :type cancel_media_operation_request: ~azure.communication.callingserver.models.CancelParticipantMediaOperationRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1201,7 +1332,7 @@ class CallConnectionsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-15-preview"
+        api_version = "2021-11-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1210,7 +1341,6 @@ class CallConnectionsOperations(object):
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'callConnectionId': self._serialize.url("call_connection_id", call_connection_id, 'str'),
-            'participantId': self._serialize.url("participant_id", participant_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1224,7 +1354,7 @@ class CallConnectionsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(cancel_media_operation_request, 'CancelMediaOperationRequest')
+        body_content = self._serialize.body(cancel_media_operation_request, 'CancelParticipantMediaOperationRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -1237,4 +1367,466 @@ class CallConnectionsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    cancel_participant_media_operation.metadata = {'url': '/calling/callConnections/{callConnectionId}/participants/{participantId}/:cancelMediaOperation'}  # type: ignore
+    cancel_participant_media_operation.metadata = {'url': '/calling/callConnections/{callConnectionId}/participants:cancelMediaOperation'}  # type: ignore
+
+    def mute_participant(
+        self,
+        call_connection_id,  # type: str
+        mute_participant_request,  # type: "_models.MuteParticipantRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Mute participant in the call.
+
+        Mute participant in the call.
+
+        :param call_connection_id: The call connection id.
+        :type call_connection_id: str
+        :param mute_participant_request: The identifier of the participant to mute in the call.
+        :type mute_participant_request: ~azure.communication.callingserver.models.MuteParticipantRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-11-15-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.mute_participant.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'callConnectionId': self._serialize.url("call_connection_id", call_connection_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(mute_participant_request, 'MuteParticipantRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    mute_participant.metadata = {'url': '/calling/callConnections/{callConnectionId}/participants:mute'}  # type: ignore
+
+    def unmute_participant(
+        self,
+        call_connection_id,  # type: str
+        unmute_participant_request,  # type: "_models.UnmuteParticipantRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Unmute participant in the call.
+
+        Unmute participant in the call.
+
+        :param call_connection_id: The call connection id.
+        :type call_connection_id: str
+        :param unmute_participant_request: The identifier of the participant to unmute in the call.
+        :type unmute_participant_request: ~azure.communication.callingserver.models.UnmuteParticipantRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-11-15-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.unmute_participant.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'callConnectionId': self._serialize.url("call_connection_id", call_connection_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(unmute_participant_request, 'UnmuteParticipantRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    unmute_participant.metadata = {'url': '/calling/callConnections/{callConnectionId}/participants:unmute'}  # type: ignore
+
+    def hold_participant_meeting_audio(
+        self,
+        call_connection_id,  # type: str
+        hold_meeting_audio_request,  # type: "_models.HoldMeetingAudioRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Hold meeting audio of a participant in the call.
+
+        Hold meeting audio of a participant in the call.
+
+        :param call_connection_id: The call connection id.
+        :type call_connection_id: str
+        :param hold_meeting_audio_request: The request payload for holding meeting audio for a
+         participant.
+        :type hold_meeting_audio_request: ~azure.communication.callingserver.models.HoldMeetingAudioRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-11-15-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.hold_participant_meeting_audio.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'callConnectionId': self._serialize.url("call_connection_id", call_connection_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(hold_meeting_audio_request, 'HoldMeetingAudioRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    hold_participant_meeting_audio.metadata = {'url': '/calling/callConnections/{callConnectionId}/participants:holdMeetingAudio'}  # type: ignore
+
+    def resume_participant_meeting_audio(
+        self,
+        call_connection_id,  # type: str
+        resume_meeting_audio_request,  # type: "_models.ResumeMeetingAudioRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Resume meeting audio of a participant in the call.
+
+        Resume meeting audio of a participant in the call.
+
+        :param call_connection_id: The call connection id.
+        :type call_connection_id: str
+        :param resume_meeting_audio_request: The request payload for resuming meeting audio for a
+         participant.
+        :type resume_meeting_audio_request: ~azure.communication.callingserver.models.ResumeMeetingAudioRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-11-15-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.resume_participant_meeting_audio.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'callConnectionId': self._serialize.url("call_connection_id", call_connection_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(resume_meeting_audio_request, 'ResumeMeetingAudioRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    resume_participant_meeting_audio.metadata = {'url': '/calling/callConnections/{callConnectionId}/participants:resumeMeetingAudio'}  # type: ignore
+
+    def answer(
+        self,
+        answer_call_request,  # type: "_models.AnswerCallRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.AnswerCallResult"
+        """Answer the call.
+
+        Answer the call.
+
+        :param answer_call_request: The answer call request.
+        :type answer_call_request: ~azure.communication.callingserver.models.AnswerCallRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: AnswerCallResult, or the result of cls(response)
+        :rtype: ~azure.communication.callingserver.models.AnswerCallResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnswerCallResult"]
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-11-15-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.answer.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(answer_call_request, 'AnswerCallRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = self._deserialize('AnswerCallResult', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    answer.metadata = {'url': '/calling:answer'}  # type: ignore
+
+    def reject(
+        self,
+        reject_call_request,  # type: "_models.RejectCallRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Reject the call.
+
+        Reject the call.
+
+        :param reject_call_request: The reject call request.
+        :type reject_call_request: ~azure.communication.callingserver.models.RejectCallRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-11-15-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.reject.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(reject_call_request, 'RejectCallRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    reject.metadata = {'url': '/calling:reject'}  # type: ignore
+
+    def redirect(
+        self,
+        redirect_call_request,  # type: "_models.RedirectCallRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Redirect the call.
+
+        Redirect the call.
+
+        :param redirect_call_request: The redirect call request.
+        :type redirect_call_request: ~azure.communication.callingserver.models.RedirectCallRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-11-15-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.redirect.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(redirect_call_request, 'RedirectCallRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    redirect.metadata = {'url': '/calling:redirect'}  # type: ignore

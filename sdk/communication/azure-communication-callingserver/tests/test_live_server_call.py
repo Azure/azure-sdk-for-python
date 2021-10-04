@@ -65,6 +65,7 @@ class ServerCallTest(CommunicationTestCase):
             http_logging_policy=get_http_logging_policy()
         )
 
+    @pytest.mark.skip(reason="Skip because the server side bits not ready")
     def test_join_play_cancel_hangup_scenario(self):
         # create GroupCalls
         group_id = CallingServerLiveTestUtils.get_group_id("test_join_play_cancel_hangup_scenario")

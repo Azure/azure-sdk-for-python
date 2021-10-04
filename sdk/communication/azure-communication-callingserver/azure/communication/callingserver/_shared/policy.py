@@ -10,6 +10,7 @@ import base64
 import hmac
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from .utils import get_current_utc_time
+from urllib.parse import urlparse
 
 try:
     from urllib.parse import urlparse
@@ -52,7 +53,7 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
 
         # Get the path and query from url, which looks like https://host/path/query
         query_url = str(request.http_request.url[len(self._host) + 8:])
-
+        
         signed_headers = "x-ms-date;host;x-ms-content-sha256"
 
         utc_now = get_current_utc_time()
@@ -69,7 +70,6 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
             query_url = urlparse(request.http_request.url).path
 
             request.http_request.headers["host"] = host
-
         else:
             host = self._host
 

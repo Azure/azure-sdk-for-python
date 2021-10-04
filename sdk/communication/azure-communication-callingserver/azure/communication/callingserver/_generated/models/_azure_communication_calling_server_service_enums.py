@@ -26,6 +26,13 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class AudioRoutingMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The audio routing mode.
+    """
+
+    ONE_TO_ONE = "oneToOne"
+    MULTICAST = "multicast"
+
 class CallConnectionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The state of the call connection.
     """
@@ -37,12 +44,27 @@ class CallConnectionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DISCONNECTING = "disconnecting"
     DISCONNECTED = "disconnected"
 
+class CallLocatorKindModel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The call locator kind.
+    """
+
+    GROUP_CALL_LOCATOR = "groupCallLocator"
+    SERVER_CALL_LOCATOR = "serverCallLocator"
+
 class CallRecordingState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The state of the recording
     """
 
     ACTIVE = "active"
     INACTIVE = "inactive"
+
+class CallRejectReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The rejection reason.
+    """
+
+    NONE = "none"
+    BUSY = "busy"
+    FORBIDDEN = "forbidden"
 
 class CommunicationCloudEnvironmentModel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The cloud that the identifier belongs to.
@@ -51,6 +73,21 @@ class CommunicationCloudEnvironmentModel(with_metaclass(_CaseInsensitiveEnumMeta
     PUBLIC = "public"
     DOD = "dod"
     GCCH = "gcch"
+
+class Enum0(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    ONE_TO_ONE = "oneToOne"
+    MULTICAST = "multicast"
+
+class Enum2(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    ONE_TO_ONE = "oneToOne"
+    MULTICAST = "multicast"
+
+class Enum3(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    ONE_TO_ONE = "oneToOne"
+    MULTICAST = "multicast"
 
 class EventSubscriptionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 

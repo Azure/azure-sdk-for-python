@@ -32,7 +32,7 @@ from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
 
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 
-SchemaRegistryPowerShellPreparer = functools.partial(PowerShellPreparer, "schemaregistry", schemaregistry_endpoint="fake_resource.servicebus.windows.net/", schemaregistry_group="fakegroup")
+SchemaRegistryPowerShellPreparer = functools.partial(PowerShellPreparer, "schemaregistry", schemaregistry_fully_qualified_namespace="fake_resource.servicebus.windows.net/", schemaregistry_group="fakegroup")
 
 class SchemaRegistryAvroSerializerTests(AzureTestCase):
 
@@ -75,15 +75,16 @@ class SchemaRegistryAvroSerializerTests(AzureTestCase):
             raw_avro_object_serializer.serialize(dict_data_missing_required_field, schema)
 
     @SchemaRegistryPowerShellPreparer()
-    def test_basic_sr_avro_serializer_with_auto_register_schemas(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
-        sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_endpoint)
-        sr_avro_serializer = SchemaRegistryAvroSerializer(sr_client, schemaregistry_group, auto_register_schemas=True)
+    def test_basic_sr_avro_serializer_with_auto_register_schemas(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        # TODO: AFTER RELEASING azure-schemaregistry=1.0.0b3, UPDATE 'endpoint' to 'fully_qualified_namespace'
+        sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_fully_qualified_namespace)
+        sr_avro_serializer = SchemaRegistryAvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
 
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         schema = avro.schema.parse(schema_str)
 
         dict_data = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
-        encoded_data = sr_avro_serializer.serialize(dict_data, schema_str)
+        encoded_data = sr_avro_serializer.serialize(dict_data, schema=schema_str)
 
         assert schema_str in sr_avro_serializer._user_input_schema_cache
         assert str(avro.schema.parse(schema_str)) in sr_avro_serializer._schema_to_id
@@ -102,15 +103,16 @@ class SchemaRegistryAvroSerializerTests(AzureTestCase):
         sr_avro_serializer.close()
 
     @SchemaRegistryPowerShellPreparer()
-    def test_basic_sr_avro_serializer_without_auto_register_schemas(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
-        sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_endpoint)
-        sr_avro_serializer = SchemaRegistryAvroSerializer(sr_client, schemaregistry_group)
+    def test_basic_sr_avro_serializer_without_auto_register_schemas(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        # TODO: AFTER RELEASING azure-schemaregistry=1.0.0b3, UPDATE 'endpoint' to 'fully_qualified_namespace'
+        sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_fully_qualified_namespace)
+        sr_avro_serializer = SchemaRegistryAvroSerializer(client=sr_client, group_name=schemaregistry_group)
 
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         schema = avro.schema.parse(schema_str)
 
         dict_data = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
-        encoded_data = sr_avro_serializer.serialize(dict_data, schema_str)
+        encoded_data = sr_avro_serializer.serialize(dict_data, schema=schema_str)
 
         assert schema_str in sr_avro_serializer._user_input_schema_cache
         assert str(avro.schema.parse(schema_str)) in sr_avro_serializer._schema_to_id

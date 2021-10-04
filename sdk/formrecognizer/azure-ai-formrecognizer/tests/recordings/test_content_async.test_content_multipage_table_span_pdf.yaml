@@ -8,20 +8,20 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/layout/analyze?readingOrder=basic
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 66e528a8-8ead-4b1e-9334-c8a2f44a0707
+      apim-request-id: 117ff8a0-1b48-49f1-a67d-2d18f00dcf3b
       content-length: '0'
-      date: Tue, 11 May 2021 00:29:25 GMT
-      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/layout/analyzeResults/66e528a8-8ead-4b1e-9334-c8a2f44a0707
+      date: Thu, 23 Sep 2021 22:33:45 GMT
+      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/layout/analyzeResults/117ff8a0-1b48-49f1-a67d-2d18f00dcf3b
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '192'
+      x-envoy-upstream-service-time: '157'
     status:
       code: 202
       message: Accepted
@@ -30,13 +30,13 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/layout/analyzeResults/66e528a8-8ead-4b1e-9334-c8a2f44a0707
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/layout/analyzeResults/117ff8a0-1b48-49f1-a67d-2d18f00dcf3b
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-05-11T00:29:25Z",
-        "lastUpdatedDateTime": "2021-05-11T00:29:28Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-09-23T22:33:46Z",
+        "lastUpdatedDateTime": "2021-09-23T22:33:48Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
         "unit": "inch", "lines": [{"boundingBox": [1.0119, 1.6855, 3.9147, 1.6855,
         3.9147, 1.8775, 1.0119, 1.8775], "text": "Quarterly Sales Update: Q3 2019",
@@ -1561,15 +1561,15 @@ interactions:
         ["#/readResults/1/lines/76/words/0"], "isHeader": false}], "boundingBox":
         [1.0424, 1.0041, 7.877, 1.0068, 7.8741, 5.1081, 1.037, 5.1044]}]}]}}'
     headers:
-      apim-request-id: de8dde50-6c6b-45a2-85a3-b641e792f658
+      apim-request-id: df487581-7940-4693-9ccc-2a462e83dc87
       content-length: '110204'
       content-type: application/json; charset=utf-8
-      date: Tue, 11 May 2021 00:29:29 GMT
+      date: Thu, 23 Sep 2021 22:33:51 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '19'
+      x-envoy-upstream-service-time: '92'
     status:
       code: 200
       message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/layout/analyzeResults/66e528a8-8ead-4b1e-9334-c8a2f44a0707
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/layout/analyzeResults/117ff8a0-1b48-49f1-a67d-2d18f00dcf3b
 version: 1
