@@ -35,14 +35,7 @@ class AzureCliCredential(object):
     """Authenticates by requesting a token from the Azure CLI.
 
     This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.
-
-    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
-        the identity logged in to the Azure CLI is registered in. When False, which is the default, the credential will
-        acquire tokens only from the tenant of the Azure CLI's active subscription.
     """
-
-    def __init__(self, **kwargs):
-        self._allow_multitenant = kwargs.get("allow_multitenant_authentication", False)
 
     def __enter__(self):
         return self
@@ -55,7 +48,7 @@ class AzureCliCredential(object):
         """Calling this method is unnecessary."""
 
     @log_get_token("AzureCliCredential")
-    def get_token(self, *scopes, **kwargs):
+    def get_token(self, *scopes, **kwargs): # pylint: disable=no-self-use
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 
@@ -63,8 +56,7 @@ class AzureCliCredential(object):
         also handle token caching because this credential doesn't cache the tokens it acquires.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
-        :keyword str tenant_id: optional tenant to include in the token request. If **allow_multitenant_authentication**
-            is False, specifying a tenant with this argument may raise an exception.
+        :keyword str tenant_id: optional tenant to include in the token request.
 
         :rtype: :class:`azure.core.credentials.AccessToken`
 
@@ -75,7 +67,7 @@ class AzureCliCredential(object):
 
         resource = _scopes_to_resource(*scopes)
         command = COMMAND_LINE.format(resource)
-        tenant = resolve_tenant("", self._allow_multitenant, **kwargs)
+        tenant = resolve_tenant("", **kwargs)
         if tenant:
             command += " --tenant " + tenant
         output = _run_command(command)

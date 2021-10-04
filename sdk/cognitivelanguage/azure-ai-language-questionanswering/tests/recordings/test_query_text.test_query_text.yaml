@@ -93,7 +93,7 @@ interactions:
       USB 3.1 Always-On, USB 3.1, Headphone/Mic, microSD RAM16GB RAM Upgradable to16GB
       Size12.1 x 8.3 x .57 inches Touchpad Size4.3 x 2.2 inches USB Ports3 Video Memory2GB
       Warranty/Supportone-year warranty. Weight2.8 pounds Wi-Fi802.11ac Wi-Fi ModelIntel
-      Wireless-AC 9560 "}], "language": "en", "stringIndexType": "TextElements_v8"}'
+      Wireless-AC 9560 "}], "language": "en", "stringIndexType": "UnicodeCodePoint"}'
     headers:
       Accept:
       - application/json
@@ -102,7 +102,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '7447'
+      - '7448'
       Content-Type:
       - application/json
       User-Agent:
@@ -136,27 +136,27 @@ interactions:
         recommended alternative, though you might want to wait a few months for the
         rumored Surface Laptop 3.   Overall, the HP Envy 13 is a fantastic laptop
         that checks all the right boxes --- as long as you buy the 1080p model.\",\n
-        \     \"confidenceScore\": 0.0070572528056800365,\n      \"id\": \"doc3\",\n
+        \     \"confidenceScore\": 0.007057250943034887,\n      \"id\": \"doc3\",\n
         \     \"answerSpan\": {\n        \"text\": \"battery life\",\n        \"confidenceScore\":
         0.5914322,\n        \"offset\": 98,\n        \"length\": 13\n      },\n      \"offset\":
         5391,\n      \"length\": 393\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - 8606d2ff-3166-4f3d-bc8c-b89815b47dfa
+      - abf593a7-19a1-45a9-b94c-e590f8f3bf5a
       content-length:
-      - '2147'
+      - '2146'
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
-      - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
+      - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=9
       date:
-      - Tue, 21 Sep 2021 21:06:55 GMT
+      - Thu, 30 Sep 2021 15:52:33 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '733'
+      - '323'
     status:
       code: 200
       message: OK

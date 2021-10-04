@@ -8,7 +8,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
 from ._shared._polling import DeleteRecoverPollingMethod, KeyVaultOperationPoller
-from ._models import DeletedKey, KeyVaultKey, KeyProperties, RandomBytes, ReleaseKeyResult
+from ._models import DeletedKey, KeyVaultKey, KeyProperties, KeyRotationPolicy, RandomBytes, ReleaseKeyResult
 
 try:
     from typing import TYPE_CHECKING
@@ -17,7 +17,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Optional, Union
+    from typing import Any, Iterable, Optional, Union
     from azure.core.paging import ItemPaged
     from azure.core.polling import LROPoller
     from ._models import JsonWebKey
@@ -45,7 +45,7 @@ class KeyClient(KeyVaultClientBase):
             :dedent: 4
     """
 
-    # pylint:disable=protected-access
+    # pylint:disable=protected-access, too-many-public-methods
 
     def _get_attributes(self, enabled, not_before, expires_on, exportable=None):
         """Return a KeyAttributes object if none-None attributes are provided, or None otherwise"""
@@ -727,3 +727,70 @@ class KeyClient(KeyVaultClientBase):
         parameters = self._models.GetRandomBytesRequest(count=count)
         result = self._client.get_random_bytes(vault_base_url=self._vault_url, parameters=parameters, **kwargs)
         return RandomBytes(value=result.value)
+
+    @distributed_trace
+    def get_key_rotation_policy(self, name, **kwargs):
+        # type: (str, **Any) -> KeyRotationPolicy
+        """Get the rotation policy of a Key Vault key.
+
+        :param str name: The name of the key.
+
+        :return: The key rotation policy.
+        :rtype: ~azure.keyvault.keys.KeyRotationPolicy
+        :raises: :class: `~azure.core.exceptions.HttpResponseError`
+        """
+        policy = self._client.get_key_rotation_policy(vault_base_url=self._vault_url, key_name=name, **kwargs)
+        return KeyRotationPolicy._from_generated(policy)
+
+    @distributed_trace
+    def rotate_key(self, name, **kwargs):
+        # type: (str, **Any) -> KeyVaultKey
+        """Rotate the key based on the key policy by generating a new version of the key.
+
+        This operation requires the keys/rotate permission.
+
+        :param str name: The name of the key to rotate.
+
+        :return: The new version of the rotated key.
+        :rtype: ~azure.keyvault.keys.KeyVaultKey
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        """
+        bundle = self._client.rotate_key(vault_base_url=self._vault_url, key_name=name, **kwargs)
+        return KeyVaultKey._from_key_bundle(bundle)
+
+    @distributed_trace
+    def update_key_rotation_policy(self, name, **kwargs):
+        # type: (str, **Any) -> KeyRotationPolicy
+        """Updates the rotation policy of a Key Vault key.
+
+        This operation requires the keys/update permission.
+
+        :param str name: The name of the key in the given vault.
+
+        :keyword lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a key.
+        :paramtype lifetime_actions: Iterable[~azure.keyvault.keys.KeyRotationLifetimeAction]
+        :keyword str expires_in: The expiry time of the policy that will be applied on new key versions, defined as an
+            ISO 8601 duration. For example: 90 days is "P90D", 3 months is "P3M", and 48 hours is "PT48H".
+
+        :return: The updated rotation policy.
+        :rtype: ~azure.keyvault.keys.KeyRotationPolicy
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        """
+        lifetime_actions = kwargs.pop("lifetime_actions", None)
+        if lifetime_actions:
+            lifetime_actions = [
+                self._models.LifetimeActions(
+                    action=self._models.LifetimeActionsType(type=action.action),
+                    trigger=self._models.LifetimeActionsTrigger(
+                        time_after_create=action.time_after_create, time_before_expiry=action.time_before_expiry
+                    ),
+                )
+                for action in lifetime_actions
+            ]
+
+        attributes = self._models.KeyRotationPolicyAttributes(expiry_time=kwargs.pop("expires_in", None))
+        policy = self._models.KeyRotationPolicy(lifetime_actions=lifetime_actions, attributes=attributes)
+        result = self._client.update_key_rotation_policy(
+            vault_base_url=self._vault_url, key_name=name, key_rotation_policy=policy
+        )
+        return KeyRotationPolicy._from_generated(result)

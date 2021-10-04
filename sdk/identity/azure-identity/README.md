@@ -1,13 +1,17 @@
 # Azure Identity client library for Python
 
-The Azure Identity library provides a set of credential classes for use with
-Azure SDK clients which support Azure Active Directory (AAD) token authentication.
-This library does not support Azure Active Directory B2C.
+The Azure Identity library provides Azure Active Directory token authentication support across the Azure SDK. It
+provides a set of TokenCredential implementations which can be used to construct Azure SDK clients which support AAD
+token authentication.
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity)
 | [Package (PyPI)](https://pypi.org/project/azure-identity/)
 | [API reference documentation][ref_docs]
 | [Azure Active Directory documentation](https://docs.microsoft.com/azure/active-directory/)
+
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 
@@ -41,8 +45,6 @@ After installing the extension, sign in to Azure in Visual Studio Code by
 pressing `F1` to open the command palette and running the `Azure: Sign In`
 command.
 
-![Visual Studio Code Account Sign In](https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/identity/azure-identity/images/VsCodeLoginCommand.png)
-
 #### Authenticating via the Azure CLI
 
 `DefaultAzureCredential` and `AzureCliCredential` can authenticate as the user
@@ -50,12 +52,8 @@ signed in to the [Azure CLI][azure_cli]. To sign in to the Azure CLI, run
 `az login`. On a system with a default web browser, the Azure CLI will launch
 the browser to authenticate a user.
 
-![Azure CLI Account Sign In](https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/identity/azure-identity/images/AzureCliLogin.png)
-
 When no default browser is available, `az login` will use the device code
 authentication flow. This can also be selected manually by running `az login --use-device-code`.
-
-![Azure CLI Account Device Code Sign In](https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/identity/azure-identity/images/AzureCliLoginDeviceCode.png)
 
 ## Key concepts
 
@@ -92,7 +90,7 @@ the following mechanisms in this order, stopping when one succeeds:
   `Connect-AzAccount` command, `DefaultAzureCredential` will authenticate
   as that user.
 - Interactive - if enabled, `DefaultAzureCredential` will interactively
-  authenticate a user via the default browser.
+  authenticate a user via the default browser. This is disabled by default.
 
 >DefaultAzureCredential is intended to simplify getting started with the SDK by handling common
 >scenarios with reasonable default behaviors. Developers who want more control or whose scenario
@@ -118,6 +116,9 @@ The following examples are provided below:
 - [Async credentials](#async-credentials "Async credentials")
 
 ### Authenticating with `DefaultAzureCredential`
+
+More details on configuring your environment to use the `DefaultAzureCredential`
+can be found in the class's [reference documentation][default_cred_ref].
 
 This example demonstrates authenticating the `BlobServiceClient` from the
 [azure-storage-blob][azure_storage_blob] library using
@@ -302,6 +303,8 @@ client secret and certificate are both present, the client secret will be used.
 
 ## Troubleshooting
 
+See the [troubleshooting guide][troubleshooting_guide] for details on how to diagnose various failure scenarios.
+
 ### Error Handling
 
 Credentials raise `CredentialUnavailableError` when they're unable to attempt
@@ -343,6 +346,10 @@ Client and management libraries listed on the
 which support Azure AD authentication accept credentials from this library. You can learn more
 about using these libraries in their documentation, which is linked from the release page.
 
+### B2C Support
+
+This library does not support [Azure Active Directory B2C][b2c].
+
 ### Provide Feedback
 
 If you encounter bugs or have suggestions, please
@@ -376,6 +383,7 @@ additional questions or comments.
 [azure_keyvault_secrets]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-secrets
 [azure_storage_blob]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob
 [azure_storage_queue]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-queue
+[b2c]: https://docs.microsoft.com/azure/active-directory-b2c/overview
 [cert_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.CertificateCredential
 [chain_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.ChainedTokenCredential
 [cli_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.AzureCliCredential
@@ -387,6 +395,7 @@ additional questions or comments.
 [managed_id_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.ManagedIdentityCredential
 [ref_docs]: https://aka.ms/azsdk/python/identity/docs
 [ref_docs_aio]: https://aka.ms/azsdk/python/identity/aio/docs
+[troubleshooting_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/Troubleshoot.md
 [userpass_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.UsernamePasswordCredential
 [vscode_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.VisualStudioCodeCredential
 

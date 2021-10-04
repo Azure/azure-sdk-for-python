@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Examples to show receiving events from EventHub with SchemaRegistryAvroSerializer integrated for data deserialization.
+Examples to show receiving events from EventHub with AvroSerializer integrated for data deserialization.
 """
 
 # pylint: disable=C0111
@@ -14,13 +14,13 @@ import os
 from azure.eventhub import EventHubConsumerClient
 from azure.identity import DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.serializer.avroserializer import SchemaRegistryAvroSerializer
+from azure.schemaregistry.serializer.avroserializer import AvroSerializer
 
 EVENTHUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
-SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
-GROUP_NAME = os.environ['SCHEMA_REGISTRY_GROUP']
+SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
+GROUP_NAME = os.environ['SCHEMAREGISTRY_GROUP']
 
 
 def on_event(partition_context, event):
@@ -44,11 +44,11 @@ eventhub_consumer = EventHubConsumerClient.from_connection_string(
 )
 
 
-# create a SchemaRegistryAvroSerializer instance
+# create a AvroSerializer instance
 # TODO: after 'azure-schemaregistry==1.0.0b3' is released, update 'endpoint' to 'fully_qualified_namespace'
-avro_serializer = SchemaRegistryAvroSerializer(
+avro_serializer = AvroSerializer(
     client=SchemaRegistryClient(
-        endpoint=SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE,
+        endpoint=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE,
         credential=DefaultAzureCredential()
     ),
     group_name=GROUP_NAME,

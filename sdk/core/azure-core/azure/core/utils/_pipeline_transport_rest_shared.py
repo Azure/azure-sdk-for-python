@@ -5,10 +5,17 @@
 # license information.
 # --------------------------------------------------------------------------
 from __future__ import absolute_import
+
+from io import BytesIO
+from email.message import Message
+
+try:
+    from email import message_from_bytes as message_parser
+except ImportError:  # 2.7
+    from email import message_from_string as message_parser  # type: ignore
 import os
 from typing import TYPE_CHECKING, cast, IO
 
-from email.message import Message
 from six.moves.http_client import HTTPConnection
 
 try:
@@ -18,6 +25,13 @@ except ImportError:
     binary_type = bytes  # type: ignore
     from urllib.parse import urlparse
 
+from ..pipeline import (
+    PipelineRequest,
+    PipelineResponse,
+    PipelineContext,
+)
+from ..pipeline._tools import await_result as _await_result
+
 if TYPE_CHECKING:
     from typing import (  # pylint: disable=ungrouped-imports
         Dict,
@@ -25,6 +39,9 @@ if TYPE_CHECKING:
         Union,
         Tuple,
         Optional,
+        Callable,
+        Type,
+        Iterator,
     )
     # importing both the py3 RestHttpRequest and the fallback RestHttpRequest
     from azure.core.rest._rest_py3 import HttpRequest as RestHttpRequestPy3
@@ -35,6 +52,26 @@ if TYPE_CHECKING:
     HTTPRequestType = Union[
         RestHttpRequestPy3, RestHttpRequestPy2, PipelineTransportHttpRequest
     ]
+    from ..pipeline.policies import SansIOHTTPPolicy
+    from azure.core.pipeline.transport import (
+        HttpResponse as PipelineTransportHttpResponse,
+        AioHttpTransportResponse as PipelineTransportAioHttpTransportResponse,
+    )
+    from azure.core.pipeline.transport._base import (
+        _HttpResponseBase as PipelineTransportHttpResponseBase
+    )
+
+class BytesIOSocket(object):
+    """Mocking the "makefile" of socket for HTTPResponse.
+    This can be used to create a http.client.HTTPResponse object
+    based on bytes and not a real socket.
+    """
+
+    def __init__(self, bytes_data):
+        self.bytes_data = bytes_data
+
+    def makefile(self, *_):
+        return BytesIO(self.bytes_data)
 
 def _format_parameters_helper(http_request, params):
     """Helper for format_parameters.
@@ -182,6 +219,98 @@ def _serialize_request(http_request):
     )
     return serializer.buffer
 
+def _decode_parts_helper(
+    response,  # type: PipelineTransportHttpResponseBase
+    message,  # type: Message
+    http_response_type,  # type: Type[PipelineTransportHttpResponseBase]
+    requests,  # type: List[PipelineTransportHttpRequest]
+    deserialize_response  # type: Callable
+):
+    # type: (...) -> List[PipelineTransportHttpResponse]
+    """Helper for _decode_parts.
+
+    Rebuild an HTTP response from pure string.
+    """
+    responses = []
+    for index, raw_reponse in enumerate(message.get_payload()):
+        content_type = raw_reponse.get_content_type()
+        if content_type == "application/http":
+            responses.append(
+                deserialize_response(
+                    raw_reponse.get_payload(decode=True),
+                    requests[index],
+                    http_response_type=http_response_type,
+                )
+            )
+        elif content_type == "multipart/mixed" and requests[index].multipart_mixed_info:
+            # The message batch contains one or more change sets
+            changeset_requests = requests[index].multipart_mixed_info[0]  # type: ignore
+            changeset_responses = response._decode_parts(raw_reponse, http_response_type, changeset_requests)  # pylint: disable=protected-access
+            responses.extend(changeset_responses)
+        else:
+            raise ValueError(
+                "Multipart doesn't support part other than application/http for now"
+            )
+    return responses
+
+def _get_raw_parts_helper(response, http_response_type):
+    """Helper for _get_raw_parts
+
+    Assuming this body is multipart, return the iterator or parts.
+
+    If parts are application/http use http_response_type or HttpClientTransportResponse
+    as enveloppe.
+    """
+    body_as_bytes = response.body()
+    # In order to use email.message parser, I need full HTTP bytes. Faking something to make the parser happy
+    http_body = (
+        b"Content-Type: "
+        + response.content_type.encode("ascii")
+        + b"\r\n\r\n"
+        + body_as_bytes
+    )
+    message = message_parser(http_body)  # type: Message
+    requests = response.request.multipart_mixed_info[0]
+    return response._decode_parts(message, http_response_type, requests)  # pylint: disable=protected-access
+
+def _parts_helper(response):
+    # type: (PipelineTransportHttpResponse) -> Iterator[PipelineTransportHttpResponse]
+    """Assuming the content-type is multipart/mixed, will return the parts as an iterator.
+
+    :rtype: iterator[HttpResponse]
+    :raises ValueError: If the content is not multipart/mixed
+    """
+    if not response.content_type or not response.content_type.startswith("multipart/mixed"):
+        raise ValueError(
+            "You can't get parts if the response is not multipart/mixed"
+        )
+
+    responses = response._get_raw_parts()  # pylint: disable=protected-access
+    if response.request.multipart_mixed_info:
+        policies = response.request.multipart_mixed_info[1]  # type: List[SansIOHTTPPolicy]
+
+        # Apply on_response concurrently to all requests
+        import concurrent.futures
+
+        def parse_responses(response):
+            http_request = response.request
+            context = PipelineContext(None)
+            pipeline_request = PipelineRequest(http_request, context)
+            pipeline_response = PipelineResponse(
+                http_request, response, context=context
+            )
+
+            for policy in policies:
+                _await_result(policy.on_response, pipeline_request, pipeline_response)
+
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            # List comprehension to raise exceptions if happened
+            [  # pylint: disable=expression-not-assigned, unnecessary-comprehension
+                _ for _ in executor.map(parse_responses, responses)
+            ]
+
+    return responses
+
 def _format_data_helper(data):
     # type: (Union[str, IO]) -> Union[Tuple[None, str], Tuple[Optional[str], IO, str]]
     """Helper for _format_data.
@@ -190,7 +319,7 @@ def _format_data_helper(data):
     a string for a form-data request.
 
     :param data: The request field data.
-        :type data: str or file-like object.
+    :type data: str or file-like object.
     """
     if hasattr(data, "read"):
         data = cast(IO, data)
@@ -202,3 +331,32 @@ def _format_data_helper(data):
             pass
         return (data_name, data, "application/octet-stream")
     return (None, cast(str, data))
+
+def _aiohttp_body_helper(response):
+    # pylint: disable=protected-access
+    # type: (PipelineTransportAioHttpTransportResponse) -> bytes
+    """Helper for body method of Aiohttp responses.
+
+    Since aiohttp body methods need decompression work synchronously,
+    need to share thid code across old and new aiohttp transport responses
+    for backcompat.
+
+    :rtype: bytes
+    """
+    if response._content is None:
+        raise ValueError("Body is not available. Call async method load_body, or do your call with stream=False.")
+    if not response._decompress:
+        return response._content
+    enc = response.headers.get('Content-Encoding')
+    if not enc:
+        return response._content
+    enc = enc.lower()
+    if enc in ("gzip", "deflate"):
+        if response._decompressed_content:
+            return response._decompressed_content
+        import zlib
+        zlib_mode = 16 + zlib.MAX_WBITS if enc == "gzip" else zlib.MAX_WBITS
+        decompressor = zlib.decompressobj(wbits=zlib_mode)
+        response._decompressed_content = decompressor.decompress(response._content)
+        return response._decompressed_content
+    return response._content

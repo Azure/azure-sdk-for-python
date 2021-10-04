@@ -34,10 +34,6 @@ class SharedTokenCacheCredential(object):
     :keyword cache_persistence_options: configuration for persistent token caching. If not provided, the credential
         will use the persistent cache shared by Microsoft development applications
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
-    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
-        the user is registered in. When False, which is the default, the credential will acquire tokens only from the
-        user's home tenant or, if a value was given for **authentication_record**, the tenant specified by the
-        :class:`AuthenticationRecord`.
     """
 
     def __init__(self, username=None, **kwargs):

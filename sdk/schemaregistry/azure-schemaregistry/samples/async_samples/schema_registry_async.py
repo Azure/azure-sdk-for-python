@@ -18,12 +18,12 @@ from azure.identity.aio import ClientSecretCredential
 from azure.schemaregistry.aio import SchemaRegistryClient
 from azure.schemaregistry import SchemaFormat
 
-TENANT_ID = os.environ['SCHEMA_REGISTRY_AZURE_TENANT_ID']
-CLIENT_ID = os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_ID']
-CLIENT_SECRET = os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_SECRET']
+TENANT_ID = os.environ['AZURE_TENANT_ID']
+CLIENT_ID = os.environ['AZURE_CLIENT_ID']
+CLIENT_SECRET = os.environ['AZURE_CLIENT_SECRET']
 
-SCHEMA_REGISTRY_FQN = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
-GROUP_NAME = os.environ['SCHEMA_REGISTRY_GROUP']
+SCHEMAREGISTRY_FQN = os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
+GROUP_NAME = os.environ['SCHEMAREGISTRY_GROUP']
 NAME = 'your-schema-name'
 FORMAT = SchemaFormat.AVRO
 SCHEMA_STRING = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
@@ -59,7 +59,7 @@ async def main():
         client_id=CLIENT_ID,
         client_secret=CLIENT_SECRET
     )
-    schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=SCHEMA_REGISTRY_FQN, credential=token_credential)
+    schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=SCHEMAREGISTRY_FQN, credential=token_credential)
     async with token_credential, schema_registry_client:
         schema_id = await register_schema(schema_registry_client, GROUP_NAME, NAME, SCHEMA_STRING, FORMAT)
         schema_str = await get_schema_by_id(schema_registry_client, schema_id)

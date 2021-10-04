@@ -4,7 +4,6 @@
 # ------------------------------------
 import requests
 from azure.core.pipeline.transport import (
-    AsyncHttpResponse,
     AsyncHttpTransport,
     AsyncioRequestsTransportResponse,
     AioHttpTransport,
@@ -13,11 +12,11 @@ from azure.core.pipeline import AsyncPipeline, PipelineResponse
 from azure.core.pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
 from unittest import mock
 import pytest
-from utils import HTTP_REQUESTS
+from utils import request_and_responses_product, ASYNC_HTTP_RESPONSES, create_http_response
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-async def test_connection_error_response(http_request):
+@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(ASYNC_HTTP_RESPONSES))
+async def test_connection_error_response(http_request, http_response):
     class MockSession(object):
         def __init__(self):
             self.auto_decompress = True
@@ -40,7 +39,7 @@ async def test_connection_error_response(http_request):
 
         async def send(self, request, **kwargs):
             request = http_request('GET', 'http://localhost/')
-            response = AsyncHttpResponse(request, None)
+            response = create_http_response(http_response, request, None)
             response.status_code = 200
             return response
 
@@ -68,7 +67,7 @@ async def test_connection_error_response(http_request):
 
     http_request = http_request('GET', 'http://localhost/')
     pipeline = AsyncPipeline(MockTransport())
-    http_response = AsyncHttpResponse(http_request, None)
+    http_response = create_http_response(http_response, http_request, None)
     http_response.internal_response = MockInternalResponse()
     stream = AioHttpStreamDownloadGenerator(pipeline, http_response, decompress=False)
     with mock.patch('asyncio.sleep', new_callable=AsyncMock):
@@ -76,7 +75,8 @@ async def test_connection_error_response(http_request):
             await stream.__anext__()
 
 @pytest.mark.asyncio
-async def test_response_streaming_error_behavior():
+@pytest.mark.parametrize("http_response", ASYNC_HTTP_RESPONSES)
+async def test_response_streaming_error_behavior(http_response):
     # Test to reproduce https://github.com/Azure/azure-sdk-for-python/issues/16723
     block_size = 103
     total_response_size = 500

@@ -9,7 +9,8 @@ import functools
 from datetime import date, time
 from azure.core.exceptions import HttpResponseError, ServiceRequestError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult, AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
+from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
 from azure.ai.formrecognizer import FormRecognizerApiVersion, AnalyzeResult
 from azure.ai.formrecognizer.aio import FormRecognizerClient, DocumentAnalysisClient
@@ -337,7 +338,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         with pytest.raises(HttpResponseError) as e:
             async with client:
                 await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg, locale="not a locale")
-        assert "UnsupportedLocale" == e.value.error.code
+        assert "InvalidArgument" == e.value.error.code
 
     @FormRecognizerPreparer()
     @GlobalClientPreparerV2(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
@@ -351,7 +352,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
     @GlobalClientPreparer()
     async def test_pages_kwarg_specified(self, client):
         async with client:
-            poller = await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg, pages=["1"])
+            poller = await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg, pages="1")
             assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
             result = await poller.result()
             assert result

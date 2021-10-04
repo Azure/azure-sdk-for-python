@@ -49,15 +49,20 @@ class LogsQueryClient(object):
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword endpoint: The endpoint to connect to. Defaults to 'https://api.loganalytics.io'.
     :paramtype endpoint: str
+    :keyword audience: URL to use for credential authentication with AAD.
+    :paramtype audience: str
     """
 
     def __init__(self, credential, **kwargs):
         # type: (TokenCredential, Any) -> None
-
-        self._endpoint = kwargs.pop("endpoint", "https://api.loganalytics.io/v1")
+        audience = kwargs.pop("audience", None)
+        endpoint = kwargs.pop("endpoint", "https://api.loganalytics.io/v1")
+        if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
+            endpoint = "https://" + endpoint
+        self._endpoint = endpoint
         self._client = MonitorQueryClient(
             credential=credential,
-            authentication_policy=get_authentication_policy(credential),
+            authentication_policy=get_authentication_policy(credential, audience),
             base_url=self._endpoint,
             **kwargs
         )
@@ -66,9 +71,9 @@ class LogsQueryClient(object):
     @distributed_trace
     def query_workspace(self, workspace_id, query, **kwargs):
         # type: (str, str, Any) -> Union[LogsQueryResult, LogsQueryPartialResult]
-        """Execute an Analytics query.
+        """Execute a Kusto query.
 
-        Executes an Analytics query for data.
+        Executes a Kusto query for data.
 
         :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
          Azure portal.
@@ -146,7 +151,7 @@ class LogsQueryClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[LogsQueryResult, LogsQueryPartialResult, LogsQueryError]]
-        """Execute a list of analytics queries. Each request can be either a LogsBatchQuery
+        """Execute a list of Kusto queries. Each request can be either a LogsBatchQuery
         object or an equivalent serialized model.
 
         **NOTE**: The response is returned in the same order as that of the requests sent.
