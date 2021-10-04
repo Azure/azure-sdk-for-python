@@ -227,11 +227,8 @@ if __name__ == "__main__":
                         "--no-deps",
                     ]
 
-                    if azure_requirements:
-                        download_command.extend(azure_requirements)
-
-                    if commands_options:
-                        download_command.extend(commands_options)
+                    download_command.extend(azure_requirements)
+                    download_command.extend(commands_options)
 
                     check_call(download_command, env=dict(os.environ, PIP_EXTRA_INDEX_URL=""))
                     additional_downloaded_reqs = [
@@ -243,10 +240,10 @@ if __name__ == "__main__":
                 "-m",
                 "pip",
                 "install",
-                built_pkg_path,
-                *additional_downloaded_reqs,
+                built_pkg_path
             ]
 
+            commands.extend(additional_downloaded_reqs)
             commands.extend(commands_options)
 
             if args.work_dir and os.path.exists(args.work_dir):
