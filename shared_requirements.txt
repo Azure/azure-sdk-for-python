@@ -95,7 +95,7 @@ azure-keyvault-nspkg
 azure-media-nspkg
 azure-agrifood-nspkg
 azure-purview-nspkg
-azure-schemaregistry==1.0.0b2
+azure-schemaregistry==1.0.0b3
 azure-search-nspkg
 azure-security-nspkg
 azure-synapse-nspkg
