@@ -26,7 +26,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
     methods based on inputs from a URL and inputs from a stream.
 
     .. note:: DocumentAnalysisClient should be used with API versions
-        v2021-09-30-preview and up. To use API versions <=v2.1, instantiate a FormRecognizerClient.
+        2021-09-30-preview and up. To use API versions <=v2.1, instantiate a FormRecognizerClient.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
