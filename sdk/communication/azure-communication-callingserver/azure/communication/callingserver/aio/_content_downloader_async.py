@@ -77,7 +77,6 @@ class ContentDownloader():
             header_parameters['Range'] = self._serialize.header("range", http_range, 'str')
 
         request = self._client.get(content_url, query_parameters, header_parameters)
-        # pdb.set_trace()
         pipeline_response = await self._client._pipeline.run(request, stream=True, **kwargs) # pylint: disable=protected-access
         response = pipeline_response.http_response
 
