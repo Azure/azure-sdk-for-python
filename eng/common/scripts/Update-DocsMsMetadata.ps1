@@ -31,12 +31,9 @@ GitHub repository ID of the SDK. Typically of the form: 'Azure/azure-sdk-for-js'
 #>
 
 param(
-  [Parameter(Mandatory = $false)]
+  [Parameter(Mandatory = $true)]
   [array]$PackageInfoJsonLocations,
   
-  [Parameter(Mandatory = $false)]
-  [string]$PackageInfoJsonPath,
-
   [Parameter(Mandatory = $true)]
   [string]$DocRepoLocation, 
 
@@ -65,7 +62,6 @@ function GetAdjustedReadmeContent($ReadmeContent, $PackageInfo, $PackageMetadata
 
   # Generate the release tag for use in link substitution
   $tag = "$($PackageInfo.Name)_$($PackageInfo.Version)"
-  Write-Host "This is the tag of release package: $tag."
   $date = Get-Date -Format "MM/dd/yyyy"
 
 
@@ -102,9 +98,8 @@ ms.service: $service
 
 function UpdateDocsMsMetadataForPackage($packageInfoJsonLocation) { 
   $packageInfoJson = Get-Content $packageInfoJsonLocation -Raw
-  Write-Host "Here is the package info json file:"
-  Write-Host $packageInfoJson
   $packageInfo = ConvertFrom-Json $packageInfoJson
+
   $originalVersion = [AzureEngSemanticVersion]::ParseVersionString($packageInfo.Version)
   if ($packageInfo.DevVersion) {
     # If the package is of a dev version there may be language-specific needs to 
@@ -162,9 +157,7 @@ function UpdateDocsMsMetadataForPackage($packageInfoJsonLocation) {
     -Path $packageInfoLocation/$packageMetadataName `
     -Value $packageInfoJson
 }
-if (!$PackageInfoJsonLocations) {
-  $PackageInfoJsonLocations = Get-ChildItem $PackageInfoJsonPath -Filter *.json
-}
+
 foreach ($packageInfo in $PackageInfoJsonLocations) {
   Write-Host "Updating metadata for package: $packageInfo"
   UpdateDocsMsMetadataForPackage $packageInfo
