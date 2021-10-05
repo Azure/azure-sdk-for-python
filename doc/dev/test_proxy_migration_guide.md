@@ -95,30 +95,41 @@ do.
 
 Since the test proxy doesn't use [`vcrpy`][vcrpy], tests don't use a scrubber to sanitize values in recordings.
 Instead, sanitizers (as well as matchers and transforms) can be registered on the proxy as detailed in
-[this][sanitizers] section of the proxy documentation. At the time of writing, sanitizers can be registered via the
-`add_sanitizer` method in `devtools_testutils`.
+[this][sanitizers] section of the proxy documentation. Sanitizers can be registered via `add_*_sanitizer` methods in
+`devtools_testutils`. For example, the general-use method for sanitizing recording bodies, headers, and URIs is
+`add_general_regex_sanitizer`. Other sanitizers are available for more specific scenarios and can be found at
+[devtools_testutils/sanitizers.py][py_sanitizers].
 
 Sanitizers, matchers, and transforms remain registered until the proxy container is stopped, so for any sanitizers that
 are shared by different tests, using a session fixture declared in a `conftest.py` file is recommended. Please refer to
 [pytest's scoped fixture documentation][pytest_fixtures] for more details.
 
-For example, to sanitize URIs in recordings, you can set up a URI sanitizer for all tests in the pytest session by
-adding something like the following in the package's `conftest.py` file:
+For example, to sanitize recordings using the general regex sanitizer, you can set up the sanitizer for all tests in
+the pytest session by adding something like the following in the package's `conftest.py` file:
 
 ```python
-from devtools_testutils import add_sanitizer
+from devtools_testutils import add_general_regex_sanitizer
 
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
 @pytest.fixture(scope="session", autouse=True)
 def sanitize_uris():
-    add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")
+    add_general_regex_sanitizer(
+        regex="(?<=\\/\\/)[a-z]+(?=(?:|-secondary)\\.(?:table|blob|queue)\\.core\\.windows\\.net)",
+        value="fakeendpoint",
+    )
 ```
 
-`add_sanitizer` accepts a sanitizer, matcher, or transform type from the ProxyRecordingSanitizer enum as a required
-parameter. Keyword-only arguments can be provided to customize the sanitizer; for example, in the snippet above, any
-request URIs that match the default URI regular expression will have their domain name replaced with "fakeendpoint". A
-request made to `https://tableaccount.table.core.windows.net` will be recorded as being made to
-`https://fakeendpoint.table.core.windows.net`.
+`add_general_regex_sanitizer` accepts a regex, replacement value, and capture group as keyword-only arguments. In the
+snippet above, any storage endpoint URIs that match the specified URI regex will have their account name replaced with
+"fakeendpoint". A request made to `https://tableaccount-secondary.table.core.windows.net` will be recorded as being
+made to `https://fakeendpoint-secondary.table.core.windows.net`, and URIs will also be sanitized in bodies and headers.
+
+As a simpler example, to emulate the effect registering a name pair with a `vcrpy` scrubber, you can provide the exact
+value you want to sanitize from recordings as the `regex` in this sanitizer. For example, to replace all instances of
+the string `tableaccount` in recordings, you could call
+```python
+add_general_regex_sanitizer(regex="my-key-vault", value="fake-vault")
+```
 
 ## Implementation details
 
@@ -171,6 +182,7 @@ case.
 [docker_start_proxy]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/testproxy/docker-start-proxy.ps1
 [general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/README.md
 [proxy_cert_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/trusting-cert-per-language.md
+[py_sanitizers]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/sanitizers.py
 [pytest_collection]: https://docs.pytest.org/latest/goodpractices.html#test-discovery
 [pytest_fixtures]: https://docs.pytest.org/latest/fixture.html#scope-sharing-fixtures-across-classes-modules-packages-or-session
 [sanitizers]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md#session-and-test-level-transforms-sanitiziers-and-matchers
