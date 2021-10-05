@@ -9,16 +9,14 @@
 # https://github.com/PyCQA/pylint/issues/3882
 
 from typing import TYPE_CHECKING, Any, Optional  # pylint: disable=unused-import
-
 from azure.core.tracing.decorator_async import distributed_trace_async
-
+from ..utils._utils import CallingServerUtils
 from .._communication_identifier_serializer import serialize_identifier
 from .._converters import (
     AddParticipantRequestConverter,
     RemoveParticipantRequestConverter,
     CancelAllMediaOperationsConverter,
     TransferCallRequestConverter,
-    CancelMediaOperationRequestConverter,
     CancelParticipantMediaOperationRequestConverter,
     PlayAudioRequestConverter,
     PlayAudioToParticipantRequestConverter

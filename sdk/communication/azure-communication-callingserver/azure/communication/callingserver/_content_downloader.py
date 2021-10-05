@@ -6,7 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import IO, TYPE_CHECKING
-from urllib.parse import urlparse
+
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse # type: ignore
+
 from msrest import Deserializer, Serializer
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -120,6 +125,8 @@ class ContentDownloader(object):
         return deserialized
 
 
-    def get_url_to_sign_request_with(self, content_url: str):
+    def get_url_to_sign_request_with(self,
+        content_url # type: str
+    ): # type: (...) -> str
         path = urlparse(content_url).path
         return self._config.endpoint + path

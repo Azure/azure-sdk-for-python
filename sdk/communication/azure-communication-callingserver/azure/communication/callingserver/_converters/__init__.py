@@ -32,6 +32,5 @@ __all__ = [
     'CancelMediaOperationWithCallLocatorRequestConverter',
     'CancelParticipantMediaOperationRequestConverter',
     'CancelParticipantMediaOperationWithCallLocatorRequestConverter',
-    'TransferCallRequestConverter',
-    'StartCallRecordingWithCallLocatorRequestConverter'
+    'TransferCallRequestConverter'
 ]
