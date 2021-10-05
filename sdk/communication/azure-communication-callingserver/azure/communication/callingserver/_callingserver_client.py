@@ -499,20 +499,19 @@ class CallingServerClient():
         if not CallingServerUtils.is_valid_url(content_url):
             raise ValueError("content_url is invalid")
 
+        # pylint:disable=protected-access
         content_downloader = ContentDownloader(
-            self._callingserver_service_client._client, # pylint:disable=protected-access
-            self._callingserver_service_client._serialize, # pylint:disable=protected-access
-            self._callingserver_service_client._deserialize, # pylint:disable=protected-access
-            self._callingserver_service_client._config) # pylint:disable=protected-access
-        stream_downloader = ContentStreamDownloader(
+            self._callingserver_service_client._client,
+            self._callingserver_service_client._serialize,
+            self._callingserver_service_client._deserialize,
+            self._callingserver_service_client._config)
+
+        return ContentStreamDownloader(
             content_downloader,
-            self._callingserver_service_client._config, # pylint:disable=protected-access
+            self._callingserver_service_client._config,
             start_range,
             end_range,
             endpoint=content_url,
             parallel_download_options=parallel_download_options,
             **kwargs
         )
-        stream_downloader._setup() # pylint:disable=protected-access
-
-        return stream_downloader

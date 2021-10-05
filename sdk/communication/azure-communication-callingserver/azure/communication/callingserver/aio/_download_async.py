@@ -7,130 +7,13 @@
 
 import asyncio
 import sys
-import threading
 from typing import AsyncIterator
 from io import BytesIO
 from itertools import islice
 
 from azure.core.exceptions import HttpResponseError
-
-def parse_length_from_content_range(content_range):
-    '''
-    Parses the content length from the content range header: bytes 1-3/65537
-    '''
-    if content_range is None:
-        return None
-
-    # First, split in space and take the second half: '1-3/65537'
-    # Next, split on slash and take the second half: '65537'
-    # Finally, convert to an int: 65537
-    return int(content_range.split(' ', 1)[1].split('/', 1)[1])
-
-def validate_and_format_range_headers(start_range, end_range):
-    # If end range is provided, start range must be provided
-    if (end_range is not None) and start_range is None:
-        raise ValueError("start_range value cannot be None.")
-
-    # Format based on whether end_range is present
-    range_header = None
-    if end_range is not None:
-        range_header = 'bytes={0}-{1}'.format(start_range, end_range)
-    elif start_range is not None:
-        range_header = "bytes={0}-".format(start_range)
-
-    return range_header
-
-class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
-    def __init__(
-        self,
-        client=None,
-        endpoint=None,
-        total_size=None,
-        chunk_size=None,
-        current_progress=None,
-        start_range=None,
-        end_range=None,
-        stream=None,
-        parallel=None,
-        **kwargs
-    ):
-        self.client = client
-        self.endpoint = endpoint
-
-        # Information on the download range/chunk size
-        self.chunk_size = chunk_size
-        self.total_size = total_size
-        self.start_index = start_range
-        self.end_index = end_range
-
-        # The destination that we will write to
-        self.stream = stream
-        self.stream_lock = threading.Lock() if parallel else None
-        self.progress_lock = threading.Lock() if parallel else None
-
-        # For a parallel download, the stream is always seekable, so we note down the current position
-        # in order to seek to the right place when out-of-order chunks come in
-        self.stream_start = stream.tell() if parallel else None
-
-        # Download progress so far
-        self.progress_total = current_progress
-
-        self.request_options = kwargs
-
-    def _calculate_range(self, chunk_start):
-        if chunk_start + self.chunk_size > self.end_index:
-            chunk_end = self.end_index
-        else:
-            chunk_end = chunk_start + self.chunk_size
-        return chunk_start, chunk_end
-
-    def get_chunk_offsets(self):
-        index = self.start_index
-        while index < self.end_index:
-            yield index
-            index += self.chunk_size
-
-    def process_chunk(self, chunk_start):
-        chunk_start, chunk_end = self._calculate_range(chunk_start)
-        chunk_data = self._download_chunk(chunk_start, chunk_end - 1)
-        length = chunk_end - chunk_start
-        if length > 0:
-            self._write_to_stream(chunk_data, chunk_start)
-            self._update_progress(length)
-
-    def yield_chunk(self, chunk_start):
-        chunk_start, chunk_end = self._calculate_range(chunk_start)
-        return self._download_chunk(chunk_start, chunk_end - 1)
-
-    def _update_progress(self, length):
-        if self.progress_lock:
-            with self.progress_lock:  # pylint: disable=not-context-manager
-                self.progress_total += length
-        else:
-            self.progress_total += length
-
-    def _write_to_stream(self, chunk_data, chunk_start):
-        if self.stream_lock:
-            with self.stream_lock:  # pylint: disable=not-context-manager
-                self.stream.seek(self.stream_start + (chunk_start - self.start_index))
-                self.stream.write(chunk_data)
-        else:
-            self.stream.write(chunk_data)
-
-    def _download_chunk(self, chunk_start, chunk_end):
-        range_header = validate_and_format_range_headers(
-            chunk_start,
-            chunk_end
-        )
-
-        response = self.client.download(
-            content_url=self.endpoint,
-            http_range=range_header,
-            **self.request_options
-        )
-
-        #pylint: disable=protected-access
-        return response.response.internal_response._body
+from .._download import _ChunkDownloader
+from .._utils import validate_and_format_range_headers, parse_length_from_content_range
 
 class _AsyncChunkDownloader(_ChunkDownloader):
     def __init__(self, **kwargs):

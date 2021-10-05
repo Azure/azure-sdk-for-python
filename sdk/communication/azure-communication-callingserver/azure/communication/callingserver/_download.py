@@ -11,35 +11,7 @@ from typing import Iterator
 from io import BytesIO
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.common import with_current_context
-
-
-def parse_length_from_content_range(content_range):
-    '''
-    Parses the content length from the content range header: bytes 1-3/65537
-    '''
-    if content_range is None:
-        return None
-
-    # First, split in space and take the second half: '1-3/65537'
-    # Next, split on slash and take the second half: '65537'
-    # Finally, convert to an int: 65537
-    return int(content_range.split(' ', 1)[1].split('/', 1)[1])
-
-
-def validate_and_format_range_headers(start_range, end_range):
-    # If end range is provided, start range must be provided
-    if (end_range is not None) and start_range is None:
-        raise ValueError("/ value cannot be None.")
-
-    # Format based on whether end_range is present
-    range_header = None
-    if end_range is not None:
-        range_header = 'bytes={0}-{1}'.format(start_range, end_range)
-    elif start_range is not None:
-        range_header = "bytes={0}-".format(start_range)
-
-    return range_header
-
+from ._utils import validate_and_format_range_headers, parse_length_from_content_range
 
 class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
@@ -236,8 +208,6 @@ class ContentStreamDownloader():  # pylint: disable=too-many-instance-attributes
             initial_request_end = initial_request_start + self._block_size - 1
 
         self._initial_range = (initial_request_start, initial_request_end)
-
-    def _setup(self):
         self._response = self._initial_request()
         if self.size == 0:
             self._current_content = b""
