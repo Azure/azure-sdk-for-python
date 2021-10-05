@@ -23,7 +23,7 @@ interaface_ouput= "DTMI(s) {0} resolved in {1} interface(s)."
 
 # By default the remote clients in this sample will use the Azure Device Models Repository endpoint
 # i.e. https://devicemodels.azure.com/
-# The local clients in this sample will use the ./SampleModelRepo endpoint
+# The local clients in this sample will use the ./SampleModelsRepo endpoint
 # See client_configuration_sample.py for examples of alternate configurations
 
 
@@ -102,7 +102,7 @@ def get_model_from_local_repo():
     # This API call will return a dictionary mapping the specified DTMI to its corresponding model,
     # from a DTDL document at the specified local endpoint, as well as the DTMIs and models for all
     # dependencies on components and interfaces
-    # i.e. ./SampleModelRepo/dtmi/com/example/temperaturecontroller-1.json
+    # i.e. ./SampleModelsRepo/dtmi/com/example/temperaturecontroller-1.json
 
     with use_local_repository() as client:
         # The output of get_models() will include at least the definition for the target dtmi.
