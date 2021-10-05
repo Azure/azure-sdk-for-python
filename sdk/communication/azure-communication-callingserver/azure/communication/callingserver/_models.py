@@ -14,7 +14,7 @@ from ._shared.models import PhoneNumberIdentifier
 try:
     from urllib.parse import urlparse
 except ImportError:
-    from urlparse import urlparse  # type: ignore
+    from urlparse import urlparse # type: ignore
 
 try:
     from typing import Protocol, TypedDict
@@ -159,7 +159,6 @@ class CreateCallOptions(object):
         # type: (str) -> None
         self.__subject = subject
 
-
 class JoinCallOptions(object):
     """The options for joining a call.
 
@@ -223,7 +222,6 @@ class JoinCallOptions(object):
     def subject(self, subject):
         # type: (str) -> None
         self.__subject = subject
-
 
 class PlayAudioOptions(object):
     """The options for playing audio.

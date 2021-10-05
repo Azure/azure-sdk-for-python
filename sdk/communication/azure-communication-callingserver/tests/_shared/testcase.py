@@ -88,4 +88,3 @@ class CommunicationTestCase(AzureTestCase):
             endpoint, _ = parse_connection_str(self.connection_str)
             self._resource_name = endpoint.split(".")[0]
             self.scrubber.register_name_pair(self._resource_name, "sanitized")
-

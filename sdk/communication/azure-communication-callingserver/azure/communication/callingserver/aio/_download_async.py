@@ -13,7 +13,7 @@ from itertools import islice
 
 from azure.core.exceptions import HttpResponseError
 from .._download import _ChunkDownloader
-from .._utils import validate_and_format_range_headers, parse_length_from_content_range
+from ..utils._utils import CallingServerUtils
 
 class _AsyncChunkDownloader(_ChunkDownloader):
     def __init__(self, **kwargs):
@@ -49,7 +49,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
             self.stream.write(chunk_data)
 
     async def _download_chunk(self, chunk_start, chunk_end):
-        range_header = validate_and_format_range_headers(
+        range_header = CallingServerUtils.validate_and_format_range_headers(
             chunk_start,
             chunk_end
         )
@@ -165,7 +165,7 @@ class ContentStreamDownloader(): # pylint: disable=too-many-instance-attributes
             self._current_content = self._response.response.internal_response._body #pylint: disable=protected-access
 
     async def _initial_request(self):
-        http_range = validate_and_format_range_headers(
+        http_range = CallingServerUtils.validate_and_format_range_headers(
             self._initial_range[0],
             self._initial_range[1])
 
@@ -177,7 +177,7 @@ class ContentStreamDownloader(): # pylint: disable=too-many-instance-attributes
 
             # Parse the total file size and adjust the download size if ranges
             # were specified
-            self._file_size = parse_length_from_content_range(response.response.headers["Content-Range"])
+            self._file_size = CallingServerUtils.parse_length_from_content_range(response.response.headers["Content-Range"])
             if self._end_range is not None:
                 # Use the length unless it is over the end of the file
                 self.size = min(self._file_size, self._end_range - self._start_range + 1)

@@ -32,8 +32,6 @@ if TYPE_CHECKING:
     from .._generated.aio.operations import CallConnectionsOperations
     from .._models import PlayAudioOptions
 
-from ..utils._utils import CallingServerUtils
-
 class CallConnection:
     def __init__(
             self,

@@ -38,8 +38,7 @@ from .._converters import (
     AddParticipantWithCallLocatorRequestConverter,
     RemoveParticipantWithCallLocatorRequestConverter,
     CancelMediaOperationWithCallLocatorRequestConverter,
-    CancelParticipantMediaOperationWithCallLocatorRequestConverter,
-    StartCallRecordingWithCallLocatorRequestConverter
+    CancelParticipantMediaOperationWithCallLocatorRequestConverter
     )
 from .._shared.utils import get_authentication_policy, parse_connection_str
 from .._version import SDK_MONIKER
@@ -47,8 +46,6 @@ from .._version import SDK_MONIKER
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from .._models import CreateCallOptions, JoinCallOptions, PlayAudioOptions
-
-from ..utils._utils import CallingServerUtils
 
 class CallingServerClient:
     """A client to interact with the AzureCommunicationService Calling Server.

@@ -23,9 +23,7 @@ from .._generated.models import (
     CancelParticipantMediaOperationRequest,
     CancelParticipantMediaOperationWithCallLocatorRequest,
     PhoneNumberIdentifierModel,
-    CallLocatorModel,
-    StartCallRecordingRequest,
-    StartCallRecordingWithCallLocatorRequest
+    CallLocatorModel
     )
 
 class JoinCallRequestConverter(object):
@@ -312,36 +310,4 @@ class TransferCallRequestConverter(object):
         return TransferCallRequest(
             target_participant=target_participant,
             user_to_user_information=user_to_user_information
-        )
-
-class StartCallRecordingRequestConverter(object):
-    @staticmethod
-    def convert(
-        recording_state_callback_uri # type: str
-        ): # type: (...) -> StartCallRecordingRequest
-
-        if not recording_state_callback_uri:
-            raise ValueError("recording_state_callback_uri can not be None")
-
-        return StartCallRecordingRequest(
-            recording_state_callback_uri=recording_state_callback_uri
-        )
-
-class StartCallRecordingWithCallLocatorRequestConverter(object):
-    @staticmethod
-    def convert(
-        call_locator, # type: CallLocatorModel
-        recording_state_callback_uri # type: str
-        ): # type: (...) -> StartCallRecordingWithCallLocatorRequest
-
-        if not call_locator:
-            raise ValueError("call_locator can not be None")
-        if not recording_state_callback_uri:
-            raise ValueError("start_call_recording_request can not be None")
-
-        return StartCallRecordingWithCallLocatorRequest(
-            call_locator=call_locator,
-            start_call_recording_request=StartCallRecordingRequestConverter.convert(
-                recording_state_callback_uri=recording_state_callback_uri
-            )
         )

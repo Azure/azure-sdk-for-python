@@ -13,8 +13,7 @@ from ._converter import (
     CancelMediaOperationWithCallLocatorRequestConverter,
     CancelParticipantMediaOperationRequestConverter,
     CancelParticipantMediaOperationWithCallLocatorRequestConverter,
-    TransferCallRequestConverter,
-    StartCallRecordingWithCallLocatorRequestConverter
+    TransferCallRequestConverter
     )
 
 __all__ = [

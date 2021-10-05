@@ -33,13 +33,10 @@ from ._converters import (
     AddParticipantWithCallLocatorRequestConverter,
     RemoveParticipantWithCallLocatorRequestConverter,
     CancelMediaOperationWithCallLocatorRequestConverter,
-    CancelParticipantMediaOperationWithCallLocatorRequestConverter,
-    StartCallRecordingWithCallLocatorRequestConverter
+    CancelParticipantMediaOperationWithCallLocatorRequestConverter
     )
 from ._shared.utils import get_authentication_policy, parse_connection_str
 from ._version import SDK_MONIKER
-from ._generated import models as _models
-from ._generated._configuration import AzureCommunicationCallingServerServiceConfiguration
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -51,7 +48,7 @@ if TYPE_CHECKING:
         CallLocator
     )
 
-class CallingServerClient():
+class CallingServerClient(object):
     """A client to interact with the AzureCommunicationService Calling Server.
 
     This client provides calling operations.
@@ -85,11 +82,9 @@ class CallingServerClient():
                 "You need to provide account shared key to authenticate.")
 
         self._endpoint = endpoint
-        self._authentication_policy = get_authentication_policy(
-            endpoint, credential)
         self._callingserver_service_client = AzureCommunicationCallingServerService(
             self._endpoint,
-            authentication_policy=self._authentication_policy,
+            authentication_policy=get_authentication_policy(endpoint, credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs)
 
