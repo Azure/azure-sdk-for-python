@@ -1,5 +1,21 @@
 # Release History
 
+## 4.0.0b1 (2021-10-05)
+
+**Features**
+
+  - Added operation TransparentDataEncryptionsOperations.list_by_database
+  - Added operation LedgerDigestUploadsOperations.begin_create_or_update
+  - Added operation LedgerDigestUploadsOperations.begin_disable
+
+**Breaking changes**
+
+  - Operation TransparentDataEncryptionsOperations.create_or_update has a new signature
+  - Operation TransparentDataEncryptionsOperations.get has a new signature
+  - Removed operation LedgerDigestUploadsOperations.create_or_update
+  - Removed operation LedgerDigestUploadsOperations.disable
+  - Removed operation group TransparentDataEncryptionActivitiesOperations
+
 ## 3.0.1 (2021-07-15)
 
 **Bugfixes**
