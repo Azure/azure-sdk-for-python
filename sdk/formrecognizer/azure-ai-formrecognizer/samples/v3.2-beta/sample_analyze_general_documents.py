@@ -43,7 +43,7 @@ def analyze_general_documents():
             "./sample_forms/forms/form_selection_mark.png",
         )
     )
-    # [START analyze_general_documents]
+
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer import DocumentAnalysisClient
 
@@ -151,8 +151,6 @@ def analyze_general_documents():
                     )
                 )
     print("----------------------------------------")
-
-    # [END analyze_general_documents]
 
 
 if __name__ == "__main__":
