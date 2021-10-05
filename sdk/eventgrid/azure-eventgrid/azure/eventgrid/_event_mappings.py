@@ -218,7 +218,7 @@ class SystemEventNames(str, Enum):
 
     MediaJobStateChangeEventName = 'Microsoft.Media.JobStateChange'
 
-    MediaLiveEventChannelArchiveHeartbeatEventName = 'Microsoft.Media.LiveEventChannelArchiveHeartbeatEventData'
+    MediaLiveEventChannelArchiveHeartbeatEventName = 'Microsoft.Media.LiveEventChannelArchiveHeartbeat'
 
     MediaLiveEventConnectionRejectedEventName = 'Microsoft.Media.LiveEventConnectionRejected'
 
