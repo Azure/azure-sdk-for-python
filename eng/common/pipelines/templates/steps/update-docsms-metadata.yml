@@ -76,18 +76,12 @@ steps:
 
 - pwsh: |
     $packageInfoJson = '${{ convertToJson(parameters.PackageInfoLocations) }}'.Trim('"').Replace("\\", "/")
-    try {
-      $packageInfoLocations = ConvertFrom-Json $packageInfoJson
-      ${{ parameters.ScriptDirectory }}/Update-DocsMsMetadata.ps1 `
-        -PackageInfoJsonLocations $packageInfoLocations `
-        -DocRepoLocation "$(DocRepoLocation)" `
-        -Language '${{parameters.Language}}' `
-        -RepoId '${{ parameters.RepoId }}'
-    }
-    catch {
-      $errorMessage = $_.Exception.Message
-      echo "##vso[task.logissue type=warning;sourcepath=consoleapp/main.cs;linenumber=1;columnnumber=1;code=100;]$errorMessage`nThe package does not have metadata, please check if it is intended."
-    }
+    $packageInfoLocations = ConvertFrom-Json $packageInfoJson
+    ${{ parameters.ScriptDirectory }}/Update-DocsMsMetadata.ps1 `
+      -PackageInfoJsonLocations $packageInfoLocations `
+      -DocRepoLocation "$(DocRepoLocation)" `
+      -Language '${{parameters.Language}}' `
+      -RepoId '${{ parameters.RepoId }}'
   displayName: Apply Documentation Updates
 
 - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
