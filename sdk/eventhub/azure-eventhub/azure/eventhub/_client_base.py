@@ -34,7 +34,8 @@ from ._constants import (
     MGMT_OPERATION,
     MGMT_PARTITION_OPERATION,
     MGMT_STATUS_CODE,
-    MGMT_STATUS_DESC
+    MGMT_STATUS_DESC,
+    AAD_TOKEN_REFRESH_WINDOW_IN_SECONDS
 )
 
 if TYPE_CHECKING:
@@ -304,7 +305,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 transport_type=self._config.transport_type,
                 custom_endpoint_hostname=self._config.custom_endpoint_hostname,
                 port=self._config.connection_port,
-                verify=self._config.connection_verify
+                verify=self._config.connection_verify,
             )
             auth.update_token()
             return auth
@@ -318,7 +319,8 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             transport_type=self._config.transport_type,
             custom_endpoint_hostname=self._config.custom_endpoint_hostname,
             port=self._config.connection_port,
-            verify=self._config.connection_verify
+            verify=self._config.connection_verify,
+            override_token_refresh_window=AAD_TOKEN_REFRESH_WINDOW_IN_SECONDS,
         )
 
     def _close_connection(self):

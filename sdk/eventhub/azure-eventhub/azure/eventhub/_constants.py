@@ -52,3 +52,5 @@ NO_RETRY_ERRORS = (
     b"com.microsoft:precondition-failed",
     b"com.microsoft:argument-error",
 )
+
+AAD_TOKEN_REFRESH_WINDOW_IN_SECONDS = 300

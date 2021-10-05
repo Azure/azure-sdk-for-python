@@ -29,7 +29,8 @@ from .._constants import (
     MGMT_OPERATION,
     MGMT_PARTITION_OPERATION,
     MGMT_STATUS_CODE,
-    MGMT_STATUS_DESC
+    MGMT_STATUS_DESC,
+    AAD_TOKEN_REFRESH_WINDOW_IN_SECONDS
 )
 from ._connection_manager_async import get_connection_manager
 from ._error_async import _handle_exception
@@ -182,7 +183,7 @@ class ClientBaseAsync(ClientBase):
                 transport_type=self._config.transport_type,
                 custom_endpoint_hostname=self._config.custom_endpoint_hostname,
                 port=self._config.connection_port,
-                verify=self._config.connection_verify
+                verify=self._config.connection_verify,
             )
             await auth.update_token()
             return auth
@@ -196,7 +197,8 @@ class ClientBaseAsync(ClientBase):
             transport_type=self._config.transport_type,
             custom_endpoint_hostname=self._config.custom_endpoint_hostname,
             port=self._config.connection_port,
-            verify=self._config.connection_verify
+            verify=self._config.connection_verify,
+            override_token_refresh_window=AAD_TOKEN_REFRESH_WINDOW_IN_SECONDS,
         )
 
     async def _close_connection_async(self) -> None:
