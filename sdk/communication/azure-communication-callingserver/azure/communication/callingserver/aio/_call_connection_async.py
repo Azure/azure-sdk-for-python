@@ -18,7 +18,6 @@ from .._converters import (
     RemoveParticipantRequestConverter,
     CancelAllMediaOperationsConverter,
     TransferCallRequestConverter,
-    CancelMediaOperationRequestConverter,
     CancelParticipantMediaOperationRequestConverter,
     PlayAudioRequestConverter,
     PlayAudioToParticipantRequestConverter

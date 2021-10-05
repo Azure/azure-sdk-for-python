@@ -178,7 +178,7 @@ class CallingServerClient:
     @distributed_trace_async()
     async def join_call(
         self,
-        call_locator: 'CallLocator',
+        call_locator: CallLocator,
         source: CommunicationIdentifier,
         call_options: 'JoinCallOptions',
         **kwargs: Any
@@ -202,9 +202,9 @@ class CallingServerClient:
             raise ValueError("call_options can not be None")
 
         join_call_request = JoinCallRequestConverter.convert(
-            serialize_call_locator(call_locator),
-            serialize_identifier(source),
-            call_options
+            call_locator=serialize_call_locator(call_locator),
+            source=serialize_identifier(source),
+            join_call_options=call_options
             )
 
         join_call_response = await self._server_call_client.join_call(
@@ -235,9 +235,9 @@ class CallingServerClient:
             raise ValueError("options can not be None")
 
         play_audio_request = PlayAudioWithCallLocatorRequestConverter.convert(
-            serialize_call_locator(call_locator),
-            audio_file_uri,
-            play_audio_options
+            call_locator=serialize_call_locator(call_locator),
+            audio_file_uri=audio_file_uri,
+            play_audio_options=play_audio_options
             )
 
         return await self._server_call_client.play_audio(
@@ -265,10 +265,10 @@ class CallingServerClient:
             raise ValueError("play_audio_options can not be None")
 
         play_audio_to_participant_request = PlayAudioToParticipantWithCallLocatorRequestConverter.convert(
-            serialize_call_locator(call_locator),
-            serialize_identifier(participant),
-            audio_file_uri,
-            play_audio_options
+            call_locator=serialize_call_locator(call_locator),
+            identifier=serialize_identifier(participant),
+            audio_file_uri=audio_file_uri,
+            play_audio_options=play_audio_options
             )
 
         return await self._server_call_client.participant_play_audio(
@@ -366,7 +366,8 @@ class CallingServerClient:
         if not media_operation_id:
             raise ValueError("media_operation_id can not be None")
 
-        cancel_participant_media_operation_request = CancelParticipantMediaOperationWithCallLocatorRequestConverter.convert(
+        cancel_participant_media_operation_request = \
+            CancelParticipantMediaOperationWithCallLocatorRequestConverter.convert(
             serialize_call_locator(call_locator),
             serialize_identifier(participant),
             media_operation_id=media_operation_id

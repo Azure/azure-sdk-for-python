@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# pylint: skip-file
 
 from typing import List, Mapping, Optional, Union, Any  # pylint: disable=unused-import
 from enum import Enum, EnumMeta
@@ -27,18 +28,18 @@ class CallLocatorKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     GROUP_CALL_LOCATOR = "groupCallLocator"
     SERVER_CALL_LOCATOR = "serverCallLocator"
 
-class CallLocator(object):
+class CallLocator(Protocol):
     """Call Locator.
 
     :ivar kind: The type of locator.
     :vartype kind: str or CallLocatorKind
     :ivar Mapping[str, Any] properties: The properties of the locator.
     """
-    id = None  # type: Optional[str]
+    id = str  # type: str
     kind = None  # type: Optional[Union[CallLocatorKind, str]]
     properties = {}  # type: Mapping[str, Any]
 
-class GroupCallLocator(CallLocator):
+class GroupCallLocator(object):
     """The group call locator.
 
     :ivar kind: The type of locator.
@@ -61,7 +62,7 @@ class GroupCallLocator(CallLocator):
         self.id = id
         self.properties = {}
 
-class ServerCallLocator(CallLocator):
+class ServerCallLocator(object):
     """The server call locator.
 
     :ivar kind: The type of locator.
