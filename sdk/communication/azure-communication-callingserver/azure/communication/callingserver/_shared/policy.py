@@ -16,12 +16,6 @@ except ImportError:
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from .utils import get_current_utc_time
-from urllib.parse import urlparse
-
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse  # type: ignore
 
 class HMACCredentialsPolicy(SansIOHTTPPolicy):
     """Implementation of HMAC authentication policy.

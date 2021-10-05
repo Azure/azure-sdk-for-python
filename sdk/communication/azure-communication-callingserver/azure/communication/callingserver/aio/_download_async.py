@@ -177,7 +177,9 @@ class ContentStreamDownloader(): # pylint: disable=too-many-instance-attributes
 
             # Parse the total file size and adjust the download size if ranges
             # were specified
-            self._file_size = CallingServerUtils.parse_length_from_content_range(response.response.headers["Content-Range"])
+            self._file_size = CallingServerUtils.parse_length_from_content_range(
+                response.response.headers["Content-Range"]
+            )
             if self._end_range is not None:
                 # Use the length unless it is over the end of the file
                 self.size = min(self._file_size, self._end_range - self._start_range + 1)
