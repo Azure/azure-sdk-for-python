@@ -11,7 +11,7 @@
 from typing import TYPE_CHECKING, Any, List, Optional  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator_async import distributed_trace_async
-
+from ..utils._utils import CallingServerUtils
 from .._communication_identifier_serializer import serialize_identifier
 from .._communication_call_locator_serializer import serialize_call_locator
 from .._generated.aio._azure_communication_calling_server_service import \
@@ -231,8 +231,12 @@ class CallingServerClient:
             raise ValueError("call_locator can not be None")
         if not audio_file_uri:
             raise ValueError("audio_file_uri can not be None")
+        if not CallingServerUtils.is_valid_url(audio_file_uri):
+            raise ValueError("audio_file_uri is invalid")
         if not play_audio_options:
             raise ValueError("options can not be None")
+        if not CallingServerUtils.is_valid_url(play_audio_options.callback_uri):
+            raise ValueError("callback_uri is invalid")
 
         play_audio_request = PlayAudioWithCallLocatorRequestConverter.convert(
             call_locator=serialize_call_locator(call_locator),
@@ -261,8 +265,12 @@ class CallingServerClient:
             raise ValueError("participant can not be None")
         if not audio_file_uri:
             raise ValueError("audio_file_uri can not be None")
+        if not CallingServerUtils.is_valid_url(audio_file_uri):
+            raise ValueError("audio_file_uri is invalid")
         if not play_audio_options:
             raise ValueError("play_audio_options can not be None")
+        if not CallingServerUtils.is_valid_url(play_audio_options.callback_uri):
+            raise ValueError("callback_uri is invalid")
 
         play_audio_to_participant_request = PlayAudioToParticipantWithCallLocatorRequestConverter.convert(
             call_locator=serialize_call_locator(call_locator),
@@ -291,6 +299,8 @@ class CallingServerClient:
             raise ValueError("call_locator can not be None")
         if not participant:
             raise ValueError("participant can not be None")
+        if not CallingServerUtils.is_valid_url(callback_uri):
+            raise ValueError("callback_uri is invalid")
 
         alternate_caller_id = (None
             if alternate_caller_id is None
@@ -368,10 +378,10 @@ class CallingServerClient:
 
         cancel_participant_media_operation_request = \
             CancelParticipantMediaOperationWithCallLocatorRequestConverter.convert(
-            serialize_call_locator(call_locator),
-            serialize_identifier(participant),
-            media_operation_id=media_operation_id
-            )
+                serialize_call_locator(call_locator),
+                serialize_identifier(participant),
+                media_operation_id=media_operation_id
+                )
 
         return await self._server_call_client.cancel_participant_media_operation(
             cancel_participant_media_operation_request=cancel_participant_media_operation_request,
