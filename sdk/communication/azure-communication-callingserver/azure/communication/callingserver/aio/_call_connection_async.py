@@ -9,16 +9,14 @@
 # https://github.com/PyCQA/pylint/issues/3882
 
 from typing import TYPE_CHECKING, Any, Optional  # pylint: disable=unused-import
-
 from azure.core.tracing.decorator_async import distributed_trace_async
-
+from ..utils._utils import CallingServerUtils
 from .._communication_identifier_serializer import serialize_identifier
 from .._converters import (
     AddParticipantRequestConverter,
     RemoveParticipantRequestConverter,
     CancelAllMediaOperationsConverter,
     TransferCallRequestConverter,
-    CancelMediaOperationRequestConverter,
     CancelParticipantMediaOperationRequestConverter,
     PlayAudioRequestConverter,
     PlayAudioToParticipantRequestConverter
@@ -33,8 +31,6 @@ from .._generated.aio._azure_communication_calling_server_service import \
 if TYPE_CHECKING:
     from .._generated.aio.operations import CallConnectionsOperations
     from .._models import PlayAudioOptions
-
-from ..utils._utils import CallingServerUtils
 
 class CallConnection:
     def __init__(

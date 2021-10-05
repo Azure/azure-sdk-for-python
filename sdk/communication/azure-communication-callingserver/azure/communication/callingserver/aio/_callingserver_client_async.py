@@ -11,7 +11,7 @@
 from typing import TYPE_CHECKING, Any, List, Optional  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator_async import distributed_trace_async
-
+from ..utils._utils import CallingServerUtils
 from .._communication_identifier_serializer import serialize_identifier
 from .._communication_call_locator_serializer import serialize_call_locator
 from .._generated.aio._azure_communication_calling_server_service import \
@@ -40,8 +40,6 @@ from .._version import SDK_MONIKER
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from .._models import CreateCallOptions, JoinCallOptions, PlayAudioOptions
-
-from ..utils._utils import CallingServerUtils
 
 class CallingServerClient:
     """A client to interact with the AzureCommunicationService Calling Server.
@@ -204,9 +202,9 @@ class CallingServerClient:
             raise ValueError("call_options can not be None")
 
         join_call_request = JoinCallRequestConverter.convert(
-            serialize_call_locator(call_locator),
-            serialize_identifier(source),
-            call_options
+            call_locator=serialize_call_locator(call_locator),
+            source=serialize_identifier(source),
+            join_call_options=call_options
             )
 
         join_call_response = await self._server_call_client.join_call(
@@ -241,9 +239,9 @@ class CallingServerClient:
             raise ValueError("callback_uri is invalid")
 
         play_audio_request = PlayAudioWithCallLocatorRequestConverter.convert(
-            serialize_call_locator(call_locator),
-            audio_file_uri,
-            play_audio_options
+            call_locator=serialize_call_locator(call_locator),
+            audio_file_uri=audio_file_uri,
+            play_audio_options=play_audio_options
             )
 
         return await self._server_call_client.play_audio(
@@ -275,10 +273,10 @@ class CallingServerClient:
             raise ValueError("callback_uri is invalid")
 
         play_audio_to_participant_request = PlayAudioToParticipantWithCallLocatorRequestConverter.convert(
-            serialize_call_locator(call_locator),
-            serialize_identifier(participant),
-            audio_file_uri,
-            play_audio_options
+            call_locator=serialize_call_locator(call_locator),
+            identifier=serialize_identifier(participant),
+            audio_file_uri=audio_file_uri,
+            play_audio_options=play_audio_options
             )
 
         return await self._server_call_client.participant_play_audio(
@@ -378,7 +376,8 @@ class CallingServerClient:
         if not media_operation_id:
             raise ValueError("media_operation_id can not be None")
 
-        cancel_participant_media_operation_request = CancelParticipantMediaOperationWithCallLocatorRequestConverter.convert(
+        cancel_participant_media_operation_request = \
+        CancelParticipantMediaOperationWithCallLocatorRequestConverter.convert(
             serialize_call_locator(call_locator),
             serialize_identifier(participant),
             media_operation_id=media_operation_id
