@@ -6,6 +6,7 @@
 
 - `auto_register_schemas` keyword argument has been added to `AvroSerializer`, which will allow for automatically registering schemas passed in to the `serialize`, when set to `True`, otherwise `False` by default.
 - `value` parameter in `serialize` on `AvroSerializer` takes type `Mapping` rather than `Dict`.
+- Depends on `azure-schemaregistry==1.0.0b3`.
 
 ### Breaking Changes
 
