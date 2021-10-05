@@ -78,22 +78,6 @@ class CommunicationTestCase(AzureTestCase):
 
     def __init__(self, method_name, *args, **kwargs):
         super(CommunicationTestCase, self).__init__(method_name, *args, **kwargs)
-        # self.variables_map = {
-        #      "CONNECTION_STRING": os.getenv("COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING",
-        #          "endpoint=https://REDACTED.communication.azure.com/;accesskey=QWNjZXNzS2V5"),
-        #      "AZURE_TENANT_ID": os.getenv("COMMUNICATION_LIVETEST_STATIC_RESOURCE_IDENTIFIER",
-        #          "016a7064-0581-40b9-be73-6dde64d69d72"),
-        #      "FROM_PHONE_NUMBER": os.getenv("AZURE_PHONE_NUMBER", "+15551234567"),
-        #      "TO_PHONE_NUMBER": os.getenv("AZURE_PHONE_NUMBER", "+15551234567"),
-        #      "CALLBACK_URI": os.getenv("CALLBACK_URI", "https://host.app/api/callback/calling"),
-        #      "AUDIO_FILE_URI": os.getenv("AUDIO_FILE_URI", "https://host.app/audio/bot-callcenter-intro.wav"),
-        #      "METADATA_URL": os.getenv("METADATA_URL",
-        #          "https://storage.asm.skype.com/v1/objects/0-eus-d2-3cca2175891f21c6c9a5975a12c0141c/content/acsmetadata"),
-        #      "VIDEO_URL": os.getenv("VIDEO_URL",
-        #          "https://storage.asm.skype.com/v1/objects/0-eus-d2-3cca2175891f21c6c9a5975a12c0141c/content/video"),
-        #      "CONTENT_URL_404": os.getenv("CONTENT_URL_404", 
-        #          "https://storage.asm.skype.com/v1/objects/0-eus-d2-3cca2175891f21c6c9a5975a12c0141d/content/acsmetadata")
-        #  }
 
     def setUp(self):
         super(CommunicationTestCase, self).setUp()
