@@ -192,7 +192,7 @@ The following section provides several code snippets covering some of the most c
 
 * [Extract Layout](#extract-layout "Extract Layout")
 * [Using Prebuilt Models](#using-prebuilt-models "Using Prebuilt Models")
-* [Using Prebuilt Document](#using-prebuilt-document "Using Prebuilt Document")
+* [Using the General Prebuilt Document Model](#using-the-general-prebuilt-document-model "Using the General Prebuilt Document Model")
 * [Build a Model](#build-a-model "Build a model")
 * [Analyze Documents Using a Custom Model](#analyze-documents-using-a-custom-model "Analyze Documents Using a Custom Model")
 * [Manage Your Models](#manage-your-models "Manage Your Models")
@@ -312,7 +312,7 @@ You are not limited to receipts! There are a few prebuilt models to choose from,
 - Analyze invoices using the `prebuilt-invoice` model (fields recognized by the service can be found [here][service_recognize_invoice]).
 - Analyze identity documents using the `prebuilt-idDocuments` model (fields recognized by the service can be found [here][service_recognize_identity_documents]).
 
-### Using Prebuilt Document
+### Using the General Prebuilt Document Model
 Analyze entities, key-value pairs, tables, styles, and selection marks from documents using the general prebuilt document model provided by the Form Recognizer service.
 Select the Prebuilt Document model by passing `model="prebuilt-document"` into the `begin_analyze_document` method:
 
