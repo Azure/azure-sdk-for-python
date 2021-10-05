@@ -59,7 +59,7 @@ class Fetcher(object):
         :returns: JSON object representing the repository metadata
         :rtype: JSON object
         """
-        return self._fetch_model_data(METADATA_FILE)
+        return await self._fetch_model_data(METADATA_FILE)
 
     @abc.abstractmethod
     @distributed_trace_async

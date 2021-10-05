@@ -14,7 +14,7 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
     HeadersPolicy,
     AsyncRetryPolicy,
-    RedirectPolicy,
+    AsyncRedirectPolicy,
     NetworkTraceLoggingPolicy,
     ProxyPolicy,
 )
@@ -187,7 +187,7 @@ def _create_pipeline(base_url=None, credential=None, transport=None, **kwargs):
             kwargs.get("headers_policy", HeadersPolicy(**kwargs)),
             authentication_policy,
             kwargs.get("retry_policy", AsyncRetryPolicy(**kwargs)),
-            kwargs.get("redirect_policy", RedirectPolicy(**kwargs)),
+            kwargs.get("redirect_policy", AsyncRedirectPolicy(**kwargs)),
             kwargs.get("logging_policy", NetworkTraceLoggingPolicy(**kwargs)),
             kwargs.get("proxy_policy", ProxyPolicy(**kwargs)),
         ]

@@ -1,0 +1,74 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-modelsrepository/1.0.0b2 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://raw.githubusercontent.com/Azure/iot-plugandplay-models/main/metadata.json
+  response:
+    body:
+      string: '404: Not Found'
+    headers:
+      accept-ranges: bytes
+      access-control-allow-origin: '*'
+      connection: keep-alive
+      content-length: '14'
+      content-security-policy: default-src 'none'; style-src 'unsafe-inline'; sandbox
+      content-type: text/plain; charset=utf-8
+      date: Mon, 04 Oct 2021 23:57:29 GMT
+      expires: Tue, 05 Oct 2021 00:02:29 GMT
+      source-age: '1'
+      strict-transport-security: max-age=31536000
+      vary: Authorization,Accept-Encoding,Origin
+      via: 1.1 varnish
+      x-cache: HIT
+      x-cache-hits: '1'
+      x-content-type-options: nosniff
+      x-fastly-request-id: f23278ea3a1dbcd46cdd20c4a4d1158bce4b4b96
+      x-frame-options: deny
+      x-github-request-id: F3C4:1DDF:7035A:93482:615B94E8
+      x-served-by: cache-sea4474-SEA
+      x-timer: S1633391850.607106,VS0,VE1
+      x-xss-protection: 1; mode=block
+    status:
+      code: 404
+      message: Not Found
+    url: https://raw.githubusercontent.com/Azure/iot-plugandplay-models/main/metadata.json
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-modelsrepository/1.0.0b2 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://raw.githubusercontent.com/Azure/iot-plugandplay-models/main/dtmi/com/example/thermojax-999.json
+  response:
+    body:
+      string: '404: Not Found'
+    headers:
+      accept-ranges: bytes
+      access-control-allow-origin: '*'
+      connection: keep-alive
+      content-length: '14'
+      content-security-policy: default-src 'none'; style-src 'unsafe-inline'; sandbox
+      content-type: text/plain; charset=utf-8
+      date: Mon, 04 Oct 2021 23:57:29 GMT
+      expires: Tue, 05 Oct 2021 00:02:29 GMT
+      source-age: '0'
+      strict-transport-security: max-age=31536000
+      vary: Authorization,Accept-Encoding,Origin
+      via: 1.1 varnish
+      x-cache: MISS
+      x-cache-hits: '0'
+      x-content-type-options: nosniff
+      x-fastly-request-id: 9d6fa5780e4466c133ea0e5e9ff151f84d1eb4ac
+      x-frame-options: deny
+      x-github-request-id: BE16:639B:35376:54DED:615B94E9
+      x-served-by: cache-sea4474-SEA
+      x-timer: S1633391850.612525,VS0,VE130
+      x-xss-protection: 1; mode=block
+    status:
+      code: 404
+      message: Not Found
+    url: https://raw.githubusercontent.com/Azure/iot-plugandplay-models/main/dtmi/com/example/thermojax-999.json
+version: 1
