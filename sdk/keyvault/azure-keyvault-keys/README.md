@@ -157,6 +157,7 @@ This section contains code snippets covering common tasks:
 * [Retrieve a key](#retrieve-a-key "Retrieve a key")
 * [Update an existing key](#update-an-existing-key "Update an existing key")
 * [Delete a key](#delete-a-key "Delete a key")
+* [Configure automatic key rotation](#configure-automatic-key-rotation "Configure automatic key rotation")
 * [List keys](#list-keys "List keys")
 * [Perform cryptographic operations](#cryptographic-operations)
 * [Async API](#async-api "Async API")
