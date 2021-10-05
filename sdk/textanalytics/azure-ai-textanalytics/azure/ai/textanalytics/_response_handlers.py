@@ -273,7 +273,7 @@ def custom_entities_result(
 
 
 @prepare_result
-def custom_category_result(
+def single_category_classify_result(
     custom_category, results, *args, **kwargs
 ):  # pylint: disable=unused-argument
     return SingleCategoryClassifyResult._from_generated(  # pylint: disable=protected-access
@@ -281,7 +281,7 @@ def custom_category_result(
     )
 
 @prepare_result
-def custom_categories_result(
+def multi_category_classify_result(
     custom_categories, results, *args, **kwargs
 ):  # pylint: disable=unused-argument
     return MultiCategoryClassifyResult._from_generated(  # pylint: disable=protected-access
@@ -313,10 +313,10 @@ def _get_deserialization_callback_from_task_type(task_type):  # pylint: disable=
         return summary_result
     if task_type == _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES:
         return custom_entities_result
-    if task_type == _AnalyzeActionsType.CLASSIFY_CUSTOM_CATEGORY:
-        return custom_category_result
-    if task_type == _AnalyzeActionsType.CLASSIFY_CUSTOM_CATEGORIES:
-        return custom_categories_result
+    if task_type == _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY:
+        return single_category_classify_result
+    if task_type == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY:
+        return multi_category_classify_result
     return key_phrases_result
 
 
@@ -333,9 +333,9 @@ def _get_property_name_from_task_type(task_type):  # pylint: disable=too-many-re
         return "extractive_summarization_tasks"
     if task_type == _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES:
         return "custom_entity_recognition_tasks"
-    if task_type == _AnalyzeActionsType.CLASSIFY_CUSTOM_CATEGORY:
+    if task_type == _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY:
         return "custom_single_classification_tasks"
-    if task_type == _AnalyzeActionsType.CLASSIFY_CUSTOM_CATEGORIES:
+    if task_type == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY:
         return "custom_multi_classification_tasks"
     return "key_phrase_extraction_tasks"
 

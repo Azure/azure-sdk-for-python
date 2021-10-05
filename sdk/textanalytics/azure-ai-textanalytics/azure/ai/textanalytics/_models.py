@@ -1747,8 +1747,8 @@ class _AnalyzeActionsType(str, Enum):
     ANALYZE_SENTIMENT = "analyze_sentiment"  #: Sentiment Analysis action.
     EXTRACT_SUMMARY = "extract_summary"
     RECOGNIZE_CUSTOM_ENTITIES = "recognize_custom_entities"
-    CLASSIFY_CUSTOM_CATEGORY = "classify_custom_category"
-    CLASSIFY_CUSTOM_CATEGORIES = "classify_custom_categories"
+    SINGLE_CATEGORY_CLASSIFY = "single_category_classify"
+    MULTI_CATEGORY_CLASSIFY = "multi_category_classify"
 
 
 class RecognizeEntitiesAction(DictMixin):

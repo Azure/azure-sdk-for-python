@@ -105,9 +105,9 @@ def _determine_action_type(action):  # pylint: disable=too-many-return-statement
     if isinstance(action, RecognizeCustomEntitiesAction):
         return _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES
     if isinstance(action, SingleCategoryClassifyAction):
-        return _AnalyzeActionsType.CLASSIFY_CUSTOM_CATEGORY
+        return _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY
     if isinstance(action, MultiCategoryClassifyAction):
-        return _AnalyzeActionsType.CLASSIFY_CUSTOM_CATEGORIES
+        return _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY
     return _AnalyzeActionsType.EXTRACT_KEY_PHRASES
 
 
