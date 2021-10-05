@@ -26,7 +26,7 @@
 import sys
 
 import pytest
-from devtools_testutils import add_sanitizer, ProxyRecordingSanitizer
+from devtools_testutils import add_general_regex_sanitizer
 
 # fixture needs to be visible from conftest
 
@@ -37,4 +37,7 @@ if sys.version_info < (3, 5):
 
 @pytest.fixture(scope="session", autouse=True)
 def sanitize_uris():
-    add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")
+    add_general_regex_sanitizer(
+        value="fakeendpoint",
+        regex="(?<=\\/\\/)[a-z]+(?=(?:|-secondary)\\.(?:table|blob|queue)\\.core\\.windows\\.net)"
+    )
