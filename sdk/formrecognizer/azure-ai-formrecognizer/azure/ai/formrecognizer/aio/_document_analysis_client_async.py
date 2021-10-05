@@ -12,10 +12,10 @@ from azure.core.polling import AsyncLROPoller
 from .._api_versions import DocumentAnalysisApiVersion
 from ._form_base_client_async import FormRecognizerClientBaseAsync
 from .._models import AnalyzeResult
+
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
     from azure.core.credentials_async import AsyncTokenCredential
-
 
 
 class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
@@ -64,9 +64,15 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
         **kwargs: Any
     ) -> None:
-        api_version = kwargs.pop("api_version", DocumentAnalysisApiVersion.V2021_09_30_PREVIEW)
+        api_version = kwargs.pop(
+            "api_version", DocumentAnalysisApiVersion.V2021_09_30_PREVIEW
+        )
         super(DocumentAnalysisClient, self).__init__(
-            endpoint=endpoint, credential=credential, api_version=api_version, client_kind="document", **kwargs
+            endpoint=endpoint,
+            credential=credential,
+            api_version=api_version,
+            client_kind="document",
+            **kwargs
         )
 
     def _analyze_document_callback(

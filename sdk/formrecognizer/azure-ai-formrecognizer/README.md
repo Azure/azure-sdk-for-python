@@ -190,7 +190,7 @@ Sample code snippets are provided to illustrate using long-running operations [b
 
 The following section provides several code snippets covering some of the most common Form Recognizer tasks, including:
 
-* [Extract layout](#extract-layout "Extract Layout")
+* [Extract Layout](#extract-layout "Extract Layout")
 * [Using Prebuilt Models](#using-prebuilt-models "Using Prebuilt Models")
 * [Using Prebuilt Document](#using-prebuilt-document "Using Prebuilt Document")
 * [Build a Model](#build-a-model "Build a model")
@@ -276,7 +276,7 @@ for table_idx, table in enumerate(result.tables):
 ### Using Prebuilt Models
 Extract fields from select document types such as receipts, invoices, business cards, and identity documents using prebuilt models provided by the Form Recognizer service.
 
-For example, to analyze fields from a sales receipt, use the prebuilt receipt model provided by passing `model="prebuilt-receipt"` into the `begin_analyze_documents` method:
+For example, to analyze fields from a sales receipt, use the prebuilt receipt model provided by passing `model="prebuilt-receipt"` into the `begin_analyze_document` method:
 
 ```python
 from azure.ai.formrecognizer import DocumentAnalysisClient
@@ -314,7 +314,7 @@ You are not limited to receipts! There are a few prebuilt models to choose from,
 
 ### Using Prebuilt Document
 Analyze entities, key-value pairs, tables, styles, and selection marks from documents using the general prebuilt document model provided by the Form Recognizer service.
-Select the Prebuilt Document model by passing `model="prebuilt-document"` into the `begin_analyze_documents` method:
+Select the Prebuilt Document model by passing `model="prebuilt-document"` into the `begin_analyze_document` method:
 
 ```python
 from azure.ai.formrecognizer import DocumentAnalysisClient
