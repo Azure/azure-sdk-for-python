@@ -40,6 +40,9 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
         <=v2.1, instantiate a FormRecognizerClient.
     :paramtype api_version: str or ~azure.ai.formrecognizer.DocumentAnalysisApiVersion
 
+    .. versionadded:: 2021-09-30-preview
+        The *DocumentAnalysisClient* and its client methods.
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/v3.2-beta/sample_authentication.py
