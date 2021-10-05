@@ -166,8 +166,8 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--pre-download-disable",
-        dest="pre_download",
+        "--pre-download-disabled",
+        dest="pre_download_disabled",
         help="During a dev build, we will restore package dependencies from a dev feed before installing them. The presence of this flag disables that behavior.",
         action="store_true",
     )
@@ -208,7 +208,7 @@ if __name__ == "__main__":
                 built_pkg_path = os.path.abspath(os.path.join(args.distribution_directory, built_package))
                 logging.info("Installing {w} from fresh built package.".format(w=built_package))
 
-            if not args.pre_download:
+            if not args.pre_download_disabled:
                 requirements = get_install_requires(os.path.join(os.path.abspath(args.target_setup), "setup.py"))
                 azure_requirements = [req.split(";")[0] for req in requirements if req.startswith("azure")]
 
