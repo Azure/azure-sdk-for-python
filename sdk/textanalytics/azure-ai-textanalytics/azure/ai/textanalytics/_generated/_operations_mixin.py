@@ -10,19 +10,14 @@
 # --------------------------------------------------------------------------
 from msrest import Serializer, Deserializer
 from typing import TYPE_CHECKING
-import warnings
-
-# FIXME: have to manually reconfigure import path for multiapi operation mixin
-from .._lro import AnalyzeActionsLROPoller, AnalyzeActionsLROPollingMethod, AnalyzeHealthcareEntitiesLROPoller, AnalyzeHealthcareEntitiesLROPollingMethod
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.polling.base_polling import LROBasePolling
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
+    from typing import Any, List, Optional, Union
+
+    # FIXME: have to manually reconfigure import path for multiapi operation mixin
+    from .._lro import AnalyzeActionsLROPoller, AnalyzeHealthcareEntitiesLROPoller
+    from azure.core.polling import LROPoller
 
 
 class TextAnalyticsClientOperationsMixin(object):
@@ -35,6 +30,7 @@ class TextAnalyticsClientOperationsMixin(object):
         skip=0,  # type: Optional[int]
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.AnalyzeJobState"
         """Get analysis status and results.
 
         Get the status of an analysis job.  A job may consist of one or more tasks.  Once all tasks are
@@ -77,6 +73,7 @@ class TextAnalyticsClientOperationsMixin(object):
         body=None,  # type: Optional["_models.AnalyzeBatchInput"]
         **kwargs  # type: Any
     ):
+        # type: (...) -> AnalyzeActionsLROPoller["_models.AnalyzeJobState"]
         """Submit analysis job.
 
         Submit a collection of text documents for analysis. Specify one or more unique tasks to be
@@ -86,13 +83,17 @@ class TextAnalyticsClientOperationsMixin(object):
         :type body: ~azure.ai.textanalytics.v3_2_preview_2.models.AnalyzeBatchInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AnalyzeActionsLROPollingMethod.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AnalyzeActionsLROPollingMethod. Pass
+         in False for this operation to not poll, or pass in your own initialized polling object for a
+         personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AnalyzeActionsLROPoller that returns either AnalyzeJobState or the result of cls(response)
-        :rtype: ~...._lro.AnalyzeActionsLROPoller[~azure.ai.textanalytics.v3_2_preview_2.models.AnalyzeJobState]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AnalyzeActionsLROPoller that returns either AnalyzeJobState or the
+         result of cls(response)
+        :rtype:
+         ~...._lro.AnalyzeActionsLROPoller[~azure.ai.textanalytics.v3_2_preview_2.models.AnalyzeJobState]
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('begin_analyze')
         if api_version == 'v3.1':
@@ -114,6 +115,7 @@ class TextAnalyticsClientOperationsMixin(object):
         job_id,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> LROPoller[None]
         """Cancel healthcare prediction job.
 
         Cancel healthcare prediction job.
@@ -122,13 +124,15 @@ class TextAnalyticsClientOperationsMixin(object):
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('begin_cancel_health_job')
         if api_version == 'v3.1':
@@ -153,6 +157,7 @@ class TextAnalyticsClientOperationsMixin(object):
         logging_opt_out=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
+        # type: (...) -> AnalyzeHealthcareEntitiesLROPoller["_models.HealthcareJobState"]
         """Submit healthcare analysis job.
 
         Start a healthcare analysis job to recognize healthcare related entities (drugs, conditions,
@@ -177,13 +182,17 @@ class TextAnalyticsClientOperationsMixin(object):
         :type logging_opt_out: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AnalyzeHealthcareEntitiesLROPollingMethod.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be
+         AnalyzeHealthcareEntitiesLROPollingMethod. Pass in False for this operation to not poll, or
+         pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AnalyzeHealthcareEntitiesLROPoller that returns either HealthcareJobState or the result of cls(response)
-        :rtype: ~...._lro.AnalyzeHealthcareEntitiesLROPoller[~azure.ai.textanalytics.v3_2_preview_2.models.HealthcareJobState]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AnalyzeHealthcareEntitiesLROPoller that returns either
+         HealthcareJobState or the result of cls(response)
+        :rtype:
+         ~...._lro.AnalyzeHealthcareEntitiesLROPoller[~azure.ai.textanalytics.v3_2_preview_2.models.HealthcareJobState]
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('begin_health')
         if api_version == 'v3.1':
@@ -209,6 +218,7 @@ class TextAnalyticsClientOperationsMixin(object):
         string_index_type=None,  # type: Optional[Union[str, "_models.StringIndexType"]]
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.EntityLinkingResult"
         """Linked entities from a well known knowledge base.
 
         The API returns a list of recognized entities with links to a well known knowledge base. See
@@ -270,6 +280,7 @@ class TextAnalyticsClientOperationsMixin(object):
         string_index_type=None,  # type: Optional[Union[str, "_models.StringIndexType"]]
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.EntitiesResult"
         """Named Entity Recognition.
 
         The API returns a list of general named entities in a given document. For the list of supported
@@ -334,6 +345,7 @@ class TextAnalyticsClientOperationsMixin(object):
         pii_categories=None,  # type: Optional[List[Union[str, "_models.PiiCategory"]]]
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.PiiResult"
         """Entities containing personal information.
 
         The API returns a list of entities with personal information (\"SSN\", \"Bank Account\" etc) in
@@ -395,6 +407,7 @@ class TextAnalyticsClientOperationsMixin(object):
         show_stats=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.HealthcareJobState"
         """Get healthcare analysis job status and results.
 
         Get details of the healthcare prediction job specified by the jobId.
@@ -438,6 +451,7 @@ class TextAnalyticsClientOperationsMixin(object):
         logging_opt_out=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.KeyPhraseResult"
         """Key Phrases.
 
         The API returns a list of strings denoting the key phrases in the input text. See the :code:`<a
@@ -494,6 +508,7 @@ class TextAnalyticsClientOperationsMixin(object):
         logging_opt_out=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.LanguageResult"
         """Detect Language.
 
         The API returns the detected language and a numeric score between 0 and 1. Scores close to 1
@@ -553,6 +568,7 @@ class TextAnalyticsClientOperationsMixin(object):
         string_index_type=None,  # type: Optional[Union[str, "_models.StringIndexType"]]
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.SentimentResponse"
         """Sentiment.
 
         The API returns a detailed sentiment analysis for the input text. The analysis is done in
