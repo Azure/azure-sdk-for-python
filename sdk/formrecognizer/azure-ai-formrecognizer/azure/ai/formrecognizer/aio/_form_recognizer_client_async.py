@@ -74,7 +74,11 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
     ) -> None:
         api_version = kwargs.pop("api_version", FormRecognizerApiVersion.V2_1)
         super(FormRecognizerClient, self).__init__(
-            endpoint=endpoint, credential=credential, api_version=api_version, client_kind="form", **kwargs
+            endpoint=endpoint,
+            credential=credential,
+            api_version=api_version,
+            client_kind="form",
+            **kwargs
         )
 
     def _prebuilt_callback(

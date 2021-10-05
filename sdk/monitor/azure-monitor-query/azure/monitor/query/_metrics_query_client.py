@@ -15,7 +15,7 @@ from ._generated._monitor_query_client import (
     MonitorQueryClient,
 )
 
-from ._models import MetricsResult, MetricDefinition, MetricNamespace
+from ._models import MetricsQueryResult, MetricDefinition, MetricNamespace
 from ._helpers import get_metrics_authentication_policy, construct_iso8601
 
 if TYPE_CHECKING:
@@ -67,7 +67,7 @@ class MetricsQueryClient(object):
 
     @distributed_trace
     def query_resource(self, resource_uri, metric_names, **kwargs):
-        # type: (str, List[str], Any) -> MetricsResult
+        # type: (str, List[str], Any) -> MetricsQueryResult
         """Lists the metric values for a resource.
 
         :param resource_uri: The identifier of the resource.
@@ -104,8 +104,8 @@ class MetricsQueryClient(object):
         :paramtype filter: str
         :keyword metric_namespace: Metric namespace to query metric definitions for.
         :paramtype metric_namespace: str
-        :return: A MetricsResult object.
-        :rtype: ~azure.monitor.query.MetricsResult
+        :return: A MetricsQueryResult object.
+        :rtype: ~azure.monitor.query.MetricsQueryResult
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -130,7 +130,7 @@ class MetricsQueryClient(object):
         generated = self._metrics_op.list(
             resource_uri, connection_verify=False, **kwargs
         )
-        return MetricsResult._from_generated( # pylint: disable=protected-access
+        return MetricsQueryResult._from_generated( # pylint: disable=protected-access
             generated
         )
 

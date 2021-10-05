@@ -82,7 +82,11 @@ class FormTrainingClient(FormRecognizerClientBase):
         # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
         api_version = kwargs.pop("api_version", FormRecognizerApiVersion.V2_1)
         super(FormTrainingClient, self).__init__(
-            endpoint=endpoint, credential=credential, api_version=api_version, client_kind="form", **kwargs
+            endpoint=endpoint,
+            credential=credential,
+            api_version=api_version,
+            client_kind="form",
+            **kwargs
         )
 
     @distributed_trace
@@ -199,7 +203,9 @@ class FormTrainingClient(FormRecognizerClientBase):
             cls=deserialization_callback,
             continuation_token=continuation_token,
             polling=LROBasePolling(
-                timeout=polling_interval, lro_algorithms=[FormTrainingPolling()], **kwargs
+                timeout=polling_interval,
+                lro_algorithms=[FormTrainingPolling()],
+                **kwargs
             ),
             **kwargs
         )

@@ -16,7 +16,8 @@ PollingReturnType = TypeVar("PollingReturnType")
 
 
 class AsyncDocumentModelAdministrationLROPoller(AsyncLROPoller[PollingReturnType]):
-    """Custom poller for model build operations.
+    """Custom poller for model build operations. Call `result()` on the poller to return
+    a :class:`~azure.ai.formrecognizer.DocumentModel`.
 
     .. versionadded:: 2021-09-30-preview
         The *AsyncDocumentModelAdministrationLROPoller* poller object
@@ -95,10 +96,10 @@ class AsyncDocumentModelAdministrationLROPoller(AsyncLROPoller[PollingReturnType
 
     @classmethod
     def from_continuation_token(
-            cls,
-            polling_method: AsyncPollingMethod[PollingReturnType],
-            continuation_token: str,
-            **kwargs: Any
+        cls,
+        polling_method: AsyncPollingMethod[PollingReturnType],
+        continuation_token: str,
+        **kwargs: Any
     ) -> "AsyncDocumentModelAdministrationLROPoller":
         (
             client,
