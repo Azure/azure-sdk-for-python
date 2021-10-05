@@ -96,18 +96,14 @@ ms.service: $service
   return "$header`n$ReadmeContent"
 }
 
-function UpdateDocsMsMetadataForPackage($packageInfoJsonLocation) {
-  try {
-    $packageInfoJson = Get-Content $packageInfoJsonLocation -Raw
+function UpdateDocsMsMetadataForPackage($packageInfoJsonLocation) { 
+  if (!Test-Path $packageInfoJsonLocation) {
+    LogWarning "Package metadata not found for $packageInfoJsonLocation"
+    return
   }
-  catch {
-    $errorMessage = $_.Exception.Message
-    LogWarning $errorMessage
-    LogWarning "The package does not have metadata. Please check if it is needed."
-    exit 0
-  }
+  
+  $packageInfoJson = Get-Content $packageInfoJsonLocation -Raw
   $packageInfo = ConvertFrom-Json $packageInfoJson
-  $originalVersion = [AzureEngSemanticVersion]::ParseVersionString($packageInfo.Version)
   if ($packageInfo.DevVersion) {
     # If the package is of a dev version there may be language-specific needs to 
     # specify the appropriate version. For example, in the case of JS, the dev 
