@@ -11,9 +11,18 @@ from typing import TYPE_CHECKING
 from .utils._utils import _FixedOffset
 
 if TYPE_CHECKING:
+    from typing import List
     from datetime import timedelta
 
+try:
+    from collections.abc import MutableMapping
+except ImportError:
+    from collections import MutableMapping
+
+from collections import OrderedDict, namedtuple
+
 __all__ = ["NULL", "AzureJSONEncoder"]
+
 
 
 class _Null(object):
@@ -121,3 +130,131 @@ class AzureJSONEncoder(JSONEncoder):
                 # This will be raised when it hits value.total_seconds in the method above
                 pass
             return super(AzureJSONEncoder, self).default(o)
+
+
+def _deserialize(item):
+    return item
+
+_PropertyValue = namedtuple("PropertyValue", ["original", "deserialized"])
+
+_PropertyDictTuple = namedtuple("_PropertyDictTuple", ["property_name", "dict_name"])
+
+class Model(MutableMapping):
+
+    _property_to_dict_name = NotImplementedError()  # type: List[_PropertyDictTuple]
+
+    # def __new__(cls, **kwargs):
+    #     self = cls(**{
+    #         cls._get_property_name(kwarg) or kwarg: value
+    #         for kwarg, value in kwargs.items()
+    #     })
+    #     self._dict = OrderedDict()
+    #     self.update(self._dict, **kwargs)
+
+    def __init__(self, **kwargs):
+        self._dict = OrderedDict()
+        self.update(self._dict, **kwargs)
+
+    def __setitem__(self, key, item):
+        # if the key is for an attr that we know of
+        # we deserialize it. Then, we keep it as a tuple of
+        # (passed value, deserialized value).
+        # Otherwise, it's just a single value
+        """
+        _attribute_map = {
+            "array": {"key": "array", "type": "str"},
+        }
+        """
+        # deserialized = _deserialize(item) if key in self._attribute_map else item
+        self._dict[key] = _PropertyValue(item, item)
+
+    def __getitem__(self, key):
+        # return non-deserialized
+        return self._dict[key].original
+
+    def __delitem__(self, key):
+        self._dict[key] = None
+
+    def __repr__(self):
+        return str(self)
+
+    def __iter__(self):
+        return (key for key in self._dict)
+
+    def __len__(self):
+        return len(self._dict)
+
+    def __eq__(self, other):
+        """Compare objects by comparing all attributes."""
+        if isinstance(other, self.__class__):
+            return self._dict == other._dict
+        return False
+
+    def __str__(self):
+        return str({k: v.original for k, v in self._dict.items() if not k.startswith("_")})
+
+    def has_key(self, k):
+        return k in self._dict
+
+    def keys(self):
+        return [k for k in self._dict if not k.startswith("_")]
+
+    def values(self):
+        return [v.original for k, v in self._dict.items() if not k.startswith("_")]
+
+    def items(self):
+        return [(k, v.original) for k, v in self._dict.items() if not k.startswith("_")]
+
+    def get(self, key, default=None):
+        if key in self._dict:
+            return self._dict[key]
+        return default
+
+    @classmethod
+    def _get_dict_name(cls, property_name):
+        try:
+            return next(
+                t for t in cls._property_to_dict_name if t.property_name == property_name
+            ).dict_name
+        except StopIteration:
+            return None
+
+    @classmethod
+    def _get_property_name(cls, dict_name):
+        try:
+            return next(
+                t for t in cls._property_to_dict_name if t.dict_name == dict_name
+            ).property_name
+        except StopIteration:
+            return None
+
+    def __getattr__(self, attr):
+        if not self.__hasattr__(attr):
+            raise AttributeError(
+                "{} instance has no attribute '{}'".format(
+                    type(self).__name__,
+                    attr
+                )
+            )
+
+        return self._dict[self._get_dict_name(attr)].deserialized
+
+    def __setattr__(self, name, value):
+        # the properties on the base class
+        my_model_properties = [
+            "_dict",
+            "_property_to_dict_name",
+        ]
+        if name in my_model_properties:
+            super(Model, self).__setattr__(name, value)
+        else:
+            self.__setitem__(self._get_dict_name(name), value)
+
+    def __delattr__(self, name):
+        return self.__delitem__(self._get_dict_name(name))
+
+    def __hasattr__(self, attr):
+        return self._get_dict_name(attr) in self._dict
+
+    def copy(self):
+        return Model(**self._dict)
