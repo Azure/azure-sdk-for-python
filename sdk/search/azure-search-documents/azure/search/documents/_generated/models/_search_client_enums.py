@@ -12,12 +12,6 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class Answers(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """This parameter is only valid if the query type is 'semantic'. If set, the query returns answers
-    extracted from key passages in the highest ranked documents. The number of answers returned can
-    be configured by appending the pipe character '|' followed by the 'count-:code:`<number of
-    answers>`' option after the answers parameter value, such as 'extractive|count-3'. Default
-    count is 1.
-    """
 
     #: Do not return answers for the query.
     NONE = "none"
@@ -43,12 +37,6 @@ class AutocompleteMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ONE_TERM_WITH_CONTEXT = "oneTermWithContext"
 
 class Captions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """This parameter is only valid if the query type is 'semantic'. If set, the query returns
-    captions extracted from key passages in the highest ranked documents. When Captions is set to
-    'extractive', highlighting is enabled by default, and can be configured by appending the pipe
-    character '|' followed by the 'highlight-<true/false>' option, such as
-    'extractive|highlight-true'. Defaults to 'None'.
-    """
 
     #: Do not return captions for the query.
     NONE = "none"
@@ -75,6 +63,34 @@ class IndexActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: document, use merge instead and set the field explicitly to null.
     DELETE = "delete"
 
+class QueryAnswerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """This parameter is only valid if the query type is 'semantic'. If set, the query returns answers
+    extracted from key passages in the highest ranked documents. The number of answers returned can
+    be configured by appending the pipe character '|' followed by the 'count-:code:`<number of
+    answers>`' option after the answers parameter value, such as 'extractive|count-3'. Default
+    count is 1.
+    """
+
+    #: Do not return answers for the query.
+    NONE = "none"
+    #: Extracts answer candidates from the contents of the documents returned in response to a query
+    #: expressed as a question in natural language.
+    EXTRACTIVE = "extractive"
+
+class QueryCaptionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """This parameter is only valid if the query type is 'semantic'. If set, the query returns
+    captions extracted from key passages in the highest ranked documents. When Captions is set to
+    'extractive', highlighting is enabled by default, and can be configured by appending the pipe
+    character '|' followed by the 'highlight-<true/false>' option, such as
+    'extractive|highlight-true'. Defaults to 'None'.
+    """
+
+    #: Do not return captions for the query.
+    NONE = "none"
+    #: Extracts captions from the matching documents that contain passages relevant to the search
+    #: query.
+    EXTRACTIVE = "extractive"
+
 class QueryLanguage(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The language of the query.
     """
@@ -83,6 +99,16 @@ class QueryLanguage(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     NONE = "none"
     #: English.
     EN_US = "en-us"
+
+class QuerySpellerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Improve search recall by spell-correcting individual search query terms.
+    """
+
+    #: Speller not enabled.
+    NONE = "none"
+    #: Speller corrects individual query terms using a static lexicon for the language specified by
+    #: the queryLanguage parameter.
+    LEXICON = "lexicon"
 
 class QueryType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the syntax of the search query. The default is 'simple'. Use 'full' if your query
@@ -125,8 +151,6 @@ class SearchMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ALL = "all"
 
 class Speller(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Improve search recall by spell-correcting individual search query terms.
-    """
 
     #: Speller not enabled.
     NONE = "none"

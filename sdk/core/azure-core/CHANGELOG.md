@@ -13,6 +13,7 @@
 - The `Content-Length` header in a http response is strictly checked against the actual number of bytes in the body,
   rather than silently truncating data in case the underlying tcp connection is closed prematurely. 
   (thanks to @jochen-ott-by for the contribution)   #20412
+- respect text encoding specified in argument (thanks to @ryohji for the contribution)  #20796
 
 ### Other Changes
 

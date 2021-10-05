@@ -1,6 +1,6 @@
 # Release History
 
-## 11.3.0b4 (Unreleased)
+## 11.3.0b4 (2021-10-05)
 
 ### Features Added
 
@@ -10,19 +10,18 @@
 ### Breaking Changes
 
 - Renamed `SearchClient.speller` to `SearchClient.query_speller`.
+- Renamed model `Speller` to `QuerySpellerType`.
+- Renamed model `Answers` to `QueryAnswerType`. 
 - Removed keyword arguments from `SearchClient`: `answers` and `captions`.
 - `SentimentSkill`, `EntityRecognitionSkill`: added client-side validation to prevent sending unsupported parameters.
-
-### Bugs Fixed
-
-### Other Changes
+- Renamed property `ignore_reset_requirements` to `skip_indexer_reset_requirement_for_cache`.
 
 ## 11.3.0b3 (2021-09-08)
 
 ### Features Added
 
 - Added new models: 
-  - `azure.search.documents.models.Captions`
+  - `azure.search.documents.models.QueryCaptionType`
   - `azure.search.documents.models.CaptionResult`
   - `azure.search.documents.indexes.models.CustomEntityLookupSkillLanguage`
   - `azure.search.documents.indexes.models.EntityRecognitionSkillVersion`

@@ -96,7 +96,7 @@ class LogsTableRow(object):
             return self._row[column]
 
 
-class MetricsResult(object):
+class MetricsQueryResult(object):
     """The response to a metrics query.
 
     :ivar cost: The integer value representing the cost of the query, for data case.
