@@ -6,6 +6,7 @@
 import os
 import aiohttp
 
+from urllib.parse import urljoin
 from ._policies import PerfTestProxyPolicy
 
 
@@ -67,7 +68,7 @@ class PerfStressTest:
             "x-recording-id": self._recording_id,
             "x-purge-inmemory-recording": "true"
         }
-        url = self.args.test_proxy + "/playback/stop"
+        url = urljoin(self.args.test_proxy, "/playback/stop")
         async with self._session.post(url, headers=headers) as resp:
             assert resp.status == 200
 
@@ -91,20 +92,20 @@ class PerfStressTest:
         raise Exception("run_async must be implemented for {}".format(self.__class__.__name__))
 
     async def _start_recording(self):
-        url = self.args.test_proxy + "/record/start"
+        url = urljoin(self.args.test_proxy, "/record/start")
         async with self._session.post(url) as resp:
             assert resp.status == 200
             self._recording_id = resp.headers["x-recording-id"]
 
     async def _stop_recording(self):
         headers = {"x-recording-id": self._recording_id}
-        url = self.args.test_proxy + "/record/stop"
+        url = urljoin(self.args.test_proxy, "/record/stop")
         async with self._session.post(url, headers=headers) as resp:
             assert resp.status == 200
 
     async def _start_playback(self):
         headers = {"x-recording-id": self._recording_id}
-        url = self.args.test_proxy + "/playback/start"
+        url = urljoin(self.args.test_proxy, "/playback/start")
         async with self._session.post(url, headers=headers) as resp:
             assert resp.status == 200
             self._recording_id = resp.headers["x-recording-id"]

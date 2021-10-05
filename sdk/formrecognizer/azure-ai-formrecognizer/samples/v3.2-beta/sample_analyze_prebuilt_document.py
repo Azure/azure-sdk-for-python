@@ -59,12 +59,10 @@ def analyze_document():
         )
     result = poller.result()
 
-    for idx, style in enumerate(result.styles):
-        print(
-            "Document contains {} content".format(
-                "handwritten" if style.is_handwritten else "no handwritten"
-            )
-        )
+    for style in result.styles:
+        if style.is_handwritten:
+            print("Document contains handwritten content: ")
+            print(",".join([result.content[span.offset:span.offset + span.length] for span in style.spans]))
 
     for page in result.pages:
         print("----Analyzing document from page #{}----".format(page.page_number))

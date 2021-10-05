@@ -25,41 +25,34 @@ interactions:
         your battery last\"\n      ],\n      \"answer\": \"**Make your battery last**\\n\\nFor
         info on how to care for your battery and power supply, conserve power, and
         make your Surface battery last longer, see [Surface battery and power](http://www.microsoft.com/surface/support/hardware-and-drivers/battery-and-power)
-        on Surface.com.\",\n      \"confidenceScore\": 0.9290999999999999,\n      \"id\":
+        on Surface.com.\",\n      \"confidenceScore\": 0.9201999999999999,\n      \"id\":
         27,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
         {\n        \"explicitlytaggedheading\": \"make your battery last\"\n      },\n
         \     \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
         []\n      }\n    },\n    {\n      \"questions\": [\n        \"Check the battery
         level\"\n      ],\n      \"answer\": \"**Check the battery level**\\n\\nYou
         can check the battery level from the lock screen or the desktop:\",\n      \"confidenceScore\":
-        0.3069,\n      \"id\": 24,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
+        0.4412,\n      \"id\": 24,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
         \     \"metadata\": {\n        \"explicitlytaggedheading\": \"check the battery
         level\"\n      },\n      \"dialog\": {\n        \"isContextOnly\": false,\n
-        \       \"prompts\": []\n      }\n    },\n    {\n      \"questions\": [\n
-        \       \"Desktop taskbar.\"\n      ],\n      \"answer\": \"**Desktop taskbar.**\\n\\nBattery
-        status appears at the right side of the taskbar. Select the battery icon for
-        info about the charging and battery status, including the percent remaining.
-        \u272A\",\n      \"confidenceScore\": 0.2548,\n      \"id\": 26,\n      \"source\":
-        \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\": {},\n      \"dialog\":
-        {\n        \"isContextOnly\": false,\n        \"prompts\": []\n      }\n    }\n
-        \ ]\n}"
+        \       \"prompts\": []\n      }\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - 555d76da-0f60-4c4c-8a93-2f3e263ca9c0
+      - 227983f1-c75e-4ee2-910d-589011a7a251
       content-length:
-      - '1621'
+      - '1140'
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
-      - CognitiveServices.TextAnalytics.QuestionAnsweringTransaction=1
+      - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
       date:
-      - Tue, 21 Sep 2021 21:06:39 GMT
+      - Thu, 30 Sep 2021 15:52:35 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '322'
+      - '2660'
     status:
       code: 200
       message: OK
@@ -95,7 +88,7 @@ interactions:
         like a phone, while your Surface charges. The USB port on the power supply
         is only for charging, not for data transfer. If you want to use a USB device,
         plug it into the USB port on your Surface.\",\n      \"confidenceScore\":
-        0.6517000000000001,\n      \"id\": 23,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
+        0.5296,\n      \"id\": 23,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
         \     \"metadata\": {\n        \"explicitlytaggedheading\": \"power and charging\"\n
         \     },\n      \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
         [\n          {\n            \"displayOrder\": 0,\n            \"qnaId\": 24,\n
@@ -105,34 +98,34 @@ interactions:
         2,\n            \"qnaId\": 26,\n            \"displayText\": \"Desktop taskbar.\"\n
         \         },\n          {\n            \"displayOrder\": 3,\n            \"qnaId\":
         27,\n            \"displayText\": \"Make your battery last\"\n          }\n
-        \       ]\n      },\n      \"answerSpan\": {\n        \"text\": \"two to four
-        hours\",\n        \"confidenceScore\": 0.3086,\n        \"offset\": 33,\n
-        \       \"length\": 18\n      }\n    },\n    {\n      \"questions\": [\n        \"Charge
+        \       ]\n      },\n      \"answerSpan\": {\n        \"text\": \" two to
+        four hours\",\n        \"confidenceScore\": 0.3795,\n        \"offset\": 32,\n
+        \       \"length\": 19\n      }\n    },\n    {\n      \"questions\": [\n        \"Charge
         your Surface Pro 4\"\n      ],\n      \"answer\": \"**Charge your Surface
         Pro 4**\\n\\n1.  Connect the two parts of the power cord.\\n\\n2.  Connect
         the power cord securely to the charging port.\\n\\n3.  Plug the power supply
-        into an electrical outlet.\",\n      \"confidenceScore\": 0.30260000000000004,\n
-        \     \"id\": 19,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
-        \     \"metadata\": {\n        \"explicitlytaggedheading\": \"charge your
-        surface pro 4\"\n      },\n      \"dialog\": {\n        \"isContextOnly\":
-        false,\n        \"prompts\": []\n      }\n    }\n  ]\n}"
+        into an electrical outlet.\",\n      \"confidenceScore\": 0.2707,\n      \"id\":
+        19,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
+        {\n        \"explicitlytaggedheading\": \"charge your surface pro 4\"\n      },\n
+        \     \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
+        []\n      }\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - 9ef0bd69-7736-4ed5-8c21-879df23aaa47
+      - f95352a5-4e6d-4ec1-8809-d164a774dfe6
       content-length:
-      - '2178'
+      - '2154'
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
-      - CognitiveServices.TextAnalytics.QuestionAnsweringTransaction=1
+      - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
       date:
-      - Tue, 21 Sep 2021 21:06:41 GMT
+      - Thu, 30 Sep 2021 15:52:35 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '1046'
+      - '509'
     status:
       code: 200
       message: OK

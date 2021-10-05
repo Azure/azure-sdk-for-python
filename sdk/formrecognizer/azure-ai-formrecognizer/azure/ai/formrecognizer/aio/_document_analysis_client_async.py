@@ -12,10 +12,10 @@ from azure.core.polling import AsyncLROPoller
 from .._api_versions import DocumentAnalysisApiVersion
 from ._form_base_client_async import FormRecognizerClientBaseAsync
 from .._models import AnalyzeResult
+
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
     from azure.core.credentials_async import AsyncTokenCredential
-
 
 
 class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
@@ -26,7 +26,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
     methods based on inputs from a URL and inputs from a stream.
 
     .. note:: DocumentAnalysisClient should be used with API versions
-        v2021-09-30-preview and up. To use API versions <=v2.1, instantiate a FormRecognizerClient.
+        2021-09-30-preview and up. To use API versions <=v2.1, instantiate a FormRecognizerClient.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
@@ -40,6 +40,9 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         Setting to an older version may result in reduced feature compatibility. To use API versions
         <=v2.1, instantiate a FormRecognizerClient.
     :paramtype api_version: str or ~azure.ai.formrecognizer.DocumentAnalysisApiVersion
+
+    .. versionadded:: 2021-09-30-preview
+        The *DocumentAnalysisClient* and its client methods.
 
     .. admonition:: Example:
 
@@ -64,9 +67,15 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
         **kwargs: Any
     ) -> None:
-        api_version = kwargs.pop("api_version", DocumentAnalysisApiVersion.V2021_09_30_PREVIEW)
+        api_version = kwargs.pop(
+            "api_version", DocumentAnalysisApiVersion.V2021_09_30_PREVIEW
+        )
         super(DocumentAnalysisClient, self).__init__(
-            endpoint=endpoint, credential=credential, api_version=api_version, client_kind="document", **kwargs
+            endpoint=endpoint,
+            credential=credential,
+            api_version=api_version,
+            client_kind="document",
+            **kwargs
         )
 
     def _analyze_document_callback(
@@ -84,9 +93,8 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         """Analyze field text and semantic values from a given document.
 
         :param str model: A unique model identifier can be passed in as a string.
-            Use this to specify the custom model ID or prebuilt model ID. Prebuilt model IDs to use are:
-            "prebuilt-receipt", "prebuilt-invoice", "prebuilt-idDocument", "prebuilt-businessCard",
-            "prebuilt-document", "prebuilt-layout".
+            Use this to specify the custom model ID or prebuilt model ID. Prebuilt model IDs supported
+            can be found here: https://aka.ms/azsdk/formrecognizer/models
         :param document: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
         :type document: bytes or IO[bytes]
         :keyword str pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
@@ -141,9 +149,8 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         The input must be the location (URL) of the document to be analyzed.
 
         :param str model: A unique model identifier can be passed in as a string.
-            Use this to specify the custom model ID or prebuilt model ID. Prebuilt model IDs to use are:
-            "prebuilt-receipt", "prebuilt-invoice", "prebuilt-idDocument", "prebuilt-businessCard",
-            "prebuilt-document", "prebuilt-layout".
+            Use this to specify the custom model ID or prebuilt model ID. Prebuilt model IDs supported
+            can be found here: https://aka.ms/azsdk/formrecognizer/models
         :param str document_url: The URL of the document to analyze. The input must be a valid, encoded, and
             publicly accessible URL of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
         :keyword str pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers

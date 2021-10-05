@@ -185,6 +185,9 @@ class QuotaExceededPolicy(SansIOHTTPPolicy):
         :type response: ~azure.core.pipeline.PipelineResponse
         """
         http_response = response.http_response
-        if http_response.status_code in [403, 429] and \
-                "Out of call volume quota for FormRecognizer F0 pricing tier" in http_response.text():
+        if (
+            http_response.status_code in [403, 429]
+            and "Out of call volume quota for FormRecognizer F0 pricing tier"
+            in http_response.text()
+        ):
             raise HttpResponseError(http_response.text(), response=http_response)

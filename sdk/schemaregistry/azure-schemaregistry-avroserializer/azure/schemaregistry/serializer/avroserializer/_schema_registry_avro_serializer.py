@@ -35,9 +35,9 @@ from ._constants import SCHEMA_ID_START_INDEX, SCHEMA_ID_LENGTH, DATA_START_INDE
 from ._avro_serializer import AvroObjectSerializer
 
 
-class SchemaRegistryAvroSerializer(object):
+class AvroSerializer(object):
     """
-    SchemaRegistryAvroSerializer provides the ability to serialize and deserialize data according
+    AvroSerializer provides the ability to serialize and deserialize data according
     to the given avro schema. It would automatically register, get and cache the schema.
 
     :keyword client: Required. The schema registry client
@@ -63,7 +63,6 @@ class SchemaRegistryAvroSerializer(object):
                 if self._auto_register_schemas
                 else self._schema_registry_client.get_schema_id
             )
-        self._user_input_schema_cache = {}
 
     def __enter__(self):
         # type: () -> SchemaRegistryAvroSerializer
@@ -115,6 +114,11 @@ class SchemaRegistryAvroSerializer(object):
         ).schema_content
         return schema_str
 
+    @classmethod
+    @lru_cache(maxsize=128)
+    def _parse_schema(cls, schema):
+        return avro.schema.parse(schema)
+
     def serialize(self, value, **kwargs):
         # type: (Mapping[str, Any], Any) -> bytes
         """
@@ -132,13 +136,8 @@ class SchemaRegistryAvroSerializer(object):
             raw_input_schema = kwargs.pop("schema")
         except KeyError as e:
             raise TypeError("'{}' is a required keyword.".format(e.args[0]))
-        try:
-            cached_schema = self._user_input_schema_cache[raw_input_schema]
-        except KeyError:
-            parsed_schema = avro.schema.parse(raw_input_schema)
-            self._user_input_schema_cache[raw_input_schema] = parsed_schema
-            cached_schema = parsed_schema
 
+        cached_schema = AvroSerializer._parse_schema(raw_input_schema)
         record_format_identifier = b"\0\0\0\0"
         schema_id = self._get_schema_id(cached_schema.fullname, str(cached_schema), **kwargs)
         data_bytes = self._avro_serializer.serialize(value, cached_schema)

@@ -15,7 +15,7 @@ from ._generated._monitor_query_client import (
     MonitorQueryClient,
 )
 
-from ._models import MetricsResult, MetricDefinition, MetricNamespace
+from ._models import MetricsQueryResult, MetricDefinition, MetricNamespace
 from ._helpers import get_metrics_authentication_policy, construct_iso8601
 
 if TYPE_CHECKING:
@@ -44,15 +44,21 @@ class MetricsQueryClient(object):
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword endpoint: The endpoint to connect to. Defaults to 'https://management.azure.com'.
     :paramtype endpoint: str
+    :keyword audience: URL to use for credential authentication with AAD.
+    :paramtype audience: str
     """
 
     def __init__(self, credential, **kwargs):
         # type: (TokenCredential, Any) -> None
+        audience = kwargs.pop("audience", None)
         endpoint = kwargs.pop("endpoint", "https://management.azure.com")
+        if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
+            endpoint = "https://" + endpoint
+        self._endpoint = endpoint
         self._client = MonitorQueryClient(
             credential=credential,
-            base_url=endpoint,
-            authentication_policy=get_metrics_authentication_policy(credential),
+            base_url=self._endpoint,
+            authentication_policy=get_metrics_authentication_policy(credential, audience),
             **kwargs
         )
         self._metrics_op = self._client.metrics
@@ -61,7 +67,7 @@ class MetricsQueryClient(object):
 
     @distributed_trace
     def query_resource(self, resource_uri, metric_names, **kwargs):
-        # type: (str, List[str], Any) -> MetricsResult
+        # type: (str, List[str], Any) -> MetricsQueryResult
         """Lists the metric values for a resource.
 
         :param resource_uri: The identifier of the resource.
@@ -98,8 +104,8 @@ class MetricsQueryClient(object):
         :paramtype filter: str
         :keyword metric_namespace: Metric namespace to query metric definitions for.
         :paramtype metric_namespace: str
-        :return: A MetricsResult object.
-        :rtype: ~azure.monitor.query.MetricsResult
+        :return: A MetricsQueryResult object.
+        :rtype: ~azure.monitor.query.MetricsQueryResult
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -124,7 +130,7 @@ class MetricsQueryClient(object):
         generated = self._metrics_op.list(
             resource_uri, connection_verify=False, **kwargs
         )
-        return MetricsResult._from_generated( # pylint: disable=protected-access
+        return MetricsQueryResult._from_generated( # pylint: disable=protected-access
             generated
         )
 

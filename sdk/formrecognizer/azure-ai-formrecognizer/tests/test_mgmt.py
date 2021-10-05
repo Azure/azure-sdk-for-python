@@ -27,7 +27,6 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 
 class TestManagement(FormRecognizerTest):
 
-    @pytest.mark.skip("aad not working in canary")
     @FormRecognizerPreparer()
     @pytest.mark.live_test_only
     def test_active_directory_auth(self):

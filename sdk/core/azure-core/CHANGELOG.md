@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- respect text encoding specified in argument (thanks to @ryohji for the contribution)  #20796
+
 ### Other Changes
 
 ## 1.19.0 (2021-09-30)
