@@ -2,7 +2,6 @@
 -e ../../../tools/azure-sdk-tools
 pytest-mock
 pytest-testdox
-pytest-asyncio
 aiohttp
 parameterized
 flake8
