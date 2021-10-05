@@ -37,10 +37,10 @@ from azure.schemaregistry.serializer.avroserializer import AvroSerializer
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-endpoint = '<< ENDPOINT OF THE SCHEMA REGISTRY >>'
-schema_group = '<< GROUP NAME OF THE SCHEMA >>'
+fully_qualified_namespace = '<< FULLY QUALIFIED NAMESPACE OF THE SCHEMA REGISTRY >>'
+group_name = '<< GROUP NAME OF THE SCHEMA >>'
 schema_registry_client = SchemaRegistryClient(endpoint, credential)
-serializer = AvroSerializer(schema_registry_client, schema_group)
+serializer = AvroSerializer(schema_registry_client, group_name)
 ```
 
 ## Key concepts
