@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+# pylint: skip-file
 from typing import List, Mapping, Optional, Union, Any  # pylint: disable=unused-import
 from enum import Enum, EnumMeta
 from six import with_metaclass
@@ -257,3 +258,38 @@ class PlayAudioOptions(object):
     def subject(self, subject):
         # type: (str) -> None
         self.__subject = subject
+
+class CallingServerEventType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The calling server event type values.
+    """
+    CALL_CONNECTION_STATE_CHANGED_EVENT = "Microsoft.Communication.CallConnectionStateChanged"
+    ADD_PARTICIPANT_RESULT_EVENT = "Microsoft.Communication.AddParticipantResult"
+    CALL_RECORDING_STATE_CHANGED_EVENT = "Microsoft.Communication.CallRecordingStateChanged"
+    PLAY_AUDIO_RESULT_EVENT = "Microsoft.Communication.PlayAudioResult"
+    PARTICIPANTS_UPDATED_EVENT = "Microsoft.Communication.ParticipantsUpdated"
+    TONE_RECEIVED_EVENT = "Microsoft.Communication.DtmfReceived"
+
+class ParallelDownloadOptions(object):
+    """The options to configure parallel downloads.
+    :ivar max_concurrency: Max number of threads used to download.
+    :type max_concurrency: int
+    :ivar block_size: Block size to download on each request.
+    :type block_size: int
+    """
+    def __init__(
+        self,
+        max_concurrency=1, # type: int
+        block_size=4*1024*1024, # type: int
+    ):  # type: (...) -> None
+        self.__max_concurrency = max_concurrency
+        self.__block_size = block_size
+
+    @property
+    def max_concurrency(self):
+        # type: () -> int
+        return self.__max_concurrency
+
+    @property
+    def block_size(self):
+        # type: () -> int
+        return self.__block_size
