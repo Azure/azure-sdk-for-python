@@ -66,7 +66,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         an instance of a AzureSasCredential from azure.core.credentials, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
     :keyword str api_version:
-        The Storage API version to use for requests. Default value is '2019-07-07'.
+        The Storage API version to use for requests. Default value is the most recent service version that is compatible with the current SDK.
         Setting to an older version may result in reduced feature compatibility.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.

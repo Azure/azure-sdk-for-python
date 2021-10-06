@@ -101,7 +101,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
     :keyword str api_version:
-        The Storage API version to use for requests. Default value is '2019-07-07'.
+        The Storage API version to use for requests. Default value is the most recent service version that is compatible with the current SDK.
         Setting to an older version may result in reduced feature compatibility.
 
         .. versionadded:: 12.2.0
