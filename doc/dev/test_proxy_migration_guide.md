@@ -104,19 +104,28 @@ Sanitizers, matchers, and transforms remain registered until the proxy container
 are shared by different tests, using a session fixture declared in a `conftest.py` file is recommended. Please refer to
 [pytest's scoped fixture documentation][pytest_fixtures] for more details.
 
-For example, to sanitize recordings using the general regex sanitizer, you can set up the sanitizer for all tests in
-the pytest session by adding something like the following in the package's `conftest.py` file:
+As a simple example, to emulate the effect registering a name pair with a `vcrpy` scrubber, you can provide the exact
+value you want to sanitize from recordings as the `regex` in the general regex sanitizer. To replace all instances of
+the string "my-key-vault" with "fake-vault" in recordings, you could add something like the following in the package's
+`conftest.py` file:
 
 ```python
 from devtools_testutils import add_general_regex_sanitizer
 
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
 @pytest.fixture(scope="session", autouse=True)
-def sanitize_uris():
-    add_general_regex_sanitizer(
-        regex="(?<=\\/\\/)[a-z]+(?=(?:|-secondary)\\.(?:table|blob|queue)\\.core\\.windows\\.net)",
-        value="fakeendpoint",
-    )
+def add_sanitizers():
+    add_general_regex_sanitizer(regex="my-key-vault", value="fake-vault")
+```
+
+For a more advanced scenario, where we want to sanitize the account names of all storage endpoints in recordings, we
+could instead call
+
+```python
+add_general_regex_sanitizer(
+    regex="(?<=\\/\\/)[a-z]+(?=(?:|-secondary)\\.(?:table|blob|queue)\\.core\\.windows\\.net)",
+    value="fakeendpoint",
+)
 ```
 
 `add_general_regex_sanitizer` accepts a regex, replacement value, and capture group as keyword-only arguments. In the
@@ -124,12 +133,7 @@ snippet above, any storage endpoint URIs that match the specified URI regex will
 "fakeendpoint". A request made to `https://tableaccount-secondary.table.core.windows.net` will be recorded as being
 made to `https://fakeendpoint-secondary.table.core.windows.net`, and URIs will also be sanitized in bodies and headers.
 
-As a simpler example, to emulate the effect registering a name pair with a `vcrpy` scrubber, you can provide the exact
-value you want to sanitize from recordings as the `regex` in this sanitizer. For example, to replace all instances of
-the string `tableaccount` in recordings, you could call
-```python
-add_general_regex_sanitizer(regex="my-key-vault", value="fake-vault")
-```
+For more details about sanitizers and their options, please refer to [devtools_testutils/sanitizers.py][py_sanitizers].
 
 ## Implementation details
 
