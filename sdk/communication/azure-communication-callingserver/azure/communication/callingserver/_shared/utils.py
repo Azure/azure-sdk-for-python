@@ -12,8 +12,10 @@ from typing import (  # pylint: disable=unused-import
 )
 from datetime import datetime
 import calendar
+from urllib.parse import urlparse
 from msrest.serialization import TZ_UTC
 from azure.core.credentials import AccessToken
+from azure.core.pipeline.policies import HeadersPolicy
 
 
 def _convert_datetime_to_utc_int(expires_on):
@@ -119,3 +121,35 @@ def get_authentication_policy(
 
     raise TypeError("Unsupported credential: {}. Use an access token string to use HMACCredentialsPolicy"
                     "or a token credential from azure.identity".format(type(credential)))
+
+def get_header_policy(
+        host, # type: str
+        credential, # type: TokenCredential or str
+):
+    # type: (...) -> HeadersPolicy or None
+    """Returns the correct header policy based
+    on which credential is being passed.
+    :param host: The resource host name.
+    :param credential: The credential we use to authenticate to the service
+    :type credential: TokenCredential or str
+    :rtype: ~azure.core.pipeline.policies.HeadersPolicy
+    ~None
+    """
+
+    if host.startswith("https://"):
+        host = host.replace("https://", "")
+
+    if host.startswith("http://"):
+        host = host.replace("http://", "")
+
+    header_policy = HeadersPolicy({
+        'x-ms-host': host
+    })
+
+    if hasattr(credential, "get_token"):
+        return header_policy
+    if isinstance(credential, str):
+        return None
+    
+    raise TypeError("Unsupported credential: {}. Use an access token string to use HMACCredentialsPolicy"
+                "or a token credential from azure.identity".format(type(credential)))

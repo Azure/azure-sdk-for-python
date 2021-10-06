@@ -4,9 +4,23 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any, List, Optional  # pylint: disable=unused-import
+from typing import TYPE_CHECKING, Any, Dict, List, Optional  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator import distributed_trace
+from azure.core import PipelineClient
+from azure.core.exceptions import (ClientAuthenticationError, HttpResponseError,
+                                    ResourceExistsError, ResourceNotFoundError, map_error)
+from azure.core.pipeline import PipelineResponse
+from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.policies import HeadersPolicy
+
+
+from ._generated import models as _models
+
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse  # type: ignore
 
 from ._communication_identifier_serializer import serialize_identifier
 from ._communication_call_locator_serializer import serialize_call_locator
@@ -30,7 +44,7 @@ from ._converters import (
     CancelMediaOperationWithCallLocatorRequestConverter,
     CancelParticipantMediaOperationWithCallLocatorRequestConverter
     )
-from ._shared.utils import get_authentication_policy, parse_connection_str
+from ._shared.utils import get_authentication_policy, get_header_policy, parse_connection_str
 from ._version import SDK_MONIKER
 
 if TYPE_CHECKING:
@@ -72,6 +86,7 @@ class CallingServerClient(object):
         self._endpoint = endpoint
         self._callingserver_service_client = AzureCommunicationCallingServerService(
             self._endpoint,
+            headers_policy=get_header_policy(endpoint, credential),
             authentication_policy=get_authentication_policy(endpoint, credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs)
@@ -369,3 +384,60 @@ class CallingServerClient(object):
             cancel_participant_media_operation_request=cancel_participant_media_operation_request,
             **kwargs
             )
+
+    @distributed_trace()
+    def delete_recording(
+        self,
+        content_delete_url, # type: str
+        **kwargs # type: Any
+
+    ): # type: (...) -> HttpResponse
+        if not content_delete_url:
+            raise ValueError("content_delete_url can not be None")
+
+        url = content_delete_url
+        uri_to_sign_with = self.get_url_to_sign_request_with(url)
+
+        query_parameters = {}
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['UriToSignWith'] = self._callingserver_service_client._serialize.header(
+            "uri_to_sign_with", uri_to_sign_with, 'str')
+
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response,
+                                                    model=self._callingserver_service_client._deserialize(_models.CommunicationErrorResponse,
+                                                                            response)),
+            401: lambda response: ClientAuthenticationError(response=response,
+                                                            model=self._callingserver_service_client._deserialize(_models.CommunicationErrorResponse,
+                                                                                    response)),
+            403: lambda response: HttpResponseError(response=response,
+                                                    model=self._callingserver_service_client._deserialize(_models.CommunicationErrorResponse,
+                                                                            response)),
+            404: lambda response: ResourceNotFoundError(response=response,
+                                                        model=self._callingserver_service_client._deserialize(_models.CommunicationErrorResponse,
+                                                                                response)),
+            500: lambda response: HttpResponseError(response=response,
+                                                    model=self._callingserver_service_client._deserialize(_models.CommunicationErrorResponse,
+                                                                            response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        request = self._callingserver_service_client._client.delete(url, query_parameters, header_parameters)
+        pipeline_response = self._callingserver_service_client._client._pipeline.run(request, **kwargs) # pylint: disable=protected-access
+        response = pipeline_response.http_response
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code,
+                      response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        return response
+
+
+    def get_url_to_sign_request_with(
+        self,
+        content_url # type: str
+    ):
+        path = urlparse(content_url).path
+        return self._endpoint + path
