@@ -43,11 +43,11 @@ class RemoteRenderingPollingAsync(AsyncPollingMethod):
         # type: () -> None
         if self._query_status is None:
             raise Exception("this poller has not been initialized")
-        if self._response.error is not None:
+        self._response = await self._query_status()  # pylint: disable=E1102
+        if self._response is not None and self._response.error is not None:
             error = HttpResponseError("Polling returned a status indicating an error state.", model=self._response)
             error.error = ODataV4Format(json.loads(json.dumps(self._response)))
             raise error
-        self._response = await self._query_status()  # pylint: disable=E1102
 
     def initialize(self, client, initial_response, deserialization_callback):
         # type: (Any, Any, Callable) -> None
