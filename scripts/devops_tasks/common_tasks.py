@@ -348,7 +348,7 @@ def is_error_code_5_allowed(target_pkg, pkg_name):
 
 # This function parses requirement and return package name and specifier
 def parse_require(req):
-    req_object = Requirement.parse(req)
+    req_object = Requirement.parse(req.split(";")[0])
     pkg_name = req_object.key
     spec = SpecifierSet(str(req_object).replace(pkg_name, ""))
     return [pkg_name, spec]
