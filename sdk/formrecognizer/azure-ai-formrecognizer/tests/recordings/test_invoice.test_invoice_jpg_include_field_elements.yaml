@@ -14,7 +14,7 @@ interactions:
       Content-Type:
       - image/jpeg
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/invoice/analyze?includeTextDetails=true
   response:
@@ -22,19 +22,19 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 9c0d5335-05c9-47e1-b928-2e6b51e27268
+      - b66d3e42-0b89-4eec-b8bf-582a12be174a
       content-length:
       - '0'
       date:
-      - Thu, 20 May 2021 17:08:17 GMT
+      - Wed, 22 Sep 2021 05:40:59 GMT
       operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/invoice/analyzeResults/9c0d5335-05c9-47e1-b928-2e6b51e27268
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/invoice/analyzeResults/b66d3e42-0b89-4eec-b8bf-582a12be174a
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '115'
+      - '109'
     status:
       code: 202
       message: Accepted
@@ -48,13 +48,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/invoice/analyzeResults/9c0d5335-05c9-47e1-b928-2e6b51e27268
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/invoice/analyzeResults/b66d3e42-0b89-4eec-b8bf-582a12be174a
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-05-20T17:08:18Z",
-        "lastUpdatedDateTime": "2021-05-20T17:08:21Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-09-22T05:40:59Z",
+        "lastUpdatedDateTime": "2021-09-22T05:41:02Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 1700, "height":
         2200, "unit": "pixel", "lines": [{"text": "CONTOSO LTD.", "boundingBox": [114,
         134, 466, 134, 466, 175, 115, 175], "words": [{"text": "CONTOSO", "boundingBox":
@@ -492,19 +492,19 @@ interactions:
         "#/readResults/0/lines/0/words/1"]}}}]}}'
     headers:
       apim-request-id:
-      - 37f18b00-025f-4da5-98c1-35387b33fb2a
+      - bb452da0-8c5a-46a8-8583-75ea434b2798
       content-length:
       - '31369'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 20 May 2021 17:08:23 GMT
+      - Wed, 22 Sep 2021 05:41:04 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '65'
+      - '29'
     status:
       code: 200
       message: OK

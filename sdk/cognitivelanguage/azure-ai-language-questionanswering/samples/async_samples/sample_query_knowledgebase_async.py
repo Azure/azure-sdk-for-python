@@ -35,7 +35,7 @@ async def sample_query_knowledgebase():
 
     client = QuestionAnsweringClient(endpoint, AzureKeyCredential(key))
     async with client:
-        input = qna.KnowledgeBaseQueryOptions(
+        input = qna.QueryKnowledgeBaseOptions(
             question="How long should my Surface battery last?",
             top=3,
             confidence_score_threshold=0.2,

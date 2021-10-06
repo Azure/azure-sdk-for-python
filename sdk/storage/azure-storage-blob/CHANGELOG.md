@@ -1,5 +1,12 @@
 # Release History
 
+## 12.9.0 (2021-09-15)
+**Stable release of preview features**
+- Added support for service version 2020-10-02 (STG78)
+- Added support for object level immutability policy with versioning (Version Level WORM).
+- Added support for listing deleted root blobs that have versions.
+- Added OAuth support for sync copy blob source.
+
 ## 12.9.0b1 (2021-07-27)
 **New Features**
 - Added support for object level immutability policy with versioning (Version Level WORM).

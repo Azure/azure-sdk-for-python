@@ -402,36 +402,6 @@ def test_interactive_browser_client_id():
     validate_client_id(mock_credential)
 
 
-@pytest.mark.parametrize("expected_value", (True, False))
-def test_allow_multitenant_authentication(expected_value):
-    """the credential should pass "allow_multitenant_authentication" to the inner credentials which support it"""
-
-    inner_credentials = {
-        credential: Mock()
-        for credential in (
-            "AzureCliCredential",
-            "AzurePowerShellCredential",
-            "EnvironmentCredential",
-            "InteractiveBrowserCredential",
-            "ManagedIdentityCredential",  # will ignore the argument
-            "SharedTokenCacheCredential",
-        )
-    }
-    with patch.multiple(DefaultAzureCredential.__module__, **inner_credentials):
-        DefaultAzureCredential(
-            allow_multitenant_authentication=expected_value, exclude_interactive_browser_credential=False
-        )
-
-    for credential_name, mock_credential in inner_credentials.items():
-        assert mock_credential.call_count == 1
-        _, kwargs = mock_credential.call_args
-
-        assert "allow_multitenant_authentication" in kwargs, (
-            '"allow_multitenant_authentication" was not passed to ' + credential_name
-        )
-        assert kwargs["allow_multitenant_authentication"] == expected_value
-
-
 def test_unexpected_kwarg():
     """the credential shouldn't raise when given an unexpected keyword argument"""
     DefaultAzureCredential(foo=42)

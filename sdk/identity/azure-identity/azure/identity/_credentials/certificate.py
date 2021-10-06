@@ -39,18 +39,12 @@ class CertificateCredential(ClientCredentialBase):
     :keyword password: The certificate's password. If a unicode string, it will be encoded as UTF-8. If the certificate
         requires a different encoding, pass appropriately encoded bytes instead.
     :paramtype password: str or bytes
-    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
-        the application is registered in. When False, which is the default, the credential will acquire tokens only from
-        the tenant specified by **tenant_id**.
     :keyword bool send_certificate_chain: if True, the credential will send the public certificate chain in the x5c
         header of each token request's JWT. This is required for Subject Name/Issuer (SNI) authentication. Defaults to
         False.
     :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
-    :keyword ~azure.identity.RegionalAuthority regional_authority: a :class:`~azure.identity.RegionalAuthority` to
-        which the credential will authenticate. This argument should be used only by applications deployed to Azure
-        VMs.
     """
 
     def __init__(self, tenant_id, client_id, certificate_path=None, **kwargs):
