@@ -2252,9 +2252,9 @@ class SummarySentence(DictMixin):
 class RecognizeCustomEntitiesAction(DictMixin):
     """RecognizeCustomEntitiesAction.
 
-    :param project_name: Required.
+    :param project_name: Required. This field indicates the project name for the model.
     :type project_name: str
-    :param deployment_name: Required.
+    :param deployment_name: This field indicates the deployment name for the model.
     :type deployment_name: str
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
@@ -2268,8 +2268,8 @@ class RecognizeCustomEntitiesAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
-    :ivar str project_name: Required.
-    :ivar str deployment_name: Required.
+    :ivar str project_name: This field indicates the project name for the model.
+    :ivar str deployment_name: This field indicates the deployment name for the model.
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
@@ -2375,9 +2375,9 @@ class RecognizeCustomEntitiesResult(DictMixin):
 class MultiCategoryClassifyAction(DictMixin):
     """MultiCategoryClassifyAction.
 
-    :param project_name: Required.
+    :param project_name: Required. This field indicates the project name for the model.
     :type project_name: str
-    :param deployment_name: Required.
+    :param deployment_name: This field indicates the deployment name for the model.
     :type deployment_name: str
     :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -2387,8 +2387,8 @@ class MultiCategoryClassifyAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
-    :ivar str project_name: Required.
-    :ivar str deployment_name: Required.
+    :ivar str project_name: This field indicates the project name for the model.
+    :ivar str deployment_name: This field indicates the deployment name for the model.
     :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
@@ -2487,9 +2487,9 @@ class MultiCategoryClassifyResult(DictMixin):
 class SingleCategoryClassifyAction(DictMixin):
     """SingleCategoryClassifyAction.
 
-    :param project_name: Required.
+    :param project_name: Required. This field indicates the project name for the model.
     :type project_name: str
-    :param deployment_name: Required.
+    :param deployment_name: This field indicates the deployment name for the model.
     :type deployment_name: str
     :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -2499,8 +2499,8 @@ class SingleCategoryClassifyAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
-    :ivar str project_name: Required.
-    :ivar str deployment_name: Required.
+    :ivar str project_name: This field indicates the project name for the model.
+    :ivar str deployment_name: This field indicates the deployment name for the model.
     :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
@@ -2598,8 +2598,7 @@ class ClassificationCategory(DictMixin):
     """ClassificationCategory.
 
     :ivar str category: Required. Classification type.
-    :ivar float confidence_score: Required. Confidence score between 0 and 1 of the recognized
-     classification.
+    :ivar float confidence_score: Confidence score between 0 and 1 of the recognized classification.
     """
 
     def __init__(
