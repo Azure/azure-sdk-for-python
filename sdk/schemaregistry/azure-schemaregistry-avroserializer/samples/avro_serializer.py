@@ -79,7 +79,7 @@ def deserialize(serializer, bytes_payload):
 
 
 if __name__ == '__main__':
-    schema_registry = SchemaRegistryClient(endpoint=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE, credential=token_credential)
+    schema_registry = SchemaRegistryClient(fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE, credential=token_credential)
     serializer = AvroSerializer(client=schema_registry, group_name=GROUP_NAME, auto_register_schemas=True)
     bytes_data_ben, bytes_data_alice = serialize(serializer)
     dict_data_ben = deserialize(serializer, bytes_data_ben)

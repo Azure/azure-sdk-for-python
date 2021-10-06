@@ -201,7 +201,7 @@ Sample code snippets are provided to illustrate using long-running operations [b
 The following section provides several code snippets covering some of the most common Form Recognizer tasks, including:
 
 * [Extract Layout](#extract-layout "Extract Layout")
-* [Using the General Prebuilt Document Model](#using-the-general-prebuilt-document-model "Using the General Prebuilt Document Model")
+* [Using the General Document Model](#using-the-general-document-model "Using the General Document Model")
 * [Using Prebuilt Models](#using-prebuilt-models "Using Prebuilt Models")
 * [Build a Custom Model](#build-a-custom-model "Build a custom model")
 * [Analyze Documents Using a Custom Model](#analyze-documents-using-a-custom-model "Analyze Documents Using a Custom Model")
@@ -283,7 +283,7 @@ for table_idx, table in enumerate(result.tables):
         )
 ```
 
-### Using the General Prebuilt Document Model
+### Using the General Document Model
 Analyze entities, key-value pairs, tables, styles, and selection marks from documents using the general prebuilt document model provided by the Form Recognizer service.
 Select the Prebuilt Document model by passing `model="prebuilt-document"` into the `begin_analyze_document` method:
 
