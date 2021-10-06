@@ -30,20 +30,14 @@ from typing import (
     Iterable,
     Tuple,
     Union,
-    Callable,
-    Optional,
-    AsyncIterator as AsyncIteratorType
+    MutableMapping,
 )
-from ..exceptions import StreamConsumedError, StreamClosedError
 
-from ._helpers import (
-    _shared_set_content_body,
-    HeadersType
-)
+from ._helpers import _shared_set_content_body
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
 def set_content_body(content: ContentType) -> Tuple[
-    HeadersType, ContentType
+    MutableMapping[str, str], ContentType
 ]:
     headers, body = _shared_set_content_body(content)
     if body is not None:
@@ -54,48 +48,3 @@ def set_content_body(content: ContentType) -> Tuple[
         "Unexpected type for 'content': '{}'. ".format(type(content)) +
         "We expect 'content' to either be str, bytes, or an Iterable / AsyncIterable"
     )
-
-def _stream_download_helper(
-    decompress: bool,
-    stream_download_generator: Callable,
-    response,
-) -> AsyncIteratorType[bytes]:
-    if response.is_stream_consumed:
-        raise StreamConsumedError(response)
-    if response.is_closed:
-        raise StreamClosedError(response)
-
-    response.is_stream_consumed = True
-    return stream_download_generator(
-        pipeline=None,
-        response=response,
-        decompress=decompress,
-    )
-
-async def iter_bytes_helper(
-    stream_download_generator: Callable,
-    response,
-    content: Optional[bytes],
-) -> AsyncIteratorType[bytes]:
-    if content:
-        chunk_size = response._connection_data_block_size  # pylint: disable=protected-access
-        for i in range(0, len(content), chunk_size):
-            yield content[i : i + chunk_size]
-    else:
-        async for part in _stream_download_helper(
-            decompress=True,
-            stream_download_generator=stream_download_generator,
-            response=response,
-        ):
-            yield part
-
-async def iter_raw_helper(
-    stream_download_generator: Callable,
-    response,
-) -> AsyncIteratorType[bytes]:
-    async for part in _stream_download_helper(
-        decompress=False,
-        stream_download_generator=stream_download_generator,
-        response=response,
-    ):
-        yield part

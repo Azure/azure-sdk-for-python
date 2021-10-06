@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: 'b''{"source": "https://badurl.jpg"}'''
+    body: 'b''{"urlSource": "https://badurl.jpg"}'''
     headers:
       Accept:
       - application/json
@@ -9,33 +9,34 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '32'
+      - '35'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyze?includeTextDetails=false
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-businessCard:analyze?stringIndexType=unicodeCodePoint&api-version=2021-07-30-preview
   response:
     body:
-      string: '{"error": {"code": "FailedToDownloadImage", "innerError": {"requestId":
-        "14487027-01d5-47f4-ba3b-400d29887e4d"}, "message": "Failed to download image
-        from input URL."}}'
+      string: '{"error": {"code": "InvalidRequest", "message": "Invalid request.",
+        "innererror": {"code": "InvalidContent", "message": "The file is corrupted
+        or format is unsupported. Refer to documentation for the list of supported
+        formats."}}}'
     headers:
       apim-request-id:
-      - 14487027-01d5-47f4-ba3b-400d29887e4d
-      content-length:
-      - '161'
+      - d07e77d7-cd3b-42cf-ba2b-a7946f4e93ec
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 10 May 2021 23:59:32 GMT
+      - Tue, 14 Sep 2021 09:14:21 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '3434'
+      - '219'
     status:
       code: 400
       message: Bad Request

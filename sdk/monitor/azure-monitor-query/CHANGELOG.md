@@ -1,14 +1,25 @@
 # Release History
 
-## 1.0.0b5 (Unreleased)
+## 1.0.0 (2021-10-05)
 
 ### Features Added
 
+- Added `LogsQueryPartialResult` and `LogsQueryError` to handle errors.
+- Added `status` attribute to `LogsQueryResult`.
+- Added `LogsQueryStatus` Enum to describe the status of a result.
+- Added a new `LogsTableRow` type that represents a single row in a table.
+- Items in `metrics` list in `MetricsQueryResult` can now be accessed by metric names.
+- Added `audience` keyword to support providing credential scope when creating clients.
+
 ### Breaking Changes
 
-### Bugs Fixed
-
-### Other Changes
+- `LogsQueryResult` now iterates over the tables directly as a convinience.
+- `query` API in logs is renamed to `query_workspace`
+- `query` API in metrics is renamed to `query_resource`
+- `query_workspace` API now returns a union of `LogsQueryPartialResult` and `LogsQueryResult`.
+- `query_batch` API now returns a union of `LogsQueryPartialResult`, `LogsQueryError` and `LogsQueryResult`.
+- `metric_namespace` is renamed to `namespace` and is a keyword-only argument in `list_metric_definitions` API.
+- `MetricsResult` is renamed to `MetricsQueryResult`.
 
 ## 1.0.0b4 (2021-09-09)
 

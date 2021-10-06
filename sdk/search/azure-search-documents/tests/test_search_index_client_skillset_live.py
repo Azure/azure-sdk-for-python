@@ -47,20 +47,17 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         s1 = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                     outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizationsS1")],
                                     description="Skill Version 1",
-                                    model_version="1",
                                     include_typeless_entities=True)
 
         s2 = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                     outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizationsS2")],
                                     skill_version=EntityRecognitionSkillVersion.LATEST,
                                     description="Skill Version 3",
-                                    model_version="3",
-                                    include_typeless_entities=True)
+                                    model_version="3")
         s3 = SentimentSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                             outputs=[OutputFieldMappingEntry(name="score", target_name="scoreS3")],
                             skill_version=SentimentSkillVersion.V1,
-                            description="Sentiment V1",
-                            include_opinion_mining=True)
+                            description="Sentiment V1")
 
         s4 = SentimentSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                             outputs=[OutputFieldMappingEntry(name="confidenceScores", target_name="scoreS4")],
@@ -73,8 +70,6 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
                                 minimum_precision=0.5)
 
         skillset = SearchIndexerSkillset(name=name, skills=list([s1, s2, s3, s4, s5]), description="desc")
-
-        client.delete_skillset(name) 
 
         dict_skills = [skill.as_dict() for skill in skillset.skills]
         skillset.skills = dict_skills
@@ -98,6 +93,36 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         assert result.skills[4].minimum_precision == 0.5
 
         assert len(client.get_skillsets()) == 1
+
+
+    def test_create_skillset_validation(self, **kwargs):
+        with pytest.raises(ValueError) as err:
+            client = SearchIndexerClient("fake_endpoint", AzureKeyCredential("fake_key"))
+            name = "test-ss"
+
+            s1 = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+                                        outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizationsS1")],
+                                        description="Skill Version 1",
+                                        model_version="1",
+                                        include_typeless_entities=True)
+
+            s2 = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+                                        outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizationsS2")],
+                                        skill_version=EntityRecognitionSkillVersion.LATEST,
+                                        description="Skill Version 3",
+                                        model_version="3",
+                                        include_typeless_entities=True)
+            s3 = SentimentSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+                                outputs=[OutputFieldMappingEntry(name="score", target_name="scoreS3")],
+                                skill_version=SentimentSkillVersion.V1,
+                                description="Sentiment V1",
+                                include_opinion_mining=True)
+            skillset = SearchIndexerSkillset(name=name, skills=list([s1, s2, s3]), description="desc")
+            client.create_skillset(skillset)
+        assert 'include_typeless_entities' in str(err.value)
+        assert 'model_version' in str(err.value)
+        assert 'include_opinion_mining' in str(err.value)
+
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)

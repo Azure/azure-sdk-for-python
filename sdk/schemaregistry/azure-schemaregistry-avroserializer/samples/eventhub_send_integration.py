@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Examples to show sending event to EventHub with SchemaRegistryAvroSerializer integrated for data serialization.
+Examples to show sending event to EventHub with AvroSerializer integrated for data serialization.
 """
 
 # pylint: disable=C0111
@@ -15,13 +15,13 @@ import os
 from azure.eventhub import EventHubProducerClient, EventData
 from azure.identity import DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.serializer.avroserializer import SchemaRegistryAvroSerializer
+from azure.schemaregistry.serializer.avroserializer import AvroSerializer
 
 EVENTHUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
-SCHEMA_REGISTRY_ENDPOINT = os.environ['SCHEMA_REGISTRY_ENDPOINT']
-SCHEMA_GROUP = os.environ['SCHEMA_REGISTRY_GROUP']
+SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
+GROUP_NAME = os.environ['SCHEMAREGISTRY_GROUP']
 
 SCHEMA_STRING = """
 {"namespace": "example.avro",
@@ -58,13 +58,14 @@ eventhub_producer = EventHubProducerClient.from_connection_string(
 )
 
 
-# create a SchemaRegistryAvroSerializer instance
-avro_serializer = SchemaRegistryAvroSerializer(
+# create a AvroSerializer instance
+avro_serializer = AvroSerializer(
     client=SchemaRegistryClient(
-        endpoint=SCHEMA_REGISTRY_ENDPOINT,
+        fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE,
         credential=DefaultAzureCredential()
     ),
-    group_name=SCHEMA_GROUP
+    group_name=GROUP_NAME,
+    auto_register_schemas=True
 )
 
 

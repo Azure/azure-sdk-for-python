@@ -18,31 +18,31 @@ from ._storage_management_client_enums import *
 class AccessPolicy(msrest.serialization.Model):
     """AccessPolicy.
 
-    :param start: Start time of the access policy.
-    :type start: ~datetime.datetime
-    :param expiry: Expiry time of the access policy.
-    :type expiry: ~datetime.datetime
+    :param start_time: Start time of the access policy.
+    :type start_time: ~datetime.datetime
+    :param expiry_time: Expiry time of the access policy.
+    :type expiry_time: ~datetime.datetime
     :param permission: List of abbreviated permissions.
     :type permission: str
     """
 
     _attribute_map = {
-        'start': {'key': 'start', 'type': 'iso-8601'},
-        'expiry': {'key': 'expiry', 'type': 'iso-8601'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
         'permission': {'key': 'permission', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        start: Optional[datetime.datetime] = None,
-        expiry: Optional[datetime.datetime] = None,
+        start_time: Optional[datetime.datetime] = None,
+        expiry_time: Optional[datetime.datetime] = None,
         permission: Optional[str] = None,
         **kwargs
     ):
         super(AccessPolicy, self).__init__(**kwargs)
-        self.start = start
-        self.expiry = expiry
+        self.start_time = start_time
+        self.expiry_time = expiry_time
         self.permission = permission
 
 
@@ -2537,20 +2537,18 @@ class ImmutableStorageWithVersioning(msrest.serialization.Model):
 class IPRule(msrest.serialization.Model):
     """IP rule with specific IP or IP range in CIDR format.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param ip_address_or_range: Required. Specifies the IP or IP range in CIDR format. Only IPV4
      address is allowed.
     :type ip_address_or_range: str
-    :ivar action: The action of IP ACL rule. Default value: "Allow".
-    :vartype action: str
+    :param action: The action of IP ACL rule. The only acceptable values to pass in are None and
+     "Allow". The default value is None.
+    :type action: str
     """
 
     _validation = {
         'ip_address_or_range': {'required': True},
-        'action': {'constant': True},
     }
 
     _attribute_map = {
@@ -2558,16 +2556,16 @@ class IPRule(msrest.serialization.Model):
         'action': {'key': 'action', 'type': 'str'},
     }
 
-    action = "Allow"
-
     def __init__(
         self,
         *,
         ip_address_or_range: str,
+        action: Optional[str] = None,
         **kwargs
     ):
         super(IPRule, self).__init__(**kwargs)
         self.ip_address_or_range = ip_address_or_range
+        self.action = action
 
 
 class KeyCreationTime(msrest.serialization.Model):
@@ -5146,7 +5144,7 @@ class StorageAccountCheckNameAvailabilityParameters(msrest.serialization.Model):
 
     :param name: Required. The storage account name.
     :type name: str
-    :ivar type: Required. The type of resource, Microsoft.Storage/storageAccounts. Default value:
+    :ivar type: The type of resource, Microsoft.Storage/storageAccounts. Has constant value:
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     """
@@ -6143,15 +6141,14 @@ class UserAssignedIdentity(msrest.serialization.Model):
 class VirtualNetworkRule(msrest.serialization.Model):
     """Virtual Network rule.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param virtual_network_resource_id: Required. Resource ID of a subnet, for example:
      /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
     :type virtual_network_resource_id: str
-    :ivar action: The action of virtual network rule. Default value: "Allow".
-    :vartype action: str
+    :param action: The action of virtual network rule. The only acceptable values to pass in are
+     None and "Allow". The default value is None.
+    :type action: str
     :param state: Gets the state of virtual network rule. Possible values include: "Provisioning",
      "Deprovisioning", "Succeeded", "Failed", "NetworkSourceDeleted".
     :type state: str or ~azure.mgmt.storage.v2021_04_01.models.State
@@ -6159,7 +6156,6 @@ class VirtualNetworkRule(msrest.serialization.Model):
 
     _validation = {
         'virtual_network_resource_id': {'required': True},
-        'action': {'constant': True},
     }
 
     _attribute_map = {
@@ -6168,15 +6164,15 @@ class VirtualNetworkRule(msrest.serialization.Model):
         'state': {'key': 'state', 'type': 'str'},
     }
 
-    action = "Allow"
-
     def __init__(
         self,
         *,
         virtual_network_resource_id: str,
+        action: Optional[str] = None,
         state: Optional[Union[str, "State"]] = None,
         **kwargs
     ):
         super(VirtualNetworkRule, self).__init__(**kwargs)
         self.virtual_network_resource_id = virtual_network_resource_id
+        self.action = action
         self.state = state

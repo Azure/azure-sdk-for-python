@@ -48,7 +48,7 @@ class BlobContainersOperations:
         maxpagesize: Optional[str] = None,
         filter: Optional[str] = None,
         include: Optional[Union[str, "_models.ListContainersInclude"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListContainerItems"]:
         """Lists all containers and does not support a prefix like data plane. Also SRP today does not
         return continuation token.
@@ -142,7 +142,7 @@ class BlobContainersOperations:
         account_name: str,
         container_name: str,
         blob_container: "_models.BlobContainer",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BlobContainer":
         """Creates a new container under the specified account as described by request body. The container
         resource includes metadata and properties for that container. It does not include a list of the
@@ -224,7 +224,7 @@ class BlobContainersOperations:
         account_name: str,
         container_name: str,
         blob_container: "_models.BlobContainer",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BlobContainer":
         """Updates container properties as specified in request body. Properties not mentioned in the
         request will be unchanged. Update fails if the specified container doesn't already exist.
@@ -300,7 +300,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BlobContainer":
         """Gets properties of a specified container.
 
@@ -368,7 +368,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes specified container under its account.
 
@@ -432,7 +432,7 @@ class BlobContainersOperations:
         account_name: str,
         container_name: str,
         legal_hold: "_models.LegalHold",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.LegalHold":
         """Sets legal hold tags. Setting the same tag results in an idempotent operation. SetLegalHold
         follows an append pattern and does not clear out the existing tags that are not specified in
@@ -510,7 +510,7 @@ class BlobContainersOperations:
         account_name: str,
         container_name: str,
         legal_hold: "_models.LegalHold",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.LegalHold":
         """Clears legal hold tags. Clearing the same or non-existent tag results in an idempotent
         operation. ClearLegalHold clears out only the specified tags in the request.
@@ -588,7 +588,7 @@ class BlobContainersOperations:
         container_name: str,
         if_match: Optional[str] = None,
         parameters: Optional["_models.ImmutabilityPolicy"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ImmutabilityPolicy":
         """Creates or updates an unlocked immutability policy. ETag in If-Match is honored if given but
         not required for this operation.
@@ -679,7 +679,7 @@ class BlobContainersOperations:
         account_name: str,
         container_name: str,
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ImmutabilityPolicy":
         """Gets the existing immutability policy along with the corresponding ETag in response headers and
         body.
@@ -759,7 +759,7 @@ class BlobContainersOperations:
         account_name: str,
         container_name: str,
         if_match: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ImmutabilityPolicy":
         """Aborts an unlocked immutability policy. The response of delete has
         immutabilityPeriodSinceCreationInDays set to 0. ETag in If-Match is required for this
@@ -840,7 +840,7 @@ class BlobContainersOperations:
         account_name: str,
         container_name: str,
         if_match: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ImmutabilityPolicy":
         """Sets the ImmutabilityPolicy to Locked state. The only action allowed on a Locked policy is
         ExtendImmutabilityPolicy action. ETag in If-Match is required for this operation.
@@ -918,7 +918,7 @@ class BlobContainersOperations:
         container_name: str,
         if_match: str,
         parameters: Optional["_models.ImmutabilityPolicy"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ImmutabilityPolicy":
         """Extends the immutabilityPeriodSinceCreationInDays of a locked immutabilityPolicy. The only
         action allowed on a Locked policy will be this action. ETag in If-Match is required for this
@@ -1007,7 +1007,7 @@ class BlobContainersOperations:
         account_name: str,
         container_name: str,
         parameters: Optional["_models.LeaseContainerRequest"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.LeaseContainerResponse":
         """The Lease Container operation establishes and manages a lock on a container for delete
         operations. The lock duration can be 15 to 60 seconds, or can be infinite.

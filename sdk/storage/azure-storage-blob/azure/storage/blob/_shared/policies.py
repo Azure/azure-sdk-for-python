@@ -75,7 +75,7 @@ def retry_hook(settings, **kwargs):
 
 
 def is_retry(response, mode):
-    """Is this method/status code retryable? (Based on whitelists and control
+    """Is this method/status code retryable? (Based on allowlists and control
     variables such as the number of total retries to allow, whether to
     respect the Retry-After header, whether this header is present, and
     whether the returned status code is on the list of status codes to
@@ -456,7 +456,7 @@ class StorageRetryPolicy(HTTPPolicy):
 
         else:
             # Incrementing because of a server error like a 500 in
-            # status_forcelist and a the given method is in the whitelist
+            # status_forcelist and a the given method is in the allowlist
             if response:
                 settings['status'] -= 1
                 settings['history'].append(RequestHistory(request, http_response=response))

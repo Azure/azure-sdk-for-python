@@ -103,5 +103,10 @@ class ManagedIdentityCredential(AsyncContextManager):
         :raises ~azure.identity.CredentialUnavailableError: managed identity isn't available in the hosting environment
         """
         if not self._credential:
-            raise CredentialUnavailableError(message="No managed identity endpoint found.")
+            raise CredentialUnavailableError(
+                message="No managed identity endpoint found. \n"
+                        "The Target Azure platform could not be determined from environment variables. "
+                        "Visit https://aka.ms/azsdk/python/identity/managedidentitycredential/troubleshoot to "
+                        "troubleshoot this issue."
+            )
         return await self._credential.get_token(*scopes, **kwargs)
