@@ -33,8 +33,8 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
     :param client_credential: a credential to authenticate the service principal, either one of its client secrets (a
         string) or the bytes of a certificate in PEM or PKCS12 format including the private key
     :paramtype client_credential: str or bytes
-    :param str user_assertion: the access token the credential will use as the user assertion when requesting
-        on-behalf-of tokens
+    :keyword str user_assertion: Required. the access token the credential will use as the user assertion when
+        requesting on-behalf-of tokens
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
@@ -71,9 +71,11 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         else:
             self._client_credential = client_credential
 
+        self._assertion = kwargs.pop("user_assertion", None)
+        if not self._assertion:
+            raise ValueError("'user_assertion' is required.")
         # note AadClient handles "authority" and any pipeline kwargs
         self._client = AadClient(tenant_id, client_id, **kwargs)
-        self._assertion = user_assertion
 
     async def __aenter__(self):
         await self._client.__aenter__()

@@ -7,8 +7,8 @@ try:
 except ImportError:
     from mock import MagicMock, patch  # type: ignore
 
+from azure.identity._credentials.application import AzureApplicationCredential
 from azure.identity import (
-    AzureApplicationCredential,
     AzureCliCredential,
     AzurePowerShellCredential,
     AuthorizationCodeCredential,

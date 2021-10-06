@@ -36,8 +36,8 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
     :param client_credential: a credential to authenticate the service principal, either one of its client secrets (a
         string) or the bytes of a certificate in PEM or PKCS12 format including the private key
     :type client_credential: str or bytes
-    :param str user_assertion: the access token the credential will use as the user assertion when requesting
-        on-behalf-of tokens
+    :keyword str user_assertion: Required. the access token the credential will use as the user assertion when
+        requesting on-behalf-of tokens
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
@@ -48,8 +48,8 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
     :paramtype password: str or bytes
     """
 
-    def __init__(self, tenant_id, client_id, client_credential, user_assertion, **kwargs):
-        # type: (str, str, Union[bytes, str], str, **Any) -> None
+    def __init__(self, tenant_id, client_id, client_credential, **kwargs):
+        # type: (str, str, Union[bytes, str], **Any) -> None
         credential = cast("Union[Dict, str]", client_credential)
         if isinstance(client_credential, six.binary_type):
             try:
@@ -68,7 +68,9 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
                     six.raise_from(ValueError(message), ex)
 
         super(OnBehalfOfCredential, self).__init__(client_id, credential, tenant_id=tenant_id, **kwargs)
-        self._assertion = user_assertion
+        self._assertion = kwargs.pop("user_assertion", None)
+        if not self._assertion:
+            raise ValueError("'user_assertion' is required.")
         self._auth_record = None  # type: Optional[AuthenticationRecord]
 
     @wrap_exceptions
