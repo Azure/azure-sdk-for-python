@@ -21,7 +21,7 @@ A natural question to ask when considering whether to adopt a new version of the
 
 There are many benefits to using the new design of the `azure-ai-formrecognizer (3.2.x)` library. This new version of the library introduces two new clients `DocumentAnalysisClient` and the `DocumentModelAdministrationClient` with unified methods for analyzing documents and provides support for the new features added by the service in API version `2021-09-30-preview` and later.
 
-New features provided by the `DocumentAnalysisClient` include one consolidated method for analyzing document layout, a general prebuilt document model type, along with the same prebuilt models that were included previously (receipts, invoices, business cards, identity documents), and custom models. Moreover, the models introduced in the latest version of the library, such as `AnalyzeResult`, remove hierarchical dependencies between document elements and move them to a more top level and easily accessible position. The service has further improved how to define where elements are located on documents by moving towards `BoundingRegion` definitions allowing for cross-page elements. Document element fields are returned with more information, such as content and spans. 
+New features provided by the `DocumentAnalysisClient` include one consolidated method for analyzing document layout, a general document model type, along with the same prebuilt models that were included previously (receipts, invoices, business cards, identity documents), and custom models. Moreover, the models introduced in the latest version of the library, such as `AnalyzeResult`, remove hierarchical dependencies between document elements and move them to a more top level and easily accessible position. The service has further improved how to define where elements are located on documents by moving towards `BoundingRegion` definitions allowing for cross-page elements. Document element fields are returned with more information, such as content and spans. 
 
 When using the `DocumentModelAdministrationClient` to build, compose, or copy models, users can now assign their own model IDs and specify a description. Listing models on the administration client now includes both prebuilt and custom models. When using `get_model()`, users can get the field schema (field names and types that the model can extract) for the model they specified, including for prebuilt models. This client also provides functions for getting information from model operations.
 
@@ -52,7 +52,7 @@ We continue to support API key and AAD authentication methods when creating the 
 
 - In `3.2.x`, we have added `DocumentAnalysisClient` and `DocumentModelAdministrationClient` which support API version `2021-09-30-preview` and later.
 - `FormRecognizerClient` and `FormTrainingClient` will raise an error if called with an API version of `2021-09-30-preview` and later. 
-- In `DocumentAnalysisClient` all prebuilt model methods along with custom model, layout, and a prebuilt document analysis model are unified into two methods called
+- In `DocumentAnalysisClient` all prebuilt model methods along with custom model, layout, and a general document analysis model are unified into two methods called
 `begin_analyze_document` and `begin_analyze_document_from_url`.
 - In `FormRecognizerClient` there are two methods (a stream and URL method) for each of the prebuilt models supported by the service. This results in two methods for business card, receipt, identity document, and invoice models, along with a pair of methods for recognizing custom documents and for recognizing content/layout. 
 
@@ -95,7 +95,7 @@ document_model_admin_client = DocumentModelAdministrationClient(
 Differences between the versions:
 - `begin_analyze_document` and `begin_analyze_document_from_url` accept a string with the desired model ID for analysis. The model ID can be any of the prebuilt model IDs or a custom model ID.
 - Along with more consolidated analysis methods in the `DocumentAnalysisClient`, the return types have also been improved and remove the hierarchical dependencies between elements. An instance of the `AnalyzeResult` model is now returned which showcases important document elements, such as key-value pairs, entities, tables, and document fields and values, among others, at the top level of the returned model. This can be contrasted with `RecognizedForm` which included more hierarchical relationships, for instance tables were an element of a `FormPage` and not a top-level element.
-- In the new version of the library, the functionality of `begin_recognize_content` has been added as a prebuilt model and can be called in library version `azure-ai-formrecognizer (3.2.x)` with `begin_analyze_document` by passing in the `prebuilt-layout` model ID. Similarly, to get general prebuilt document information, such as key-value pairs, entities, and text layout, the `prebuilt-document` model ID can be used with `begin_analyze_document`.
+- In the new version of the library, the functionality of `begin_recognize_content` has been added as a prebuilt model and can be called in library version `azure-ai-formrecognizer (3.2.x)` with `begin_analyze_document` by passing in the `prebuilt-layout` model ID. Similarly, to get general document information, such as key-value pairs, entities, and text layout, the `prebuilt-document` model ID can be used with `begin_analyze_document`.
 - When calling `begin_analyze_document` and `begin_analyze_document_from_url` the returned type is an `AnalyzeResult` object, while the various methods used with `FormRecognizerClient` return a list of `RecognizedForm`.
 - The `pages` keyword argument is a string with library version `azure-ai-formrecognizer (3.2.x)`. In `azure-ai-formrecognizer (3.1.x)`, `pages` was a list of strings.
 - The `include_field_elements` keyword argument is not supported with the `DocumentAnalysisClient`, text details are automatically included with API version `2021-09-30-preview` and later.
@@ -362,7 +362,7 @@ for table_idx, table in enumerate(result.tables):
 print("----------------------------------------")
 ```
 
-Analyzing general prebuilt document types with `3.2.x`:
+Analyzing general document types with `3.2.x`:
 
 > NOTE: Analyzing a document with the `prebuilt-document` model replaces training without labels in version `3.1.x` of the library.
 
