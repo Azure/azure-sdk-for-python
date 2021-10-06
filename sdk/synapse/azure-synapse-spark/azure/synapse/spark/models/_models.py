@@ -47,8 +47,9 @@ class SparkBatchJob(msrest.serialization.Model):
     :type app_id: str
     :param app_info: The detailed application info.
     :type app_info: dict[str, str]
-    :param state: The batch state.
-    :type state: str
+    :param state: The batch state. Possible values include: "not_started", "starting", "idle",
+     "busy", "shutting_down", "error", "dead", "killed", "success", "running", "recovering".
+    :type state: str or ~azure.synapse.spark.models.LivyStates
     :param log_lines: The log lines.
     :type log_lines: list[str]
     """
@@ -484,8 +485,9 @@ class SparkSession(msrest.serialization.Model):
     :type app_id: str
     :param app_info: Dictionary of :code:`<string>`.
     :type app_info: dict[str, str]
-    :param state:
-    :type state: str
+    :param state: The session state. Possible values include: "not_started", "starting", "idle",
+     "busy", "shutting_down", "error", "dead", "killed", "success", "running", "recovering".
+    :type state: str or ~azure.synapse.spark.models.LivyStates
     :param log_lines:
     :type log_lines: list[str]
     """
@@ -727,8 +729,9 @@ class SparkStatement(msrest.serialization.Model):
     :type id: int
     :param code:
     :type code: str
-    :param state:
-    :type state: str
+    :param state:  Possible values include: "waiting", "running", "available", "error",
+     "cancelling", "cancelled".
+    :type state: str or ~azure.synapse.spark.models.LivyStatementStates
     :param output:
     :type output: ~azure.synapse.spark.models.SparkStatementOutput
     """

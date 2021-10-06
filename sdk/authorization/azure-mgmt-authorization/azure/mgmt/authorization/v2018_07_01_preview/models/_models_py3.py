@@ -8,6 +8,7 @@
 
 from typing import List, Optional
 
+from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
@@ -186,35 +187,134 @@ class DenyAssignmentPermission(msrest.serialization.Model):
         self.not_data_actions = not_data_actions
 
 
-class Principal(msrest.serialization.Model):
-    """Deny assignment principal.
+class ErrorAdditionalInfo(msrest.serialization.Model):
+    """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Object ID of the Azure AD principal (user, group, or service principal) to which the
-     deny assignment applies. An empty guid '00000000-0000-0000-0000-000000000000' as principal id
-     and principal type as 'Everyone' represents all users, groups and service principals.
-    :vartype id: str
-    :ivar type: Type of object represented by principal id (user, group, or service principal). An
-     empty guid '00000000-0000-0000-0000-000000000000' as principal id and principal type as
-     'Everyone' represents all users, groups and service principals.
+    :ivar type: The additional info type.
     :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: any
     """
 
     _validation = {
-        'id': {'readonly': True},
         'type': {'readonly': True},
+        'info': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(Principal, self).__init__(**kwargs)
-        self.id = None
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
+        self.info = None
+
+
+class ErrorDetail(msrest.serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.authorization.v2018_07_01_preview.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info:
+     list[~azure.mgmt.authorization.v2018_07_01_preview.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorDetail]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorDetail, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class ErrorResponse(msrest.serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+
+    :param error: The error object.
+    :type error: ~azure.mgmt.authorization.v2018_07_01_preview.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorDetail'},
+    }
+
+    def __init__(
+        self,
+        *,
+        error: Optional["ErrorDetail"] = None,
+        **kwargs
+    ):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = error
+
+
+class Principal(msrest.serialization.Model):
+    """The name of the entity last modified it.
+
+    :param id: The id of the principal made changes.
+    :type id: str
+    :param display_name: The name of the principal made changes.
+    :type display_name: str
+    :param type: Type of principal such as user , group etc.
+    :type type: str
+    :param email: Email of principal.
+    :type email: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'email': {'key': 'email', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,
+        display_name: Optional[str] = None,
+        type: Optional[str] = None,
+        email: Optional[str] = None,
+        **kwargs
+    ):
+        super(Principal, self).__init__(**kwargs)
+        self.id = id
+        self.display_name = display_name
+        self.type = type
+        self.email = email

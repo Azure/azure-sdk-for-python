@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2021-03-01",
-    "total_api_version_list": ["2021-03-01"],
+    "chosen_version": "2021-07-01",
+    "total_api_version_list": ["2021-07-01"],
     "client": {
         "name": "ContainerInstanceManagementClient",
         "filename": "_container_instance_management_client",

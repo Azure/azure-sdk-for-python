@@ -16,48 +16,43 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-language-questionanswering/1.0.0b2 Python/3.9.5 (macOS-11.5.2-x86_64-i386-64bit)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-05-01-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-07-15-preview
   response:
     body:
       string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Make
         your battery last\"\n      ],\n      \"answer\": \"**Make your battery last**\\n\\nFor
         info on how to care for your battery and power supply, conserve power, and
         make your Surface battery last longer, see [Surface battery and power](http://www.microsoft.com/surface/support/hardware-and-drivers/battery-and-power)
-        on Surface.com.\",\n      \"confidenceScore\": 0.9292,\n      \"id\": 27,\n
-        \     \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
+        on Surface.com.\",\n      \"confidenceScore\": 0.9201999999999999,\n      \"id\":
+        27,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
         {\n        \"explicitlytaggedheading\": \"make your battery last\"\n      },\n
         \     \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
         []\n      }\n    },\n    {\n      \"questions\": [\n        \"Check the battery
         level\"\n      ],\n      \"answer\": \"**Check the battery level**\\n\\nYou
         can check the battery level from the lock screen or the desktop:\",\n      \"confidenceScore\":
-        0.3583,\n      \"id\": 24,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
+        0.4412,\n      \"id\": 24,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
         \     \"metadata\": {\n        \"explicitlytaggedheading\": \"check the battery
         level\"\n      },\n      \"dialog\": {\n        \"isContextOnly\": false,\n
-        \       \"prompts\": []\n      }\n    },\n    {\n      \"questions\": [\n
-        \       \"Desktop taskbar.\"\n      ],\n      \"answer\": \"**Desktop taskbar.**\\n\\nBattery
-        status appears at the right side of the taskbar. Select the battery icon for
-        info about the charging and battery status, including the percent remaining.
-        \u272A\",\n      \"confidenceScore\": 0.2229,\n      \"id\": 26,\n      \"source\":
-        \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\": {},\n      \"dialog\":
-        {\n        \"isContextOnly\": false,\n        \"prompts\": []\n      }\n    }\n
-        \ ]\n}"
+        \       \"prompts\": []\n      }\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - 6364fbb3-83b7-4d3d-815c-6663f41e1ae4
+      - f02239ca-4edc-4348-b5d6-b3023765bddb
       content-length:
-      - '1609'
+      - '1140'
       content-type:
       - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
       date:
-      - Tue, 13 Jul 2021 17:24:02 GMT
+      - Thu, 30 Sep 2021 15:52:34 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '384'
+      - '916'
     status:
       code: 200
       message: OK

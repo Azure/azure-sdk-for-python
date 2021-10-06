@@ -1,28 +1,33 @@
 interactions:
 - request:
-    body: null
+    body: 'b''{"modelId": "703439bb-c451-4bf6-9b95-31b0e75bedbc"}'''
     headers:
       Accept:
       - application/json
+      Content-Length:
+      - '51'
+      Content-Type:
+      - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/copyAuthorization
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels:authorizeCopy?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"modelId": "9ed41a30-9027-4b91-abcb-fcae124593dc", "accessToken":
-        "redacted", "expirationDateTimeTicks": 1620782157}'
+      string: '{"targetResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.CognitiveServices/accounts/frname",
+        "targetResourceRegion": "region", "targetModelId": "703439bb-c451-4bf6-9b95-31b0e75bedbc",
+        "targetModelLocation": "https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/703439bb-c451-4bf6-9b95-31b0e75bedbc?api-version=2021-09-30-preview",
+        "accessToken": "redacted", "expirationDateTime": "2021-09-15T19:34:25Z"}'
     headers:
-      apim-request-id: 0bad17b3-23f3-43c1-92bc-bea7ce1d446c
-      content-length: '140'
+      apim-request-id: 82960de3-1b69-433e-97f0-505f88ec49ff
       content-type: application/json; charset=utf-8
-      date: Tue, 11 May 2021 01:15:58 GMT
-      location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/9ed41a30-9027-4b91-abcb-fcae124593dc
+      date: Wed, 15 Sep 2021 18:34:25 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '39'
+      x-envoy-upstream-service-time: '255'
     status:
-      code: 201
-      message: Created
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/copyAuthorization
+      code: 200
+      message: OK
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels:authorizeCopy?api-version=2021-09-30-preview
 version: 1
