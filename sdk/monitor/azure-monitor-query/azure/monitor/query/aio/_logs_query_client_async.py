@@ -45,7 +45,7 @@ class LogsQueryClient(object):
         self._endpoint = endpoint
         self._client = MonitorQueryClient(
             credential=credential,
-            authentication_policy=get_authentication_policy(credential, audience),
+            authentication_policy=get_authentication_policy(credential, "https://api.loganalytics.io"),
             base_url=self._endpoint,
             **kwargs
         )

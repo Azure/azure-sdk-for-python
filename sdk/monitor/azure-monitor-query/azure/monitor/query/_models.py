@@ -7,7 +7,7 @@
 
 from enum import Enum
 import uuid
-from typing import Any, Optional, List, Mapping
+from typing import Any, Optional, List
 
 from ._helpers import construct_iso8601, process_row
 from ._generated.models import (
