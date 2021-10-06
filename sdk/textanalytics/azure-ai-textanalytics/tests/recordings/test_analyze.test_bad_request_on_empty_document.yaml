@@ -3,7 +3,9 @@ interactions:
     body: '{"tasks": {"entityRecognitionTasks": [], "entityRecognitionPiiTasks": [],
       "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest", "loggingOptOut":
       false}}], "entityLinkingTasks": [], "sentimentAnalysisTasks": [], "extractiveSummarizationTasks":
-      []}, "analysisInput": {"documents": [{"id": "0", "text": "", "language": "en"}]}}'
+      [], "customEntityRecognitionTasks": [], "customSingleClassificationTasks": [],
+      "customMultiClassificationTasks": []}, "analysisInput": {"documents": [{"id":
+      "0", "text": "", "language": "en"}]}}'
     headers:
       Accept:
       - application/json, text/json
@@ -12,24 +14,24 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '342'
+      - '455'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/analyze
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze
   response:
     body:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocumentBatch","message":"Document
         text is empty."}}}'
     headers:
       apim-request-id:
-      - 04acc0f2-d7c5-4b2f-9185-762b3e471998
+      - 2d1db232-1e02-4b7a-9047-c464b3caa025
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 02 Aug 2021 21:29:58 GMT
+      - Wed, 06 Oct 2021 20:48:36 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -37,7 +39,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '6'
+      - '28'
     status:
       code: 400
       message: Bad Request

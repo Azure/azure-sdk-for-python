@@ -9,9 +9,10 @@ interactions:
       "UnicodeCodePoint"}}], "sentimentAnalysisTasks": [{"parameters": {"model-version":
       "bad", "loggingOptOut": false, "opinionMining": false}}], "extractiveSummarizationTasks":
       [{"parameters": {"model-version": "bad", "loggingOptOut": false, "stringIndexType":
-      "UnicodeCodePoint", "sentenceCount": 3, "sortBy": "Offset"}}]}, "analysisInput":
-      {"documents": [{"id": "1", "text": "I did not like the hotel we stayed at.",
-      "language": "english"}]}}'
+      "UnicodeCodePoint", "sentenceCount": 3, "sortBy": "Offset"}}], "customEntityRecognitionTasks":
+      [], "customSingleClassificationTasks": [], "customMultiClassificationTasks":
+      []}, "analysisInput": {"documents": [{"id": "1", "text": "I did not like the
+      hotel we stayed at.", "language": "english"}]}}'
     headers:
       Accept:
       - application/json, text/json
@@ -20,13 +21,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '924'
+      - '1037'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/analyze
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze
   response:
     body:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid parameter in request","innererror":{"code":"InvalidParameterValue","message":"Job
@@ -34,11 +35,11 @@ interactions:
         job task type KeyPhraseExtraction. Supported values latest,2019-10-01,2020-07-01,2021-05-01."}}}'
     headers:
       apim-request-id:
-      - d89ccb83-73b2-4bc5-9d69-fce9f98a3c37
+      - 66cba1b7-76bd-4112-8e92-ac061ece104b
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 02 Aug 2021 21:29:58 GMT
+      - Wed, 06 Oct 2021 20:48:35 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -46,7 +47,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '16'
+      - '4'
     status:
       code: 400
       message: Bad Request

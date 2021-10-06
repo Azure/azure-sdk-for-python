@@ -30,13 +30,13 @@ interactions:
     body:
       string: ''
     headers:
-      apim-request-id: 7c71a969-2a84-49ac-a3f1-cec92cacb9b2
-      date: Tue, 05 Oct 2021 23:08:59 GMT
-      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/d936ba8d-3660-4962-8aad-736dd13db4ec
+      apim-request-id: 37c740ab-f288-423f-af9f-6b50db801045
+      date: Wed, 06 Oct 2021 21:18:33 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/b0f6212f-5c05-4285-b047-88bf07e76854
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '713'
+      x-envoy-upstream-service-time: '585'
     status:
       code: 202
       message: Accepted
@@ -47,20 +47,20 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/d936ba8d-3660-4962-8aad-736dd13db4ec?showStats=True
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/b0f6212f-5c05-4285-b047-88bf07e76854?showStats=True
   response:
     body:
-      string: '{"jobId":"d936ba8d-3660-4962-8aad-736dd13db4ec","lastUpdateDateTime":"2021-10-05T23:09:01Z","createdDateTime":"2021-10-05T23:08:59Z","expirationDateTime":"2021-10-06T23:08:59Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"customMultiClassificationTasks":[{"lastUpdateDateTime":"2021-10-05T23:09:01.1688132Z","state":"succeeded","results":{"statistics":{"documentsCount":3,"validDocumentsCount":3,"erroneousDocumentsCount":0,"transactionsCount":3},"documents":[{"id":"1","classifications":[],"statistics":{"charactersCount":295,"transactionsCount":1},"warnings":[]},{"id":"2","classifications":[],"statistics":{"charactersCount":158,"transactionsCount":1},"warnings":[]},{"id":"3","classifications":[{"category":"BookRestaurant","confidenceScore":0.97}],"statistics":{"charactersCount":121,"transactionsCount":1},"warnings":[]}],"errors":[],"projectName":"textanalytics_multi_category_classify_project_name","deploymentName":"textanalytics_multi_category_classify_project_name"}}]}}'
+      string: '{"jobId":"b0f6212f-5c05-4285-b047-88bf07e76854","lastUpdateDateTime":"2021-10-06T21:18:38Z","createdDateTime":"2021-10-06T21:18:33Z","expirationDateTime":"2021-10-07T21:18:33Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"customMultiClassificationTasks":[{"lastUpdateDateTime":"2021-10-06T21:18:38.279196Z","state":"succeeded","results":{"statistics":{"documentsCount":3,"validDocumentsCount":3,"erroneousDocumentsCount":0,"transactionsCount":3},"documents":[{"id":"1","classifications":[],"statistics":{"charactersCount":295,"transactionsCount":1},"warnings":[]},{"id":"2","classifications":[],"statistics":{"charactersCount":158,"transactionsCount":1},"warnings":[]},{"id":"3","classifications":[{"category":"BookRestaurant","confidenceScore":0.97}],"statistics":{"charactersCount":121,"transactionsCount":1},"warnings":[]}],"errors":[],"projectName":"textanalytics_multi_category_classify_project_name","deploymentName":"textanalytics_multi_category_classify_project_name"}}]}}'
     headers:
-      apim-request-id: 19f71ab9-f935-4e20-bb1c-095d588198fd
+      apim-request-id: 887188d2-99e5-47fe-9144-77b26d9c7343
       content-type: application/json; charset=utf-8
-      date: Tue, 05 Oct 2021 23:09:04 GMT
+      date: Wed, 06 Oct 2021 21:18:39 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '234'
+      x-envoy-upstream-service-time: '265'
     status:
       code: 200
       message: OK
-    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/d936ba8d-3660-4962-8aad-736dd13db4ec?showStats=True
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/b0f6212f-5c05-4285-b047-88bf07e76854?showStats=True
 version: 1
