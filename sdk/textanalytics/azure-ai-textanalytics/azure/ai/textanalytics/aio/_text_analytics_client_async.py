@@ -1056,7 +1056,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                         a
                         for a in actions
                         if _determine_action_type(a)
-                        == _AnalyzeActionsType.CLASSIFY_CUSTOM_CATEGORY
+                        == _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY
                     ]
                 ],
                 custom_multi_classification_tasks=[
@@ -1067,7 +1067,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                         a
                         for a in actions
                         if _determine_action_type(a)
-                        == _AnalyzeActionsType.CLASSIFY_CUSTOM_CATEGORIES
+                        == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY
                     ]
                 ],
             )
