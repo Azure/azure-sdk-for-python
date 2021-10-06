@@ -14,6 +14,7 @@ This version of the SDK defaults to the latest supported API version, which curr
 ### Bugs Fixed
 
 ### Other Changes
+- Package requires [azure-core](https://pypi.org/project/azure-core/) version 1.16.0 or greater
 
 ## 5.2.0b1 (2021-08-09)
 
