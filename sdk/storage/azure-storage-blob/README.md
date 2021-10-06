@@ -123,6 +123,14 @@ The `credential` parameter may be provided in a number of different forms, depen
     from azure.storage.blob import BlobServiceClient
     service = BlobServiceClient(account_url="https://<my_account_name>.blob.core.windows.net", credential="<account_access_key>")
     ```
+    
+    If you are using **customized url** (which means the url is not in this format `<my_account_name>.blob.core.windows.net`),
+    please instantiate the client using the credential below:
+    ```python
+    from azure.storage.blob import BlobServiceClient
+    service = BlobServiceClient(account_url="https://<my_account_name>.blob.core.windows.net", 
+       credential={"account_name": "<your_account_name>", "account_key":"<account_access_key>"})
+    ```
 
 4. To use [anonymous public read access](https://docs.microsoft.com/azure/storage/blobs/storage-manage-access-to-resources),
    simply omit the credential parameter.
