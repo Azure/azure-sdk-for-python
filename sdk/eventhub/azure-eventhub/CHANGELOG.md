@@ -9,6 +9,9 @@
 ### Other Changes
 
 - Updated uAMQP dependency to 1.4.3.
+  - Added support for Python 3.10.
+  - Fixed memory leak in win32 socketio and tlsio (issue #19777).
+  - Fixed memory leak in the process of converting AMQPValue into string (issue #19777).
 
 ## 5.6.0 (2021-07-07)
 
