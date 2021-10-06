@@ -30,7 +30,7 @@ import asyncio
 
 
 async def sample_build_model_async():
-    # [START build_model]
+    # [START build_model_async]
     from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
     from azure.core.credentials import AzureKeyCredential
 
@@ -55,7 +55,7 @@ async def sample_build_model_async():
             print("Field: '{}' has type '{}' and confidence score {}".format(
                 field_name, field["type"], doc_type.field_confidence[field_name]
             ))
-    # [END build_model]
+    # [END build_model_async]
 
 
 async def main():
