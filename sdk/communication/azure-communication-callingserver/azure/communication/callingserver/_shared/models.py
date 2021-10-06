@@ -51,7 +51,7 @@ CommunicationUserProperties = TypedDict(
 )
 
 
-class CommunicationUserIdentifier(object):
+class CommunicationUserIdentifier(CommunicationIdentifier):
     """Represents a user in Azure Communication Service.
 
     :ivar str raw_id: Optional raw ID of the identifier.
@@ -77,7 +77,7 @@ PhoneNumberProperties = TypedDict(
 )
 
 
-class PhoneNumberIdentifier(object):
+class PhoneNumberIdentifier(CommunicationIdentifier):
     """Represents a phone number.
 
     :ivar str raw_id: Optional raw ID of the identifier.
@@ -125,7 +125,7 @@ MicrosoftTeamsUserProperties = TypedDict(
 )
 
 
-class MicrosoftTeamsUserIdentifier(object):
+class MicrosoftTeamsUserIdentifier(CommunicationIdentifier):
     """Represents an identifier for a Microsoft Teams user.
 
     :ivar str raw_id: Optional raw ID of the identifier.

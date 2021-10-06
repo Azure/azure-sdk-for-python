@@ -14,14 +14,19 @@ from ._generated.models import (AddParticipantResult,
                                 CreateCallRequest, PhoneNumberIdentifierModel,
                                 PlayAudioRequest, PlayAudioResult,
                                 MediaType, EventSubscriptionType,
-                                OperationStatus)
+                                OperationStatus, CallConnectionStateChangedEvent,
+                                ToneReceivedEvent, ToneInfo,
+                                PlayAudioResultEvent, CommunicationIdentifierModel,
+                                CommunicationUserIdentifierModel, AddParticipantResultEvent,
+                                CallConnectionState, ToneValue)
 from ._models import (
     CreateCallOptions,
     JoinCallOptions,
     PlayAudioOptions,
     CallLocator,
     GroupCallLocator,
-    ServerCallLocator
+    ServerCallLocator,
+    CallingServerEventType
     )
 from ._shared.models import CommunicationIdentifier, CommunicationUserIdentifier, PhoneNumberIdentifier
 
@@ -46,6 +51,16 @@ __all__ = [
     'PlayAudioResult',
     'CallLocator',
     'GroupCallLocator',
-    'ServerCallLocator'
+    'ServerCallLocator',
+    'CallConnectionStateChangedEvent',
+    'ToneReceivedEvent',
+    'ToneInfo',
+    'PlayAudioResultEvent',
+    'CommunicationIdentifierModel',
+    'CommunicationUserIdentifierModel',
+    'AddParticipantResultEvent',
+    'CallConnectionState',
+    'ToneValue',
+    'CallingServerEventType'
 ]
 __version__ = VERSION

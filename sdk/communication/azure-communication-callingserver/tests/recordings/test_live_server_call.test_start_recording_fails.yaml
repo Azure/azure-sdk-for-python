@@ -1,0 +1,132 @@
+interactions:
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-identity/1.0.1 Python/3.8.2 (macOS-11.6-x86_64-i386-64bit)
+      x-ms-date:
+      - Mon, 04 Oct 2021 23:43:37 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
+  response:
+    body:
+      string: '{"identity":{"id":"8:acs:ecee8f8c-19e8-45a0-a2f9-248c9fa6c7ac_0000000c-ed92-a8fd-b1de-a53a0d000b31"}}'
+    headers:
+      api-supported-versions:
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
+        2021-10-31-preview
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Oct 2021 23:43:38 GMT
+      ms-cv:
+      - C+VmIGT9bkuTrn2mIE5gCQ.0
+      request-context:
+      - appId=
+      strict-transport-security:
+      - max-age=2592000
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 107ms
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-identity/1.0.1 Python/3.8.2 (macOS-11.6-x86_64-i386-64bit)
+      x-ms-date:
+      - Mon, 04 Oct 2021 23:43:37 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
+  response:
+    body:
+      string: '{"identity":{"id":"8:acs:ecee8f8c-19e8-45a0-a2f9-248c9fa6c7ac_0000000c-ed92-aaa9-fa45-9f3a0d000a2f"}}'
+    headers:
+      api-supported-versions:
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
+        2021-10-31-preview
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Oct 2021 23:43:38 GMT
+      ms-cv:
+      - 7H5LLVS8O0qYZLwmRqVvOg.0
+      request-context:
+      - appId=
+      strict-transport-security:
+      - max-age=2592000
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 128ms
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{"callLocator": {}, "startCallRecordingRequest": {"recordingStateCallbackUri":
+      "https://bot.contoso.io/callback"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '114'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-11.6-x86_64-i386-64bit)
+    method: POST
+    uri: https://sanitized.communication.azure.com/calling/recordings?api-version=2021-11-15-preview
+  response:
+    body:
+      string: '{"error": {"code": "8527", "message": "Invalid join identity, cannot
+        join call."}}'
+    headers:
+      content-length:
+      - '78'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Oct 2021 23:43:40 GMT
+      x-cache:
+      - CONFIG_NOCACHE
+      x-microsoft-skype-chain-id:
+      - ae062897-2550-4ed9-88ed-068bafbae824
+    status:
+      code: 400
+      message: Bad Request
+version: 1

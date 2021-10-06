@@ -7,20 +7,10 @@
 from typing import TYPE_CHECKING, Any, Dict, List, Optional  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator import distributed_trace
-from azure.core import PipelineClient
-from azure.core.exceptions import (ClientAuthenticationError, HttpResponseError,
-                                    ResourceExistsError, ResourceNotFoundError, map_error)
-from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
-from azure.core.pipeline.policies import HeadersPolicy
-
-
-from ._generated import models as _models
-
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse  # type: ignore
+from azure.core.pipeline.transport import HttpResponse
+from .utils._utils import CallingServerUtils
+from ._content_downloader import ContentDownloader
+from ._download import ContentStreamDownloader
 
 from ._communication_identifier_serializer import serialize_identifier
 from ._communication_call_locator_serializer import serialize_call_locator
@@ -30,10 +20,13 @@ from ._generated.models import (
     CreateCallRequest,
     PhoneNumberIdentifierModel,
     PlayAudioResult,
-    AddParticipantResult
+    AddParticipantResult,
+    StartCallRecordingResult,
+    CallRecordingProperties,
+    StartCallRecordingRequest,
+    StartCallRecordingWithCallLocatorRequest
     )
 from ._shared.models import CommunicationIdentifier
-from ._models import CallLocator
 from ._call_connection import CallConnection
 from ._converters import (
     JoinCallRequestConverter,
@@ -47,9 +40,23 @@ from ._converters import (
 from ._shared.utils import get_authentication_policy, get_header_policy, parse_connection_str
 from ._version import SDK_MONIKER
 
+from ._generated import models as _models
+
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse  # type: ignore
+
+
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from ._models import CreateCallOptions, JoinCallOptions, PlayAudioOptions
+    from ._models import (
+        CreateCallOptions,
+        JoinCallOptions,
+        PlayAudioOptions,
+        ParallelDownloadOptions,
+        CallLocator
+    )
 
 class CallingServerClient(object):
     """A client to interact with the AzureCommunicationService Calling Server.
@@ -67,6 +74,7 @@ class CallingServerClient(object):
             :language: python
             :dedent: 8
     """
+
     def __init__(
         self,
         endpoint,  # type: str
@@ -211,9 +219,9 @@ class CallingServerClient(object):
             raise ValueError("call_options can not be None")
 
         join_call_request = JoinCallRequestConverter.convert(
-            serialize_call_locator(call_locator),
-            serialize_identifier(source),
-            call_options
+            call_locator=serialize_call_locator(call_locator),
+            source=serialize_identifier(source),
+            join_call_options=call_options
             )
 
         join_call_response = self._server_call_client.join_call(
@@ -239,13 +247,17 @@ class CallingServerClient(object):
             raise ValueError("call_locator can not be None")
         if not audio_file_uri:
             raise ValueError("audio_file_uri can not be None")
+        if not CallingServerUtils.is_valid_url(audio_file_uri):
+            raise ValueError("audio_file_uri is invalid")
         if not play_audio_options:
             raise ValueError("options can not be None")
+        if not CallingServerUtils.is_valid_url(play_audio_options.callback_uri):
+            raise ValueError("callback_uri is invalid")
 
         play_audio_request = PlayAudioWithCallLocatorRequestConverter.convert(
-            serialize_call_locator(call_locator),
-            audio_file_uri,
-            play_audio_options
+            call_locator=serialize_call_locator(call_locator),
+            audio_file_uri=audio_file_uri,
+            play_audio_options=play_audio_options
             )
 
         return self._server_call_client.play_audio(
@@ -269,14 +281,18 @@ class CallingServerClient(object):
             raise ValueError("participant can not be None")
         if not audio_file_uri:
             raise ValueError("audio_file_uri can not be None")
+        if not CallingServerUtils.is_valid_url(audio_file_uri):
+            raise ValueError("audio_file_uri is invalid")
         if not play_audio_options:
             raise ValueError("play_audio_options can not be None")
+        if not CallingServerUtils.is_valid_url(play_audio_options.callback_uri):
+            raise ValueError("callback_uri is invalid")
 
         play_audio_to_participant_request = PlayAudioToParticipantWithCallLocatorRequestConverter.convert(
-            serialize_call_locator(call_locator),
-            serialize_identifier(participant),
-            audio_file_uri,
-            play_audio_options
+            call_locator=serialize_call_locator(call_locator),
+            identifier=serialize_identifier(participant),
+            audio_file_uri=audio_file_uri,
+            play_audio_options=play_audio_options
             )
 
         return self._server_call_client.participant_play_audio(
@@ -374,7 +390,8 @@ class CallingServerClient(object):
         if not media_operation_id:
             raise ValueError("media_operation_id can not be None")
 
-        cancel_participant_media_operation_request = CancelParticipantMediaOperationWithCallLocatorRequestConverter.convert(
+        cancel_participant_media_operation_request = \
+        CancelParticipantMediaOperationWithCallLocatorRequestConverter.convert(
             serialize_call_locator(call_locator),
             serialize_identifier(participant),
             media_operation_id=media_operation_id
@@ -384,6 +401,132 @@ class CallingServerClient(object):
             cancel_participant_media_operation_request=cancel_participant_media_operation_request,
             **kwargs
             )
+   
+    def start_recording(
+        self,
+        call_locator,  # type: CallLocator
+        recording_state_callback_uri,  # type: str
+        **kwargs  # type: Any
+    ):  # type: (...) -> StartCallRecordingResult
+
+        if not call_locator:
+            raise ValueError("call_locator cannot be None")
+        if not CallingServerUtils.is_valid_url(recording_state_callback_uri):
+            raise ValueError("recording_state_callback_uri is invalid")
+
+        start_call_recording_request = StartCallRecordingRequest(
+            recording_state_callback_uri=recording_state_callback_uri,
+            **kwargs
+        )
+
+        start_call_recording_with_calllocator_request = StartCallRecordingWithCallLocatorRequest(
+            call_locator=serialize_call_locator(call_locator),
+            start_call_recording_request=start_call_recording_request
+        )
+
+        return self._server_call_client.start_recording(
+           start_call_recording_with_call_locator_request=start_call_recording_with_calllocator_request,
+            **kwargs
+        )
+
+    @distributed_trace()
+    def pause_recording(
+        self,
+        recording_id,  # type: str
+        **kwargs  # type: Any
+    ):  # type: (...) -> HttpResponse
+
+        if not recording_id:
+            raise ValueError("recording_id cannot be None")
+
+        return self._server_call_client.pause_recording(
+            recording_id=recording_id,
+            **kwargs
+        )
+
+    @distributed_trace()
+    def resume_recording(
+        self,
+        recording_id,  # type: str
+        **kwargs  # type: Any
+    ):  # type: (...) -> HttpResponse
+
+        if not recording_id:
+            raise ValueError("recording_id cannot be None")
+
+        return self._server_call_client.resume_recording(
+            recording_id=recording_id,
+            **kwargs
+        )
+
+    @distributed_trace()
+    def stop_recording(
+        self,
+        recording_id,  # type: str
+        **kwargs  # type: Any
+    ):  # type: (...) -> HttpResponse
+
+        if not recording_id:
+            raise ValueError("recording_id cannot be None")
+
+        return self._server_call_client.stop_recording(
+            recording_id=recording_id,
+            **kwargs
+        )
+
+    @distributed_trace()
+    def get_recording_properities(
+        self,
+        recording_id,  # type: str
+        **kwargs  # type: Any
+    ):  # type: (...) -> CallRecordingProperties
+
+        if not recording_id:
+            raise ValueError("recording_id cannot be None")
+
+        return self._server_call_client.get_recording_properties(
+            recording_id=recording_id,
+            **kwargs
+        )
+
+    @distributed_trace()
+    def download(
+        self,
+        content_url,  # type: str
+        start_range=None,  # type: int
+        end_range=None,  # type: int
+        parallel_download_options=None,  # type: ParallelDownloadOptions
+        **kwargs  # type: Any
+    ):  # type: (...) -> ContentStreamDownloader
+        """Download using content url.
+
+        :param str content_url:
+            The content url.
+        :returns: ContentStreamDownloader for a successful download request.
+        :rtype: ~ContentStreamDownloader
+        """
+        if not content_url:
+            raise ValueError("content_url can not be None")
+
+        if not CallingServerUtils.is_valid_url(content_url):
+            raise ValueError("content_url is invalid")
+
+        # pylint:disable=protected-access
+        content_downloader = ContentDownloader(
+            self._callingserver_service_client._client,
+            self._callingserver_service_client._serialize,
+            self._callingserver_service_client._deserialize,
+            self._callingserver_service_client._config)
+
+        return ContentStreamDownloader(
+            content_downloader,
+            self._callingserver_service_client._config,
+            start_range,
+            end_range,
+            endpoint=content_url,
+            parallel_download_options=parallel_download_options,
+            **kwargs
+        )
 
     @distributed_trace()
     def delete_recording(
@@ -429,11 +572,10 @@ class CallingServerClient(object):
         response = pipeline_response.http_response
         if response.status_code not in [200]:
             map_error(status_code=response.status_code,
-                      response=response, error_map=error_map)
+                        response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         return response
-
 
     def get_url_to_sign_request_with(
         self,
