@@ -547,28 +547,30 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         key_name = self.get_resource_name("rotation-key")
         self._create_rsa_key(client, key_name)
 
-        actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.ROTATE, time_before_expiry="P30D")]
-        updated_policy = client.update_key_rotation_policy(key_name, expires_in="P90D", lifetime_actions=actions)
+        actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.ROTATE, time_after_create="P2M")]
+        updated_policy = client.update_key_rotation_policy(key_name, lifetime_actions=actions)
         fetched_policy = client.get_key_rotation_policy(key_name)
+        assert updated_policy.expires_in is None
         _assert_rotation_policies_equal(updated_policy, fetched_policy)
 
         updated_policy_actions = updated_policy.lifetime_actions[0]
         fetched_policy_actions = fetched_policy.lifetime_actions[0]
         assert updated_policy_actions.action == KeyRotationPolicyAction.ROTATE
-        assert updated_policy_actions.time_after_create is None
-        assert updated_policy_actions.time_before_expiry == "P30D"
+        assert updated_policy_actions.time_after_create == "P2M"
+        assert updated_policy_actions.time_before_expiry is None
         _assert_lifetime_actions_equal(updated_policy_actions, fetched_policy_actions)
 
-        new_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.NOTIFY, time_after_create="P2M")]
-        new_policy = client.update_key_rotation_policy(key_name, lifetime_actions=new_actions)
+        new_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.NOTIFY, time_before_expiry="P30D")]
+        new_policy = client.update_key_rotation_policy(key_name, expires_in="P90D", lifetime_actions=new_actions)
         new_fetched_policy = client.get_key_rotation_policy(key_name)
+        assert new_policy.expires_in == "P90D"
         _assert_rotation_policies_equal(new_policy, new_fetched_policy)
 
         new_policy_actions = new_policy.lifetime_actions[0]
         new_fetched_policy_actions = new_fetched_policy.lifetime_actions[0]
         assert new_policy_actions.action == KeyRotationPolicyAction.NOTIFY
-        assert new_policy_actions.time_after_create == "P2M"
-        assert new_policy_actions.time_before_expiry is None
+        assert new_policy_actions.time_after_create is None
+        assert new_policy_actions.time_before_expiry == "P30D"
         _assert_lifetime_actions_equal(new_policy_actions, new_fetched_policy_actions)
 
     @all_api_versions()
