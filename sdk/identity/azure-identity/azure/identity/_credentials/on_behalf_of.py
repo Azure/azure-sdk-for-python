@@ -33,28 +33,35 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
 
     :param str tenant_id: ID of the service principal's tenant. Also called its "directory" ID.
     :param str client_id: the service principal's client ID
-    :param client_credential: a credential to authenticate the service principal, either one of its client secrets (a
-        string) or the bytes of a certificate in PEM or PKCS12 format including the private key
-    :type client_credential: str or bytes
+    :keyword str client_secret: Optional. client secrets to authenticate the service principal.
+        Either client_secret or client_certificate must be provided.
+    :keyword bytes client_certificate: Optional. the bytes of a certificate in PEM or PKCS12 format including
+        the private key to authenticate the service principal. Either client_secret or client_certificate must
+        be provided.
     :keyword str user_assertion: Required. the access token the credential will use as the user assertion when
         requesting on-behalf-of tokens
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
-    :keyword password: a certificate password. Used only when **client_credential** is certificate bytes. If this value
+    :keyword password: a certificate password. Used only when **client_certificate** is provided. If this value
         is a unicode string, it will be encoded as UTF-8. If the certificate requires a different encoding, pass
         appropriately encoded bytes instead.
     :paramtype password: str or bytes
     """
 
-    def __init__(self, tenant_id, client_id, client_credential, **kwargs):
-        # type: (str, str, Union[bytes, str], **Any) -> None
-        credential = cast("Union[Dict, str]", client_credential)
-        if isinstance(client_credential, six.binary_type):
+    def __init__(self, tenant_id, client_id, **kwargs):
+        # type: (str, str, **Any) -> None
+        self._assertion = kwargs.pop("user_assertion", None)
+        if not self._assertion:
+            raise ValueError("'user_assertion' is required.")
+        client_certificate = kwargs.pop("client_certificate", None)
+        client_secret = kwargs.pop("client_secret", None)
+
+        if client_certificate:
             try:
                 credential = get_client_credential(
-                    certificate_path=None, password=kwargs.pop("password", None), certificate_data=client_credential
+                    certificate_path=None, password=kwargs.pop("password", None), certificate_data=client_certificate
                 )
             except ValueError as ex:
                 # client_credential isn't a valid cert. On 2.7 str == bytes and we ignore this exception because we
@@ -62,15 +69,15 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
                 # either an invalid cert, or a client secret as bytes; both are errors.
                 if six.PY3:
                     message = (
-                        '"client_credential" should be either a client secret (a string)'
-                        + " or the bytes of a certificate in PEM or PKCS12 format"
+                        '"client_certificate" should be the bytes of a certificate in PEM or PKCS12 format'
                     )
                     six.raise_from(ValueError(message), ex)
+        elif client_secret:
+            credential = client_secret
+        else:
+            raise ValueError("Either `client_certificate` or `client_secret` must be provided")
 
         super(OnBehalfOfCredential, self).__init__(client_id, credential, tenant_id=tenant_id, **kwargs)
-        self._assertion = kwargs.pop("user_assertion", None)
-        if not self._assertion:
-            raise ValueError("'user_assertion' is required.")
         self._auth_record = None  # type: Optional[AuthenticationRecord]
 
     @wrap_exceptions
