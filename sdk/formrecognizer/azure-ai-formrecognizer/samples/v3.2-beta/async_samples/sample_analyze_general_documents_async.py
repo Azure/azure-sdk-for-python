@@ -69,7 +69,7 @@ async def analyze_general_documents():
             print(",".join([result.content[span.offset:span.offset + span.length] for span in style.spans]))
 
     print("----Key-value pairs found in document----")
-    for idx, kv_pair in enumerate(result.key_value_pairs):
+    for kv_pair in result.key_value_pairs:
         if kv_pair.key:
             print(
                     "Key '{}' found within '{}' bounding regions".format(
@@ -86,14 +86,14 @@ async def analyze_general_documents():
                 )
 
     print("----Entities found in document----")
-    for idx, entity in enumerate(result.entities):
+    for entity in result.entities:
         print("Entity of category '{}' with sub-category '{}'".format(entity.category, entity.sub_category))
         print("...has content '{}'".format(entity.content))
         print("...within '{}' bounding regions".format(format_bounding_region(entity.bounding_regions)))
         print("...with confidence {}\n".format(entity.confidence))
 
-    for idx, page in enumerate(result.pages):
-        print("----Analyzing document from page #{}----".format(idx + 1))
+    for page in result.pages:
+        print("----Analyzing document from page #{}----".format(page.page_number))
         print(
             "Page has width: {} and height: {}, measured with unit: {}".format(
                 page.width, page.height, page.unit
