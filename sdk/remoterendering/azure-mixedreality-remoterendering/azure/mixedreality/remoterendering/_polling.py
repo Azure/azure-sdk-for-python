@@ -13,7 +13,7 @@ from azure.core.polling import PollingMethod
 from azure.core.exceptions import HttpResponseError, ODataV4Format
 
 from ._generated.models import (AssetConversion, AssetConversionStatus,
-                                RenderingSession, RenderingSessionStatus, RemoteRenderingError)
+                                RenderingSession, RenderingSessionStatus)
 
 # pylint: disable=unsubscriptable-object
 if TYPE_CHECKING:

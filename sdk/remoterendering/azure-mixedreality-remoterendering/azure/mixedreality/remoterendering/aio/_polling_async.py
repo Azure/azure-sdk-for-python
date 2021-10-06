@@ -5,10 +5,12 @@
 # --------------------------------------------------------------------------
 import asyncio
 import base64
+import json
 from functools import partial
 from typing import TYPE_CHECKING
 
 from azure.core.polling import AsyncPollingMethod
+from azure.core.exceptions import HttpResponseError, ODataV4Format
 
 from .._generated.aio import RemoteRenderingRestClient
 from .._generated.models import (AssetConversion, AssetConversionInputSettings,
@@ -41,6 +43,10 @@ class RemoteRenderingPollingAsync(AsyncPollingMethod):
         # type: () -> None
         if self._query_status is None:
             raise Exception("this poller has not been initialized")
+        if self._response.error is not None:
+            error = HttpResponseError("Polling returned a status indicating an error state.", model=self._response)
+            error.error = ODataV4Format(json.loads(json.dumps(self._response)))
+            raise error
         self._response = await self._query_status()  # pylint: disable=E1102
 
     def initialize(self, client, initial_response, deserialization_callback):

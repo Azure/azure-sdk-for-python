@@ -39,15 +39,10 @@ For an account created in the eastus region, the account domain will have the fo
 There are several different forms of authentication:
 
 - Account Key authentication
-  - Account keys enable you to get started quickly with using Azure Remote Rendering. But before you deploy your application
-    to production, we recommend that you update your app to use Azure AD authentication.
+  - Account keys enable you to get started quickly with using Azure Remote Rendering. But before you deploy your application to production, we recommend that you update your app to use Azure AD authentication.
 - Azure Active Directory (AD) token authentication
-  - If you're building an enterprise application and your company is using Azure AD as its identity system, you can use
-    user-based Azure AD authentication in your app. You then grant access to your Azure Remote Rendering accounts by using
-    your existing Azure AD security groups. You can also grant access directly to users in your organization.
-  - Otherwise, we recommend that you obtain Azure AD tokens from a web service that supports your app. We recommend this
-    method for production applications because it allows you to avoid embedding the credentials for access to Azure Spatial
-    Anchors in your client application.
+  - If you're building an enterprise application and your company is using Azure AD as its identity system, you can use user-based Azure AD authentication in your app. You then grant access to your Azure Remote Rendering accounts by using your existing Azure AD security groups. You can also grant access directly to users in your organization.
+  - Otherwise, we recommend that you obtain Azure AD tokens from a web service that supports your app. We recommend this method for production applications because it allows you to avoid embedding the credentials for access in your client application.
 
 See [here](https://docs.microsoft.com/azure/remote-rendering/how-tos/authentication) for detailed instructions and information.
 
