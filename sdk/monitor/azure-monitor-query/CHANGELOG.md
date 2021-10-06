@@ -9,7 +9,6 @@
 - Added `LogsQueryStatus` Enum to describe the status of a result.
 - Added a new `LogsTableRow` type that represents a single row in a table.
 - Items in `metrics` list in `MetricsQueryResult` can now be accessed by metric names.
-- Added `audience` keyword to support providing credential scope when creating clients.
 
 ### Breaking Changes
 
