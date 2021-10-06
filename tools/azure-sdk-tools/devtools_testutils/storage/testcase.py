@@ -15,6 +15,8 @@ import sys
 import time
 import zlib
 
+from devtools_testutils import AzureTestCase
+
 from .processors import XMSRequestIDBody
 from . import ApiVersionAssertPolicy, service_version_map
 from .. import AzureMgmtTestCase, FakeTokenCredential
@@ -26,17 +28,17 @@ LOGGING_FORMAT = "%(asctime)s %(name)-20s %(levelname)-5s %(message)s"
 ENABLE_LOGGING = True
 
 
-class StorageTestCase(AzureMgmtTestCase):
+class StorageTestCase(AzureTestCase):
     def __init__(self, *args, **kwargs):
         super(StorageTestCase, self).__init__(*args, **kwargs)
         self.replay_processors.append(XMSRequestIDBody())
         self.logger = logging.getLogger("azure.storage")
         self.configure_logging()
 
-    def connection_string(self, account, key):
+    def connection_string(self, account_name, key):
         return (
             "DefaultEndpointsProtocol=https;AcCounTName="
-            + account.name
+            + account_name
             + ";AccOuntKey="
             + str(key)
             + ";EndpoIntSuffix=core.windows.net"
@@ -48,17 +50,7 @@ class StorageTestCase(AzureMgmtTestCase):
         :param str storage_account: Storage account name
         :param str storage_type: The Storage type part of the URL. Should be "blob", or "queue", etc.
         """
-        try:
-            if storage_type == "blob":
-                return storage_account.primary_endpoints.blob.rstrip("/")
-            if storage_type == "queue":
-                return storage_account.primary_endpoints.queue.rstrip("/")
-            if storage_type == "file":
-                return storage_account.primary_endpoints.file.rstrip("/")
-            else:
-                raise ValueError("Unknown storage type {}".format(storage_type))
-        except AttributeError:  # Didn't find "primary_endpoints"
-            return "https://{}.{}.core.windows.net".format(storage_account, storage_type)
+        return "https://{}.{}.core.windows.net".format(storage_account, storage_type)
 
     def configure_logging(self):
         enable_logging = ENABLE_LOGGING

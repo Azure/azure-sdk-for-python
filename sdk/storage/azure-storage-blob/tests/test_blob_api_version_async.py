@@ -16,7 +16,7 @@ from azure.storage.blob.aio import (
     ContainerClient,
     BlobClient,
 )
-from _shared.testcase import GlobalStorageAccountPreparer
+from _shared.testcase import BlobPreparer
 from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------
@@ -133,11 +133,11 @@ class StorageClientTest(AsyncStorageTestCase):
                 api_version="foo")
         self.assertTrue(str(error.value).startswith("Unsupported API version 'foo'."))
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_old_api_get_page_ranges_succeeds_async(self, resource_group, location, storage_account, storage_account_key):
+    async def test_old_api_get_page_ranges_succeeds_async(self, storage_account_name, storage_account_key):
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             credential=storage_account_key,
             connection_data_block_size=4 * 1024,
             max_page_size=4 * 1024,

@@ -15,7 +15,7 @@ from azure.storage.blob import (
 )
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, ResponseCallback
 from azure.core.exceptions import ResourceExistsError, HttpResponseError
-from _shared.testcase import GlobalStorageAccountPreparer
+from _shared.testcase import BlobPreparer
 from devtools_testutils.storage import StorageTestCase
 
 # test constants
@@ -52,10 +52,10 @@ class StorageBlobRetryTest(StorageTestCase):
             return self.wrapped_stream.tell()
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_retry_put_block_with_seekable_stream(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_retry_put_block_with_seekable_stream(self, storage_account_name, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key,
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key,
                                 retry_policy=self.retry)
         self._setup(bsc)
         blob_name = self.get_resource_name('blob')
@@ -84,11 +84,10 @@ class StorageBlobRetryTest(StorageTestCase):
         self.assertEqual(content, data)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_retry_put_block_with_non_seekable_stream(self, resource_group, location, storage_account,
-                                                      storage_account_key):
+    @BlobPreparer()
+    def test_retry_put_block_with_non_seekable_stream(self, storage_account_name, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key,
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key,
                                 retry_policy=self.retry)
         self._setup(bsc)
         blob_name = self.get_resource_name('blob')
@@ -118,11 +117,10 @@ class StorageBlobRetryTest(StorageTestCase):
         self.assertEqual(content, data)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_retry_put_block_with_non_seekable_stream_fail(self, resource_group, location, storage_account,
-                                                           storage_account_key):
+    @BlobPreparer()
+    def test_retry_put_block_with_non_seekable_stream_fail(self, storage_account_name, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key,
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key,
                                 retry_policy=self.retry)
         self._setup(bsc)
         blob_name = self.get_resource_name('blob')
