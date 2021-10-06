@@ -76,7 +76,7 @@ def find_released_packages(setup_py_path, dependency_type):
 
 
 def parse_req(req):
-    req_object = Requirement.parse(req)
+    req_object = Requirement.parse(req.split(";")[0])
     pkg_name = req_object.key
     spec = SpecifierSet(str(req_object).replace(pkg_name, ""))
     return pkg_name, spec

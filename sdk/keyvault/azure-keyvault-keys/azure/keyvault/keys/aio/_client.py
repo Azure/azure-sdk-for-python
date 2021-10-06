@@ -8,6 +8,8 @@ from functools import partial
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
+from ..crypto.aio import CryptographyClient
+from .._client import _get_key_id
 from .._shared._polling_async import AsyncDeleteRecoverPollingMethod
 from .._shared import AsyncKeyVaultClientBase
 from .._shared.exceptions import error_map as _error_map
@@ -59,6 +61,25 @@ class KeyClient(AsyncKeyVaultClientBase):
                 enabled=enabled, not_before=not_before, expires=expires_on, exportable=exportable
             )
         return None
+
+    def get_cryptography_client(self, key_name, **kwargs):
+        # type: (str, **Any) -> CryptographyClient
+        """Gets a :class:`~azure.keyvault.keys.crypto.aio.CryptographyClient` for the given key.
+
+        :param str key_name: The name of the key used to perform cryptographic operations.
+
+        :keyword str version: Optional version of the key used to perform cryptographic operations.
+
+        :returns: A :class:`~azure.keyvault.keys.crypto.aio.CryptographyClient` using the same options, credentials, and
+            HTTP client as this :class:`~azure.keyvault.keys.aio.KeyClient`.
+        :rtype: ~azure.keyvault.keys.crypto.aio.CryptographyClient
+        """
+        key_id = _get_key_id(self._vault_url, key_name, kwargs.get("version"))
+
+        # We provide a fake credential because the generated client already has the KeyClient's real credential
+        return CryptographyClient(
+            key_id, object(), generated_client=self._client, generated_models=self._models  # type: ignore
+        )
 
     @distributed_trace_async
     async def create_key(self, name: str, key_type: "Union[str, KeyType]", **kwargs: "Any") -> KeyVaultKey:

@@ -18,7 +18,7 @@ from .._common.utils import (
     get_renewable_lock_duration,
 )
 from .._common.auto_lock_renewer import SHORT_RENEW_OFFSET, SHORT_RENEW_SCALING_FACTOR
-from ._async_utils import get_running_loop
+from ._async_utils import get_dict_with_loop_if_needed
 from ..exceptions import AutoLockRenewTimeout, AutoLockRenewFailed, ServiceBusError
 
 Renewable = Union[ServiceBusSession, ServiceBusReceivedMessage]
@@ -41,8 +41,6 @@ class AutoLockRenewer:
     :param on_lock_renew_failure: A callback may be specified to be called when the lock is lost on the renewable
      that is being registered. Default value is None (no callback).
     :type on_lock_renew_failure: Optional[LockRenewFailureCallback]
-    :param loop: An async event loop.
-    :type loop: Optional[~asyncio.AbstractEventLoop]
 
     .. admonition:: Example:
 
@@ -68,9 +66,9 @@ class AutoLockRenewer:
         on_lock_renew_failure: Optional[AsyncLockRenewFailureCallback] = None,
         loop: Optional[asyncio.AbstractEventLoop] = None,
     ) -> None:
+        self._internal_kwargs = get_dict_with_loop_if_needed(loop)
         self._shutdown = asyncio.Event()
         self._futures = []  # type: List[asyncio.Future]
-        self._loop = loop or get_running_loop()
         self._sleep_time = 1
         self._renew_period = 10
         self._on_lock_renew_failure = on_lock_renew_failure
@@ -226,7 +224,7 @@ class AutoLockRenewer:
                 on_lock_renew_failure or self._on_lock_renew_failure,
                 renew_period_override,
             ),
-            loop=self._loop,
+            **self._internal_kwargs
         )
         self._futures.append(renew_future)
 

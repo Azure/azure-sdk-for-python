@@ -1,12 +1,14 @@
 # Release History
 
-## 7.4.0b1 (2021-10-05)
+## 7.3.4 (Unreleased)
 
 ### Features Added
 
-- Added support to create and update queues and topics of large message size to `ServiceBusAdministrationClient`. This feature is only available for Service Bus of Premium Tier.
-  - Methods`create_queue`, `create_topic`, `update_queue`, `update_topic` on `ServiceBusAdministrationClient` now take a new keyword argument `max_message_size_in_kilobytes`.
-  - `QueueProperties` and `TopicProperties` now have a new instance variable `max_message_size_in_kilobytes`.
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
 
 ### Other Changes
 
