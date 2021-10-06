@@ -285,7 +285,7 @@ for table_idx, table in enumerate(result.tables):
 
 ### Using the General Document Model
 Analyze entities, key-value pairs, tables, styles, and selection marks from documents using the general document model provided by the Form Recognizer service.
-Select the General Document model by passing `model="prebuilt-document"` into the `begin_analyze_document` method:
+Select the General Document Model by passing `model="prebuilt-document"` into the `begin_analyze_document` method:
 
 ```python
 from azure.ai.formrecognizer import DocumentAnalysisClient
