@@ -28,6 +28,7 @@ PKGS_TXT_FILE = "packages.txt"
 
 logging.getLogger().setLevel(logging.INFO)
 
+# both min and max overrides are *inclusive* of the version targeted
 MINIMUM_VERSION_SUPPORTED_OVERRIDE = {
     'azure-common': '1.1.10',
     'msrest': '0.6.10',
@@ -37,6 +38,10 @@ MINIMUM_VERSION_SUPPORTED_OVERRIDE = {
     'azure-core': '1.11.0',
     'requests': '2.19.0',
     'six': '1.12.0'
+}
+
+MAXIMUM_VERSION_SUPPORTED_OVERRIDE = {
+    'cryptography': '3.4.8'
 }
 
 def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
@@ -95,6 +100,11 @@ def process_requirement(req, dependency_type):
 
     if pkg_name in MINIMUM_VERSION_SUPPORTED_OVERRIDE:
         versions = [v for v in versions if parse_version(v) >= parse_version(MINIMUM_VERSION_SUPPORTED_OVERRIDE[pkg_name])]
+
+    if pkg_name in MAXIMUM_VERSION_SUPPORTED_OVERRIDE:
+        versions = [v for v in versions if parse_version(v) <= parse_version(MAXIMUM_VERSION_SUPPORTED_OVERRIDE[pkg_name])]
+
+
     # Search from lowest to latest in case of finding minimum dependency
     # Search from latest to lowest in case of finding latest required version
     # reverse the list to get latest version first
