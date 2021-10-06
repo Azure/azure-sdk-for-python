@@ -64,6 +64,7 @@ class CallingServerClient(object):
             :language: python
             :dedent: 8
     """
+
     def __init__(
         self,
         endpoint,  # type: str
@@ -379,11 +380,11 @@ class CallingServerClient(object):
             raise ValueError("media_operation_id can not be None")
 
         cancel_participant_media_operation_request = \
-            CancelParticipantMediaOperationWithCallLocatorRequestConverter.convert(
-                serialize_call_locator(call_locator),
-                serialize_identifier(participant),
-                media_operation_id=media_operation_id
-                )
+        CancelParticipantMediaOperationWithCallLocatorRequestConverter.convert(
+            serialize_call_locator(call_locator),
+            serialize_identifier(participant),
+            media_operation_id=media_operation_id
+            )
 
         return self._server_call_client.cancel_participant_media_operation(
             cancel_participant_media_operation_request=cancel_participant_media_operation_request,
@@ -500,20 +501,19 @@ class CallingServerClient(object):
         if not CallingServerUtils.is_valid_url(content_url):
             raise ValueError("content_url is invalid")
 
+        # pylint:disable=protected-access
         content_downloader = ContentDownloader(
-            self._callingserver_service_client._client, # pylint:disable=protected-access
-            self._callingserver_service_client._serialize, # pylint:disable=protected-access
-            self._callingserver_service_client._deserialize, # pylint:disable=protected-access
-            self._callingserver_service_client._config) # pylint:disable=protected-access
-        stream_downloader = ContentStreamDownloader(
+            self._callingserver_service_client._client,
+            self._callingserver_service_client._serialize,
+            self._callingserver_service_client._deserialize,
+            self._callingserver_service_client._config)
+
+        return ContentStreamDownloader(
             content_downloader,
-            self._callingserver_service_client._config, # pylint:disable=protected-access
+            self._callingserver_service_client._config,
             start_range,
             end_range,
             endpoint=content_url,
             parallel_download_options=parallel_download_options,
             **kwargs
         )
-        stream_downloader._setup() # pylint:disable=protected-access
-
-        return stream_downloader

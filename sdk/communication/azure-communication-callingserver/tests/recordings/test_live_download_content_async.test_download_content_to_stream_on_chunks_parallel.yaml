@@ -1,0 +1,279 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      Range:
+      - bytes=0-99
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+      host:
+      - sanitized.communication.azure.com
+      x-ms-date:
+      - Fri, 17 Sep 2021 23:02:21 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://storagehost.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+  response:
+    body:
+      string: "{\r\n  \"resourceId\": \"ab12b0ea-85ea-4f83-b0b6-84d90209c7c4\",\r\n
+        \ \"callId\": \"ffe2a624-6092-408f-8eb6-d52"
+    headers:
+      cache-control: no-cache, max-age=0, s-maxage=0, private
+      content-length: '100'
+      content-range: bytes 0-99/837
+      content-type: application/octet-stream
+      date: Fri, 17 Sep 2021 23:02:21 GMT
+      server: Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+    status:
+      code: 206
+      message: Partial Content
+    url: https://storagehost.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+- request:
+    body: ''
+    headers:
+      Range:
+      - bytes=100-199
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+      host:
+      - sanitized.communication.azure.com
+      x-ms-date:
+      - Fri, 17 Sep 2021 23:02:21 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://storagehost.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+  response:
+    body:
+      string: "b892633bd\",\r\n  \"chunkDocumentId\": \"0-wus-d4-6afafe78b9e313d77933b87578eabc9e\",\r\n
+        \ \"chunkIndex\": 0,\r\n"
+    headers:
+      cache-control: no-cache, max-age=0, s-maxage=0, private
+      content-length: '100'
+      content-range: bytes 100-199/837
+      content-type: application/octet-stream
+      date: Fri, 17 Sep 2021 23:02:21 GMT
+      server: Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+    status:
+      code: 206
+      message: Partial Content
+    url: https://storagehost.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+- request:
+    body: ''
+    headers:
+      Range:
+      - bytes=400-499
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+      host:
+      - sanitized.communication.azure.com
+      x-ms-date:
+      - Fri, 17 Sep 2021 23:02:21 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://storagehost.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+  response:
+    body:
+      string: "  \"format\": \"mp4\",\r\n    \"audioConfiguration\": {\r\n      \"sampleRate\":
+        16000,\r\n      \"bitRate\": 128000"
+    headers:
+      cache-control: no-cache, max-age=0, s-maxage=0, private
+      content-length: '100'
+      content-range: bytes 400-499/837
+      content-type: application/octet-stream
+      date: Fri, 17 Sep 2021 23:02:21 GMT
+      server: Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+    status:
+      code: 206
+      message: Partial Content
+    url: https://storagehost.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+- request:
+    body: ''
+    headers:
+      Range:
+      - bytes=300-399
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+      host:
+      - sanitized.communication.azure.com
+      x-ms-date:
+      - Fri, 17 Sep 2021 23:02:21 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://storagehost.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+  response:
+    body:
+      string: "rvals\": [],\r\n  \"recordingInfo\": {\r\n    \"contentType\": \"mixed\",\r\n
+        \   \"channelType\": \"audioVideo\",\r\n  "
+    headers:
+      cache-control: no-cache, max-age=0, s-maxage=0, private
+      content-length: '100'
+      content-range: bytes 300-399/837
+      content-type: application/octet-stream
+      date: Fri, 17 Sep 2021 23:02:21 GMT
+      server: Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+    status:
+      code: 206
+      message: Partial Content
+    url: https://storagehost.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+- request:
+    body: ''
+    headers:
+      Range:
+      - bytes=200-299
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+      host:
+      - sanitized.communication.azure.com
+      x-ms-date:
+      - Fri, 17 Sep 2021 23:02:21 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://storagehost.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+  response:
+    body:
+      string: "  \"chunkStartTime\": \"2021-09-14T23:25:55.3107105Z\",\r\n  \"chunkDuration\":
+        10660.0,\r\n  \"pauseResumeInte"
+    headers:
+      cache-control: no-cache, max-age=0, s-maxage=0, private
+      content-length: '100'
+      content-range: bytes 200-299/837
+      content-type: application/octet-stream
+      date: Fri, 17 Sep 2021 23:02:22 GMT
+      server: Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+    status:
+      code: 206
+      message: Partial Content
+    url: https://storagehost.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+- request:
+    body: ''
+    headers:
+      Range:
+      - bytes=500-599
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+      host:
+      - sanitized.communication.azure.com
+      x-ms-date:
+      - Fri, 17 Sep 2021 23:02:22 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://storagehost.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+  response:
+    body:
+      string: ",\r\n      \"channels\": 1\r\n    },\r\n    \"videoConfiguration\":
+        {\r\n      \"longerSideLength\": 1920,\r\n      "
+    headers:
+      cache-control: no-cache, max-age=0, s-maxage=0, private
+      content-length: '100'
+      content-range: bytes 500-599/837
+      content-type: application/octet-stream
+      date: Fri, 17 Sep 2021 23:02:21 GMT
+      server: Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+    status:
+      code: 206
+      message: Partial Content
+    url: https://storagehost.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+- request:
+    body: ''
+    headers:
+      Range:
+      - bytes=600-699
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+      host:
+      - sanitized.communication.azure.com
+      x-ms-date:
+      - Fri, 17 Sep 2021 23:02:22 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://storagehost.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+  response:
+    body:
+      string: "\"shorterSideLength\": 1080,\r\n      \"framerate\": 8,\r\n      \"bitRate\":
+        1000000\r\n    }\r\n  },\r\n  \"partici"
+    headers:
+      cache-control: no-cache, max-age=0, s-maxage=0, private
+      content-length: '100'
+      content-range: bytes 600-699/837
+      content-type: application/octet-stream
+      date: Fri, 17 Sep 2021 23:02:22 GMT
+      server: Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+    status:
+      code: 206
+      message: Partial Content
+    url: https://storagehost.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+- request:
+    body: ''
+    headers:
+      Range:
+      - bytes=700-799
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+      host:
+      - sanitized.communication.azure.com
+      x-ms-date:
+      - Fri, 17 Sep 2021 23:02:22 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://storagehost.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+  response:
+    body:
+      string: "pants\": [\r\n    {\r\n      \"participantId\": \"8:acs:ab12b0ea-85ea-4f83-b0b6-84d90209c7c4_0000000c-8680-7"
+    headers:
+      cache-control: no-cache, max-age=0, s-maxage=0, private
+      content-length: '100'
+      content-range: bytes 700-799/837
+      content-type: application/octet-stream
+      date: Fri, 17 Sep 2021 23:02:21 GMT
+      server: Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+    status:
+      code: 206
+      message: Partial Content
+    url: https://storagehost.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+- request:
+    body: ''
+    headers:
+      Range:
+      - bytes=800-836
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+      host:
+      - sanitized.communication.azure.com
+      x-ms-date:
+      - Fri, 17 Sep 2021 23:02:22 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://storagehost.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+  response:
+    body:
+      string: "76f-ba73-254822000c19\"\r\n    }\r\n  ]\r\n}"
+    headers:
+      cache-control: no-cache, max-age=0, s-maxage=0, private
+      content-length: '37'
+      content-range: bytes 800-836/837
+      content-type: application/octet-stream
+      date: Fri, 17 Sep 2021 23:02:22 GMT
+      server: Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+    status:
+      code: 206
+      message: Partial Content
+    url: https://storagehost.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+version: 1

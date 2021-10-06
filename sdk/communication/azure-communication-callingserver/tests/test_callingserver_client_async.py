@@ -14,7 +14,8 @@ from azure.communication.callingserver import (
     JoinCallOptions,
     PlayAudioOptions,
     CommunicationIdentifier,
-    CallLocator
+    CallLocator, 
+    ServerCallLocator
     )
 from utils._unit_test_utils import CallingServerUnitTestUtils
 
@@ -415,3 +416,10 @@ async def test_cancel_participant_media_operation_failed(
     except:
         raised = True
     assert raised == True
+
+
+@pytest.mark.asyncio
+async def test_start_recording_relative_uri_fails():
+    server_call_id = "aHR0cHM6Ly9jb252LXVzd2UtMDguY29udi5za3lwZS5jb20vY29udi8tby1FWjVpMHJrS3RFTDBNd0FST1J3P2k9ODgmZT02Mzc1Nzc0MTY4MDc4MjQyOTM"
+    with pytest.raises(ValueError):
+        await _mock_utils_async.create_calling_server_client_async().start_recording(ServerCallLocator(server_call_id), "/not/absolute/uri")
