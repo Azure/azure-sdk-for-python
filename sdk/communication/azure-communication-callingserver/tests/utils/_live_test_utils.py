@@ -5,9 +5,11 @@
 # --------------------------------------------------------------------------
 
 import time, uuid
+import re
 from typing import List
 from devtools_testutils import is_live
 from ._test_constants import RESOURCE_IDENTIFIER, AZURE_TENANT_ID
+from azure_devtools.scenario_tests import RecordingProcessor
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.callingserver import (
     CommunicationUserIdentifier,
@@ -20,8 +22,19 @@ from azure.communication.callingserver import (
     AddParticipantResult,
     OperationStatus,
     MediaType,
-    EventSubscriptionType
+    EventSubscriptionType,
+    ServerCallLocator
     )
+
+class RequestReplacerProcessor(RecordingProcessor):
+    def __init__(self, keys=None, replacement="sanitized"):
+        self._keys = keys if keys else []
+        self._replacement = replacement
+
+    def process_request(self, request):
+        request.uri = re.sub('/calling/serverCalls/([^/?]+)',
+            '/calling/serverCalls/{}'.format(self._replacement), request.uri)
+        return request
 
 class CallingServerLiveTestUtils:
 
@@ -107,7 +120,7 @@ class CallingServerLiveTestUtils:
                 requested_media_types=[MediaType.AUDIO],
                 requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED]
             )
-            from_call_connection = callingserver_client.join_call(group_id, from_participant, from_options)
+            from_call_connection = callingserver_client.join_call(ServerCallLocator(group_id), from_participant, from_options)
             CallingServerLiveTestUtils.validate_callconnection(from_call_connection)
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
 
@@ -117,7 +130,7 @@ class CallingServerLiveTestUtils:
                 requested_media_types=[MediaType.AUDIO],
                 requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED]
             )
-            to_call_connection = callingserver_client.join_call(group_id, to_participant, to_options)
+            to_call_connection = callingserver_client.join_call(ServerCallLocator(group_id), to_participant, to_options)
             CallingServerLiveTestUtils.validate_callconnection(from_call_connection)
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
 
@@ -152,6 +165,12 @@ class CallingServerLiveTestUtils:
         if is_live():
             return str(uuid.uuid4())
 
+        # For recording tests we need to make sure the groupId
+        # matches the recorded groupId, or the call will fail.
+        return CallingServerLiveTestUtils.get_playback_group_id(test_name)
+    
+    @staticmethod
+    def get_playback_group_id(test_name):
         # For recording tests we need to make sure the groupId
         # matches the recorded groupId, or the call will fail.
         return str(uuid.uuid3(uuid.NAMESPACE_OID, test_name))
