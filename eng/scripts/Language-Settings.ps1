@@ -424,12 +424,12 @@ function Get-python-DocsMsMetadataForPackage($PackageInfo) {
 
   # Readme names (which are used in the URL) should not include redundant terms
   # when viewed in URL form. For example: 
-  # https://docs.microsoft.com/en-us/dotnet/api/overview/azure/storage.blobs-readme
+  # https://docs.microsoft.com/en-us/dotnet/api/overview/azure/storage-blobs-readme
   # Note how the end of the URL doesn't look like:
-  # ".../azure/azure.storage.blobs-readme" 
+  # ".../azure/azure-storage-blobs-readme" 
 
   # This logic eliminates a preceeding "azure." in the readme filename.
-  # "azure.storage.blobs" -> "storage.blobs"
+  # "azure-storage-blobs" -> "storage-blobs"
   if ($readmeName.StartsWith('azure-')) {
     $readmeName = $readmeName.Substring(6)
   }
