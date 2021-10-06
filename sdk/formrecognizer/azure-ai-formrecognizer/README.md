@@ -49,7 +49,7 @@ This table shows the relationship between SDK versions and supported API version
 |2.0 | FormRecognizerClient and FormTrainingClient
 
 #### Create a Cognitive Services or Form Recognizer resource
-Form Recognizer supports both [multi-service and single-service access][cognitive_resource_portal]. Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Form Recognizer access only, create a Form Recognizer resource. Please note that you will need a single-service resource if you intend to use [Azure Active Directory authentication](#create-client-with-an-azure-active-directory-credential).
+Form Recognizer supports both [multi-service and single-service access][cognitive_resource_portal]. Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Form Recognizer access only, create a Form Recognizer resource. Please note that you will need a single-service resource if you intend to use [Azure Active Directory authentication](#create-the-client-with-an-azure-active-directory-credential).
 
 You can create either resource using: 
 
@@ -596,7 +596,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [cognitive_resource_portal]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer
 [cognitive_resource_cli]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli?tabs=windows
 [azure-key-credential]: https://aka.ms/azsdk/python/core/azurekeycredential
-[fr-labeling-tool]: https://aka.ms/azsdk/formrecognizer/labelingtool
+[labeling-tool]: https://aka.ms/azsdk/formrecognizer/labelingtool
 [fr-build-model]: https://aka.ms/azsdk/formrecognizer/buildmodel
 [fr-build-training-set]: https://aka.ms/azsdk/formrecognizer/buildtrainingset
 [fr-models]: https://aka.ms/azsdk/formrecognizer/models
