@@ -250,7 +250,7 @@ logger.addHandler(handler)
 credential = DefaultAzureCredential()
 schema_registry_client = SchemaRegistryClient("<your-fully_qualified_namespace>", credential)
 # This client will log detailed information about its HTTP sessions, at DEBUG level
-serializer = AvroSerializer(client=schema_registry_client, group_name="<your-group-name>", logging_enable=True)
+serializer = AvroSerializer(client=schema_registry_client, group_name="<your-group-name>")
 ```
 
 Similarly, `logging_enable` can enable detailed logging for a single operation,
