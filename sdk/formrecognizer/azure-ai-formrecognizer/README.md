@@ -181,7 +181,7 @@ More information about analyzing documents, including supported features, locale
 - Listing document model operations or getting a specific model operation created within the last 24 hours.
 - Copying a custom model from one Form Recognizer resource to another.
 
-Please note that models can also be built using a graphical user interface such as the [Form Recognizer Labeling Tool][labeling_tool].
+Please note that models can also be built using a graphical user interface such as the [Form Recognizer Labeling Tool][labeling-tool].
 
 Sample code snippets are provided to illustrate using a DocumentModelAdministrationClient [here](#examples "Examples").
 
