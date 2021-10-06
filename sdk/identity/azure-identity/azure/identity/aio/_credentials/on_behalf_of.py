@@ -50,7 +50,6 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         tenant_id: str,
         client_id: str,
         client_credential: "Union[bytes, str]",
-        user_assertion: str,
         **kwargs: "Any"
     ) -> None:
         super().__init__()
