@@ -49,6 +49,12 @@ from .._models import (
     AnalyzeHealthcareEntitiesResult,
     ExtractSummaryAction,
     ExtractSummaryResult,
+    RecognizeCustomEntitiesAction,
+    RecognizeCustomEntitiesResult,
+    SingleCategoryClassifyAction,
+    SingleCategoryClassifyResult,
+    MultiCategoryClassifyAction,
+    MultiCategoryClassifyResult,
 )
 from .._lro import TextAnalyticsOperationResourcePolling
 from ._lro_async import (
@@ -851,6 +857,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 ExtractKeyPhrasesAction,
                 AnalyzeSentimentAction,
                 ExtractSummaryAction,
+                RecognizeCustomEntitiesAction,
+                SingleCategoryClassifyAction,
+                MultiCategoryClassifyAction,
             ]
         ],  # pylint: disable=line-too-long
         **kwargs: Any,
@@ -864,6 +873,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     ExtractKeyPhrasesResult,
                     AnalyzeSentimentResult,
                     ExtractSummaryResult,
+                    RecognizeCustomEntitiesResult,
+                    SingleCategoryClassifyResult,
+                    MultiCategoryClassifyResult,
                     DocumentError,
                 ]
             ]
@@ -889,7 +901,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             Duplicate actions in list not supported.
         :type actions:
             list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or
-            RecognizeLinkedEntitiesAction or AnalyzeSentimentAction, or ExtractSummaryAction]
+            RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or ExtractSummaryAction or
+            RecognizeCustomEntitiesAction or SingleCategoryClassifyAction or
+            MultiCategoryClassifyAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -913,13 +927,17 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :rtype:
             ~azure.ai.textanalytics.aio.AsyncAnalyzeActionsLROPoller[~azure.core.async_paging.AsyncItemPaged[
             list[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult,
-            ExtractKeyPhrasesResult, AnalyzeSentimentResult, ExtractSummaryResult, DocumentError]]]]
+            ExtractKeyPhrasesResult, AnalyzeSentimentResult, ExtractSummaryAction, RecognizeCustomEntitiesResult,
+            SingleCategoryClassifyResult, MultiCategoryClassifyResult, DocumentError]]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. versionadded:: v3.1
             The *begin_analyze_actions* client method.
         .. versionadded:: v3.2-preview
-            The *ExtractSummaryAction* input option and *ExtractSummaryResult* result object
+            The *ExtractSummaryAction*, *RecognizeCustomEntitiesAction*, *SingleCategoryClassifyAction*,
+            and *MultiCategoryClassifyAction* input options and the corresponding *ExtractSummaryResult*,
+            *RecognizeCustomEntitiesResult*, *SingleCategoryClassifyResult*,
+            and *MultiCategoryClassifyResult* result objects
 
         .. admonition:: Example:
 
@@ -1017,6 +1035,39 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                         for a in actions
                         if _determine_action_type(a)
                         == _AnalyzeActionsType.EXTRACT_SUMMARY
+                    ]
+                ],
+                custom_entity_recognition_tasks=[
+                    t._to_generated(  # pylint: disable=protected-access
+                        self._api_version
+                    )
+                    for t in [
+                        a
+                        for a in actions
+                        if _determine_action_type(a)
+                        == _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES
+                    ]
+                ],
+                custom_single_classification_tasks=[
+                    t._to_generated(  # pylint: disable=protected-access
+                        self._api_version
+                    )
+                    for t in [
+                        a
+                        for a in actions
+                        if _determine_action_type(a)
+                        == _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY
+                    ]
+                ],
+                custom_multi_classification_tasks=[
+                    t._to_generated(  # pylint: disable=protected-access
+                        self._api_version
+                    )
+                    for t in [
+                        a
+                        for a in actions
+                        if _determine_action_type(a)
+                        == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY
                     ]
                 ],
             )

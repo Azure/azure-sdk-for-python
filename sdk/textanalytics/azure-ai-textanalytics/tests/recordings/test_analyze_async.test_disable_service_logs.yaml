@@ -9,106 +9,183 @@ interactions:
       [{"parameters": {"model-version": "latest", "loggingOptOut": true, "opinionMining":
       false}}], "extractiveSummarizationTasks": [{"parameters": {"model-version":
       "latest", "loggingOptOut": true, "stringIndexType": "UnicodeCodePoint", "sentenceCount":
-      3, "sortBy": "Offset"}}]}, "analysisInput": {"documents": [{"id": "0", "text":
-      "Test for logging disable", "language": "en"}]}}'
+      3, "sortBy": "Offset"}}], "customEntityRecognitionTasks": [{"parameters": {"project-name":
+      "textanalytics_custom_entities_project_name", "deployment-name": "textanalytics_custom_entities_project_name",
+      "loggingOptOut": true}}], "customSingleClassificationTasks": [{"parameters":
+      {"project-name": "single_category_classify_project_name", "deployment-name":
+      "single_category_classify_project_name", "loggingOptOut": true}}], "customMultiClassificationTasks":
+      [{"parameters": {"project-name": "textanalytics_multi_category_classify_project_name",
+      "deployment-name": "textanalytics_multi_category_classify_project_name", "loggingOptOut":
+      true}}]}, "analysisInput": {"documents": [{"id": "0", "text": "Test for logging
+      disable", "language": "en"}]}}'
     headers:
       Accept:
       - application/json, text/json
       Content-Length:
-      - '915'
+      - '1490'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/analyze
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 3fb79315-7a67-4783-b2b7-6d9213576ddb
-      date: Mon, 02 Aug 2021 21:45:38 GMT
-      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/analyze/jobs/43aedde3-0c7d-4794-a401-6cf5bedae3d8
+      apim-request-id: c727d385-d2b3-4e26-ba13-6916033740ab
+      date: Tue, 05 Oct 2021 23:07:45 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/81e18e55-e8da-4c05-a3bb-f35dc57dd010
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '259'
+      x-envoy-upstream-service-time: '761'
     status:
       code: 202
       message: Accepted
-    url: https://tacanaryjava.cognitiveservices.azure.com//text/analytics/v3.2-preview.1/analyze
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/analyze
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/analyze/jobs/43aedde3-0c7d-4794-a401-6cf5bedae3d8
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/81e18e55-e8da-4c05-a3bb-f35dc57dd010
   response:
     body:
-      string: '{"jobId":"43aedde3-0c7d-4794-a401-6cf5bedae3d8","lastUpdateDateTime":"2021-08-02T21:45:39Z","createdDateTime":"2021-08-02T21:45:38Z","expirationDateTime":"2021-08-03T21:45:38Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":6,"total":6}}'
+      string: '{"jobId":"81e18e55-e8da-4c05-a3bb-f35dc57dd010","lastUpdateDateTime":"2021-10-05T23:07:46Z","createdDateTime":"2021-10-05T23:07:45Z","expirationDateTime":"2021-10-06T23:07:45Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":3,"failed":0,"inProgress":6,"total":9,"customEntityRecognitionTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:46.2455144Z","state":"succeeded","results":{"documents":[{"id":"0","entities":[],"warnings":[]}],"errors":[],"projectName":"textanalytics_custom_entities_project_name","deploymentName":"textanalytics_custom_entities_project_name"}}],"customSingleClassificationTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:46.9850895Z","state":"succeeded","results":{"documents":[{"id":"0","classification":{"category":"PlayMusic","confidenceScore":0.6},"warnings":[]}],"errors":[],"projectName":"single_category_classify_project_name","deploymentName":"single_category_classify_project_name"}}],"customMultiClassificationTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:46.570953Z","state":"succeeded","results":{"documents":[{"id":"0","classifications":[],"warnings":[]}],"errors":[],"projectName":"textanalytics_multi_category_classify_project_name","deploymentName":"textanalytics_multi_category_classify_project_name"}}]}}'
     headers:
-      apim-request-id: 492d4486-76b5-4ac0-a87c-6161ae061408
+      apim-request-id: ea993164-2fd6-42ab-a2f0-b06ea2ec1efd
       content-type: application/json; charset=utf-8
-      date: Mon, 02 Aug 2021 21:45:42 GMT
+      date: Tue, 05 Oct 2021 23:07:50 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '9'
+      x-envoy-upstream-service-time: '319'
     status:
       code: 200
       message: OK
-    url: https://tacanaryjava.cognitiveservices.azure.com/text/analytics/v3.2-preview.1/analyze/jobs/43aedde3-0c7d-4794-a401-6cf5bedae3d8
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/81e18e55-e8da-4c05-a3bb-f35dc57dd010
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/analyze/jobs/43aedde3-0c7d-4794-a401-6cf5bedae3d8
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/81e18e55-e8da-4c05-a3bb-f35dc57dd010
   response:
     body:
-      string: '{"jobId":"43aedde3-0c7d-4794-a401-6cf5bedae3d8","lastUpdateDateTime":"2021-08-02T21:45:45Z","createdDateTime":"2021-08-02T21:45:38Z","expirationDateTime":"2021-08-03T21:45:38Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":4,"failed":0,"inProgress":2,"total":6,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-08-02T21:45:45.105061Z","taskName":"NamedEntityRecognition_latest","state":"succeeded","results":{"documents":[{"id":"0","entities":[{"text":"logging","category":"Skill","offset":9,"length":7,"confidenceScore":0.61}],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}}],"entityLinkingTasks":[{"lastUpdateDateTime":"2021-08-02T21:45:44.7288427Z","taskName":"EntityLinking_latest","state":"succeeded","results":{"documents":[{"id":"0","entities":[{"bingId":"a7b11e27-5b63-19a5-b4dd-37b71149ecac","name":"Test
+      string: '{"jobId":"81e18e55-e8da-4c05-a3bb-f35dc57dd010","lastUpdateDateTime":"2021-10-05T23:07:54Z","createdDateTime":"2021-10-05T23:07:45Z","expirationDateTime":"2021-10-06T23:07:45Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":6,"failed":0,"inProgress":3,"total":9,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:53.5863104Z","state":"succeeded","results":{"documents":[{"id":"0","entities":[{"text":"logging","category":"Skill","offset":9,"length":7,"confidenceScore":0.61}],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:53.667053Z","state":"succeeded","results":{"documents":[{"redactedText":"Test
+        for logging disable","id":"0","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:54.6202532Z","state":"succeeded","results":{"documents":[{"id":"0","keyPhrases":["Test","logging"],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}}],"customEntityRecognitionTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:46.2455144Z","state":"succeeded","results":{"documents":[{"id":"0","entities":[],"warnings":[]}],"errors":[],"projectName":"textanalytics_custom_entities_project_name","deploymentName":"textanalytics_custom_entities_project_name"}}],"customSingleClassificationTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:46.9850895Z","state":"succeeded","results":{"documents":[{"id":"0","classification":{"category":"PlayMusic","confidenceScore":0.6},"warnings":[]}],"errors":[],"projectName":"single_category_classify_project_name","deploymentName":"single_category_classify_project_name"}}],"customMultiClassificationTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:46.570953Z","state":"succeeded","results":{"documents":[{"id":"0","classifications":[],"warnings":[]}],"errors":[],"projectName":"textanalytics_multi_category_classify_project_name","deploymentName":"textanalytics_multi_category_classify_project_name"}}]}}'
+    headers:
+      apim-request-id: 1c34657f-9f14-4c26-a0cd-90181b408b05
+      content-type: application/json; charset=utf-8
+      date: Tue, 05 Oct 2021 23:07:56 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '694'
+    status:
+      code: 200
+      message: OK
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/81e18e55-e8da-4c05-a3bb-f35dc57dd010
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/81e18e55-e8da-4c05-a3bb-f35dc57dd010
+  response:
+    body:
+      string: '{"jobId":"81e18e55-e8da-4c05-a3bb-f35dc57dd010","lastUpdateDateTime":"2021-10-05T23:07:58Z","createdDateTime":"2021-10-05T23:07:45Z","expirationDateTime":"2021-10-06T23:07:45Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":7,"failed":0,"inProgress":2,"total":9,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:53.5863104Z","state":"succeeded","results":{"documents":[{"id":"0","entities":[{"text":"logging","category":"Skill","offset":9,"length":7,"confidenceScore":0.61}],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:53.667053Z","state":"succeeded","results":{"documents":[{"redactedText":"Test
+        for logging disable","id":"0","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}],"extractiveSummarizationTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:58.4835278Z","state":"succeeded","results":{"documents":[{"id":"0","sentences":[{"text":"Test
+        for logging disable","rankScore":1.0,"offset":0,"length":24}],"warnings":[]}],"errors":[],"modelVersion":"2021-08-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:54.6202532Z","state":"succeeded","results":{"documents":[{"id":"0","keyPhrases":["Test","logging"],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}}],"customEntityRecognitionTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:46.2455144Z","state":"succeeded","results":{"documents":[{"id":"0","entities":[],"warnings":[]}],"errors":[],"projectName":"textanalytics_custom_entities_project_name","deploymentName":"textanalytics_custom_entities_project_name"}}],"customSingleClassificationTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:46.9850895Z","state":"succeeded","results":{"documents":[{"id":"0","classification":{"category":"PlayMusic","confidenceScore":0.6},"warnings":[]}],"errors":[],"projectName":"single_category_classify_project_name","deploymentName":"single_category_classify_project_name"}}],"customMultiClassificationTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:46.570953Z","state":"succeeded","results":{"documents":[{"id":"0","classifications":[],"warnings":[]}],"errors":[],"projectName":"textanalytics_multi_category_classify_project_name","deploymentName":"textanalytics_multi_category_classify_project_name"}}]}}'
+    headers:
+      apim-request-id: 6136feb8-6b2a-4087-8e87-7860d3b8ebc7
+      content-type: application/json; charset=utf-8
+      date: Tue, 05 Oct 2021 23:08:01 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '415'
+    status:
+      code: 200
+      message: OK
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/81e18e55-e8da-4c05-a3bb-f35dc57dd010
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/81e18e55-e8da-4c05-a3bb-f35dc57dd010
+  response:
+    body:
+      string: '{"jobId":"81e18e55-e8da-4c05-a3bb-f35dc57dd010","lastUpdateDateTime":"2021-10-05T23:07:58Z","createdDateTime":"2021-10-05T23:07:45Z","expirationDateTime":"2021-10-06T23:07:45Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":7,"failed":0,"inProgress":2,"total":9,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:53.5863104Z","state":"succeeded","results":{"documents":[{"id":"0","entities":[{"text":"logging","category":"Skill","offset":9,"length":7,"confidenceScore":0.61}],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:53.667053Z","state":"succeeded","results":{"documents":[{"redactedText":"Test
+        for logging disable","id":"0","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}],"extractiveSummarizationTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:58.4835278Z","state":"succeeded","results":{"documents":[{"id":"0","sentences":[{"text":"Test
+        for logging disable","rankScore":1.0,"offset":0,"length":24}],"warnings":[]}],"errors":[],"modelVersion":"2021-08-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:54.6202532Z","state":"succeeded","results":{"documents":[{"id":"0","keyPhrases":["Test","logging"],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}}],"customEntityRecognitionTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:46.2455144Z","state":"succeeded","results":{"documents":[{"id":"0","entities":[],"warnings":[]}],"errors":[],"projectName":"textanalytics_custom_entities_project_name","deploymentName":"textanalytics_custom_entities_project_name"}}],"customSingleClassificationTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:46.9850895Z","state":"succeeded","results":{"documents":[{"id":"0","classification":{"category":"PlayMusic","confidenceScore":0.6},"warnings":[]}],"errors":[],"projectName":"single_category_classify_project_name","deploymentName":"single_category_classify_project_name"}}],"customMultiClassificationTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:46.570953Z","state":"succeeded","results":{"documents":[{"id":"0","classifications":[],"warnings":[]}],"errors":[],"projectName":"textanalytics_multi_category_classify_project_name","deploymentName":"textanalytics_multi_category_classify_project_name"}}]}}'
+    headers:
+      apim-request-id: 00c76e3f-6f02-4ead-a52d-0d7259de19b3
+      content-type: application/json; charset=utf-8
+      date: Tue, 05 Oct 2021 23:08:07 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '435'
+    status:
+      code: 200
+      message: OK
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/81e18e55-e8da-4c05-a3bb-f35dc57dd010
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/81e18e55-e8da-4c05-a3bb-f35dc57dd010
+  response:
+    body:
+      string: '{"jobId":"81e18e55-e8da-4c05-a3bb-f35dc57dd010","lastUpdateDateTime":"2021-10-05T23:07:58Z","createdDateTime":"2021-10-05T23:07:45Z","expirationDateTime":"2021-10-06T23:07:45Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":7,"failed":0,"inProgress":2,"total":9,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:53.5863104Z","state":"succeeded","results":{"documents":[{"id":"0","entities":[{"text":"logging","category":"Skill","offset":9,"length":7,"confidenceScore":0.61}],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:53.667053Z","state":"succeeded","results":{"documents":[{"redactedText":"Test
+        for logging disable","id":"0","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}],"extractiveSummarizationTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:58.4835278Z","state":"succeeded","results":{"documents":[{"id":"0","sentences":[{"text":"Test
+        for logging disable","rankScore":1.0,"offset":0,"length":24}],"warnings":[]}],"errors":[],"modelVersion":"2021-08-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:54.6202532Z","state":"succeeded","results":{"documents":[{"id":"0","keyPhrases":["Test","logging"],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}}],"customEntityRecognitionTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:46.2455144Z","state":"succeeded","results":{"documents":[{"id":"0","entities":[],"warnings":[]}],"errors":[],"projectName":"textanalytics_custom_entities_project_name","deploymentName":"textanalytics_custom_entities_project_name"}}],"customSingleClassificationTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:46.9850895Z","state":"succeeded","results":{"documents":[{"id":"0","classification":{"category":"PlayMusic","confidenceScore":0.6},"warnings":[]}],"errors":[],"projectName":"single_category_classify_project_name","deploymentName":"single_category_classify_project_name"}}],"customMultiClassificationTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:46.570953Z","state":"succeeded","results":{"documents":[{"id":"0","classifications":[],"warnings":[]}],"errors":[],"projectName":"textanalytics_multi_category_classify_project_name","deploymentName":"textanalytics_multi_category_classify_project_name"}}]}}'
+    headers:
+      apim-request-id: 9212c5b7-e73d-4cf3-be1f-d000c1d853e3
+      content-type: application/json; charset=utf-8
+      date: Tue, 05 Oct 2021 23:08:12 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '438'
+    status:
+      code: 200
+      message: OK
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/81e18e55-e8da-4c05-a3bb-f35dc57dd010
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/81e18e55-e8da-4c05-a3bb-f35dc57dd010
+  response:
+    body:
+      string: '{"jobId":"81e18e55-e8da-4c05-a3bb-f35dc57dd010","lastUpdateDateTime":"2021-10-05T23:08:18Z","createdDateTime":"2021-10-05T23:07:45Z","expirationDateTime":"2021-10-06T23:07:45Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":9,"failed":0,"inProgress":0,"total":9,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:53.5863104Z","state":"succeeded","results":{"documents":[{"id":"0","entities":[{"text":"logging","category":"Skill","offset":9,"length":7,"confidenceScore":0.61}],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}}],"entityLinkingTasks":[{"lastUpdateDateTime":"2021-10-05T23:08:18.1568979Z","state":"succeeded","results":{"documents":[{"id":"0","entities":[{"bingId":"a7b11e27-5b63-19a5-b4dd-37b71149ecac","name":"Test
         (assessment)","matches":[{"text":"Test","offset":0,"length":4,"confidenceScore":0.04}],"language":"en","id":"Test
-        (assessment)","url":"https://en.wikipedia.org/wiki/Test_(assessment)","dataSource":"Wikipedia"}],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-08-02T21:45:45.1349964Z","taskName":"PersonallyIdentifiableInformation_latest","state":"succeeded","results":{"documents":[{"redactedText":"Test
-        for logging disable","id":"0","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-08-02T21:45:44.6626774Z","taskName":"KeyPhraseExtraction_latest","state":"succeeded","results":{"documents":[{"id":"0","keyPhrases":["Test","logging"],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}}]}}'
+        (assessment)","url":"https://en.wikipedia.org/wiki/Test_(assessment)","dataSource":"Wikipedia"}],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:53.667053Z","state":"succeeded","results":{"documents":[{"redactedText":"Test
+        for logging disable","id":"0","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}],"extractiveSummarizationTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:58.4835278Z","state":"succeeded","results":{"documents":[{"id":"0","sentences":[{"text":"Test
+        for logging disable","rankScore":1.0,"offset":0,"length":24}],"warnings":[]}],"errors":[],"modelVersion":"2021-08-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:54.6202532Z","state":"succeeded","results":{"documents":[{"id":"0","keyPhrases":["Test","logging"],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-10-05T23:08:18.2567362Z","state":"succeeded","results":{"documents":[{"id":"0","sentiment":"negative","confidenceScores":{"positive":0.02,"neutral":0.12,"negative":0.86},"sentences":[{"sentiment":"negative","confidenceScores":{"positive":0.02,"neutral":0.12,"negative":0.86},"offset":0,"length":24,"text":"Test
+        for logging disable"}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}],"customEntityRecognitionTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:46.2455144Z","state":"succeeded","results":{"documents":[{"id":"0","entities":[],"warnings":[]}],"errors":[],"projectName":"textanalytics_custom_entities_project_name","deploymentName":"textanalytics_custom_entities_project_name"}}],"customSingleClassificationTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:46.9850895Z","state":"succeeded","results":{"documents":[{"id":"0","classification":{"category":"PlayMusic","confidenceScore":0.6},"warnings":[]}],"errors":[],"projectName":"single_category_classify_project_name","deploymentName":"single_category_classify_project_name"}}],"customMultiClassificationTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:46.570953Z","state":"succeeded","results":{"documents":[{"id":"0","classifications":[],"warnings":[]}],"errors":[],"projectName":"textanalytics_multi_category_classify_project_name","deploymentName":"textanalytics_multi_category_classify_project_name"}}]}}'
     headers:
-      apim-request-id: 598baa08-e0e0-4613-a930-9a056e59f8de
+      apim-request-id: 84e00ab8-9522-49a9-a604-5c10792431f7
       content-type: application/json; charset=utf-8
-      date: Mon, 02 Aug 2021 21:45:48 GMT
+      date: Tue, 05 Oct 2021 23:08:18 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '115'
+      x-envoy-upstream-service-time: '556'
     status:
       code: 200
       message: OK
-    url: https://tacanaryjava.cognitiveservices.azure.com/text/analytics/v3.2-preview.1/analyze/jobs/43aedde3-0c7d-4794-a401-6cf5bedae3d8
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/analyze/jobs/43aedde3-0c7d-4794-a401-6cf5bedae3d8
-  response:
-    body:
-      string: '{"jobId":"43aedde3-0c7d-4794-a401-6cf5bedae3d8","lastUpdateDateTime":"2021-08-02T21:45:51Z","createdDateTime":"2021-08-02T21:45:38Z","expirationDateTime":"2021-08-03T21:45:38Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":6,"failed":0,"inProgress":0,"total":6,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-08-02T21:45:45.105061Z","taskName":"NamedEntityRecognition_latest","state":"succeeded","results":{"documents":[{"id":"0","entities":[{"text":"logging","category":"Skill","offset":9,"length":7,"confidenceScore":0.61}],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}}],"entityLinkingTasks":[{"lastUpdateDateTime":"2021-08-02T21:45:44.7288427Z","taskName":"EntityLinking_latest","state":"succeeded","results":{"documents":[{"id":"0","entities":[{"bingId":"a7b11e27-5b63-19a5-b4dd-37b71149ecac","name":"Test
-        (assessment)","matches":[{"text":"Test","offset":0,"length":4,"confidenceScore":0.04}],"language":"en","id":"Test
-        (assessment)","url":"https://en.wikipedia.org/wiki/Test_(assessment)","dataSource":"Wikipedia"}],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-08-02T21:45:45.1349964Z","taskName":"PersonallyIdentifiableInformation_latest","state":"succeeded","results":{"documents":[{"redactedText":"Test
-        for logging disable","id":"0","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}],"extractiveSummarizationTasks":[{"lastUpdateDateTime":"2021-08-02T21:45:51.7536788Z","taskName":"ExtractiveSummarization_latest","state":"succeeded","results":{"documents":[{"id":"0","sentences":[{"text":"Test
-        for logging disable","rankScore":1.0,"offset":0,"length":24}],"warnings":[]}],"errors":[],"modelVersion":"2021-08-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-08-02T21:45:44.6626774Z","taskName":"KeyPhraseExtraction_latest","state":"succeeded","results":{"documents":[{"id":"0","keyPhrases":["Test","logging"],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-08-02T21:45:50.5189175Z","taskName":"SentimentAnalysis_latest","state":"succeeded","results":{"documents":[{"id":"0","sentiment":"negative","confidenceScores":{"positive":0.02,"neutral":0.12,"negative":0.86},"sentences":[{"sentiment":"negative","confidenceScores":{"positive":0.02,"neutral":0.12,"negative":0.86},"offset":0,"length":24,"text":"Test
-        for logging disable"}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}]}}'
-    headers:
-      apim-request-id: f3c6b772-94e5-4be7-9e62-738691a0f407
-      content-type: application/json; charset=utf-8
-      date: Mon, 02 Aug 2021 21:45:54 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '173'
-    status:
-      code: 200
-      message: OK
-    url: https://tacanaryjava.cognitiveservices.azure.com/text/analytics/v3.2-preview.1/analyze/jobs/43aedde3-0c7d-4794-a401-6cf5bedae3d8
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/81e18e55-e8da-4c05-a3bb-f35dc57dd010
 version: 1

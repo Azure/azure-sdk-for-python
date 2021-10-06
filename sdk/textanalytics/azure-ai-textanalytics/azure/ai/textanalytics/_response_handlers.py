@@ -34,6 +34,9 @@ from ._models import (
     AnalyzeHealthcareEntitiesResult,
     ExtractSummaryResult,
     _AnalyzeActionsType,
+    RecognizeCustomEntitiesResult,
+    SingleCategoryClassifyResult,
+    MultiCategoryClassifyResult,
 )
 
 
@@ -260,6 +263,32 @@ def summary_result(
     )
 
 
+@prepare_result
+def custom_entities_result(
+    custom_entities, results, *args, **kwargs
+):  # pylint: disable=unused-argument
+    return RecognizeCustomEntitiesResult._from_generated(  # pylint: disable=protected-access
+        custom_entities
+    )
+
+
+@prepare_result
+def single_category_classify_result(
+    custom_category, results, *args, **kwargs
+):  # pylint: disable=unused-argument
+    return SingleCategoryClassifyResult._from_generated(  # pylint: disable=protected-access
+        custom_category
+    )
+
+@prepare_result
+def multi_category_classify_result(
+    custom_categories, results, *args, **kwargs
+):  # pylint: disable=unused-argument
+    return MultiCategoryClassifyResult._from_generated(  # pylint: disable=protected-access
+        custom_categories
+    )
+
+
 def healthcare_extract_page_data(
     doc_id_order, obj, response_headers, health_job_state
 ):  # pylint: disable=unused-argument
@@ -271,7 +300,7 @@ def healthcare_extract_page_data(
     )
 
 
-def _get_deserialization_callback_from_task_type(task_type):
+def _get_deserialization_callback_from_task_type(task_type):  # pylint: disable=too-many-return-statements
     if task_type == _AnalyzeActionsType.RECOGNIZE_ENTITIES:
         return entities_result
     if task_type == _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES:
@@ -282,10 +311,16 @@ def _get_deserialization_callback_from_task_type(task_type):
         return sentiment_result
     if task_type == _AnalyzeActionsType.EXTRACT_SUMMARY:
         return summary_result
+    if task_type == _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES:
+        return custom_entities_result
+    if task_type == _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY:
+        return single_category_classify_result
+    if task_type == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY:
+        return multi_category_classify_result
     return key_phrases_result
 
 
-def _get_property_name_from_task_type(task_type):
+def _get_property_name_from_task_type(task_type):  # pylint: disable=too-many-return-statements
     if task_type == _AnalyzeActionsType.RECOGNIZE_ENTITIES:
         return "entity_recognition_tasks"
     if task_type == _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES:
@@ -296,6 +331,12 @@ def _get_property_name_from_task_type(task_type):
         return "sentiment_analysis_tasks"
     if task_type == _AnalyzeActionsType.EXTRACT_SUMMARY:
         return "extractive_summarization_tasks"
+    if task_type == _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES:
+        return "custom_entity_recognition_tasks"
+    if task_type == _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY:
+        return "custom_single_classification_tasks"
+    if task_type == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY:
+        return "custom_multi_classification_tasks"
     return "key_phrase_extraction_tasks"
 
 

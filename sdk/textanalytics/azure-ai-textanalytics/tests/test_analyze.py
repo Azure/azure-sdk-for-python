@@ -35,7 +35,13 @@ from azure.ai.textanalytics import (
     RecognizePiiEntitiesResult,
     ExtractSummaryAction,
     PiiEntityCategory,
-    ExtractSummaryResult
+    ExtractSummaryResult,
+    SingleCategoryClassifyAction,
+    MultiCategoryClassifyAction,
+    RecognizeCustomEntitiesAction,
+    SingleCategoryClassifyResult,
+    MultiCategoryClassifyResult,
+    RecognizeCustomEntitiesResult
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -670,8 +676,19 @@ class TestAnalyze(TextAnalyticsTest):
         assert excinfo.value.status_code == 400
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_disable_service_logs(self, client):
+    def test_disable_service_logs(
+            self,
+            textanalytics_custom_text_endpoint,
+            textanalytics_custom_text_key,
+            textanalytics_single_category_classify_project_name,
+            textanalytics_single_category_classify_deployment_name,
+            textanalytics_multi_category_classify_project_name,
+            textanalytics_multi_category_classify_deployment_name,
+            textanalytics_custom_entities_project_name,
+            textanalytics_custom_entities_deployment_name
+    ):
+
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
         actions = [
             RecognizeEntitiesAction(disable_service_logs=True),
             ExtractKeyPhrasesAction(disable_service_logs=True),
@@ -679,6 +696,21 @@ class TestAnalyze(TextAnalyticsTest):
             RecognizeLinkedEntitiesAction(disable_service_logs=True),
             AnalyzeSentimentAction(disable_service_logs=True),
             ExtractSummaryAction(disable_service_logs=True),
+            SingleCategoryClassifyAction(
+                project_name=textanalytics_single_category_classify_project_name,
+                deployment_name=textanalytics_single_category_classify_deployment_name,
+                disable_service_logs=True
+            ),
+            MultiCategoryClassifyAction(
+                project_name=textanalytics_multi_category_classify_project_name,
+                deployment_name=textanalytics_multi_category_classify_deployment_name,
+                disable_service_logs=True
+            ),
+            RecognizeCustomEntitiesAction(
+                project_name=textanalytics_custom_entities_project_name,
+                deployment_name=textanalytics_custom_entities_deployment_name,
+                disable_service_logs=True
+            )
         ]
 
         for action in actions:
@@ -887,3 +919,166 @@ class TestAnalyze(TextAnalyticsTest):
 
         assert not document_results[1][0].is_error
         assert isinstance(document_results[1][0], ExtractSummaryResult)
+
+    @TextAnalyticsPreparer()
+    def test_single_category_classify(
+            self,
+            textanalytics_custom_text_endpoint,
+            textanalytics_custom_text_key,
+            textanalytics_single_category_classify_project_name,
+            textanalytics_single_category_classify_deployment_name
+    ):
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        docs = [
+            {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+            {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
+            {"id": "3", "language": "en", "text": "I need a reservation for an indoor restaurant in China. Please don't stop the music. Play music and add it to my playlist"},
+        ]
+
+        response = client.begin_analyze_actions(
+            docs,
+            actions=[
+                SingleCategoryClassifyAction(
+                    project_name=textanalytics_single_category_classify_project_name,
+                    deployment_name=textanalytics_single_category_classify_deployment_name
+                )
+            ],
+            show_stats=True,
+            polling_interval=self._interval(),
+        ).result()
+
+        document_results = list(response)
+        for doc_result in document_results:
+            for result in doc_result:
+                assert result.id
+                assert not result.is_error
+                assert not result.warnings
+                assert result.statistics
+                assert result.classification.category
+                assert result.classification.confidence_score
+
+    @TextAnalyticsPreparer()
+    def test_multi_category_classify(
+            self,
+            textanalytics_custom_text_endpoint,
+            textanalytics_custom_text_key,
+            textanalytics_multi_category_classify_project_name,
+            textanalytics_multi_category_classify_deployment_name
+    ):
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        docs = [
+            {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+            {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
+            {"id": "3", "language": "en", "text": "I need a reservation for an indoor restaurant in China. Please don't stop the music. Play music and add it to my playlist"},
+        ]
+
+        response = client.begin_analyze_actions(
+            docs,
+            actions=[
+                MultiCategoryClassifyAction(
+                    project_name=textanalytics_multi_category_classify_project_name,
+                    deployment_name=textanalytics_multi_category_classify_deployment_name
+                )
+            ],
+            show_stats=True,
+            polling_interval=self._interval(),
+        ).result()
+
+        document_results = list(response)
+        for doc_result in document_results:
+            for result in doc_result:
+                assert result.id
+                assert not result.is_error
+                assert not result.warnings
+                assert result.statistics
+                for classification in result.classifications:
+                    assert classification.category
+                    assert classification.confidence_score
+
+    @TextAnalyticsPreparer()
+    def test_recognize_custom_entities(
+            self,
+            textanalytics_custom_text_endpoint,
+            textanalytics_custom_text_key,
+            textanalytics_custom_entities_project_name,
+            textanalytics_custom_entities_deployment_name
+    ):
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        docs = [
+            {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+            {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
+            {"id": "3", "language": "en", "text": "I need a reservation for an indoor restaurant in China. Please don't stop the music. Play music and add it to my playlist"},
+        ]
+
+        response = client.begin_analyze_actions(
+            docs,
+            actions=[
+                RecognizeCustomEntitiesAction(
+                    project_name=textanalytics_custom_entities_project_name,
+                    deployment_name=textanalytics_custom_entities_deployment_name
+                )
+            ],
+            show_stats=True,
+            polling_interval=self._interval(),
+        ).result()
+
+        document_results = list(response)
+        for doc_result in document_results:
+            for result in doc_result:
+                assert result.id
+                assert not result.is_error
+                assert not result.warnings
+                assert result.statistics
+                for entity in result.entities:
+                    assert entity.text
+                    assert entity.category
+                    assert entity.offset is not None
+                    assert entity.length is not None
+                    assert entity.confidence_score is not None
+
+    @TextAnalyticsPreparer()
+    def test_custom_partial_error(
+            self,
+            textanalytics_custom_text_endpoint,
+            textanalytics_custom_text_key,
+            textanalytics_single_category_classify_project_name,
+            textanalytics_single_category_classify_deployment_name,
+            textanalytics_multi_category_classify_project_name,
+            textanalytics_multi_category_classify_deployment_name,
+            textanalytics_custom_entities_project_name,
+            textanalytics_custom_entities_deployment_name
+    ):
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        docs = [
+            {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+            {"id": "2", "language": "en", "text": ""},
+        ]
+
+        response = client.begin_analyze_actions(
+            docs,
+            actions=[
+                SingleCategoryClassifyAction(
+                    project_name=textanalytics_single_category_classify_project_name,
+                    deployment_name=textanalytics_single_category_classify_deployment_name
+                ),
+                MultiCategoryClassifyAction(
+                    project_name=textanalytics_multi_category_classify_project_name,
+                    deployment_name=textanalytics_multi_category_classify_deployment_name
+                ),
+                RecognizeCustomEntitiesAction(
+                    project_name=textanalytics_custom_entities_project_name,
+                    deployment_name=textanalytics_custom_entities_deployment_name
+                )
+            ],
+            show_stats=True,
+            polling_interval=self._interval(),
+        ).result()
+
+        document_results = list(response)
+        assert len(document_results) == 2
+        assert isinstance(document_results[0][0], SingleCategoryClassifyResult)
+        assert isinstance(document_results[0][1], MultiCategoryClassifyResult)
+        assert isinstance(document_results[0][2], RecognizeCustomEntitiesResult)
+        assert document_results[1][0].is_error
+        assert document_results[1][1].is_error
+        assert document_results[1][2].is_error

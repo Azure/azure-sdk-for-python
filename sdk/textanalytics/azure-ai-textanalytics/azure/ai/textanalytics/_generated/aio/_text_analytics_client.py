@@ -12,7 +12,6 @@
 from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 from msrest import Deserializer, Serializer
@@ -22,6 +21,7 @@ from ._operations_mixin import TextAnalyticsClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials import TokenCredential
     from azure.core.credentials_async import AsyncTokenCredential
 
 class _SDKClient(object):

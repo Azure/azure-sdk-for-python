@@ -9,16 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 from msrest import Serializer, Deserializer
-from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
-import warnings
+from typing import Any, List, Optional, Union
 
 # FIXME: have to manually reconfigure import path for multiapi operation mixin
 from ...aio._lro_async import AsyncAnalyzeHealthcareEntitiesLROPoller, AsyncAnalyzeHealthcareEntitiesLROPollingMethod, AsyncAnalyzeActionsLROPoller, AsyncAnalyzeActionsLROPollingMethod
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
-from azure.core.polling.async_base_polling import AsyncLROBasePolling
+from azure.core.polling import AsyncLROPoller
 
 
 class TextAnalyticsClientOperationsMixin(object):
@@ -83,12 +78,16 @@ class TextAnalyticsClientOperationsMixin(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncAnalyzeActionsLROPollingMethod.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object
+         for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncAnalyzeActionsLROPoller that returns either AnalyzeJobState or the result of cls(response)
-        :rtype: ~.....aio._lro_async.AsyncAnalyzeActionsLROPoller[~azure.ai.textanalytics.v3_2_preview_2.models.AnalyzeJobState]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncAnalyzeActionsLROPoller that returns either AnalyzeJobState or the
+         result of cls(response)
+        :rtype:
+         ~.....aio._lro_async.AsyncAnalyzeActionsLROPoller[~azure.ai.textanalytics.v3_2_preview_2.models.AnalyzeJobState]
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('begin_analyze')
         if api_version == 'v3.1':
@@ -118,13 +117,15 @@ class TextAnalyticsClientOperationsMixin(object):
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('begin_cancel_health_job')
         if api_version == 'v3.1':
@@ -173,13 +174,17 @@ class TextAnalyticsClientOperationsMixin(object):
         :type logging_opt_out: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncAnalyzeHealthcareEntitiesLROPollingMethod.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be
+         AsyncAnalyzeHealthcareEntitiesLROPollingMethod. Pass in False for this operation to not poll,
+         or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncAnalyzeHealthcareEntitiesLROPoller that returns either HealthcareJobState or the result of cls(response)
-        :rtype: ~.....aio._lro_async.AsyncAnalyzeHealthcareEntitiesLROPoller[~azure.ai.textanalytics.v3_2_preview_2.models.HealthcareJobState]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncAnalyzeHealthcareEntitiesLROPoller that returns either
+         HealthcareJobState or the result of cls(response)
+        :rtype:
+         ~.....aio._lro_async.AsyncAnalyzeHealthcareEntitiesLROPoller[~azure.ai.textanalytics.v3_2_preview_2.models.HealthcareJobState]
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('begin_health')
         if api_version == 'v3.1':

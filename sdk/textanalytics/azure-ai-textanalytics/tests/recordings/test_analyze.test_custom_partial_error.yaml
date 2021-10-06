@@ -1,0 +1,95 @@
+interactions:
+- request:
+    body: '{"tasks": {"entityRecognitionTasks": [], "entityRecognitionPiiTasks": [],
+      "keyPhraseExtractionTasks": [], "entityLinkingTasks": [], "sentimentAnalysisTasks":
+      [], "extractiveSummarizationTasks": [], "customEntityRecognitionTasks": [{"parameters":
+      {"project-name": "textanalytics_custom_entities_project_name", "deployment-name":
+      "textanalytics_custom_entities_project_name"}}], "customSingleClassificationTasks":
+      [{"parameters": {"project-name": "single_category_classify_project_name", "deployment-name":
+      "single_category_classify_project_name"}}], "customMultiClassificationTasks":
+      [{"parameters": {"project-name": "textanalytics_multi_category_classify_project_name",
+      "deployment-name": "textanalytics_multi_category_classify_project_name"}}]},
+      "analysisInput": {"documents": [{"id": "1", "text": "A recent report by the
+      Government Accountability Office (GAO) found that the dramatic increase in oil
+      and natural gas development on federal lands over the past six years has stretched
+      the staff of the BLM to a point that it has been unable to meet its environmental
+      protection responsibilities.", "language": "en"}, {"id": "2", "text": "", "language":
+      "en"}]}}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1119'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - daf613dd-edd7-4ce2-8eb0-4824d6214d33
+      date:
+      - Tue, 05 Oct 2021 23:07:21 GMT
+      operation-location:
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/ba92a7f8-bd89-4c68-88e5-057a94334d3e
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '329'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/ba92a7f8-bd89-4c68-88e5-057a94334d3e?showStats=True
+  response:
+    body:
+      string: '{"jobId":"ba92a7f8-bd89-4c68-88e5-057a94334d3e","lastUpdateDateTime":"2021-10-05T23:07:22Z","createdDateTime":"2021-10-05T23:07:21Z","expirationDateTime":"2021-10-06T23:07:21Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":3,"failed":0,"inProgress":0,"total":3,"customEntityRecognitionTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:22.440671Z","state":"succeeded","results":{"statistics":{"documentsCount":2,"validDocumentsCount":1,"erroneousDocumentsCount":1,"transactionsCount":1},"documents":[{"id":"1","statistics":{"charactersCount":295,"transactionsCount":1},"entities":[{"text":"Government","category":"restaurant_name","offset":23,"length":10,"confidenceScore":0.05},{"text":"Office","category":"restaurant_name","offset":49,"length":6,"confidenceScore":0.11},{"text":"GAO","category":"restaurant_name","offset":57,"length":3,"confidenceScore":0.04},{"text":"Accountability","category":"geographic_poi","offset":34,"length":14,"confidenceScore":0.07},{"text":"natural","category":"geographic_poi","offset":106,"length":7,"confidenceScore":0.04},{"text":"dramatic","category":"sort","offset":77,"length":8,"confidenceScore":0.03},{"text":"oil","category":"restaurant_type","offset":98,"length":3,"confidenceScore":0.03},{"text":"gas","category":"restaurant_type","offset":114,"length":3,"confidenceScore":0.09},{"text":"and","category":"served_dish","offset":102,"length":3,"confidenceScore":0.07},{"text":"development","category":"object_type","offset":118,"length":11,"confidenceScore":0.06},{"text":"federal","category":"state","offset":133,"length":7,"confidenceScore":0.07},{"text":"protection","category":"state","offset":267,"length":10,"confidenceScore":0.05},{"text":"lands","category":"poi","offset":141,"length":5,"confidenceScore":0.04},{"text":"BLM","category":"poi","offset":202,"length":3,"confidenceScore":0.07},{"text":"the","category":"timeRange","offset":152,"length":3,"confidenceScore":0.24},{"text":"past
+        six years","category":"timeRange","offset":156,"length":14,"confidenceScore":0.54}],"warnings":[]}],"errors":[{"id":"2","error":{"code":"InvalidArgument","message":"Invalid
+        document in request.","innererror":{"code":"InvalidDocument","message":"Document
+        text is empty."}}}],"projectName":"textanalytics_custom_entities_project_name","deploymentName":"textanalytics_custom_entities_project_name"}}],"customSingleClassificationTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:22.4975235Z","state":"succeeded","results":{"statistics":{"documentsCount":2,"validDocumentsCount":1,"erroneousDocumentsCount":1,"transactionsCount":1},"documents":[{"id":"1","classification":{"category":"RateBook","confidenceScore":0.76},"statistics":{"charactersCount":295,"transactionsCount":1},"warnings":[]}],"errors":[{"id":"2","error":{"code":"InvalidArgument","message":"Invalid
+        document in request.","innererror":{"code":"InvalidDocument","message":"Document
+        text is empty."}}}],"projectName":"single_category_classify_project_name","deploymentName":"single_category_classify_project_name"}}],"customMultiClassificationTasks":[{"lastUpdateDateTime":"2021-10-05T23:07:22.2662386Z","state":"succeeded","results":{"statistics":{"documentsCount":2,"validDocumentsCount":1,"erroneousDocumentsCount":1,"transactionsCount":1},"documents":[{"id":"1","classifications":[],"statistics":{"charactersCount":295,"transactionsCount":1},"warnings":[]}],"errors":[{"id":"2","error":{"code":"InvalidArgument","message":"Invalid
+        document in request.","innererror":{"code":"InvalidDocument","message":"Document
+        text is empty."}}}],"projectName":"textanalytics_multi_category_classify_project_name","deploymentName":"textanalytics_multi_category_classify_project_name"}}]}}'
+    headers:
+      apim-request-id:
+      - a8641abb-4688-448f-aa31-5d6a62dea7f4
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Oct 2021 23:07:26 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '288'
+    status:
+      code: 200
+      message: OK
+version: 1
