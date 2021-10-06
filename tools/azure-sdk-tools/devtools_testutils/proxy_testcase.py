@@ -24,6 +24,10 @@ from .azure_recorded_testcase import is_live
 from .config import PROXY_URL
 
 
+# To learn about how to migrate SDK tests to the test proxy, please refer to the migration guide at
+# https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
+
+
 # defaults
 RECORDING_START_URL = "{}/record/start".format(PROXY_URL)
 RECORDING_STOP_URL = "{}/record/stop".format(PROXY_URL)

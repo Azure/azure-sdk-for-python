@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: 'b''{"source": "blob_sas_url"}'''
+    body: 'b''{"urlSource": "blob_sas_url"}'''
     headers:
       Accept:
       - application/json
@@ -9,33 +9,33 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '217'
+      - '232'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyze?includeTextDetails=false&locale=not%20a%20locale
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-businessCard:analyze?locale=not%20a%20locale&stringIndexType=unicodeCodePoint&api-version=2021-07-30-preview
   response:
     body:
-      string: '{"error": {"code": "UnsupportedLocale", "innerError": {"requestId":
-        "3aaf4402-aa4f-43de-a9f6-5c459658f918"}, "message": "Locale unsupported. Supported
-        locales include en-AU, en-CA, en-GB, en-IN and en-US."}}'
+      string: '{"error": {"code": "InvalidArgument", "message": "Invalid argument.",
+        "innererror": {"code": "InvalidParameter", "message": "The parameter Locale
+        is invalid: The language code is invalid or not supported."}}}'
     headers:
       apim-request-id:
-      - 3aaf4402-aa4f-43de-a9f6-5c459658f918
-      content-length:
-      - '200'
+      - ca9d674b-544b-44c9-ab52-aa478b171d2d
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 10 May 2021 23:59:47 GMT
+      - Tue, 14 Sep 2021 09:14:37 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '490'
+      - '994'
     status:
       code: 400
       message: Bad Request

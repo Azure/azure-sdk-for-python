@@ -1,43 +1,43 @@
 interactions:
 - request:
-    body: '{"startTime": "2020-01-01T00:00:00.000Z", "endTime": "2020-10-21T00:00:00.000Z",
+    body: '{"startTime": "2021-01-01T00:00:00.000Z", "endTime": "2021-09-09T00:00:00.000Z",
       "series": [{"dimension_name": "Los Angeles", "category": "Homemade"}]}'
     headers:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       Content-Length:
-      - '141'
+      - '143'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b5 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/data/query
+    uri: https://ga-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/data/query
   response:
     body:
-      string: '{"value":[{"id":{"metricId":"metric_id","dimension":{"dimension_name":"Los
-        Angeles","category":"Homemade"}},"timestampList":[],"valueList":[]}]}'
+      string: '{"value":[{"id":{"metricId":"metric_id","dimension":{"category":"Homemade","dimension_name":"Los
+        Angeles"}},"timestampList":[],"valueList":[]}]}'
     headers:
       apim-request-id:
-      - a0646294-209d-4f7b-a110-9051d3503e85
+      - 2ef14b8f-62c7-4f96-80e5-ae121c44873e
       content-length:
-      - '161'
+      - '163'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 12 Jun 2021 00:01:46 GMT
+      - Wed, 29 Sep 2021 19:38:45 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '362'
+      - '348'
       x-request-id:
-      - a0646294-209d-4f7b-a110-9051d3503e85
+      - 2ef14b8f-62c7-4f96-80e5-ae121c44873e
     status:
       code: 200
       message: OK

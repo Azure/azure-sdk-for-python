@@ -13,6 +13,10 @@ create, manage, and deploy public and private SSL/TLS certificates
 
 [Source code][key_client_src] | [Package (PyPI)][pypi_package_keys] | [API reference documentation][reference_docs] | [Product documentation][keyvault_docs] | [Samples][key_samples]
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 ## Getting started
 ### Install packages
 Install [azure-keyvault-keys][pypi_package_keys] and
@@ -149,17 +153,18 @@ from the vault, update key metadata, and delete keys, as shown in the
 
 ## Examples
 This section contains code snippets covering common tasks:
-* [Create a Key](#create-a-key "Create a Key")
-* [Retrieve a Key](#retrieve-a-key "Retrieve a Key")
-* [Update an existing Key](#update-an-existing-key "Update an existing Key")
-* [Delete a Key](#delete-a-key "Delete a Key")
-* [List Keys](#list-keys "List Keys")
+* [Create a key](#create-a-key "Create a key")
+* [Retrieve a key](#retrieve-a-key "Retrieve a key")
+* [Update an existing key](#update-an-existing-key "Update an existing key")
+* [Delete a key](#delete-a-key "Delete a key")
+* [Configure automatic key rotation](#configure-automatic-key-rotation "Configure automatic key rotation")
+* [List keys](#list-keys "List keys")
 * [Perform cryptographic operations](#cryptographic-operations)
 * [Async API](#async-api "Async API")
-* [Asynchronously create a Key](#asynchronously-create-a-key "Asynchronously create a Key")
-* [Asynchronously list Keys](#asynchronously-list-keys "Asynchronously list Keys")
+* [Asynchronously create a key](#asynchronously-create-a-key "Asynchronously create a key")
+* [Asynchronously list keys](#asynchronously-list-keys "Asynchronously list keys")
 
-### Create a Key
+### Create a key
 [create_rsa_key](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient.create_rsa_key) and
 [create_ec_key](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient.create_ec_key)
 create RSA and elliptic curve keys in the vault, respectively. If a key with the same name already exists, a new version
@@ -184,7 +189,7 @@ print(ec_key.name)
 print(ec_key.key_type)
 ```
 
-### Retrieve a Key
+### Retrieve a key
 [get_key](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient.get_key) retrieves a key
 previously stored in the Vault.
 ```python
@@ -198,7 +203,7 @@ key = key_client.get_key("key-name")
 print(key.name)
 ```
 
-### Update an existing Key
+### Update an existing key
 [update_key_properties](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient.update_key_properties)
 updates the properties of a key previously stored in the Key Vault.
 ```python
@@ -216,7 +221,7 @@ print(updated_key.name)
 print(updated_key.properties.enabled)
 ```
 
-### Delete a Key
+### Delete a key
 [begin_delete_key](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient.begin_delete_key)
 requests Key Vault delete a key, returning a poller which allows you to wait for the deletion to finish. Waiting is
 helpful when the vault has [soft-delete][soft_delete] enabled, and you want to purge (permanently delete) the key as
@@ -234,6 +239,31 @@ deleted_key = key_client.begin_delete_key("key-name").result()
 print(deleted_key.name)
 print(deleted_key.deleted_date)
 ```
+
+### Configure automatic key rotation
+`update_key_rotation_policy` allows you to configure automatic key rotation for a key by specifying a rotation policy.
+In addition, `rotate_key` allows you to rotate a key on-demand by creating a new version of the given key.
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.keys import KeyClient, KeyRotationLifetimeAction, KeyRotationPolicyAction
+
+credential = DefaultAzureCredential()
+key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+
+# Set the key's automated rotation policy to rotate the key 30 days before expiry
+actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.ROTATE, time_before_expiry="P30D")]
+# You may also specify the duration after which the newly rotated key will expire
+# In this example, any new key versions will expire after 90 days
+updated_policy = key_client.update_key_rotation_policy("key-name", expires_in="P90D", lifetime_actions=actions)
+
+# You can get the current rotation policy for a key with get_key_rotation_policy
+current_policy = key_client.get_key_rotation_policy("key-name")
+
+# Finally, you can rotate a key on-demand by creating a new version of the key
+rotated_key = key_client.rotate_key("key-name")
+```
+
 ### List keys
 [list_properties_of_keys](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient.list_properties_of_keys)
 lists the properties of all of the keys in the client's vault.
@@ -306,7 +336,7 @@ async with client:
     ...
 ```
 
-### Asynchronously create a Key
+### Asynchronously create a key
 [create_rsa_key](https://aka.ms/azsdk/python/keyvault-keys/aio/docs#azure.keyvault.keys.aio.KeyClient.create_rsa_key) and
 [create_ec_key](https://aka.ms/azsdk/python/keyvault-keys/aio/docs#azure.keyvault.keys.aio.KeyClient.create_ec_key)
 create RSA and elliptic curve keys in the vault, respectively. If a key with the same name already exists, a new

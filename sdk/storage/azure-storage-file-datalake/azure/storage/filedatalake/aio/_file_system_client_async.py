@@ -18,6 +18,7 @@ from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.storage.blob.aio import ContainerClient
+from .._serialize import get_api_version
 from .._deserialize import process_storage_error, is_file_path
 from .._generated.models import ListBlobsIncludeItem
 
@@ -98,6 +99,10 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         self._datalake_client_for_blob_operation = AzureDataLakeStorageRESTAPI(self._container_client.url,
                                                                                file_system=file_system_name,
                                                                                pipeline=self._pipeline)
+        api_version = get_api_version(kwargs)
+        self._client._config.version = api_version  # pylint: disable=protected-access
+        self._datalake_client_for_blob_operation._config.version = api_version  # pylint: disable=protected-access
+
         self._loop = kwargs.get('loop', None)
 
     async def __aexit__(self, *args):
@@ -787,6 +792,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         )
         return DataLakeDirectoryClient(self.url, self.file_system_name, directory_name=directory_name,
                                        credential=self._raw_credential,
+                                       api_version=self.api_version,
                                        _configuration=self._config, _pipeline=_pipeline,
                                        _hosts=self._hosts,
                                        require_encryption=self.require_encryption,
@@ -828,6 +834,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         )
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
+            api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,

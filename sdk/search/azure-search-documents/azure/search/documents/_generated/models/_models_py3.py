@@ -19,9 +19,9 @@ class AnswerResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :keyword additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :paramtype additional_properties: dict[str, any]
+    :vartype additional_properties: dict[str, any]
     :ivar score: The score value represents how relevant the answer is to the the query relative to
      other answers returned for the query.
     :vartype score: float
@@ -55,6 +55,11 @@ class AnswerResult(msrest.serialization.Model):
         additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        """
         super(AnswerResult, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.score = None
@@ -90,6 +95,8 @@ class AutocompleteItem(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AutocompleteItem, self).__init__(**kwargs)
         self.text = None
         self.query_plus_text = None
@@ -98,36 +105,36 @@ class AutocompleteItem(msrest.serialization.Model):
 class AutocompleteOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :keyword autocomplete_mode: Specifies the mode for Autocomplete. The default is 'oneTerm'. Use
+    :ivar autocomplete_mode: Specifies the mode for Autocomplete. The default is 'oneTerm'. Use
      'twoTerms' to get shingles and 'oneTermWithContext' to use the current context while producing
      auto-completed terms. Possible values include: "oneTerm", "twoTerms", "oneTermWithContext".
-    :paramtype autocomplete_mode: str or ~azure.search.documents.models.AutocompleteMode
-    :keyword filter: An OData expression that filters the documents used to produce completed terms
+    :vartype autocomplete_mode: str or ~azure.search.documents.models.AutocompleteMode
+    :ivar filter: An OData expression that filters the documents used to produce completed terms
      for the Autocomplete result.
-    :paramtype filter: str
-    :keyword use_fuzzy_matching: A value indicating whether to use fuzzy matching for the
-     autocomplete query. Default is false. When set to true, the query will find terms even if
-     there's a substituted or missing character in the search text. While this provides a better
-     experience in some scenarios, it comes at a performance cost as fuzzy autocomplete queries are
-     slower and consume more resources.
-    :paramtype use_fuzzy_matching: bool
-    :keyword highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+    :vartype filter: str
+    :ivar use_fuzzy_matching: A value indicating whether to use fuzzy matching for the autocomplete
+     query. Default is false. When set to true, the query will find terms even if there's a
+     substituted or missing character in the search text. While this provides a better experience in
+     some scenarios, it comes at a performance cost as fuzzy autocomplete queries are slower and
+     consume more resources.
+    :vartype use_fuzzy_matching: bool
+    :ivar highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
      highlightPreTag. If omitted, hit highlighting is disabled.
-    :paramtype highlight_post_tag: str
-    :keyword highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+    :vartype highlight_post_tag: str
+    :ivar highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
      highlightPostTag. If omitted, hit highlighting is disabled.
-    :paramtype highlight_pre_tag: str
-    :keyword minimum_coverage: A number between 0 and 100 indicating the percentage of the index
-     that must be covered by an autocomplete query in order for the query to be reported as a
-     success. This parameter can be useful for ensuring search availability even for services with
-     only one replica. The default is 80.
-    :paramtype minimum_coverage: float
-    :keyword search_fields: The list of field names to consider when querying for auto-completed
+    :vartype highlight_pre_tag: str
+    :ivar minimum_coverage: A number between 0 and 100 indicating the percentage of the index that
+     must be covered by an autocomplete query in order for the query to be reported as a success.
+     This parameter can be useful for ensuring search availability even for services with only one
+     replica. The default is 80.
+    :vartype minimum_coverage: float
+    :ivar search_fields: The list of field names to consider when querying for auto-completed
      terms. Target fields must be included in the specified suggester.
-    :paramtype search_fields: list[str]
-    :keyword top: The number of auto-completed terms to retrieve. This must be a value between 1
-     and 100. The default is 5.
-    :paramtype top: int
+    :vartype search_fields: list[str]
+    :ivar top: The number of auto-completed terms to retrieve. This must be a value between 1 and
+     100. The default is 5.
+    :vartype top: int
     """
 
     _attribute_map = {
@@ -154,6 +161,38 @@ class AutocompleteOptions(msrest.serialization.Model):
         top: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword autocomplete_mode: Specifies the mode for Autocomplete. The default is 'oneTerm'. Use
+         'twoTerms' to get shingles and 'oneTermWithContext' to use the current context while producing
+         auto-completed terms. Possible values include: "oneTerm", "twoTerms", "oneTermWithContext".
+        :paramtype autocomplete_mode: str or ~azure.search.documents.models.AutocompleteMode
+        :keyword filter: An OData expression that filters the documents used to produce completed terms
+         for the Autocomplete result.
+        :paramtype filter: str
+        :keyword use_fuzzy_matching: A value indicating whether to use fuzzy matching for the
+         autocomplete query. Default is false. When set to true, the query will find terms even if
+         there's a substituted or missing character in the search text. While this provides a better
+         experience in some scenarios, it comes at a performance cost as fuzzy autocomplete queries are
+         slower and consume more resources.
+        :paramtype use_fuzzy_matching: bool
+        :keyword highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+         highlightPreTag. If omitted, hit highlighting is disabled.
+        :paramtype highlight_post_tag: str
+        :keyword highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+         highlightPostTag. If omitted, hit highlighting is disabled.
+        :paramtype highlight_pre_tag: str
+        :keyword minimum_coverage: A number between 0 and 100 indicating the percentage of the index
+         that must be covered by an autocomplete query in order for the query to be reported as a
+         success. This parameter can be useful for ensuring search availability even for services with
+         only one replica. The default is 80.
+        :paramtype minimum_coverage: float
+        :keyword search_fields: The list of field names to consider when querying for auto-completed
+         terms. Target fields must be included in the specified suggester.
+        :paramtype search_fields: list[str]
+        :keyword top: The number of auto-completed terms to retrieve. This must be a value between 1
+         and 100. The default is 5.
+        :paramtype top: int
+        """
         super(AutocompleteOptions, self).__init__(**kwargs)
         self.autocomplete_mode = autocomplete_mode
         self.filter = filter
@@ -170,41 +209,41 @@ class AutocompleteRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword search_text: Required. The search text on which to base autocomplete results.
-    :paramtype search_text: str
-    :keyword autocomplete_mode: Specifies the mode for Autocomplete. The default is 'oneTerm'. Use
+    :ivar search_text: Required. The search text on which to base autocomplete results.
+    :vartype search_text: str
+    :ivar autocomplete_mode: Specifies the mode for Autocomplete. The default is 'oneTerm'. Use
      'twoTerms' to get shingles and 'oneTermWithContext' to use the current context while producing
      auto-completed terms. Possible values include: "oneTerm", "twoTerms", "oneTermWithContext".
-    :paramtype autocomplete_mode: str or ~azure.search.documents.models.AutocompleteMode
-    :keyword filter: An OData expression that filters the documents used to produce completed terms
+    :vartype autocomplete_mode: str or ~azure.search.documents.models.AutocompleteMode
+    :ivar filter: An OData expression that filters the documents used to produce completed terms
      for the Autocomplete result.
-    :paramtype filter: str
-    :keyword use_fuzzy_matching: A value indicating whether to use fuzzy matching for the
-     autocomplete query. Default is false. When set to true, the query will autocomplete terms even
-     if there's a substituted or missing character in the search text. While this provides a better
-     experience in some scenarios, it comes at a performance cost as fuzzy autocomplete queries are
-     slower and consume more resources.
-    :paramtype use_fuzzy_matching: bool
-    :keyword highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+    :vartype filter: str
+    :ivar use_fuzzy_matching: A value indicating whether to use fuzzy matching for the autocomplete
+     query. Default is false. When set to true, the query will autocomplete terms even if there's a
+     substituted or missing character in the search text. While this provides a better experience in
+     some scenarios, it comes at a performance cost as fuzzy autocomplete queries are slower and
+     consume more resources.
+    :vartype use_fuzzy_matching: bool
+    :ivar highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
      highlightPreTag. If omitted, hit highlighting is disabled.
-    :paramtype highlight_post_tag: str
-    :keyword highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+    :vartype highlight_post_tag: str
+    :ivar highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
      highlightPostTag. If omitted, hit highlighting is disabled.
-    :paramtype highlight_pre_tag: str
-    :keyword minimum_coverage: A number between 0 and 100 indicating the percentage of the index
-     that must be covered by an autocomplete query in order for the query to be reported as a
-     success. This parameter can be useful for ensuring search availability even for services with
-     only one replica. The default is 80.
-    :paramtype minimum_coverage: float
-    :keyword search_fields: The comma-separated list of field names to consider when querying for
+    :vartype highlight_pre_tag: str
+    :ivar minimum_coverage: A number between 0 and 100 indicating the percentage of the index that
+     must be covered by an autocomplete query in order for the query to be reported as a success.
+     This parameter can be useful for ensuring search availability even for services with only one
+     replica. The default is 80.
+    :vartype minimum_coverage: float
+    :ivar search_fields: The comma-separated list of field names to consider when querying for
      auto-completed terms. Target fields must be included in the specified suggester.
-    :paramtype search_fields: str
-    :keyword suggester_name: Required. The name of the suggester as specified in the suggesters
+    :vartype search_fields: str
+    :ivar suggester_name: Required. The name of the suggester as specified in the suggesters
      collection that's part of the index definition.
-    :paramtype suggester_name: str
-    :keyword top: The number of auto-completed terms to retrieve. This must be a value between 1
-     and 100. The default is 5.
-    :paramtype top: int
+    :vartype suggester_name: str
+    :ivar top: The number of auto-completed terms to retrieve. This must be a value between 1 and
+     100. The default is 5.
+    :vartype top: int
     """
 
     _validation = {
@@ -240,6 +279,43 @@ class AutocompleteRequest(msrest.serialization.Model):
         top: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword search_text: Required. The search text on which to base autocomplete results.
+        :paramtype search_text: str
+        :keyword autocomplete_mode: Specifies the mode for Autocomplete. The default is 'oneTerm'. Use
+         'twoTerms' to get shingles and 'oneTermWithContext' to use the current context while producing
+         auto-completed terms. Possible values include: "oneTerm", "twoTerms", "oneTermWithContext".
+        :paramtype autocomplete_mode: str or ~azure.search.documents.models.AutocompleteMode
+        :keyword filter: An OData expression that filters the documents used to produce completed terms
+         for the Autocomplete result.
+        :paramtype filter: str
+        :keyword use_fuzzy_matching: A value indicating whether to use fuzzy matching for the
+         autocomplete query. Default is false. When set to true, the query will autocomplete terms even
+         if there's a substituted or missing character in the search text. While this provides a better
+         experience in some scenarios, it comes at a performance cost as fuzzy autocomplete queries are
+         slower and consume more resources.
+        :paramtype use_fuzzy_matching: bool
+        :keyword highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+         highlightPreTag. If omitted, hit highlighting is disabled.
+        :paramtype highlight_post_tag: str
+        :keyword highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+         highlightPostTag. If omitted, hit highlighting is disabled.
+        :paramtype highlight_pre_tag: str
+        :keyword minimum_coverage: A number between 0 and 100 indicating the percentage of the index
+         that must be covered by an autocomplete query in order for the query to be reported as a
+         success. This parameter can be useful for ensuring search availability even for services with
+         only one replica. The default is 80.
+        :paramtype minimum_coverage: float
+        :keyword search_fields: The comma-separated list of field names to consider when querying for
+         auto-completed terms. Target fields must be included in the specified suggester.
+        :paramtype search_fields: str
+        :keyword suggester_name: Required. The name of the suggester as specified in the suggesters
+         collection that's part of the index definition.
+        :paramtype suggester_name: str
+        :keyword top: The number of auto-completed terms to retrieve. This must be a value between 1
+         and 100. The default is 5.
+        :paramtype top: int
+        """
         super(AutocompleteRequest, self).__init__(**kwargs)
         self.search_text = search_text
         self.autocomplete_mode = autocomplete_mode
@@ -281,6 +357,8 @@ class AutocompleteResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AutocompleteResult, self).__init__(**kwargs)
         self.coverage = None
         self.results = None
@@ -291,9 +369,9 @@ class CaptionResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :keyword additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :paramtype additional_properties: dict[str, any]
+    :vartype additional_properties: dict[str, any]
     :ivar text: A representative text passage extracted from the document most relevant to the
      search query.
     :vartype text: str
@@ -319,6 +397,11 @@ class CaptionResult(msrest.serialization.Model):
         additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        """
         super(CaptionResult, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.text = None
@@ -330,9 +413,9 @@ class FacetResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :keyword additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :paramtype additional_properties: dict[str, any]
+    :vartype additional_properties: dict[str, any]
     :ivar count: The approximate count of documents falling within the bucket described by this
      facet.
     :vartype count: long
@@ -353,6 +436,11 @@ class FacetResult(msrest.serialization.Model):
         additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        """
         super(FacetResult, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.count = None
@@ -361,12 +449,12 @@ class FacetResult(msrest.serialization.Model):
 class IndexAction(msrest.serialization.Model):
     """Represents an index action that operates on a document.
 
-    :keyword additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :paramtype additional_properties: dict[str, any]
-    :keyword action_type: The operation to perform on a document in an indexing batch. Possible
-     values include: "upload", "merge", "mergeOrUpload", "delete".
-    :paramtype action_type: str or ~azure.search.documents.models.IndexActionType
+    :vartype additional_properties: dict[str, any]
+    :ivar action_type: The operation to perform on a document in an indexing batch. Possible values
+     include: "upload", "merge", "mergeOrUpload", "delete".
+    :vartype action_type: str or ~azure.search.documents.models.IndexActionType
     """
 
     _attribute_map = {
@@ -381,6 +469,14 @@ class IndexAction(msrest.serialization.Model):
         action_type: Optional[Union[str, "IndexActionType"]] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword action_type: The operation to perform on a document in an indexing batch. Possible
+         values include: "upload", "merge", "mergeOrUpload", "delete".
+        :paramtype action_type: str or ~azure.search.documents.models.IndexActionType
+        """
         super(IndexAction, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.action_type = action_type
@@ -391,8 +487,8 @@ class IndexBatch(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword actions: Required. The actions in the batch.
-    :paramtype actions: list[~azure.search.documents.models.IndexAction]
+    :ivar actions: Required. The actions in the batch.
+    :vartype actions: list[~azure.search.documents.models.IndexAction]
     """
 
     _validation = {
@@ -409,6 +505,10 @@ class IndexBatch(msrest.serialization.Model):
         actions: List["IndexAction"],
         **kwargs
     ):
+        """
+        :keyword actions: Required. The actions in the batch.
+        :paramtype actions: list[~azure.search.documents.models.IndexAction]
+        """
         super(IndexBatch, self).__init__(**kwargs)
         self.actions = actions
 
@@ -437,6 +537,8 @@ class IndexDocumentsResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(IndexDocumentsResult, self).__init__(**kwargs)
         self.results = None
 
@@ -481,6 +583,8 @@ class IndexingResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(IndexingResult, self).__init__(**kwargs)
         self.key = None
         self.error_message = None
@@ -491,8 +595,8 @@ class IndexingResult(msrest.serialization.Model):
 class RequestOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :keyword x_ms_client_request_id: The tracking ID sent with the request to help with debugging.
-    :paramtype x_ms_client_request_id: str
+    :ivar x_ms_client_request_id: The tracking ID sent with the request to help with debugging.
+    :vartype x_ms_client_request_id: str
     """
 
     _attribute_map = {
@@ -505,6 +609,10 @@ class RequestOptions(msrest.serialization.Model):
         x_ms_client_request_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword x_ms_client_request_id: The tracking ID sent with the request to help with debugging.
+        :paramtype x_ms_client_request_id: str
+        """
         super(RequestOptions, self).__init__(**kwargs)
         self.x_ms_client_request_id = x_ms_client_request_id
 
@@ -568,6 +676,8 @@ class SearchDocumentsResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SearchDocumentsResult, self).__init__(**kwargs)
         self.count = None
         self.coverage = None
@@ -609,6 +719,8 @@ class SearchError(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SearchError, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -618,98 +730,97 @@ class SearchError(msrest.serialization.Model):
 class SearchOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :keyword include_total_result_count: A value that specifies whether to fetch the total count of
+    :ivar include_total_result_count: A value that specifies whether to fetch the total count of
      results. Default is false. Setting this value to true may have a performance impact. Note that
      the count returned is an approximation.
-    :paramtype include_total_result_count: bool
-    :keyword facets: The list of facet expressions to apply to the search query. Each facet
-     expression contains a field name, optionally followed by a comma-separated list of name:value
-     pairs.
-    :paramtype facets: list[str]
-    :keyword filter: The OData $filter expression to apply to the search query.
-    :paramtype filter: str
-    :keyword highlight_fields: The list of field names to use for hit highlights. Only searchable
+    :vartype include_total_result_count: bool
+    :ivar facets: The list of facet expressions to apply to the search query. Each facet expression
+     contains a field name, optionally followed by a comma-separated list of name:value pairs.
+    :vartype facets: list[str]
+    :ivar filter: The OData $filter expression to apply to the search query.
+    :vartype filter: str
+    :ivar highlight_fields: The list of field names to use for hit highlights. Only searchable
      fields can be used for hit highlighting.
-    :paramtype highlight_fields: list[str]
-    :keyword highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+    :vartype highlight_fields: list[str]
+    :ivar highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
      highlightPreTag. Default is &lt;/em&gt;.
-    :paramtype highlight_post_tag: str
-    :keyword highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+    :vartype highlight_post_tag: str
+    :ivar highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
      highlightPostTag. Default is &lt;em&gt;.
-    :paramtype highlight_pre_tag: str
-    :keyword minimum_coverage: A number between 0 and 100 indicating the percentage of the index
-     that must be covered by a search query in order for the query to be reported as a success. This
+    :vartype highlight_pre_tag: str
+    :ivar minimum_coverage: A number between 0 and 100 indicating the percentage of the index that
+     must be covered by a search query in order for the query to be reported as a success. This
      parameter can be useful for ensuring search availability even for services with only one
      replica. The default is 100.
-    :paramtype minimum_coverage: float
-    :keyword order_by: The list of OData $orderby expressions by which to sort the results. Each
+    :vartype minimum_coverage: float
+    :ivar order_by: The list of OData $orderby expressions by which to sort the results. Each
      expression can be either a field name or a call to either the geo.distance() or the
      search.score() functions. Each expression can be followed by asc to indicate ascending, and
      desc to indicate descending. The default is ascending order. Ties will be broken by the match
      scores of documents. If no OrderBy is specified, the default sort order is descending by
      document match score. There can be at most 32 $orderby clauses.
-    :paramtype order_by: list[str]
-    :keyword query_type: A value that specifies the syntax of the search query. The default is
+    :vartype order_by: list[str]
+    :ivar query_type: A value that specifies the syntax of the search query. The default is
      'simple'. Use 'full' if your query uses the Lucene query syntax. Possible values include:
      "simple", "full", "semantic".
-    :paramtype query_type: str or ~azure.search.documents.models.QueryType
-    :keyword scoring_parameters: The list of parameter values to be used in scoring functions (for
+    :vartype query_type: str or ~azure.search.documents.models.QueryType
+    :ivar scoring_parameters: The list of parameter values to be used in scoring functions (for
      example, referencePointParameter) using the format name-values. For example, if the scoring
      profile defines a function with a parameter called 'mylocation' the parameter string would be
      "mylocation--122.2,44.8" (without the quotes).
-    :paramtype scoring_parameters: list[str]
-    :keyword scoring_profile: The name of a scoring profile to evaluate match scores for matching
+    :vartype scoring_parameters: list[str]
+    :ivar scoring_profile: The name of a scoring profile to evaluate match scores for matching
      documents in order to sort the results.
-    :paramtype scoring_profile: str
-    :keyword search_fields: The list of field names to which to scope the full-text search. When
-     using fielded search (fieldName:searchExpression) in a full Lucene query, the field names of
-     each fielded search expression take precedence over any field names listed in this parameter.
-    :paramtype search_fields: list[str]
-    :keyword query_language: The language of the query. Possible values include: "none", "en-us".
-    :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
-    :keyword speller: Improve search recall by spell-correcting individual search query terms.
+    :vartype scoring_profile: str
+    :ivar search_fields: The list of field names to which to scope the full-text search. When using
+     fielded search (fieldName:searchExpression) in a full Lucene query, the field names of each
+     fielded search expression take precedence over any field names listed in this parameter.
+    :vartype search_fields: list[str]
+    :ivar query_language: The language of the query. Possible values include: "none", "en-us".
+    :vartype query_language: str or ~azure.search.documents.models.QueryLanguage
+    :ivar speller: Improve search recall by spell-correcting individual search query terms.
      Possible values include: "none", "lexicon".
-    :paramtype speller: str or ~azure.search.documents.models.Speller
-    :keyword answers: This parameter is only valid if the query type is 'semantic'. If set, the
-     query returns answers extracted from key passages in the highest ranked documents. The number
-     of answers returned can be configured by appending the pipe character '|' followed by the
+    :vartype speller: str or ~azure.search.documents.models.Speller
+    :ivar answers: This parameter is only valid if the query type is 'semantic'. If set, the query
+     returns answers extracted from key passages in the highest ranked documents. The number of
+     answers returned can be configured by appending the pipe character '|' followed by the
      'count-:code:`<number of answers>`' option after the answers parameter value, such as
      'extractive|count-3'. Default count is 1. Possible values include: "none", "extractive".
-    :paramtype answers: str or ~azure.search.documents.models.Answers
-    :keyword search_mode: A value that specifies whether any or all of the search terms must be
+    :vartype answers: str or ~azure.search.documents.models.Answers
+    :ivar search_mode: A value that specifies whether any or all of the search terms must be
      matched in order to count the document as a match. Possible values include: "any", "all".
-    :paramtype search_mode: str or ~azure.search.documents.models.SearchMode
-    :keyword scoring_statistics: A value that specifies whether we want to calculate scoring
+    :vartype search_mode: str or ~azure.search.documents.models.SearchMode
+    :ivar scoring_statistics: A value that specifies whether we want to calculate scoring
      statistics (such as document frequency) globally for more consistent scoring, or locally, for
      lower latency. Possible values include: "local", "global".
-    :paramtype scoring_statistics: str or ~azure.search.documents.models.ScoringStatistics
-    :keyword session_id: A value to be used to create a sticky session, which can help to get more
+    :vartype scoring_statistics: str or ~azure.search.documents.models.ScoringStatistics
+    :ivar session_id: A value to be used to create a sticky session, which can help to get more
      consistent results. As long as the same sessionId is used, a best-effort attempt will be made
      to target the same replica set. Be wary that reusing the same sessionID values repeatedly can
      interfere with the load balancing of the requests across replicas and adversely affect the
      performance of the search service. The value used as sessionId cannot start with a '_'
      character.
-    :paramtype session_id: str
-    :keyword select: The list of fields to retrieve. If unspecified, all fields marked as
-     retrievable in the schema are included.
-    :paramtype select: list[str]
-    :keyword skip: The number of search results to skip. This value cannot be greater than 100,000.
-     If you need to scan documents in sequence, but cannot use $skip due to this limitation,
-     consider using $orderby on a totally-ordered key and $filter with a range query instead.
-    :paramtype skip: int
-    :keyword top: The number of search results to retrieve. This can be used in conjunction with
-     $skip to implement client-side paging of search results. If results are truncated due to
-     server-side paging, the response will include a continuation token that can be used to issue
-     another Search request for the next page of results.
-    :paramtype top: int
-    :keyword captions: This parameter is only valid if the query type is 'semantic'. If set, the
-     query returns captions extracted from key passages in the highest ranked documents. When
-     Captions is set to 'extractive', highlighting is enabled by default, and can be configured by
-     appending the pipe character '|' followed by the 'highlight-<true/false>' option, such as
+    :vartype session_id: str
+    :ivar select: The list of fields to retrieve. If unspecified, all fields marked as retrievable
+     in the schema are included.
+    :vartype select: list[str]
+    :ivar skip: The number of search results to skip. This value cannot be greater than 100,000. If
+     you need to scan documents in sequence, but cannot use $skip due to this limitation, consider
+     using $orderby on a totally-ordered key and $filter with a range query instead.
+    :vartype skip: int
+    :ivar top: The number of search results to retrieve. This can be used in conjunction with $skip
+     to implement client-side paging of search results. If results are truncated due to server-side
+     paging, the response will include a continuation token that can be used to issue another Search
+     request for the next page of results.
+    :vartype top: int
+    :ivar captions: This parameter is only valid if the query type is 'semantic'. If set, the query
+     returns captions extracted from key passages in the highest ranked documents. When Captions is
+     set to 'extractive', highlighting is enabled by default, and can be configured by appending the
+     pipe character '|' followed by the 'highlight-<true/false>' option, such as
      'extractive|highlight-true'. Defaults to 'None'. Possible values include: "none", "extractive".
-    :paramtype captions: str or ~azure.search.documents.models.Captions
-    :keyword semantic_fields: The list of field names used for semantic search.
-    :paramtype semantic_fields: list[str]
+    :vartype captions: str or ~azure.search.documents.models.Captions
+    :ivar semantic_fields: The list of field names used for semantic search.
+    :vartype semantic_fields: list[str]
     """
 
     _attribute_map = {
@@ -766,6 +877,100 @@ class SearchOptions(msrest.serialization.Model):
         semantic_fields: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword include_total_result_count: A value that specifies whether to fetch the total count of
+         results. Default is false. Setting this value to true may have a performance impact. Note that
+         the count returned is an approximation.
+        :paramtype include_total_result_count: bool
+        :keyword facets: The list of facet expressions to apply to the search query. Each facet
+         expression contains a field name, optionally followed by a comma-separated list of name:value
+         pairs.
+        :paramtype facets: list[str]
+        :keyword filter: The OData $filter expression to apply to the search query.
+        :paramtype filter: str
+        :keyword highlight_fields: The list of field names to use for hit highlights. Only searchable
+         fields can be used for hit highlighting.
+        :paramtype highlight_fields: list[str]
+        :keyword highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+         highlightPreTag. Default is &lt;/em&gt;.
+        :paramtype highlight_post_tag: str
+        :keyword highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+         highlightPostTag. Default is &lt;em&gt;.
+        :paramtype highlight_pre_tag: str
+        :keyword minimum_coverage: A number between 0 and 100 indicating the percentage of the index
+         that must be covered by a search query in order for the query to be reported as a success. This
+         parameter can be useful for ensuring search availability even for services with only one
+         replica. The default is 100.
+        :paramtype minimum_coverage: float
+        :keyword order_by: The list of OData $orderby expressions by which to sort the results. Each
+         expression can be either a field name or a call to either the geo.distance() or the
+         search.score() functions. Each expression can be followed by asc to indicate ascending, and
+         desc to indicate descending. The default is ascending order. Ties will be broken by the match
+         scores of documents. If no OrderBy is specified, the default sort order is descending by
+         document match score. There can be at most 32 $orderby clauses.
+        :paramtype order_by: list[str]
+        :keyword query_type: A value that specifies the syntax of the search query. The default is
+         'simple'. Use 'full' if your query uses the Lucene query syntax. Possible values include:
+         "simple", "full", "semantic".
+        :paramtype query_type: str or ~azure.search.documents.models.QueryType
+        :keyword scoring_parameters: The list of parameter values to be used in scoring functions (for
+         example, referencePointParameter) using the format name-values. For example, if the scoring
+         profile defines a function with a parameter called 'mylocation' the parameter string would be
+         "mylocation--122.2,44.8" (without the quotes).
+        :paramtype scoring_parameters: list[str]
+        :keyword scoring_profile: The name of a scoring profile to evaluate match scores for matching
+         documents in order to sort the results.
+        :paramtype scoring_profile: str
+        :keyword search_fields: The list of field names to which to scope the full-text search. When
+         using fielded search (fieldName:searchExpression) in a full Lucene query, the field names of
+         each fielded search expression take precedence over any field names listed in this parameter.
+        :paramtype search_fields: list[str]
+        :keyword query_language: The language of the query. Possible values include: "none", "en-us".
+        :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
+        :keyword speller: Improve search recall by spell-correcting individual search query terms.
+         Possible values include: "none", "lexicon".
+        :paramtype speller: str or ~azure.search.documents.models.Speller
+        :keyword answers: This parameter is only valid if the query type is 'semantic'. If set, the
+         query returns answers extracted from key passages in the highest ranked documents. The number
+         of answers returned can be configured by appending the pipe character '|' followed by the
+         'count-:code:`<number of answers>`' option after the answers parameter value, such as
+         'extractive|count-3'. Default count is 1. Possible values include: "none", "extractive".
+        :paramtype answers: str or ~azure.search.documents.models.Answers
+        :keyword search_mode: A value that specifies whether any or all of the search terms must be
+         matched in order to count the document as a match. Possible values include: "any", "all".
+        :paramtype search_mode: str or ~azure.search.documents.models.SearchMode
+        :keyword scoring_statistics: A value that specifies whether we want to calculate scoring
+         statistics (such as document frequency) globally for more consistent scoring, or locally, for
+         lower latency. Possible values include: "local", "global".
+        :paramtype scoring_statistics: str or ~azure.search.documents.models.ScoringStatistics
+        :keyword session_id: A value to be used to create a sticky session, which can help to get more
+         consistent results. As long as the same sessionId is used, a best-effort attempt will be made
+         to target the same replica set. Be wary that reusing the same sessionID values repeatedly can
+         interfere with the load balancing of the requests across replicas and adversely affect the
+         performance of the search service. The value used as sessionId cannot start with a '_'
+         character.
+        :paramtype session_id: str
+        :keyword select: The list of fields to retrieve. If unspecified, all fields marked as
+         retrievable in the schema are included.
+        :paramtype select: list[str]
+        :keyword skip: The number of search results to skip. This value cannot be greater than 100,000.
+         If you need to scan documents in sequence, but cannot use $skip due to this limitation,
+         consider using $orderby on a totally-ordered key and $filter with a range query instead.
+        :paramtype skip: int
+        :keyword top: The number of search results to retrieve. This can be used in conjunction with
+         $skip to implement client-side paging of search results. If results are truncated due to
+         server-side paging, the response will include a continuation token that can be used to issue
+         another Search request for the next page of results.
+        :paramtype top: int
+        :keyword captions: This parameter is only valid if the query type is 'semantic'. If set, the
+         query returns captions extracted from key passages in the highest ranked documents. When
+         Captions is set to 'extractive', highlighting is enabled by default, and can be configured by
+         appending the pipe character '|' followed by the 'highlight-<true/false>' option, such as
+         'extractive|highlight-true'. Defaults to 'None'. Possible values include: "none", "extractive".
+        :paramtype captions: str or ~azure.search.documents.models.Captions
+        :keyword semantic_fields: The list of field names used for semantic search.
+        :paramtype semantic_fields: list[str]
+        """
         super(SearchOptions, self).__init__(**kwargs)
         self.include_total_result_count = include_total_result_count
         self.facets = facets
@@ -795,99 +1000,98 @@ class SearchOptions(msrest.serialization.Model):
 class SearchRequest(msrest.serialization.Model):
     """Parameters for filtering, sorting, faceting, paging, and other search query behaviors.
 
-    :keyword include_total_result_count: A value that specifies whether to fetch the total count of
+    :ivar include_total_result_count: A value that specifies whether to fetch the total count of
      results. Default is false. Setting this value to true may have a performance impact. Note that
      the count returned is an approximation.
-    :paramtype include_total_result_count: bool
-    :keyword facets: The list of facet expressions to apply to the search query. Each facet
-     expression contains a field name, optionally followed by a comma-separated list of name:value
-     pairs.
-    :paramtype facets: list[str]
-    :keyword filter: The OData $filter expression to apply to the search query.
-    :paramtype filter: str
-    :keyword highlight_fields: The comma-separated list of field names to use for hit highlights.
-     Only searchable fields can be used for hit highlighting.
-    :paramtype highlight_fields: str
-    :keyword highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+    :vartype include_total_result_count: bool
+    :ivar facets: The list of facet expressions to apply to the search query. Each facet expression
+     contains a field name, optionally followed by a comma-separated list of name:value pairs.
+    :vartype facets: list[str]
+    :ivar filter: The OData $filter expression to apply to the search query.
+    :vartype filter: str
+    :ivar highlight_fields: The comma-separated list of field names to use for hit highlights. Only
+     searchable fields can be used for hit highlighting.
+    :vartype highlight_fields: str
+    :ivar highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
      highlightPreTag. Default is &lt;/em&gt;.
-    :paramtype highlight_post_tag: str
-    :keyword highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+    :vartype highlight_post_tag: str
+    :ivar highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
      highlightPostTag. Default is &lt;em&gt;.
-    :paramtype highlight_pre_tag: str
-    :keyword minimum_coverage: A number between 0 and 100 indicating the percentage of the index
-     that must be covered by a search query in order for the query to be reported as a success. This
+    :vartype highlight_pre_tag: str
+    :ivar minimum_coverage: A number between 0 and 100 indicating the percentage of the index that
+     must be covered by a search query in order for the query to be reported as a success. This
      parameter can be useful for ensuring search availability even for services with only one
      replica. The default is 100.
-    :paramtype minimum_coverage: float
-    :keyword order_by: The comma-separated list of OData $orderby expressions by which to sort the
+    :vartype minimum_coverage: float
+    :ivar order_by: The comma-separated list of OData $orderby expressions by which to sort the
      results. Each expression can be either a field name or a call to either the geo.distance() or
      the search.score() functions. Each expression can be followed by asc to indicate ascending, or
      desc to indicate descending. The default is ascending order. Ties will be broken by the match
      scores of documents. If no $orderby is specified, the default sort order is descending by
      document match score. There can be at most 32 $orderby clauses.
-    :paramtype order_by: str
-    :keyword query_type: A value that specifies the syntax of the search query. The default is
+    :vartype order_by: str
+    :ivar query_type: A value that specifies the syntax of the search query. The default is
      'simple'. Use 'full' if your query uses the Lucene query syntax. Possible values include:
      "simple", "full", "semantic".
-    :paramtype query_type: str or ~azure.search.documents.models.QueryType
-    :keyword scoring_statistics: A value that specifies whether we want to calculate scoring
+    :vartype query_type: str or ~azure.search.documents.models.QueryType
+    :ivar scoring_statistics: A value that specifies whether we want to calculate scoring
      statistics (such as document frequency) globally for more consistent scoring, or locally, for
      lower latency. The default is 'local'. Use 'global' to aggregate scoring statistics globally
      before scoring. Using global scoring statistics can increase latency of search queries.
      Possible values include: "local", "global".
-    :paramtype scoring_statistics: str or ~azure.search.documents.models.ScoringStatistics
-    :keyword session_id: A value to be used to create a sticky session, which can help getting more
+    :vartype scoring_statistics: str or ~azure.search.documents.models.ScoringStatistics
+    :ivar session_id: A value to be used to create a sticky session, which can help getting more
      consistent results. As long as the same sessionId is used, a best-effort attempt will be made
      to target the same replica set. Be wary that reusing the same sessionID values repeatedly can
      interfere with the load balancing of the requests across replicas and adversely affect the
      performance of the search service. The value used as sessionId cannot start with a '_'
      character.
-    :paramtype session_id: str
-    :keyword scoring_parameters: The list of parameter values to be used in scoring functions (for
+    :vartype session_id: str
+    :ivar scoring_parameters: The list of parameter values to be used in scoring functions (for
      example, referencePointParameter) using the format name-values. For example, if the scoring
      profile defines a function with a parameter called 'mylocation' the parameter string would be
      "mylocation--122.2,44.8" (without the quotes).
-    :paramtype scoring_parameters: list[str]
-    :keyword scoring_profile: The name of a scoring profile to evaluate match scores for matching
+    :vartype scoring_parameters: list[str]
+    :ivar scoring_profile: The name of a scoring profile to evaluate match scores for matching
      documents in order to sort the results.
-    :paramtype scoring_profile: str
-    :keyword search_text: A full-text search query expression; Use "*" or omit this parameter to
-     match all documents.
-    :paramtype search_text: str
-    :keyword search_fields: The comma-separated list of field names to which to scope the full-text
+    :vartype scoring_profile: str
+    :ivar search_text: A full-text search query expression; Use "*" or omit this parameter to match
+     all documents.
+    :vartype search_text: str
+    :ivar search_fields: The comma-separated list of field names to which to scope the full-text
      search. When using fielded search (fieldName:searchExpression) in a full Lucene query, the
      field names of each fielded search expression take precedence over any field names listed in
      this parameter.
-    :paramtype search_fields: str
-    :keyword search_mode: A value that specifies whether any or all of the search terms must be
+    :vartype search_fields: str
+    :ivar search_mode: A value that specifies whether any or all of the search terms must be
      matched in order to count the document as a match. Possible values include: "any", "all".
-    :paramtype search_mode: str or ~azure.search.documents.models.SearchMode
-    :keyword query_language: A value that specifies the language of the search query. Possible
-     values include: "none", "en-us".
-    :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
-    :keyword speller: A value that specified the type of the speller to use to spell-correct
+    :vartype search_mode: str or ~azure.search.documents.models.SearchMode
+    :ivar query_language: A value that specifies the language of the search query. Possible values
+     include: "none", "en-us".
+    :vartype query_language: str or ~azure.search.documents.models.QueryLanguage
+    :ivar speller: A value that specified the type of the speller to use to spell-correct
      individual search query terms. Possible values include: "none", "lexicon".
-    :paramtype speller: str or ~azure.search.documents.models.Speller
-    :keyword answers: A value that specifies whether answers should be returned as part of the
-     search response. Possible values include: "none", "extractive".
-    :paramtype answers: str or ~azure.search.documents.models.Answers
-    :keyword select: The comma-separated list of fields to retrieve. If unspecified, all fields
-     marked as retrievable in the schema are included.
-    :paramtype select: str
-    :keyword skip: The number of search results to skip. This value cannot be greater than 100,000.
-     If you need to scan documents in sequence, but cannot use skip due to this limitation, consider
+    :vartype speller: str or ~azure.search.documents.models.QuerySpellerType
+    :ivar answers: A value that specifies whether answers should be returned as part of the search
+     response. Possible values include: "none", "extractive".
+    :vartype answers: str or ~azure.search.documents.models.QueryAnswerType
+    :ivar select: The comma-separated list of fields to retrieve. If unspecified, all fields marked
+     as retrievable in the schema are included.
+    :vartype select: str
+    :ivar skip: The number of search results to skip. This value cannot be greater than 100,000. If
+     you need to scan documents in sequence, but cannot use skip due to this limitation, consider
      using orderby on a totally-ordered key and filter with a range query instead.
-    :paramtype skip: int
-    :keyword top: The number of search results to retrieve. This can be used in conjunction with
-     $skip to implement client-side paging of search results. If results are truncated due to
-     server-side paging, the response will include a continuation token that can be used to issue
-     another Search request for the next page of results.
-    :paramtype top: int
-    :keyword captions: A value that specifies whether captions should be returned as part of the
+    :vartype skip: int
+    :ivar top: The number of search results to retrieve. This can be used in conjunction with $skip
+     to implement client-side paging of search results. If results are truncated due to server-side
+     paging, the response will include a continuation token that can be used to issue another Search
+     request for the next page of results.
+    :vartype top: int
+    :ivar captions: A value that specifies whether captions should be returned as part of the
      search response. Possible values include: "none", "extractive".
-    :paramtype captions: str or ~azure.search.documents.models.Captions
-    :keyword semantic_fields: The comma-separated list of field names used for semantic search.
-    :paramtype semantic_fields: str
+    :vartype captions: str or ~azure.search.documents.models.QueryCaptionType
+    :ivar semantic_fields: The comma-separated list of field names used for semantic search.
+    :vartype semantic_fields: str
     """
 
     _attribute_map = {
@@ -937,15 +1141,110 @@ class SearchRequest(msrest.serialization.Model):
         search_fields: Optional[str] = None,
         search_mode: Optional[Union[str, "SearchMode"]] = None,
         query_language: Optional[Union[str, "QueryLanguage"]] = None,
-        speller: Optional[Union[str, "Speller"]] = None,
-        answers: Optional[Union[str, "Answers"]] = None,
+        speller: Optional[Union[str, "QuerySpellerType"]] = None,
+        answers: Optional[Union[str, "QueryAnswerType"]] = None,
         select: Optional[str] = None,
         skip: Optional[int] = None,
         top: Optional[int] = None,
-        captions: Optional[Union[str, "Captions"]] = None,
+        captions: Optional[Union[str, "QueryCaptionType"]] = None,
         semantic_fields: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword include_total_result_count: A value that specifies whether to fetch the total count of
+         results. Default is false. Setting this value to true may have a performance impact. Note that
+         the count returned is an approximation.
+        :paramtype include_total_result_count: bool
+        :keyword facets: The list of facet expressions to apply to the search query. Each facet
+         expression contains a field name, optionally followed by a comma-separated list of name:value
+         pairs.
+        :paramtype facets: list[str]
+        :keyword filter: The OData $filter expression to apply to the search query.
+        :paramtype filter: str
+        :keyword highlight_fields: The comma-separated list of field names to use for hit highlights.
+         Only searchable fields can be used for hit highlighting.
+        :paramtype highlight_fields: str
+        :keyword highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+         highlightPreTag. Default is &lt;/em&gt;.
+        :paramtype highlight_post_tag: str
+        :keyword highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+         highlightPostTag. Default is &lt;em&gt;.
+        :paramtype highlight_pre_tag: str
+        :keyword minimum_coverage: A number between 0 and 100 indicating the percentage of the index
+         that must be covered by a search query in order for the query to be reported as a success. This
+         parameter can be useful for ensuring search availability even for services with only one
+         replica. The default is 100.
+        :paramtype minimum_coverage: float
+        :keyword order_by: The comma-separated list of OData $orderby expressions by which to sort the
+         results. Each expression can be either a field name or a call to either the geo.distance() or
+         the search.score() functions. Each expression can be followed by asc to indicate ascending, or
+         desc to indicate descending. The default is ascending order. Ties will be broken by the match
+         scores of documents. If no $orderby is specified, the default sort order is descending by
+         document match score. There can be at most 32 $orderby clauses.
+        :paramtype order_by: str
+        :keyword query_type: A value that specifies the syntax of the search query. The default is
+         'simple'. Use 'full' if your query uses the Lucene query syntax. Possible values include:
+         "simple", "full", "semantic".
+        :paramtype query_type: str or ~azure.search.documents.models.QueryType
+        :keyword scoring_statistics: A value that specifies whether we want to calculate scoring
+         statistics (such as document frequency) globally for more consistent scoring, or locally, for
+         lower latency. The default is 'local'. Use 'global' to aggregate scoring statistics globally
+         before scoring. Using global scoring statistics can increase latency of search queries.
+         Possible values include: "local", "global".
+        :paramtype scoring_statistics: str or ~azure.search.documents.models.ScoringStatistics
+        :keyword session_id: A value to be used to create a sticky session, which can help getting more
+         consistent results. As long as the same sessionId is used, a best-effort attempt will be made
+         to target the same replica set. Be wary that reusing the same sessionID values repeatedly can
+         interfere with the load balancing of the requests across replicas and adversely affect the
+         performance of the search service. The value used as sessionId cannot start with a '_'
+         character.
+        :paramtype session_id: str
+        :keyword scoring_parameters: The list of parameter values to be used in scoring functions (for
+         example, referencePointParameter) using the format name-values. For example, if the scoring
+         profile defines a function with a parameter called 'mylocation' the parameter string would be
+         "mylocation--122.2,44.8" (without the quotes).
+        :paramtype scoring_parameters: list[str]
+        :keyword scoring_profile: The name of a scoring profile to evaluate match scores for matching
+         documents in order to sort the results.
+        :paramtype scoring_profile: str
+        :keyword search_text: A full-text search query expression; Use "*" or omit this parameter to
+         match all documents.
+        :paramtype search_text: str
+        :keyword search_fields: The comma-separated list of field names to which to scope the full-text
+         search. When using fielded search (fieldName:searchExpression) in a full Lucene query, the
+         field names of each fielded search expression take precedence over any field names listed in
+         this parameter.
+        :paramtype search_fields: str
+        :keyword search_mode: A value that specifies whether any or all of the search terms must be
+         matched in order to count the document as a match. Possible values include: "any", "all".
+        :paramtype search_mode: str or ~azure.search.documents.models.SearchMode
+        :keyword query_language: A value that specifies the language of the search query. Possible
+         values include: "none", "en-us".
+        :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
+        :keyword speller: A value that specified the type of the speller to use to spell-correct
+         individual search query terms. Possible values include: "none", "lexicon".
+        :paramtype speller: str or ~azure.search.documents.models.QuerySpellerType
+        :keyword answers: A value that specifies whether answers should be returned as part of the
+         search response. Possible values include: "none", "extractive".
+        :paramtype answers: str or ~azure.search.documents.models.QueryAnswerType
+        :keyword select: The comma-separated list of fields to retrieve. If unspecified, all fields
+         marked as retrievable in the schema are included.
+        :paramtype select: str
+        :keyword skip: The number of search results to skip. This value cannot be greater than 100,000.
+         If you need to scan documents in sequence, but cannot use skip due to this limitation, consider
+         using orderby on a totally-ordered key and filter with a range query instead.
+        :paramtype skip: int
+        :keyword top: The number of search results to retrieve. This can be used in conjunction with
+         $skip to implement client-side paging of search results. If results are truncated due to
+         server-side paging, the response will include a continuation token that can be used to issue
+         another Search request for the next page of results.
+        :paramtype top: int
+        :keyword captions: A value that specifies whether captions should be returned as part of the
+         search response. Possible values include: "none", "extractive".
+        :paramtype captions: str or ~azure.search.documents.models.QueryCaptionType
+        :keyword semantic_fields: The comma-separated list of field names used for semantic search.
+        :paramtype semantic_fields: str
+        """
         super(SearchRequest, self).__init__(**kwargs)
         self.include_total_result_count = include_total_result_count
         self.facets = facets
@@ -980,9 +1279,9 @@ class SearchResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :paramtype additional_properties: dict[str, any]
+    :vartype additional_properties: dict[str, any]
     :ivar score: Required. The relevance score of the document compared to other documents returned
      by the query.
     :vartype score: float
@@ -1020,6 +1319,11 @@ class SearchResult(msrest.serialization.Model):
         additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        """
         super(SearchResult, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.score = None
@@ -1056,6 +1360,8 @@ class SuggestDocumentsResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SuggestDocumentsResult, self).__init__(**kwargs)
         self.results = None
         self.coverage = None
@@ -1064,41 +1370,41 @@ class SuggestDocumentsResult(msrest.serialization.Model):
 class SuggestOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :keyword filter: An OData expression that filters the documents considered for suggestions.
-    :paramtype filter: str
-    :keyword use_fuzzy_matching: A value indicating whether to use fuzzy matching for the
-     suggestions query. Default is false. When set to true, the query will find terms even if
-     there's a substituted or missing character in the search text. While this provides a better
-     experience in some scenarios, it comes at a performance cost as fuzzy suggestions queries are
-     slower and consume more resources.
-    :paramtype use_fuzzy_matching: bool
-    :keyword highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+    :ivar filter: An OData expression that filters the documents considered for suggestions.
+    :vartype filter: str
+    :ivar use_fuzzy_matching: A value indicating whether to use fuzzy matching for the suggestions
+     query. Default is false. When set to true, the query will find terms even if there's a
+     substituted or missing character in the search text. While this provides a better experience in
+     some scenarios, it comes at a performance cost as fuzzy suggestions queries are slower and
+     consume more resources.
+    :vartype use_fuzzy_matching: bool
+    :ivar highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
      highlightPreTag. If omitted, hit highlighting of suggestions is disabled.
-    :paramtype highlight_post_tag: str
-    :keyword highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+    :vartype highlight_post_tag: str
+    :ivar highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
      highlightPostTag. If omitted, hit highlighting of suggestions is disabled.
-    :paramtype highlight_pre_tag: str
-    :keyword minimum_coverage: A number between 0 and 100 indicating the percentage of the index
-     that must be covered by a suggestions query in order for the query to be reported as a success.
-     This parameter can be useful for ensuring search availability even for services with only one
+    :vartype highlight_pre_tag: str
+    :ivar minimum_coverage: A number between 0 and 100 indicating the percentage of the index that
+     must be covered by a suggestions query in order for the query to be reported as a success. This
+     parameter can be useful for ensuring search availability even for services with only one
      replica. The default is 80.
-    :paramtype minimum_coverage: float
-    :keyword order_by: The list of OData $orderby expressions by which to sort the results. Each
+    :vartype minimum_coverage: float
+    :ivar order_by: The list of OData $orderby expressions by which to sort the results. Each
      expression can be either a field name or a call to either the geo.distance() or the
      search.score() functions. Each expression can be followed by asc to indicate ascending, or desc
      to indicate descending. The default is ascending order. Ties will be broken by the match scores
      of documents. If no $orderby is specified, the default sort order is descending by document
      match score. There can be at most 32 $orderby clauses.
-    :paramtype order_by: list[str]
-    :keyword search_fields: The list of field names to search for the specified search text. Target
+    :vartype order_by: list[str]
+    :ivar search_fields: The list of field names to search for the specified search text. Target
      fields must be included in the specified suggester.
-    :paramtype search_fields: list[str]
-    :keyword select: The list of fields to retrieve. If unspecified, only the key field will be
+    :vartype search_fields: list[str]
+    :ivar select: The list of fields to retrieve. If unspecified, only the key field will be
      included in the results.
-    :paramtype select: list[str]
-    :keyword top: The number of suggestions to retrieve. The value must be a number between 1 and
-     100. The default is 5.
-    :paramtype top: int
+    :vartype select: list[str]
+    :ivar top: The number of suggestions to retrieve. The value must be a number between 1 and 100.
+     The default is 5.
+    :vartype top: int
     """
 
     _attribute_map = {
@@ -1127,6 +1433,43 @@ class SuggestOptions(msrest.serialization.Model):
         top: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword filter: An OData expression that filters the documents considered for suggestions.
+        :paramtype filter: str
+        :keyword use_fuzzy_matching: A value indicating whether to use fuzzy matching for the
+         suggestions query. Default is false. When set to true, the query will find terms even if
+         there's a substituted or missing character in the search text. While this provides a better
+         experience in some scenarios, it comes at a performance cost as fuzzy suggestions queries are
+         slower and consume more resources.
+        :paramtype use_fuzzy_matching: bool
+        :keyword highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+         highlightPreTag. If omitted, hit highlighting of suggestions is disabled.
+        :paramtype highlight_post_tag: str
+        :keyword highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+         highlightPostTag. If omitted, hit highlighting of suggestions is disabled.
+        :paramtype highlight_pre_tag: str
+        :keyword minimum_coverage: A number between 0 and 100 indicating the percentage of the index
+         that must be covered by a suggestions query in order for the query to be reported as a success.
+         This parameter can be useful for ensuring search availability even for services with only one
+         replica. The default is 80.
+        :paramtype minimum_coverage: float
+        :keyword order_by: The list of OData $orderby expressions by which to sort the results. Each
+         expression can be either a field name or a call to either the geo.distance() or the
+         search.score() functions. Each expression can be followed by asc to indicate ascending, or desc
+         to indicate descending. The default is ascending order. Ties will be broken by the match scores
+         of documents. If no $orderby is specified, the default sort order is descending by document
+         match score. There can be at most 32 $orderby clauses.
+        :paramtype order_by: list[str]
+        :keyword search_fields: The list of field names to search for the specified search text. Target
+         fields must be included in the specified suggester.
+        :paramtype search_fields: list[str]
+        :keyword select: The list of fields to retrieve. If unspecified, only the key field will be
+         included in the results.
+        :paramtype select: list[str]
+        :keyword top: The number of suggestions to retrieve. The value must be a number between 1 and
+         100. The default is 5.
+        :paramtype top: int
+        """
         super(SuggestOptions, self).__init__(**kwargs)
         self.filter = filter
         self.use_fuzzy_matching = use_fuzzy_matching
@@ -1144,47 +1487,47 @@ class SuggestRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword filter: An OData expression that filters the documents considered for suggestions.
-    :paramtype filter: str
-    :keyword use_fuzzy_matching: A value indicating whether to use fuzzy matching for the
-     suggestion query. Default is false. When set to true, the query will find suggestions even if
-     there's a substituted or missing character in the search text. While this provides a better
-     experience in some scenarios, it comes at a performance cost as fuzzy suggestion searches are
-     slower and consume more resources.
-    :paramtype use_fuzzy_matching: bool
-    :keyword highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+    :ivar filter: An OData expression that filters the documents considered for suggestions.
+    :vartype filter: str
+    :ivar use_fuzzy_matching: A value indicating whether to use fuzzy matching for the suggestion
+     query. Default is false. When set to true, the query will find suggestions even if there's a
+     substituted or missing character in the search text. While this provides a better experience in
+     some scenarios, it comes at a performance cost as fuzzy suggestion searches are slower and
+     consume more resources.
+    :vartype use_fuzzy_matching: bool
+    :ivar highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
      highlightPreTag. If omitted, hit highlighting of suggestions is disabled.
-    :paramtype highlight_post_tag: str
-    :keyword highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+    :vartype highlight_post_tag: str
+    :ivar highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
      highlightPostTag. If omitted, hit highlighting of suggestions is disabled.
-    :paramtype highlight_pre_tag: str
-    :keyword minimum_coverage: A number between 0 and 100 indicating the percentage of the index
-     that must be covered by a suggestion query in order for the query to be reported as a success.
-     This parameter can be useful for ensuring search availability even for services with only one
+    :vartype highlight_pre_tag: str
+    :ivar minimum_coverage: A number between 0 and 100 indicating the percentage of the index that
+     must be covered by a suggestion query in order for the query to be reported as a success. This
+     parameter can be useful for ensuring search availability even for services with only one
      replica. The default is 80.
-    :paramtype minimum_coverage: float
-    :keyword order_by: The comma-separated list of OData $orderby expressions by which to sort the
+    :vartype minimum_coverage: float
+    :ivar order_by: The comma-separated list of OData $orderby expressions by which to sort the
      results. Each expression can be either a field name or a call to either the geo.distance() or
      the search.score() functions. Each expression can be followed by asc to indicate ascending, or
      desc to indicate descending. The default is ascending order. Ties will be broken by the match
      scores of documents. If no $orderby is specified, the default sort order is descending by
      document match score. There can be at most 32 $orderby clauses.
-    :paramtype order_by: str
-    :keyword search_text: Required. The search text to use to suggest documents. Must be at least 1
+    :vartype order_by: str
+    :ivar search_text: Required. The search text to use to suggest documents. Must be at least 1
      character, and no more than 100 characters.
-    :paramtype search_text: str
-    :keyword search_fields: The comma-separated list of field names to search for the specified
-     search text. Target fields must be included in the specified suggester.
-    :paramtype search_fields: str
-    :keyword select: The comma-separated list of fields to retrieve. If unspecified, only the key
+    :vartype search_text: str
+    :ivar search_fields: The comma-separated list of field names to search for the specified search
+     text. Target fields must be included in the specified suggester.
+    :vartype search_fields: str
+    :ivar select: The comma-separated list of fields to retrieve. If unspecified, only the key
      field will be included in the results.
-    :paramtype select: str
-    :keyword suggester_name: Required. The name of the suggester as specified in the suggesters
+    :vartype select: str
+    :ivar suggester_name: Required. The name of the suggester as specified in the suggesters
      collection that's part of the index definition.
-    :paramtype suggester_name: str
-    :keyword top: The number of suggestions to retrieve. This must be a value between 1 and 100.
-     The default is 5.
-    :paramtype top: int
+    :vartype suggester_name: str
+    :ivar top: The number of suggestions to retrieve. This must be a value between 1 and 100. The
+     default is 5.
+    :vartype top: int
     """
 
     _validation = {
@@ -1222,6 +1565,49 @@ class SuggestRequest(msrest.serialization.Model):
         top: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword filter: An OData expression that filters the documents considered for suggestions.
+        :paramtype filter: str
+        :keyword use_fuzzy_matching: A value indicating whether to use fuzzy matching for the
+         suggestion query. Default is false. When set to true, the query will find suggestions even if
+         there's a substituted or missing character in the search text. While this provides a better
+         experience in some scenarios, it comes at a performance cost as fuzzy suggestion searches are
+         slower and consume more resources.
+        :paramtype use_fuzzy_matching: bool
+        :keyword highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+         highlightPreTag. If omitted, hit highlighting of suggestions is disabled.
+        :paramtype highlight_post_tag: str
+        :keyword highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+         highlightPostTag. If omitted, hit highlighting of suggestions is disabled.
+        :paramtype highlight_pre_tag: str
+        :keyword minimum_coverage: A number between 0 and 100 indicating the percentage of the index
+         that must be covered by a suggestion query in order for the query to be reported as a success.
+         This parameter can be useful for ensuring search availability even for services with only one
+         replica. The default is 80.
+        :paramtype minimum_coverage: float
+        :keyword order_by: The comma-separated list of OData $orderby expressions by which to sort the
+         results. Each expression can be either a field name or a call to either the geo.distance() or
+         the search.score() functions. Each expression can be followed by asc to indicate ascending, or
+         desc to indicate descending. The default is ascending order. Ties will be broken by the match
+         scores of documents. If no $orderby is specified, the default sort order is descending by
+         document match score. There can be at most 32 $orderby clauses.
+        :paramtype order_by: str
+        :keyword search_text: Required. The search text to use to suggest documents. Must be at least 1
+         character, and no more than 100 characters.
+        :paramtype search_text: str
+        :keyword search_fields: The comma-separated list of field names to search for the specified
+         search text. Target fields must be included in the specified suggester.
+        :paramtype search_fields: str
+        :keyword select: The comma-separated list of fields to retrieve. If unspecified, only the key
+         field will be included in the results.
+        :paramtype select: str
+        :keyword suggester_name: Required. The name of the suggester as specified in the suggesters
+         collection that's part of the index definition.
+        :paramtype suggester_name: str
+        :keyword top: The number of suggestions to retrieve. This must be a value between 1 and 100.
+         The default is 5.
+        :paramtype top: int
+        """
         super(SuggestRequest, self).__init__(**kwargs)
         self.filter = filter
         self.use_fuzzy_matching = use_fuzzy_matching
@@ -1243,9 +1629,9 @@ class SuggestResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :paramtype additional_properties: dict[str, any]
+    :vartype additional_properties: dict[str, any]
     :ivar text: Required. The text of the suggestion result.
     :vartype text: str
     """
@@ -1265,6 +1651,11 @@ class SuggestResult(msrest.serialization.Model):
         additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        """
         super(SuggestResult, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.text = None
