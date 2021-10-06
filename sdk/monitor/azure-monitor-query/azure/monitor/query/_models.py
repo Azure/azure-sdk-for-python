@@ -7,7 +7,7 @@
 
 from enum import Enum
 import uuid
-from typing import Any, Optional, List
+from typing import Any, Optional, List, Mapping
 
 from ._helpers import construct_iso8601, process_row
 from ._generated.models import (
@@ -235,10 +235,10 @@ class LogsQueryResult(object):
     :vartype tables: list[~azure.monitor.query.LogsTable]
     :ivar statistics: This will include a statistics property in the response that describes various
      performance statistics such as query execution time and resource usage.
-    :vartype statistics: object
+    :vartype statistics: Mapping
     :ivar visualization: This will include a visualization property in the response that specifies the type of
      visualization selected by the query and any properties for that visualization.
-    :vartype visualization: object
+    :vartype visualization: Mapping
     :ivar status: The status of the result.
      Always 'Success' for an instance of a LogsQueryResult.
     :vartype status: ~azure.monitor.query.LogsQueryStatus
@@ -585,10 +585,10 @@ class LogsQueryPartialResult(object):
     :vartype partial_data: list[~azure.monitor.query.LogsTable]
     :ivar statistics: This will include a statistics property in the response that describes various
      performance statistics such as query execution time and resource usage.
-    :vartype statistics: object
+    :vartype statistics: Mapping
     :ivar visualization: This will include a visualization property in the response that specifies the type of
      visualization selected by the query and any properties for that visualization.
-    :vartype visualization: object
+    :vartype visualization: Mapping
     :ivar partial_error: The partial errror info
     :vartype partial_error: ~azure.monitor.query.LogsQueryError
     :ivar status: The status of the result. Always 'PartialError' for an instance of a LogsQueryPartialResult.
