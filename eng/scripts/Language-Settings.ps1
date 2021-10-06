@@ -361,16 +361,29 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
     }
 
     Write-Host "Add new package from metadata: $packageName"
-    $package = [ordered]@{
+    if ($PackageSourceOverride) {
+      $package = [ordered]@{
         package_info = [ordered]@{
           name = $packageName;
           install_type = 'pypi';
           prefer_source_distribution = 'true';
           version = $packageVersion;
+          extra_index_url = $PackageSourceOverride
         };
         exclude_path = @("test*","example*","sample*","doc*");
+      }
     }
-
+    else {
+      $package = [ordered]@{
+          package_info = [ordered]@{
+            name = $packageName;
+            install_type = 'pypi';
+            prefer_source_distribution = 'true';
+            version = $packageVersion;
+          };
+          exclude_path = @("test*","example*","sample*","doc*");
+      }
+    }
     $outputPackages += $package
   }
 
