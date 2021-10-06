@@ -35,11 +35,11 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 96cbcac1-f812-48c6-a629-9aeb00719340
+      - f16e81f4-4032-4e83-aab0-edeef46fd22c
       date:
-      - Tue, 05 Oct 2021 23:06:44 GMT
+      - Wed, 06 Oct 2021 20:50:21 GMT
       operation-location:
-      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/e8170ebe-e2dc-4586-8dbc-0a58709c196c
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/3b5a2a6f-a3eb-46a8-9b34-ec8484bf2e4d
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -47,7 +47,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '282'
+      - '733'
     status:
       code: 202
       message: Accepted
@@ -63,17 +63,17 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/e8170ebe-e2dc-4586-8dbc-0a58709c196c?showStats=True
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/3b5a2a6f-a3eb-46a8-9b34-ec8484bf2e4d?showStats=True
   response:
     body:
-      string: '{"jobId":"e8170ebe-e2dc-4586-8dbc-0a58709c196c","lastUpdateDateTime":"2021-10-05T23:06:46Z","createdDateTime":"2021-10-05T23:06:44Z","expirationDateTime":"2021-10-06T23:06:44Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"customMultiClassificationTasks":[{"lastUpdateDateTime":"2021-10-05T23:06:46.0377092Z","state":"succeeded","results":{"statistics":{"documentsCount":3,"validDocumentsCount":3,"erroneousDocumentsCount":0,"transactionsCount":3},"documents":[{"id":"1","classifications":[],"statistics":{"charactersCount":295,"transactionsCount":1},"warnings":[]},{"id":"2","classifications":[],"statistics":{"charactersCount":158,"transactionsCount":1},"warnings":[]},{"id":"3","classifications":[{"category":"BookRestaurant","confidenceScore":0.97}],"statistics":{"charactersCount":121,"transactionsCount":1},"warnings":[]}],"errors":[],"projectName":"textanalytics_multi_category_classify_project_name","deploymentName":"textanalytics_multi_category_classify_project_name"}}]}}'
+      string: '{"jobId":"3b5a2a6f-a3eb-46a8-9b34-ec8484bf2e4d","lastUpdateDateTime":"2021-10-06T20:50:23Z","createdDateTime":"2021-10-06T20:50:22Z","expirationDateTime":"2021-10-07T20:50:22Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"customMultiClassificationTasks":[{"lastUpdateDateTime":"2021-10-06T20:50:23.3704559Z","state":"succeeded","results":{"statistics":{"documentsCount":3,"validDocumentsCount":3,"erroneousDocumentsCount":0,"transactionsCount":3},"documents":[{"id":"1","classifications":[],"statistics":{"charactersCount":295,"transactionsCount":1},"warnings":[]},{"id":"2","classifications":[],"statistics":{"charactersCount":158,"transactionsCount":1},"warnings":[]},{"id":"3","classifications":[{"category":"BookRestaurant","confidenceScore":0.97}],"statistics":{"charactersCount":121,"transactionsCount":1},"warnings":[]}],"errors":[],"projectName":"textanalytics_multi_category_classify_project_name","deploymentName":"textanalytics_multi_category_classify_project_name"}}]}}'
     headers:
       apim-request-id:
-      - 5fdd36f9-2a98-4ae2-ad17-6c6bc77e8ead
+      - 6454b093-a831-44ed-a755-c1faff705f10
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 05 Oct 2021 23:06:49 GMT
+      - Wed, 06 Oct 2021 20:50:27 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -81,7 +81,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '131'
+      - '92'
     status:
       code: 200
       message: OK

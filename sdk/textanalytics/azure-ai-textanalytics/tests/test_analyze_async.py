@@ -1039,7 +1039,6 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             async for doc in response:
                 document_results.append(doc)
 
-        document_results = list(response)
         for doc_result in document_results:
             for result in doc_result:
                 assert result.id

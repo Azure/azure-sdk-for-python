@@ -23,7 +23,7 @@ class AsyncFakeTokenCredential(object):
         return self.token
 
 
-@pytest.mark.skip("No active endpoints yet")
+
 class AsyncTextAnalyticsTest(TextAnalyticsTest):
 
     def generate_oauth_token(self):
