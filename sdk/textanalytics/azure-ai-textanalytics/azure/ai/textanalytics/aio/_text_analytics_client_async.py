@@ -963,112 +963,51 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         continuation_token = kwargs.pop("continuation_token", None)
 
         doc_id_order = [doc.get("id") for doc in docs.documents]
-        task_order = [_determine_action_type(action) for action in actions]
-        if len(task_order) != len(set(task_order)):
-            raise ValueError("Multiple of the same action is not currently supported.")
+        try:
+            generated_tasks = [action._to_generated(self._api_version, str(idx)) for idx, action in enumerate(actions)]
+        except AttributeError:
+            raise TypeError("Unsupported action type in list.")
+        task_order = [(_determine_action_type(a), a.task_name) for a in generated_tasks]
 
         try:
             analyze_tasks = self._client.models(
                 api_version=self._api_version
             ).JobManifestTasks(
                 entity_recognition_tasks=[
-                    t._to_generated(  # pylint: disable=protected-access
-                        self._api_version
-                    )
-                    for t in [
-                        a
-                        for a in actions
-                        if _determine_action_type(a)
-                        == _AnalyzeActionsType.RECOGNIZE_ENTITIES
-                    ]
+                    a for a in generated_tasks
+                    if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_ENTITIES
                 ],
                 entity_recognition_pii_tasks=[
-                    t._to_generated(  # pylint: disable=protected-access
-                        self._api_version
-                    )
-                    for t in [
-                        a
-                        for a in actions
-                        if _determine_action_type(a)
-                        == _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
-                    ]
+                    a for a in generated_tasks
+                    if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
                 ],
                 key_phrase_extraction_tasks=[
-                    t._to_generated(  # pylint: disable=protected-access
-                        self._api_version
-                    )
-                    for t in [
-                        a
-                        for a in actions
-                        if _determine_action_type(a)
-                        == _AnalyzeActionsType.EXTRACT_KEY_PHRASES
-                    ]
+                    a for a in generated_tasks
+                    if _determine_action_type(a) == _AnalyzeActionsType.EXTRACT_KEY_PHRASES
                 ],
                 entity_linking_tasks=[
-                    t._to_generated(  # pylint: disable=protected-access
-                        self._api_version
-                    )
-                    for t in [
-                        a
-                        for a in actions
-                        if _determine_action_type(a)
-                        == _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
-                    ]
+                    a for a in generated_tasks
+                    if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
                 ],
                 sentiment_analysis_tasks=[
-                    t._to_generated(  # pylint: disable=protected-access
-                        self._api_version
-                    )
-                    for t in [
-                        a
-                        for a in actions
-                        if _determine_action_type(a)
-                        == _AnalyzeActionsType.ANALYZE_SENTIMENT
-                    ]
+                    a for a in generated_tasks
+                    if _determine_action_type(a) == _AnalyzeActionsType.ANALYZE_SENTIMENT
                 ],
                 extractive_summarization_tasks=[
-                    t._to_generated(  # pylint: disable=protected-access
-                        self._api_version
-                    )
-                    for t in [
-                        a
-                        for a in actions
-                        if _determine_action_type(a)
-                        == _AnalyzeActionsType.EXTRACT_SUMMARY
-                    ]
+                    a for a in generated_tasks
+                    if _determine_action_type(a) == _AnalyzeActionsType.EXTRACT_SUMMARY
                 ],
                 custom_entity_recognition_tasks=[
-                    t._to_generated(  # pylint: disable=protected-access
-                        self._api_version
-                    )
-                    for t in [
-                        a
-                        for a in actions
-                        if _determine_action_type(a)
-                        == _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES
-                    ]
+                    a for a in generated_tasks
+                    if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES
                 ],
                 custom_single_classification_tasks=[
-                    t._to_generated(  # pylint: disable=protected-access
-                        self._api_version
-                    )
-                    for t in [
-                        a
-                        for a in actions
-                        if _determine_action_type(a)
-                        == _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY
-                    ]
+                    a for a in generated_tasks
+                    if _determine_action_type(a) == _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY
                 ],
                 custom_multi_classification_tasks=[
-                    t._to_generated(  # pylint: disable=protected-access
-                        self._api_version
-                    )
-                    for t in [
-                        a
-                        for a in actions
-                        if _determine_action_type(a)
-                        == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY
-                    ]
+                    a for a in generated_tasks
+                    if _determine_action_type(a) == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY
                 ],
             )
             analyze_body = self._client.models(
