@@ -17,7 +17,7 @@ stages:
         JobName: ${{ replace(service, '-', '_') }}
         AllocateResourceGroup: 'false'
         BuildTargetingString: ${{ service }}
-        ${{ if eq(service, 'azure-storage-file-datalake') }}:
+        ${{ if or eq(service, 'azure-storage-file-datalake') eq(service, 'azure-storage-blob')}}:
           DeployArmTemplate: true
           Location: 'canadacentral'
 
