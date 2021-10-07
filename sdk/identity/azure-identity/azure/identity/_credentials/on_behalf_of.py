@@ -66,14 +66,11 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
                     certificate_path=None, password=kwargs.pop("password", None), certificate_data=client_certificate
                 )
             except ValueError as ex:
-                # client_credential isn't a valid cert. On 2.7 str == bytes and we ignore this exception because we
-                # can't tell whether the caller intended to provide a cert. On Python 3 we can say the caller provided
-                # either an invalid cert, or a client secret as bytes; both are errors.
-                if six.PY3:
-                    message = (
-                        '"client_certificate" is not a valid certificate in PEM or PKCS12 format'
-                    )
-                    six.raise_from(ValueError(message), ex)
+                # client_certificate isn't a valid cert. 
+                message = (
+                    '"client_certificate" is not a valid certificate in PEM or PKCS12 format'
+                )
+                six.raise_from(ValueError(message), ex)
         elif client_secret:
             credential = client_secret
         else:
