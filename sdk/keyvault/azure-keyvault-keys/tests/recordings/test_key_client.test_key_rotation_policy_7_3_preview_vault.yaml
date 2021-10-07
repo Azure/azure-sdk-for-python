@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://vaultname.vault.azure.net/keys/livekvtestrotation-keybd0f17af/create?api-version=7.3-preview
   response:
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Sep 2021 20:28:54 GMT
+      - Wed, 06 Oct 2021 19:10:18 GMT
       expires:
       - '-1'
       pragma:
@@ -45,7 +45,7 @@ interactions:
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:
-      - 1.9.79.2
+      - 1.9.132.3
       x-powered-by:
       - ASP.NET
     status:
@@ -65,21 +65,21 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://vaultname.vault.azure.net/keys/livekvtestrotation-keybd0f17af/create?api-version=7.3-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keybd0f17af/1f1dcc214e0649298fc9d8431f133d70","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"xuqdP_vk8J3YrTpuVGWdaqKyYur6DxjrNIf8ytP5gbe5FNZ6gWdR3Owy8DhQoR699a9XLLzuqa-h7DasW_n-HXoZ_yRcJq4SHi-FG4PkZdJB9rh54l8dbzFn-8anGdTcVEPqFn9B1xOdf8aSZ1QIyW2io9gpLtpWY9rvQjtK8N332KWLxDHDxgOIq7jbexsa9DDWgKzcA_g37PEwpRYSb4NtJkvk4ztMa_OhEEwL7HIzUJjCQjKZRRGIVZxNWhakMQrdb4qhxQ8PNPmMFcuY9TVJ8hzVCZHQrsristcBcE1IyhvQoHYnCnDX3dD5FLyhPAoLVqmP6Z0_2w68-k-nfQ","e":"AQAB"},"attributes":{"enabled":true,"exp":1640636935,"created":1632860935,"updated":1632860935,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keybd0f17af/c4727665632f40458f317002b39a1504","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"2gbZmgfsdB98UZQ1YbmpvHYGNOICfyClDIBjVc5UatdptqMiUQU_1mbSB7ngynjQWFXH7AOnE4XH37lQ1ZQAGSvH6Z0LjYkyLT5tSG_MdJ5TGRqyMT6tEh-46QvPRGLAMbWm6uqAbmc6pX-Qsj2nxBsueH1p7Q9qR-IH0oXVS6v8If2YkwMvBo7Uzf6mtwfquDzXYOS5jwg5rWz7PlUTiQaws4s1Fwlth7Vxr6HFYPpmVBQM327hKgR50kcv6mjXmt0VT27apBOyJykGZlGjuZZLILT5Tffc3AC4qNhSEhKXZA2uqg5f7HB8PERZrexi0fI_AzTLySwtZStzJwBC_Q","e":"AQAB"},"attributes":{"enabled":true,"exp":1641323419,"created":1633547419,"updated":1633547419,"recoveryLevel":"CustomizedRecoverable+Purgeable","recoverableDays":7}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '715'
+      - '723'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Sep 2021 20:28:55 GMT
+      - Wed, 06 Oct 2021 19:10:19 GMT
       expires:
       - '-1'
       pragma:
@@ -93,100 +93,7 @@ interactions:
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:
-      - 1.9.79.2
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: '{"lifetimeActions": [{"trigger": {"timeBeforeExpiry": "P30D"}, "action":
-      {"type": "Rotate"}}], "attributes": {"expiryTime": "P90D"}}'
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '132'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: PUT
-    uri: https://vaultname.vault.azure.net/keys/livekvtestrotation-keybd0f17af/rotationpolicy?api-version=7.3-preview
-  response:
-    body:
-      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keybd0f17af/rotationpolicy","lifetimeActions":[{"trigger":{"timeBeforeExpiry":"P30D"},"action":{"type":"Rotate"}},{"trigger":{"timeBeforeExpiry":"P30D"},"action":{"type":"Notify"}}],"attributes":{"expiryTime":"P90D","created":1632795088,"updated":1632795088}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '327'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 28 Sep 2021 20:28:55 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      strict-transport-security:
-      - max-age=31536000;includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-keyvault-network-info:
-      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region:
-      - westus
-      x-ms-keyvault-service-version:
-      - 1.9.79.2
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://vaultname.vault.azure.net/keys/livekvtestrotation-keybd0f17af/rotationpolicy?api-version=7.3-preview
-  response:
-    body:
-      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keybd0f17af/rotationpolicy","lifetimeActions":[{"trigger":{"timeBeforeExpiry":"P30D"},"action":{"type":"Rotate"}},{"trigger":{"timeBeforeExpiry":"P30D"},"action":{"type":"Notify"}}],"attributes":{"expiryTime":"P90D","created":1632795088,"updated":1632795088}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '327'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 28 Sep 2021 20:28:55 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      strict-transport-security:
-      - max-age=31536000;includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-keyvault-network-info:
-      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region:
-      - westus
-      x-ms-keyvault-service-version:
-      - 1.9.79.2
+      - 1.9.132.3
       x-powered-by:
       - ASP.NET
     status:
@@ -194,7 +101,7 @@ interactions:
       message: OK
 - request:
     body: '{"lifetimeActions": [{"trigger": {"timeAfterCreate": "P2M"}, "action":
-      {"type": "Notify"}}], "attributes": {}}'
+      {"type": "Rotate"}}], "attributes": {}}'
     headers:
       Accept:
       - application/json
@@ -207,21 +114,21 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: PUT
     uri: https://vaultname.vault.azure.net/keys/livekvtestrotation-keybd0f17af/rotationpolicy?api-version=7.3-preview
   response:
     body:
-      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keybd0f17af/rotationpolicy","lifetimeActions":[{"trigger":{"timeAfterCreate":"P2M"},"action":{"type":"Notify"}}],"attributes":{"created":1632795088,"updated":1632860936}}'
+      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keybd0f17af/rotationpolicy","lifetimeActions":[{"trigger":{"timeAfterCreate":"P2M"},"action":{"type":"Rotate"}}],"attributes":{"created":1633547268,"updated":1633547419}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '238'
+      - '237'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Sep 2021 20:28:55 GMT
+      - Wed, 06 Oct 2021 19:10:19 GMT
       expires:
       - '-1'
       pragma:
@@ -235,7 +142,7 @@ interactions:
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:
-      - 1.9.79.2
+      - 1.9.132.3
       x-powered-by:
       - ASP.NET
     status:
@@ -251,21 +158,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://vaultname.vault.azure.net/keys/livekvtestrotation-keybd0f17af/rotationpolicy?api-version=7.3-preview
   response:
     body:
-      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keybd0f17af/rotationpolicy","lifetimeActions":[{"trigger":{"timeAfterCreate":"P2M"},"action":{"type":"Notify"}}],"attributes":{"created":1632795088,"updated":1632860936}}'
+      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keybd0f17af/rotationpolicy","lifetimeActions":[{"trigger":{"timeAfterCreate":"P2M"},"action":{"type":"Rotate"}}],"attributes":{"created":1633547268,"updated":1633547419}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '238'
+      - '237'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Sep 2021 20:28:56 GMT
+      - Wed, 06 Oct 2021 19:10:19 GMT
       expires:
       - '-1'
       pragma:
@@ -279,7 +186,100 @@ interactions:
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:
-      - 1.9.79.2
+      - 1.9.132.3
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"lifetimeActions": [{"trigger": {"timeBeforeExpiry": "P30D"}, "action":
+      {"type": "Notify"}}], "attributes": {"expiryTime": "P90D"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '132'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+    method: PUT
+    uri: https://vaultname.vault.azure.net/keys/livekvtestrotation-keybd0f17af/rotationpolicy?api-version=7.3-preview
+  response:
+    body:
+      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keybd0f17af/rotationpolicy","lifetimeActions":[{"trigger":{"timeBeforeExpiry":"P30D"},"action":{"type":"Notify"}}],"attributes":{"expiryTime":"P90D","created":1633547268,"updated":1633547419}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '259'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 06 Oct 2021 19:10:19 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-keyvault-service-version:
+      - 1.9.132.3
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+    method: GET
+    uri: https://vaultname.vault.azure.net/keys/livekvtestrotation-keybd0f17af/rotationpolicy?api-version=7.3-preview
+  response:
+    body:
+      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keybd0f17af/rotationpolicy","lifetimeActions":[{"trigger":{"timeBeforeExpiry":"P30D"},"action":{"type":"Notify"}}],"attributes":{"expiryTime":"P90D","created":1633547268,"updated":1633547419}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '259'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 06 Oct 2021 19:10:19 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-keyvault-service-version:
+      - 1.9.132.3
       x-powered-by:
       - ASP.NET
     status:

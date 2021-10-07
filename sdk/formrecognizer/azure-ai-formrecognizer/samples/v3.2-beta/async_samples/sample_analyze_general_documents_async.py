@@ -68,8 +68,32 @@ async def analyze_general_documents():
             print("Document contains handwritten content: ")
             print(",".join([result.content[span.offset:span.offset + span.length] for span in style.spans]))
 
-    for idx, page in enumerate(result.pages):
-        print("----Analyzing document from page #{}----".format(idx + 1))
+    print("----Key-value pairs found in document----")
+    for kv_pair in result.key_value_pairs:
+        if kv_pair.key:
+            print(
+                    "Key '{}' found within '{}' bounding regions".format(
+                        kv_pair.key.content,
+                        format_bounding_region(kv_pair.key.bounding_regions),
+                    )
+                )
+        if kv_pair.value:
+            print(
+                    "Value '{}' found within '{}' bounding regions\n".format(
+                        kv_pair.value.content,
+                        format_bounding_region(kv_pair.value.bounding_regions),
+                    )
+                )
+
+    print("----Entities found in document----")
+    for entity in result.entities:
+        print("Entity of category '{}' with sub-category '{}'".format(entity.category, entity.sub_category))
+        print("...has content '{}'".format(entity.content))
+        print("...within '{}' bounding regions".format(format_bounding_region(entity.bounding_regions)))
+        print("...with confidence {}\n".format(entity.confidence))
+
+    for page in result.pages:
+        print("----Analyzing document from page #{}----".format(page.page_number))
         print(
             "Page has width: {} and height: {}, measured with unit: {}".format(
                 page.width, page.height, page.unit
@@ -128,30 +152,6 @@ async def analyze_general_documents():
                     "...content on page {} is within bounding box '{}'\n".format(
                         region.page_number,
                         format_bounding_box(region.bounding_box),
-                    )
-                )
-
-    print("----Entities found in document----")
-    for idx, entity in enumerate(result.entities):
-        print("Entity of category '{}' with sub-category '{}'".format(entity.category, entity.sub_category))
-        print("...has content '{}'".format(entity.content))
-        print("...within '{}' bounding regions".format(format_bounding_region(entity.bounding_regions)))
-        print("...with confidence {}\n".format(entity.confidence))
-
-    print("----Key-value pairs found in document----")
-    for idx, kv_pair in enumerate(result.key_value_pairs):
-        if kv_pair.key:
-            print(
-                    "Key '{}' found within '{}' bounding regions".format(
-                        kv_pair.key.content,
-                        format_bounding_region(kv_pair.key.bounding_regions),
-                    )
-                )
-        if kv_pair.value:
-            print(
-                    "Value '{}' found within '{}' bounding regions\n".format(
-                        kv_pair.value.content,
-                        format_bounding_region(kv_pair.value.bounding_regions),
                     )
                 )
     print("----------------------------------------")
