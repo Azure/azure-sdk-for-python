@@ -50,7 +50,7 @@ class StorageTestCase(AzureTestCase):
         :param str storage_account: Storage account name
         :param str storage_type: The Storage type part of the URL. Should be "blob", or "queue", etc.
         """
-        return "https://{}.{}.core.windows.net".format(storage_account, storage_type)
+        return "{}://{}.{}.core.windows.net".format(os.environ.get("PROTOCOL", "https"), storage_account, storage_type)
 
     def configure_logging(self):
         enable_logging = ENABLE_LOGGING

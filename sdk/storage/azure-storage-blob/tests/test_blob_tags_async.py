@@ -115,7 +115,7 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
 
         await blob_client.delete_blob(lease=lease)
 
-    @pytest.mark.playback_test_only
+    @pytest.mark.live_test_only
     @BlobPreparer()
     async def test_set_blob_tags_for_a_version(self, versioned_storage_account_name, versioned_storage_account_key):
         await self._setup(versioned_storage_account_name, versioned_storage_account_key)
