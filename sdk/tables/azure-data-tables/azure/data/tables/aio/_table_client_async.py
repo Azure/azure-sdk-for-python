@@ -697,11 +697,9 @@ class TableClient(AsyncTablesBaseClient):
             is_cosmos_endpoint=self._cosmos_endpoint,
             **kwargs
         )
-        
         operations_iterable = [
             _operation async for _operation in operations
-        ] if isinstance(operations, AsyncIterable) else operations
-        
+        ] if isinstance(operations, AsyncIterable) else operations # pylint: disable=isinstance-second-argument-not-valid-type
         for operation in operations_iterable:
             try:
                 operation_kwargs = operation[2]  # type: ignore
