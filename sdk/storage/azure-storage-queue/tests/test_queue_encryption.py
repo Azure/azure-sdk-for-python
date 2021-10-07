@@ -19,7 +19,6 @@ from cryptography.hazmat.primitives.ciphers import Cipher
 from cryptography.hazmat.primitives.ciphers.algorithms import AES
 from cryptography.hazmat.primitives.ciphers.modes import CBC
 from cryptography.hazmat.primitives.padding import PKCS7
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.storage.queue._shared import decode_base64_to_bytes
 from azure.storage.queue._shared.encryption import (
@@ -41,7 +40,8 @@ from encryption_test_helper import (
     KeyResolver,
     RSAKeyWrapper,
 )
-from _shared.testcase import GlobalStorageAccountPreparer, StorageTestCase
+from _shared.testcase import QueuePreparer
+from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = 'encryptionqueue'
@@ -71,10 +71,10 @@ class StorageQueueEncryptionTest(StorageTestCase):
 
     # --------------------------------------------------------------------------
 
-    @GlobalStorageAccountPreparer()
-    def test_get_messages_encrypted_kek(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_get_messages_encrypted_kek(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         qsc.key_encryption_key = KeyWrapper('key1')
         queue = self._create_queue(qsc)
         queue.send_message(u'encrypted_message_2')
@@ -85,10 +85,10 @@ class StorageQueueEncryptionTest(StorageTestCase):
         # Assert
         self.assertEqual(li.content, u'encrypted_message_2')
 
-    @GlobalStorageAccountPreparer()
-    def test_get_messages_encrypted_resolver(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_get_messages_encrypted_resolver(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         qsc.key_encryption_key = KeyWrapper('key1')
         queue = self._create_queue(qsc)
         queue.send_message(u'encrypted_message_2')
@@ -103,10 +103,10 @@ class StorageQueueEncryptionTest(StorageTestCase):
         # Assert
         self.assertEqual(li.content, u'encrypted_message_2')
 
-    @GlobalStorageAccountPreparer()
-    def test_peek_messages_encrypted_kek(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_peek_messages_encrypted_kek(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         qsc.key_encryption_key = KeyWrapper('key1')
         queue = self._create_queue(qsc)
         queue.send_message(u'encrypted_message_3')
@@ -117,10 +117,10 @@ class StorageQueueEncryptionTest(StorageTestCase):
         # Assert
         self.assertEqual(li[0].content, u'encrypted_message_3')
 
-    @GlobalStorageAccountPreparer()
-    def test_peek_messages_encrypted_resolver(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_peek_messages_encrypted_resolver(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         qsc.key_encryption_key = KeyWrapper('key1')
         queue = self._create_queue(qsc)
         queue.send_message(u'encrypted_message_4')
@@ -136,14 +136,14 @@ class StorageQueueEncryptionTest(StorageTestCase):
         self.assertEqual(li[0].content, u'encrypted_message_4')
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_peek_messages_encrypted_kek_RSA(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_peek_messages_encrypted_kek_RSA(self, storage_account_name, storage_account_key):
 
         # We can only generate random RSA keys, so this must be run live or
         # the playback test will fail due to a change in kek values.
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         qsc.key_encryption_key = RSAKeyWrapper('key2')
         queue = self._create_queue(qsc)
         queue.send_message(u'encrypted_message_3')
@@ -155,11 +155,11 @@ class StorageQueueEncryptionTest(StorageTestCase):
         self.assertEqual(li[0].content, u'encrypted_message_3')
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_update_encrypted_message(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_update_encrypted_message(self, storage_account_name, storage_account_key):
         # TODO: Recording doesn't work
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         queue = self._create_queue(qsc)
         queue.key_encryption_key = KeyWrapper('key1')
         queue.send_message(u'Update Me')
@@ -175,10 +175,10 @@ class StorageQueueEncryptionTest(StorageTestCase):
         # Assert
         self.assertEqual(u'Updated', list_result2.content)
 
-    @GlobalStorageAccountPreparer()
-    def test_update_encrypted_binary_message(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_update_encrypted_binary_message(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         queue = self._create_queue(qsc, message_encode_policy=BinaryBase64EncodePolicy(), message_decode_policy=BinaryBase64DecodePolicy())
         queue.key_encryption_key = KeyWrapper('key1')
 
@@ -203,11 +203,11 @@ class StorageQueueEncryptionTest(StorageTestCase):
         self.assertEqual(binary_message, list_result2.content)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_update_encrypted_raw_text_message(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_update_encrypted_raw_text_message(self, storage_account_name, storage_account_key):
         # TODO: Recording doesn't work
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         queue = self._create_queue(qsc, message_encode_policy=None, message_decode_policy=None)
         queue.key_encryption_key = KeyWrapper('key1')
 
@@ -227,11 +227,11 @@ class StorageQueueEncryptionTest(StorageTestCase):
         self.assertEqual(raw_text, list_result2.content)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_update_encrypted_json_message(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_update_encrypted_json_message(self, storage_account_name, storage_account_key):
         # TODO: Recording doesn't work
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         queue = self._create_queue(qsc, message_encode_policy=None, message_decode_policy=None)
         queue.key_encryption_key = KeyWrapper('key1')
 
@@ -253,10 +253,10 @@ class StorageQueueEncryptionTest(StorageTestCase):
         # Assert
         self.assertEqual(message_dict, loads(list_result2.content))
 
-    @GlobalStorageAccountPreparer()
-    def test_invalid_value_kek_wrap(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_invalid_value_kek_wrap(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         queue = self._create_queue(qsc)
         queue.key_encryption_key = KeyWrapper('key1')
         queue.key_encryption_key.get_kid = None
@@ -276,10 +276,10 @@ class StorageQueueEncryptionTest(StorageTestCase):
         with self.assertRaises(AttributeError):
             queue.send_message(u'message')
 
-    @GlobalStorageAccountPreparer()
-    def test_missing_attribute_kek_wrap(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_missing_attribute_kek_wrap(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         queue = self._create_queue(qsc)
 
         valid_key = KeyWrapper('key1')
@@ -309,10 +309,10 @@ class StorageQueueEncryptionTest(StorageTestCase):
         with self.assertRaises(AttributeError):
             queue.send_message(u'message')
 
-    @GlobalStorageAccountPreparer()
-    def test_invalid_value_kek_unwrap(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_invalid_value_kek_unwrap(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         queue = self._create_queue(qsc)
         queue.key_encryption_key = KeyWrapper('key1')
         queue.send_message(u'message')
@@ -326,10 +326,10 @@ class StorageQueueEncryptionTest(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             queue.peek_messages()
 
-    @GlobalStorageAccountPreparer()
-    def test_missing_attribute_kek_unrwap(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_missing_attribute_kek_unrwap(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         queue = self._create_queue(qsc)
         queue.key_encryption_key = KeyWrapper('key1')
         queue.send_message(u'message')
@@ -352,10 +352,10 @@ class StorageQueueEncryptionTest(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             queue.peek_messages()
 
-    @GlobalStorageAccountPreparer()
-    def test_validate_encryption(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_validate_encryption(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         queue = self._create_queue(qsc)
         kek = KeyWrapper('key1')
         queue.key_encryption_key = kek
@@ -411,10 +411,10 @@ class StorageQueueEncryptionTest(StorageTestCase):
         # Assert
         self.assertEqual(decrypted_data, u'message')
 
-    @GlobalStorageAccountPreparer()
-    def test_put_with_strict_mode(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_put_with_strict_mode(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         queue = self._create_queue(qsc)
         kek = KeyWrapper('key1')
         queue.key_encryption_key = kek
@@ -429,10 +429,10 @@ class StorageQueueEncryptionTest(StorageTestCase):
 
         self.assertEqual(str(e.exception), "Encryption required but no key was provided.")
 
-    @GlobalStorageAccountPreparer()
-    def test_get_with_strict_mode(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_get_with_strict_mode(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         queue = self._create_queue(qsc)
         queue.send_message(u'message')
 
@@ -443,10 +443,10 @@ class StorageQueueEncryptionTest(StorageTestCase):
 
         self.assertEqual(str(e.exception), 'Message was not encrypted.')
 
-    @GlobalStorageAccountPreparer()
-    def test_encryption_add_encrypted_64k_message(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_encryption_add_encrypted_64k_message(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         queue = self._create_queue(qsc)
         message = u'a' * 1024 * 64
 
@@ -458,10 +458,10 @@ class StorageQueueEncryptionTest(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             queue.send_message(message)
 
-    @GlobalStorageAccountPreparer()
-    def test_encryption_nonmatching_kid(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_encryption_nonmatching_kid(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         queue = self._create_queue(qsc)
         queue.key_encryption_key = KeyWrapper('key1')
         queue.send_message(u'message')
