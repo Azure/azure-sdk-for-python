@@ -7,11 +7,6 @@
 # --------------------------------------------------------------------------
 from typing import IO, TYPE_CHECKING
 
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse # type: ignore
-
 from msrest import Deserializer, Serializer
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -26,7 +21,7 @@ from .utils._utils import CallingServerUtils
 
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
+    # pylint: disable=unused-import,ungrouped-imports,unsubscriptable-object
     from typing import Any, Callable, Dict, Optional, TypeVar
 
     T = TypeVar('T')

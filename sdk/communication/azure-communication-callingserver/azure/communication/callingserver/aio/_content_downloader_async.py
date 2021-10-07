@@ -7,15 +7,13 @@
 from typing import IO, TYPE_CHECKING
 from urllib.parse import urlparse
 
-from ..utils._utils import CallingServerUtils
+from azure.core.exceptions import HttpResponseError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.core.exceptions import map_error
-
-from .._generated import models as _models
+from ..utils._utils import CallingServerUtils
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
+    # pylint: disable=unused-import,ungrouped-imports,unsubscriptable-object
     from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 
     T = TypeVar('T')

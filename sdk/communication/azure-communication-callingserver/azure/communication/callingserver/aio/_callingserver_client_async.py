@@ -525,6 +525,7 @@ class CallingServerClient:
         **kwargs: Any
 
     ): # type: (...) -> HttpResponse
+        # pylint: disable=protected-access
         if not content_delete_url:
             raise ValueError("content_delete_url can not be None")
 
@@ -533,7 +534,7 @@ class CallingServerClient:
         query_parameters = {} # type: Dict[str, Any]
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['UriToSignWith'] = self._callingserver_service_client._serialize.header( # pylint: disable=protected-access
+        header_parameters['UriToSignWith'] = self._callingserver_service_client._serialize.header(
             name="uri_to_sign_with",
             data=uri_to_sign_with,
             data_type='str')
@@ -541,9 +542,9 @@ class CallingServerClient:
         error_map = CallingServerUtils.get_error_response_map(
             kwargs.pop('error_map', {}))
 
-        client = self._callingserver_service_client._client # pylint: disable=protected-access
-        request = client.delete(content_delete_url, query_parameters, header_parameters)
-        pipeline_response = await client._pipeline.run(request, stream=False, **kwargs)  # pylint: disable=protected-access
+        client = self._callingserver_service_client._client
+        request = client.delete(content_delete_url, query_parameters, header_parameters) #pylint: disable=specify-parameter-names-in-call
+        pipeline_response = await client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
         if response.status_code not in [200]:
             map_error(status_code=response.status_code,

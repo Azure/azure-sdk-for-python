@@ -14,8 +14,6 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
 )
 
-from .. _generated import models as _models
-
 class CallingServerUtils(object):
 
     @staticmethod
@@ -68,7 +66,7 @@ class CallingServerUtils(object):
     @staticmethod
     def get_error_response_map(
         additional_errors
-    ): 
+    ):
         error_map = {
             400: HttpResponseError,
             401: ClientAuthenticationError,
