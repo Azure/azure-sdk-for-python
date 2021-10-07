@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 import asyncio
 import base64
-import json
 from functools import partial
 from typing import TYPE_CHECKING
 
@@ -46,7 +45,7 @@ class RemoteRenderingPollingAsync(AsyncPollingMethod):
         self._response = await self._query_status()  # pylint: disable=E1102
         if self._response is not None and self._response.error is not None:
             error = HttpResponseError("Polling returned a status indicating an error state.", model=self._response)
-            error.error = ODataV4Format(json.loads(json.dumps(self._response)))
+            error.error = ODataV4Format(self._response.error.serialize())
             raise error
 
     def initialize(self, client, initial_response, deserialization_callback):

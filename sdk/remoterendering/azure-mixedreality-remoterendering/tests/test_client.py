@@ -278,16 +278,15 @@ class ClientTests(AzureTestCase):
             storage_container_write_sas="?"+remoterendering_arr_sas_token
         )
 
-        conversion_poller = client.begin_asset_conversion(
-            conversion_id=conversion_id,  input_settings=input_settings, output_settings=output_settings
-        )
-        conversion = conversion_poller.result()
+        with pytest.raises(HttpResponseError) as excinfo:
+            # make the request which fails in polling because of the missing asset
+            conversion_poller = client.begin_asset_conversion(
+                conversion_id=conversion_id,  input_settings=input_settings, output_settings=output_settings)
+            conversion_poller.result()
 
-        assert conversion.id == conversion_id
-        assert conversion.settings.input_settings.relative_input_asset_path == input_settings.relative_input_asset_path
-        assert conversion.status == AssetConversionStatus.FAILED
-        assert "invalid input" in conversion.error.message.lower()
-        assert "logs" in conversion.error.message.lower()
+        error_details = excinfo.value
+        assert "invalid input" in error_details.error.message.lower()
+        assert "logs" in error_details.error.message.lower()
 
     @RemoteRenderingPreparer()
     @RemoteRendererClientPreparer()

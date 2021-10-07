@@ -4,7 +4,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 import base64
-import json
 import time
 from functools import partial
 from typing import TYPE_CHECKING
@@ -45,7 +44,7 @@ class RemoteRenderingPolling(PollingMethod):
         self._response = self._query_status()  # pylint: disable=E1102
         if self._response.error is not None:
             error = HttpResponseError("Polling returned a status indicating an error state.", model=self._response)
-            error.error = ODataV4Format(json.loads(json.dumps(self._response)))
+            error.error = ODataV4Format(self._response.error.serialize())
             raise error
 
     def initialize(self, client, initial_response, deserialization_callback):
