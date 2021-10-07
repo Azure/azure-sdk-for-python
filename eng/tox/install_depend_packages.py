@@ -130,7 +130,7 @@ def filter_dev_requirements(setup_py_path, released_packages, temp_dir):
     filtered_req = [
         req
         for req in requirements
-        if os.path.basename(req.replace('\n', '')) not in req_to_exclude
+        if os.path.basename(req.replace('\n', '')) not in req_to_exclude and not any([i.startswith(req) for i in req_to_exclude])
     ]
 
     logging.info("Filtered dev requirements: %s", filtered_req)
