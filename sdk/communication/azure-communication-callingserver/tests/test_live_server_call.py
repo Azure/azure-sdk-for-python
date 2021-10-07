@@ -50,7 +50,6 @@ class ServerCallTest(CommunicationTestCase):
 
         # create CallingServerClient
         endpoint, _ = parse_connection_str(self.connection_str)
-        print("init " + self.connection_str)
         self.endpoint = endpoint
 
         if not is_live():
@@ -205,8 +204,6 @@ class ServerCallTest(CommunicationTestCase):
     @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
     def test_delete_success(self):
         delete_url = CallingServerLiveTestUtils.get_delete_url()  
-        print(self.endpoint)
-        print(DefaultAzureCredential())
         delete_response = self.callingserver_client.delete_recording(delete_url)
         assert delete_response is not None
         assert delete_response.status_code == 200
