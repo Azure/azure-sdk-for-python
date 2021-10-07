@@ -1,5 +1,4 @@
 # NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
-
 trigger:
   branches:
     include:
@@ -11,7 +10,6 @@ trigger:
     include:
     - sdk/storage/
     - sdk/core/
-
 pr:
   branches:
     include:
@@ -24,23 +22,22 @@ pr:
     include:
     - sdk/storage/
     - sdk/core/
-
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: storage
     TestTimeoutInMinutes: 120
-    # Override the base matrix due to https://github.com/Azure/azure-sdk-for-python/issues/17837
     MatrixConfigs:
-      - Name: storage_ci_matrix
-        Path: eng/pipelines/templates/stages/platform-matrix-cryptography-dependency.json
-        Selection: sparse
-        GenerateVMJobs: true
+    - Name: storage_ci_matrix
+      Path: eng/pipelines/templates/stages/platform-matrix-cryptography-dependency.json
+      Selection: sparse
+      GenerateVMJobs: true
     Artifacts:
     - name: azure-storage-blob
       safeName: azurestorageblob
     - name: azure-storage-blob-changefeed
       safeName: azurestorageblobchangefeed
+      skipPublishDocs: "true"
     - name: azure-storage-file-share
       safeName: azurestoragefileshare
     - name: azure-storage-file-datalake
@@ -60,15 +57,16 @@ extends:
       meta_source: conda-recipe/meta.yaml
       common_root: azure/storage
       checkout:
-        - package: azure-storage-blob
-          checkout_path: sdk/storage
-          version: 12.8.0
-        - package: azure-storage-queue
-          checkout_path: sdk/storage
-          version: 12.1.5
-        - package: azure-storage-file-share
-          checkout_path: sdk/storage
-          version: 12.4.1
-        - package: azure-storage-file-datalake
-          checkout_path: sdk/storage
-          version: 12.3.0
+      - package: azure-storage-blob
+        checkout_path: sdk/storage
+        version: 12.8.0
+      - package: azure-storage-queue
+        checkout_path: sdk/storage
+        version: 12.1.5
+      - package: azure-storage-file-share
+        checkout_path: sdk/storage
+        version: 12.4.1
+      - package: azure-storage-file-datalake
+        checkout_path: sdk/storage
+        version: 12.3.0
+

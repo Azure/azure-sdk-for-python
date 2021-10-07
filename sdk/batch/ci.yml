@@ -1,5 +1,4 @@
 # NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
-
 trigger:
   branches:
     include:
@@ -10,7 +9,6 @@ trigger:
   paths:
     include:
     - sdk/batch/
-
 pr:
   branches:
     include:
@@ -22,7 +20,6 @@ pr:
   paths:
     include:
     - sdk/batch/
-
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
@@ -32,3 +29,5 @@ extends:
       safeName: azuremgmtbatch
     - name: azure-batch
       safeName: azurebatch
+      skipPublishDocs: "true"
+

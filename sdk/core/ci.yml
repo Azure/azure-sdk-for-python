@@ -1,5 +1,4 @@
 # NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
-
 trigger:
   branches:
     include:
@@ -12,7 +11,6 @@ trigger:
     - sdk/core/
     - eng/
     - tools/
-
 pr:
   branches:
     include:
@@ -26,7 +24,6 @@ pr:
     - sdk/core/
     - eng/
     - tools/
-
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
@@ -42,11 +39,13 @@ extends:
       safeName: azurecorecoretracingtelemetry
     - name: azure-common
       safeName: azurecommon
+      skipPublishDocs: "true"
     CondaArtifacts:
     - name: azure-core
       meta_source: conda-recipe/meta.yaml
       common_root: azure
       checkout:
-        - package: azure-core
-          checkout_path: sdk/core
-          version: 1.12.0
+      - package: azure-core
+        checkout_path: sdk/core
+        version: 1.12.0
+

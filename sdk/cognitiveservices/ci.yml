@@ -1,5 +1,4 @@
 # NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
-
 trigger:
   branches:
     include:
@@ -10,7 +9,6 @@ trigger:
   paths:
     include:
     - sdk/cognitiveservices/
-
 pr:
   branches:
     include:
@@ -22,7 +20,6 @@ pr:
   paths:
     include:
     - sdk/cognitiveservices/
-
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
@@ -31,41 +28,61 @@ extends:
     Artifacts:
     - name: azure-cognitiveservices-anomalydetector
       safeName: azurecognitiveservicesanomalydetector
+      skipPublishDocs: "true"
     - name: azure-cognitiveservices-knowledge-qnamaker
       safeName: azurecognitiveservicesknowledgeqnamaker
+      skipPublishDocs: "true"
     - name: azure-cognitiveservices-language-luis
       safeName: azurecognitiveserviceslanguageluis
+      skipPublishDocs: "true"
     - name: azure-cognitiveservices-language-spellcheck
       safeName: azurecognitiveserviceslanguagespellcheck
+      skipPublishDocs: "true"
     - name: azure-cognitiveservices-language-textanalytics
       safeName: azurecognitiveserviceslanguagetextanalytics
+      skipPublishDocs: "true"
     - name: azure-cognitiveservices-personalizer
       safeName: azurecognitiveservicespersonalizer
+      skipPublishDocs: "true"
     - name: azure-cognitiveservices-search-autosuggest
       safeName: azurecognitiveservicessearchautosuggest
+      skipPublishDocs: "true"
     - name: azure-cognitiveservices-search-customimagesearch
       safeName: azurecognitiveservicessearchcustomimagesearch
+      skipPublishDocs: "true"
     - name: azure-cognitiveservices-search-customsearch
       safeName: azurecognitiveservicessearchcustomsearch
+      skipPublishDocs: "true"
     - name: azure-cognitiveservices-search-entitysearch
       safeName: azurecognitiveservicessearchentitysearch
+      skipPublishDocs: "true"
     - name: azure-cognitiveservices-search-imagesearch
       safeName: azurecognitiveservicessearchimagesearch
+      skipPublishDocs: "true"
     - name: azure-cognitiveservices-search-newssearch
       safeName: azurecognitiveservicessearchnewssearch
+      skipPublishDocs: "true"
     - name: azure-cognitiveservices-search-videosearch
       safeName: azurecognitiveservicessearchvideosearch
+      skipPublishDocs: "true"
     - name: azure-cognitiveservices-search-visualsearch
       safeName: azurecognitiveservicessearchvisualsearch
+      skipPublishDocs: "true"
     - name: azure-cognitiveservices-search-websearch
       safeName: azurecognitiveservicessearchwebsearch
+      skipPublishDocs: "true"
     - name: azure-cognitiveservices-vision-computervision
       safeName: azurecognitiveservicesvisioncomputervision
+      skipPublishDocs: "true"
     - name: azure-cognitiveservices-vision-contentmoderator
       safeName: azurecognitiveservicesvisioncontentmoderator
+      skipPublishDocs: "true"
     - name: azure-cognitiveservices-vision-customvision
       safeName: azurecognitiveservicesvisioncustomvision
+      skipPublishDocs: "true"
     - name: azure-cognitiveservices-vision-face
       safeName: azurecognitiveservicesvisionface
+      skipPublishDocs: "true"
     - name: azure-mgmt-cognitiveservices
       safeName: azuremgmtcognitiveservices
+

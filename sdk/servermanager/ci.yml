@@ -1,5 +1,4 @@
 # NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
-
 trigger:
   branches:
     include:
@@ -10,7 +9,6 @@ trigger:
   paths:
     include:
     - sdk/servermanager/
-
 pr:
   branches:
     include:
@@ -22,7 +20,6 @@ pr:
   paths:
     include:
     - sdk/servermanager/
-
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
@@ -30,3 +27,5 @@ extends:
     Artifacts:
     - name: azure-mgmt-servermanager
       safeName: azuremgmtservermanager
+      skipPublishDocs: "true"
+

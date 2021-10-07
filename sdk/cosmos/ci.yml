@@ -10,7 +10,6 @@ trigger:
     include:
     - sdk/cosmos/
     - sdk/core/
-
 pr:
   branches:
     include:
@@ -23,7 +22,6 @@ pr:
     include:
     - sdk/cosmos/
     - sdk/core/
-
 extends:
   template: /eng/pipelines/templates/stages/cosmos-sdk-client.yml
   parameters:
@@ -33,3 +31,4 @@ extends:
       safeName: azurecosmos
     - name: azure-mgmt-cosmosdb
       safeName: azuremgmtcosmosdb
+
