@@ -664,16 +664,18 @@ class TableClient(AsyncTablesBaseClient):
     @distributed_trace_async
     async def submit_transaction(
         self,
-        operations: Union[Iterable[TransactionOperationType],AsyncIterable[TransactionOperationType]],
+        operations: Union[
+            Iterable[TransactionOperationType], AsyncIterable[TransactionOperationType]
+        ],
         **kwargs
     ) -> List[Mapping[str, Any]]:
         """Commit a list of operations as a single transaction.
 
         If any one of these operations fails, the entire transaction will be rejected.
 
-        :param operations: The list of operations to commit in a transaction. This should be an iterable (or async iterable) of
-         tuples containing an operation name, the entity on which to operate, and optionally, a dict of additional
-         kwargs for that operation.
+        :param operations: The list of operations to commit in a transaction. This should be an iterable
+         (or async iterable) of tuples containing an operation name, the entity on which to operate,
+         and optionally, a dict of additional kwargs for that operation.
         :type operations: Union[Iterable[TransactionOperationType],AsyncIterable[TransactionOperationType]]
         :return: A list of mappings with response metadata for each operation in the transaction.
         :rtype: List[Mapping[str, Any]]
