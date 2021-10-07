@@ -66,7 +66,7 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
                     certificate_path=None, password=kwargs.pop("password", None), certificate_data=client_certificate
                 )
             except ValueError as ex:
-                # client_certificate isn't a valid cert. 
+                # client_certificate isn't a valid cert.
                 message = (
                     '"client_certificate" is not a valid certificate in PEM or PKCS12 format'
                 )
