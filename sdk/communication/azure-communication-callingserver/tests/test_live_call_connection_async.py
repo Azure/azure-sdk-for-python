@@ -64,7 +64,6 @@ class CallConnectionTestAsync(AsyncCommunicationTestCase):
             http_logging_policy=get_http_logging_policy()
         )
 
-    @pytest.mark.skip(reason="Skip because the server side bits not ready")
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_play_cancel_hangup_scenario_async(self):
         # create call option

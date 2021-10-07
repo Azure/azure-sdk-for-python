@@ -14,7 +14,7 @@ from azure.communication.callingserver import (
     JoinCallOptions,
     PlayAudioOptions,
     CommunicationIdentifier,
-    CallLocator, 
+    CallLocator,
     ServerCallLocator
     )
 from utils._unit_test_utils import CallingServerUnitTestUtils
@@ -416,7 +416,6 @@ async def test_cancel_participant_media_operation_failed(
     except:
         raised = True
     assert raised == True
-
 
 @pytest.mark.asyncio
 async def test_start_recording_relative_uri_fails():
