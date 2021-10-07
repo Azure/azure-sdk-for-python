@@ -6,8 +6,7 @@
 import logging
 from azure.core.tracing.decorator import distributed_trace
 from ._resolver import DtmiResolver
-from ._common import DEFAULT_LOCATION, DEFAULT_API_VERSION, DependencyModeType
-
+from ._common import DEFAULT_LOCATION, DEFAULT_API_VERSION, CLIENT_INIT_MSG, DependencyModeType
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -17,14 +16,11 @@ class ModelsRepositoryClient(object):
 
     def __init__(
         self,
-        credential=None,
         repository_location=DEFAULT_LOCATION,
         **kwargs
     ):  # pylint: disable=missing-client-constructor-parameter-credential
         # type: (TokenCredential, str, Any) -> None
         """
-        :param credential: Credentials to use when connecting to the service.
-        :type credential: ~azure.core.credentials.TokenCredential
         :param repository_location: Location of the Models Repository you wish to access.
             This location can be a remote HTTP/HTTPS URL, or a local filesystem path.
             If omitted, will default to using "https://devicemodels.azure.com".
@@ -37,7 +33,8 @@ class ModelsRepositoryClient(object):
         :raises: ValueError if an invalid argument is provided
         """
         self.repository_uri = repository_location if repository_location else DEFAULT_LOCATION
-        _LOGGER.debug("Client configured for respository location %s", self.repository_uri)
+        info_msg = CLIENT_INIT_MSG.format(self.repository_uri)
+        _LOGGER.debug(info_msg)
 
         self.resolver = DtmiResolver(location=self.repository_uri, **kwargs)
 
@@ -83,4 +80,4 @@ class ModelsRepositoryClient(object):
         if isinstance(dtmis, str):
             dtmis = [dtmis]
 
-        return self.resolver.resolve(dtmis, dependency_resolution=dependency_resolution)
+        return self.resolver.resolve(dtmis, dependency_resolution=dependency_resolution, **kwargs)

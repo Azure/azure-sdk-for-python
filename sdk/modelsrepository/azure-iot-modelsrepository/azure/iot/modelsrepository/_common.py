@@ -4,8 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 import platform
-from ._version import VERSION
 from enum import Enum
+from ._version import VERSION
 
 USER_AGENT = "azsdk-python-modelsrepository/{pkg_version} Python/{py_version} ({platform})".format(
     pkg_version=VERSION, py_version=(platform.python_version()), platform=platform.platform()
@@ -17,17 +17,24 @@ DEFAULT_API_VERSION = "2021-02-11"
 DEFAULT_LOCATION = "https://devicemodels.azure.com"
 METADATA_FILE = "metadata.json"
 
-# Standard strings TODO figure out best way to allow inputs in string
-GenericGetModelsError = "Failure handling \"{0}\"."
-InvalidDtmiFormat = "Invalid DTMI format \"{0}\"."
-ClientInitWithFetcher = "Client session {0} initialized with {1} content fetcher."
-ProcessingDtmi = "Processing DTMI \"{0}\". "
-SkippingPreProcessedDtmi = "Already processed DTMI \"{0}\". Skipping."
-DiscoveredDependencies = "Discovered dependencies \"{0}\"."
-FetchingModelContent = "Attempting to fetch model content from \"{0}\"."
-ErrorFetchingModelContent = "Model file \"{0}\" not found or not accessible in target repository."
-FailureProcessingRepositoryMetadata = "Unable to fetch or process repository metadata file."
-IncorrectDtmiCasing = "Fetched model has incorrect DTMI casing. Expected \"{0}\", parsed \"{1}\"."
+# Standard strings
+CLIENT_INIT_MSG = "Client configured for repository location \"{0}\"."
+DISCOVERED_DEPENDENCIES = "Discovered dependencies \"{0}\"."
+ERROR_FETCHING_MODEL_CONTENT = (
+    "Model file \"{0}\" not found or not accessible in target repository. Fallback to non-expanded"
+    "model content and will determine dependencies for this model manually."
+)
+FAILURE_PROCESSING_REPOSITORY_METADATA = (
+    "Unable to fetch or process repository metadata file. Repository assumed to not have expanded "
+    "models. The client will fetch non-expanded model content and determine dependencies manually."
+)
+FETCHER_INIT_MSG = "Repository Location identified as {0}. Client session initialized with {1}."
+FETCHING_MODEL_CONTENT = "Attempting to fetch model content from \"{0}\"."
+GENERIC_GET_MODELS_ERROR = "Failure handling \"{0}\"."
+INCORRECT_DTMI_CASING = "Fetched model has incorrect DTMI casing. Expected \"{0}\", parsed \"{1}\"."
+INVALID_DTMI_FORMAT = "Invalid DTMI format \"{0}\"."
+PROCESSING_DTMI = "Processing DTMI \"{0}\". "
+SKIPPING_PRE_PROCESSED_DTMI = "Already processed DTMI \"{0}\". Skipping."
 
 
 class DependencyModeType(Enum):
@@ -37,23 +44,6 @@ class DependencyModeType(Enum):
 
     disabled = "disabled"
     enabled = "enabled"
-
-
-class RemoteProtocolType(Enum):
-    """
-    Remote protocol for web URL.
-    """
-
-    http = "http"
-    https = "https"
-
-class ModelType(Enum):
-    """
-    Possible DTMI modely types.
-    """
-
-    interface = "Interface"
-    component = "Component"
 
 
 class ModelProperties(Enum):
@@ -66,3 +56,21 @@ class ModelProperties(Enum):
     extends = "extends"
     contents = "contents"
     schema = "schema"
+
+
+class ModelType(Enum):
+    """
+    Possible DTMI modely types.
+    """
+
+    interface = "Interface"
+    component = "Component"
+
+
+class RemoteProtocolType(Enum):
+    """
+    Remote protocol for web URL.
+    """
+
+    http = "http"
+    https = "https"

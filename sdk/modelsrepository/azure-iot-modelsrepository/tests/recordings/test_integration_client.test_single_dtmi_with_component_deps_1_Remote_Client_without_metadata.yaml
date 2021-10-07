@@ -11,6 +11,68 @@ interactions:
       User-Agent:
       - azsdk-python-modelsrepository/1.0.0b2 Python/3.8.3 (Windows-10-10.0.19041-SP0)
     method: GET
+    uri: https://raw.githubusercontent.com/Azure/iot-plugandplay-models/main/metadata.json
+  response:
+    body:
+      string: '404: Not Found'
+    headers:
+      accept-ranges:
+      - bytes
+      access-control-allow-origin:
+      - '*'
+      connection:
+      - keep-alive
+      content-length:
+      - '14'
+      content-security-policy:
+      - default-src 'none'; style-src 'unsafe-inline'; sandbox
+      content-type:
+      - text/plain; charset=utf-8
+      date:
+      - Wed, 06 Oct 2021 20:48:08 GMT
+      expires:
+      - Wed, 06 Oct 2021 20:53:08 GMT
+      source-age:
+      - '2'
+      strict-transport-security:
+      - max-age=31536000
+      vary:
+      - Authorization,Accept-Encoding,Origin
+      via:
+      - 1.1 varnish
+      x-cache:
+      - HIT
+      x-cache-hits:
+      - '1'
+      x-content-type-options:
+      - nosniff
+      x-fastly-request-id:
+      - c39673cc5a2f89e088d99163ed250d61c3f8a36c
+      x-frame-options:
+      - deny
+      x-github-request-id:
+      - 44FA:9CCC:107A5A:1AA84D:615E0B87
+      x-served-by:
+      - cache-sea4421-SEA
+      x-timer:
+      - S1633553289.721131,VS0,VE0
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 404
+      message: Not Found
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-modelsrepository/1.0.0b2 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+    method: GET
     uri: https://raw.githubusercontent.com/Azure/iot-plugandplay-models/main/dtmi/com/example/temperaturecontroller-1.json
   response:
     body:
@@ -55,13 +117,13 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Wed, 29 Sep 2021 01:22:55 GMT
+      - Wed, 06 Oct 2021 20:48:08 GMT
       etag:
       - W/"748cdd5268acc4ab078a6309c8e06c0fdd42913cc5d40c6f736c61caa5894682"
       expires:
-      - Wed, 29 Sep 2021 01:27:55 GMT
+      - Wed, 06 Oct 2021 20:53:08 GMT
       source-age:
-      - '1'
+      - '0'
       strict-transport-security:
       - max-age=31536000
       vary:
@@ -69,21 +131,21 @@ interactions:
       via:
       - 1.1 varnish
       x-cache:
-      - HIT
+      - MISS
       x-cache-hits:
-      - '1'
+      - '0'
       x-content-type-options:
       - nosniff
       x-fastly-request-id:
-      - 62e44c5907119b97df96f8fe44e325246456345b
+      - ebbc267a59e089a872d3be493823f32c1f833249
       x-frame-options:
       - deny
       x-github-request-id:
-      - EE06:7194:1C852:26F1B:6153BFEE
+      - B6FA:471F:10439C:1A5D07:615E0B88
       x-served-by:
-      - cache-sea4445-SEA
+      - cache-sea4421-SEA
       x-timer:
-      - S1632878576.620218,VS0,VE1
+      - S1633553289.732212,VS0,VE133
       x-xss-protection:
       - 1; mode=block
     status:
@@ -151,13 +213,13 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Wed, 29 Sep 2021 01:22:55 GMT
+      - Wed, 06 Oct 2021 20:48:08 GMT
       etag:
       - W/"b96d69804e3b33b3efad5393d8ab41bd814a03d293a753532e6b3a1b944c4b3e"
       expires:
-      - Wed, 29 Sep 2021 01:27:55 GMT
+      - Wed, 06 Oct 2021 20:53:08 GMT
       source-age:
-      - '3'
+      - '1'
       strict-transport-security:
       - max-age=31536000
       vary:
@@ -167,19 +229,19 @@ interactions:
       x-cache:
       - HIT
       x-cache-hits:
-      - '2'
+      - '1'
       x-content-type-options:
       - nosniff
       x-fastly-request-id:
-      - 2646823d2db2fcfc62ba2685e01d14182022de77
+      - fb42b99a0d026fa0b069c509ed9a3cefccc1cad7
       x-frame-options:
       - deny
       x-github-request-id:
-      - AF36:7193:124D2:1B77D:6153BFEC
+      - 44FA:9CCC:107A61:1AA856:615E0B87
       x-served-by:
-      - cache-sea4445-SEA
+      - cache-sea4421-SEA
       x-timer:
-      - S1632878576.633616,VS0,VE0
+      - S1633553289.885462,VS0,VE1
       x-xss-protection:
       - 1; mode=block
     status:
@@ -250,13 +312,13 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Wed, 29 Sep 2021 01:22:55 GMT
+      - Wed, 06 Oct 2021 20:48:08 GMT
       etag:
       - W/"70bf3b0318800ff73445e120d24e516033d1cb6934c2888be2b78dc09b52eb7b"
       expires:
-      - Wed, 29 Sep 2021 01:27:55 GMT
+      - Wed, 06 Oct 2021 20:53:08 GMT
       source-age:
-      - '3'
+      - '2'
       strict-transport-security:
       - max-age=31536000
       vary:
@@ -270,15 +332,15 @@ interactions:
       x-content-type-options:
       - nosniff
       x-fastly-request-id:
-      - fa275a68ec7fd6279732f89a617e9d8e92edc5ce
+      - 0e3bb40c90d0512697437afd5d55f3d55e0956f3
       x-frame-options:
       - deny
       x-github-request-id:
-      - B3F4:1FDB:10C2C:18FEB:6153BFEC
+      - 93FA:8DB2:1AFAB6:270A2C:615E0B87
       x-served-by:
-      - cache-sea4445-SEA
+      - cache-sea4421-SEA
       x-timer:
-      - S1632878576.643163,VS0,VE1
+      - S1633553289.904469,VS0,VE1
       x-xss-protection:
       - 1; mode=block
     status:

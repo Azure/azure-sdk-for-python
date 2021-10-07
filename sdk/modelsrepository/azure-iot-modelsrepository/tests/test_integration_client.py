@@ -17,9 +17,9 @@ from .client_helper import (
 )
 
 
-###########################
-# Test Case Mixin Classes #
-###########################
+#####################
+# Test Case Classes #
+#####################
 
 
 class TestIntegrationGetModels(AzureTestCase):
