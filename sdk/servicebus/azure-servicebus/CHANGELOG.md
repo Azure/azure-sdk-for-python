@@ -1,5 +1,15 @@
 # Release History
 
+## 7.4.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 7.4.0b1 (2021-10-06)
 
 ### Features Added
