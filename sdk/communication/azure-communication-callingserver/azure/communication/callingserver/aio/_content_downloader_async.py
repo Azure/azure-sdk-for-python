@@ -7,10 +7,10 @@
 from typing import IO, TYPE_CHECKING
 from urllib.parse import urlparse
 
+from ..utils._utils import CallingServerUtils
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.core.exceptions import (ClientAuthenticationError, HttpResponseError,
-    ResourceExistsError, ResourceNotFoundError, map_error)
+from azure.core.exceptions import map_error
 
 from .._generated import models as _models
 
@@ -46,25 +46,9 @@ class ContentDownloader():
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[IO]
-        error_map = {
-            409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response,
-                                                    model=self._deserialize(_models.CommunicationErrorResponse,
-                                                                            response)),
-            401: lambda response: ClientAuthenticationError(response=response,
-                                                            model=self._deserialize(_models.CommunicationErrorResponse,
-                                                                                    response)),
-            403: lambda response: HttpResponseError(response=response,
-                                                    model=self._deserialize(_models.CommunicationErrorResponse,
-                                                                            response)),
-            404: lambda response: ResourceNotFoundError(response=response,
-                                                        model=self._deserialize(_models.CommunicationErrorResponse,
-                                                                                response)),
-            500: lambda response: HttpResponseError(response=response,
-                                                    model=self._deserialize(_models.CommunicationErrorResponse,
-                                                                            response)),
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map = CallingServerUtils.get_error_response_map(
+            kwargs.pop('error_map', {}))
+
 
         # Construct URL
         uri_to_sign_with = self._get_url_to_sign_request_with(content_url)

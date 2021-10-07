@@ -15,16 +15,15 @@ except ImportError:
 from msrest import Deserializer, Serializer
 from azure.core import PipelineClient
 from azure.core.exceptions import (
-    ClientAuthenticationError,
     HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError,
     map_error
 )
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from ._generated import models as _models
 from ._generated._configuration import AzureCommunicationCallingServerServiceConfiguration
+from .utils._utils import CallingServerUtils
+
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -44,8 +43,6 @@ class ContentDownloader(object):
     :type models: ~azure.communication.callingserver.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
     """
 
     models = _models
@@ -80,28 +77,10 @@ class ContentDownloader(object):
         """
 
         cls = kwargs.pop('cls', None)  # type: ClsType[IO]
-        error_map = {
-            409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response,
-                                                    model=self._deserialize(_models.CommunicationErrorResponse,
-                                                                            response)),
-            401: lambda response: ClientAuthenticationError(response=response,
-                                                            model=self._deserialize(_models.CommunicationErrorResponse,
-                                                                                    response)),
-            403: lambda response: HttpResponseError(response=response,
-                                                    model=self._deserialize(_models.CommunicationErrorResponse,
-                                                                            response)),
-            404: lambda response: ResourceNotFoundError(response=response,
-                                                        model=self._deserialize(_models.CommunicationErrorResponse,
-                                                                                response)),
-            500: lambda response: HttpResponseError(response=response,
-                                                    model=self._deserialize(_models.CommunicationErrorResponse,
-                                                                            response)),
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map = CallingServerUtils.get_error_response_map(kwargs.pop('error_map', {}))
 
         url = content_url
-        uri_to_sign_with = self.get_url_to_sign_request_with(url)
+        uri_to_sign_with = CallingServerUtils.get_url_to_sign_request_with(self._config.endpoint, url)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
@@ -123,10 +102,3 @@ class ContentDownloader(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-
-
-    def get_url_to_sign_request_with(self,
-        content_url # type: str
-    ): # type: (...) -> str
-        path = urlparse(content_url).path
-        return self._config.endpoint + path

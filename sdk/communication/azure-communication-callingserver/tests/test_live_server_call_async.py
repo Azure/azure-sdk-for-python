@@ -212,3 +212,29 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
 
         with self.assertRaises(HttpResponseError):
             await self.callingserver_client.start_recording(ServerCallLocator(invalid_server_call_id), CONST.CALLBACK_URI)
+
+    @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_delete_success(self):
+        delete_url = CallingServerLiveTestUtilsAsync.get_delete_url()       
+        async with self.callingserver_client:
+            delete_response = await self.callingserver_client.delete_recording(delete_url)
+            assert delete_response is not None
+            assert delete_response.status_code == 200
+
+    @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_delete_content_not_exists(self):
+        delete_url = CallingServerLiveTestUtilsAsync.get_invalid_delete_url()
+        async with self.callingserver_client:
+            with self.assertRaises(HttpResponseError):
+                await self.callingserver_client.delete_recording(delete_url)
+
+    @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_delete_content_unauthorized(self):       
+        delete_url = CallingServerLiveTestUtilsAsync.get_delete_url()       
+        unauthorized_client = CallingServerClient.from_connection_string("endpoint=https://test.communication.azure.com/;accesskey=1234")
+        async with unauthorized_client:
+            with self.assertRaises(HttpResponseError):
+                await unauthorized_client.delete_recording(delete_url)

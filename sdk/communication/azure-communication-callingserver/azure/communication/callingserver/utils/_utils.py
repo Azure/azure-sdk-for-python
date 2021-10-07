@@ -4,7 +4,17 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from urllib.parse import urlparse
 import validators
+
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+)
+
+from .. _generated import models as _models
 
 class CallingServerUtils(object):
 
@@ -46,3 +56,26 @@ class CallingServerUtils(object):
             range_header = "bytes={0}-".format(start_range)
 
         return range_header
+
+    @staticmethod
+    def get_url_to_sign_request_with(
+        resource_endpoint, # type: str
+        content_url # type: str
+    ): # type: (...) -> str
+        path = urlparse(content_url).path
+        return resource_endpoint + path
+
+    @staticmethod
+    def get_error_response_map(
+        additional_errors
+    ): 
+        error_map = {
+            400: HttpResponseError,
+            401: ClientAuthenticationError,
+            403: HttpResponseError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            500: HttpResponseError
+        }
+        error_map.update(additional_errors)
+        return error_map

@@ -8,6 +8,11 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional  # pylint: disable=u
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.transport import HttpResponse
+from azure.core.exceptions import (
+    HttpResponseError,
+    map_error
+)
+
 from .utils._utils import CallingServerUtils
 from ._content_downloader import ContentDownloader
 from ._download import ContentStreamDownloader
@@ -39,14 +44,6 @@ from ._converters import (
     )
 from ._shared.utils import get_authentication_policy, get_header_policy, parse_connection_str
 from ._version import SDK_MONIKER
-
-from ._generated import models as _models
-
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse  # type: ignore
-
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -401,7 +398,7 @@ class CallingServerClient(object):
             cancel_participant_media_operation_request=cancel_participant_media_operation_request,
             **kwargs
             )
-   
+
     def start_recording(
         self,
         call_locator,  # type: CallLocator
@@ -539,36 +536,21 @@ class CallingServerClient(object):
             raise ValueError("content_delete_url can not be None")
 
         url = content_delete_url
-        uri_to_sign_with = self.get_url_to_sign_request_with(url)
+        uri_to_sign_with = CallingServerUtils.get_url_to_sign_request_with(self._endpoint, url)
 
-        query_parameters = {}
+        query_parameters = {} # type: Dict[str, Any]
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['UriToSignWith'] = self._callingserver_service_client._serialize.header(
-            "uri_to_sign_with", uri_to_sign_with, 'str')
+        header_parameters['UriToSignWith'] = self._callingserver_service_client._serialize.header( # pylint: disable=protected-access
+            name="uri_to_sign_with",
+            data=uri_to_sign_with,
+            data_type='str')
 
-        error_map = {
-            409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response,
-                                                    model=self._callingserver_service_client._deserialize(_models.CommunicationErrorResponse,
-                                                                            response)),
-            401: lambda response: ClientAuthenticationError(response=response,
-                                                            model=self._callingserver_service_client._deserialize(_models.CommunicationErrorResponse,
-                                                                                    response)),
-            403: lambda response: HttpResponseError(response=response,
-                                                    model=self._callingserver_service_client._deserialize(_models.CommunicationErrorResponse,
-                                                                            response)),
-            404: lambda response: ResourceNotFoundError(response=response,
-                                                        model=self._callingserver_service_client._deserialize(_models.CommunicationErrorResponse,
-                                                                                response)),
-            500: lambda response: HttpResponseError(response=response,
-                                                    model=self._callingserver_service_client._deserialize(_models.CommunicationErrorResponse,
-                                                                            response)),
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        request = self._callingserver_service_client._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._callingserver_service_client._client._pipeline.run(request, **kwargs) # pylint: disable=protected-access
+        error_map = CallingServerUtils.get_error_response_map(
+            kwargs.pop('error_map', {}))
+        client = self._callingserver_service_client._client # pylint: disable=protected-access
+        request = client.delete(url, query_parameters, header_parameters)
+        pipeline_response = client._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
         response = pipeline_response.http_response
         if response.status_code not in [200]:
             map_error(status_code=response.status_code,
@@ -576,10 +558,3 @@ class CallingServerClient(object):
             raise HttpResponseError(response=response)
 
         return response
-
-    def get_url_to_sign_request_with(
-        self,
-        content_url # type: str
-    ):
-        path = urlparse(content_url).path
-        return self._endpoint + path

@@ -12,7 +12,6 @@ from typing import (  # pylint: disable=unused-import
 )
 from datetime import datetime
 import calendar
-from urllib.parse import urlparse
 from msrest.serialization import TZ_UTC
 from azure.core.credentials import AccessToken
 from azure.core.pipeline.policies import HeadersPolicy
@@ -150,6 +149,6 @@ def get_header_policy(
         return header_policy
     if isinstance(credential, str):
         return None
-    
+
     raise TypeError("Unsupported credential: {}. Use an access token string to use HMACCredentialsPolicy"
                 "or a token credential from azure.identity".format(type(credential)))
