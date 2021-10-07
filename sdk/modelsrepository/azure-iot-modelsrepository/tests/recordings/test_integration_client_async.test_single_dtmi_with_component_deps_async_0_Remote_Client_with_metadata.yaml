@@ -8,24 +8,24 @@ interactions:
     uri: https://devicemodels.azure.com/metadata.json
   response:
     body:
-      string: "{\n  \"commitId\": \"8776be97bdb9803e90499eff98b95fb792da3e56\",\n
+      string: "{\n  \"commitId\": \"16b04c45d99deb5438de3c5247a966e7596eaa44\",\n
         \ \"features\": {\n    \"expanded\": true,\n    \"index\": true\n  },\n  \"publishDateUtc\":
-        \"2021-10-04T17:00:46.811428+00:00\",\n  \"sourceRepo\": \"Azure/iot-plugandplay-models\",\n
-        \ \"totalModelCount\": 19027\n}"
+        \"2021-10-06T18:01:30.072670+00:00\",\n  \"sourceRepo\": \"Azure/iot-plugandplay-models\",\n
+        \ \"totalModelCount\": 19032\n}"
     headers:
       accept-ranges: bytes
       access-control-allow-headers: '*'
       access-control-allow-methods: GET, HEAD, OPTIONS
       access-control-expose-headers: '*'
-      age: '1'
+      age: '2'
       cache-control: max-age=600
       content-length: '253'
-      content-md5: NKppgKFM3+6s8eXtEYbFkw==
+      content-md5: x6Px49JuRM9EVDNUDRj0qA==
       content-type: application/json
-      date: Mon, 04 Oct 2021 23:57:30 GMT
-      etag: '"0x8D9875AEB0F0DED"'
-      expires: Tue, 05 Oct 2021 00:07:30 GMT
-      last-modified: Mon, 04 Oct 2021 17:18:01 GMT
+      date: Wed, 06 Oct 2021 20:48:09 GMT
+      etag: '"0x8D988F70ADF0EEF"'
+      expires: Wed, 06 Oct 2021 20:58:09 GMT
+      last-modified: Wed, 06 Oct 2021 18:28:07 GMT
       server: ECAcc (sed/E12A)
       x-cache: HIT
       x-ms-error-code: ConditionNotMet
@@ -141,11 +141,11 @@ interactions:
       access-control-allow-headers: '*'
       access-control-allow-methods: GET, HEAD, OPTIONS
       access-control-expose-headers: '*'
-      age: '235145'
+      age: '396584'
       content-length: '6751'
       content-md5: BnZpV2+7Z2t0sxAxOhmBdw==
       content-type: application/json
-      date: Mon, 04 Oct 2021 23:57:30 GMT
+      date: Wed, 06 Oct 2021 20:48:09 GMT
       etag: '"0x8D8FED94EBE03D1"'
       last-modified: Wed, 14 Apr 2021 00:07:35 GMT
       server: ECAcc (sed/E181)

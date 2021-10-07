@@ -73,9 +73,18 @@ This form shows specifing a local filesystem URI for the models repository clien
 client = ModelsRepositoryClient(repository_location="c:/path/to/SampleModelsRepo/")
 ```
 
+#### Repository metadata
+
+Models repositories that implement Azure IoT conventions can **optionally** include a `metadata.json` file at the root of the repository. The `metadata.json` file provides key attributees of a repository including the features that it provides. A client can use the repository metadata to make decisions around how to optimally handle an operation.
+
+The following snippet shows how to configure the time span in seconds in which the `ModelsRepositoryClient` considers metadata stale.  When the client metadata state is stale, the next service operation that can make use of metadata will first fetch and refresh the client metadata state. The operation will then continue as normal.
+```python
+client = ModelsRepositoryClient(metadata_expiry=1800)
+```
+
 #### Override options
 
-If you need to override pipeline behavior, such as provide your own `HttpClient` instance, you can do that via constructor that takes a [ModelsRepositoryClientOptions][modelsrepository_clientoptions] parameter.
+If you need to override pipeline behavior, such as provide your own `HttpClient` instance, you can do that by specifying the corresponding kwarg.
 It provides an opportunity to override default behavior including:
 
 - Overriding [transport][azure_core_transport]

@@ -22,12 +22,12 @@ from .client_helper import (
 )
 
 
-###########################
-# Test Case Mixin Classes #
-###########################
+#####################
+# Test Case Classes #
+#####################
 
 
-class TestIntegrationGetModelsAsync(AzureTestCase):
+class TestIntegrationGetModels(AzureTestCase):
     @parameterized.expand(
         [
             ("Remote Client", ClientType.remote.value),

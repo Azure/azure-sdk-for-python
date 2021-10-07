@@ -71,9 +71,15 @@ class TestGetModelURI(object):
             ),
             pytest.param(
                 "dtmi:com:somedomain:example:FooDTDL;1",
-                "file://c:/myrepository/local/",
-                "file://c:/myrepository/local/dtmi/com/somedomain/example/foodtdl-1.json",
+                "file:///c:/myrepository/local/",
+                "file:///c:/myrepository/local/dtmi/com/somedomain/example/foodtdl-1.json",
                 id="Drive Letter Filesystem URI",
+            ),
+            pytest.param(
+                "dtmi:com:somedomain:example:FooDTDL;1",
+                "file:///c:/myrepoSitory/local/",
+                "file:///c:/myrepoSitory/local/dtmi/com/somedomain/example/foodtdl-1.json",
+                id="Mixed case Drive Letter Filesystem URI",
             ),
             pytest.param(
                 "dtmi:com:somedomain:example:FooDTDL;1",
@@ -102,14 +108,20 @@ class TestGetModelURI(object):
             pytest.param(
                 "dtmi:com:somedomain:example:FooDTDL;1",
                 "c:/myrepository/local/",
-                "file://c:/myrepository/local/dtmi/com/somedomain/example/foodtdl-1.json",
+                "file:///c:/myrepository/local/dtmi/com/somedomain/example/foodtdl-1.json",
                 id="Drive Letter Filesystem with no file scheme",
             ),
             pytest.param(
                 "dtmi:com:somedomain:example:FooDTDL;1",
                 "\\\\myrepository\\local",
-                "///myrepository/local/dtmi/com/somedomain/example/foodtdl-1.json",
+                "file://myrepository/local/dtmi/com/somedomain/example/foodtdl-1.json",
                 id="Forward slashes",
+            ),
+            pytest.param(
+                "dtmi:com:somedomain:example:FooDTDL;1",
+                "c:\\myrepository\\local\\",
+                "file:///c:/myrepository/local/dtmi/com/somedomain/example/foodtdl-1.json",
+                id="Drive Letter Filesystem with no file scheme and foward slashes",
             ),
         ],
     )
@@ -117,25 +129,8 @@ class TestGetModelURI(object):
         model_uri = dtmi_conventions.get_model_uri(dtmi, repository_uri)
         assert model_uri == expected_model_uri
 
-    @pytest.mark.it("Raises Value Error for invalid DTMIs")
-    @pytest.mark.parametrize(
-        "dtmi, repository_uri",
-        [
-            pytest.param(
-                "dtmi:com:example:Thermostat:1",
-                "https://localhost/repository/",
-                id="HTTPS repository URI",
-            ),
-            pytest.param(
-                "dtmi:com:example:Thermostat:1",
-                "file://path/to/repository/",
-                id="File system URI",
-            ),
-        ],
-    )
-    def test_uri_expanded(self, dtmi, repository_uri):
-        with self.assertRaises(ValueError):
-            dtmi_conventions.get_model_uri(dtmi, repository_uri, expanded=True)
+        expanded_model_uri = dtmi_conventions.get_model_uri(dtmi, repository_uri, expanded=True)
+        assert expanded_model_uri == expected_model_uri.replace(".json", ".expanded.json")
 
     @pytest.mark.it("Raises ValueError if given an invalid DTMI")
     @pytest.mark.parametrize(
@@ -149,8 +144,18 @@ class TestGetModelURI(object):
         ],
     )
     def test_invalid_dtmi(self, dtmi):
+        # Remote repository
         with pytest.raises(ValueError):
-            dtmi_conventions.get_model_uri(dtmi, "https://myrepository/")
+            dtmi_conventions.get_model_uri(dtmi, "https://myrepository/local")
+        # Remote repository, expanded
+        with pytest.raises(ValueError):
+            dtmi_conventions.get_model_uri(dtmi, "https://myrepository/local", expanded=True)
+        # Local repository
+        with pytest.raises(ValueError):
+            dtmi_conventions.get_model_uri(dtmi, "file://path/to/repository/")
+        # Local repository, expanded
+        with pytest.raises(ValueError):
+            dtmi_conventions.get_model_uri(dtmi, "file://path/to/repository/", expanded=True)
 
 @pytest.mark.describe("._convert_dtmi_to_path()")
 class TestConvertDTMIToPath(object):
@@ -198,36 +203,3 @@ class TestConvertDTMIToPath(object):
     )
     def test_valid_dtmi(self, dtmi, expanded, expected_path):
         assert dtmi_conventions._convert_dtmi_to_path(dtmi, expanded) == expected_path
-
-
-@pytest.mark.describe("._get_metadata_uri()")
-class TestGetModelURI(object):
-    @pytest.mark.it("Returns the URI for the metadata at a specified repository")
-    @pytest.mark.parametrize(
-        "repository_uri, expected_metadata_uri",
-        [
-            pytest.param(
-                "https://myrepository/local/",
-                "https://myrepository/local/metadata.json",
-                id="HTTPS repository URI",
-            ),
-            pytest.param(
-                "file:///myrepository/local/",
-                "file:///myrepository/local/metadata.json",
-                id="POSIX Filesystem URI",
-            ),
-            pytest.param(
-                "c:/myrepository/local/",
-                "file://c:/myrepository/local/metadata.json",
-                id="Drive Letter Filesystem URI",
-            ),
-            pytest.param(
-                "file://server/myrepository/local",
-                "file://server/myrepository/local/metadata.json",
-                id="Without ending slash",
-            ),
-        ],
-    )
-    def test_uri(self, repository_uri, expected_metadata_uri):
-        metadata_uri = dtmi_conventions._get_metadata_uri(repository_uri)
-        assert metadata_uri == expected_metadata_uri

@@ -39,6 +39,7 @@ if not VERSION:
 setup(
     name="azure-iot-modelsrepository",
     version=VERSION,
+    include_package_data=True,
     description="Microsoft Azure IoT Models Repository Library",
     license="MIT License",
     author="Microsoft Corporation",
@@ -64,20 +65,21 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "License :: OSI Approved :: MIT License",
     ],
     install_requires=[
         "azure-core<2.0.0,>=1.2.2",
         "six>=1.11.0",
-        "aiohttp"
     ],
-    extras_require={":python_version<'3.0'": ["azure-iot-nspkg"]},
-    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3*, !=3.4.*",
+    extras_require={
+        ":python_version<'3.0'": ["azure-nspkg"],
+        ":python_version<'3.4'": ["enum34>=1.0.4"],
+        "async:python_version>='3.5'": ["aiohttp>=3.0"],
+    },
     packages=find_packages(
         exclude=[
             "tests",
-            "tests.*",
             "samples",
-            "samples.*",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
             "azure.iot",

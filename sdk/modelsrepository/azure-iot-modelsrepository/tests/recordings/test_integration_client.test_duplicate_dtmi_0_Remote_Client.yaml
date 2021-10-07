@@ -11,6 +11,68 @@ interactions:
       User-Agent:
       - azsdk-python-modelsrepository/1.0.0b2 Python/3.8.3 (Windows-10-10.0.19041-SP0)
     method: GET
+    uri: https://raw.githubusercontent.com/Azure/iot-plugandplay-models/main/metadata.json
+  response:
+    body:
+      string: '404: Not Found'
+    headers:
+      accept-ranges:
+      - bytes
+      access-control-allow-origin:
+      - '*'
+      connection:
+      - keep-alive
+      content-length:
+      - '14'
+      content-security-policy:
+      - default-src 'none'; style-src 'unsafe-inline'; sandbox
+      content-type:
+      - text/plain; charset=utf-8
+      date:
+      - Wed, 06 Oct 2021 20:48:07 GMT
+      expires:
+      - Wed, 06 Oct 2021 20:53:07 GMT
+      source-age:
+      - '0'
+      strict-transport-security:
+      - max-age=31536000
+      vary:
+      - Authorization,Accept-Encoding,Origin
+      via:
+      - 1.1 varnish
+      x-cache:
+      - HIT
+      x-cache-hits:
+      - '1'
+      x-content-type-options:
+      - nosniff
+      x-fastly-request-id:
+      - b3e98e4584a1e83724a73f0115088cb9a5d4e2d7
+      x-frame-options:
+      - deny
+      x-github-request-id:
+      - 44FA:9CCC:107A5A:1AA84D:615E0B87
+      x-served-by:
+      - cache-sea4430-SEA
+      x-timer:
+      - S1633553287.430738,VS0,VE1
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 404
+      message: Not Found
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-modelsrepository/1.0.0b2 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+    method: GET
     uri: https://raw.githubusercontent.com/Azure/iot-plugandplay-models/main/dtmi/azure/devicemanagement/deviceinformation-1.json
   response:
     body:
@@ -61,11 +123,11 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Wed, 29 Sep 2021 01:22:52 GMT
+      - Wed, 06 Oct 2021 20:48:07 GMT
       etag:
       - W/"b96d69804e3b33b3efad5393d8ab41bd814a03d293a753532e6b3a1b944c4b3e"
       expires:
-      - Wed, 29 Sep 2021 01:27:52 GMT
+      - Wed, 06 Oct 2021 20:53:07 GMT
       source-age:
       - '0'
       strict-transport-security:
@@ -81,15 +143,15 @@ interactions:
       x-content-type-options:
       - nosniff
       x-fastly-request-id:
-      - 431fad725293e45a7d8b4a764aa99d2d288d532d
+      - 3e0c18961722f618ff8046a77c2468a94f6b399d
       x-frame-options:
       - deny
       x-github-request-id:
-      - AF36:7193:124D2:1B77D:6153BFEC
+      - 44FA:9CCC:107A61:1AA856:615E0B87
       x-served-by:
-      - cache-sea4459-SEA
+      - cache-sea4430-SEA
       x-timer:
-      - S1632878573.615357,VS0,VE204
+      - S1633553287.446004,VS0,VE140
       x-xss-protection:
       - 1; mode=block
     status:

@@ -8,9 +8,9 @@ import json
 import abc
 import os
 import io
-import six
 import re
 import urllib
+import six
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.exceptions import (
     map_error,
@@ -18,13 +18,11 @@ from azure.core.exceptions import (
     HttpResponseError,
     raise_with_traceback,
 )
-from .dtmi_conventions import (
-    _convert_dtmi_to_path,
-    METADATA_FILE
-)
+from .dtmi_conventions import _convert_dtmi_to_path
 from ._common import (
-    ErrorFetchingModelContent,
-    FetchingModelContent
+    ERROR_FETCHING_MODEL_CONTENT,
+    FETCHING_MODEL_CONTENT,
+    METADATA_FILE
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -47,11 +45,18 @@ class Fetcher(object):
         dtdl_path = _convert_dtmi_to_path(dtmi, expanded=try_from_expanded)
         if try_from_expanded:
             try:
+                info_msg = FETCHING_MODEL_CONTENT.format(dtdl_path)
+                _LOGGER.debug(info_msg)
+
                 return (self._fetch_model_data(dtdl_path), True)
-            except:
+            except (ResourceNotFoundError, HttpResponseError):
                 # Fallback to non expanded model
-                _LOGGER.debug(ErrorFetchingModelContent.format(dtmi))
+                info_msg = ERROR_FETCHING_MODEL_CONTENT.format(dtmi)
+                _LOGGER.debug(info_msg)
                 dtdl_path = _convert_dtmi_to_path(dtmi, expanded=False)
+
+        info_msg = FETCHING_MODEL_CONTENT.format(dtdl_path)
+        _LOGGER.debug(info_msg)
 
         # Let errors from this bubble up
         return (self._fetch_model_data(dtdl_path), False)
@@ -84,6 +89,9 @@ class HttpFetcher(Fetcher):
 
     def __init__(self, base_url, pipeline):
         """
+        :param base_url: Location of the Models Repository you wish to access.
+            This location can be a remote HTTP/HTTPS URL, or a local filesystem path.
+        :type base_url: str
         :param pipeline: Pipeline (pre-configured)
         :type pipeline: :class:`azure.core.pipeline.Pipeline`
         """
@@ -110,12 +118,13 @@ class HttpFetcher(Fetcher):
         :returns: JSON data at the path
         :rtype: JSON object
         """
-        _LOGGER.debug(FetchingModelContent.format(path))
         url = urllib.parse.urljoin(self.base_url, path)
 
         # Fetch
         request = HttpRequest("GET", url)
-        _LOGGER.debug("GET %s", url)
+        info_msg = "GET {}".format(url)
+        _LOGGER.debug(info_msg)
+
         response = self.pipeline.run(request).http_response
         if response.status_code != 200:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
@@ -124,8 +133,8 @@ class HttpFetcher(Fetcher):
             )
 
         # Remove trailing commas if needed
-        content = re.sub(",[ \t\r\n]+}", "}", response.text())
-        content = re.sub(",[ \t\r\n]+\]", "]", content)
+        content = re.sub(r",[ \t\r\n]+}", "}", response.text())
+        content = re.sub(r",[ \t\r\n]+\]", "]", content)
         json_response = json.loads(content)
         return json_response
 
@@ -157,13 +166,14 @@ class FilesystemFetcher(Fetcher):
         :returns: JSON data at the path
         :rtype: JSON object
         """
-        _LOGGER.debug(FetchingModelContent.format(path))
         abs_path = os.path.join(self.base_filepath, path)
         abs_path = os.path.normpath(abs_path)
 
         # Fetch
         try:
-            _LOGGER.debug("File open on %s", abs_path)
+            info_msg = "File open on {}".format(abs_path)
+            _LOGGER.debug(info_msg)
+
             with io.open(abs_path, encoding="utf-8-sig") as f:
                 file_str = f.read()
         except (OSError, IOError):
@@ -174,6 +184,6 @@ class FilesystemFetcher(Fetcher):
             raise_with_traceback(ResourceNotFoundError, message="Could not open file")
 
         # Remove trailing commas if needed
-        content = re.sub(",[ \t\r\n]+}", "}", file_str)
-        content = re.sub(",[ \t\r\n]+\]", "]", content)
+        content = re.sub(r",[ \t\r\n]+}", "}", file_str)
+        content = re.sub(r",[ \t\r\n]+\]", "]", content)
         return json.loads(content)

@@ -6,7 +6,7 @@
 import logging
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._resolver import DtmiResolver
-from .._common import DEFAULT_LOCATION, DEFAULT_API_VERSION, DependencyModeType
+from .._common import DEFAULT_LOCATION, DEFAULT_API_VERSION, CLIENT_INIT_MSG, DependencyModeType
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -34,23 +34,21 @@ class ModelsRepositoryClient(object):
         :raises: ValueError if an invalid argument is provided
         """
         self.repository_uri = repository_location if repository_location else DEFAULT_LOCATION
-        _LOGGER.debug("Client configured for respository location %s", self.repository_uri)
+        info_msg = CLIENT_INIT_MSG.format(self.repository_uri)
+        _LOGGER.debug(info_msg)
 
         self.resolver = DtmiResolver(location=self.repository_uri, **kwargs)
 
         # Store api version here (for now). Currently doesn't do anything
         self._api_version = kwargs.get("api_version", DEFAULT_API_VERSION)
 
-    @distributed_trace_async
     async def __aenter__(self):
         await self.resolver.__aenter__()
         return self
 
-    @distributed_trace_async
     async def __aexit__(self, *exc_details):
         await self.resolver.__aexit__(*exc_details)
 
-    @distributed_trace_async
     async def close(self):
         # type: () -> None
         """Close the client, preventing future operations"""
@@ -83,4 +81,4 @@ class ModelsRepositoryClient(object):
         if isinstance(dtmis, str):
             dtmis = [dtmis]
 
-        return await self.resolver.resolve(dtmis, dependency_resolution=dependency_resolution)
+        return await self.resolver.resolve(dtmis, dependency_resolution=dependency_resolution, **kwargs)

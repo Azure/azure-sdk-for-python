@@ -11,6 +11,68 @@ interactions:
       User-Agent:
       - azsdk-python-modelsrepository/1.0.0b2 Python/3.8.3 (Windows-10-10.0.19041-SP0)
     method: GET
+    uri: https://raw.githubusercontent.com/Azure/iot-plugandplay-models/main/metadata.json
+  response:
+    body:
+      string: '404: Not Found'
+    headers:
+      accept-ranges:
+      - bytes
+      access-control-allow-origin:
+      - '*'
+      connection:
+      - keep-alive
+      content-length:
+      - '14'
+      content-security-policy:
+      - default-src 'none'; style-src 'unsafe-inline'; sandbox
+      content-type:
+      - text/plain; charset=utf-8
+      date:
+      - Wed, 06 Oct 2021 20:48:08 GMT
+      expires:
+      - Wed, 06 Oct 2021 20:53:08 GMT
+      source-age:
+      - '1'
+      strict-transport-security:
+      - max-age=31536000
+      vary:
+      - Authorization,Accept-Encoding,Origin
+      via:
+      - 1.1 varnish
+      x-cache:
+      - HIT
+      x-cache-hits:
+      - '1'
+      x-content-type-options:
+      - nosniff
+      x-fastly-request-id:
+      - 0285395adf81130a038f9b226fe8ad84475b96b2
+      x-frame-options:
+      - deny
+      x-github-request-id:
+      - 44FA:9CCC:107A5A:1AA84D:615E0B87
+      x-served-by:
+      - cache-sea4425-SEA
+      x-timer:
+      - S1633553288.241148,VS0,VE1
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 404
+      message: Not Found
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-modelsrepository/1.0.0b2 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+    method: GET
     uri: https://raw.githubusercontent.com/Azure/iot-plugandplay-models/main/dtmi/com/example/thermojax-999.json
   response:
     body:
@@ -29,9 +91,9 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Wed, 29 Sep 2021 01:22:54 GMT
+      - Wed, 06 Oct 2021 20:48:08 GMT
       expires:
-      - Wed, 29 Sep 2021 01:27:54 GMT
+      - Wed, 06 Oct 2021 20:53:08 GMT
       source-age:
       - '0'
       strict-transport-security:
@@ -47,15 +109,15 @@ interactions:
       x-content-type-options:
       - nosniff
       x-fastly-request-id:
-      - 6a1600bdcf1bf6031a4308359a984ca65da0f68e
+      - d007baedb5fe7aae8d98d3a980fe6d18a2c039e9
       x-frame-options:
       - deny
       x-github-request-id:
-      - 9F9E:08A4:19296:22C48:6153BFEE
+      - 5036:5DEF:74C64:D454C:615E0B88
       x-served-by:
-      - cache-sea4454-SEA
+      - cache-sea4425-SEA
       x-timer:
-      - S1632878575.833305,VS0,VE144
+      - S1633553288.256167,VS0,VE139
       x-xss-protection:
       - 1; mode=block
     status:

@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import re
 from six.moves import urllib
-from ._common import InvalidDtmiFormat, METADATA_FILE
+from ._common import INVALID_DTMI_FORMAT
 
 def is_valid_dtmi(dtmi):
     """Checks validity of a DTMI
@@ -43,7 +43,7 @@ def get_model_uri(dtmi, repository_uri, expanded=False):
 
     dtmi_path = _convert_dtmi_to_path(dtmi, expanded)
     if dtmi_path == "":
-        raise ValueError(InvalidDtmiFormat.format(dtmi))
+        raise ValueError(INVALID_DTMI_FORMAT.format(dtmi))
 
     return repository_uri + dtmi_path
 
@@ -68,22 +68,8 @@ def _convert_dtmi_to_path(dtmi, expanded=False):
     return dtmi_path
 
 
-def _get_metadata_uri(repository_uri):
-    """Get the URI representing the absolute location of the metadata in a Models Repository
-
-    :param str repository_uri: URI for a Models Repository
-
-    :returns: The URI for the metadata in the Models Repository
-    :rtype: str
-    """
-    repository_uri = _add_scheme(repository_uri)
-    if not repository_uri.endswith("/"):
-        repository_uri += "/"
-    return repository_uri + METADATA_FILE
-
-
 def _add_scheme(uri):
-    """Add the scheme `file://` to local repository uri if needed.
+    """Add the file scheme to local repository uri if needed.
 
     Specifically checks if the uri is a filesystem path with drive letters or not a web url
     with an unspecified protocol.
@@ -94,13 +80,12 @@ def _add_scheme(uri):
     :rtype: str
     """
     scheme = urllib.parse.urlparse(uri).scheme
-    if (
-        (len(scheme) == 1 and scheme.isalpha()) or
-        (scheme == "" and not re.search(
+    if len(scheme) == 1 and scheme.isalpha():
+        uri = "file:///" + uri.replace("\\", "/")
+    elif scheme == "" and not re.search(
             r"\.[a-zA-z]{2,63}$",
             uri[: uri.find("/") if uri.find("/") >= 0 else len(uri)],
-        ))
     ):
-        return "file://" + uri
+        uri = "file://" + uri.strip("\\").replace("\\", "/")
 
     return uri
