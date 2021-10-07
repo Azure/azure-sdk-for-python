@@ -33,12 +33,12 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
 
     :param str tenant_id: ID of the service principal's tenant. Also called its "directory" ID.
     :param str client_id: the service principal's client ID
-    :keyword str client_secret: Optional. client secrets to authenticate the service principal.
-        Either client_secret or client_certificate must be provided.
-    :keyword bytes client_certificate: Optional. the bytes of a certificate in PEM or PKCS12 format including
-        the private key to authenticate the service principal. Either client_secret or client_certificate must
+    :keyword str client_secret: Optional. A client secret to authenticate the service principal.
+        Either **client_secret** or **client_certificate** must be provided.
+    :keyword bytes client_certificate: Optional. The bytes of a certificate in PEM or PKCS12 format including
+        the private key to authenticate the service principal. Either **client_secret** or **client_certificate** must
         be provided.
-    :keyword str user_assertion: Required. the access token the credential will use as the user assertion when
+    :keyword str user_assertion: Required. The access token the credential will use as the user assertion when
         requesting on-behalf-of tokens
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
