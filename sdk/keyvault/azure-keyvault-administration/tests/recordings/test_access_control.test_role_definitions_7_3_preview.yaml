@@ -11,9 +11,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-keyvault-administration/4.0.1b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-administration/4.1.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://managedhsm/providers/Microsoft.Authorization/roleDefinitions?api-version=7.3-preview
+    uri: https://managedhsmname.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions?api-version=7.3-preview
   response:
     body:
       string: OK
@@ -36,7 +36,7 @@ interactions:
       x-frame-options:
       - SAMEORIGIN
       x-ms-build-version:
-      - 1.0.20210712-1-6ae2ae9e-develop
+      - 1.0.20210809-1-5b391b3f-develop
       x-ms-server-latency:
       - '0'
     status:
@@ -52,9 +52,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-keyvault-administration/4.0.1b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-administration/4.1.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://managedhsm/providers/Microsoft.Authorization/roleDefinitions?api-version=7.3-preview
+    uri: https://managedhsmname.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions?api-version=7.3-preview
   response:
     body:
       string: '{"value":[{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/7b127d3c-77bd-4e3e-bbe0-dbb8971fa7f8","name":"7b127d3c-77bd-4e3e-bbe0-dbb8971fa7f8","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":["Microsoft.KeyVault/managedHsm/backup/start/action","Microsoft.KeyVault/managedHsm/backup/status/action","Microsoft.KeyVault/managedHsm/keys/backup/action"],"notActions":[],"notDataActions":[]}],"roleName":"Managed
@@ -82,18 +82,18 @@ interactions:
       x-frame-options:
       - SAMEORIGIN
       x-ms-build-version:
-      - 1.0.20210712-1-6ae2ae9e-develop
+      - 1.0.20210809-1-5b391b3f-develop
       x-ms-keyvault-network-info:
       - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region:
       - westus
       x-ms-server-latency:
-      - '0'
+      - '1'
     status:
       code: 200
       message: OK
 - request:
-    body: '{"properties": {"roleName": "role-name626010ec", "description": "test",
+    body: '{"properties": {"roleName": "role-name48d21575", "description": "test",
       "permissions": [{"dataActions": ["Microsoft.KeyVault/managedHsm/keys/read/action"]}]}}'
     headers:
       Accept:
@@ -107,12 +107,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-administration/4.0.1b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-administration/4.1.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://managedhsm/providers/Microsoft.Authorization/roleDefinitions/definition-name?api-version=7.3-preview
+    uri: https://managedhsmname.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions/definition-name?api-version=7.3-preview
   response:
     body:
-      string: '{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/definition-name","name":"definition-name","properties":{"assignableScopes":["/"],"description":"test","permissions":[{"actions":[],"dataActions":["Microsoft.KeyVault/managedHsm/keys/read/action"],"notActions":[],"notDataActions":[]}],"roleName":"role-name626010ec","type":"CustomRole"},"type":"Microsoft.Authorization/roleDefinitions"}'
+      string: '{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/definition-name","name":"definition-name","properties":{"assignableScopes":["/"],"description":"test","permissions":[{"actions":[],"dataActions":["Microsoft.KeyVault/managedHsm/keys/read/action"],"notActions":[],"notDataActions":[]}],"roleName":"role-name48d21575","type":"CustomRole"},"type":"Microsoft.Authorization/roleDefinitions"}'
     headers:
       cache-control:
       - no-cache
@@ -133,7 +133,7 @@ interactions:
       x-ms-keyvault-region:
       - westus
       x-ms-server-latency:
-      - '57'
+      - '44'
     status:
       code: 201
       message: Created
@@ -151,9 +151,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-administration/4.0.1b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-administration/4.1.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://managedhsm/providers/Microsoft.Authorization/roleDefinitions/definition-name?api-version=7.3-preview
+    uri: https://managedhsmname.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions/definition-name?api-version=7.3-preview
   response:
     body:
       string: '{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/definition-name","name":"definition-name","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":[],"notActions":[],"notDataActions":["Microsoft.KeyVault/managedHsm/keys/read/action"]}],"roleName":"","type":"CustomRole"},"type":"Microsoft.Authorization/roleDefinitions"}'
@@ -177,7 +177,7 @@ interactions:
       x-ms-keyvault-region:
       - westus
       x-ms-server-latency:
-      - '56'
+      - '46'
     status:
       code: 201
       message: Created
@@ -191,9 +191,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-keyvault-administration/4.0.1b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-administration/4.1.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://managedhsm/providers/Microsoft.Authorization/roleDefinitions?api-version=7.3-preview
+    uri: https://managedhsmname.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions?api-version=7.3-preview
   response:
     body:
       string: '{"value":[{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/7b127d3c-77bd-4e3e-bbe0-dbb8971fa7f8","name":"7b127d3c-77bd-4e3e-bbe0-dbb8971fa7f8","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":["Microsoft.KeyVault/managedHsm/backup/start/action","Microsoft.KeyVault/managedHsm/backup/status/action","Microsoft.KeyVault/managedHsm/keys/backup/action"],"notActions":[],"notDataActions":[]}],"roleName":"Managed
@@ -221,13 +221,13 @@ interactions:
       x-frame-options:
       - SAMEORIGIN
       x-ms-build-version:
-      - 1.0.20210712-1-6ae2ae9e-develop
+      - 1.0.20210809-1-5b391b3f-develop
       x-ms-keyvault-network-info:
       - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region:
       - westus
       x-ms-server-latency:
-      - '1'
+      - '0'
     status:
       code: 200
       message: OK
@@ -241,9 +241,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-keyvault-administration/4.0.1b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-administration/4.1.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://managedhsm/providers/Microsoft.Authorization/roleDefinitions/definition-name?api-version=7.3-preview
+    uri: https://managedhsmname.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions/definition-name?api-version=7.3-preview
   response:
     body:
       string: '{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/definition-name","name":"definition-name","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":[],"notActions":[],"notDataActions":["Microsoft.KeyVault/managedHsm/keys/read/action"]}],"roleName":"","type":"CustomRole"},"type":"Microsoft.Authorization/roleDefinitions"}'
@@ -263,7 +263,7 @@ interactions:
       x-frame-options:
       - SAMEORIGIN
       x-ms-build-version:
-      - 1.0.20210712-1-6ae2ae9e-develop
+      - 1.0.20210809-1-5b391b3f-develop
       x-ms-keyvault-network-info:
       - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region:
@@ -285,9 +285,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-keyvault-administration/4.0.1b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-administration/4.1.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://managedhsm/providers/Microsoft.Authorization/roleDefinitions/definition-name?api-version=7.3-preview
+    uri: https://managedhsmname.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions/definition-name?api-version=7.3-preview
   response:
     body:
       string: '{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/definition-name","name":"definition-name","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":[],"notActions":[],"notDataActions":["Microsoft.KeyVault/managedHsm/keys/read/action"]}],"roleName":"","type":"CustomRole"},"type":"Microsoft.Authorization/roleDefinitions"}'
@@ -311,7 +311,7 @@ interactions:
       x-ms-keyvault-region:
       - westus
       x-ms-server-latency:
-      - '54'
+      - '38'
     status:
       code: 200
       message: OK
@@ -325,9 +325,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-keyvault-administration/4.0.1b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-administration/4.1.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://managedhsm/providers/Microsoft.Authorization/roleDefinitions?api-version=7.3-preview
+    uri: https://managedhsmname.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions?api-version=7.3-preview
   response:
     body:
       string: '{"value":[{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/7b127d3c-77bd-4e3e-bbe0-dbb8971fa7f8","name":"7b127d3c-77bd-4e3e-bbe0-dbb8971fa7f8","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":["Microsoft.KeyVault/managedHsm/backup/start/action","Microsoft.KeyVault/managedHsm/backup/status/action","Microsoft.KeyVault/managedHsm/keys/backup/action"],"notActions":[],"notDataActions":[]}],"roleName":"Managed
@@ -355,7 +355,7 @@ interactions:
       x-frame-options:
       - SAMEORIGIN
       x-ms-build-version:
-      - 1.0.20210712-1-6ae2ae9e-develop
+      - 1.0.20210809-1-5b391b3f-develop
       x-ms-keyvault-network-info:
       - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region:
