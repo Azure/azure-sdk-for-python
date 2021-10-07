@@ -61,8 +61,6 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         validate_tenant_id(tenant_id)
 
         self._assertion = user_assertion
-        if not self._assertion:
-            raise ValueError('"user_assertion" is required.')
 
         if client_certificate:
             if client_secret:
@@ -80,7 +78,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         elif client_secret:
             self._client_credential = client_secret
         else:
-            raise ValueError('Either "client_certificate" or "client_secret" must be provided')
+            raise TypeError('Either "client_certificate" or "client_secret" must be provided')
 
         # note AadClient handles "authority" and any pipeline kwargs
         self._client = AadClient(tenant_id, client_id, **kwargs)

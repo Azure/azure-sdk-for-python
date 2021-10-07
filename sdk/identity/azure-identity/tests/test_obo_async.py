@@ -210,3 +210,15 @@ async def test_no_scopes():
     credential = OnBehalfOfCredential("tenant-id", "client-id", client_secret="client-secret", user_assertion="assertion")
     with pytest.raises(ValueError):
         await credential.get_token()
+
+@pytest.mark.asyncio
+async def test_no_user_assertion():
+    """The credential should raise ValueError when ctoring with no user_assertion"""
+    with pytest.raises(TypeError):
+        credential = OnBehalfOfCredential("tenant-id", "client-id", client_secret="client-secret")
+
+@pytest.mark.asyncio
+async def test_no_client_credential():
+    """The credential should raise ValueError when ctoring with no client_secret or client_certificate"""
+    with pytest.raises(TypeError):
+        credential = OnBehalfOfCredential("tenant-id", "client-id", user_assertion="assertion")

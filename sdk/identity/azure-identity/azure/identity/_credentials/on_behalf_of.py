@@ -54,7 +54,7 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         # type: (str, str, **Any) -> None
         self._assertion = kwargs.pop("user_assertion", None)
         if not self._assertion:
-            raise ValueError('"user_assertion" is required.')
+            raise TypeError('"user_assertion" is required.')
         client_certificate = kwargs.pop("client_certificate", None)
         client_secret = kwargs.pop("client_secret", None)
 
@@ -74,7 +74,7 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         elif client_secret:
             credential = client_secret
         else:
-            raise ValueError('Either "client_certificate" or "client_secret" must be provided')
+            raise TypeError('Either "client_certificate" or "client_secret" must be provided')
 
         super(OnBehalfOfCredential, self).__init__(client_id, credential, tenant_id=tenant_id, **kwargs)
         self._auth_record = None  # type: Optional[AuthenticationRecord]
