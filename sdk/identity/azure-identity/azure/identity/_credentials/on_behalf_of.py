@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import cast, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 import six
 
@@ -54,7 +54,7 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         # type: (str, str, **Any) -> None
         self._assertion = kwargs.pop("user_assertion", None)
         if not self._assertion:
-            raise ValueError("'user_assertion' is required.")
+            raise ValueError('"user_assertion" is required.')
         client_certificate = kwargs.pop("client_certificate", None)
         client_secret = kwargs.pop("client_secret", None)
 

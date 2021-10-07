@@ -12,7 +12,8 @@
 - `azure.identity.RegionalAuthority` is removed.
 - `regional_authority` argument is removed for `CertificateCredential` and `ClientSecretCredential`.
 - `AzureApplicationCredential` is removed.
-- `client_credential` in the ctor of `OnBehalfOfCredential` is deprecated. Please use `client_secret` or `client_certificate` instead.
+- `client_credential` in the ctor of `OnBehalfOfCredential` is removed. Please use `client_secret` or `client_certificate` instead.
+- Make `user_assertion` in the ctor of `OnBehalfOfCredential` a keyword only argument.
 
 ## 1.7.0b4 (2021-09-09)
 

@@ -62,7 +62,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
 
         self._assertion = user_assertion
         if not self._assertion:
-            raise ValueError("'user_assertion' is required.")
+            raise ValueError('"user_assertion" is required.')
 
         if client_certificate:
             try:
