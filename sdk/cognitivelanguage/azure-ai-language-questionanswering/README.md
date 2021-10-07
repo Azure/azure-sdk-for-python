@@ -84,7 +84,7 @@ params = qna.QueryKnowledgeBaseOptions(
     question="How long should my Surface battery last?"
 )
 
-output = client.query_knowledgebase(
+output = client.query_knowledge_base(
     params,
     project_name="FAQ",
 )
@@ -108,7 +108,7 @@ params = qna.models.QueryKnowledgeBaseOptions(
     )
 )
 
-output = client.query_knowledgebase(
+output = client.query_knowledge_base(
     params,
     project_name="FAQ"
 )
@@ -133,7 +133,7 @@ params = qna.QueryKnowledgeBaseOptions(
     question="How long should my Surface battery last?"
 )
 
-output = await client.query_knowledgebase(
+output = await client.query_knowledge_base(
     params,
     project_name="FAQ"
 )
@@ -156,7 +156,7 @@ For example, if you submit a question to a non-existant knowledge base, a `400` 
 from azure.core.exceptions import HttpResponseError
 
 try:
-    client.query_knowledgebase(
+    client.query_knowledge_base(
         params,
         project_name="invalid-knowledge-base"
     )
