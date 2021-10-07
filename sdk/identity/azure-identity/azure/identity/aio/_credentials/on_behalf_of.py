@@ -65,11 +65,13 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
             raise ValueError('"user_assertion" is required.')
 
         if client_certificate:
+            if client_secret:
+                raise ValueError('Specifying both "client_certificate" and "client_secret" is not valid.')
             try:
                 cert = get_client_credential(None, kwargs.pop("password", None), client_certificate)
             except ValueError as ex:
                 message = (
-                    '"client_certificate" should be the bytes of a certificate in PEM or PKCS12 format'
+                    '"client_certificate" is not a valid certificate in PEM or PKCS12 format'
                 )
                 raise ValueError(message) from ex
             self._client_credential = AadClientCertificate(
@@ -78,7 +80,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         elif client_secret:
             self._client_credential = client_secret
         else:
-            raise ValueError("Either `client_certificate` or `client_secret` must be provided")
+            raise ValueError('Either "client_certificate" or "client_secret" must be provided')
 
         # note AadClient handles "authority" and any pipeline kwargs
         self._client = AadClient(tenant_id, client_id, **kwargs)

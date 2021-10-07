@@ -59,6 +59,8 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         client_secret = kwargs.pop("client_secret", None)
 
         if client_certificate:
+            if client_secret:
+                raise ValueError('Specifying both "client_certificate" and "client_secret" is not valid.')
             try:
                 credential = get_client_credential(
                     certificate_path=None, password=kwargs.pop("password", None), certificate_data=client_certificate
@@ -69,13 +71,13 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
                 # either an invalid cert, or a client secret as bytes; both are errors.
                 if six.PY3:
                     message = (
-                        '"client_certificate" should be the bytes of a certificate in PEM or PKCS12 format'
+                        '"client_certificate" is not a valid certificate in PEM or PKCS12 format'
                     )
                     six.raise_from(ValueError(message), ex)
         elif client_secret:
             credential = client_secret
         else:
-            raise ValueError("Either `client_certificate` or `client_secret` must be provided")
+            raise ValueError('Either "client_certificate" or "client_secret" must be provided')
 
         super(OnBehalfOfCredential, self).__init__(client_id, credential, tenant_id=tenant_id, **kwargs)
         self._auth_record = None  # type: Optional[AuthenticationRecord]
