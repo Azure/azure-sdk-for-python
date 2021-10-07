@@ -3,7 +3,6 @@
 trigger:
   branches:
     include:
-    - master
     - main
     - hotfix/*
     - release/*
@@ -11,12 +10,11 @@ trigger:
   paths:
     include:
     - sdk/cognitivelanguage/
-    - scripts/
+    - sdk/core/
 
 pr:
   branches:
     include:
-    - master
     - main
     - feature/*
     - hotfix/*
@@ -25,6 +23,7 @@ pr:
   paths:
     include:
     - sdk/cognitivelanguage/
+    - sdk/core/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
@@ -32,4 +31,6 @@ extends:
     ServiceDirectory: cognitivelanguage
     Artifacts:
     - name: azure-ai-language-questionanswering
-      safeName: questionanswering
+      safeName: azureailanguagequestionanswering
+    - name: azure-ai-language-conversations
+      safeName: azureailanguageconversations

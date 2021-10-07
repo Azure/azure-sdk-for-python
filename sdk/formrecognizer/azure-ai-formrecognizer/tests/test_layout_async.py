@@ -5,7 +5,7 @@
 # ------------------------------------
 
 import functools
-from azure.ai.formrecognizer._generated.models import AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer.aio import FormRecognizerClient, DocumentAnalysisClient
 from azure.ai.formrecognizer import AnalyzeResult
 from preparers import FormRecognizerPreparer
@@ -147,18 +147,18 @@ class TestLayoutFromStreamAsync(AsyncFormRecognizerTest):
             document = fd.read()
 
         async with client:
-            poller = await client.begin_analyze_document("prebuilt-layout", document, pages=["1"])
+            poller = await client.begin_analyze_document("prebuilt-layout", document, pages="1")
             result = await poller.result()
             assert len(result.pages) == 1
 
-            poller = await client.begin_analyze_document("prebuilt-layout", document, pages=["1", "3"])
+            poller = await client.begin_analyze_document("prebuilt-layout", document, pages="1, 3")
             result = await poller.result()
             assert len(result.pages) == 2
 
-            poller = await client.begin_analyze_document("prebuilt-layout", document, pages=["1-2"])
+            poller = await client.begin_analyze_document("prebuilt-layout", document, pages="1-2")
             result = await poller.result()
             assert len(result.pages) == 2
 
-            poller = await client.begin_analyze_document("prebuilt-layout", document, pages=["1-2", "3"])
+            poller = await client.begin_analyze_document("prebuilt-layout", document, pages="1-2, 3")
             result = await poller.result()
             assert len(result.pages) == 3

@@ -8,7 +8,8 @@ import pytest
 import functools
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer.aio import FormRecognizerClient, FormTrainingClient, DocumentAnalysisClient, DocumentModelAdministrationClient
-from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult, AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
+from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer._response_handlers import prepare_form_result
 from azure.ai.formrecognizer import AnalyzeResult
 from preparers import FormRecognizerPreparer
@@ -37,11 +38,11 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    async def test_custom_form_multipage_unlabeled(self, client, formrecognizer_multipage_storage_container_sas_url):
+    async def test_custom_form_multipage_unlabeled(self, client, formrecognizer_multipage_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
-        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url, "multipage-training-data", "multipage_invoice1.pdf")
+        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf")
         async with client:
-            training_poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url, use_training_labels=False)
+            training_poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=False)
             model = await training_poller.result()
 
             async with fr_client:
@@ -59,12 +60,12 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    async def test_form_multipage_labeled(self, client, formrecognizer_multipage_storage_container_sas_url):
+    async def test_form_multipage_labeled(self, client, formrecognizer_multipage_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
-        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url, "multipage-training-data", "multipage_invoice1.pdf")
+        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf")
         async with client:
             training_poller = await client.begin_training(
-                formrecognizer_multipage_storage_container_sas_url,
+                formrecognizer_multipage_storage_container_sas_url_v2,
                 use_training_labels=True
             )
             model = await training_poller.result()
@@ -82,9 +83,9 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    async def test_multipage_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url):
+    async def test_multipage_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
-        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url, "multipage-training-data", "multipage_invoice1.pdf")
+        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf")
         responses = []
 
         def callback(raw_response, _, headers):
@@ -94,7 +95,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(form)
 
         async with client:
-            training_poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url, use_training_labels=False)
+            training_poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=False)
             model = await training_poller.result()
 
             async with fr_client:
@@ -122,9 +123,9 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    async def test_multipage_labeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url):
+    async def test_multipage_labeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
-        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url, "multipage-training-data", "multipage_invoice1.pdf")
+        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf")
         responses = []
 
         def callback(raw_response, _, headers):
@@ -134,7 +135,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(form)
 
         async with client:
-            training_poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url, use_training_labels=True)
+            training_poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=True)
             model = await training_poller.result()
 
             async with fr_client:
@@ -188,9 +189,9 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    async def test_custom_form_multipage_vendor_set_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2):
+    async def test_custom_form_multipage_vendor_set_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2_v2):
         fr_client = client.get_form_recognizer_client()
-        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url_2, "multipage-vendor-forms", "multi1.pdf")
+        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url_2_v2, "multipage-vendor-forms", "multi1.pdf")
         responses = []
 
         def callback(raw_response, _, headers):
@@ -200,7 +201,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(form)
 
         async with client:
-            poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_2, use_training_labels=False)
+            poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_2_v2, use_training_labels=False)
             model = await poller.result()
 
             async with fr_client:
@@ -226,9 +227,9 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    async def test_custom_form_multipage_vendor_set_labeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2):
+    async def test_custom_form_multipage_vendor_set_labeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2_v2):
         fr_client = client.get_form_recognizer_client()
-        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url_2, "multipage-vendor-forms", "multi1.pdf")
+        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url_2_v2, "multipage-vendor-forms", "multi1.pdf")
         responses = []
 
         def callback(raw_response, _, headers):
@@ -238,7 +239,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(form)
 
         async with client:
-            poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_2, use_training_labels=True)
+            poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_2_v2, use_training_labels=True)
             model = await poller.result()
 
             async with fr_client:

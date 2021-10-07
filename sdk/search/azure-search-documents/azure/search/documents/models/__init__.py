@@ -25,32 +25,32 @@
 # --------------------------------------------------------------------------
 
 from .._generated.models import (
-    Answers,
     AnswerResult,
     AutocompleteMode,
-    Captions,
     CaptionResult,
     IndexAction,
     IndexingResult,
+    QueryAnswerType,
+    QueryCaptionType,
     QueryLanguage,
+    QuerySpellerType,
     QueryType,
     SearchMode,
-    Speller,
 )
 from .._search_client import odata
 
 
 __all__ = (
-    "Answers",
     "AnswerResult",
     "AutocompleteMode",
-    "Captions",
     "CaptionResult",
     "IndexAction",
     "IndexingResult",
     "odata",
+    "QueryAnswerType",
+    "QueryCaptionType",
     "QueryLanguage",
+    "QuerySpellerType",
     "QueryType",
     "SearchMode",
-    "Speller",
 )

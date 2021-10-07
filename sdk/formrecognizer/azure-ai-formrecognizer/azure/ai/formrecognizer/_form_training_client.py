@@ -18,10 +18,6 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling
 from azure.core.pipeline import Pipeline
-from ._generated.models import (
-    CopyRequest,
-    CopyAuthorizationResult,
-)
 from ._helpers import TransportWrapper
 from ._api_versions import FormRecognizerApiVersion
 from ._models import (
@@ -50,7 +46,7 @@ class FormTrainingClient(FormRecognizerClientBase):
     composing models from a collection of existing models trained with labels.
 
     .. note:: FormTrainingClient should be used with API versions <=v2.1.
-        To use API versions v2021-09-30-preview and up, instantiate a DocumentModelAdministrationClient.
+        To use API versions 2021-09-30-preview and up, instantiate a DocumentModelAdministrationClient.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
@@ -86,7 +82,11 @@ class FormTrainingClient(FormRecognizerClientBase):
         # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
         api_version = kwargs.pop("api_version", FormRecognizerApiVersion.V2_1)
         super(FormTrainingClient, self).__init__(
-            endpoint=endpoint, credential=credential, api_version=api_version, client_kind="form", **kwargs
+            endpoint=endpoint,
+            credential=credential,
+            api_version=api_version,
+            client_kind="form",
+            **kwargs
         )
 
     @distributed_trace
@@ -203,7 +203,9 @@ class FormTrainingClient(FormRecognizerClientBase):
             cls=deserialization_callback,
             continuation_token=continuation_token,
             polling=LROBasePolling(
-                timeout=polling_interval, lro_algorithms=[FormTrainingPolling()], **kwargs
+                timeout=polling_interval,
+                lro_algorithms=[FormTrainingPolling()],
+                **kwargs
             ),
             **kwargs
         )
@@ -423,10 +425,10 @@ class FormTrainingClient(FormRecognizerClientBase):
 
         return self._client.begin_copy_custom_model(  # type: ignore
             model_id=model_id,
-            copy_request=CopyRequest(
+            copy_request=self._generated_models.CopyRequest(
                 target_resource_id=target["resourceId"],
                 target_resource_region=target["resourceRegion"],
-                copy_authorization=CopyAuthorizationResult(
+                copy_authorization=self._generated_models.CopyAuthorizationResult(
                     access_token=target["accessToken"],
                     model_id=target["modelId"],
                     expiration_date_time_ticks=target["expirationDateTimeTicks"],

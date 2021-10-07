@@ -89,6 +89,7 @@
         }
     },
     "variables": {
+        "kvApiVersion": "2019-09-01",
         "azureKeyVaultUrl": "[format('https://{0}{1}', parameters('baseName'), parameters('keyVaultDomainSuffix'))]",
         "hsmApiVersion": "2021-04-01-preview",
         "hsmName": "[concat(parameters('baseName'), 'hsm')]",
@@ -113,7 +114,7 @@
     "resources": [
         {
             "type": "Microsoft.KeyVault/vaults",
-            "apiVersion": "2016-10-01",
+            "apiVersion": "[variables('kvApiVersion')]",
             "name": "[parameters('baseName')]",
             "location": "[parameters('location')]",
             "properties": {
@@ -143,7 +144,8 @@
                                 "wrapKey",
                                 "verify",
                                 "sign",
-                                "purge"
+                                "purge",
+                                "rotate"
                             ],
                             "secrets": [
                                 "get",

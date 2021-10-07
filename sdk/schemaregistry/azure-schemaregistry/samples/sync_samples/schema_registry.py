@@ -38,12 +38,12 @@ import json
 from azure.identity import ClientSecretCredential
 from azure.schemaregistry import SchemaRegistryClient, SchemaFormat
 
-TENANT_ID = os.environ['SCHEMA_REGISTRY_AZURE_TENANT_ID']
-CLIENT_ID = os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_ID']
-CLIENT_SECRET = os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_SECRET']
+TENANT_ID = os.environ['AZURE_TENANT_ID']
+CLIENT_ID = os.environ['AZURE_CLIENT_ID']
+CLIENT_SECRET = os.environ['AZURE_CLIENT_SECRET']
 
-SCHEMA_REGISTRY_FQN = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
-GROUP_NAME = os.environ['SCHEMA_REGISTRY_GROUP']
+SCHEMAREGISTRY_FQN = os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
+GROUP_NAME = os.environ['SCHEMAREGISTRY_GROUP']
 NAME = 'your-schema-name'
 FORMAT = SchemaFormat.AVRO
 
@@ -99,7 +99,7 @@ if __name__ == '__main__':
         client_id=CLIENT_ID,
         client_secret=CLIENT_SECRET
     )
-    schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=SCHEMA_REGISTRY_FQN, credential=token_credential)
+    schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=SCHEMAREGISTRY_FQN, credential=token_credential)
     with schema_registry_client:
         schema_id = register_schema(schema_registry_client, GROUP_NAME, NAME, SCHEMA_STRING, FORMAT)
         schema_str = get_schema_by_id(schema_registry_client, schema_id)

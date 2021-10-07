@@ -24,27 +24,27 @@ class PurviewCatalogClientConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
+    :param endpoint: The catalog endpoint of your Purview account. Example: https://{accountName}.purview.azure.com.
+    :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param endpoint: The catalog endpoint of your Purview account. Example: https://{accountName}.catalog.purview.azure.com.
-    :type endpoint: str
     """
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
         endpoint: str,
+        credential: "AsyncTokenCredential",
         **kwargs: Any
     ) -> None:
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
         super(PurviewCatalogClientConfiguration, self).__init__(**kwargs)
 
-        self.credential = credential
         self.endpoint = endpoint
-        self.api_version = "2021-05-01-preview"
+        self.credential = credential
+        self.api_version = "2021-09-01"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://purview.azure.net/.default'])
         kwargs.setdefault('sdk_moniker', 'purview-catalog/{}'.format(VERSION))
         self._configure(**kwargs)

@@ -16,6 +16,7 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models as _models
+from ..._vendor import _convert_request
 from ...operations._synonym_maps_operations import build_create_or_update_request, build_create_request, build_delete_request, build_get_request, build_list_request
 
 T = TypeVar('T')
@@ -93,18 +94,19 @@ class SynonymMapsOperations:
             if_none_match=if_none_match,
             json=json,
             template_url=self.create_or_update.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if response.status_code == 200:
@@ -163,18 +165,19 @@ class SynonymMapsOperations:
             if_match=if_match,
             if_none_match=if_none_match,
             template_url=self.delete.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -215,18 +218,19 @@ class SynonymMapsOperations:
             synonym_map_name=synonym_map_name,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.get.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SynonymMap', pipeline_response)
@@ -273,18 +277,19 @@ class SynonymMapsOperations:
             select=select,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.list.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('ListSynonymMapsResult', pipeline_response)
@@ -333,18 +338,19 @@ class SynonymMapsOperations:
             x_ms_client_request_id=_x_ms_client_request_id,
             json=json,
             template_url=self.create.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SynonymMap', pipeline_response)

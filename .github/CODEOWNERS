@@ -17,7 +17,7 @@
 # Service team
 ####
 # PRLabel: %Azure.Identity
-/sdk/identity/                                                       @chlowell @mccoyp @schaabs
+/sdk/identity/                                                       @chlowell @mccoyp @schaabs @xiangyan99
 
 # PRLabel: %Event Hubs
 /sdk/eventhub/                                                       @annatisch @yunhaoling @swathipil @rakshith91
@@ -39,6 +39,8 @@
 
 # PRLabel: %Communication
 /sdk/communication/                                                  @acsdevx-msft
+/sdk/communication/azure-communication-phonenumbers/                 @RoyHerrod @danielav7 @whisper6284 @AlonsoMondal
+/sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
 
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @chlowell @mccoyp @YalinLi0312
@@ -101,7 +103,7 @@
 /sdk/servicebus/                                                     @annatisch @yunhaoling @swathipil @rakshith91
 
 # PRLabel: %Synapse
-/sdk/synapse/                                                        @aim-for-better @idear1203
+/sdk/synapse/                                                        @wonner @idear1203 @xiangyan99
 
 # PRLabel: %EngSys
 /sdk/template/                                                       @Azure/azure-sdk-eng
