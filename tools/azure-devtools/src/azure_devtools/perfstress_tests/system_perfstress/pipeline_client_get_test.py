@@ -6,6 +6,7 @@
 from azure.core import PipelineClient
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import PipelineResponse
+from azure.core.pipeline.transport import HttpResponse
 
 from azure_devtools.perfstress_tests import PerfStressTest
 
@@ -35,26 +36,18 @@ class PipelineClientGetTest(PerfStressTest):
         await self._send_request_async()
 
     def _send_request_sync(self):
-        # TODO: Should HttpRequest be created each time or reused?
-        # TODO: Should self.args.url be set as base_url, passed to get(), or both?
         request = self.pipeline_client.get(self.args.url)
-
-        # TODO: Should this need a type hint, or should the type be inferred from our SDK package?
-        # TODO: It seems that the type of "PipelineClient._pipeline" is not inferred
         response: PipelineResponse = self.pipeline_client._pipeline.run(request)
-
-        # TODO: Consume response body
+        # Consume response body
+        http_response: HttpResponse = response.http_response
+        data = http_response.body()
 
     async def _send_request_async(self):
-        # TODO: Should HttpRequest be created each time or reused?
-        # TODO: Should self.args.url be set as base_url, passed to get(), or both?
         request = self.async_pipeline_client.get(self.args.url)
-
-        # TODO: Should this need a type hint, or should the type be inferred from our SDK package?
-        # TODO: It seems that the type of "PipelineClient._pipeline" is not inferred
         response: PipelineResponse = await self.async_pipeline_client._pipeline.run(request)
-
-        # TODO: Consume response body
+        # Consume response body
+        http_response: HttpResponse = response.http_response
+        data = http_response.body()
 
     async def close(self):
         await self.async_pipeline_client.close()
