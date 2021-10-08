@@ -48,7 +48,7 @@ class RecognizeCustomFormsSampleAsync(object):
         model_id = os.getenv("CUSTOM_TRAINED_MODEL_ID", custom_model_id)
 
         async with FormRecognizerClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key), api_version="2.1"
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         ) as form_recognizer_client:
 
             # Make sure your form's type is included in the list of form types the custom model can recognize
@@ -121,7 +121,7 @@ async def main():
             raise ValueError("Please provide endpoint and API key to run the samples.")
 
         form_training_client = FormTrainingClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key), api_version="2.1"
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         async with form_training_client:
             model = await (await form_training_client.begin_training(

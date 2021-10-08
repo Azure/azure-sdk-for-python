@@ -52,10 +52,6 @@ class EnvironmentCredential(object):
       - **AZURE_TENANT_ID**: (optional) ID of the service principal's tenant. Also called its 'directory' ID.
         If not provided, defaults to the 'organizations' tenant, which supports only Azure Active Directory work or
         school accounts.
-
-    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
-        the application or user is registered in. When False, which is the default, the credential will acquire tokens
-        only from the tenant specified by **AZURE_TENANT_ID**.
     """
 
     def __init__(self, **kwargs):
@@ -123,8 +119,7 @@ class EnvironmentCredential(object):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
-        :keyword str tenant_id: optional tenant to include in the token request. If **allow_multitenant_authentication**
-            is False, specifying a tenant with this argument may raise an exception.
+        :keyword str tenant_id: optional tenant to include in the token request.
 
         :rtype: :class:`azure.core.credentials.AccessToken`
 

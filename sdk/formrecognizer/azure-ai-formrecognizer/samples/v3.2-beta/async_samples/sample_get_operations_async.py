@@ -28,7 +28,7 @@ import asyncio
 
 
 async def sample_get_operations_async():
-    # [START list_operations]
+    # [START list_operations_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
 
@@ -50,9 +50,9 @@ async def sample_get_operations_async():
             print("Operation created on: {}".format(operation.created_on))
             print("Operation last updated on: {}".format(operation.last_updated_on))
             print("Resource location of successful operation: {}".format(operation.resource_location))
-    # [END list_operations]
+    # [END list_operations_async]
 
-        # [START get_operation]
+        # [START get_operation_async]
         # Get an operation by ID
         print("\nGetting operation info by ID: {}".format(first_operation.operation_id))
         operation_info = await document_model_admin_client.get_operation(first_operation.operation_id)
@@ -66,7 +66,7 @@ async def sample_get_operations_async():
             print("{}: {}".format(error.code, error.message))
         else:
             print("My operation status is {}".format(operation_info.status))
-        # [END get_operation]
+        # [END get_operation_async]
 
 async def main():
     await sample_get_operations_async()

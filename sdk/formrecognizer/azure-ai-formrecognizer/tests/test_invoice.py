@@ -10,7 +10,8 @@ from io import BytesIO
 from datetime import date
 from azure.core.exceptions import ServiceRequestError, HttpResponseError
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult, AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
+from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
 from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormRecognizerApiVersion, DocumentAnalysisClient, AnalyzeResult
 from testcase import FormRecognizerTest

@@ -26,27 +26,27 @@ class PurviewScanningClientConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
     :param endpoint: The scanning endpoint of your purview account. Example: https://{accountName}.scan.purview.azure.com.
     :type endpoint: str
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: ~azure.core.credentials.TokenCredential
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
         endpoint,  # type: str
+        credential,  # type: "TokenCredential"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
         super(PurviewScanningClientConfiguration, self).__init__(**kwargs)
 
-        self.credential = credential
         self.endpoint = endpoint
+        self.credential = credential
         self.api_version = "2018-12-01-preview"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://purview.azure.net/.default'])
         kwargs.setdefault('sdk_moniker', 'purview-scanning/{}'.format(VERSION))

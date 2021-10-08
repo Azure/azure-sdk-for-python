@@ -11,7 +11,14 @@ import time
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.keys import ApiVersion, JsonWebKey, KeyClient, KeyReleasePolicy
+from azure.keyvault.keys import (
+    ApiVersion,
+    JsonWebKey,
+    KeyClient,
+    KeyReleasePolicy,
+    KeyRotationLifetimeAction,
+    KeyRotationPolicyAction,
+)
 import pytest
 from six import byte2int
 
@@ -22,8 +29,22 @@ from _test_case import client_setup, get_attestation_token, get_decorator, get_r
 all_api_versions = get_decorator()
 only_hsm = get_decorator(only_hsm=True)
 only_hsm_7_3_preview = get_decorator(only_hsm=True, api_versions=[ApiVersion.V7_3_PREVIEW])
+only_vault_7_3_preview = get_decorator(only_vault=True, api_versions=[ApiVersion.V7_3_PREVIEW])
 logging_enabled = get_decorator(logging_enable=True)
 logging_disabled = get_decorator(logging_enable=False)
+
+
+def _assert_rotation_policies_equal(p1, p2):
+    assert p1.id == p2.id
+    assert p1.expires_in == p2.expires_in
+    assert p1.created_on == p2.created_on
+    assert p1.updated_on == p2.updated_on
+    assert len(p1.lifetime_actions) == len(p2.lifetime_actions)
+
+def _assert_lifetime_actions_equal(a1, a2):
+    assert a1.action == a2.action
+    assert a1.time_after_create == a2.time_after_create
+    assert a1.time_before_expiry == a2.time_before_expiry
 
 
 # used for logging tests
@@ -507,6 +528,85 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         new_release_policy = KeyReleasePolicy(policy_string)
 
         self._update_key_properties(client, key, new_release_policy)
+
+    @only_vault_7_3_preview()
+    @client_setup
+    def test_key_rotation(self, client, **kwargs):
+        key_name = self.get_resource_name("rotation-key")
+        key = self._create_rsa_key(client, key_name)
+        rotated_key = client.rotate_key(key_name)
+
+        # the rotated key should have a new ID, version, and key material (for RSA, n and e fields)
+        assert key.id != rotated_key.id
+        assert key.properties.version != rotated_key.properties.version
+        assert key.key.n != rotated_key.key.n
+
+    @only_vault_7_3_preview()
+    @client_setup
+    def test_key_rotation_policy(self, client, **kwargs):
+        key_name = self.get_resource_name("rotation-key")
+        self._create_rsa_key(client, key_name)
+
+        actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.ROTATE, time_after_create="P2M")]
+        updated_policy = client.update_key_rotation_policy(key_name, lifetime_actions=actions)
+        fetched_policy = client.get_key_rotation_policy(key_name)
+        assert updated_policy.expires_in is None
+        _assert_rotation_policies_equal(updated_policy, fetched_policy)
+
+        updated_policy_actions = updated_policy.lifetime_actions[0]
+        fetched_policy_actions = fetched_policy.lifetime_actions[0]
+        assert updated_policy_actions.action == KeyRotationPolicyAction.ROTATE
+        assert updated_policy_actions.time_after_create == "P2M"
+        assert updated_policy_actions.time_before_expiry is None
+        _assert_lifetime_actions_equal(updated_policy_actions, fetched_policy_actions)
+
+        new_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.NOTIFY, time_before_expiry="P30D")]
+        new_policy = client.update_key_rotation_policy(key_name, expires_in="P90D", lifetime_actions=new_actions)
+        new_fetched_policy = client.get_key_rotation_policy(key_name)
+        assert new_policy.expires_in == "P90D"
+        _assert_rotation_policies_equal(new_policy, new_fetched_policy)
+
+        new_policy_actions = new_policy.lifetime_actions[0]
+        new_fetched_policy_actions = new_fetched_policy.lifetime_actions[0]
+        assert new_policy_actions.action == KeyRotationPolicyAction.NOTIFY
+        assert new_policy_actions.time_after_create is None
+        assert new_policy_actions.time_before_expiry == "P30D"
+        _assert_lifetime_actions_equal(new_policy_actions, new_fetched_policy_actions)
+
+    @all_api_versions()
+    @client_setup
+    def test_get_cryptography_client(self, client, is_hsm, **kwargs):
+        key_name = self.get_resource_name("key-name")
+        key = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
+
+        # try specifying the key version
+        crypto_client = client.get_cryptography_client(key_name, version=key.properties.version)
+        # both clients should use the same generated client
+        assert client._client == crypto_client._client
+
+        # the crypto client should successfully perform crypto operations
+        plaintext = b"plaintext"
+        result = crypto_client.encrypt("RSA-OAEP", plaintext)
+        assert result.key_id == key.id
+
+        result = crypto_client.decrypt(result.algorithm, result.ciphertext)
+        assert result.key_id == key.id
+        assert "RSA-OAEP" == result.algorithm
+        assert plaintext == result.plaintext
+
+        # try ommitting the key version
+        crypto_client = client.get_cryptography_client(key_name)
+        # both clients should use the same generated client
+        assert client._client == crypto_client._client
+
+        # the crypto client should successfully perform crypto operations
+        result = crypto_client.encrypt("RSA-OAEP", plaintext)
+        assert result.key_id == key.id
+
+        result = crypto_client.decrypt(result.algorithm, result.ciphertext)
+        assert result.key_id == key.id
+        assert "RSA-OAEP" == result.algorithm
+        assert plaintext == result.plaintext
 
 
 def test_positive_bytes_count_required():
