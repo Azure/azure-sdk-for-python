@@ -48,6 +48,12 @@ class PerfStressTest:
         return
 
     async def record_and_start_playback(self):
+        # Make one call to Run() before starting recording, to avoid capturing one-time setup like authorization requests
+        if self.args.sync:
+            self.run_sync()
+        else:
+            await self.run_async()
+
         await self._start_recording()
         self._test_proxy_policy.recording_id = self._recording_id
         self._test_proxy_policy.mode = "record"
