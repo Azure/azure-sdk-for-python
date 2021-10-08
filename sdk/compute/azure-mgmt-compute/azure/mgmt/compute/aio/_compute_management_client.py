@@ -366,6 +366,45 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def community_galleries(self):
+        """Instance depends on the API version:
+
+           * 2021-07-01: :class:`CommunityGalleriesOperations<azure.mgmt.compute.v2021_07_01.aio.operations.CommunityGalleriesOperations>`
+        """
+        api_version = self._get_api_version('community_galleries')
+        if api_version == '2021-07-01':
+            from ..v2021_07_01.aio.operations import CommunityGalleriesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'community_galleries'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def community_gallery_image_versions(self):
+        """Instance depends on the API version:
+
+           * 2021-07-01: :class:`CommunityGalleryImageVersionsOperations<azure.mgmt.compute.v2021_07_01.aio.operations.CommunityGalleryImageVersionsOperations>`
+        """
+        api_version = self._get_api_version('community_gallery_image_versions')
+        if api_version == '2021-07-01':
+            from ..v2021_07_01.aio.operations import CommunityGalleryImageVersionsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'community_gallery_image_versions'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def community_gallery_images(self):
+        """Instance depends on the API version:
+
+           * 2021-07-01: :class:`CommunityGalleryImagesOperations<azure.mgmt.compute.v2021_07_01.aio.operations.CommunityGalleryImagesOperations>`
+        """
+        api_version = self._get_api_version('community_gallery_images')
+        if api_version == '2021-07-01':
+            from ..v2021_07_01.aio.operations import CommunityGalleryImagesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'community_gallery_images'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def dedicated_host_groups(self):
         """Instance depends on the API version:
 
