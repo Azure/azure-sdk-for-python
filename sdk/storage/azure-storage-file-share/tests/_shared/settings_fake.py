@@ -4,8 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
-STORAGE_ACCOUNT_NAME = ""
-STORAGE_ACCOUNT_KEY = ""
+STORAGE_ACCOUNT_NAME = "fakename"
+STORAGE_ACCOUNT_KEY = "fakekey"
+PREMIUM_STORAGE_FILE_ACCOUNT_NAME = "fakename"
+PREMIUM_STORAGE_FILE_ACCOUNT_KEY = "fakekey"
+SECONDARY_STORAGE_ACCOUNT_NAME = "fakename"
+SECONDARY_STORAGE_ACCOUNT_KEY = "fakekey"
 
 ACCOUNT_URL_SUFFIX = 'core.windows.net'
 RUN_IN_LIVE = "False"
@@ -13,5 +17,5 @@ SKIP_LIVE_RECORDING = "True"
 
 PROTOCOL = "https"
 
-ENABLE_LOGGING = True
+STORAGE_ACCOUNT_FAKE_KEY = "NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg=="
 

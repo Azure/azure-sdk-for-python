@@ -8,39 +8,20 @@ from __future__ import division
 
 import functools
 import os.path
-import time
-from datetime import datetime, timedelta
 
 try:
     import unittest.mock as mock
 except ImportError:
     import mock
 
-import zlib
-import math
-import sys
-import string
-import random
-import re
 import logging
 from devtools_testutils import (
-    AzureMgmtTestCase,
-    AzureMgmtPreparer,
-    ResourceGroupPreparer,
-    StorageAccountPreparer,
-    FakeResource,
     PowerShellPreparer)
-from azure_devtools.scenario_tests import RecordingProcessor, AzureTestError, create_random_name
+
 try:
     from cStringIO import StringIO      # Python 2
 except ImportError:
     from io import StringIO
-
-from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
-from azure.core.credentials import AccessToken
-from azure.storage.queue import generate_account_sas, AccountSasPermissions, ResourceTypes
-from azure.mgmt.storage.models import StorageAccount, Endpoints
 try:
     # Running locally - use configuration in settings_real.py
     from .settings_real import *
@@ -52,10 +33,6 @@ try:
     from devtools_testutils import mgmt_settings_real as settings
 except ImportError:
     from devtools_testutils import mgmt_settings_fake as settings
-
-import pytest
-
-from .service_versions import service_version_map
 
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'

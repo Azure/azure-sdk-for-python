@@ -90,12 +90,12 @@ class GlobalStorageAccountPreparer(AzureMgmtPreparer):
         storage_account = StorageTestCase._STORAGE_ACCOUNT
         if self.is_live:
             self.test_class_instance.scrubber.register_name_pair(
-                storage_account.name,
+                storage_account_name,
                 "storagename"
             )
         else:
             name = "storagename"
-            storage_account.name = name
+            storage_account_name = name
             storage_account.primary_endpoints.blob = 'https://{}.{}.core.windows.net'.format(name, 'blob')
             storage_account.primary_endpoints.queue = 'https://{}.{}.core.windows.net'.format(name, 'queue')
             storage_account.primary_endpoints.table = 'https://{}.{}.core.windows.net'.format(name, 'table')
@@ -382,7 +382,7 @@ def storage_account():
                     storage_account = StorageAccount(
                         location=location,
                     )
-                    storage_account.name = storage_name
+                    storage_account_name = storage_name
                     storage_account.id = storage_name
                     storage_account.primary_endpoints=Endpoints()
                     storage_account.primary_endpoints.blob = 'https://{}.{}.core.windows.net'.format(storage_name, 'blob')
@@ -418,7 +418,7 @@ def storage_account():
                             storage_connection_string_parts["EndpointSuffix"], # Let it fail if we don't even have that
                         )
 
-                    storage_account.name = storage_name
+                    storage_account_name = storage_name
                     storage_account.id = storage_name
                     storage_account.primary_endpoints=Endpoints()
                     storage_account.primary_endpoints.blob = storage_connection_string_parts.get("BlobEndpoint", build_service_endpoint("blob"))
