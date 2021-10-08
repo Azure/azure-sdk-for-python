@@ -13,6 +13,7 @@ from azure_devtools.perfstress_tests import PerfStressTest
 class PipelineClientGetTest(PerfStressTest):
     pipeline_client: PipelineClient = None
     async_pipeline_client: AsyncPipelineClient = None
+    _first_run = True
 
     def __init__(self, arguments):
         super().__init__(arguments)
@@ -20,6 +21,20 @@ class PipelineClientGetTest(PerfStressTest):
         self.async_pipeline_client = AsyncPipelineClient(base_url=self.args.url, **self._client_kwargs)
 
     def run_sync(self):
+        if self._first_run:
+            for _ in range(self.args.first_run_extra_requests):
+                self._send_request_sync()
+            self._first_run = False
+        self._send_request_sync()
+
+    async def run_async(self):
+        if self._first_run:
+            for _ in range(self.args.first_run_extra_requests):
+                await self._send_request_async()
+            self._first_run = False
+        await self._send_request_async()
+
+    def _send_request_sync(self):
         # TODO: Should HttpRequest be created each time or reused?
         # TODO: Should self.args.url be set as base_url, passed to get(), or both?
         request = self.pipeline_client.get(self.args.url)
@@ -30,7 +45,7 @@ class PipelineClientGetTest(PerfStressTest):
 
         # TODO: Consume response body
 
-    async def run_async(self):
+    async def _send_request_async(self):
         # TODO: Should HttpRequest be created each time or reused?
         # TODO: Should self.args.url be set as base_url, passed to get(), or both?
         request = self.async_pipeline_client.get(self.args.url)
@@ -47,4 +62,6 @@ class PipelineClientGetTest(PerfStressTest):
 
     @staticmethod
     def add_arguments(parser):
+        parser.add_argument("--first-run-extra-requests", type=int, default=0, help='Extra requests to send on first run. ' +
+            'Simulates SDKs which require extra requests (like authentication) on first API call.')
         parser.add_argument("-u", "--url", required=True)
