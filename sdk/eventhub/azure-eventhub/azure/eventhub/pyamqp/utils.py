@@ -88,8 +88,12 @@ def generate_sas_token(audience, policy, key, expiry=None):
 
 def add_batch(batch, message):
     # Add a message to a batch
-    batch.data.append(encode_payload(b"", message))
+    output = bytearray()
+    encode_payload(output, message)
+    batch.data.append(output)
 
 
 def get_message_encoded_size(message):
-    return len(encode_payload(b"", message))
+    output = bytearray()
+    encode_payload(output, message)
+    return len(output)
