@@ -175,7 +175,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     if options.get("consistencyLevel"):
         consistency_level = options["consistencyLevel"]
         headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
-    elif default_client_consistency_level is not None: # Why not just check for `default_client_consistency_level`
+    elif default_client_consistency_level is not None:
         consistency_level = default_client_consistency_level
         headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
 
