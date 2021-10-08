@@ -15,7 +15,6 @@ from .._communication_identifier_serializer import serialize_identifier
 from .._converters import (
     AddParticipantRequestConverter,
     RemoveParticipantRequestConverter,
-    CancelAllMediaOperationsConverter,
     TransferCallRequestConverter,
     CancelParticipantMediaOperationRequestConverter,
     PlayAudioRequestConverter,
@@ -24,7 +23,6 @@ from .._converters import (
 from .._generated.models import (
     AddParticipantResult,
     CallConnectionProperties,
-    CancelAllMediaOperationsResult,
     PhoneNumberIdentifierModel,
     PlayAudioResult
     )
@@ -72,15 +70,12 @@ class CallConnection:
     @distributed_trace_async()
     async def cancel_all_media_operations(
             self,
-            operation_context: Optional[str] = None,
             **kwargs: Any
-        ) -> CancelAllMediaOperationsResult:
+        ) -> None:
 
-        cancel_all_media_operations_request = CancelAllMediaOperationsConverter.convert(operation_context)
 
         return await self._call_connection_client.cancel_all_media_operations(
             call_connection_id=self.call_connection_id,
-            cancel_all_media_operation_request=cancel_all_media_operations_request,
             **kwargs
         )
 

@@ -17,8 +17,6 @@ from .._generated.models import (
     AddParticipantWithCallLocatorRequest,
     RemoveParticipantRequest,
     RemoveParticipantWithCallLocatorRequest,
-    CancelAllMediaOperationsRequest,
-    CancelMediaOperationRequest,
     CancelMediaOperationWithCallLocatorRequest,
     CancelParticipantMediaOperationRequest,
     CancelParticipantMediaOperationWithCallLocatorRequest,
@@ -215,29 +213,6 @@ class RemoveParticipantWithCallLocatorRequestConverter(object):
             remove_participant_request=RemoveParticipantRequestConverter.convert(identifier)
             )
 
-class CancelAllMediaOperationsConverter(object):
-    @staticmethod
-    def convert(
-        operation_context=None # type: str
-        ): # type: (...) -> CancelAllMediaOperationsRequest
-
-        return CancelAllMediaOperationsRequest(
-            operation_context=operation_context
-            )
-
-class CancelMediaOperationRequestConverter(object):
-    @staticmethod
-    def convert(
-        media_operation_id # type: str
-        ): # type: (...) -> CancelMediaOperationRequest
-
-        if not media_operation_id:
-            raise ValueError("media_operation_id can not be None")
-
-        return CancelMediaOperationRequest(
-            media_operation_id=media_operation_id
-        )
-
 class CancelMediaOperationWithCallLocatorRequestConverter(object):
     @staticmethod
     def convert(
@@ -252,9 +227,7 @@ class CancelMediaOperationWithCallLocatorRequestConverter(object):
 
         return CancelMediaOperationWithCallLocatorRequest(
             call_locator=call_locator,
-            cancel_media_operation_request=CancelMediaOperationRequestConverter.convert(
-                media_operation_id=media_operation_id
-            )
+            media_operation_id=media_operation_id
         )
 
 class CancelParticipantMediaOperationRequestConverter(object):

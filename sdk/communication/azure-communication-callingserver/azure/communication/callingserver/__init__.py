@@ -9,8 +9,6 @@ from ._version import VERSION
 from ._call_connection import CallConnection
 from ._callingserver_client import CallingServerClient
 from ._generated.models import (AddParticipantResult, CallConnectionProperties,
-                                CancelAllMediaOperationsRequest,
-                                CancelAllMediaOperationsResult,
                                 CreateCallRequest, PhoneNumberIdentifierModel,
                                 PlayAudioRequest, PlayAudioResult,
                                 MediaType, EventSubscriptionType,
@@ -32,11 +30,9 @@ from ._shared.models import CommunicationIdentifier, CommunicationUserIdentifier
 
 __all__ = [
     'AddParticipantResult',
-    'CancelAllMediaOperationsRequest',
     'CallConnectionProperties',
     'CallConnection',
     'CallingServerClient',
-    'CancelAllMediaOperationsResult',
     'CommunicationIdentifier',
     'CommunicationUserIdentifier',
     'CreateCallOptions',
