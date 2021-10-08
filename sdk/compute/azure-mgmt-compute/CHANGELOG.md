@@ -1,5 +1,13 @@
 # Release History
 
+## 23.1.0 (2021-10-08)
+
+**Features**
+
+  - Added operation group CommunityGalleriesOperations
+  - Added operation group CommunityGalleryImagesOperations
+  - Added operation group CommunityGalleryImageVersionsOperations
+
 ## 23.0.0 (2021-09-02)
 
 **Features**
