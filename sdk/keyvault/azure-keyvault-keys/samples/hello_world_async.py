@@ -2,12 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import datetime
 import asyncio
+import datetime
 import os
-from azure.keyvault.keys.aio import KeyClient
 from azure.identity.aio import DefaultAzureCredential
-from azure.core.exceptions import HttpResponseError
+from azure.keyvault.keys.aio import KeyClient
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:

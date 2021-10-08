@@ -4,9 +4,8 @@
 # ------------------------------------
 import asyncio
 import os
-from azure.keyvault.keys.aio import KeyClient
 from azure.identity.aio import DefaultAzureCredential
-from azure.core.exceptions import HttpResponseError
+from azure.keyvault.keys.aio import KeyClient
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:

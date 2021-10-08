@@ -4,9 +4,8 @@
 # ------------------------------------
 import datetime
 import os
-from azure.keyvault.keys import KeyClient
 from azure.identity import DefaultAzureCredential
-from azure.core.exceptions import HttpResponseError
+from azure.keyvault.keys import KeyClient
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
