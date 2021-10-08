@@ -945,7 +945,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         doc_id_order = [doc.get("id") for doc in docs.documents]
         try:
-            generated_tasks = [action._to_generated(self._api_version, str(idx)) for idx, action in enumerate(actions)]
+            generated_tasks = [
+                action._to_generated(self._api_version, str(idx))  # pylint: disable=protected-access
+                for idx, action in enumerate(actions)
+            ]
         except AttributeError:
             raise TypeError("Unsupported action type in list.")
         task_order = [(_determine_action_type(a), a.task_name) for a in generated_tasks]
