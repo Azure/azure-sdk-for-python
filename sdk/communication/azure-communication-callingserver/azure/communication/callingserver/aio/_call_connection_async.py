@@ -21,9 +21,13 @@ from .._converters import (
     PlayAudioRequestConverter,
     PlayAudioToParticipantRequestConverter
     )
-from .._generated.models import (AddParticipantResult,
-                                 CancelAllMediaOperationsResult,
-                                 PhoneNumberIdentifierModel, PlayAudioResult)
+from .._generated.models import (
+    AddParticipantResult,
+    CallConnectionProperties,
+    CancelAllMediaOperationsResult,
+    PhoneNumberIdentifierModel,
+    PlayAudioResult
+    )
 from .._shared.models import CommunicationIdentifier
 from .._generated.aio._azure_communication_calling_server_service import \
     AzureCommunicationCallingServerService  # pylint: disable=unused-import
@@ -43,6 +47,16 @@ class CallConnection:
         self.call_connection_id = call_connection_id
         self._call_connection_client = call_connection_client
         self._callingserver_service_client = callingserver_service_client
+
+    @distributed_trace_async()
+    async def get_call(
+            self,
+            **kwargs: Any
+        ) -> CallConnectionProperties:
+        return await self._call_connection_client.get_call(
+            call_connection_id=self.call_connection_id,
+            **kwargs
+        )
 
     @distributed_trace_async()
     async def hang_up(

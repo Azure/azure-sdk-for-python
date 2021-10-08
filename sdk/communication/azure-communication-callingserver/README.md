@@ -96,7 +96,7 @@ from azure.communication.callingserver import (
     )
 
 add_participant_result = await call_connection_async.add_participant(
-    participant=CommunicationUserIdentifier("<user-id>")
+    participant=CommunicationUserIdentifier("<id>")
     )
 ```
 
@@ -106,10 +106,12 @@ add_participant_result = await call_connection_async.add_participant(
 Once the participant_id is provided, the `remove_participant` method can be invoked:
 
 ```Python
-await call_connection_async.remove_participant(participant_id)
+await call_connection_async.remove_participant(
+    participant=CommunicationUserIdentifier("<id>")
+    )
 ```
 
-- `participant_id`: The participant to be removed from the call.
+- `participant`: The identifier of participant to be removed from the call.
 
 ### Play audio in the call connection
 Once the call is establised, the `play_audio` method can be invoked:
@@ -132,10 +134,6 @@ play_audio_result = await call_connection_async.play_audio(
 Once the call is establised, the `cancel_all_media_operations` method can be invoked:
 
 ```Python
-from azure.communication.callingserver import (
-    PlayAudioOptions
-    )
-
 cancel_all_media_operations_result = await call_connection_async.cancel_all_media_operations()
 ```
 
@@ -159,7 +157,7 @@ from azure.communication.callingserver import (
 call_locator = ServerCallLocator("<server-call-id>")
 call_connection = await callingserver_client.join_call(
     call_locator=call_locator,
-    source=CommunicationUserIdentifier("<user-id>"),
+    source=CommunicationUserIdentifier("<id>"),
     join_call_options=JoinCallOptions"<...>"))
     )
 ```
@@ -180,7 +178,7 @@ from azure.communication.callingserver import (
 call_locator = ServerCallLocator("<server-call-id>")
 add_participant_result = await callingserver_client.add_participant(
     call_locator=call_locator,
-    participant=CommunicationUserIdentifier("<user-id>")
+    participant=CommunicationUserIdentifier("<id>")
     callback_uri="<callback-uri>"
     )
 ```
@@ -200,14 +198,12 @@ from azure.communication.callingserver import (
 
 await callingserver_client.remove_participant(
     call_locator=call_locator,
-    participant=CommunicationUserIdentifier("<user-id>")
-    callback_uri="<callback-uri>"
+    participant=CommunicationUserIdentifier("<id>")
     )
 ```
 
 - `call_locator`: The callLocator contains the call id.
 - `participant`: The participant to be removed from the call.
-- `callback_uri`: The callback uri.
 
 ### Play audio with callLocator in the server call
 Once the call is establised, the `play_audio` method can be invoked:

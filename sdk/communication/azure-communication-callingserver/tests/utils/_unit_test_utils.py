@@ -5,7 +5,12 @@
 # --------------------------------------------------------------------------
 
 import utils._test_constants as _test_constants
-
+from azure.communication.callingserver._communication_call_locator_serializer import (
+    deserialize_call_locator
+    )
+from azure.communication.callingserver._communication_identifier_serializer import (
+    deserialize_identifier
+    )
 from azure.communication.callingserver import (
     CreateCallOptions,
     MediaType,
@@ -14,6 +19,7 @@ from azure.communication.callingserver import (
     PlayAudioOptions,
     PlayAudioResult,
     AddParticipantResult,
+    CallConnectionProperties,
     CommunicationUserIdentifier,
     CancelAllMediaOperationsResult,
     PhoneNumberIdentifier,
@@ -336,6 +342,22 @@ class CallingServerUnitTestUtils:
 class CallConnectionUnitTestUtils:
 
     @staticmethod
+    def data_source_test_get_call():
+        parameters = []
+        parameters.append((
+            _test_constants.ClientType_ConnectionString,
+            _test_constants.CALL_ID,
+            ))
+
+        parameters.append((
+            _test_constants.ClientType_ManagedIdentity,
+            _test_constants.CALL_ID,
+            True,
+            ))
+
+        return parameters
+
+    @staticmethod
     def data_source_test_hang_up():
         parameters = []
         parameters.append((
@@ -506,14 +528,14 @@ class CallConnectionUnitTestUtils:
     @staticmethod
     def verify_cancel_all_media_operations_result(result):
         # type: (CancelAllMediaOperationsResult) -> None
-        assert "dummyId" == result.operation_id
+        assert _test_constants.OPERATION_ID == result.operation_id
         assert OperationStatus.COMPLETED == result.status
         assert _test_constants.OPERATION_CONTEXT == result.operation_context
 
     @staticmethod
     def verify_play_audio_result(result):
         # type: (PlayAudioResult) -> None
-        assert "dummyId" == result.operation_id
+        assert _test_constants.OPERATION_ID == result.operation_id
         assert OperationStatus.RUNNING == result.status
         assert _test_constants.OPERATION_CONTEXT == result.operation_context
 
@@ -521,3 +543,29 @@ class CallConnectionUnitTestUtils:
     def verify_add_participant_result(result):
         # type: (AddParticipantResult) -> None
         assert _test_constants.PARTICIPANT_ID == result.participant_id
+
+    @staticmethod
+    def verify_get_call_result(result):
+        # type: (CallConnectionProperties) -> None
+        call_locator = deserialize_call_locator(result.call_locator)
+        source_identifier = deserialize_identifier(result.source)
+        target_identifier_01 = deserialize_identifier(result.targets[0])
+        target_identifier_02 = deserialize_identifier(result.targets[1])
+
+        assert _test_constants.SEVERCALL_ID == call_locator.id
+        assert _test_constants.SERVER_CALL_LOCATOR == call_locator.kind
+        assert _test_constants.COMMUNICATION_USER_Id_01 == source_identifier.properties['id']
+        assert _test_constants.COMMUNICATION_USER_KIND == source_identifier.kind
+        assert _test_constants.COMMUNICATION_USER_Id_02 == target_identifier_01.properties['id']
+        assert _test_constants.COMMUNICATION_USER_KIND == target_identifier_01.kind
+        assert _test_constants.PHONE_NUMBER == target_identifier_02.properties['value']
+        assert _test_constants.PHONE_NUMBER_KIND == target_identifier_02.kind
+
+        assert _test_constants.CALL_ID == result.call_connection_id
+        assert _test_constants.CALL_STATE_CONNECTED == result.call_connection_state
+        assert _test_constants.CALL_SUBJECT == result.subject
+        assert _test_constants.AppCallbackUrl == result.callback_uri
+        assert _test_constants.CALLEVENTS_DTMFRECEIVED == result.requested_call_events[0]
+        assert _test_constants.CALLEVENTS_PARTICIPANTSUPDATED == result.requested_call_events[1]
+        assert _test_constants.MEDIA_TYPES_AUDIO == result.requested_media_types[0]
+        assert _test_constants.MEDIA_TYPES_VIDEO == result.requested_media_types[1]

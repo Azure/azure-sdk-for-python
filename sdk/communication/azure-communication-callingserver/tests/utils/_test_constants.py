@@ -18,7 +18,7 @@ SERVER_CALL_ID = "0d11d342-297f-4584-bb92-13fcbb3ae3bd"
 FAKE_ENDPOINT = "https://endpoint"
 FAKE_TOKEN = "Fake Token"
 CALL_SUBJECT = "testsubject"
-
+OPERATION_ID = "dummyId"
 # System Environment Variables
 # Live Test Variables
 RESOURCE_IDENTIFIER = os.getenv(
@@ -45,7 +45,7 @@ CreateOrJoinCallPayload={
 PHONE_NUMBER = "+14255550123"
 OPERATION_CONTEXT = "dummyOperationContext"
 ErrorPayload={
-    "operationId": "dummyId",
+    "operationId": OPERATION_ID,
     "status": "failed",
     "operationContext": OPERATION_CONTEXT,
     "resultInfo": {
@@ -62,21 +62,74 @@ PARTICIPANT_ID = "dummyParticipantId"
 MEDIA_OPERATION_ID = "dummyMediaOperationId"
 USER_TO_USER_INFORMATION = "dummyUserToUserInformation"
 
+SEVERCALL_ID = "aHKW9HM6Ly9jb252ZXJzYXRpb24tc2VydmljZS11cmwvYXBpL3YyL2VwL2NvbnYvc2Rjc3NlaVdiUV8wLVNCTE9peG1NWHRRP2k9OSZlPTYzNzU1MDY4NDM3MDUzNTAwMQ=="
+GROUPCALL_ID = "507ad2dc-5a40-4d85-b2d9-cf214d469638"
+
+SERVER_CALL_LOCATOR = "serverCallLocator"
+GROUP_CALL_LOCATOR = "groupCallLocator"
+
+COMMUNICATION_USER_Id_01 = "8:acs:b9612345-fd0b-480c-8fd2-cb58b70eab9f_acacdeb5-dba7-479b-ab45-5e76469d87b2"
+COMMUNICATION_USER_Id_02 = "8:acs:b9612345-fd0b-480c-8fd2-cb58b70eab9f_f95c7b38-6c4e-4898-93b3-2553402304d6"
+
+COMMUNICATION_USER_KIND = "communication_user"
+PHONE_NUMBER_KIND = "phone_number"
+
+CALL_STATE_CONNECTED = "connected"
+MEDIA_TYPES_AUDIO = "audio"
+MEDIA_TYPES_VIDEO = "video"
+CALLEVENTS_DTMFRECEIVED = "dtmfReceived"
+CALLEVENTS_PARTICIPANTSUPDATED = "participantsUpdated"
+
+# GetCallResponsePayload
+GetCallResponsePayload = {
+    "callConnectionId": CALL_ID,
+    "source": {
+          "communicationUser": {
+            "id": COMMUNICATION_USER_Id_01
+          }
+        },
+    "targets": [
+        {
+        "communicationUser": {
+            "id": COMMUNICATION_USER_Id_02
+        }
+        },
+        {
+        "phoneNumber": {
+            "value": PHONE_NUMBER
+        }
+        }
+    ],
+    "callConnectionState": CALL_STATE_CONNECTED,
+    "subject": CALL_SUBJECT,
+    "callbackUri": AppCallbackUrl,
+    "requestedMediaTypes": [
+        MEDIA_TYPES_AUDIO,
+        MEDIA_TYPES_VIDEO
+    ],
+    "requestedCallEvents": [
+        CALLEVENTS_DTMFRECEIVED,
+        CALLEVENTS_PARTICIPANTSUPDATED
+    ],
+    "callLocator": {
+          "serverCallId": SEVERCALL_ID,
+          "kind": SERVER_CALL_LOCATOR
+        }
+    }
+
+
 # CancelAllMediaOperaions
 CancelAllMediaOperaionsResponsePayload = {
-    "operationId": "dummyId",
+    "operationId": OPERATION_ID,
     "status": "completed",
     "operationContext": OPERATION_CONTEXT,
     }
-
-SEVERCALL_ID = "b3ba87f4-9daf-4d0b-b95a-53d955a40577"
-GROUPCALL_ID = "507ad2dc-5a40-4d85-b2d9-cf214d469638"
 
 # PlayAudio
 AUDIO_FILE_URI = "https://bot.contoso.io/audio/sample-message.wav"
 AUDIO_FILE_ID = "sampleAudioFileId"
 PlayAudioResponsePayload = {
-    "operationId": "dummyId",
+    "operationId": OPERATION_ID,
     "status": "running",
     "operationContext": OPERATION_CONTEXT
     }

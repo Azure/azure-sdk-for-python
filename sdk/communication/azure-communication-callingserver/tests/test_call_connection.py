@@ -18,6 +18,46 @@ from utils._unit_test_utils import CallConnectionUnitTestUtils
 
 class TestCallConnection(unittest.TestCase):
 
+    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_get_call())
+    def test_get_call_succeed(
+        self,
+        test_name, # type: str
+        call_connection_id, # type: str
+        use_managed_identity = False, # type: bool
+        ):
+
+        call_connection = _mock_utils.create_mock_call_connection(
+            call_connection_id,
+            status_code=200,
+            payload=_test_constants.GetCallResponsePayload,
+            use_managed_identity=use_managed_identity
+            )
+
+        result = call_connection.get_call()
+        CallConnectionUnitTestUtils.verify_get_call_result(result)
+
+    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_get_call())
+    def test_get_call_failed(
+        self,
+        test_name, # type: str
+        call_connection_id, # type: str
+        use_managed_identity = False, # type: bool
+        ):
+
+        call_connection = _mock_utils.create_mock_call_connection(
+            call_connection_id,
+            status_code=404,
+            payload=_test_constants.ErrorPayload,
+            use_managed_identity = use_managed_identity
+            )
+
+        raised = False
+        try:
+            call_connection.get_call()
+        except:
+            raised = True
+        assert raised == True
+
     @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_hang_up())
     def test_hang_up_succeed(
         self,

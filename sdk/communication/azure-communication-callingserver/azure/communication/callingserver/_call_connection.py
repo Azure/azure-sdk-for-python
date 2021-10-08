@@ -16,10 +16,13 @@ from ._converters import (
     PlayAudioRequestConverter,
     PlayAudioToParticipantRequestConverter
     )
-from ._generated.models import (AddParticipantResult,
-                                CancelAllMediaOperationsResult,
-                                PhoneNumberIdentifierModel,
-                                PlayAudioResult)
+from ._generated.models import (
+    AddParticipantResult,
+    CallConnectionProperties,
+    CancelAllMediaOperationsResult,
+    PhoneNumberIdentifierModel,
+    PlayAudioResult
+    )
 from ._shared.models import CommunicationIdentifier
 
 if TYPE_CHECKING:
@@ -35,6 +38,17 @@ class CallConnection(object):
 
         self.call_connection_id = call_connection_id
         self._call_connection_client = call_connection_client
+
+    @distributed_trace()
+    def get_call(
+            self,
+            **kwargs  # type: Any
+        ): # type: (...) -> CallConnectionProperties
+
+        return self._call_connection_client.get_call(
+            call_connection_id=self.call_connection_id,
+            **kwargs
+        )
 
     @distributed_trace()
     def hang_up(
