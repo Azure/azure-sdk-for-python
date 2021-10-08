@@ -194,7 +194,13 @@ def auto_close_issue(sdk_repo, item):
         issue_info.edit(state='closed')
         item.issue_object.add_to_labels('auto-closed')
         logging.info(f"issue number：{issue_number} has been closed!")
-
+        
+    created_at = issue_info.created_at.strftime('%Y-%m-%d')
+    closed_at = issue_info.closed_at.strftime('%Y-%m-%d')
+    assignee = issue_info.assignee.login
+    link = issue_info.html_url
+    closed_issue_info = f'{package_name},{assignee},{created_at},{closed_at},{link}\n'
+    print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&',closed_issue_info)
 
 def _get_last_released_date(package_name):
     pypi_link = f'https://pypi.org/project/{package_name}/#history'
