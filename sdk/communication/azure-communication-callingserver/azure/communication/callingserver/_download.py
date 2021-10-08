@@ -148,12 +148,12 @@ class _ChunkIterator(object):
         try:
             chunk = next(self._iter_chunks)
             self._current_content += self._iter_downloader.yield_chunk(chunk)
-        except StopIteration as ex:
+        except StopIteration:
             self._complete = True
             # it's likely that there some data left in self._current_content
             if self._current_content:
                 return self._current_content
-            raise StopIteration("Download complete") from ex
+            raise StopIteration("Download complete")
 
         return self._get_chunk_data()
 
@@ -316,8 +316,8 @@ class ContentStreamDownloader():  # pylint: disable=too-many-instance-attributes
 
             try:
                 stream.seek(stream.tell())
-            except (NotImplementedError, AttributeError) as ex:
-                raise ValueError(error_message) from ex
+            except (NotImplementedError, AttributeError):
+                raise ValueError(error_message)
 
         # Write the content to the user stream
         stream.write(self._current_content)
