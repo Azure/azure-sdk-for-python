@@ -119,8 +119,8 @@ class ShareFileClient(StorageAccountHostsMixin):
         an instance of a AzureSasCredential from azure.core.credentials or an account
         shared access key.
     :keyword str api_version:
-        The Storage API version to use for requests. Default value is the most recent service version that is compatible with the current SDK.
-        Setting to an older version may result in reduced feature compatibility.
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
         .. versionadded:: 12.1.0
 
