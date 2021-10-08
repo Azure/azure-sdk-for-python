@@ -1,14 +1,14 @@
 interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [], "entityRecognitionPiiTasks": [{"parameters":
-      {"model-version": "latest", "loggingOptOut": true, "stringIndexType": "UnicodeCodePoint"}}],
-      "keyPhraseExtractionTasks": [], "entityLinkingTasks": [], "sentimentAnalysisTasks":
-      [{"parameters": {"model-version": "latest", "loggingOptOut": false, "opinionMining":
-      false}}], "extractiveSummarizationTasks": [], "customEntityRecognitionTasks":
-      [], "customSingleClassificationTasks": [], "customMultiClassificationTasks":
-      []}, "analysisInput": {"documents": [{"id": "1", "text": "I did not like the
-      hotel we stayed at.", "language": "tr"}, {"id": "2", "text": "I did not like
-      the hotel we stayed at.", "language": "en"}]}}'
+      {"model-version": "latest", "loggingOptOut": true, "stringIndexType": "UnicodeCodePoint"},
+      "taskName": "1"}], "keyPhraseExtractionTasks": [], "entityLinkingTasks": [],
+      "sentimentAnalysisTasks": [{"parameters": {"model-version": "latest", "loggingOptOut":
+      false, "opinionMining": false}, "taskName": "0"}], "extractiveSummarizationTasks":
+      [], "customEntityRecognitionTasks": [], "customSingleClassificationTasks": [],
+      "customMultiClassificationTasks": []}, "analysisInput": {"documents": [{"id":
+      "1", "text": "I did not like the hotel we stayed at.", "language": "tr"}, {"id":
+      "2", "text": "I did not like the hotel we stayed at.", "language": "en"}]}}'
     headers:
       Accept:
       - application/json, text/json
@@ -17,7 +17,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '703'
+      - '737'
       Content-Type:
       - application/json
       User-Agent:
@@ -29,11 +29,11 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 15df1027-2286-4e3a-bf6b-8e74d96ba8fe
+      - 2c80ce03-68fb-446e-b63d-da9c6d758b38
       date:
-      - Wed, 06 Oct 2021 20:51:34 GMT
+      - Thu, 07 Oct 2021 23:43:29 GMT
       operation-location:
-      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/6299b261-9df1-49e0-bb50-22718e8aff67
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/070567ec-e003-4d4d-84c4-5db891edcf01
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -41,7 +41,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '290'
+      - '260'
     status:
       code: 202
       message: Accepted
@@ -57,17 +57,17 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/6299b261-9df1-49e0-bb50-22718e8aff67
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/070567ec-e003-4d4d-84c4-5db891edcf01
   response:
     body:
-      string: '{"jobId":"6299b261-9df1-49e0-bb50-22718e8aff67","lastUpdateDateTime":"2021-10-06T20:51:34Z","createdDateTime":"2021-10-06T20:51:34Z","expirationDateTime":"2021-10-07T20:51:34Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":2,"total":2}}'
+      string: '{"jobId":"070567ec-e003-4d4d-84c4-5db891edcf01","lastUpdateDateTime":"2021-10-07T23:43:30Z","createdDateTime":"2021-10-07T23:43:29Z","expirationDateTime":"2021-10-08T23:43:29Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":2,"total":2}}'
     headers:
       apim-request-id:
-      - f96e17a6-d36a-4ba9-9f65-931466ccb2df
+      - 3843786a-a758-47ea-8a9c-13b74293052e
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 Oct 2021 20:51:39 GMT
+      - Thu, 07 Oct 2021 23:43:35 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -75,7 +75,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '9'
+      - '10'
     status:
       code: 200
       message: OK
@@ -91,21 +91,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/6299b261-9df1-49e0-bb50-22718e8aff67
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/070567ec-e003-4d4d-84c4-5db891edcf01
   response:
     body:
-      string: '{"jobId":"6299b261-9df1-49e0-bb50-22718e8aff67","lastUpdateDateTime":"2021-10-06T20:51:44Z","createdDateTime":"2021-10-06T20:51:34Z","expirationDateTime":"2021-10-07T20:51:34Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":1,"total":2,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-10-06T20:51:44.3028321Z","state":"succeeded","results":{"documents":[{"redactedText":"I
+      string: '{"jobId":"070567ec-e003-4d4d-84c4-5db891edcf01","lastUpdateDateTime":"2021-10-07T23:43:37Z","createdDateTime":"2021-10-07T23:43:29Z","expirationDateTime":"2021-10-08T23:43:29Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":1,"total":2,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-10-07T23:43:37.3152811Z","taskName":"1","state":"succeeded","results":{"documents":[{"redactedText":"I
         did not like the hotel we stayed at.","id":"2","entities":[],"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
         language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
         For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}]}}'
     headers:
       apim-request-id:
-      - 1c6788d0-5157-4142-8671-b285f3338dda
+      - 0b4a118a-7ac8-45f9-a2da-3e629c7100d6
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 Oct 2021 20:51:44 GMT
+      - Thu, 07 Oct 2021 23:43:39 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -113,7 +113,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '69'
+      - '82'
     status:
       code: 200
       message: OK
@@ -129,21 +129,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/6299b261-9df1-49e0-bb50-22718e8aff67
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/070567ec-e003-4d4d-84c4-5db891edcf01
   response:
     body:
-      string: '{"jobId":"6299b261-9df1-49e0-bb50-22718e8aff67","lastUpdateDateTime":"2021-10-06T20:51:44Z","createdDateTime":"2021-10-06T20:51:34Z","expirationDateTime":"2021-10-07T20:51:34Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":1,"total":2,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-10-06T20:51:44.3028321Z","state":"succeeded","results":{"documents":[{"redactedText":"I
+      string: '{"jobId":"070567ec-e003-4d4d-84c4-5db891edcf01","lastUpdateDateTime":"2021-10-07T23:43:37Z","createdDateTime":"2021-10-07T23:43:29Z","expirationDateTime":"2021-10-08T23:43:29Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":1,"total":2,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-10-07T23:43:37.3152811Z","taskName":"1","state":"succeeded","results":{"documents":[{"redactedText":"I
         did not like the hotel we stayed at.","id":"2","entities":[],"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
         language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
         For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}]}}'
     headers:
       apim-request-id:
-      - e349f0ef-2414-429f-bd15-4e4172d92677
+      - 6eb85911-2b68-49c8-897a-7875de7eb210
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 Oct 2021 20:51:49 GMT
+      - Thu, 07 Oct 2021 23:43:45 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -151,7 +151,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '79'
+      - '118'
     status:
       code: 200
       message: OK
@@ -167,23 +167,61 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/6299b261-9df1-49e0-bb50-22718e8aff67
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/070567ec-e003-4d4d-84c4-5db891edcf01
   response:
     body:
-      string: '{"jobId":"6299b261-9df1-49e0-bb50-22718e8aff67","lastUpdateDateTime":"2021-10-06T20:51:53Z","createdDateTime":"2021-10-06T20:51:34Z","expirationDateTime":"2021-10-07T20:51:34Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":2,"failed":0,"inProgress":0,"total":2,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-10-06T20:51:44.3028321Z","state":"succeeded","results":{"documents":[{"redactedText":"I
+      string: '{"jobId":"070567ec-e003-4d4d-84c4-5db891edcf01","lastUpdateDateTime":"2021-10-07T23:43:37Z","createdDateTime":"2021-10-07T23:43:29Z","expirationDateTime":"2021-10-08T23:43:29Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":1,"total":2,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-10-07T23:43:37.3152811Z","taskName":"1","state":"succeeded","results":{"documents":[{"redactedText":"I
         did not like the hotel we stayed at.","id":"2","entities":[],"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
         language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-10-06T20:51:53.657923Z","state":"succeeded","results":{"documents":[{"id":"1","sentiment":"neutral","confidenceScores":{"positive":0.06,"neutral":0.55,"negative":0.39},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.06,"neutral":0.55,"negative":0.39},"offset":0,"length":38,"text":"I
+        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}]}}'
+    headers:
+      apim-request-id:
+      - 356a38f2-01f4-4668-8455-71fd3d092f5b
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 07 Oct 2021 23:43:50 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '70'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/070567ec-e003-4d4d-84c4-5db891edcf01
+  response:
+    body:
+      string: '{"jobId":"070567ec-e003-4d4d-84c4-5db891edcf01","lastUpdateDateTime":"2021-10-07T23:43:54Z","createdDateTime":"2021-10-07T23:43:29Z","expirationDateTime":"2021-10-08T23:43:29Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":2,"failed":0,"inProgress":0,"total":2,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-10-07T23:43:37.3152811Z","taskName":"1","state":"succeeded","results":{"documents":[{"redactedText":"I
+        did not like the hotel we stayed at.","id":"2","entities":[],"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
+        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-10-07T23:43:54.8484842Z","taskName":"0","state":"succeeded","results":{"documents":[{"id":"1","sentiment":"neutral","confidenceScores":{"positive":0.06,"neutral":0.55,"negative":0.39},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.06,"neutral":0.55,"negative":0.39},"offset":0,"length":38,"text":"I
         did not like the hotel we stayed at."}],"warnings":[]},{"id":"2","sentiment":"negative","confidenceScores":{"positive":0.01,"neutral":0.45,"negative":0.54},"sentences":[{"sentiment":"negative","confidenceScores":{"positive":0.01,"neutral":0.45,"negative":0.54},"offset":0,"length":38,"text":"I
         did not like the hotel we stayed at."}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}]}}'
     headers:
       apim-request-id:
-      - a9851f14-e890-40a4-9f0e-d46dd331b92d
+      - 836f6963-ac3b-432d-ac32-9d4217108f05
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 Oct 2021 20:51:55 GMT
+      - Thu, 07 Oct 2021 23:43:55 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -191,7 +229,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '135'
+      - '199'
     status:
       code: 200
       message: OK

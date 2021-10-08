@@ -3,7 +3,7 @@ interactions:
     body: '{"tasks": {"entityRecognitionTasks": [], "entityRecognitionPiiTasks": [],
       "keyPhraseExtractionTasks": [], "entityLinkingTasks": [], "sentimentAnalysisTasks":
       [{"parameters": {"model-version": "latest", "loggingOptOut": false, "opinionMining":
-      true}}], "extractiveSummarizationTasks": [], "customEntityRecognitionTasks":
+      true}, "taskName": "0"}], "extractiveSummarizationTasks": [], "customEntityRecognitionTasks":
       [], "customSingleClassificationTasks": [], "customMultiClassificationTasks":
       []}, "analysisInput": {"documents": [{"id": "0", "text": "It has a sleek premium
       aluminum design that makes it beautiful to look at.", "language": "en"}, {"id":
@@ -16,7 +16,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '627'
+      - '644'
       Content-Type:
       - application/json
       User-Agent:
@@ -28,11 +28,11 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 28633344-7498-4dc7-b24e-0816a1a52b15
+      - 08c0dae7-ae9e-4c42-ae69-c691d28f60bd
       date:
-      - Wed, 06 Oct 2021 20:52:27 GMT
+      - Thu, 07 Oct 2021 23:44:19 GMT
       operation-location:
-      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/814b7608-58e6-4491-bff2-94def31afbd3
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/ce624af3-418a-4051-8f75-020cc7bd0f6b
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -40,7 +40,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '187'
+      - '327'
     status:
       code: 202
       message: Accepted
@@ -56,17 +56,17 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/814b7608-58e6-4491-bff2-94def31afbd3?showStats=True
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/ce624af3-418a-4051-8f75-020cc7bd0f6b?showStats=True
   response:
     body:
-      string: '{"jobId":"814b7608-58e6-4491-bff2-94def31afbd3","lastUpdateDateTime":"2021-10-06T20:52:28Z","createdDateTime":"2021-10-06T20:52:28Z","expirationDateTime":"2021-10-07T20:52:28Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":1,"total":1}}'
+      string: '{"jobId":"ce624af3-418a-4051-8f75-020cc7bd0f6b","lastUpdateDateTime":"2021-10-07T23:44:20Z","createdDateTime":"2021-10-07T23:44:20Z","expirationDateTime":"2021-10-08T23:44:20Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":1,"total":1}}'
     headers:
       apim-request-id:
-      - 7cf93b58-d9f4-40cb-8f1b-b9d313bf399c
+      - 76fccd8f-c564-4f0c-876e-706634cba873
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 Oct 2021 20:52:33 GMT
+      - Thu, 07 Oct 2021 23:44:24 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -74,7 +74,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '7'
+      - '9'
     status:
       code: 200
       message: OK
@@ -90,17 +90,17 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/814b7608-58e6-4491-bff2-94def31afbd3?showStats=True
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/ce624af3-418a-4051-8f75-020cc7bd0f6b?showStats=True
   response:
     body:
-      string: '{"jobId":"814b7608-58e6-4491-bff2-94def31afbd3","lastUpdateDateTime":"2021-10-06T20:52:28Z","createdDateTime":"2021-10-06T20:52:28Z","expirationDateTime":"2021-10-07T20:52:28Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":1,"total":1}}'
+      string: '{"jobId":"ce624af3-418a-4051-8f75-020cc7bd0f6b","lastUpdateDateTime":"2021-10-07T23:44:20Z","createdDateTime":"2021-10-07T23:44:20Z","expirationDateTime":"2021-10-08T23:44:20Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":1,"total":1}}'
     headers:
       apim-request-id:
-      - 04b70896-a1ce-45eb-b8d1-2389d8938810
+      - 1c547caf-bea0-412f-b727-6087953e9791
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 Oct 2021 20:52:37 GMT
+      - Thu, 07 Oct 2021 23:44:29 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -108,7 +108,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '7'
+      - '29'
     status:
       code: 200
       message: OK
@@ -124,17 +124,17 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/814b7608-58e6-4491-bff2-94def31afbd3?showStats=True
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/ce624af3-418a-4051-8f75-020cc7bd0f6b?showStats=True
   response:
     body:
-      string: '{"jobId":"814b7608-58e6-4491-bff2-94def31afbd3","lastUpdateDateTime":"2021-10-06T20:52:28Z","createdDateTime":"2021-10-06T20:52:28Z","expirationDateTime":"2021-10-07T20:52:28Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":1,"total":1}}'
+      string: '{"jobId":"ce624af3-418a-4051-8f75-020cc7bd0f6b","lastUpdateDateTime":"2021-10-07T23:44:20Z","createdDateTime":"2021-10-07T23:44:20Z","expirationDateTime":"2021-10-08T23:44:20Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":1,"total":1}}'
     headers:
       apim-request-id:
-      - 81a0277a-7c51-4360-a176-afdb07c44058
+      - 6300e29e-064a-4b8a-9135-097bda662c94
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 Oct 2021 20:52:43 GMT
+      - Thu, 07 Oct 2021 23:44:35 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -142,7 +142,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '8'
+      - '12'
     status:
       code: 200
       message: OK
@@ -158,17 +158,17 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/814b7608-58e6-4491-bff2-94def31afbd3?showStats=True
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/ce624af3-418a-4051-8f75-020cc7bd0f6b?showStats=True
   response:
     body:
-      string: '{"jobId":"814b7608-58e6-4491-bff2-94def31afbd3","lastUpdateDateTime":"2021-10-06T20:52:28Z","createdDateTime":"2021-10-06T20:52:28Z","expirationDateTime":"2021-10-07T20:52:28Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":1,"total":1}}'
+      string: '{"jobId":"ce624af3-418a-4051-8f75-020cc7bd0f6b","lastUpdateDateTime":"2021-10-07T23:44:20Z","createdDateTime":"2021-10-07T23:44:20Z","expirationDateTime":"2021-10-08T23:44:20Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":1,"total":1}}'
     headers:
       apim-request-id:
-      - d9553a5d-8e80-4185-b27b-fcf50c967210
+      - 2063a48f-4ac4-4888-a07d-b65aefb5c4f0
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 Oct 2021 20:52:49 GMT
+      - Thu, 07 Oct 2021 23:44:40 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -176,7 +176,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '27'
+      - '15'
     status:
       code: 200
       message: OK
@@ -192,19 +192,19 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/814b7608-58e6-4491-bff2-94def31afbd3?showStats=True
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/ce624af3-418a-4051-8f75-020cc7bd0f6b?showStats=True
   response:
     body:
-      string: '{"jobId":"814b7608-58e6-4491-bff2-94def31afbd3","lastUpdateDateTime":"2021-10-06T20:52:53Z","createdDateTime":"2021-10-06T20:52:28Z","expirationDateTime":"2021-10-07T20:52:28Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-10-06T20:52:53.510634Z","state":"succeeded","results":{"statistics":{"documentsCount":2,"validDocumentsCount":2,"erroneousDocumentsCount":0,"transactionsCount":2},"documents":[{"id":"0","sentiment":"positive","statistics":{"charactersCount":74,"transactionsCount":1},"confidenceScores":{"positive":0.98,"neutral":0.02,"negative":0.0},"sentences":[{"sentiment":"positive","confidenceScores":{"positive":0.98,"neutral":0.02,"negative":0.0},"offset":0,"length":74,"text":"It
+      string: '{"jobId":"ce624af3-418a-4051-8f75-020cc7bd0f6b","lastUpdateDateTime":"2021-10-07T23:44:42Z","createdDateTime":"2021-10-07T23:44:20Z","expirationDateTime":"2021-10-08T23:44:20Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-10-07T23:44:42.3690987Z","taskName":"0","state":"succeeded","results":{"statistics":{"documentsCount":2,"validDocumentsCount":2,"erroneousDocumentsCount":0,"transactionsCount":2},"documents":[{"id":"0","sentiment":"positive","statistics":{"charactersCount":74,"transactionsCount":1},"confidenceScores":{"positive":0.98,"neutral":0.02,"negative":0.0},"sentences":[{"sentiment":"positive","confidenceScores":{"positive":0.98,"neutral":0.02,"negative":0.0},"offset":0,"length":74,"text":"It
         has a sleek premium aluminum design that makes it beautiful to look at.","targets":[{"sentiment":"positive","confidenceScores":{"positive":1.0,"negative":0.0},"offset":32,"length":6,"text":"design","relations":[{"relationType":"assessment","ref":"#/documents/0/sentences/0/assessments/0"},{"relationType":"assessment","ref":"#/documents/0/sentences/0/assessments/1"}]}],"assessments":[{"sentiment":"positive","confidenceScores":{"positive":1.0,"negative":0.0},"offset":9,"length":5,"text":"sleek","isNegated":false},{"sentiment":"positive","confidenceScores":{"positive":1.0,"negative":0.0},"offset":15,"length":7,"text":"premium","isNegated":false}]}],"warnings":[]},{"id":"1","sentiment":"negative","statistics":{"charactersCount":32,"transactionsCount":1},"confidenceScores":{"positive":0.0,"neutral":0.0,"negative":1.0},"sentences":[{"sentiment":"negative","confidenceScores":{"positive":0.0,"neutral":0.0,"negative":1.0},"offset":0,"length":32,"text":"The
         food and service is not good","targets":[{"sentiment":"negative","confidenceScores":{"positive":0.0,"negative":1.0},"offset":4,"length":4,"text":"food","relations":[{"relationType":"assessment","ref":"#/documents/1/sentences/0/assessments/0"}]},{"sentiment":"negative","confidenceScores":{"positive":0.0,"negative":1.0},"offset":13,"length":7,"text":"service","relations":[{"relationType":"assessment","ref":"#/documents/1/sentences/0/assessments/0"}]}],"assessments":[{"sentiment":"negative","confidenceScores":{"positive":0.0,"negative":1.0},"offset":28,"length":4,"text":"good","isNegated":true}]}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}]}}'
     headers:
       apim-request-id:
-      - daceaa92-4559-4c23-8787-24504482c319
+      - fb9034a6-abcf-49e4-9847-e131c9ffac5b
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 Oct 2021 20:52:53 GMT
+      - Thu, 07 Oct 2021 23:44:45 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -212,7 +212,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '155'
+      - '140'
     status:
       code: 200
       message: OK

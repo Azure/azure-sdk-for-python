@@ -2,17 +2,17 @@ interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [], "entityRecognitionPiiTasks": [],
       "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest", "loggingOptOut":
-      false}}], "entityLinkingTasks": [], "sentimentAnalysisTasks": [], "extractiveSummarizationTasks":
-      [], "customEntityRecognitionTasks": [], "customSingleClassificationTasks": [],
-      "customMultiClassificationTasks": []}, "analysisInput": {"documents": [{"id":
-      "1", "text": "Microsoft was founded by Bill Gates and Paul Allen", "language":
-      "en"}, {"id": "2", "text": "Microsoft fue fundado por Bill Gates y Paul Allen",
-      "language": "es"}]}}'
+      false}, "taskName": "0"}], "entityLinkingTasks": [], "sentimentAnalysisTasks":
+      [], "extractiveSummarizationTasks": [], "customEntityRecognitionTasks": [],
+      "customSingleClassificationTasks": [], "customMultiClassificationTasks": []},
+      "analysisInput": {"documents": [{"id": "1", "text": "Microsoft was founded by
+      Bill Gates and Paul Allen", "language": "en"}, {"id": "2", "text": "Microsoft
+      fue fundado por Bill Gates y Paul Allen", "language": "es"}]}}'
     headers:
       Accept:
       - application/json, text/json
       Content-Length:
-      - '597'
+      - '614'
       Content-Type:
       - application/json
       User-Agent:
@@ -23,13 +23,13 @@ interactions:
     body:
       string: ''
     headers:
-      apim-request-id: 570fed33-d597-4159-8bff-faae2a1023ac
-      date: Wed, 06 Oct 2021 20:53:49 GMT
-      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/c59a14f2-03f9-4df7-b4ec-12261c1682f2
+      apim-request-id: 3ef998f4-e5df-411e-9fdb-f25a751eece4
+      date: Thu, 07 Oct 2021 23:46:05 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/8f5133fc-0e42-49ff-bedb-775d0138bc7d
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '203'
+      x-envoy-upstream-service-time: '337'
     status:
       code: 202
       message: Accepted
@@ -40,110 +40,22 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/c59a14f2-03f9-4df7-b4ec-12261c1682f2?showStats=True
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/8f5133fc-0e42-49ff-bedb-775d0138bc7d?showStats=True
   response:
     body:
-      string: '{"jobId":"c59a14f2-03f9-4df7-b4ec-12261c1682f2","lastUpdateDateTime":"2021-10-06T20:53:50Z","createdDateTime":"2021-10-06T20:53:49Z","expirationDateTime":"2021-10-07T20:53:49Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":1,"total":1}}'
-    headers:
-      apim-request-id: 9f3d65c1-d611-4a77-8e79-5c984e3e0a62
-      content-type: application/json; charset=utf-8
-      date: Wed, 06 Oct 2021 20:53:53 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '10'
-    status:
-      code: 200
-      message: OK
-    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/c59a14f2-03f9-4df7-b4ec-12261c1682f2?showStats=True
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/c59a14f2-03f9-4df7-b4ec-12261c1682f2?showStats=True
-  response:
-    body:
-      string: '{"jobId":"c59a14f2-03f9-4df7-b4ec-12261c1682f2","lastUpdateDateTime":"2021-10-06T20:53:50Z","createdDateTime":"2021-10-06T20:53:49Z","expirationDateTime":"2021-10-07T20:53:49Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":1,"total":1}}'
-    headers:
-      apim-request-id: 8d9c0cca-5a26-463f-a6a0-235132439c46
-      content-type: application/json; charset=utf-8
-      date: Wed, 06 Oct 2021 20:53:59 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '10'
-    status:
-      code: 200
-      message: OK
-    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/c59a14f2-03f9-4df7-b4ec-12261c1682f2?showStats=True
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/c59a14f2-03f9-4df7-b4ec-12261c1682f2?showStats=True
-  response:
-    body:
-      string: '{"jobId":"c59a14f2-03f9-4df7-b4ec-12261c1682f2","lastUpdateDateTime":"2021-10-06T20:53:50Z","createdDateTime":"2021-10-06T20:53:49Z","expirationDateTime":"2021-10-07T20:53:49Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":1,"total":1}}'
-    headers:
-      apim-request-id: 62897df8-38f9-4eb6-bf07-b734984959eb
-      content-type: application/json; charset=utf-8
-      date: Wed, 06 Oct 2021 20:54:04 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '8'
-    status:
-      code: 200
-      message: OK
-    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/c59a14f2-03f9-4df7-b4ec-12261c1682f2?showStats=True
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/c59a14f2-03f9-4df7-b4ec-12261c1682f2?showStats=True
-  response:
-    body:
-      string: '{"jobId":"c59a14f2-03f9-4df7-b4ec-12261c1682f2","lastUpdateDateTime":"2021-10-06T20:53:50Z","createdDateTime":"2021-10-06T20:53:49Z","expirationDateTime":"2021-10-07T20:53:49Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":1,"total":1}}'
-    headers:
-      apim-request-id: f0cfd8af-e15b-4476-b9a9-078651a44149
-      content-type: application/json; charset=utf-8
-      date: Wed, 06 Oct 2021 20:54:09 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '8'
-    status:
-      code: 200
-      message: OK
-    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/c59a14f2-03f9-4df7-b4ec-12261c1682f2?showStats=True
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/c59a14f2-03f9-4df7-b4ec-12261c1682f2?showStats=True
-  response:
-    body:
-      string: '{"jobId":"c59a14f2-03f9-4df7-b4ec-12261c1682f2","lastUpdateDateTime":"2021-10-06T20:54:12Z","createdDateTime":"2021-10-06T20:53:49Z","expirationDateTime":"2021-10-07T20:53:49Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-10-06T20:54:12.3361867Z","state":"succeeded","results":{"statistics":{"documentsCount":2,"validDocumentsCount":2,"erroneousDocumentsCount":0,"transactionsCount":2},"documents":[{"id":"1","keyPhrases":["Bill
+      string: '{"jobId":"8f5133fc-0e42-49ff-bedb-775d0138bc7d","lastUpdateDateTime":"2021-10-07T23:46:07Z","createdDateTime":"2021-10-07T23:46:05Z","expirationDateTime":"2021-10-08T23:46:05Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-10-07T23:46:07.9109923Z","taskName":"0","state":"succeeded","results":{"statistics":{"documentsCount":2,"validDocumentsCount":2,"erroneousDocumentsCount":0,"transactionsCount":2},"documents":[{"id":"1","keyPhrases":["Bill
         Gates","Paul Allen","Microsoft"],"statistics":{"charactersCount":50,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["Bill
         Gates","Paul Allen","Microsoft"],"statistics":{"charactersCount":49,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}}]}}'
     headers:
-      apim-request-id: 5a646a77-6c1f-4960-8b97-2da159426d4e
+      apim-request-id: f0d04397-56b6-4169-b5ee-9289d40a421f
       content-type: application/json; charset=utf-8
-      date: Wed, 06 Oct 2021 20:54:14 GMT
+      date: Thu, 07 Oct 2021 23:46:10 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '172'
+      x-envoy-upstream-service-time: '74'
     status:
       code: 200
       message: OK
-    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/c59a14f2-03f9-4df7-b4ec-12261c1682f2?showStats=True
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/8f5133fc-0e42-49ff-bedb-775d0138bc7d?showStats=True
 version: 1

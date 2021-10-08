@@ -2,15 +2,15 @@ interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [], "entityRecognitionPiiTasks": [],
       "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest", "loggingOptOut":
-      false}}], "entityLinkingTasks": [], "sentimentAnalysisTasks": [], "extractiveSummarizationTasks":
-      [], "customEntityRecognitionTasks": [], "customSingleClassificationTasks": [],
-      "customMultiClassificationTasks": []}, "analysisInput": {"documents": [{"id":
-      "0", "text": "", "language": "en"}]}}'
+      false}, "taskName": "0"}], "entityLinkingTasks": [], "sentimentAnalysisTasks":
+      [], "extractiveSummarizationTasks": [], "customEntityRecognitionTasks": [],
+      "customSingleClassificationTasks": [], "customMultiClassificationTasks": []},
+      "analysisInput": {"documents": [{"id": "0", "text": "", "language": "en"}]}}'
     headers:
       Accept:
       - application/json, text/json
       Content-Length:
-      - '455'
+      - '472'
       Content-Type:
       - application/json
       User-Agent:
@@ -22,13 +22,13 @@ interactions:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocumentBatch","message":"Document
         text is empty."}}}'
     headers:
-      apim-request-id: a48389a0-e25f-4a1b-ad42-9d9fbb71232a
+      apim-request-id: 144c4c76-208e-4dfd-aafc-5d29d4a351fa
       content-type: application/json; charset=utf-8
-      date: Wed, 06 Oct 2021 20:54:52 GMT
+      date: Thu, 07 Oct 2021 23:46:54 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '4'
+      x-envoy-upstream-service-time: '12'
     status:
       code: 400
       message: Bad Request
