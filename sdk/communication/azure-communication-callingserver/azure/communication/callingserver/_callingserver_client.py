@@ -22,7 +22,10 @@ from ._generated.models import (
     StartCallRecordingResult,
     CallRecordingProperties,
     StartCallRecordingRequest,
-    StartCallRecordingWithCallLocatorRequest
+    StartCallRecordingWithCallLocatorRequest, 
+    RecordingContentType,
+    RecordingChannelType,
+    RecordingFormatType
     )
 from ._shared.models import CommunicationIdentifier
 from ._call_connection import CallConnection
@@ -391,11 +394,15 @@ class CallingServerClient(object):
             **kwargs
             )
 
+    #pylint:disable=too-many-arguments
     @distributed_trace()
     def start_recording(
         self,
         call_locator,  # type: CallLocator
         recording_state_callback_uri,  # type: str
+        recording_content_type = None, # type: Optional[RecordingContentType]
+        recording_channel_type = None, # type: Optional[RecordingChannelType]
+        recording_format_type = None, # type: Optional[RecordingFormatType]
         **kwargs  # type: Any
     ):  # type: (...) -> StartCallRecordingResult
 
@@ -406,6 +413,9 @@ class CallingServerClient(object):
 
         start_call_recording_request = StartCallRecordingRequest(
             recording_state_callback_uri=recording_state_callback_uri,
+            recording_content_type=recording_content_type,
+            recording_channel_type=recording_channel_type,
+            recording_format_type=recording_format_type,
             **kwargs
         )
 
