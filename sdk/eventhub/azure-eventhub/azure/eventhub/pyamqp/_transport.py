@@ -290,7 +290,10 @@ class _AbstractTransport(object):
         #             pack('ll', sec, usec),
         #         )
         self._setup_transport()
-        self.sock.settimeout(5)  # set socket back to non-blocking mode
+        # TODO: a greater timeout value is needed in long distance communication
+        #  we should either figure out a reasonable value error/dynamically adjust the timeout
+        #  1 second is enough for perf analysis
+        self.sock.settimeout(1)  # set socket back to non-blocking mode
 
     def _get_tcp_socket_defaults(self, sock):
         tcp_opts = {}
@@ -342,7 +345,12 @@ class _AbstractTransport(object):
             # Call shutdown first to make sure that pending messages
             # reach the AMQP broker if the program exits after
             # calling this method.
-            self.sock.shutdown(socket.SHUT_RDWR)
+            try:
+                self.sock.shutdown(socket.SHUT_RDWR)
+            except Exception as exc:
+                # TODO: shutdown could raise OSError, Transport endpoint is not connected if the endpoint is already
+                #  disconnected. can we safely ignore the errors since the close operation is initiated by us.
+                _LOGGER.info("An error occurred when shutting down the socket: %r", exc)
             self.sock.close()
             self.sock = None
         self.connected = False
@@ -524,7 +532,7 @@ class SSLTransport(_AbstractTransport):
         try:
             while toread:
                 try:
-                    nbytes = self.sock.recv_into(view[nbytes:])
+                    nbytes = self.sock.recv_into(view[length:])
                 except socket.error as exc:
                     # ssl.sock.read may cause a SSLerror without errno
                     # http://bugs.python.org/issue10272

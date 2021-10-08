@@ -5,8 +5,8 @@
 #--------------------------------------------------------------------------
 
 from enum import Enum
-import six
 from collections import namedtuple
+import six
 
 from .constants import PORT, FIELD
 from .types import AMQPTypes, FieldDefinition
@@ -134,11 +134,11 @@ AMQPError._definition = (
 
 class AMQPException(Exception):
 
-    def __init__(self, condition, description, info):
+    def __init__(self, condition, description, info, message=None):
         self.condition = condition
         self.description = description
         self.info = info
-        super(AMQPException, self).__init__()  # TODO: Pass a message
+        super(AMQPException, self).__init__(message)  # TODO: Pass a message
 
 
 class AMQPDecodeError(AMQPException):
@@ -252,14 +252,13 @@ class TokenAuthFailure(AuthenticationException):
 
 class ErrorResponse(object):
     """
-
     """
-    def __init__(self, error_info=None, condition=None, description=None, info=None):
-        info = None
-        self.condition = condition
-        self.description = description
-        self.info = info
-        self.error = error_info
+    def __init__(self, **kwargs):
+        self.condition = kwargs.get("condition")
+        self.description = kwargs.get("description")
+
+        info = kwargs.get("info")
+        error_info = kwargs.get("error_info")
         if isinstance(error_info, list) and len(error_info) >= 1:
             if isinstance(error_info[0], list) and len(error_info[0]) >= 1:
                 self.condition = error_info[0][0]
@@ -267,7 +266,6 @@ class ErrorResponse(object):
                     self.description = error_info[0][1]
                 if len(error_info[0]) >= 3:
                     info = error_info[0][2]
-        try:
-            self.info = info.value
-        except AttributeError:
-            self.info = info
+
+        self.info = info
+        self.error = error_info
