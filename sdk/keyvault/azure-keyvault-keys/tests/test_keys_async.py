@@ -564,29 +564,66 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         key_name = self.get_resource_name("rotation-key")
         await self._create_rsa_key(client, key_name)
 
-        actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.ROTATE, time_before_expiry="P30D")]
-        updated_policy = await client.update_key_rotation_policy(key_name, expires_in="P90D", lifetime_actions=actions)
+        actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.ROTATE, time_after_create="P2M")]
+        updated_policy = await client.update_key_rotation_policy(key_name, lifetime_actions=actions)
         fetched_policy = await client.get_key_rotation_policy(key_name)
+        assert updated_policy.expires_in is None
         _assert_rotation_policies_equal(updated_policy, fetched_policy)
 
         updated_policy_actions = updated_policy.lifetime_actions[0]
         fetched_policy_actions = fetched_policy.lifetime_actions[0]
         assert updated_policy_actions.action == KeyRotationPolicyAction.ROTATE
-        assert updated_policy_actions.time_after_create is None
-        assert updated_policy_actions.time_before_expiry == "P30D"
+        assert updated_policy_actions.time_after_create == "P2M"
+        assert updated_policy_actions.time_before_expiry is None
         _assert_lifetime_actions_equal(updated_policy_actions, fetched_policy_actions)
 
-        new_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.NOTIFY, time_after_create="P2M")]
-        new_policy = await client.update_key_rotation_policy(key_name, lifetime_actions=new_actions)
+        new_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.NOTIFY, time_before_expiry="P30D")]
+        new_policy = await client.update_key_rotation_policy(key_name, expires_in="P90D", lifetime_actions=new_actions)
         new_fetched_policy = await client.get_key_rotation_policy(key_name)
+        assert new_policy.expires_in == "P90D"
         _assert_rotation_policies_equal(new_policy, new_fetched_policy)
 
         new_policy_actions = new_policy.lifetime_actions[0]
         new_fetched_policy_actions = new_fetched_policy.lifetime_actions[0]
         assert new_policy_actions.action == KeyRotationPolicyAction.NOTIFY
-        assert new_policy_actions.time_after_create == "P2M"
-        assert new_policy_actions.time_before_expiry is None
+        assert new_policy_actions.time_after_create is None
+        assert new_policy_actions.time_before_expiry == "P30D"
         _assert_lifetime_actions_equal(new_policy_actions, new_fetched_policy_actions)
+
+    @all_api_versions()
+    @client_setup
+    async def test_get_cryptography_client(self, client, is_hsm, **kwargs):
+        key_name = self.get_resource_name("key-name")
+        key = await self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
+
+        # try specifying the key version
+        crypto_client = client.get_cryptography_client(key_name, version=key.properties.version)
+        # both clients should use the same generated client
+        assert client._client == crypto_client._client
+
+        # the crypto client should successfully perform crypto operations
+        plaintext = b"plaintext"
+        result = await crypto_client.encrypt("RSA-OAEP", plaintext)
+        assert result.key_id == key.id
+
+        result = await crypto_client.decrypt(result.algorithm, result.ciphertext)
+        assert result.key_id == key.id
+        assert "RSA-OAEP" == result.algorithm
+        assert plaintext == result.plaintext
+
+        # try ommitting the key version
+        crypto_client = client.get_cryptography_client(key_name)
+        # both clients should use the same generated client
+        assert client._client == crypto_client._client
+
+        # the crypto client should successfully perform crypto operations
+        result = await crypto_client.encrypt("RSA-OAEP", plaintext)
+        assert result.key_id == key.id
+
+        result = await crypto_client.decrypt(result.algorithm, result.ciphertext)
+        assert result.key_id == key.id
+        assert "RSA-OAEP" == result.algorithm
+        assert plaintext == result.plaintext
 
 
 @pytest.mark.asyncio

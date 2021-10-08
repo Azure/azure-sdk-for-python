@@ -21,8 +21,8 @@ if TYPE_CHECKING:
 class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
     """DocumentAnalysisClient analyzes information from documents and images.
     It is the interface to use for analyzing with prebuilt models (receipts, business cards,
-    invoices, identity documents), analyzing layout from documents, analyzing general prebuilt
-    documents, and analyzing custom documents with built models. It provides different
+    invoices, identity documents), analyzing layout from documents, analyzing general
+    document types, and analyzing custom documents with built models. It provides different
     methods based on inputs from a URL and inputs from a stream.
 
     .. note:: DocumentAnalysisClient should be used with API versions

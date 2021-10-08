@@ -38,7 +38,6 @@ async def analyze_identity_documents_async():
         )
     )
 
-    # [START analyze_identity_documents_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 
@@ -112,7 +111,6 @@ async def analyze_identity_documents_async():
             print(
                 "Region: {} has confidence: {}".format(region.value, region.confidence)
             )
-    # [END analyze_identity_documents_async]
 
 
 async def main():

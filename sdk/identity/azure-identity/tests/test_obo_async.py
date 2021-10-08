@@ -29,7 +29,7 @@ class RecordedTests(OboRecordedTestCase):
             client_id, self.obo_settings["username"], self.obo_settings["password"], tenant_id=tenant_id
         )
         assertion = user_credential.get_token(self.obo_settings["scope"]).token
-        credential = OnBehalfOfCredential(tenant_id, client_id, client_secret, assertion)
+        credential = OnBehalfOfCredential(tenant_id, client_id, client_secret=client_secret, user_assertion=assertion)
         await credential.get_token(self.obo_settings["scope"])
 
     @RecordedTestCase.await_prepared_test
@@ -41,14 +41,14 @@ class RecordedTests(OboRecordedTestCase):
             client_id, self.obo_settings["username"], self.obo_settings["password"], tenant_id=tenant_id
         )
         assertion = user_credential.get_token(self.obo_settings["scope"]).token
-        credential = OnBehalfOfCredential(tenant_id, client_id, self.obo_settings["cert_bytes"], assertion)
+        credential = OnBehalfOfCredential(tenant_id, client_id, client_certificate=self.obo_settings["cert_bytes"], user_assertion=assertion)
         await credential.get_token(self.obo_settings["scope"])
 
 
 @pytest.mark.asyncio
 async def test_close():
     transport = AsyncMockTransport()
-    credential = OnBehalfOfCredential("tenant-id", "client-id", "client-secret", "assertion", transport=transport)
+    credential = OnBehalfOfCredential("tenant-id", "client-id", client_secret="client-secret", user_assertion="assertion", transport=transport)
 
     await credential.close()
 
@@ -58,7 +58,7 @@ async def test_close():
 @pytest.mark.asyncio
 async def test_context_manager():
     transport = AsyncMockTransport()
-    credential = OnBehalfOfCredential("tenant-id", "client-id", "client-secret", "assertion", transport=transport)
+    credential = OnBehalfOfCredential("tenant-id", "client-id", client_secret="client-secret", user_assertion="assertion", transport=transport)
 
     async with credential:
         assert transport.__aenter__.call_count == 1
@@ -85,7 +85,7 @@ async def test_multitenant_authentication():
 
     transport = Mock(send=Mock(wraps=send))
     credential = OnBehalfOfCredential(
-        first_tenant, "client-id", "secret", "assertion", transport=transport
+        first_tenant, "client-id", client_secret="secret", user_assertion="assertion", transport=transport
     )
     token = await credential.get_token("scope")
     assert token.token == first_token
@@ -122,14 +122,14 @@ async def test_authority(authority):
 
     transport = Mock(send=send)
     credential = OnBehalfOfCredential(
-        tenant_id, "client-id", "secret", "assertion", authority=authority, transport=transport
+        tenant_id, "client-id", client_secret="secret", user_assertion="assertion", authority=authority, transport=transport
     )
     token = await credential.get_token("scope")
     assert token.token == expected_token
 
     # authority can be configured via environment variable
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
-        credential = OnBehalfOfCredential(tenant_id, "client-id", "secret", "assertion", transport=transport)
+        credential = OnBehalfOfCredential(tenant_id, "client-id", client_secret="secret", user_assertion="assertion", transport=transport)
     token = await credential.get_token("scope")
     assert token.token == expected_token
 
@@ -148,8 +148,8 @@ async def test_policies_configurable():
     credential = OnBehalfOfCredential(
         "tenant-id",
         "client-id",
-        "client-secret",
-        "assertion",
+        client_secret="client-secret",
+        user_assertion="assertion",
         policies=[ContentDecodePolicy(), policy],
         transport=Mock(send=send),
     )
@@ -160,7 +160,7 @@ async def test_policies_configurable():
 def test_invalid_cert():
     """The credential should raise ValueError when given invalid cert bytes"""
     with pytest.raises(ValueError):
-        OnBehalfOfCredential("tenant-id", "client-id", b"not a cert", "assertion")
+        OnBehalfOfCredential("tenant-id", "client-id", client_certificate=b"not a cert", user_assertion="assertion")
 
 
 @pytest.mark.asyncio
@@ -183,7 +183,7 @@ async def test_refresh_token():
             assert request.body["refresh_token"] == refresh_token
             return mock_response(json_payload=build_aad_response(access_token=second_token))
 
-    credential = OnBehalfOfCredential("tenant-id", "client-id", "secret", "assertion", transport=Mock(send=send))
+    credential = OnBehalfOfCredential("tenant-id", "client-id", client_secret="secret", user_assertion="assertion", transport=Mock(send=send))
     token = await credential.get_token("scope")
     assert token.token == first_token
 
@@ -197,16 +197,28 @@ def test_tenant_id_validation():
     """The credential should raise ValueError when given an invalid tenant_id"""
     valid_ids = {"c878a2ab-8ef4-413b-83a0-199afb84d7fb", "contoso.onmicrosoft.com", "organizations", "common"}
     for tenant in valid_ids:
-        OnBehalfOfCredential(tenant, "client-id", "secret", "assertion")
+        OnBehalfOfCredential(tenant, "client-id", client_secret="secret", user_assertion="assertion")
     invalid_ids = {"my tenant", "my_tenant", "/", "\\", '"my-tenant"', "'my-tenant'"}
     for tenant in invalid_ids:
         with pytest.raises(ValueError):
-            OnBehalfOfCredential(tenant, "client-id", "secret", "assertion")
+            OnBehalfOfCredential(tenant, "client-id", client_secret="secret", user_assertion="assertion")
 
 
 @pytest.mark.asyncio
 async def test_no_scopes():
     """The credential should raise ValueError when get_token is called with no scopes"""
-    credential = OnBehalfOfCredential("tenant-id", "client-id", "client-secret", "assertion")
+    credential = OnBehalfOfCredential("tenant-id", "client-id", client_secret="client-secret", user_assertion="assertion")
     with pytest.raises(ValueError):
         await credential.get_token()
+
+@pytest.mark.asyncio
+async def test_no_user_assertion():
+    """The credential should raise ValueError when ctoring with no user_assertion"""
+    with pytest.raises(TypeError):
+        credential = OnBehalfOfCredential("tenant-id", "client-id", client_secret="client-secret")
+
+@pytest.mark.asyncio
+async def test_no_client_credential():
+    """The credential should raise ValueError when ctoring with no client_secret or client_certificate"""
+    with pytest.raises(TypeError):
+        credential = OnBehalfOfCredential("tenant-id", "client-id", user_assertion="assertion")

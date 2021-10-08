@@ -27,7 +27,7 @@ To use this package, you must have:
 * Python 2.7, 3.6 or later - [Install Python][python]
 
 ### Authenticate the client
-Interaction with Schema Registry Avro Serializer starts with an instance of AvroSerializer class. You need the endpoint, AAD credential and schema group name to instantiate the client object.
+Interaction with Schema Registry Avro Serializer starts with an instance of AvroSerializer class. You need the fully qualified namespace, AAD credential and schema group name to instantiate the client object.
 
 **Create client using the azure-identity library:**
 
@@ -37,10 +37,10 @@ from azure.schemaregistry.serializer.avroserializer import AvroSerializer
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-endpoint = '<< ENDPOINT OF THE SCHEMA REGISTRY >>'
-schema_group = '<< GROUP NAME OF THE SCHEMA >>'
-schema_registry_client = SchemaRegistryClient(endpoint, credential)
-serializer = AvroSerializer(schema_registry_client, schema_group)
+fully_qualified_namespace = '<< FULLY QUALIFIED NAMESPACE OF THE SCHEMA REGISTRY >>'
+group_name = '<< GROUP NAME OF THE SCHEMA >>'
+schema_registry_client = SchemaRegistryClient(fully_qualified_namespace, credential)
+serializer = AvroSerializer(client=schema_registry_client, group_name=group_name)
 ```
 
 ## Key concepts
@@ -95,10 +95,10 @@ from azure.schemaregistry.serializer.avroserializer import AvroSerializer
 from azure.identity import DefaultAzureCredential
 
 token_credential = DefaultAzureCredential()
-endpoint = os.environ['SCHEMA_REGISTRY_ENDPOINT']
+fully_qualified_namespace = os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
 group_name = "<your-group-name>"
 
-schema_registry_client = SchemaRegistryClient(endpoint, token_credential)
+schema_registry_client = SchemaRegistryClient(fully_qualified_namespace, token_credential)
 serializer = AvroSerializer(client=schema_registry_client, group_name=group_name)
 
 schema_string = """
@@ -129,10 +129,10 @@ from azure.schemaregistry.serializer.avroserializer import AvroSerializer
 from azure.identity import DefaultAzureCredential
 
 token_credential = DefaultAzureCredential()
-endpoint = os.environ['SCHEMA_REGISTRY_ENDPOINT']
+fully_qualified_namespace = os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
 group_name = "<your-group-name>"
 
-schema_registry_client = SchemaRegistryClient(endpoint, token_credential)
+schema_registry_client = SchemaRegistryClient(fully_qualified_namespace, token_credential)
 serializer = AvroSerializer(client=schema_registry_client, group_name=group_name)
 
 with serializer:
@@ -152,7 +152,7 @@ from azure.schemaregistry.serializer.avroserializer import AvroSerializer
 from azure.identity import DefaultAzureCredential
 
 token_credential = DefaultAzureCredential()
-endpoint = os.environ['SCHEMA_REGISTRY_ENDPOINT']
+fully_qualified_namespace = os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
 group_name = "<your-group-name>"
 eventhub_connection_str = os.environ['EVENT_HUB_CONN_STR']
 eventhub_name = os.environ['EVENT_HUB_NAME']
@@ -168,7 +168,7 @@ schema_string = """
  ]
 }"""
 
-schema_registry_client = SchemaRegistryClient(endpoint, token_credential)
+schema_registry_client = SchemaRegistryClient(fully_qualified_namespace, token_credential)
 avro_serializer = AvroSerializer(client=schema_registry_client, group_name=group_name)
 
 eventhub_producer = EventHubProducerClient.from_connection_string(
@@ -196,12 +196,12 @@ from azure.schemaregistry.serializer.avroserializer import AvroSerializer
 from azure.identity import DefaultAzureCredential
 
 token_credential = DefaultAzureCredential()
-endpoint = os.environ['SCHEMA_REGISTRY_ENDPOINT']
+fully_qualified_namespace = os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
 group_name = "<your-group-name>"
 eventhub_connection_str = os.environ['EVENT_HUB_CONN_STR']
 eventhub_name = os.environ['EVENT_HUB_NAME']
 
-schema_registry_client = SchemaRegistryClient(endpoint, token_credential)
+schema_registry_client = SchemaRegistryClient(fully_qualified_namespace, token_credential)
 avro_serializer = AvroSerializer(client=schema_registry_client, group_name=group_name)
 
 eventhub_consumer = EventHubConsumerClient.from_connection_string(
@@ -248,9 +248,9 @@ handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
 credential = DefaultAzureCredential()
-schema_registry_client = SchemaRegistryClient("<your-end-point>", credential)
+schema_registry_client = SchemaRegistryClient("<your-fully_qualified_namespace>", credential, logging_enable=True)
 # This client will log detailed information about its HTTP sessions, at DEBUG level
-serializer = AvroSerializer(client=schema_registry_client, group_name="<your-group-name>", logging_enable=True)
+serializer = AvroSerializer(client=schema_registry_client, group_name="<your-group-name>")
 ```
 
 Similarly, `logging_enable` can enable detailed logging for a single operation,
