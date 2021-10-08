@@ -6,34 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AudioRoutingMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AudioRoutingMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The audio routing mode.
     """
 
     ONE_TO_ONE = "oneToOne"
     MULTICAST = "multicast"
 
-class CallConnectionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CallConnectionState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The state of the call connection.
     """
 
@@ -44,21 +29,21 @@ class CallConnectionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DISCONNECTING = "disconnecting"
     DISCONNECTED = "disconnected"
 
-class CallLocatorKindModel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CallLocatorKindModel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The call locator kind.
     """
 
     GROUP_CALL_LOCATOR = "groupCallLocator"
     SERVER_CALL_LOCATOR = "serverCallLocator"
 
-class CallRecordingState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CallRecordingState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The state of the recording
     """
 
     ACTIVE = "active"
     INACTIVE = "inactive"
 
-class CallRejectReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CallRejectReason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The rejection reason.
     """
 
@@ -66,7 +51,7 @@ class CallRejectReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     BUSY = "busy"
     FORBIDDEN = "forbidden"
 
-class CommunicationCloudEnvironmentModel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CommunicationCloudEnvironmentModel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The cloud that the identifier belongs to.
     """
 
@@ -74,32 +59,32 @@ class CommunicationCloudEnvironmentModel(with_metaclass(_CaseInsensitiveEnumMeta
     DOD = "dod"
     GCCH = "gcch"
 
-class Enum0(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Enum0(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     ONE_TO_ONE = "oneToOne"
     MULTICAST = "multicast"
 
-class Enum2(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Enum2(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     ONE_TO_ONE = "oneToOne"
     MULTICAST = "multicast"
 
-class Enum3(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Enum3(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     ONE_TO_ONE = "oneToOne"
     MULTICAST = "multicast"
 
-class EventSubscriptionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EventSubscriptionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     PARTICIPANTS_UPDATED = "participantsUpdated"
     DTMF_RECEIVED = "dtmfReceived"
 
-class MediaType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MediaType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     AUDIO = "audio"
     VIDEO = "video"
 
-class OperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The status of the operation
     """
 
@@ -108,21 +93,21 @@ class OperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     COMPLETED = "completed"
     FAILED = "failed"
 
-class RecordingChannelType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RecordingChannelType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Channel type of call recording.
     """
 
     MIXED = "mixed"
     UNMIXED = "unmixed"
 
-class RecordingContentType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RecordingContentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Content type of call recording.
     """
 
     AUDIO = "audio"
     AUDIO_VIDEO = "audioVideo"
 
-class RecordingFormatType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RecordingFormatType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Format type of call recording.
     """
 
@@ -130,7 +115,7 @@ class RecordingFormatType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MP3 = "mp3"
     MP4 = "mp4"
 
-class ToneValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ToneValue(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The tone value.
     """
 
