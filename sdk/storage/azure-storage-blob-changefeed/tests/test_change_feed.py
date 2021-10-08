@@ -13,16 +13,17 @@ from datetime import datetime, timedelta
 
 from math import ceil
 
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 from azure.storage.blob.changefeed import (
     ChangeFeedClient,
 )
+from devtools_testutils.storage import StorageTestCase
+from _shared.testcase import ChangeFeedPreparer
 
 @pytest.mark.playback_test_only
 class StorageChangeFeedTest(StorageTestCase):
 
     # --Test cases for change feed -----------------------------------------
-    @FileSharePreparer()
+    @ChangeFeedPreparer()
     def test_get_change_feed_events_by_page(self, storage_account_name, storage_account_key):
         cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         results_per_page = 10
@@ -54,7 +55,7 @@ class StorageChangeFeedTest(StorageTestCase):
         for i in range(0, len(one_page)):
             self.assertTrue(merged_two_pages[i].get('id') == one_page[i].get('id'))
 
-    @FileSharePreparer()
+    @ChangeFeedPreparer()
     def test_get_all_change_feed_events(self, storage_account_name, storage_account_key):
         cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         change_feed = cf_client.list_changes()
@@ -74,7 +75,7 @@ class StorageChangeFeedTest(StorageTestCase):
         self.assertEqual(ceil(len(all_events)*1.0/results_per_page), len(pages))
         self.assertEqual(total_events, event_number_in_all_pages)
 
-    @FileSharePreparer()
+    @ChangeFeedPreparer()
     def test_get_change_feed_events_with_continuation_token(self, resource_group, location, storage_account,
                                                             storage_account_key):
         cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
@@ -100,7 +101,7 @@ class StorageChangeFeedTest(StorageTestCase):
         # Assert the
         self.assertEqual(total_events, len(events_per_page1) + len(rest_events))
 
-    @FileSharePreparer()
+    @ChangeFeedPreparer()
     def test_get_change_feed_events_in_a_time_range(self, storage_account_name, storage_account_key):
         cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         start_time = datetime(2020, 8, 12)
@@ -113,7 +114,7 @@ class StorageChangeFeedTest(StorageTestCase):
 
         self.assertIsNot(len(events), 0)
 
-    @FileSharePreparer()
+    @ChangeFeedPreparer()
     def test_change_feed_does_not_fail_on_empty_event_stream(self, storage_account_name, storage_account_key):
         cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         start_time = datetime(2300, 8, 19)
@@ -122,7 +123,7 @@ class StorageChangeFeedTest(StorageTestCase):
         events = list(change_feed)
         self.assertEqual(len(events), 0)
 
-    @FileSharePreparer()
+    @ChangeFeedPreparer()
     def test_read_change_feed_tail_where_3_shards_have_data(self, storage_account_name, storage_account_key):
         cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
 
@@ -180,7 +181,7 @@ class StorageChangeFeedTest(StorageTestCase):
             events3.append(event)
         self.assertNotEqual(events2, 0)
 
-    @FileSharePreparer()
+    @ChangeFeedPreparer()
     def test_read_change_feed_tail_where_only_1_shard_has_data(self, storage_account_name, storage_account_key):
         cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
 
@@ -220,7 +221,7 @@ class StorageChangeFeedTest(StorageTestCase):
 
         self.assertIsNot(len(events2), 0)
 
-    @FileSharePreparer()
+    @ChangeFeedPreparer()
     def test_read_change_feed_with_3_shards_in_a_time_range(self, storage_account_name, storage_account_key):
         cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
 
@@ -249,7 +250,7 @@ class StorageChangeFeedTest(StorageTestCase):
         end_time_str = (end_time + timedelta(hours=1)).isoformat()
         self.assertTrue(events[len(events) - 1]['eventTime'] < end_time_str)
 
-    @FileSharePreparer()
+    @ChangeFeedPreparer()
     def test_read_3_shards_change_feed_during_a_time_range_in_multiple_times_gives_same_result_as_reading_all(
             self, storage_account_name, storage_account_key):
         cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
@@ -311,7 +312,7 @@ class StorageChangeFeedTest(StorageTestCase):
         self.assertEqual(len(dict_token3['CurrentSegmentCursor']['ShardCursors']), 3)
         self.assertEqual(len(events)+len(events2)+len(events3), len(all_events))
 
-    @FileSharePreparer()
+    @ChangeFeedPreparer()
     def test_list_3_shards_events_works_with_1_shard_cursor(self, storage_account_name, storage_account_key):
         cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         start_time = datetime(2020, 8, 5, 17)
