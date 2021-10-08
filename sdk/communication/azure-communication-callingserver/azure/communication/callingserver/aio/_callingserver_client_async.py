@@ -26,7 +26,10 @@ from .._generated.models import (
     StartCallRecordingResult,
     CallRecordingProperties,
     StartCallRecordingWithCallLocatorRequest,
-    StartCallRecordingRequest
+    StartCallRecordingRequest,
+    RecordingContentType,
+    RecordingChannelType,
+    RecordingFormatType
     )
 from .._shared.models import CommunicationIdentifier
 from ._content_downloader_async import ContentDownloader
@@ -396,11 +399,15 @@ class CallingServerClient:
             **kwargs
             )
 
+    # pylint:disable=too-many-arguments
     @distributed_trace_async()
     async def start_recording(
         self,
         call_locator: CallLocator,
         recording_state_callback_uri: str,
+        recording_content_type: Optional[RecordingContentType] = None,
+        recording_channel_type: Optional[RecordingChannelType] = None,
+        recording_format_type: Optional[RecordingFormatType] = None,
         **kwargs: Any
     ) -> StartCallRecordingResult:
 
@@ -411,6 +418,9 @@ class CallingServerClient:
 
         start_call_recording_request = StartCallRecordingRequest(
             recording_state_callback_uri=recording_state_callback_uri,
+            recording_content_type=recording_content_type,
+            recording_channel_type=recording_channel_type,
+            recording_format_type=recording_format_type,
             **kwargs
         )
 
