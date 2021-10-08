@@ -76,8 +76,7 @@ class StorageChangeFeedTest(StorageTestCase):
         self.assertEqual(total_events, event_number_in_all_pages)
 
     @ChangeFeedPreparer()
-    def test_get_change_feed_events_with_continuation_token(self, resource_group, location, storage_account,
-                                                            storage_account_key):
+    def test_get_change_feed_events_with_continuation_token(self, storage_account_name, storage_account_key):
         cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         # To get the total events number
         start_time = datetime(2020, 8, 18)

@@ -19,9 +19,15 @@ from devtools_testutils import AzureTestCase
 
 from .processors import XMSRequestIDBody
 from . import ApiVersionAssertPolicy, service_version_map
-from .. import AzureMgmtTestCase, FakeTokenCredential
+from .. import FakeTokenCredential
 
-from azure.storage.blob import generate_account_sas, AccountSasPermissions, ResourceTypes
+try:
+    from azure.storage.blob import generate_account_sas, AccountSasPermissions, ResourceTypes
+except:
+    try:
+        from azure.storage.queue import generate_account_sas, AccountSasPermissions, ResourceTypes
+    except:
+        from azure.storage.fileshare import generate_account_sas, AccountSasPermissions, ResourceTypes
 
 LOGGING_FORMAT = "%(asctime)s %(name)-20s %(levelname)-5s %(message)s"
 
