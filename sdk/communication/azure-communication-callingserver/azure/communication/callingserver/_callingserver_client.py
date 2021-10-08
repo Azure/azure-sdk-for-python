@@ -20,9 +20,11 @@ from ._generated.models import (
     PlayAudioResult,
     AddParticipantResult,
     CallRecordingProperties,
-    # StartCallRecordingResult,
-    # StartCallRecordingRequest,
-    # StartCallRecordingWithCallLocatorRequest
+    StartCallRecordingWithCallLocatorRequest,
+    StartCallRecordingResult,
+    RecordingContentType,
+    RecordingChannelType,
+    RecordingFormatType
     )
 from ._shared.models import CommunicationIdentifier
 from ._call_connection import CallConnection
@@ -170,8 +172,7 @@ class CallingServerClient(object):
             alternate_caller_id=(None
                 if options.alternate_Caller_Id is None
                 else PhoneNumberIdentifierModel(value=options.alternate_Caller_Id.properties['value'])),
-            subject=options.subject,
-            **kwargs
+            subject=options.subject
         )
 
         create_call_response = self._call_connection_client.create_call(
@@ -391,33 +392,36 @@ class CallingServerClient(object):
             **kwargs
             )
 
-    # @distributed_trace()
-    # def start_recording(
-    #     self,
-    #     call_locator,  # type: CallLocator
-    #     recording_state_callback_uri,  # type: str
-    #     **kwargs  # type: Any
-    # ):  # type: (...) -> StartCallRecordingResult
+    #pylint:disable=too-many-arguments
+    @distributed_trace()
+    def start_recording(
+        self,
+        call_locator,  # type: CallLocator
+        recording_state_callback_uri,  # type: str
+        recording_content_type = None, # type: Optional[RecordingContentType]
+        recording_channel_type = None, # type: Optional[RecordingChannelType]
+        recording_format_type = None, # type: Optional[RecordingFormatType]
+        **kwargs  # type: Any
+    ):  # type: (...) -> StartCallRecordingResult
 
-    #     if not call_locator:
-    #         raise ValueError("call_locator cannot be None")
-    #     if not CallingServerUtils.is_valid_url(recording_state_callback_uri):
-    #         raise ValueError("recording_state_callback_uri is invalid")
+        if not call_locator:
+            raise ValueError("call_locator cannot be None")
+        if not CallingServerUtils.is_valid_url(recording_state_callback_uri):
+            raise ValueError("recording_state_callback_uri is invalid")
 
-    #     start_call_recording_request = StartCallRecordingRequest(
-    #         recording_state_callback_uri=recording_state_callback_uri,
-    #         **kwargs
-    #     )
+        start_call_recording_with_calllocator_request = StartCallRecordingWithCallLocatorRequest(
+            call_locator=serialize_call_locator(call_locator),
+            recording_state_callback_uri=recording_state_callback_uri,
+            recording_content_type=recording_content_type,
+            recording_channel_type=recording_channel_type,
+            recording_format_type=recording_format_type,
+            **kwargs
+        )
 
-    #     start_call_recording_with_calllocator_request = StartCallRecordingWithCallLocatorRequest(
-    #         call_locator=serialize_call_locator(call_locator),
-    #         start_call_recording_request=start_call_recording_request
-    #     )
-
-    #     return self._server_call_client.start_recording(
-    #        start_call_recording_with_call_locator_request=start_call_recording_with_calllocator_request,
-    #         **kwargs
-    #     )
+        return self._server_call_client.start_recording(
+           start_call_recording_with_call_locator_request=start_call_recording_with_calllocator_request,
+            **kwargs
+        )
 
     @distributed_trace()
     def pause_recording(

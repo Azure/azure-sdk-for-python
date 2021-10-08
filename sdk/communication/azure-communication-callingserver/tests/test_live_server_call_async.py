@@ -178,32 +178,31 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
 
             call_locator = ServerCallLocator(group_id)
 
-            async with self.callingserver_client:
-                try:
-                    start_call_recording_result = await self.callingserver_client.start_recording(call_locator, CONST.CALLBACK_URI)
-                    recording_id = start_call_recording_result.recording_id
+            try:
+                start_call_recording_result = await self.callingserver_client.start_recording(call_locator, CONST.CALLBACK_URI)
+                recording_id = start_call_recording_result.recording_id
 
-                    assert recording_id is not None
-                    CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                assert recording_id is not None
+                CallingServerLiveTestUtils.sleep_if_in_live_mode()
 
-                    recording_state = await self.callingserver_client.get_recording_properities(recording_id)
-                    assert recording_state.recording_state == "active"
+                recording_state = await self.callingserver_client.get_recording_properities(recording_id)
+                assert recording_state.recording_state == "active"
 
-                    await self.callingserver_client.pause_recording(recording_id)
-                    CallingServerLiveTestUtils.sleep_if_in_live_mode()
-                    recording_state = await self.callingserver_client.get_recording_properities(recording_id)
-                    assert recording_state.recording_state == "inactive"
+                await self.callingserver_client.pause_recording(recording_id)
+                CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                recording_state = await self.callingserver_client.get_recording_properities(recording_id)
+                assert recording_state.recording_state == "inactive"
 
-                    await self.callingserver_client.resume_recording(recording_id)
-                    CallingServerLiveTestUtils.sleep_if_in_live_mode()
-                    recording_state = await self.callingserver_client.get_recording_properities(recording_id)
-                    assert recording_state.recording_state == "active"
+                await self.callingserver_client.resume_recording(recording_id)
+                CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                recording_state = await self.callingserver_client.get_recording_properities(recording_id)
+                assert recording_state.recording_state == "active"
 
-                    await self.callingserver_client.stop_recording(recording_id)
-                finally:
-                    # Clean up/Hang up
-                    CallingServerLiveTestUtils.sleep_if_in_live_mode()
-                    await CallingServerLiveTestUtilsAsync.clean_up_connections_async(call_connections)
+                await self.callingserver_client.stop_recording(recording_id)
+            finally:
+                # Clean up/Hang up
+                CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                await CallingServerLiveTestUtilsAsync.clean_up_connections_async(call_connections)
 
     @pytest.mark.skip(reason="Skip because the server side bits not ready")
     @AsyncCommunicationTestCase.await_prepared_test
