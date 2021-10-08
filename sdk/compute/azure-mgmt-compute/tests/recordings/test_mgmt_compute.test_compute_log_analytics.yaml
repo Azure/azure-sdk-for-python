@@ -16,10 +16,10 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-storage/18.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-storage/19.0.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/accountxyz9b271243?api-version=2021-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/accountxyz9b271243?api-version=2021-06-01
   response:
     body:
       string: ''
@@ -31,11 +31,11 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Thu, 02 Sep 2021 03:19:09 GMT
+      - Fri, 08 Oct 2021 02:22:00 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/4c7eaaf8-d0ee-4640-ae9c-ad88ba26966b?monitor=true&api-version=2021-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/d7e676c3-d23a-4a5c-852f-0fed913aa9b5?monitor=true&api-version=2021-06-01
       pragma:
       - no-cache
       server:
@@ -59,22 +59,63 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-storage/18.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-storage/19.0.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/4c7eaaf8-d0ee-4640-ae9c-ad88ba26966b?monitor=true&api-version=2021-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/d7e676c3-d23a-4a5c-852f-0fed913aa9b5?monitor=true&api-version=2021-06-01
   response:
     body:
-      string: '{"sku":{"name":"Standard_GRS","tier":"Standard"},"kind":"StorageV2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/accountxyz9b271243","name":"accountxyz9b271243","type":"Microsoft.Storage/storageAccounts","location":"eastus","tags":{"key1":"value1","key2":"value2"},"properties":{"keyCreationTime":{"key1":"2021-09-02T03:19:07.8537115Z","key2":"2021-09-02T03:19:07.8537115Z"},"privateEndpointConnections":[],"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"keyType":"Account","enabled":true,"lastEnabledTime":"2021-09-02T03:19:07.8537115Z"},"blob":{"keyType":"Account","enabled":true,"lastEnabledTime":"2021-09-02T03:19:07.8537115Z"}},"keySource":"Microsoft.Storage"},"accessTier":"Hot","provisioningState":"Succeeded","creationTime":"2021-09-02T03:19:07.7443354Z","primaryEndpoints":{"dfs":"https://accountxyz9b271243.dfs.core.windows.net/","web":"https://accountxyz9b271243.z13.web.core.windows.net/","blob":"https://accountxyz9b271243.blob.core.windows.net/","queue":"https://accountxyz9b271243.queue.core.windows.net/","table":"https://accountxyz9b271243.table.core.windows.net/","file":"https://accountxyz9b271243.file.core.windows.net/"},"primaryLocation":"eastus","statusOfPrimary":"available","secondaryLocation":"westus","statusOfSecondary":"available"}}'
+      string: ''
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1536'
+      - '0'
+      content-type:
+      - text/plain; charset=utf-8
+      date:
+      - Fri, 08 Oct 2021 02:22:17 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/d7e676c3-d23a-4a5c-852f-0fed913aa9b5?monitor=true&api-version=2021-06-01
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-storage/19.0.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/d7e676c3-d23a-4a5c-852f-0fed913aa9b5?monitor=true&api-version=2021-06-01
+  response:
+    body:
+      string: '{"sku":{"name":"Standard_GRS","tier":"Standard"},"kind":"StorageV2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/accountxyz9b271243","name":"accountxyz9b271243","type":"Microsoft.Storage/storageAccounts","location":"eastus","tags":{"key1":"value1","key2":"value2"},"properties":{"keyCreationTime":{"key1":"2021-10-08T02:21:59.1779068Z","key2":"2021-10-08T02:21:59.1779068Z"},"privateEndpointConnections":[],"minimumTlsVersion":"TLS1_0","allowBlobPublicAccess":true,"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"keyType":"Account","enabled":true,"lastEnabledTime":"2021-10-08T02:21:59.1935298Z"},"blob":{"keyType":"Account","enabled":true,"lastEnabledTime":"2021-10-08T02:21:59.1935298Z"}},"keySource":"Microsoft.Storage"},"accessTier":"Hot","provisioningState":"Succeeded","creationTime":"2021-10-08T02:21:59.0528891Z","primaryEndpoints":{"dfs":"https://accountxyz9b271243.dfs.core.windows.net/","web":"https://accountxyz9b271243.z13.web.core.windows.net/","blob":"https://accountxyz9b271243.blob.core.windows.net/","queue":"https://accountxyz9b271243.queue.core.windows.net/","table":"https://accountxyz9b271243.table.core.windows.net/","file":"https://accountxyz9b271243.file.core.windows.net/"},"primaryLocation":"eastus","statusOfPrimary":"available","secondaryLocation":"westus","statusOfSecondary":"available"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1594'
       content-type:
       - application/json
       date:
-      - Thu, 02 Sep 2021 03:19:25 GMT
+      - Fri, 08 Oct 2021 02:22:20 GMT
       expires:
       - '-1'
       pragma:
@@ -104,13 +145,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-storage/18.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-storage/19.0.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/accountxyz9b271243/listKeys?api-version=2021-04-01&$expand=kerb
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/accountxyz9b271243/listKeys?api-version=2021-06-01&$expand=kerb
   response:
     body:
-      string: '{"keys":[{"creationTime":"2021-09-02T03:19:07.8537115Z","keyName":"key1","value":"FakeValue","permissions":"FULL"},{"creationTime":"2021-09-02T03:19:07.8537115Z","keyName":"key2","value":"FakeValue","permissions":"FULL"}]}'
+      string: '{"keys":[{"creationTime":"2021-10-08T02:21:59.1779068Z","keyName":"key1","value":"FakeValue","permissions":"FULL"},{"creationTime":"2021-10-08T02:21:59.1779068Z","keyName":"key2","value":"FakeValue","permissions":"FULL"}]}'
     headers:
       cache-control:
       - no-cache
@@ -119,7 +160,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Thu, 02 Sep 2021 03:19:26 GMT
+      - Fri, 08 Oct 2021 02:22:20 GMT
       expires:
       - '-1'
       pragma:
@@ -140,8 +181,8 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"blobContainerSasUri": "fakeuri", "fromTime": "2021-08-31T03:19:26.299953Z",
-      "toTime": "2021-09-02T03:19:26.299958Z", "groupByResourceName": true, "intervalLength":
+    body: '{"blobContainerSasUri": "fakeuri", "fromTime": "2021-10-06T02:22:21.363428Z",
+      "toTime": "2021-10-08T02:22:21.363433Z", "groupByResourceName": true, "intervalLength":
       "SixtyMins"}'
     headers:
       Accept:
@@ -155,7 +196,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-compute/23.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-compute/0.0.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/logAnalytics/apiAccess/getRequestRateByInterval?api-version=2021-07-01
@@ -164,17 +205,17 @@ interactions:
       string: ''
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/d4a25eb1-6cfc-4330-a8ab-29f113b0ea33?p=54253b73-cb53-496f-ab42-5e5ee19426f8&api-version=2021-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/cd278c8e-7217-4395-89b0-8f50981401fe?p=54253b73-cb53-496f-ab42-5e5ee19426f8&api-version=2021-07-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Thu, 02 Sep 2021 03:19:26 GMT
+      - Fri, 08 Oct 2021 02:22:21 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/d4a25eb1-6cfc-4330-a8ab-29f113b0ea33?p=54253b73-cb53-496f-ab42-5e5ee19426f8&monitor=true&api-version=2021-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/cd278c8e-7217-4395-89b0-8f50981401fe?p=54253b73-cb53-496f-ab42-5e5ee19426f8&monitor=true&api-version=2021-07-01
       pragma:
       - no-cache
       server:
@@ -201,17 +242,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-compute/23.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-compute/0.0.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/d4a25eb1-6cfc-4330-a8ab-29f113b0ea33?p=54253b73-cb53-496f-ab42-5e5ee19426f8&api-version=2021-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/cd278c8e-7217-4395-89b0-8f50981401fe?p=54253b73-cb53-496f-ab42-5e5ee19426f8&api-version=2021-07-01
   response:
     body:
-      string: "{\r\n  \"startTime\": \"2021-09-02T03:19:26.7566842+00:00\",\r\n  \"endTime\":
-        \"2021-09-02T03:19:28.0535437+00:00\",\r\n  \"status\": \"Failed\",\r\n  \"error\":
+      string: "{\r\n  \"startTime\": \"2021-10-08T02:22:21.7498574+00:00\",\r\n  \"endTime\":
+        \"2021-10-08T02:22:23.3904663+00:00\",\r\n  \"status\": \"Failed\",\r\n  \"error\":
         {\r\n    \"code\": \"BadRequest\",\r\n    \"message\": \"Could not write log
         analytics to the given SAS URI due to The remote server returned an error:
-        (403) Forbidden..\"\r\n  },\r\n  \"name\": \"d4a25eb1-6cfc-4330-a8ab-29f113b0ea33\"\r\n}"
+        (403) Forbidden..\"\r\n  },\r\n  \"name\": \"cd278c8e-7217-4395-89b0-8f50981401fe\"\r\n}"
     headers:
       cache-control:
       - no-cache
@@ -220,7 +261,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 02 Sep 2021 03:19:56 GMT
+      - Fri, 08 Oct 2021 02:22:51 GMT
       expires:
       - '-1'
       pragma:
@@ -242,8 +283,8 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"blobContainerSasUri": "fakeuri", "fromTime": "2021-08-31T03:19:56.953692Z",
-      "toTime": "2021-09-02T03:19:56.953704Z", "groupByOperationName": true, "groupByResourceName":
+    body: '{"blobContainerSasUri": "fakeuri", "fromTime": "2021-10-06T02:22:51.973373Z",
+      "toTime": "2021-10-08T02:22:51.973387Z", "groupByOperationName": true, "groupByResourceName":
       false}'
     headers:
       Accept:
@@ -257,7 +298,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-compute/23.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-compute/0.0.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/logAnalytics/apiAccess/getThrottledRequests?api-version=2021-07-01
@@ -266,17 +307,17 @@ interactions:
       string: ''
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/934c611f-3de7-42c2-bb1e-ed4d54923e63?p=54253b73-cb53-496f-ab42-5e5ee19426f8&api-version=2021-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/ac32e541-7c3b-4400-b79e-fd42bb200773?p=54253b73-cb53-496f-ab42-5e5ee19426f8&api-version=2021-07-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Thu, 02 Sep 2021 03:19:56 GMT
+      - Fri, 08 Oct 2021 02:22:51 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/934c611f-3de7-42c2-bb1e-ed4d54923e63?p=54253b73-cb53-496f-ab42-5e5ee19426f8&monitor=true&api-version=2021-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/ac32e541-7c3b-4400-b79e-fd42bb200773?p=54253b73-cb53-496f-ab42-5e5ee19426f8&monitor=true&api-version=2021-07-01
       pragma:
       - no-cache
       server:
@@ -303,17 +344,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-compute/23.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-compute/0.0.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/934c611f-3de7-42c2-bb1e-ed4d54923e63?p=54253b73-cb53-496f-ab42-5e5ee19426f8&api-version=2021-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/ac32e541-7c3b-4400-b79e-fd42bb200773?p=54253b73-cb53-496f-ab42-5e5ee19426f8&api-version=2021-07-01
   response:
     body:
-      string: "{\r\n  \"startTime\": \"2021-09-02T03:19:56.9912681+00:00\",\r\n  \"endTime\":
-        \"2021-09-02T03:19:57.3506316+00:00\",\r\n  \"status\": \"Failed\",\r\n  \"error\":
+      string: "{\r\n  \"startTime\": \"2021-10-08T02:22:52.0156526+00:00\",\r\n  \"endTime\":
+        \"2021-10-08T02:22:52.3906728+00:00\",\r\n  \"status\": \"Failed\",\r\n  \"error\":
         {\r\n    \"code\": \"BadRequest\",\r\n    \"message\": \"Could not write log
         analytics to the given SAS URI due to The remote server returned an error:
-        (403) Forbidden..\"\r\n  },\r\n  \"name\": \"934c611f-3de7-42c2-bb1e-ed4d54923e63\"\r\n}"
+        (403) Forbidden..\"\r\n  },\r\n  \"name\": \"ac32e541-7c3b-4400-b79e-fd42bb200773\"\r\n}"
     headers:
       cache-control:
       - no-cache
@@ -322,7 +363,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 02 Sep 2021 03:20:26 GMT
+      - Fri, 08 Oct 2021 02:23:21 GMT
       expires:
       - '-1'
       pragma:
