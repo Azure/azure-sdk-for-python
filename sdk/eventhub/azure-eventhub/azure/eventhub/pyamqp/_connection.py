@@ -268,7 +268,7 @@ class Connection(object):
             properties=self._properties,
         )
         if self._network_trace:
-            _LOGGER.info("<- %r", open_frame, extra=self._network_trace_params)
+            _LOGGER.info("-> %r", open_frame, extra=self._network_trace_params)
         self._send_frame(0, open_frame)
 
     def _incoming_open(self, channel, frame):
@@ -470,6 +470,8 @@ class Connection(object):
         
         :raises ValueError: If the connection is not open or not in a valid state.
         """
+        if self._network_trace:
+            _LOGGER.info("-> %r", frame, extra=self._network_trace_params)
         if not self._allow_pipelined_open and self.state in [ConnectionState.OPEN_PIPE, ConnectionState.OPEN_SENT]:
             raise ValueError("Connection not configured to allow pipeline send.")
         if self.state not in [ConnectionState.OPEN_PIPE, ConnectionState.OPEN_SENT, ConnectionState.OPENED]:
