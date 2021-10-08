@@ -22,6 +22,10 @@ from .sender import SenderLink
 from .receiver import ReceiverLink
 from .sasl import SASLTransport
 from .endpoints import Source, Target
+from .error import (
+    AMQPConnectionError,
+    ErrorResponse,
+)
 
 from .constants import (
     MessageDeliveryState,
@@ -36,9 +40,9 @@ from .constants import (
     INCOMING_WINDOW,
     OUTGOING_WIDNOW,
     DEFAULT_AUTH_TIMEOUT,
-    MESSAGE_DELIVERY_DONE_STATES
+    MESSAGE_DELIVERY_DONE_STATES,
 )
-from .error import AMQPConnectionError
+
 from .mgmt_operation import MgmtOperation
 from .cbs import CBSAuthenticator
 from .authentication import _CBSAuth
@@ -296,7 +300,11 @@ class AMQPClient(object):
                 raise mgmt_link.mgmt_error
             if mgmt_link.mgmt_link_open_status != ManagementOpenResult.OK:
                 # TODO: update below with correct status code + info
-                raise AMQPConnectionError(400, "Failed to open mgmt link: {}".format(mgmt_link.mgmt_link_open_status), {})
+                raise AMQPConnectionError(
+                    400,
+                    "Failed to open mgmt link: {}".format(mgmt_link.mgmt_link_open_status),
+                    {}
+                )
         operation_type = operation_type or b'empty'
         status, response, description = mgmt_link.execute(
             message,
@@ -372,13 +380,32 @@ class SendClient(AMQPClient):
 
     def _on_send_complete(self, message_delivery, message, reason, state):
         # TODO: check whether the callback would be called in case of message expiry or link going down
-        # and if so handle the state in the callback
-        if SEND_DISPOSITION_ACCEPT in state:
+        #  and if so handle the state in the callback
+        if state and SEND_DISPOSITION_ACCEPT in state:
             message_delivery.state = MessageDeliveryState.Ok
         else:
-            # TODO: sending disposition state could only be rejected/accepted?
-            message_delivery.state = MessageDeliveryState.Error
-            message_delivery.reason = reason
+            # TODO:
+            #  - sending disposition state could only be rejected/accepted?
+            #  - error action
+            #  - whether the state should be None in the case of sending failure/we could give a better default value
+            #   (message is not delivered)
+            if not state and reason == LinkDeliverySettleReason.NotDelivered:
+                message_delivery.state = MessageDeliveryState.Error
+                message_delivery.reason = reason
+                return
+
+            error_response = ErrorResponse(error_info=state[SEND_DISPOSITION_REJECT])
+            # TODO: check error_info structure
+            if error_response.condition == b'com.microsoft:server-busy':
+                # TODO: customized/configurable error handling logic
+                time.sleep(4)  # 4 is what we're doing nowadays in EH/SB, service tells client to backoff for 4 seconds
+
+                timeout = (message_delivery.expiry - time.time()) if message_delivery.expiry else 0
+                self._transfer_message(message_delivery, timeout)
+                message_delivery.state = MessageDeliveryState.WaitingToBeSent
+            else:
+                message_delivery.state = MessageDeliveryState.Error
+                message_delivery.reason = reason
 
     def send_message(self, message, **kwargs):
         """
