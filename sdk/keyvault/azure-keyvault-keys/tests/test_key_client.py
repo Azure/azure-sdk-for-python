@@ -61,6 +61,23 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
     def __init__(self, *args, **kwargs):
         super(KeyClientTests, self).__init__(*args, match_body=False, **kwargs)
 
+    def _assert_jwks_equal(self, jwk1, jwk2):
+        assert jwk1.kid == jwk2.kid
+        assert jwk1.kty == jwk2.kty
+        assert jwk1.n == jwk2.n
+        assert jwk1.e == jwk2.e
+        assert jwk1.d == jwk2.d
+        assert jwk1.dp == jwk2.dp
+        assert jwk1.dq == jwk2.dq
+        assert jwk1.qi == jwk2.qi
+        assert jwk1.p == jwk2.p
+        assert jwk1.q == jwk2.q
+        assert jwk1.k == jwk2.k
+        assert jwk1.t == jwk2.t
+        assert jwk1.crv == jwk2.crv
+        assert jwk1.x == jwk2.x
+        assert jwk1.y == jwk2.y
+
     def _assert_key_attributes_equal(self, k1, k2):
         self.assertEqual(k1.name, k2.name)
         self.assertEqual(k1.vault_url, k2.vault_url)
@@ -123,9 +140,14 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         expires = date_parse.parse("2050-01-02T08:00:00.000Z")
         tags = {"foo": "updated tag"}
         key_ops = ["decrypt", "encrypt"]
+
+        # wait before updating the key to make sure updated_on has a different value
+        if self.is_live:
+            time.sleep(2)
         key_bundle = client.update_key_properties(
             key.name, key_operations=key_ops, expires_on=expires, tags=tags, release_policy=release_policy
         )
+
         assert tags == key_bundle.properties.tags
         assert key.id == key_bundle.id
         assert key.properties.updated_on != key_bundle.properties.updated_on
@@ -183,7 +205,10 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         assert tags == ec_key.properties.tags
         # create ec with curve
         ec_key_curve_name = self.get_resource_name("crud-P-256-ec-key")
-        self._create_ec_key(client, key_name=ec_key_curve_name, curve="P-256", hardware_protected=is_hsm)
+        created_ec_key_curve = self._create_ec_key(
+            client, key_name=ec_key_curve_name, curve="P-256", hardware_protected=is_hsm
+        )
+        self.assertEqual("P-256", created_ec_key_curve.key.crv)
 
         # import key
         import_test_key_name = self.get_resource_name("import-test-key")
@@ -217,13 +242,16 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         deleted_key_poller = client.begin_delete_key(rsa_key.name)
         deleted_key = deleted_key_poller.result()
         self.assertIsNotNone(deleted_key)
-        self.assertEqual(rsa_key.key_type, deleted_key.key_type)
+
+        # aside from key_ops, the original updated keys should have the same JWKs
+        self._assert_jwks_equal(rsa_key.key, deleted_key.key)
         self.assertEqual(deleted_key.id, rsa_key.id)
         self.assertTrue(
             deleted_key.recovery_id and deleted_key.deleted_date and deleted_key.scheduled_purge_date,
             "Missing required deleted key attributes.",
         )
         deleted_key_poller.wait()
+
         # get the deleted key when soft deleted enabled
         deleted_key = client.get_deleted_key(rsa_key.name)
         self.assertIsNotNone(deleted_key)
