@@ -1702,7 +1702,7 @@ def build_glossary_import_glossary_terms_via_csv_request_initial(
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     include_term_hierarchy = kwargs.pop('include_term_hierarchy', False)  # type: Optional[bool]
 
-    api_version = "2021-09-01"
+    api_version = "2021-05-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/glossary/{glossaryGuid}/terms/import')
@@ -1741,7 +1741,7 @@ def build_glossary_import_glossary_terms_via_csv_by_glossary_name_request_initia
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     include_term_hierarchy = kwargs.pop('include_term_hierarchy', False)  # type: Optional[bool]
 
-    api_version = "2021-09-01"
+    api_version = "2021-05-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/glossary/name/{glossaryName}/terms/import')
@@ -1777,7 +1777,7 @@ def build_glossary_get_import_csv_operation_status_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-09-01"
+    api_version = "2021-05-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/glossary/terms/import/{operationGuid}')
@@ -1812,7 +1812,7 @@ def build_glossary_export_glossary_terms_as_csv_request(
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     include_term_hierarchy = kwargs.pop('include_term_hierarchy', False)  # type: Optional[bool]
 
-    api_version = "2021-09-01"
+    api_version = "2021-05-01-preview"
     accept = "text/csv"
     # Construct URL
     url = kwargs.pop("template_url", '/glossary/{glossaryGuid}/terms/export')
@@ -1852,7 +1852,7 @@ def build_glossary_list_terms_by_glossary_name_request(
     offset = kwargs.pop('offset', None)  # type: Optional[int]
     include_term_hierarchy = kwargs.pop('include_term_hierarchy', False)  # type: Optional[bool]
 
-    api_version = "2021-09-01"
+    api_version = "2021-05-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/glossary/name/{glossaryName}/terms')
@@ -1891,7 +1891,7 @@ def build_discovery_query_request(
     # type: (...) -> HttpRequest
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-09-01"
+    api_version = "2021-05-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/search/query')
@@ -1921,7 +1921,7 @@ def build_discovery_suggest_request(
     # type: (...) -> HttpRequest
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-09-01"
+    api_version = "2021-05-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/search/suggest')
@@ -1951,7 +1951,7 @@ def build_discovery_browse_request(
     # type: (...) -> HttpRequest
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-09-01"
+    api_version = "2021-05-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/browse')
@@ -1981,7 +1981,7 @@ def build_discovery_auto_complete_request(
     # type: (...) -> HttpRequest
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-09-01"
+    api_version = "2021-05-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/search/autocomplete')
@@ -2060,7 +2060,7 @@ def build_lineage_next_page_lineage_request(
     offset = kwargs.pop('offset', None)  # type: Optional[int]
     limit = kwargs.pop('limit', None)  # type: Optional[int]
 
-    api_version = "2021-09-01"
+    api_version = "2021-05-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/lineage/{guid}/next/')
@@ -2679,7 +2679,7 @@ def build_types_get_term_template_def_by_guid_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-09-01"
+    api_version = "2021-05-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/types/termtemplatedef/guid/{guid}')
@@ -2711,7 +2711,7 @@ def build_types_get_term_template_def_by_name_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-09-01"
+    api_version = "2021-05-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/types/termtemplatedef/name/{name}')
@@ -2745,7 +2745,7 @@ def build_collection_create_or_update_request(
     # type: (...) -> HttpRequest
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-09-01"
+    api_version = "2021-05-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/collections/{collection}/entity')
@@ -2781,7 +2781,7 @@ def build_collection_create_or_update_bulk_request(
     # type: (...) -> HttpRequest
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-09-01"
+    api_version = "2021-05-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/collections/{collection}/entity/bulk')
@@ -2817,7 +2817,7 @@ def build_collection_move_entities_to_collection_request(
     # type: (...) -> HttpRequest
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-09-01"
+    api_version = "2021-05-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/collections/{collection}/entity/moveHere')
