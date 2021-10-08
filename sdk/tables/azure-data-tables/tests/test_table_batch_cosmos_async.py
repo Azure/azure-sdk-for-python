@@ -662,3 +662,29 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
 
         finally:
             await self._tear_down()
+
+    @cosmos_decorator_async
+    async def test_async_batch_inserts(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        try:
+            # Act
+            transaction_count = 10
+            async def generate_entities(count):
+                for i in range(count):
+                    yield ("upsert", {'PartitionKey': 'async_inserts', 'RowKey': str(i)})
+
+            batch = generate_entities(transaction_count)
+            transaction_result = await self.table.submit_transaction(batch)
+
+            # Assert
+            self._assert_valid_batch_transaction(transaction_result, transaction_count)
+            assert 'etag' in transaction_result[0]
+
+            entities = self.table.query_entities("PartitionKey eq 'async_inserts'")
+            entities = [e async for e in entities]
+
+            # Assert
+            assert len(entities) ==  transaction_count
+        finally:
+            await self._tear_down()

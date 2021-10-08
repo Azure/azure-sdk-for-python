@@ -675,7 +675,11 @@ class TableClient(AsyncTablesBaseClient):
 
         :param operations: The list of operations to commit in a transaction. This should be an iterable
          (or async iterable) of tuples containing an operation name, the entity on which to operate,
-         and optionally, a dict of additional kwargs for that operation.
+         and optionally, a dict of additional kwargs for that operation. For example::
+
+            - ('upsert', {'PartitionKey': 'A', 'RowKey': 'B'})
+            - ('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}, {'mode': UpdateMode.REPLACE})
+
         :type operations: Union[Iterable[TransactionOperationType],AsyncIterable[TransactionOperationType]]
         :return: A list of mappings with response metadata for each operation in the transaction.
         :rtype: List[Mapping[str, Any]]
@@ -699,16 +703,17 @@ class TableClient(AsyncTablesBaseClient):
             is_cosmos_endpoint=self._cosmos_endpoint,
             **kwargs
         )
-        operations_iterable = [
-            _operation async for _operation in operations
-        ] if isinstance(operations, AsyncIterable) else operations # pylint: disable=isinstance-second-argument-not-valid-type
-        for operation in operations_iterable:
+        try:
+            for operation in operations:  # type: ignore
+                batched_requests.add_operation(operation)
+        except TypeError:
             try:
-                operation_kwargs = operation[2]  # type: ignore
-            except IndexError:
-                operation_kwargs = {}
-            try:
-                getattr(batched_requests, operation[0].lower())(operation[1], **operation_kwargs)
-            except AttributeError:
-                raise ValueError("Unrecognized operation: {}".format(operation))
+                async for operation in operations:  # type: ignore
+                    batched_requests.add_operation(operation)
+            except TypeError:
+                raise TypeError(
+                  "The value of 'operations' must be an iterator or async iterator "
+                  "of Tuples. Please check documentation for correct Tuple format."
+                )
+
         return await self._batch_send(*batched_requests.requests, **kwargs)

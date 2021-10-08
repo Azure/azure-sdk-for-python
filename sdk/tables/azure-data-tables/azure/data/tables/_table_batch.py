@@ -10,13 +10,14 @@ from typing import (
     Dict,
     Mapping,
     Optional,
-    List
+    List,
+    Tuple
 )
 
 from azure.core import MatchConditions
 
 from ._common_conversion import _transform_patch_to_cosmos_post
-from ._models import UpdateMode
+from ._models import UpdateMode, TransactionOperation
 from ._serialize import _get_match_headers, _add_entity_properties, _prepare_key
 from ._entity import TableEntity
 
@@ -26,8 +27,10 @@ if TYPE_CHECKING:
     from ._generated import models, AzureTable
     from ._generated._configuration import AzureTableConfiguration
 
-EntityType = Union[TableEntity, Mapping[str, Any]]
 
+EntityType = Union[TableEntity, Mapping[str, Any]]
+OperationType = Union[TransactionOperation, str]
+TransactionOperationType = Union[Tuple[OperationType, EntityType], Tuple[OperationType, EntityType, Mapping[str, Any]]]
 
 
 class TableBatchOperations(object):
@@ -90,6 +93,18 @@ class TableBatchOperations(object):
             self._partition_key = entity["PartitionKey"]
         elif entity["PartitionKey"] != self._partition_key:
             raise ValueError("Partition Keys must all be the same")
+
+    def add_operation(self, operation):
+        # type: (TransactionOperationType) -> None
+        """Add a single operation to a batch."""
+        try:
+            operation_kwargs = operation[2]  # type: ignore
+        except IndexError:
+            operation_kwargs = {}
+        try:
+            getattr(self, operation[0].lower())(operation[1], **operation_kwargs)
+        except AttributeError:
+            raise ValueError("Unrecognized operation: {}".format(operation))
 
     def create(
         self,
