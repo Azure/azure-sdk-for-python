@@ -9,13 +9,17 @@ from azure.keyvault.keys.aio import KeyClient
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
-# 1. An Azure Key Vault (https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli)
+# 1. An Azure Key Vault (https://docs.microsoft.com/azure/key-vault/quick-create-cli)
 #
-# 2. Microsoft Azure Key Vault PyPI package -
-#    https://pypi.python.org/pypi/azure-keyvault-keys/
+# 2. azure-keyvault-keys and azure-identity libraries (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
-#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
+# 3. Set environment variable VAULT_URL with the URL of your key vault
+#
+# 4. Set up your environment to use azure-identity's DefaultAzureCredential. To authenticate a service principal with
+#    environment variables, set AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and AZURE_TENANT_ID
+#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration#authenticate-the-client)
+#
+# 5. Key create, delete, recover, and purge permissions for your service principal in your vault
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates deleting and purging a vault(key) resource for Azure Key Vault.
@@ -32,9 +36,7 @@ from azure.keyvault.keys.aio import KeyClient
 # ----------------------------------------------------------------------------------------------------------
 async def run_sample():
     # Instantiate a key client that will be used to call the service.
-    # Notice that the client is using default Azure credentials.
-    # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
-    # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
+    # Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
     VAULT_URL = os.environ["VAULT_URL"]
     credential = DefaultAzureCredential()
     client = KeyClient(vault_url=VAULT_URL, credential=credential)

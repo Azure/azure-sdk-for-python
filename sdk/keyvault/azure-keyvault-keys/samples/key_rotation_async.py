@@ -10,7 +10,7 @@ from azure.keyvault.keys.aio import KeyClient
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
-# 1. An Azure Key Vault (https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli)
+# 1. An Azure Key Vault (https://docs.microsoft.com/azure/key-vault/quick-create-cli)
 #
 # 2. azure-keyvault-keys and azure-identity libraries (pip install these)
 #
@@ -35,7 +35,6 @@ from azure.keyvault.keys.aio import KeyClient
 #
 # 5. Delete a key (delete_key)
 # ----------------------------------------------------------------------------------------------------------
-
 
 async def run_sample():
     # Instantiate a key client that will be used to call the service.
