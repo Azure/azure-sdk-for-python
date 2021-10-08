@@ -26,12 +26,6 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
-class AmazonRdsForOraclePartitionOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    NONE = "None"
-    PHYSICAL_PARTITIONS_OF_TABLE = "PhysicalPartitionsOfTable"
-    DYNAMIC_RANGE = "DynamicRange"
-
 class AvroCompressionCodec(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     NONE = "none"
@@ -702,14 +696,6 @@ class SqlAlwaysEncryptedAkvAuthType(with_metaclass(_CaseInsensitiveEnumMeta, str
 
     SERVICE_PRINCIPAL = "ServicePrincipal"
     MANAGED_IDENTITY = "ManagedIdentity"
-    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
-
-class SqlDWWriteBehaviorEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Specify the write behavior when copying data into sql dw.
-    """
-
-    INSERT = "Insert"
-    UPSERT = "Upsert"
 
 class SqlPartitionOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The partition mechanism that will be used for Sql read in parallel.
@@ -718,14 +704,6 @@ class SqlPartitionOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NONE = "None"
     PHYSICAL_PARTITIONS_OF_TABLE = "PhysicalPartitionsOfTable"
     DYNAMIC_RANGE = "DynamicRange"
-
-class SqlWriteBehaviorEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Specify the write behavior when copying data into sql.
-    """
-
-    INSERT = "Insert"
-    UPSERT = "Upsert"
-    STORED_PROCEDURE = "StoredProcedure"
 
 class SsisLogLocationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of SSIS log location.
