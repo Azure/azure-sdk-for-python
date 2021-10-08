@@ -887,7 +887,7 @@ class CollectionsOperations(object):
                     "name": "str",  # Optional. Gets the name.
                     "parentCollection": {
                         "referenceName": "str",  # Optional. Gets or sets the reference name.
-                        "type": "str"  # Optional. Gets the reference type property.
+                        "type": "CollectionReference"  # Optional. Default value is "CollectionReference". Gets or sets the reference type property.
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",  # Optional. The timestamp of resource creation (UTC).
@@ -964,7 +964,7 @@ class CollectionsOperations(object):
                     "name": "str",  # Optional. Gets the name.
                     "parentCollection": {
                         "referenceName": "str",  # Optional. Gets or sets the reference name.
-                        "type": "str"  # Optional. Gets the reference type property.
+                        "type": "CollectionReference"  # Optional. Default value is "CollectionReference". Gets or sets the reference type property.
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",  # Optional. The timestamp of resource creation (UTC).
@@ -984,7 +984,7 @@ class CollectionsOperations(object):
                     "name": "str",  # Optional. Gets the name.
                     "parentCollection": {
                         "referenceName": "str",  # Optional. Gets or sets the reference name.
-                        "type": "str"  # Optional. Gets the reference type property.
+                        "type": "CollectionReference"  # Optional. Default value is "CollectionReference". Gets or sets the reference type property.
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",  # Optional. The timestamp of resource creation (UTC).
@@ -1110,7 +1110,7 @@ class CollectionsOperations(object):
                             "name": "str",  # Optional. Gets the name.
                             "parentCollection": {
                                 "referenceName": "str",  # Optional. Gets or sets the reference name.
-                                "type": "str"  # Optional. Gets the reference type property.
+                                "type": "CollectionReference"  # Optional. Default value is "CollectionReference". Gets or sets the reference type property.
                             },
                             "systemData": {
                                 "createdAt": "2020-02-20 00:00:00",  # Optional. The timestamp of resource creation (UTC).

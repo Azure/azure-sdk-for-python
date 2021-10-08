@@ -34,7 +34,7 @@ def build_metadata_roles_list_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-07-01"
+    api_version = "2021-07-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/metadataRoles')
@@ -62,7 +62,7 @@ def build_metadata_policy_list_all_request(
     # type: (...) -> HttpRequest
     collection_name = kwargs.pop('collection_name', None)  # type: Optional[str]
 
-    api_version = "2021-07-01"
+    api_version = "2021-07-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/metadataPolicies')
@@ -93,7 +93,7 @@ def build_metadata_policy_update_request(
     # type: (...) -> HttpRequest
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-07-01"
+    api_version = "2021-07-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/metadataPolicies/{policyId}')
@@ -127,7 +127,7 @@ def build_metadata_policy_get_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-07-01"
+    api_version = "2021-07-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/metadataPolicies/{policyId}')
@@ -362,7 +362,7 @@ class MetadataPolicyOperations(object):
                                 ],
                                 "collection": {
                                     "referenceName": "str",  # Optional. The name of reference.
-                                    "type": "str"  # Optional. The type of reference.
+                                    "type": "CollectionReference"  # Optional. Default value is "CollectionReference". The type of reference.
                                 },
                                 "decisionRules": [
                                     {
@@ -506,7 +506,7 @@ class MetadataPolicyOperations(object):
                         ],
                         "collection": {
                             "referenceName": "str",  # Optional. The name of reference.
-                            "type": "str"  # Optional. The type of reference.
+                            "type": "CollectionReference"  # Optional. Default value is "CollectionReference". The type of reference.
                         },
                         "decisionRules": [
                             {
@@ -564,7 +564,7 @@ class MetadataPolicyOperations(object):
                         ],
                         "collection": {
                             "referenceName": "str",  # Optional. The name of reference.
-                            "type": "str"  # Optional. The type of reference.
+                            "type": "CollectionReference"  # Optional. Default value is "CollectionReference". The type of reference.
                         },
                         "decisionRules": [
                             {
@@ -684,7 +684,7 @@ class MetadataPolicyOperations(object):
                         ],
                         "collection": {
                             "referenceName": "str",  # Optional. The name of reference.
-                            "type": "str"  # Optional. The type of reference.
+                            "type": "CollectionReference"  # Optional. Default value is "CollectionReference". The type of reference.
                         },
                         "decisionRules": [
                             {

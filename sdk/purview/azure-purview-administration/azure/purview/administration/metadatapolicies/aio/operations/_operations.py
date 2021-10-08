@@ -232,7 +232,7 @@ class MetadataPolicyOperations:
                                 ],
                                 "collection": {
                                     "referenceName": "str",  # Optional. The name of reference.
-                                    "type": "str"  # Optional. The type of reference.
+                                    "type": "CollectionReference"  # Optional. Default value is "CollectionReference". The type of reference.
                                 },
                                 "decisionRules": [
                                     {
@@ -373,7 +373,7 @@ class MetadataPolicyOperations:
                         ],
                         "collection": {
                             "referenceName": "str",  # Optional. The name of reference.
-                            "type": "str"  # Optional. The type of reference.
+                            "type": "CollectionReference"  # Optional. Default value is "CollectionReference". The type of reference.
                         },
                         "decisionRules": [
                             {
@@ -431,7 +431,7 @@ class MetadataPolicyOperations:
                         ],
                         "collection": {
                             "referenceName": "str",  # Optional. The name of reference.
-                            "type": "str"  # Optional. The type of reference.
+                            "type": "CollectionReference"  # Optional. Default value is "CollectionReference". The type of reference.
                         },
                         "decisionRules": [
                             {
@@ -550,7 +550,7 @@ class MetadataPolicyOperations:
                         ],
                         "collection": {
                             "referenceName": "str",  # Optional. The name of reference.
-                            "type": "str"  # Optional. The type of reference.
+                            "type": "CollectionReference"  # Optional. Default value is "CollectionReference". The type of reference.
                         },
                         "decisionRules": [
                             {
