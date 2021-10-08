@@ -13,19 +13,18 @@ from azure.communication.callingserver._communication_identifier_serializer impo
     )
 from azure.communication.callingserver import (
     CreateCallOptions,
-    MediaType,
-    EventSubscriptionType,
+    CallMediaType,
+    CallingEventSubscriptionType,
     JoinCallOptions,
     PlayAudioOptions,
     PlayAudioResult,
     AddParticipantResult,
     CallConnectionProperties,
     CommunicationUserIdentifier,
-    CancelAllMediaOperationsResult,
     PhoneNumberIdentifier,
     GroupCallLocator,
     ServerCallLocator,
-    OperationStatus
+    CallingOperationStatus
     )
 
 class CallingServerUnitTestUtils:
@@ -34,8 +33,8 @@ class CallingServerUnitTestUtils:
     def data_source_test_create_connection():
         options = CreateCallOptions(
                 callback_uri=_test_constants.CALLBACK_URI,
-                requested_media_types=[MediaType.AUDIO],
-                requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED])
+                requested_media_types=[CallMediaType.AUDIO],
+                requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED])
         options.subject=_test_constants.CALL_SUBJECT
         options.alternate_Caller_Id = PhoneNumberIdentifier(_test_constants.PHONE_NUMBER)
 
@@ -61,8 +60,8 @@ class CallingServerUnitTestUtils:
     def data_source_test_join_call():
         options = JoinCallOptions(
                 callback_uri=_test_constants.CALLBACK_URI,
-                requested_media_types=[MediaType.AUDIO],
-                requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED])
+                requested_media_types=[CallMediaType.AUDIO],
+                requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED])
         options.subject=_test_constants.CALL_SUBJECT
 
         parameters = []
@@ -331,7 +330,7 @@ class CallingServerUnitTestUtils:
     def verify_play_audio_result(result):
         # type: (PlayAudioResult) -> None
         assert "dummyId" == result.operation_id
-        assert OperationStatus.RUNNING == result.status
+        assert CallingOperationStatus.RUNNING == result.status
         assert _test_constants.OPERATION_CONTEXT == result.operation_context
 
     @staticmethod
@@ -379,13 +378,11 @@ class CallConnectionUnitTestUtils:
         parameters.append((
             _test_constants.ClientType_ConnectionString,
             _test_constants.CALL_ID,
-            _test_constants.OPERATION_CONTEXT,
             ))
 
         parameters.append((
             _test_constants.ClientType_ManagedIdentity,
             _test_constants.CALL_ID,
-            _test_constants.OPERATION_CONTEXT,
             True,
             ))
 
@@ -526,17 +523,10 @@ class CallConnectionUnitTestUtils:
         return parameters
 
     @staticmethod
-    def verify_cancel_all_media_operations_result(result):
-        # type: (CancelAllMediaOperationsResult) -> None
-        assert _test_constants.OPERATION_ID == result.operation_id
-        assert OperationStatus.COMPLETED == result.status
-        assert _test_constants.OPERATION_CONTEXT == result.operation_context
-
-    @staticmethod
     def verify_play_audio_result(result):
         # type: (PlayAudioResult) -> None
         assert _test_constants.OPERATION_ID == result.operation_id
-        assert OperationStatus.RUNNING == result.status
+        assert CallingOperationStatus.RUNNING == result.status
         assert _test_constants.OPERATION_CONTEXT == result.operation_context
 
     @staticmethod

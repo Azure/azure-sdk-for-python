@@ -50,14 +50,14 @@ class CallingServerClientSamples(object):
         endpoint = self.endpoint
         from_user = self.user
         # [START create_call_connection]
-        from azure.communication.callingserver import PhoneNumberIdentifier, CreateCallOptions, MediaType, EventSubscriptionType
+        from azure.communication.callingserver import PhoneNumberIdentifier, CreateCallOptions, CallMediaType, CallingEventSubscriptionType
         from azure.communication.callingserver import CallingServerClient
         from azure.identity import DefaultAzureCredential
-        to_user = PhoneNumberIdentifier(self.to_phone_number)
+        to_user = PhoneNumberIdentifier("<your-phone-number>")
         options = CreateCallOptions(
             callback_uri="<your-callback-uri>",
-            requested_media_types=[MediaType.AUDIO],
-            requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED, EventSubscriptionType.DTMF_RECEIVED]
+            requested_media_types=[CallMediaType.AUDIO],
+            requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED, CallingEventSubscriptionType.TONE_RECEIVED]
         )
         # set `endpoint` to an existing ACS endpoint
         calling_server_client = CallingServerClient(endpoint, DefaultAzureCredential())
@@ -76,14 +76,14 @@ class CallingServerClientSamples(object):
         from_user = self.user
         # [START create_server_call_with_calllocator]
         # set `endpoint` to an existing ACS endpoint
-        from azure.communication.callingserver import ServerCallLocator, CommunicationUserIdentifier, MediaType, EventSubscriptionType, JoinCallOptions
+        from azure.communication.callingserver import ServerCallLocator, CommunicationUserIdentifier, CallMediaType, CallingEventSubscriptionType, JoinCallOptions
         from azure.communication.callingserver import CallingServerClient
         from azure.identity import DefaultAzureCredential
 
         join_options = JoinCallOptions(
             callback_uri="<your-callback-uri>",
-            requested_media_types=[MediaType.AUDIO],
-            requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED]
+            requested_media_types=[CallMediaType.AUDIO],
+            requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED]
         )
         # set `endpoint` to an existing ACS endpoint
         calling_server_client = CallingServerClient(endpoint, DefaultAzureCredential())

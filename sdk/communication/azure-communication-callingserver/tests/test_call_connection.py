@@ -103,7 +103,6 @@ class TestCallConnection(unittest.TestCase):
         self,
         test_name, # type: str
         call_connection_id, # type: str
-        operation_context = None, # type: str
         use_managed_identity = False # type: bool
         ):
 
@@ -114,8 +113,8 @@ class TestCallConnection(unittest.TestCase):
             use_managed_identity=use_managed_identity
             )
 
-        result = call_connection.cancel_all_media_operations(operation_context)
-        CallConnectionUnitTestUtils.verify_cancel_all_media_operations_result(result)
+        call_connection.cancel_all_media_operations()
+        assert call_connection.call_connection_id == _test_constants.CALL_ID
 
     @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_cancel_all_media_operations())
     def test_cancel_all_media_operations_failed(

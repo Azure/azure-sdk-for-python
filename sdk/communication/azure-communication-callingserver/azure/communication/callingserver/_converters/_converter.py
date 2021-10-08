@@ -86,10 +86,11 @@ class PlayAudioWithCallLocatorRequestConverter(object):
 
         return PlayAudioWithCallLocatorRequest(
             call_locator=call_locator,
-            play_audio_request=PlayAudioRequestConverter.convert(
-                audio_file_uri,
-                play_audio_options
-                )
+            audio_file_uri=audio_file_uri,
+            loop=play_audio_options.loop,
+            operation_context=play_audio_options.operation_context,
+            audio_file_id=play_audio_options.audio_file_id,
+            callback_uri=play_audio_options.callback_uri
             )
 
 class PlayAudioToParticipantRequestConverter(object):
@@ -132,11 +133,12 @@ class PlayAudioToParticipantWithCallLocatorRequestConverter(object):
 
         return PlayAudioToParticipantWithCallLocatorRequest(
             call_locator=call_locator,
-            play_audio_to_participant_request=PlayAudioToParticipantRequestConverter.convert(
-                identifier=identifier,
-                audio_file_uri=audio_file_uri,
-                play_audio_options=play_audio_options
-                )
+            identifier=identifier,
+            audio_file_uri=audio_file_uri,
+            loop=play_audio_options.loop,
+            operation_context=play_audio_options,
+            audio_file_id=play_audio_options.audio_file_id,
+            callback_uri=play_audio_options.callback_uri
             )
 
 class AddParticipantRequestConverter(object):
@@ -210,7 +212,7 @@ class RemoveParticipantWithCallLocatorRequestConverter(object):
 
         return RemoveParticipantWithCallLocatorRequest(
             call_locator=call_locator,
-            remove_participant_request=RemoveParticipantRequestConverter.convert(identifier)
+            identifier=identifier
             )
 
 class CancelMediaOperationWithCallLocatorRequestConverter(object):
@@ -264,10 +266,8 @@ class CancelParticipantMediaOperationWithCallLocatorRequestConverter(object):
 
         return CancelParticipantMediaOperationWithCallLocatorRequest(
             call_locator=call_locator,
-            cancel_participant_media_operation_request=CancelParticipantMediaOperationRequestConverter.convert(
-                identifier=identifier,
-                media_operation_id=media_operation_id
-            )
+            identifier=identifier,
+            media_operation_id=media_operation_id
         )
 
 class TransferCallRequestConverter(object):

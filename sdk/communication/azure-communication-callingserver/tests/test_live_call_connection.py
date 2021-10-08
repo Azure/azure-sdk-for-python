@@ -13,8 +13,8 @@ from azure.communication.callingserver import (
     PlayAudioOptions,
     PhoneNumberIdentifier,
     CreateCallOptions,
-    MediaType,
-    EventSubscriptionType,
+    CallMediaType,
+    CallingEventSubscriptionType,
     CommunicationUserIdentifier
     )
 from azure.communication.callingserver._shared.utils import parse_connection_str
@@ -69,8 +69,8 @@ class CallConnectionTest(CommunicationTestCase):
         # create call option
         options = CreateCallOptions(
             callback_uri=CONST.AppCallbackUrl,
-            requested_media_types=[MediaType.AUDIO],
-            requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED, EventSubscriptionType.DTMF_RECEIVED]
+            requested_media_types=[CallMediaType.AUDIO],
+            requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED, CallingEventSubscriptionType.TONE_RECEIVED]
         )
         options.alternate_Caller_Id = PhoneNumberIdentifier(self.from_phone_number)
 
@@ -117,8 +117,8 @@ class CallConnectionTest(CommunicationTestCase):
         # create option
         options = CreateCallOptions(
             callback_uri=CONST.AppCallbackUrl,
-            requested_media_types=[MediaType.AUDIO],
-            requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED, EventSubscriptionType.DTMF_RECEIVED]
+            requested_media_types=[CallMediaType.AUDIO],
+            requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED, CallingEventSubscriptionType.TONE_RECEIVED]
         )
         options.alternate_Caller_Id = PhoneNumberIdentifier(self.from_phone_number)
 

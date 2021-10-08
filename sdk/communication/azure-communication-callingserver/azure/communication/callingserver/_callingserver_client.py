@@ -19,10 +19,10 @@ from ._generated.models import (
     PhoneNumberIdentifierModel,
     PlayAudioResult,
     AddParticipantResult,
-    StartCallRecordingResult,
     CallRecordingProperties,
-    StartCallRecordingRequest,
-    StartCallRecordingWithCallLocatorRequest
+    # StartCallRecordingResult,
+    # StartCallRecordingRequest,
+    # StartCallRecordingWithCallLocatorRequest
     )
 from ._shared.models import CommunicationIdentifier
 from ._call_connection import CallConnection
@@ -391,33 +391,33 @@ class CallingServerClient(object):
             **kwargs
             )
 
-    @distributed_trace()
-    def start_recording(
-        self,
-        call_locator,  # type: CallLocator
-        recording_state_callback_uri,  # type: str
-        **kwargs  # type: Any
-    ):  # type: (...) -> StartCallRecordingResult
+    # @distributed_trace()
+    # def start_recording(
+    #     self,
+    #     call_locator,  # type: CallLocator
+    #     recording_state_callback_uri,  # type: str
+    #     **kwargs  # type: Any
+    # ):  # type: (...) -> StartCallRecordingResult
 
-        if not call_locator:
-            raise ValueError("call_locator cannot be None")
-        if not CallingServerUtils.is_valid_url(recording_state_callback_uri):
-            raise ValueError("recording_state_callback_uri is invalid")
+    #     if not call_locator:
+    #         raise ValueError("call_locator cannot be None")
+    #     if not CallingServerUtils.is_valid_url(recording_state_callback_uri):
+    #         raise ValueError("recording_state_callback_uri is invalid")
 
-        start_call_recording_request = StartCallRecordingRequest(
-            recording_state_callback_uri=recording_state_callback_uri,
-            **kwargs
-        )
+    #     start_call_recording_request = StartCallRecordingRequest(
+    #         recording_state_callback_uri=recording_state_callback_uri,
+    #         **kwargs
+    #     )
 
-        start_call_recording_with_calllocator_request = StartCallRecordingWithCallLocatorRequest(
-            call_locator=serialize_call_locator(call_locator),
-            start_call_recording_request=start_call_recording_request
-        )
+    #     start_call_recording_with_calllocator_request = StartCallRecordingWithCallLocatorRequest(
+    #         call_locator=serialize_call_locator(call_locator),
+    #         start_call_recording_request=start_call_recording_request
+    #     )
 
-        return self._server_call_client.start_recording(
-           start_call_recording_with_call_locator_request=start_call_recording_with_calllocator_request,
-            **kwargs
-        )
+    #     return self._server_call_client.start_recording(
+    #        start_call_recording_with_call_locator_request=start_call_recording_with_calllocator_request,
+    #         **kwargs
+    #     )
 
     @distributed_trace()
     def pause_recording(

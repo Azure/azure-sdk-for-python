@@ -9,7 +9,7 @@
 from typing import List, Mapping, Optional, Union, Any  # pylint: disable=unused-import
 from enum import Enum, EnumMeta
 from six import with_metaclass
-from ._generated.models import EventSubscriptionType, MediaType
+from ._generated.models import CallingEventSubscriptionType, CallMediaType
 from ._shared.models import PhoneNumberIdentifier
 
 try:
@@ -94,16 +94,16 @@ class CreateCallOptions(object):
     :ivar callback_uri: Required. The callback URI.
     :type callback_uri: str
     :ivar requested_media_types: The requested media types.
-    :type requested_media_types: list[str or ~azure.communication.callingserver.models.MediaType]
+    :type requested_media_types: list[str or ~azure.communication.callingserver.models.CallMediaType]
     :ivar requested_call_events: The requested call events to subscribe to.
     :type requested_call_events: list[str or
-     ~azure.communication.callingserver.models.EventSubscriptionType]
+     ~azure.communication.callingserver.models.CallingEventSubscriptionType]
     """
     def __init__(
         self,
         callback_uri,  # type: str
-        requested_media_types,  # type: List[MediaType]
-        requested_call_events  # type: List[EventSubscriptionType]
+        requested_media_types,  # type: List[CallMediaType]
+        requested_call_events  # type: List[CallingEventSubscriptionType]
     ):  # type: (...) -> None
         try:
             if not callback_uri.lower().startswith('http'):
@@ -139,7 +139,7 @@ class CreateCallOptions(object):
 
     @property
     def requested_call_events(self):
-        # type: () -> List[EventSubscriptionType]
+        # type: () -> List[CallingEventSubscriptionType]
         return self.__requested_call_events
 
     @property
@@ -168,16 +168,16 @@ class JoinCallOptions(object):
     :ivar callback_uri: Required. The callback URI.
     :type callback_uri: str
     :ivar requested_media_types: The requested media types.
-    :type requested_media_types: list[str or ~azure.communication.callingserver.models.MediaType]
+    :type requested_media_types: list[str or ~azure.communication.callingserver.models.CallMediaType]
     :ivar requested_call_events: The requested call events to subscribe to.
     :type requested_call_events: list[str or
-     ~azure.communication.callingserver.models.EventSubscriptionType]
+     ~azure.communication.callingserver.models.CallingEventSubscriptionType]
     """
     def __init__(
         self,
         callback_uri,  # type: str
-        requested_media_types,  # type: List[MediaType]
-        requested_call_events  # type: List[EventSubscriptionType]
+        requested_media_types,  # type: List[CallMediaType]
+        requested_call_events  # type: List[CallingEventSubscriptionType]
     ):  # type: (...) -> None
         try:
             if not callback_uri.lower().startswith('http'):
@@ -207,12 +207,12 @@ class JoinCallOptions(object):
 
     @property
     def requested_media_types(self):
-        # type: () -> List[MediaType]
+        # type: () -> List[CallMediaType]
         return self.__requested_media_types
 
     @property
     def requested_call_events(self):
-        # type: () -> List[EventSubscriptionType]
+        # type: () -> List[CallingEventSubscriptionType]
         return self.__requested_call_events
 
     @property

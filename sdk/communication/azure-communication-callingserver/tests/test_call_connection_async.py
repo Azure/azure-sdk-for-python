@@ -101,7 +101,6 @@ async def test_hang_up_failed(
 async def test_cancel_all_media_operations_succeed(
     test_name, # type: str
     call_connection_id, # type: str
-    operation_context = None, # type: str
     use_managed_identity = False # type: bool
     ):
 
@@ -112,8 +111,8 @@ async def test_cancel_all_media_operations_succeed(
         use_managed_identity=use_managed_identity
         )
 
-    result = await call_connection.cancel_all_media_operations(operation_context)
-    CallConnectionUnitTestUtils.verify_cancel_all_media_operations_result(result)
+    await call_connection.cancel_all_media_operations()
+    assert call_connection.call_connection_id == _test_constants.CALL_ID
 
 @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_cancel_all_media_operations())
 @pytest.mark.asyncio
