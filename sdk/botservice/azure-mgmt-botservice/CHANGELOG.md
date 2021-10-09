@@ -1,5 +1,27 @@
 # Release History
 
+## 2.0.0b1 (2021-10-09)
+
+**Features**
+
+  - Model BotProperties has a new parameter disable_local_auth
+  - Model BotProperties has a new parameter msa_app_tenant_id
+  - Model BotProperties has a new parameter msa_app_msi_resource_id
+  - Model BotProperties has a new parameter private_endpoint_connections
+  - Model BotProperties has a new parameter open_with_hint
+  - Model BotProperties has a new parameter msa_app_type
+  - Model BotProperties has a new parameter app_password_hint
+  - Model SlackChannelProperties has a new parameter scopes
+  - Added operation group PrivateEndpointConnectionsOperations
+  - Added operation group PrivateLinkResourcesOperations
+  - Added operation group OperationResultsOperations
+
+**Breaking changes**
+
+  - Model DirectLineSpeechChannelProperties no longer has parameter cognitive_services_subscription_id
+  - Model DirectLineSpeechChannelProperties has a new required parameter cognitive_service_region
+  - Model DirectLineSpeechChannelProperties has a new required parameter cognitive_service_subscription_key
+
 ## 1.0.0 (2021-05-20)
 
 **Features**
