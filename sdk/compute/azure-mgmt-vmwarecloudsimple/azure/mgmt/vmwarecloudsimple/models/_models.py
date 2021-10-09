@@ -510,7 +510,7 @@ class DedicatedCloudNode(msrest.serialization.Model):
     :ivar cloud_rack_name: VMWare Cloud Rack Name.
     :vartype cloud_rack_name: str
     :ivar created: date time the resource was created.
-    :vartype created: any
+    :vartype created: ~datetime.datetime
     :param nodes_count: count of nodes to create.
     :type nodes_count: int
     :param placement_group_id: Placement Group id, e.g. "n1".
@@ -562,7 +562,7 @@ class DedicatedCloudNode(msrest.serialization.Model):
         'availability_zone_id': {'key': 'properties.availabilityZoneId', 'type': 'str'},
         'availability_zone_name': {'key': 'properties.availabilityZoneName', 'type': 'str'},
         'cloud_rack_name': {'key': 'properties.cloudRackName', 'type': 'str'},
-        'created': {'key': 'properties.created', 'type': 'object'},
+        'created': {'key': 'properties.created', 'type': 'iso-8601'},
         'nodes_count': {'key': 'properties.nodesCount', 'type': 'int'},
         'placement_group_id': {'key': 'properties.placementGroupId', 'type': 'str'},
         'placement_group_name': {'key': 'properties.placementGroupName', 'type': 'str'},
@@ -897,8 +897,6 @@ class PatchPayload(msrest.serialization.Model):
 class PrivateCloud(msrest.serialization.Model):
     """Private cloud model.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :param id: Azure Id, e.g.
      "/subscriptions/4da99247-a172-4ed6-8ae9-ebed2d12f839/providers/Microsoft.VMwareCloudSimple/privateClouds/cloud123".
     :type id: str
@@ -906,8 +904,9 @@ class PrivateCloud(msrest.serialization.Model):
     :type location: str
     :param name: Private cloud name.
     :type name: str
-    :ivar type: Azure Resource type. Default value: "Microsoft.VMwareCloudSimple/privateClouds".
-    :vartype type: str
+    :param type: Azure Resource type. The only acceptable values to pass in are None and
+     "Microsoft.VMwareCloudSimple/privateClouds". The default value is None.
+    :type type: str
     :param availability_zone_id: Availability Zone id, e.g. "az1".
     :type availability_zone_id: str
     :param availability_zone_name: Availability Zone name, e.g. "Availability Zone 1".
@@ -959,10 +958,6 @@ class PrivateCloud(msrest.serialization.Model):
     :type vr_ops_enabled: bool
     """
 
-    _validation = {
-        'type': {'constant': True},
-    }
-
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
@@ -994,8 +989,6 @@ class PrivateCloud(msrest.serialization.Model):
         'vr_ops_enabled': {'key': 'properties.vrOpsEnabled', 'type': 'bool'},
     }
 
-    type = "Microsoft.VMwareCloudSimple/privateClouds"
-
     def __init__(
         self,
         **kwargs
@@ -1004,6 +997,7 @@ class PrivateCloud(msrest.serialization.Model):
         self.id = kwargs.get('id', None)
         self.location = kwargs.get('location', None)
         self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
         self.availability_zone_id = kwargs.get('availability_zone_id', None)
         self.availability_zone_name = kwargs.get('availability_zone_name', None)
         self.clusters_number = kwargs.get('clusters_number', None)
