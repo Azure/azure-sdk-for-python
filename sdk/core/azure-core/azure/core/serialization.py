@@ -32,7 +32,7 @@ with no data. This gets serialized to `null` on the wire.
 """
 
 
-def _timedelta_as_isostr(value):
+def _timedelta_as_str(td):
     # type: (timedelta) -> str
     """Converts a datetime.timedelta object into an ISO 8601 formatted string, e.g. 'P4DT12H30M05S'
 
@@ -40,7 +40,7 @@ def _timedelta_as_isostr(value):
     """
 
     # Split seconds to larger units
-    seconds = value.total_seconds()
+    seconds = td.total_seconds()
     minutes, seconds = divmod(seconds, 60)
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
@@ -82,19 +82,25 @@ def _timedelta_as_isostr(value):
 
     return "P" + date + time
 
-def _timestr_as_isostr(o):
+
+def _datetime_as_isostr(dt):
     # First try datetime.datetime
-    if hasattr(o, "year") and hasattr(o, "hour"):
+    if hasattr(dt, "year") and hasattr(dt, "hour"):
         # astimezone() fails for naive times in Python 2.7, so make make sure o is aware (tzinfo is set)
-        if not o.tzinfo:
-            iso_formatted = o.replace(tzinfo=TZ_UTC).isoformat()
+        if not dt.tzinfo:
+            iso_formatted = dt.replace(tzinfo=TZ_UTC).isoformat()
         else:
-            iso_formatted = o.astimezone(TZ_UTC).isoformat()
+            iso_formatted = dt.astimezone(TZ_UTC).isoformat()
         # Replace the trailing "+00:00" UTC offset with "Z" (RFC 3339: https://www.ietf.org/rfc/rfc3339.txt)
         return iso_formatted.replace("+00:00", "Z")
     # Next try datetime.date or datetime.time
-    return o.isoformat()
-    
+    try:
+        return dt.isoformat()
+    # Last, try datetime.timedelta
+    except AttributeError:
+        return _timedelta_as_str(dt)
+
+
 try:
     from datetime import timezone
 
@@ -110,13 +116,7 @@ class AzureJSONEncoder(JSONEncoder):
         if isinstance(o, (bytes, bytearray)):
             return base64.b64encode(o).decode()
         try:
-            return _timestr_as_isostr(o)
+            return _datetime_as_isostr(o)
         except AttributeError:
-            pass
-        # Last, try datetime.timedelta
-        try:
-            return _timedelta_as_isostr(o)
-        except AttributeError:
-            # This will be raised when it hits value.total_seconds in the method above
             pass
         return super(AzureJSONEncoder, self).default(o)
