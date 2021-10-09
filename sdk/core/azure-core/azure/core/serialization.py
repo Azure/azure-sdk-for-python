@@ -84,6 +84,7 @@ def _timedelta_as_str(td):
 
 
 def _datetime_as_isostr(dt):
+    """Converts a datetime.(datetime|date|time|timedelta) object into an ISO 8601 formatted string"""
     # First try datetime.datetime
     if hasattr(dt, "year") and hasattr(dt, "hour"):
         # astimezone() fails for naive times in Python 2.7, so make make sure o is aware (tzinfo is set)
@@ -118,5 +119,6 @@ class AzureJSONEncoder(JSONEncoder):
         try:
             return _datetime_as_isostr(o)
         except AttributeError:
+            # This will be raised when it hits value.total_seconds in the method above
             pass
         return super(AzureJSONEncoder, self).default(o)
