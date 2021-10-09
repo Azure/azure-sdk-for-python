@@ -16,16 +16,14 @@ from azure.keyvault.keys import KeyClient
 #    
 # 4. Set up your environment to use azure-identity's DefaultAzureCredential. To authenticate a service principal with
 #    environment variables, set AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and AZURE_TENANT_ID
-#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration#authenticate-the-client)
+#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # 5. Key create, list, and delete permissions for your service principal in your vault
 #
 # ----------------------------------------------------------------------------------------------------------
-# Sample - demonstrates the basic list operations on a vault(key) resource for Azure Key Vault.
-# The vault has to be soft-delete enabled to perform one of the following operations. See
-# https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete for more information about soft-delete.
+# Sample - demonstrates the basic list operations for keys
 #
-# 1. Create key (create_key)
+# 1. Create a key (create_key)
 #
 # 2. List keys from the Key Vault (list_keys)
 #
@@ -33,8 +31,7 @@ from azure.keyvault.keys import KeyClient
 #
 # 4. Delete keys (begin_delete_key)
 #
-# 5. List deleted keys from the Key Vault (list_deleted_keys). The vault has to be soft-delete enabled to perform this
-# operation.
+# 5. List deleted keys from the Key Vault (list_deleted_keys)
 #
 # ----------------------------------------------------------------------------------------------------------
 
@@ -81,7 +78,7 @@ print("\n.. Delete the created keys...")
 for key_name in (ec_key.name, rsa_key.name):
     client.begin_delete_key(key_name).wait()
 
-# You can list all the deleted and non-purged keys, assuming Key Vault is soft-delete enabled.
+# You can list all the deleted and non-purged keys.
 print("\n.. List deleted keys from the Key Vault (requires soft-delete)")
 deleted_keys = client.list_deleted_keys()
 for deleted_key in deleted_keys:

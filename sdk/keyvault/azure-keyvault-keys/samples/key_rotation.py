@@ -16,7 +16,7 @@ from azure.keyvault.keys import KeyClient, KeyRotationLifetimeAction, KeyRotatio
 #    
 # 4. Set up your environment to use azure-identity's DefaultAzureCredential. To authenticate a service principal with
 #    environment variables, set AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and AZURE_TENANT_ID
-#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration#authenticate-the-client)
+#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # 5. Key rotation permissions for your service principal in your vault
 #

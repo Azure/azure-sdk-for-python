@@ -17,14 +17,12 @@ from azure.keyvault.keys.aio import KeyClient
 #
 # 4. Set up your environment to use azure-identity's DefaultAzureCredential. To authenticate a service principal with
 #    environment variables, set AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and AZURE_TENANT_ID
-#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration#authenticate-the-client)
+#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # 5. Key create, delete, recover, and purge permissions for your service principal in your vault
 #
 # ----------------------------------------------------------------------------------------------------------
-# Sample - demonstrates deleting and purging a vault(key) resource for Azure Key Vault.
-# The vault has to be soft-delete enabled to perform one of the following operations. See
-# https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete for more information about soft-delete.
+# Sample - demonstrates deleting and purging keys
 #
 # 1. Create a key (create_key)
 #
@@ -57,8 +55,7 @@ async def run_sample():
     recovered_key = await client.recover_deleted_key(rsa_key.name)
     print("Recovered key '{0}'".format(recovered_key.name))
 
-    # deleting the recovered key so it doesn't outlast this script
-    # If the keyvault is soft-delete enabled, then for permanent deletion, the deleted key needs to be purged.
+    # To permanently delete the key, the deleted key needs to be purged.
     await client.delete_key(recovered_key.name)
 
     # Keys will still purge eventually on their scheduled purge date, but calling `purge_deleted_key` immediately

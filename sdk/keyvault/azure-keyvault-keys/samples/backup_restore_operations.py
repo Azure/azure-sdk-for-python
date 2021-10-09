@@ -17,7 +17,7 @@ from azure.keyvault.keys import KeyClient
 #    
 # 4. Set up your environment to use azure-identity's DefaultAzureCredential. To authenticate a service principal with
 #    environment variables, set AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and AZURE_TENANT_ID
-#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration#authenticate-the-client)
+#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # 5. Key create, backup, delete, purge, and restore permissions for your service principal in your vault
 #
