@@ -62,21 +62,9 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         super(KeyClientTests, self).__init__(*args, match_body=False, **kwargs)
 
     def _assert_jwks_equal(self, jwk1, jwk2):
-        assert jwk1.kid == jwk2.kid
-        assert jwk1.kty == jwk2.kty
-        assert jwk1.n == jwk2.n
-        assert jwk1.e == jwk2.e
-        assert jwk1.d == jwk2.d
-        assert jwk1.dp == jwk2.dp
-        assert jwk1.dq == jwk2.dq
-        assert jwk1.qi == jwk2.qi
-        assert jwk1.p == jwk2.p
-        assert jwk1.q == jwk2.q
-        assert jwk1.k == jwk2.k
-        assert jwk1.t == jwk2.t
-        assert jwk1.crv == jwk2.crv
-        assert jwk1.x == jwk2.x
-        assert jwk1.y == jwk2.y
+        for field in JsonWebKey._FIELDS:
+            if field != "key_ops":
+                assert getattr(jwk1, field) == getattr(jwk2, field)
 
     def _assert_key_attributes_equal(self, k1, k2):
         self.assertEqual(k1.name, k2.name)
