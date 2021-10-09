@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Optional
+from typing import Any
 
 
 class SchemaProperties(object):
@@ -50,13 +50,12 @@ class SchemaProperties(object):
 
     def __init__(
         self,
-        id=None,    # pylint:disable=redefined-builtin
         **kwargs
     ):
-        # type: (Optional[str], Any) -> None
-        self.id = id
-        self.format = kwargs.get('format')
-        self.version = kwargs.get('version')
+        # type: (Any) -> None
+        self.id = kwargs.pop('id')
+        self.format = kwargs.pop('format')
+        self.version = kwargs.pop('version')
 
 
 class Schema(object):
@@ -81,9 +80,8 @@ class Schema(object):
 
     def __init__(
         self,
-        schema_definition,
-        properties,
+        **kwargs
     ):
-        # type: (str, SchemaProperties) -> None
-        self.schema_definition = schema_definition
-        self.properties = properties
+        # type: (Any) -> None
+        self.schema_definition = kwargs.pop("schema_definition")
+        self.properties = kwargs.pop("properties")

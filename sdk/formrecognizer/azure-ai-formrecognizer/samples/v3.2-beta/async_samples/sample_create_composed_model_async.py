@@ -40,7 +40,7 @@ import asyncio
 
 
 async def sample_create_composed_model_async():
-    # [START composed_model]
+    # [START composed_model_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
 
@@ -93,7 +93,7 @@ async def sample_create_composed_model_async():
             print("Field: '{}' has type '{}' and confidence score {}".format(
                 field_name, field["type"], doc_type.field_confidence[field_name]
             ))
-    # [END composed_model]
+    # [END composed_model_async]
 
 
 async def main():

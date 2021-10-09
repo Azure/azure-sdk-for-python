@@ -30,19 +30,18 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
 
     :param str tenant_id: ID of the service principal's tenant. Also called its "directory" ID.
     :param str client_id: the service principal's client ID
-    :param client_credential: a credential to authenticate the service principal, either one of its client secrets (a
-        string) or the bytes of a certificate in PEM or PKCS12 format including the private key
-    :paramtype client_credential: str or bytes
-    :param str user_assertion: the access token the credential will use as the user assertion when requesting
-        on-behalf-of tokens
+    :keyword str client_secret: Optional. A client secret to authenticate the service principal.
+        Either **client_secret** or **client_certificate** must be provided.
+    :keyword bytes client_certificate: Optional. The bytes of a certificate in PEM or PKCS12 format including
+        the private key to authenticate the service principal. Either **client_secret** or **client_certificate** must
+        be provided.
+    :keyword str user_assertion: Required. The access token the credential will use as the user assertion when
+        requesting on-behalf-of tokens
 
-    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
-        the application is registered in. When False, which is the default, the credential will acquire tokens only
-        from the tenant specified by **tenant_id**.
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
-    :keyword password: a certificate password. Used only when **client_credential** is certificate bytes. If this value
+    :keyword password: a certificate password. Used only when **client_certificate** is provided. If this value
         is a unicode string, it will be encoded as UTF-8. If the certificate requires a different encoding, pass
         appropriately encoded bytes instead.
     :paramtype password: str or bytes
@@ -52,31 +51,37 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         self,
         tenant_id: str,
         client_id: str,
-        client_credential: "Union[bytes, str]",
+        *,
+        client_certificate: bytes = None,
+        client_secret: str = None,
         user_assertion: str,
         **kwargs: "Any"
     ) -> None:
         super().__init__()
         validate_tenant_id(tenant_id)
 
-        if isinstance(client_credential, bytes):
+        self._assertion = user_assertion
+
+        if client_certificate:
+            if client_secret:
+                raise ValueError('Specifying both "client_certificate" and "client_secret" is not valid.')
             try:
-                cert = get_client_credential(None, kwargs.pop("password", None), client_credential)
+                cert = get_client_credential(None, kwargs.pop("password", None), client_certificate)
             except ValueError as ex:
                 message = (
-                    '"client_credential" should be either a client secret (a string)'
-                    + " or the bytes of a certificate in PEM or PKCS12 format"
+                    '"client_certificate" is not a valid certificate in PEM or PKCS12 format'
                 )
                 raise ValueError(message) from ex
             self._client_credential = AadClientCertificate(
                 cert["private_key"], password=cert.get("passphrase")
             )  # type: Union[str, AadClientCertificate]
+        elif client_secret:
+            self._client_credential = client_secret
         else:
-            self._client_credential = client_credential
+            raise TypeError('Either "client_certificate" or "client_secret" must be provided')
 
-        # note AadClient handles "allow_multitenant_authentication", "authority", and any pipeline kwargs
+        # note AadClient handles "authority" and any pipeline kwargs
         self._client = AadClient(tenant_id, client_id, **kwargs)
-        self._assertion = user_assertion
 
     async def __aenter__(self):
         await self._client.__aenter__()

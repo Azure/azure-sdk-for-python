@@ -7,7 +7,7 @@
 
 # pylint: disable=anomalous-backslash-in-string
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, List
 from msrest.serialization import Serializer
 from azure.core.tracing.decorator import distributed_trace
 
@@ -15,7 +15,7 @@ from ._generated._monitor_query_client import (
     MonitorQueryClient,
 )
 
-from ._models import MetricsResult, MetricDefinition, MetricNamespace
+from ._models import MetricsQueryResult, MetricDefinition, MetricNamespace
 from ._helpers import get_metrics_authentication_policy, construct_iso8601
 
 if TYPE_CHECKING:
@@ -25,11 +25,15 @@ if TYPE_CHECKING:
 
 
 class MetricsQueryClient(object):
-    """MetricsQueryClient
+    """MetricsQueryClient should be used to collect numeric data from monitored resources into a
+    time series database. Metrics are numerical values that are collected at regular intervals and
+    describe some aspect of a system at a particular time. Metrics are lightweight and capable of
+    supporting near real-time scenarios, making them particularly useful for alerting and
+    fast detection of issues.
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/sample_metrics_query_client.py
+    .. literalinclude:: ../samples/sample_metrics_query.py
         :start-after: [START metrics_client_auth_with_token_cred]
         :end-before: [END metrics_client_auth_with_token_cred]
         :language: python
@@ -44,11 +48,15 @@ class MetricsQueryClient(object):
 
     def __init__(self, credential, **kwargs):
         # type: (TokenCredential, Any) -> None
+        audience = kwargs.pop("audience", None)
         endpoint = kwargs.pop("endpoint", "https://management.azure.com")
+        if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
+            endpoint = "https://" + endpoint
+        self._endpoint = endpoint
         self._client = MonitorQueryClient(
             credential=credential,
-            base_url=endpoint,
-            authentication_policy=get_metrics_authentication_policy(credential),
+            base_url=self._endpoint,
+            authentication_policy=get_metrics_authentication_policy(credential, audience),
             **kwargs
         )
         self._metrics_op = self._client.metrics
@@ -57,7 +65,7 @@ class MetricsQueryClient(object):
 
     @distributed_trace
     def query_resource(self, resource_uri, metric_names, **kwargs):
-        # type: (str, list, Optional[timedelta], Any) -> MetricsResult
+        # type: (str, List[str], Any) -> MetricsQueryResult
         """Lists the metric values for a resource.
 
         :param resource_uri: The identifier of the resource.
@@ -90,11 +98,12 @@ class MetricsQueryClient(object):
          series where A = a1, B = b1 and C = c1::code:`<br>`\ **$filter=A eq ‘a1’ and B eq ‘b1’ and C eq
          ‘c1’**\ :code:`<br>`- Return all time series where A = a1:code:`<br>`\ **$filter=A eq ‘a1’ and
          B eq ‘\ *’ and C eq ‘*\ ’**.
+         To use the split feature, set the value to * - for example, like "City eq '*'"
         :paramtype filter: str
         :keyword metric_namespace: Metric namespace to query metric definitions for.
         :paramtype metric_namespace: str
-        :return: Response, or the result of cls(response)
-        :rtype: ~azure.monitor.query.MetricsResult
+        :return: A MetricsQueryResult object.
+        :rtype: ~azure.monitor.query.MetricsQueryResult
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -119,7 +128,7 @@ class MetricsQueryClient(object):
         generated = self._metrics_op.list(
             resource_uri, connection_verify=False, **kwargs
         )
-        return MetricsResult._from_generated( # pylint: disable=protected-access
+        return MetricsQueryResult._from_generated( # pylint: disable=protected-access
             generated
         )
 
@@ -162,7 +171,7 @@ class MetricsQueryClient(object):
         :type resource_uri: str
         :keyword namespace: Metric namespace to query metric definitions for.
         :paramtype namespace: str
-        :return: An iterator like instance of either MetricDefinitionCollection or the result of cls(response)
+        :return: An iterator like instance of either MetricDefinition or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricDefinition]
         :raises: ~azure.core.exceptions.HttpResponseError
         """

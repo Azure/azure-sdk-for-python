@@ -29,7 +29,6 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 
 class TestManagementAsync(AsyncFormRecognizerTest):
 
-    @pytest.mark.skip("no aad yet in private preview")
     @FormRecognizerPreparer()
     @pytest.mark.live_test_only
     async def test_active_directory_auth_async(self):
@@ -178,6 +177,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                 assert op.result is None
                 assert error.code
                 assert error.message
+                assert error.details
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()

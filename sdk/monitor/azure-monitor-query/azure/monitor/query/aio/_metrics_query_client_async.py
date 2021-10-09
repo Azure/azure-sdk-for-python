@@ -7,8 +7,7 @@
 
 # pylint: disable=anomalous-backslash-in-string
 
-from datetime import timedelta
-from typing import TYPE_CHECKING, Any, List, Optional
+from typing import TYPE_CHECKING, Any, List
 from msrest.serialization import Serializer
 
 from azure.core.async_paging import AsyncItemPaged
@@ -18,7 +17,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._generated.aio._monitor_query_client import (
     MonitorQueryClient,
 )
-from .._models import MetricsResult, MetricDefinition, MetricNamespace
+from .._models import MetricsQueryResult, MetricDefinition, MetricNamespace
 from ._helpers_asyc import get_metrics_authentication_policy
 from .._helpers import construct_iso8601
 
@@ -36,11 +35,15 @@ class MetricsQueryClient(object):
     """
 
     def __init__(self, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+        audience = kwargs.pop("audience", None)
         endpoint = kwargs.pop("endpoint", "https://management.azure.com")
+        if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
+            endpoint = "https://" + endpoint
+        self._endpoint = endpoint
         self._client = MonitorQueryClient(
             credential=credential,
-            base_url=endpoint,
-            authentication_policy=get_metrics_authentication_policy(credential),
+            base_url=self._endpoint,
+            authentication_policy=get_metrics_authentication_policy(credential, audience),
             **kwargs
         )
         self._metrics_op = self._client.metrics
@@ -49,8 +52,8 @@ class MetricsQueryClient(object):
 
     @distributed_trace_async
     async def query_resource(
-        self, resource_uri: str, metric_names: List, **kwargs: Any
-    ) -> MetricsResult:
+        self, resource_uri: str, metric_names: List[str], **kwargs: Any
+    ) -> MetricsQueryResult:
         """Lists the metric values for a resource.
 
         **Note**: Although the start_time, end_time, duration are optional parameters, it is highly
@@ -86,11 +89,12 @@ class MetricsQueryClient(object):
          series where A = a1, B = b1 and C = c1::code:`<br>`\ **$filter=A eq ‘a1’ and B eq ‘b1’ and C eq
          ‘c1’**\ :code:`<br>`- Return all time series where A = a1:code:`<br>`\ **$filter=A eq ‘a1’ and
          B eq ‘\ *’ and C eq ‘*\ ’**.
+         To use the split feature, set the value to * - for example, like "City eq '*'"
         :paramtype filter: str
         :keyword metric_namespace: Metric namespace to query metric definitions for.
         :paramtype metric_namespace: str
-        :return: Response, or the result of cls(response)
-        :rtype: ~azure.monitor.query.MetricsResult
+        :return: A MetricsQueryResult object.
+        :rtype: ~azure.monitor.query.MetricsQueryResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         timespan = construct_iso8601(kwargs.pop("timespan", None))
@@ -105,7 +109,7 @@ class MetricsQueryClient(object):
         generated = await self._metrics_op.list(
             resource_uri, connection_verify=False, **kwargs
         )
-        return MetricsResult._from_generated( # pylint: disable=protected-access
+        return MetricsQueryResult._from_generated( # pylint: disable=protected-access
             generated
         )
 
@@ -150,7 +154,7 @@ class MetricsQueryClient(object):
         :type resource_uri: str
         :keyword namespace: Metric namespace to query metric definitions for.
         :paramtype namespace: str
-        :return: An iterator like instance of either MetricDefinitionCollection or the result of cls(response)
+        :return: An iterator like instance of either MetricDefinition or the result of cls(response)
         :rtype: ~azure.core.paging.AsyncItemPaged[:class: `~azure.monitor.query.MetricDefinition`]
         :raises: ~azure.core.exceptions.HttpResponseError
         """

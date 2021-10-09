@@ -1,47 +1,43 @@
 interactions:
 - request:
-    body: '{"startTime": "2020-01-01T00:00:00.000Z", "endTime": "2020-10-21T00:00:00.000Z",
+    body: '{"startTime": "2021-01-01T00:00:00.000Z", "endTime": "2021-09-09T00:00:00.000Z",
       "dimensionName": "dimension_name"}'
     headers:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       Content-Length:
-      - '105'
+      - '107'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b5 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/anomalies/dimension/query
+    uri: https://ga-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/anomalies/dimension/query
   response:
     body:
-      string: '{"value":["__SUM__","Karachi","Los Angeles","Delhi","Manila","Seoul","Mumbai","New
-        York","Miami","Mexico City","Philadelphia","Osaka","Tianjin","Istanbul","Taipei","Madrid","Moscow","Kolkata","Shenzhen","Rio
-        de Janeiro","Belo Horizonte","Lahore","Beijing","Dallas","Jakarta","Hyderabad","Wuhan","Lima","Shanghai","Bangkok","Bogota","Houston","Buenos
-        Aires","Kinshasa","Santiago","London","Bengaluru","Chennai","Tokyo","Sao Paulo","Lagos","Hong
-        Kong","Cairo","Chongqing","Guangzhou","Chicago","Tehran","Dhaka","Paris","Ho
-        Chi Minh City","Barcelona","Washington","Pune","Shenyang","Luanda","Baghdad","Guadalajara","Haora","Singapore","Toronto"]}'
+      string: '{"value":["__SUM__","Karachi","Mumbai","Delhi","Seoul","Beijing","Cairo","New
+        York","Miami","Tianjin","Istanbul"]}'
     headers:
       apim-request-id:
-      - 07fe529d-1c40-49d2-aeba-3a53b45f8239
+      - b73c4bdd-4c0f-40b8-918f-7d4160d254d5
       content-length:
-      - '643'
+      - '114'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Jun 2021 23:45:01 GMT
+      - Wed, 29 Sep 2021 19:38:38 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '208'
+      - '216'
       x-request-id:
-      - 07fe529d-1c40-49d2-aeba-3a53b45f8239
+      - b73c4bdd-4c0f-40b8-918f-7d4160d254d5
     status:
       code: 200
       message: OK
