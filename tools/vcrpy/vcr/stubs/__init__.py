@@ -26,7 +26,7 @@ class VCRFakeSocket(object):
 
     def fileno(self):
         """
-        This is kinda crappy.  requests will watch
+        This is not very good.  requests will watch
         this descriptor and make sure it's not closed.
         Return file descriptor 0 since that's stdin.
         """

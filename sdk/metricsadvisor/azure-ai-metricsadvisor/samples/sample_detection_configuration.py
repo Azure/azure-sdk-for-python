@@ -194,13 +194,13 @@ def sample_update_detection_config(detection_config):
         detection_config,
         series_group_detection_conditions=[
             MetricSeriesGroupDetectionCondition(
-                series_group_key={"city": "Seoul"},
+                series_group_key={"region": "Seoul"},
                 smart_detection_condition=smart_detection_condition
             )
         ],
         series_detection_conditions=[
             MetricSingleSeriesDetectionCondition(
-                series_key={"city": "Osaka", "category": "Cell Phones"},
+                series_key={"region": "Osaka", "category": "Cell Phones"},
                 smart_detection_condition=smart_detection_condition
             )
         ]

@@ -313,8 +313,6 @@ class ApiDefinitionInfo(msrest.serialization.Model):
 class ApiKVReference(msrest.serialization.Model):
     """Description of site key vault references.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :param reference:
     :type reference: str
     :param status:  Possible values include: "Initialized", "Resolved", "InvalidSyntax",
@@ -332,16 +330,13 @@ class ApiKVReference(msrest.serialization.Model):
     :type identity_type: str or ~azure.mgmt.web.v2019_08_01.models.ManagedServiceIdentityType
     :param details:
     :type details: str
-    :ivar source:  Default value: "KeyVault".
-    :vartype source: str
-    :ivar location:  Default value: "ApplicationSetting".
-    :vartype location: str
+    :param source:  The only acceptable values to pass in are None and "KeyVault". The default
+     value is None.
+    :type source: str
+    :param location:  The only acceptable values to pass in are None and "ApplicationSetting". The
+     default value is None.
+    :type location: str
     """
-
-    _validation = {
-        'source': {'constant': True},
-        'location': {'constant': True},
-    }
 
     _attribute_map = {
         'reference': {'key': 'reference', 'type': 'str'},
@@ -355,9 +350,6 @@ class ApiKVReference(msrest.serialization.Model):
         'location': {'key': 'location', 'type': 'str'},
     }
 
-    source = "KeyVault"
-    location = "ApplicationSetting"
-
     def __init__(
         self,
         *,
@@ -368,6 +360,8 @@ class ApiKVReference(msrest.serialization.Model):
         secret_version: Optional[str] = None,
         identity_type: Optional[Union[str, "ManagedServiceIdentityType"]] = None,
         details: Optional[str] = None,
+        source: Optional[str] = None,
+        location: Optional[str] = None,
         **kwargs
     ):
         super(ApiKVReference, self).__init__(**kwargs)
@@ -378,6 +372,8 @@ class ApiKVReference(msrest.serialization.Model):
         self.secret_version = secret_version
         self.identity_type = identity_type
         self.details = details
+        self.source = source
+        self.location = location
 
 
 class ApiManagementConfig(msrest.serialization.Model):
@@ -8004,18 +8000,18 @@ class KeyVaultReferenceResource(ProxyOnlyResource):
     :type identity_type: str or ~azure.mgmt.web.v2019_08_01.models.ManagedServiceIdentityType
     :param details:
     :type details: str
-    :ivar source:  Default value: "KeyVault".
-    :vartype source: str
-    :ivar location:  Default value: "ApplicationSetting".
-    :vartype location: str
+    :param source:  The only acceptable values to pass in are None and "KeyVault". The default
+     value is None.
+    :type source: str
+    :param location:  The only acceptable values to pass in are None and "ApplicationSetting". The
+     default value is None.
+    :type location: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'source': {'constant': True},
-        'location': {'constant': True},
     }
 
     _attribute_map = {
@@ -8034,9 +8030,6 @@ class KeyVaultReferenceResource(ProxyOnlyResource):
         'location': {'key': 'properties.location', 'type': 'str'},
     }
 
-    source = "KeyVault"
-    location = "ApplicationSetting"
-
     def __init__(
         self,
         *,
@@ -8048,6 +8041,8 @@ class KeyVaultReferenceResource(ProxyOnlyResource):
         secret_version: Optional[str] = None,
         identity_type: Optional[Union[str, "ManagedServiceIdentityType"]] = None,
         details: Optional[str] = None,
+        source: Optional[str] = None,
+        location: Optional[str] = None,
         **kwargs
     ):
         super(KeyVaultReferenceResource, self).__init__(kind=kind, **kwargs)
@@ -8058,6 +8053,8 @@ class KeyVaultReferenceResource(ProxyOnlyResource):
         self.secret_version = secret_version
         self.identity_type = identity_type
         self.details = details
+        self.source = source
+        self.location = location
 
 
 class LocalizableString(msrest.serialization.Model):

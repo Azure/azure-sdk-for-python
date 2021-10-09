@@ -1,5 +1,35 @@
 # Release History
 
+## 19.0.0 (2021-09-14)
+
+**Features**
+
+  - Model BlobContainer has a new parameter enable_nfs_v3_root_squash
+  - Model BlobContainer has a new parameter enable_nfs_v3_all_squash
+  - Model UpdateHistoryProperty has a new parameter allow_protected_append_writes
+  - Model UpdateHistoryProperty has a new parameter allow_protected_append_writes_all
+  - Model StorageAccountUpdateParameters has a new parameter default_to_o_auth_authentication
+  - Model StorageAccountUpdateParameters has a new parameter public_network_access
+  - Model StorageAccountUpdateParameters has a new parameter immutable_storage_with_versioning
+  - Model ImmutabilityPolicy has a new parameter allow_protected_append_writes_all
+  - Model StorageAccountCreateParameters has a new parameter default_to_o_auth_authentication
+  - Model StorageAccountCreateParameters has a new parameter public_network_access
+  - Model StorageAccountCreateParameters has a new parameter immutable_storage_with_versioning
+  - Model ListContainerItem has a new parameter enable_nfs_v3_root_squash
+  - Model ListContainerItem has a new parameter enable_nfs_v3_all_squash
+  - Model LegalHoldProperties has a new parameter protected_append_writes_history
+  - Model ImmutabilityPolicyProperties has a new parameter allow_protected_append_writes_all
+  - Model StorageAccount has a new parameter default_to_o_auth_authentication
+  - Model StorageAccount has a new parameter public_network_access
+  - Model StorageAccount has a new parameter immutable_storage_with_versioning
+  - Model LegalHold has a new parameter allow_protected_append_writes_all
+  - Added operation StorageAccountsOperations.begin_abort_hierarchical_namespace_migration
+  - Added operation StorageAccountsOperations.begin_hierarchical_namespace_migration
+
+**Breaking changes**
+
+  - Model AccessPolicy has a new signature
+
 ## 18.0.0 (2021-05-13)
 
 **Features**

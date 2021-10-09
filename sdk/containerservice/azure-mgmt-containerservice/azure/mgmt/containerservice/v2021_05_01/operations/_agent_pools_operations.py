@@ -56,8 +56,7 @@ class AgentPoolsOperations(object):
         # type: (...) -> Iterable["_models.AgentPoolListResult"]
         """Gets a list of agent pools in the specified managed cluster.
 
-        Gets a list of agent pools in the specified managed cluster. The operation returns properties
-        of each agent pool.
+        Gets a list of agent pools in the specified managed cluster.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -133,9 +132,9 @@ class AgentPoolsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.AgentPool"
-        """Gets the agent pool.
+        """Gets the specified managed cluster agent pool.
 
-        Gets the details of the agent pool by managed cluster and resource group.
+        Gets the specified managed cluster agent pool.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -259,7 +258,7 @@ class AgentPoolsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller["_models.AgentPool"]
-        """Creates or updates an agent pool.
+        """Creates or updates an agent pool in the specified managed cluster.
 
         Creates or updates an agent pool in the specified managed cluster.
 
@@ -269,7 +268,7 @@ class AgentPoolsOperations(object):
         :type resource_name: str
         :param agent_pool_name: The name of the agent pool.
         :type agent_pool_name: str
-        :param parameters: Parameters supplied to the Create or Update an agent pool operation.
+        :param parameters: The agent pool to create or update.
         :type parameters: ~azure.mgmt.containerservice.v2021_05_01.models.AgentPool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -384,9 +383,9 @@ class AgentPoolsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
-        """Deletes an agent pool.
+        """Deletes an agent pool in the specified managed cluster.
 
-        Deletes the agent pool in the specified managed cluster.
+        Deletes an agent pool in the specified managed cluster.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -456,10 +455,9 @@ class AgentPoolsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.AgentPoolUpgradeProfile"
-        """Gets upgrade profile for an agent pool.
+        """Gets the upgrade profile for an agent pool.
 
-        Gets the details of the upgrade profile for an agent pool with a specified resource group and
-        managed cluster name.
+        Gets the upgrade profile for an agent pool.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -521,9 +519,11 @@ class AgentPoolsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.AgentPoolAvailableVersions"
-        """Gets a list of supported versions for the specified agent pool.
+        """Gets a list of supported Kubernetes versions for the specified agent pool.
 
-        Gets a list of supported versions for the specified agent pool.
+        See `supported Kubernetes versions
+        <https://docs.microsoft.com/azure/aks/supported-kubernetes-versions>`_ for more details about
+        the version lifecycle.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -635,9 +635,11 @@ class AgentPoolsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller["_models.AgentPool"]
-        """Upgrade node image version of an agent pool to the latest.
+        """Upgrades the node image version of an agent pool to the latest.
 
-        Upgrade node image version of an agent pool to the latest.
+        Upgrading the node image version of an agent pool applies the newest OS and runtime updates to
+        the nodes. AKS provides one new image per week with the latest updates. For more details on
+        node image versions, see: https://docs.microsoft.com/azure/aks/node-image-upgrade.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

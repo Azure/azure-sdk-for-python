@@ -5,11 +5,12 @@ import os
 import tempfile
 from enum import Enum
 from typing import List, Any
+from urllib.parse import urlparse
 
 from opentelemetry.sdk.trace.export import SpanExportResult
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
-from azure.core.pipeline.policies import ContentDecodePolicy, HttpLoggingPolicy, RequestIdPolicy
+from azure.core.pipeline.policies import ContentDecodePolicy, HttpLoggingPolicy, RedirectPolicy, RequestIdPolicy
 from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
 from azure.monitor.opentelemetry.exporter._generated._configuration import AzureMonitorClientConfiguration
 from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
@@ -43,6 +44,7 @@ class BaseExporter:
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         self._timeout = 10.0  # networking timeout in seconds
         self._api_version = kwargs.get('api_version') or _SERVICE_API_LATEST
+        self._consecutive_redirects = 0  # To prevent circular redirects
 
         temp_suffix = self._instrumentation_key or ""
         default_storage_path = os.path.join(
@@ -56,7 +58,8 @@ class BaseExporter:
             config.user_agent_policy,
             config.proxy_policy,
             ContentDecodePolicy(**kwargs),
-            config.redirect_policy,
+            # Handle redirects in exporter, set new endpoint if redirected
+            RedirectPolicy(permit_redirects=False),
             config.retry_policy,
             config.authentication_policy,
             config.custom_hook_policy,
@@ -100,6 +103,7 @@ class BaseExporter:
             try:
                 track_response = self.client.track(envelopes)
                 if not track_response.errors:
+                    self._consecutive_redirects = 0
                     logger.info("Transmission succeeded: Item received: %s. Items accepted: %s",
                                 track_response.items_received, track_response.items_accepted)
                     return ExportResult.SUCCESS
@@ -120,11 +124,33 @@ class BaseExporter:
                     envelopes_to_store = [x.as_dict()
                                           for x in resend_envelopes]
                     self.storage.put(envelopes_to_store)
+                    self._consecutive_redirects = 0
                     return ExportResult.FAILED_RETRYABLE
 
             except HttpResponseError as response_error:
                 if _is_retryable_code(response_error.status_code):
                     return ExportResult.FAILED_RETRYABLE
+                if _is_redirect_code(response_error.status_code):
+                    self._consecutive_redirects = self._consecutive_redirects + 1
+                    if self._consecutive_redirects < self.client._config.redirect_policy.max_redirects:  # pylint: disable=W0212
+                        if response_error.response and response_error.response.headers:
+                            location = response_error.response.headers.get("location")
+                            if location:
+                                url = urlparse(location)
+                                if url.scheme and url.netloc:
+                                    # Change the host to the new redirected host
+                                    self.client._config.host = "{}://{}".format(url.scheme, url.netloc)  # pylint: disable=W0212
+                                    # Attempt to export again
+                                    return self._transmit(envelopes)
+                        logger.error(
+                            "Error parsing redirect information."
+                        )
+                        return ExportResult.FAILED_NOT_RETRYABLE
+                    logger.error(
+                        "Error sending telemetry because of circular redirects." \
+                        "Please check the integrity of your connection string."
+                    )
+                    return ExportResult.FAILED_NOT_RETRYABLE
                 return ExportResult.FAILED_NOT_RETRYABLE
             except ServiceRequestError as request_error:
                 # Errors when we're fairly sure that the server did not receive the
@@ -140,7 +166,18 @@ class BaseExporter:
                 return ExportResult.FAILED_NOT_RETRYABLE
             return ExportResult.FAILED_NOT_RETRYABLE
         # No spans to export
+        self._consecutive_redirects = 0
         return ExportResult.SUCCESS
+
+
+def _is_redirect_code(response_code: int) -> bool:
+    """
+    Determine if response is a redirect response.
+    """
+    return bool(response_code in(
+        307,  # Temporary redirect
+        308,  # Permanent redirect
+    ))
 
 
 def _is_retryable_code(response_code: int) -> bool:

@@ -46,7 +46,7 @@ class ServiceTasksOperations:
         group_name: str,
         service_name: str,
         task_type: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TaskList"]:
         """Get service level tasks for a service.
 
@@ -71,7 +71,7 @@ class ServiceTasksOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -132,7 +132,7 @@ class ServiceTasksOperations:
         service_name: str,
         task_name: str,
         parameters: "_models.ProjectTask",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProjectTask":
         """Create or update service task.
 
@@ -159,7 +159,7 @@ class ServiceTasksOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -212,7 +212,7 @@ class ServiceTasksOperations:
         service_name: str,
         task_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProjectTask":
         """Get service task information.
 
@@ -237,7 +237,7 @@ class ServiceTasksOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         accept = "application/json"
 
         # Construct URL
@@ -283,7 +283,7 @@ class ServiceTasksOperations:
         service_name: str,
         task_name: str,
         delete_running_tasks: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete service task.
 
@@ -308,7 +308,7 @@ class ServiceTasksOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         accept = "application/json"
 
         # Construct URL
@@ -351,7 +351,7 @@ class ServiceTasksOperations:
         service_name: str,
         task_name: str,
         parameters: "_models.ProjectTask",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProjectTask":
         """Create or update service task.
 
@@ -377,7 +377,7 @@ class ServiceTasksOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -425,7 +425,7 @@ class ServiceTasksOperations:
         group_name: str,
         service_name: str,
         task_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProjectTask":
         """Cancel a service task.
 
@@ -448,7 +448,7 @@ class ServiceTasksOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         accept = "application/json"
 
         # Construct URL

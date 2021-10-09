@@ -1,12 +1,17 @@
 # Release History
 
-## 4.5.0 (Unreleased)
+## 4.6.0 (2021-10-05)
 
 ### Features Added
 
-- `EventGridEvent`'s `from_dict` method now accepts objects from servicebus, eventhubs and storage directly.
-- Added a `from_json` method which now accepts storage QueueMessage, eventhub's EventData or ServiceBusMessage or simply json bytes to return an `EventGridEvent`
+- Added new enum values to `SystemEvents`.
 
+## 4.5.0 (2021-08-10)
+
+### Features Added
+
+- Added a new enum value `Microsoft.ContainerService.NewKubernetesVersionAvailable` to `SystemEvents`.
+- Added a `from_json` method which now accepts storage QueueMessage, eventhub's EventData or ServiceBusMessage or simply json bytes to return an `EventGridEvent`
 
 ## 4.4.0 (2021-07-19)
 

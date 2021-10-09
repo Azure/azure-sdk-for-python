@@ -10,9 +10,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/languages?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/languages?showStats=false
   response:
     body:
       string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
@@ -20,9 +20,9 @@ interactions:
         hint is not valid. Please specify an ISO 3166-1 alpha-2 two letter country
         code."}}}],"modelVersion":"2021-01-05"}'
     headers:
-      apim-request-id: a9932831-fa9d-46bc-9046-e1e41ea2ffa9
+      apim-request-id: b10b5969-dd79-458a-8d1f-545b2f4201ba
       content-type: application/json; charset=utf-8
-      date: Wed, 23 Jun 2021 01:53:41 GMT
+      date: Mon, 02 Aug 2021 20:42:43 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -30,5 +30,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com//text/analytics/v3.1/languages?showStats=false
+    url: https://tacanaryjava.cognitiveservices.azure.com//text/analytics/v3.2-preview.1/languages?showStats=false
 version: 1

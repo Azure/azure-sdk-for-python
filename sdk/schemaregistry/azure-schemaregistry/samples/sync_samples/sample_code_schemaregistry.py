@@ -25,73 +25,71 @@
 # --------------------------------------------------------------------------
 import os
 
-from azure.schemaregistry import SchemaRegistryClient, SerializationType
+from azure.schemaregistry import SchemaRegistryClient, SchemaFormat
 from azure.identity import ClientSecretCredential, DefaultAzureCredential
 
 
 def create_client():
     # [START create_sr_client_sync]
-    SCHEMA_REGISTRY_ENDPOINT = os.environ['SCHEMA_REGISTRY_ENDPOINT']
+    SCHEMAREGISTRY_FQN = os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
     token_credential = DefaultAzureCredential()
-    schema_registry_client = SchemaRegistryClient(endpoint=SCHEMA_REGISTRY_ENDPOINT, credential=token_credential)
+    schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=SCHEMAREGISTRY_FQN, credential=token_credential)
     # [END create_sr_client_sync]
-    TENANT_ID = os.environ['SCHEMA_REGISTRY_AZURE_TENANT_ID']
-    CLIENT_ID = os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_ID']
-    CLIENT_SECRET = os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_SECRET']
+    TENANT_ID = os.environ['AZURE_TENANT_ID']
+    CLIENT_ID = os.environ['AZURE_CLIENT_ID']
+    CLIENT_SECRET = os.environ['AZURE_CLIENT_SECRET']
     token_credential = ClientSecretCredential(TENANT_ID, CLIENT_ID, CLIENT_SECRET)
-    schema_registry_client = SchemaRegistryClient(endpoint=SCHEMA_REGISTRY_ENDPOINT, credential=token_credential)
+    schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=SCHEMAREGISTRY_FQN, credential=token_credential)
     return schema_registry_client
 
 
-def register_scehma(schema_registry_client):
+def register_schema(schema_registry_client):
     # [START register_schema_sync]
-    SCHEMA_GROUP = os.environ['SCHEMA_REGISTRY_GROUP']
-    SCHEMA_NAME = 'your-schema-name'
-    SERIALIZATION_TYPE = SerializationType.AVRO
-    SCHEMA_CONTENT = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
-    schema_properties = schema_registry_client.register_schema(SCHEMA_GROUP, SCHEMA_NAME, SERIALIZATION_TYPE, SCHEMA_CONTENT)
-    schem_id = schema_properties.schema_id
+    GROUP_NAME = os.environ['SCHEMAREGISTRY_GROUP']
+    NAME = 'your-schema-name'
+    FORMAT = SchemaFormat.AVRO
+    SCHEMA_DEFINITION = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
+    schema_properties = schema_registry_client.register_schema(GROUP_NAME, NAME, SCHEMA_DEFINITION, FORMAT)
+    schema_id = schema_properties.id
     # [END register_schema_sync]
 
     # [START print_schema_properties]
-    print(schema_properties.schema_id)
-    print(schema_properties.location)
-    print(schema_properties.location_by_id)
-    print(schema_properties.serialization_type)
+    print(schema_properties.id)
+    print(schema_properties.format)
     print(schema_properties.version)
     # [END print_schema_properties]
 
-    return schem_id
+    return schema_id
 
 
-def get_schema(schema_registry_client, schema_id):
+def get_schema(schema_registry_client, id):
     # [START get_schema_sync]
-    schema = schema_registry_client.get_schema(schema_id)
-    schema_content = schema.schema_content
+    schema = schema_registry_client.get_schema(id)
+    schema_definition = schema.schema_definition
     # [END get_schema_sync]
 
     # [START print_schema]
-    print(schema.schema_content)
-    print(schema.schema_properties)
+    print(schema.schema_definition)
+    print(schema.properties)
     # [END print_schema]
     return schema
 
 
 def get_schema_id(schema_registry_client):
-    schema_group = os.environ['SCHEMA_REGISTRY_GROUP']
-    schema_name = 'your-schema-name'
-    serialization_type = SerializationType.AVRO
-    schema_content = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
+    group_name = os.environ['SCHEMAREGISTRY_GROUP']
+    name = 'your-schema-name'
+    format = SchemaFormat.AVRO
+    schema_definition = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
     # [START get_schema_id_sync]
-    schema_properties = schema_registry_client.get_schema_id(schema_group, schema_name, serialization_type, schema_content)
-    schem_id = schema_properties.schema_id
+    schema_properties = schema_registry_client.get_schema_properties(group_name, name, schema_definition, format)
+    schema_id = schema_properties.id
     # [END get_schema_id_sync]
-    return schem_id
+    return schema_id
 
 
 if __name__ == '__main__':
     client = create_client()
     with client:
-        id = register_scehma(client)
+        id = register_schema(client)
         schema = get_schema(client, id)
         id = get_schema_id(client)

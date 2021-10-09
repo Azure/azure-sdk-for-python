@@ -221,7 +221,7 @@ class PhoneNumbersClientTest(CommunicationTestCase):
         if self.is_playback():
             phone_number = "sanitized"
         else:
-            phone_number = "+14255550123"
+            phone_number = "+14255555111"
 
         with pytest.raises(Exception) as ex:
             self.phone_number_client.begin_update_phone_number_capabilities(

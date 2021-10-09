@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/layout/analyze?readingOrder=basic
   response:
@@ -17,10 +17,10 @@ interactions:
       string: '{"error": {"code": "FailedToDownloadImage", "message": "Failed to download
         image from input URL."}}'
     headers:
-      apim-request-id: 5b001d06-9118-4f76-bb7c-7d22337cc0f7
+      apim-request-id: 6ef59c48-b4cd-4fe7-8bbc-ad0b933c1512
       content-length: '95'
       content-type: application/json; charset=utf-8
-      date: Tue, 11 May 2021 00:40:00 GMT
+      date: Thu, 23 Sep 2021 22:40:03 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
       x-envoy-upstream-service-time: '4'

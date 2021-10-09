@@ -7,6 +7,7 @@
 from typing import Any
 import six
 
+
 class MetricsAdvisorKeyCredential(object):
     """Credential type used for authenticating to an Azure Metrics Advisor service.
 
@@ -17,7 +18,10 @@ class MetricsAdvisorKeyCredential(object):
 
     def __init__(self, subscription_key, api_key):
         # type: (str, str) -> None
-        if not (isinstance(subscription_key, six.string_types) and isinstance(api_key, six.string_types)):
+        if not (
+            isinstance(subscription_key, six.string_types)
+            and isinstance(api_key, six.string_types)
+        ):
             raise TypeError("key must be a string.")
         self._subscription_key = subscription_key  # type: str
         self._api_key = api_key  # type: str
@@ -54,10 +58,14 @@ class MetricsAdvisorKeyCredential(object):
         subscription_key = kwargs.pop("subscription_key", None)
         api_key = kwargs.pop("api_key", None)
         if len(kwargs) > 0:
-            raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
+            raise TypeError(
+                "Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0])
+            )
         if subscription_key:
             if not isinstance(subscription_key, six.string_types):
-                raise TypeError("The subscription_key used for updating must be a string.")
+                raise TypeError(
+                    "The subscription_key used for updating must be a string."
+                )
             self._subscription_key = subscription_key
         if api_key:
             if not isinstance(api_key, six.string_types):

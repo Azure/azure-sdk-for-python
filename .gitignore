@@ -114,3 +114,6 @@ sdk/cosmos/azure-cosmos/test/test_config.py
 
 # env vars
 .env
+
+# local SSL certificate folder
+.certificate

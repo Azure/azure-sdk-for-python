@@ -89,6 +89,9 @@ IGNORED_SAMPLES = {
         "iot_hub_connection_string_receive_async.py",
         "proxy_async.py"
     ],
+    "azure-eventhub-checkpointstoretable":[
+        "receive_events_using_checkpoint_store.py"
+    ],
     "azure-servicebus": [
         "mgmt_queue.py",
         "mgmt_rule.py",
@@ -120,6 +123,15 @@ IGNORED_SAMPLES = {
         "sample_list_translations_with_filters_async.py",
         "sample_list_document_statuses_with_filters.py",
         "sample_list_translations_with_filters.py",
+        "sample_translation_with_custom_model.py",
+        "sample_translation_with_custom_model_async.py",
+    ],
+    "azure-ai-formrecognizer": [
+        "sample_manage_custom_models.py",
+        "sample_manage_custom_models_async.py",
+    ],
+    "azure-ai-language-questionanswering": [
+        "sample_chat.py"
     ]
 }
 

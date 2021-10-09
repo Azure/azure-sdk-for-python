@@ -43,7 +43,7 @@ class SecurityContactsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SecurityContactList"]:
         """Security contact configurations for the subscription.
 
@@ -110,7 +110,7 @@ class SecurityContactsOperations:
     async def get(
         self,
         security_contact_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SecurityContact":
         """Security contact configurations for the subscription.
 
@@ -165,7 +165,7 @@ class SecurityContactsOperations:
         self,
         security_contact_name: str,
         security_contact: "_models.SecurityContact",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SecurityContact":
         """Security contact configurations for the subscription.
 
@@ -226,7 +226,7 @@ class SecurityContactsOperations:
     async def delete(
         self,
         security_contact_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Security contact configurations for the subscription.
 
@@ -278,7 +278,7 @@ class SecurityContactsOperations:
         self,
         security_contact_name: str,
         security_contact: "_models.SecurityContact",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SecurityContact":
         """Security contact configurations for the subscription.
 

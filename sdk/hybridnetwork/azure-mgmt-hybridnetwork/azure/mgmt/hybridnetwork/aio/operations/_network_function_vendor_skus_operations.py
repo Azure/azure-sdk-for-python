@@ -44,7 +44,7 @@ class NetworkFunctionVendorSkusOperations:
     def list_by_vendor(
         self,
         vendor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NetworkFunctionSkuListResult"]:
         """Lists all network function vendor sku details in a vendor.
 
@@ -60,7 +60,7 @@ class NetworkFunctionVendorSkusOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01-preview"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -116,7 +116,7 @@ class NetworkFunctionVendorSkusOperations:
         self,
         vendor_name: str,
         vendor_sku_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NetworkFunctionSkuDetails"]:
         """Lists information about network function vendor sku details.
 
@@ -134,7 +134,7 @@ class NetworkFunctionVendorSkusOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01-preview"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):

@@ -45,7 +45,7 @@ class PipelineRunsOperations:
         resource_group_name: str,
         factory_name: str,
         filter_parameters: "_models.RunFilterParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PipelineRunsQueryResponse":
         """Query pipeline runs in the factory based on input filter conditions.
 
@@ -111,7 +111,7 @@ class PipelineRunsOperations:
         resource_group_name: str,
         factory_name: str,
         run_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PipelineRun":
         """Get a pipeline run by its run ID.
 
@@ -174,7 +174,7 @@ class PipelineRunsOperations:
         factory_name: str,
         run_id: str,
         is_recursive: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Cancel a pipeline run by its run ID.
 

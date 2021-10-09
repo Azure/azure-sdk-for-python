@@ -25,7 +25,7 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url: str,
         azure_storage_blob_container_uri: Optional["_models.SASTokenParameter"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.FullBackupOperation"]:
         """Creates a full backup using a user-provided SAS token to an Azure blob storage container.
 
@@ -48,6 +48,8 @@ class KeyVaultClientOperationsMixin(object):
         api_version = self._get_api_version('begin_full_backup')
         if api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_full_backup'".format(api_version))
         mixin_instance = OperationClass()
@@ -62,7 +64,7 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url: str,
         restore_blob_details: Optional["_models.RestoreOperationParameters"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.RestoreOperation"]:
         """Restores all key materials using the SAS token pointing to a previously stored Azure Blob
         storage backup folder.
@@ -85,6 +87,8 @@ class KeyVaultClientOperationsMixin(object):
         api_version = self._get_api_version('begin_full_restore_operation')
         if api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_full_restore_operation'".format(api_version))
         mixin_instance = OperationClass()
@@ -100,7 +104,7 @@ class KeyVaultClientOperationsMixin(object):
         vault_base_url: str,
         key_name: str,
         restore_blob_details: Optional["_models.SelectiveKeyRestoreOperationParameters"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.SelectiveKeyRestoreOperation"]:
         """Restores all key versions of a given key using user supplied SAS token pointing to a previously
         stored Azure Blob storage backup folder.
@@ -125,6 +129,8 @@ class KeyVaultClientOperationsMixin(object):
         api_version = self._get_api_version('begin_selective_key_restore_operation')
         if api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_selective_key_restore_operation'".format(api_version))
         mixin_instance = OperationClass()
@@ -139,7 +145,7 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url: str,
         job_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FullBackupOperation":
         """Returns the status of full backup operation.
 
@@ -155,6 +161,8 @@ class KeyVaultClientOperationsMixin(object):
         api_version = self._get_api_version('full_backup_status')
         if api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'full_backup_status'".format(api_version))
         mixin_instance = OperationClass()
@@ -169,7 +177,7 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url: str,
         job_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RestoreOperation":
         """Returns the status of restore operation.
 
@@ -185,6 +193,8 @@ class KeyVaultClientOperationsMixin(object):
         api_version = self._get_api_version('restore_status')
         if api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'restore_status'".format(api_version))
         mixin_instance = OperationClass()

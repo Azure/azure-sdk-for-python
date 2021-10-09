@@ -53,26 +53,26 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'License :: OSI Approved :: MIT License',
     ],
     packages=find_packages(exclude=[
         'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
-        # This means any folder structure that only consists of a __init__.py. 
-        # For example, for storage, this would mean adding 'azure.storage' 
+        # This means any folder structure that only consists of a __init__.py.
+        # For example, for storage, this would mean adding 'azure.storage'
         # in addition to the default 'azure' that is seen here.
         'azure',
         'azure.ai',
         'azure.ai.language',
     ]),
     install_requires=[
-        'azure-core<2.0.0,>=1.16.0',
+        'azure-core<2.0.0,>=1.19.0',
         'msrest>=0.6.21',
-        'chardet>=3.0.2,<5'
     ],
     extras_require={
         ":python_version<'3.0'": ['futures', 'azure-ai-language-nspkg'],
-        ":python_version<'3.5'": ["typing"]
+        ":python_version<'3.5'": ["typing"],
     },
     project_urls={
         'Bug Reports': 'https://github.com/Azure/azure-sdk-for-python/issues',

@@ -25,7 +25,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         azure_storage_blob_container_uri: Optional["_models.SASTokenParameter"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FullBackupOperation":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FullBackupOperation"]
         error_map = {
@@ -82,7 +82,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         azure_storage_blob_container_uri: Optional["_models.SASTokenParameter"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.FullBackupOperation"]:
         """Creates a full backup using a user-provided SAS token to an Azure blob storage container.
 
@@ -153,7 +153,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         job_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FullBackupOperation":
         """Returns the status of full backup operation.
 
@@ -211,7 +211,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         restore_blob_details: Optional["_models.RestoreOperationParameters"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RestoreOperation":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RestoreOperation"]
         error_map = {
@@ -268,7 +268,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         restore_blob_details: Optional["_models.RestoreOperationParameters"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.RestoreOperation"]:
         """Restores all key materials using the SAS token pointing to a previously stored Azure Blob
         storage backup folder.
@@ -339,7 +339,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         job_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RestoreOperation":
         """Returns the status of restore operation.
 
@@ -398,7 +398,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         key_name: str,
         restore_blob_details: Optional["_models.SelectiveKeyRestoreOperationParameters"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SelectiveKeyRestoreOperation":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SelectiveKeyRestoreOperation"]
         error_map = {
@@ -457,7 +457,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         key_name: str,
         restore_blob_details: Optional["_models.SelectiveKeyRestoreOperationParameters"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.SelectiveKeyRestoreOperation"]:
         """Restores all key versions of a given key using user supplied SAS token pointing to a previously
         stored Azure Blob storage backup folder.

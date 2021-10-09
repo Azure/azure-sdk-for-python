@@ -16,13 +16,20 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._configuration import HealthcareApisManagementClientConfiguration
 from .operations import ServicesOperations
-from .operations import Operations
-from .operations import OperationResultsOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
+from .operations import WorkspacesOperations
+from .operations import DicomServicesOperations
+from .operations import IotConnectorsOperations
+from .operations import FhirDestinationsOperations
+from .operations import IotConnectorFhirDestinationOperations
+from .operations import FhirServicesOperations
+from .operations import Operations
+from .operations import OperationResultsOperations
 from . import models
 
 
@@ -31,14 +38,26 @@ class HealthcareApisManagementClient(object):
 
     :ivar services: ServicesOperations operations
     :vartype services: azure.mgmt.healthcareapis.operations.ServicesOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.healthcareapis.operations.Operations
-    :ivar operation_results: OperationResultsOperations operations
-    :vartype operation_results: azure.mgmt.healthcareapis.operations.OperationResultsOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections: azure.mgmt.healthcareapis.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources: azure.mgmt.healthcareapis.operations.PrivateLinkResourcesOperations
+    :ivar workspaces: WorkspacesOperations operations
+    :vartype workspaces: azure.mgmt.healthcareapis.operations.WorkspacesOperations
+    :ivar dicom_services: DicomServicesOperations operations
+    :vartype dicom_services: azure.mgmt.healthcareapis.operations.DicomServicesOperations
+    :ivar iot_connectors: IotConnectorsOperations operations
+    :vartype iot_connectors: azure.mgmt.healthcareapis.operations.IotConnectorsOperations
+    :ivar fhir_destinations: FhirDestinationsOperations operations
+    :vartype fhir_destinations: azure.mgmt.healthcareapis.operations.FhirDestinationsOperations
+    :ivar iot_connector_fhir_destination: IotConnectorFhirDestinationOperations operations
+    :vartype iot_connector_fhir_destination: azure.mgmt.healthcareapis.operations.IotConnectorFhirDestinationOperations
+    :ivar fhir_services: FhirServicesOperations operations
+    :vartype fhir_services: azure.mgmt.healthcareapis.operations.FhirServicesOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.healthcareapis.operations.Operations
+    :ivar operation_results: OperationResultsOperations operations
+    :vartype operation_results: azure.mgmt.healthcareapis.operations.OperationResultsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The subscription identifier.
@@ -67,14 +86,44 @@ class HealthcareApisManagementClient(object):
 
         self.services = ServicesOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.operation_results = OperationResultsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.workspaces = WorkspacesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.dicom_services = DicomServicesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.iot_connectors = IotConnectorsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.fhir_destinations = FhirDestinationsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.iot_connector_fhir_destination = IotConnectorFhirDestinationOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.fhir_services = FhirServicesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.operation_results = OperationResultsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+
+    def _send_request(self, http_request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     def close(self):
         # type: () -> None

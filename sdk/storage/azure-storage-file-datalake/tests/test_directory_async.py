@@ -21,6 +21,7 @@ from azure.storage.filedatalake import ContentSettings, DirectorySasPermissions,
 from azure.storage.filedatalake import generate_directory_sas
 from azure.storage.filedatalake.aio import DataLakeServiceClient, DataLakeDirectoryClient
 from azure.storage.filedatalake import AccessControlChangeResult, AccessControlChangeCounters
+from azure.storage.filedatalake._serialize import _SUPPORTED_API_VERSIONS
 
 from asynctestcase import (
     StorageTestCase,
@@ -1086,6 +1087,29 @@ class DirectoryTest(StorageTestCase):
         response = await directory_client.create_directory()
         self.assertIsNotNone(response)
 
+    @DataLakePreparer()
+    def test_using_directory_sas_to_create_file(self, datalake_storage_account_name, datalake_storage_account_key):
+        newest_api_version = _SUPPORTED_API_VERSIONS[-1]
+
+        service_client = DataLakeServiceClient("https://abc.dfs.core.windows.net", credential='fake')
+        filesys_client = service_client.get_file_system_client("filesys")
+        dir_client = DataLakeDirectoryClient("https://abc.dfs.core.windows.net", "filesys", "dir", credential='fake')
+        file_client = dir_client.get_file_client("file")
+        self.assertEqual(service_client.api_version, newest_api_version)
+        self.assertEqual(filesys_client.api_version, newest_api_version)
+        self.assertEqual(dir_client.api_version, newest_api_version)
+        self.assertEqual(file_client.api_version, newest_api_version)
+
+        service_client2 = DataLakeServiceClient("https://abc.dfs.core.windows.net", credential='fake',
+                                                api_version="2019-02-02")
+        filesys_client2 = service_client2.get_file_system_client("filesys")
+        dir_client2 = DataLakeDirectoryClient("https://abc.dfs.core.windows.net", "filesys", "dir", credential='fake',
+                                              api_version="2019-02-02")
+        file_client2 = dir_client2.get_file_client("file")
+        self.assertEqual(service_client2.api_version, "2019-02-02")
+        self.assertEqual(filesys_client2.api_version, "2019-02-02")
+        self.assertEqual(dir_client2.api_version, "2019-02-02")
+        self.assertEqual(file_client2.api_version, "2019-02-02")
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

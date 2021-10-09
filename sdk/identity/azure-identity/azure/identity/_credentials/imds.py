@@ -56,6 +56,16 @@ class ImdsCredential(GetTokenMixin):
         self._error_message = None  # type: Optional[str]
         self._user_assigned_identity = "client_id" in kwargs or "identity_config" in kwargs
 
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._client.__exit__(*args)
+
+    def close(self):
+        self.__exit__()
+
     def _acquire_token_silently(self, *scopes, **kwargs):
         # type: (*str, **Any) -> Optional[AccessToken]
         return self._client.get_cached_token(*scopes)

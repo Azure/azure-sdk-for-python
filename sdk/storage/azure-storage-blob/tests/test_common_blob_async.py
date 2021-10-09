@@ -1497,7 +1497,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         copyblob = self.bsc.get_blob_client(container_name, 'blob1copy')
 
         immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
-                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
 
         copy = await copyblob.start_copy_from_url(sourceblob, immutability_policy=immutability_policy,
                                                   legal_hold=True,
@@ -1517,7 +1517,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             await copyblob.delete_immutability_policy()
             await copyblob.set_legal_hold(False)
             await copyblob.delete_blob()
-            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
+            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, container_name)
 
     # @GlobalStorageAccountPreparer()
     # @AsyncStorageTestCase.await_prepared_test
@@ -2594,7 +2594,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         await blob.upload_blob(b"abc", overwrite=True)
 
         immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
-                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         resp = await blob.set_immutability_policy(
             immutability_policy=immutability_policy)
 
@@ -2617,7 +2617,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             await blob.delete_immutability_policy()
             await blob.set_legal_hold(False)
             await blob.delete_blob()
-            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
+            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, container_name)
 
     @GlobalResourceGroupPreparer()
     @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", random_name_enabled=True)
@@ -2656,7 +2656,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             await blob.delete_immutability_policy()
             await blob.set_legal_hold(False)
             await blob.delete_blob()
-            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
+            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, container_name)
 
     @GlobalResourceGroupPreparer()
     @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", random_name_enabled=True)
@@ -2677,7 +2677,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         content = b"abcedfg"
 
         immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
-                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         await blob.upload_blob(content,
                                immutability_policy=immutability_policy,
                                legal_hold=True,
@@ -2700,7 +2700,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             await blob.delete_immutability_policy()
             await blob.set_legal_hold(False)
             await blob.delete_blob()
-            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
+            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, container_name)
 
     @GlobalResourceGroupPreparer()
     @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", random_name_enabled=True)
@@ -2722,7 +2722,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         content = b"abcedfg"
 
         immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
-                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         await blob.upload_blob(content,
                                immutability_policy=immutability_policy,
                                legal_hold=True,
@@ -2740,6 +2740,6 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             await blob.delete_immutability_policy()
             await blob.set_legal_hold(False)
             await blob.delete_blob()
-            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
+            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, container_name)
 
 # ------------------------------------------------------------------------------

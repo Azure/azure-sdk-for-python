@@ -1446,7 +1446,7 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
         blob = bsc.get_blob_client(container_name, blob_name)
 
         immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
-                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         await blob.create_append_blob(immutability_policy=immutability_policy,
                                       legal_hold=True)
 
@@ -1463,6 +1463,6 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
             await blob.delete_immutability_policy()
             await blob.set_legal_hold(False)
             await blob.delete_blob()
-            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
+            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, container_name)
 
 # ------------------------------------------------------------------------------
