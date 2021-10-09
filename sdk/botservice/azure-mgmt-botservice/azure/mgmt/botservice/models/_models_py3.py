@@ -319,8 +319,15 @@ class BotProperties(msrest.serialization.Model):
     :type endpoint: str
     :ivar endpoint_version: The bot's endpoint version.
     :vartype endpoint_version: str
+    :param msa_app_type: Microsoft App Type for the bot. Possible values include:
+     "UserAssignedMSI", "SingleTenant", "MultiTenant".
+    :type msa_app_type: str or ~azure.mgmt.botservice.models.MsaAppType
     :param msa_app_id: Required. Microsoft App Id for the bot.
     :type msa_app_id: str
+    :param msa_app_tenant_id: Microsoft App Tenant Id for the bot.
+    :type msa_app_tenant_id: str
+    :param msa_app_msi_resource_id: Microsoft App Managed Identity Resource Id for the bot.
+    :type msa_app_msi_resource_id: str
     :ivar configured_channels: Collection of channels for which the bot is configured.
     :vartype configured_channels: list[str]
     :ivar enabled_channels: Collection of channels for which the bot is enabled.
@@ -341,8 +348,21 @@ class BotProperties(msrest.serialization.Model):
     :type cmek_key_vault_url: str
     :param is_isolated: Whether the bot is in an isolated network.
     :type is_isolated: bool
+    :param disable_local_auth: Opt-out of local authentication and ensure only MSI and AAD can be
+     used exclusively for authentication.
+    :type disable_local_auth: bool
     :param schema_transformation_version: The channel schema transformation version for the bot.
     :type schema_transformation_version: str
+    :ivar private_endpoint_connections: List of Private Endpoint Connections configured for the
+     bot.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.botservice.models.PrivateEndpointConnection]
+    :param open_with_hint: The hint to browser (e.g. protocol handler) on how to open the bot for
+     authoring.
+    :type open_with_hint: str
+    :param app_password_hint: The hint (e.g. keyVault secret resourceId) on how to fetch the app
+     secret.
+    :type app_password_hint: str
     """
 
     _validation = {
@@ -352,6 +372,7 @@ class BotProperties(msrest.serialization.Model):
         'msa_app_id': {'required': True},
         'configured_channels': {'readonly': True},
         'enabled_channels': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -360,7 +381,10 @@ class BotProperties(msrest.serialization.Model):
         'icon_url': {'key': 'iconUrl', 'type': 'str'},
         'endpoint': {'key': 'endpoint', 'type': 'str'},
         'endpoint_version': {'key': 'endpointVersion', 'type': 'str'},
+        'msa_app_type': {'key': 'msaAppType', 'type': 'str'},
         'msa_app_id': {'key': 'msaAppId', 'type': 'str'},
+        'msa_app_tenant_id': {'key': 'msaAppTenantId', 'type': 'str'},
+        'msa_app_msi_resource_id': {'key': 'msaAppMSIResourceId', 'type': 'str'},
         'configured_channels': {'key': 'configuredChannels', 'type': '[str]'},
         'enabled_channels': {'key': 'enabledChannels', 'type': '[str]'},
         'developer_app_insight_key': {'key': 'developerAppInsightKey', 'type': 'str'},
@@ -371,7 +395,11 @@ class BotProperties(msrest.serialization.Model):
         'is_cmek_enabled': {'key': 'isCmekEnabled', 'type': 'bool'},
         'cmek_key_vault_url': {'key': 'cmekKeyVaultUrl', 'type': 'str'},
         'is_isolated': {'key': 'isIsolated', 'type': 'bool'},
+        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
         'schema_transformation_version': {'key': 'schemaTransformationVersion', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        'open_with_hint': {'key': 'openWithHint', 'type': 'str'},
+        'app_password_hint': {'key': 'appPasswordHint', 'type': 'str'},
     }
 
     def __init__(
@@ -382,6 +410,9 @@ class BotProperties(msrest.serialization.Model):
         msa_app_id: str,
         description: Optional[str] = None,
         icon_url: Optional[str] = None,
+        msa_app_type: Optional[Union[str, "MsaAppType"]] = None,
+        msa_app_tenant_id: Optional[str] = None,
+        msa_app_msi_resource_id: Optional[str] = None,
         developer_app_insight_key: Optional[str] = None,
         developer_app_insights_api_key: Optional[str] = None,
         developer_app_insights_application_id: Optional[str] = None,
@@ -390,7 +421,10 @@ class BotProperties(msrest.serialization.Model):
         is_cmek_enabled: Optional[bool] = None,
         cmek_key_vault_url: Optional[str] = None,
         is_isolated: Optional[bool] = None,
+        disable_local_auth: Optional[bool] = None,
         schema_transformation_version: Optional[str] = None,
+        open_with_hint: Optional[str] = None,
+        app_password_hint: Optional[str] = None,
         **kwargs
     ):
         super(BotProperties, self).__init__(**kwargs)
@@ -399,7 +433,10 @@ class BotProperties(msrest.serialization.Model):
         self.icon_url = icon_url
         self.endpoint = endpoint
         self.endpoint_version = None
+        self.msa_app_type = msa_app_type
         self.msa_app_id = msa_app_id
+        self.msa_app_tenant_id = msa_app_tenant_id
+        self.msa_app_msi_resource_id = msa_app_msi_resource_id
         self.configured_channels = None
         self.enabled_channels = None
         self.developer_app_insight_key = developer_app_insight_key
@@ -410,7 +447,11 @@ class BotProperties(msrest.serialization.Model):
         self.is_cmek_enabled = is_cmek_enabled
         self.cmek_key_vault_url = cmek_key_vault_url
         self.is_isolated = is_isolated
+        self.disable_local_auth = disable_local_auth
         self.schema_transformation_version = schema_transformation_version
+        self.private_endpoint_connections = None
+        self.open_with_hint = open_with_hint
+        self.app_password_hint = app_password_hint
 
 
 class BotResponseList(msrest.serialization.Model):
@@ -891,9 +932,12 @@ class DirectLineSpeechChannelProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param cognitive_services_subscription_id: Required. The cognitive service subscription ID to
+    :param cognitive_service_region: Required. The cognitive service region with this channel
+     registration.
+    :type cognitive_service_region: str
+    :param cognitive_service_subscription_key: Required. The cognitive service subscription key to
      use with this channel registration.
-    :type cognitive_services_subscription_id: str
+    :type cognitive_service_subscription_key: str
     :param is_enabled: Whether this channel is enabled or not.
     :type is_enabled: bool
     :param custom_voice_deployment_id: Custom speech model id (optional).
@@ -906,11 +950,13 @@ class DirectLineSpeechChannelProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'cognitive_services_subscription_id': {'required': True},
+        'cognitive_service_region': {'required': True},
+        'cognitive_service_subscription_key': {'required': True},
     }
 
     _attribute_map = {
-        'cognitive_services_subscription_id': {'key': 'cognitiveServicesSubscriptionId', 'type': 'str'},
+        'cognitive_service_region': {'key': 'cognitiveServiceRegion', 'type': 'str'},
+        'cognitive_service_subscription_key': {'key': 'cognitiveServiceSubscriptionKey', 'type': 'str'},
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
         'custom_voice_deployment_id': {'key': 'customVoiceDeploymentId', 'type': 'str'},
         'custom_speech_model_id': {'key': 'customSpeechModelId', 'type': 'str'},
@@ -920,7 +966,8 @@ class DirectLineSpeechChannelProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        cognitive_services_subscription_id: str,
+        cognitive_service_region: str,
+        cognitive_service_subscription_key: str,
         is_enabled: Optional[bool] = None,
         custom_voice_deployment_id: Optional[str] = None,
         custom_speech_model_id: Optional[str] = None,
@@ -928,7 +975,8 @@ class DirectLineSpeechChannelProperties(msrest.serialization.Model):
         **kwargs
     ):
         super(DirectLineSpeechChannelProperties, self).__init__(**kwargs)
-        self.cognitive_services_subscription_id = cognitive_services_subscription_id
+        self.cognitive_service_region = cognitive_service_region
+        self.cognitive_service_subscription_key = cognitive_service_subscription_key
         self.is_enabled = is_enabled
         self.custom_voice_deployment_id = custom_voice_deployment_id
         self.custom_speech_model_id = custom_speech_model_id
@@ -1199,7 +1247,7 @@ class HostSettingsResponse(msrest.serialization.Model):
     :type to_channel_from_bot_o_auth_scope: str
     :param validate_authority: Per cloud OAuth setting on whether authority is validated.
     :type validate_authority: bool
-    :param bot_open_id_metadata: Same as ToBotFromChannelOpenIdMetadataUrl, used by SDK < v4.12.
+    :param bot_open_id_metadata: Same as toBotFromChannelOpenIdMetadataUrl, used by SDK < v4.12.
     :type bot_open_id_metadata: str
     """
 
@@ -1585,6 +1633,288 @@ class OperationEntityListResult(msrest.serialization.Model):
         self.value = value
 
 
+class OperationResultsDescription(msrest.serialization.Model):
+    """The properties indicating the operation result of an operation on a service.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The ID of the operation returned.
+    :vartype id: str
+    :ivar name: The name of the operation result.
+    :vartype name: str
+    :ivar status: The status of the operation being performed. Possible values include: "Canceled",
+     "Succeeded", "Failed", "Requested", "Running".
+    :vartype status: str or ~azure.mgmt.botservice.models.OperationResultStatus
+    :ivar start_time: The time that the operation was started.
+    :vartype start_time: ~datetime.datetime
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'status': {'readonly': True},
+        'start_time': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OperationResultsDescription, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.status = None
+        self.start_time = None
+
+
+class PrivateEndpoint(msrest.serialization.Model):
+    """The Private Endpoint resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The ARM identifier for Private Endpoint.
+    :vartype id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = None
+
+
+class PrivateLinkResourceBase(msrest.serialization.Model):
+    """Common fields that are returned in the response for all BotService Private Link Resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateLinkResourceBase, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
+class PrivateEndpointConnection(PrivateLinkResourceBase):
+    """The Private Endpoint Connection resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :param private_endpoint: The resource of private end point.
+    :type private_endpoint: ~azure.mgmt.botservice.models.PrivateEndpoint
+    :param private_link_service_connection_state: A collection of information about the state of
+     the connection between service consumer and provider.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.botservice.models.PrivateLinkServiceConnectionState
+    :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
+     Possible values include: "Succeeded", "Creating", "Deleting", "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.botservice.models.PrivateEndpointConnectionProvisioningState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        private_endpoint: Optional["PrivateEndpoint"] = None,
+        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
+        **kwargs
+    ):
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.private_endpoint = private_endpoint
+        self.private_link_service_connection_state = private_link_service_connection_state
+        self.provisioning_state = None
+
+
+class PrivateEndpointConnectionListResult(msrest.serialization.Model):
+    """List of private endpoint connection associated with the specified storage account.
+
+    :param value: Array of private endpoint connections.
+    :type value: list[~azure.mgmt.botservice.models.PrivateEndpointConnection]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["PrivateEndpointConnection"]] = None,
+        **kwargs
+    ):
+        super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
+        self.value = value
+
+
+class PrivateLinkResource(PrivateLinkResourceBase):
+    """A private link resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    :param required_zone_names: The private link resource Private link DNS zone name.
+    :type required_zone_names: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        required_zone_names: Optional[List[str]] = None,
+        **kwargs
+    ):
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.group_id = None
+        self.required_members = None
+        self.required_zone_names = required_zone_names
+
+
+class PrivateLinkResourceListResult(msrest.serialization.Model):
+    """A list of private link resources.
+
+    :param value: Array of private link resources.
+    :type value: list[~azure.mgmt.botservice.models.PrivateLinkResource]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["PrivateLinkResource"]] = None,
+        **kwargs
+    ):
+        super(PrivateLinkResourceListResult, self).__init__(**kwargs)
+        self.value = value
+
+
+class PrivateLinkServiceConnectionState(msrest.serialization.Model):
+    """A collection of information about the state of the connection between service consumer and provider.
+
+    :param status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
+     of the service. Possible values include: "Pending", "Approved", "Rejected".
+    :type status: str or ~azure.mgmt.botservice.models.PrivateEndpointServiceConnectionStatus
+    :param description: The reason for approval/rejection of the connection.
+    :type description: str
+    :param actions_required: A message indicating if changes on the service provider require any
+     updates on the consumer.
+    :type actions_required: str
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "PrivateEndpointServiceConnectionStatus"]] = None,
+        description: Optional[str] = None,
+        actions_required: Optional[str] = None,
+        **kwargs
+    ):
+        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        self.status = status
+        self.description = description
+        self.actions_required = actions_required
+
+
 class ServiceProvider(msrest.serialization.Model):
     """Service Provider Definition.
 
@@ -1951,6 +2281,8 @@ class SlackChannelProperties(msrest.serialization.Model):
     :param verification_token: The Slack verification token. Value only returned through POST to
      the action Channel List API, otherwise empty.
     :type verification_token: str
+    :param scopes: The Slack permission scopes.
+    :type scopes: str
     :param landing_page_url: The Slack landing page Url.
     :type landing_page_url: str
     :ivar redirect_action: The Slack redirect action.
@@ -1980,6 +2312,7 @@ class SlackChannelProperties(msrest.serialization.Model):
         'client_id': {'key': 'clientId', 'type': 'str'},
         'client_secret': {'key': 'clientSecret', 'type': 'str'},
         'verification_token': {'key': 'verificationToken', 'type': 'str'},
+        'scopes': {'key': 'scopes', 'type': 'str'},
         'landing_page_url': {'key': 'landingPageUrl', 'type': 'str'},
         'redirect_action': {'key': 'redirectAction', 'type': 'str'},
         'last_submission_id': {'key': 'lastSubmissionId', 'type': 'str'},
@@ -1996,6 +2329,7 @@ class SlackChannelProperties(msrest.serialization.Model):
         client_id: Optional[str] = None,
         client_secret: Optional[str] = None,
         verification_token: Optional[str] = None,
+        scopes: Optional[str] = None,
         landing_page_url: Optional[str] = None,
         signing_secret: Optional[str] = None,
         **kwargs
@@ -2004,6 +2338,7 @@ class SlackChannelProperties(msrest.serialization.Model):
         self.client_id = client_id
         self.client_secret = client_secret
         self.verification_token = verification_token
+        self.scopes = scopes
         self.landing_page_url = landing_page_url
         self.redirect_action = None
         self.last_submission_id = None

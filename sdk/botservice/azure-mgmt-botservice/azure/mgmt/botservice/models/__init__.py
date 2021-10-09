@@ -45,6 +45,14 @@ try:
     from ._models_py3 import OperationDisplayInfo
     from ._models_py3 import OperationEntity
     from ._models_py3 import OperationEntityListResult
+    from ._models_py3 import OperationResultsDescription
+    from ._models_py3 import PrivateEndpoint
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointConnectionListResult
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkResourceBase
+    from ._models_py3 import PrivateLinkResourceListResult
+    from ._models_py3 import PrivateLinkServiceConnectionState
     from ._models_py3 import Resource
     from ._models_py3 import ServiceProvider
     from ._models_py3 import ServiceProviderParameter
@@ -102,6 +110,14 @@ except (SyntaxError, ImportError):
     from ._models import OperationDisplayInfo  # type: ignore
     from ._models import OperationEntity  # type: ignore
     from ._models import OperationEntityListResult  # type: ignore
+    from ._models import OperationResultsDescription  # type: ignore
+    from ._models import PrivateEndpoint  # type: ignore
+    from ._models import PrivateEndpointConnection  # type: ignore
+    from ._models import PrivateEndpointConnectionListResult  # type: ignore
+    from ._models import PrivateLinkResource  # type: ignore
+    from ._models import PrivateLinkResourceBase  # type: ignore
+    from ._models import PrivateLinkResourceListResult  # type: ignore
+    from ._models import PrivateLinkServiceConnectionState  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import ServiceProvider  # type: ignore
     from ._models import ServiceProviderParameter  # type: ignore
@@ -125,6 +141,10 @@ from ._azure_bot_service_enums import (
     ChannelName,
     Key,
     Kind,
+    MsaAppType,
+    OperationResultStatus,
+    PrivateEndpointConnectionProvisioningState,
+    PrivateEndpointServiceConnectionStatus,
     RegenerateKeysChannelName,
     SkuName,
     SkuTier,
@@ -169,6 +189,14 @@ __all__ = [
     'OperationDisplayInfo',
     'OperationEntity',
     'OperationEntityListResult',
+    'OperationResultsDescription',
+    'PrivateEndpoint',
+    'PrivateEndpointConnection',
+    'PrivateEndpointConnectionListResult',
+    'PrivateLinkResource',
+    'PrivateLinkResourceBase',
+    'PrivateLinkResourceListResult',
+    'PrivateLinkServiceConnectionState',
     'Resource',
     'ServiceProvider',
     'ServiceProviderParameter',
@@ -190,6 +218,10 @@ __all__ = [
     'ChannelName',
     'Key',
     'Kind',
+    'MsaAppType',
+    'OperationResultStatus',
+    'PrivateEndpointConnectionProvisioningState',
+    'PrivateEndpointServiceConnectionStatus',
     'RegenerateKeysChannelName',
     'SkuName',
     'SkuTier',

@@ -62,7 +62,7 @@ class BotConnectionOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-05-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -123,7 +123,7 @@ class BotConnectionOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-05-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -190,7 +190,7 @@ class BotConnectionOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-05-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -266,7 +266,7 @@ class BotConnectionOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-05-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -339,7 +339,7 @@ class BotConnectionOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-05-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -403,7 +403,7 @@ class BotConnectionOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-05-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -461,7 +461,7 @@ class BotConnectionOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-05-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
