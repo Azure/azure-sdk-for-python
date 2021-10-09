@@ -251,7 +251,7 @@ from azure.keyvault.keys import KeyClient, KeyRotationLifetimeAction, KeyRotatio
 credential = DefaultAzureCredential()
 key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 
-# Set the key's automated rotation policy to rotate the key 30 days before expiry
+# Set the key's automated rotation policy to rotate the key 30 days before the key expires
 actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.ROTATE, time_before_expiry="P30D")]
 # You may also specify the duration after which the newly rotated key will expire
 # In this example, any new key versions will expire after 90 days
