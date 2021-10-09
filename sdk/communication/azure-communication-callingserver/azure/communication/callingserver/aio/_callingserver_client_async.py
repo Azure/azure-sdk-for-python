@@ -294,7 +294,7 @@ class CallingServerClient:
         )
 
     @distributed_trace_async()
-    async def add_participant(
+    async def add_participant( # pylint: disable=too-many-arguments
         self,
         call_locator: 'CallLocator',
         participant: 'CommunicationIdentifier',
@@ -397,9 +397,8 @@ class CallingServerClient:
             **kwargs
             )
 
-    # pylint:disable=too-many-arguments
     @distributed_trace_async()
-    async def start_recording(
+    async def start_recording( # pylint: disable=too-many-arguments
         self,
         call_locator: CallLocator,
         recording_state_callback_uri: str,

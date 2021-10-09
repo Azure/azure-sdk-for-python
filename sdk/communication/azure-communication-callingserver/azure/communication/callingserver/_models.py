@@ -5,7 +5,6 @@
 # ------------------------------------
 # pylint: skip-file
 
-# pylint: skip-file
 from typing import List, Mapping, Optional, Union, Any  # pylint: disable=unused-import
 from enum import Enum, EnumMeta
 from six import with_metaclass

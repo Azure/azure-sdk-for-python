@@ -64,7 +64,6 @@ class CallConnectionTest(CommunicationTestCase):
             http_logging_policy=get_http_logging_policy()
         )
 
-    @pytest.mark.skip(reason="Skip because the server side bits not ready")
     def test_create_play_cancel_hangup_scenario(self):
         # create call option
         options = CreateCallOptions(
@@ -102,17 +101,12 @@ class CallConnectionTest(CommunicationTestCase):
 
             # Cancel All Media Operations
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
-            CancelMediaOperationContext = str(uuid.uuid4())
-            cancel_all_media_operations_result = call_connection.cancel_all_media_operations(
-                CancelMediaOperationContext
-                )
-            CallingServerLiveTestUtils.validate_cancel_all_media_operations(cancel_all_media_operations_result)
+            call_connection.cancel_all_media_operations()
         finally:
             # Hang up
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
             call_connection.hang_up()
 
-    @pytest.mark.skip(reason="Skip because the server side bits not ready")
     def test_create_add_remove_hangup_scenario(self):
         # create option
         options = CreateCallOptions(
@@ -134,17 +128,17 @@ class CallConnectionTest(CommunicationTestCase):
             # Add Participant
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
             OperationContext = str(uuid.uuid4())
+            added_participant = CallingServerLiveTestUtils.get_fixed_user_id("0000000d-06a7-7ed4-bf75-25482200020e")
             add_participant_result = call_connection.add_participant(
-                participant=CommunicationUserIdentifier(CallingServerLiveTestUtils.get_fixed_user_id("0000000c-9f68-6fd6-e57b-254822002248")),
+                participant=CommunicationUserIdentifier(added_participant),
                 alternate_caller_id=None,
                 operation_context=OperationContext
                 )
             CallingServerLiveTestUtils.validate_add_participant(add_participant_result)
 
             # Remove Participant
-            participant_id=add_participant_result.participant_id
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
-            call_connection.remove_participant(participant_id)
+            call_connection.remove_participant(CommunicationUserIdentifier(added_participant))
         finally:
             # Hang up
             CallingServerLiveTestUtils.sleep_if_in_live_mode()

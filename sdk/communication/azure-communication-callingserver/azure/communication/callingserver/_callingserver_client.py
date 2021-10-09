@@ -291,13 +291,13 @@ class CallingServerClient(object):
         )
 
     @distributed_trace()
-    def add_participant(
+    def add_participant( # pylint: disable=too-many-arguments
         self,
         call_locator,  # type: CallLocator
         participant,  # type: CommunicationIdentifier
         callback_uri,  # type: str
-        alternate_caller_id,  # type: Optional[str]
-        operation_context,  # type: Optional[str]
+        alternate_caller_id=None,  # type: Optional[str]
+        operation_context=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):  # type: (...) -> AddParticipantResult
 
@@ -392,15 +392,14 @@ class CallingServerClient(object):
             **kwargs
             )
 
-    #pylint:disable=too-many-arguments
     @distributed_trace()
-    def start_recording(
+    def start_recording( # pylint: disable=too-many-arguments
         self,
         call_locator,  # type: CallLocator
         recording_state_callback_uri,  # type: str
-        recording_content_type = None, # type: Optional[RecordingContentType]
-        recording_channel_type = None, # type: Optional[RecordingChannelType]
-        recording_format_type = None, # type: Optional[RecordingFormatType]
+        recording_content_type=None, # type: Optional[RecordingContentType]
+        recording_channel_type=None, # type: Optional[RecordingChannelType]
+        recording_format_type=None, # type: Optional[RecordingFormatType]
         **kwargs  # type: Any
     ):  # type: (...) -> StartCallRecordingResult
 

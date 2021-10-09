@@ -11,7 +11,8 @@ from azure.communication.callingserver.aio import CallingServerClient
 from azure.communication.callingserver import (
     PlayAudioOptions,
     CommunicationUserIdentifier,
-    ServerCallLocator
+    ServerCallLocator,
+    GroupCallLocator
     )
 
 from azure.communication.callingserver._shared.utils import parse_connection_str
@@ -63,7 +64,6 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
             http_logging_policy=get_http_logging_policy()
         )
 
-    @pytest.mark.skip(reason="Skip because the server side bits not ready")
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_join_play_cancel_hangup_scenario_async(self):
         async with self.callingserver_client:
@@ -83,33 +83,30 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
                 CONST.CALLBACK_URI
                 )
 
-            # initialize a Server Call
-            server_call_async = self.callingserver_client.initialize_server_call(group_id)
+            try:
+                # Play Audio
+                CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                OperationContext = str(uuid.uuid4())
+                options = PlayAudioOptions(
+                    loop = True,
+                    audio_file_id = str(uuid.uuid4()),
+                    callback_uri = CONST.AppCallbackUrl,
+                    operation_context = OperationContext
+                    )
+                play_audio_result = await self.callingserver_client.play_audio(
+                    GroupCallLocator(group_id),
+                    CONST.AudioFileUrl,
+                    options
+                    )
+                CallingServerLiveTestUtils.validate_play_audio_result(play_audio_result)
 
-            async with server_call_async:
-                try:
-                    # Play Audio
-                    CallingServerLiveTestUtils.sleep_if_in_live_mode()
-                    OperationContext = str(uuid.uuid4())
-                    options = PlayAudioOptions(
-                        loop = True,
-                        audio_file_id = str(uuid.uuid4()),
-                        callback_uri = CONST.AppCallbackUrl,
-                        operation_context = OperationContext
-                        )
-                    play_audio_result = await server_call_async.play_audio(
-                        CONST.AudioFileUrl,
-                        options
-                        )
-                    CallingServerLiveTestUtils.validate_play_audio_result(play_audio_result)
-
-                    # Cancel Prompt Audio
-                    CallingServerLiveTestUtils.sleep_if_in_live_mode()
-                    await CallingServerLiveTestUtilsAsync.cancel_all_media_operations_for_group_call_async(call_connections)
-                finally:
-                    # Clean up/Hang up
-                    CallingServerLiveTestUtils.sleep_if_in_live_mode()
-                    await CallingServerLiveTestUtilsAsync.clean_up_connections_async(call_connections)
+                # Cancel Prompt Audio
+                CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                await CallingServerLiveTestUtilsAsync.cancel_all_media_operations_for_group_call_async(call_connections)
+            finally:
+                # Clean up/Hang up
+                CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                await CallingServerLiveTestUtilsAsync.clean_up_connections_async(call_connections)
 
     @pytest.mark.skip(reason="Skip because the server side bits not ready")
     @AsyncCommunicationTestCase.await_prepared_test
@@ -131,30 +128,30 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
                 CONST.CALLBACK_URI
                 )
 
-            # initialize a Server Call
-            server_call_async = self.callingserver_client.initialize_server_call(group_id)
+            try:
+                # Add Participant
+                CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                OperationContext = str(uuid.uuid4())
+                added_participant = CallingServerLiveTestUtils.get_fixed_user_id("0000000d-06a7-7ed4-bf75-25482200020e")
+                add_participant_result = await self.callingserver_client.add_participant(
+                    call_locator=GroupCallLocator(group_id),
+                    participant=CommunicationUserIdentifier(added_participant),
+                    callback_uri=CONST.AppCallbackUrl,
+                    alternate_caller_id=None,
+                    operation_context=OperationContext
+                    )
+                CallingServerLiveTestUtils.validate_add_participant(add_participant_result)
 
-            async with server_call_async:
-                try:
-                    # Add Participant
-                    CallingServerLiveTestUtils.sleep_if_in_live_mode()
-                    OperationContext = str(uuid.uuid4())
-                    add_participant_result = await server_call_async.add_participant(
-                        participant=CommunicationUserIdentifier(CallingServerLiveTestUtils.get_fixed_user_id("0000000c-9f68-6fd6-e57b-254822002248")),
-                        callback_uri=None,
-                        alternate_caller_id=None,
-                        operation_context=OperationContext
-                        )
-                    CallingServerLiveTestUtils.validate_add_participant(add_participant_result)
-
-                    # Remove Participant
-                    participant_id=add_participant_result.participant_id
-                    CallingServerLiveTestUtils.sleep_if_in_live_mode()
-                    await server_call_async.remove_participant(participant_id)
-                finally:
-                    # Clean up/Hang up
-                    CallingServerLiveTestUtils.sleep_if_in_live_mode()
-                    await CallingServerLiveTestUtilsAsync.clean_up_connections_async(call_connections)
+                # Remove Participant
+                CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                await self.callingserver_client.remove_participant(
+                    GroupCallLocator(group_id),
+                    CommunicationUserIdentifier(added_participant)
+                    )
+            finally:
+                # Clean up/Hang up
+                CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                await CallingServerLiveTestUtilsAsync.clean_up_connections_async(call_connections)
 
     @pytest.mark.skip(reason="Skip because the server side bits not ready")
     @AsyncCommunicationTestCase.await_prepared_test

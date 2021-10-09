@@ -22,7 +22,8 @@ from azure.communication.callingserver import (
     CallingOperationStatus,
     CallMediaType,
     CallingEventSubscriptionType,
-    ServerCallLocator
+    ServerCallLocator,
+    GroupCallLocator
     )
 
 class RequestReplacerProcessor(RecordingProcessor):
@@ -51,7 +52,7 @@ class CallingServerLiveTestUtils:
         assert play_audio_result.operation_id is not None
         assert len(play_audio_result.operation_id) != 0
         assert play_audio_result.status is not None
-        assert play_audio_result.status == OperationStatus.RUNNING
+        assert play_audio_result.status == CallingOperationStatus.RUNNING
 
     @staticmethod
     def validate_add_participant(add_participant_result):
@@ -110,7 +111,7 @@ class CallingServerLiveTestUtils:
                 requested_media_types=[CallMediaType.AUDIO],
                 requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED]
             )
-            from_call_connection = callingserver_client.join_call(ServerCallLocator(group_id), from_participant, from_options)
+            from_call_connection = callingserver_client.join_call(GroupCallLocator(group_id), from_participant, from_options)
             CallingServerLiveTestUtils.validate_callconnection(from_call_connection)
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
 
@@ -120,7 +121,7 @@ class CallingServerLiveTestUtils:
                 requested_media_types=[CallMediaType.AUDIO],
                 requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED]
             )
-            to_call_connection = callingserver_client.join_call(ServerCallLocator(group_id), to_participant, to_options)
+            to_call_connection = callingserver_client.join_call(GroupCallLocator(group_id), to_participant, to_options)
             CallingServerLiveTestUtils.validate_callconnection(from_call_connection)
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
 

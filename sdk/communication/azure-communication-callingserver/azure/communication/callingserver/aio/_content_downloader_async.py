@@ -4,6 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
+# pylint: disable=unsubscriptable-object
+# disabled unsubscriptable-object because of pylint bug referenced here:
+# https://github.com/PyCQA/pylint/issues/3882
+
 from typing import IO, TYPE_CHECKING
 from urllib.parse import urlparse
 
@@ -31,9 +35,9 @@ class ContentDownloader():
 
     async def download(
         self,
-        content_url, #type: str
-        http_range=None, #type: Optional[str]
-        **kwargs #type: Any
+        content_url: str,
+        http_range: Optional[str] = None,
+        **kwargs: Any
     ) -> IO:
         """The Download operation downloads content.
         :param content_url: The URL where the content is located

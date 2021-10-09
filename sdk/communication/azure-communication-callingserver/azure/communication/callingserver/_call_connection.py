@@ -211,7 +211,7 @@ class CallConnection(object):
     def transfer_call(
             self,
             target_participant,  # type: CommunicationIdentifier
-            user_to_user_information, # type: str
+            user_to_user_information=None,  # type: Optional[str]
             **kwargs  # type: Any
         ):  # type: (...) -> None
 
