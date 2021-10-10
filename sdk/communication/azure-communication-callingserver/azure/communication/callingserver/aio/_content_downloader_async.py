@@ -8,7 +8,7 @@
 # disabled unsubscriptable-object because of pylint bug referenced here:
 # https://github.com/PyCQA/pylint/issues/3882
 
-from typing import IO, TYPE_CHECKING
+from typing import IO, Optional, TYPE_CHECKING
 from urllib.parse import urlparse
 
 from azure.core.pipeline import PipelineResponse
@@ -20,13 +20,13 @@ from .._generated import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, TypeVar
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse],
         T, Dict[str, Any]], Any]]
 
-class ContentDownloader():
+class ContentDownloader:
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
