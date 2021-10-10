@@ -9,6 +9,7 @@ import sys
 import threading
 from typing import Iterator
 from io import BytesIO
+from six import reraise as raise_
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.common import with_current_context
 from .utils._utils import CallingServerUtils
@@ -148,12 +149,15 @@ class _ChunkIterator(object):
         try:
             chunk = next(self._iter_chunks)
             self._current_content += self._iter_downloader.yield_chunk(chunk)
-        except StopIteration as ex:
+        except StopIteration:
             self._complete = True
             # it's likely that there some data left in self._current_content
             if self._current_content:
                 return self._current_content
-            raise StopIteration("Download complete") from ex
+            # https://stackoverflow.com/questions/27318327/how-to-imitate-python-3s-raise-from-in-python-2
+            # https://stackoverflow.com/questions/34463087/valid-syntax-in-both-python-2-x-and-3-x-for-raising-exception/40877934
+            traceback = sys.exc_info()[2]
+            raise_(StopIteration, "Download complete", traceback)
 
         return self._get_chunk_data()
 
@@ -316,8 +320,11 @@ class ContentStreamDownloader():  # pylint: disable=too-many-instance-attributes
 
             try:
                 stream.seek(stream.tell())
-            except (NotImplementedError, AttributeError) as ex:
-                raise ValueError(error_message) from ex
+            except (NotImplementedError, AttributeError):
+                # https://stackoverflow.com/questions/27318327/how-to-imitate-python-3s-raise-from-in-python-2
+                # https://stackoverflow.com/questions/34463087/valid-syntax-in-both-python-2-x-and-3-x-for-raising-exception/40877934
+                traceback = sys.exc_info()[2]
+                raise_(ValueError, error_message, traceback)
 
         # Write the content to the user stream
         stream.write(self._current_content)
