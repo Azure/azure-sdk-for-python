@@ -2,13 +2,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # -------------------------------------
-from ._enums import KeyCurveName, KeyExportEncryptionAlgorithm, KeyOperation, KeyType
+from ._enums import KeyCurveName, KeyExportEncryptionAlgorithm, KeyOperation, KeyRotationPolicyAction, KeyType
 from ._shared.client_base import ApiVersion
 from ._models import (
     DeletedKey,
     JsonWebKey,
     KeyProperties,
     KeyReleasePolicy,
+    KeyRotationLifetimeAction,
+    KeyRotationPolicy,
     KeyVaultKey,
     KeyVaultKeyIdentifier,
     RandomBytes,
@@ -25,10 +27,13 @@ __all__ = [
     "KeyCurveName",
     "KeyExportEncryptionAlgorithm",
     "KeyOperation",
+    "KeyRotationPolicyAction",
     "KeyType",
     "DeletedKey",
     "KeyProperties",
     "KeyReleasePolicy",
+    "KeyRotationLifetimeAction",
+    "KeyRotationPolicy",
     "RandomBytes",
     "ReleaseKeyResult",
 ]

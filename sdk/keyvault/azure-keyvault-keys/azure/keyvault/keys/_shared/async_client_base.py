@@ -29,31 +29,30 @@ class AsyncKeyVaultClientBase(object):
         if not vault_url:
             raise ValueError("vault_url must be the URL of an Azure Key Vault")
 
-        self._vault_url = vault_url.strip(" /")
-        client = kwargs.get("generated_client")
-        if client:
-            # caller provided a configured client -> nothing left to initialize
-            self._client = client
-            return
-
-        self.api_version = kwargs.pop("api_version", DEFAULT_VERSION)
-
-        pipeline = kwargs.pop("pipeline", None)
-        transport = kwargs.pop("transport", None)
-        http_logging_policy = HttpLoggingPolicy(**kwargs)
-        http_logging_policy.allowed_header_names.update(
-            {
-                "x-ms-keyvault-network-info",
-                "x-ms-keyvault-region",
-                "x-ms-keyvault-service-version"
-            }
-        )
-
-        if not transport and not pipeline:
-            from azure.core.pipeline.transport import AioHttpTransport
-            transport = AioHttpTransport(**kwargs)
-
         try:
+            self.api_version = kwargs.pop("api_version", DEFAULT_VERSION)
+            self._vault_url = vault_url.strip(" /")
+
+            client = kwargs.get("generated_client")
+            if client:
+                # caller provided a configured client -> only models left to initialize
+                self._client = client
+                models = kwargs.get("generated_models")
+                self._models = models or _KeyVaultClient.models(api_version=self.api_version)
+                return
+
+            pipeline = kwargs.pop("pipeline", None)
+            transport = kwargs.pop("transport", None)
+            http_logging_policy = HttpLoggingPolicy(**kwargs)
+            http_logging_policy.allowed_header_names.update(
+                {"x-ms-keyvault-network-info", "x-ms-keyvault-region", "x-ms-keyvault-service-version"}
+            )
+
+            if not transport and not pipeline:
+                from azure.core.pipeline.transport import AioHttpTransport
+
+                transport = AioHttpTransport(**kwargs)
+
             self._client = _KeyVaultClient(
                 api_version=self.api_version,
                 pipeline=pipeline,

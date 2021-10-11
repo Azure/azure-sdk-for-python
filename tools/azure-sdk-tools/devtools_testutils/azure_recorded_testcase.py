@@ -7,7 +7,6 @@ import functools
 import logging
 import os
 import os.path
-import requests
 import six
 import sys
 import time
@@ -21,8 +20,6 @@ from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_functi
 
 from . import mgmt_settings_fake as fake_settings
 from .azure_testcase import _is_autorest_v3, get_resource_name, get_qualified_method_name
-from .config import PROXY_URL
-from .enums import ProxyRecordingSanitizer
 
 try:
     # Try to import the AsyncFakeCredential, if we cannot assume it is Python 2
@@ -35,38 +32,6 @@ if TYPE_CHECKING:
 
 
 load_dotenv(find_dotenv())
-
-
-def add_sanitizer(sanitizer, **kwargs):
-    # type: (ProxyRecordingSanitizer, **Any) -> None
-    """Registers a sanitizer, matcher, or transform with the test proxy.
-
-    :param sanitizer: The name of the sanitizer, matcher, or transform you want to add.
-    :type sanitizer: ProxyRecordingSanitizer or str
-
-    :keyword str value: The substitution value.
-    :keyword str regex: A regex for a sanitizer. Can be defined as a simple regex, or if a ``group_for_replace`` is
-        provided, a substitution operation.
-    :keyword str group_for_replace: The capture group that needs to be operated upon. Do not provide if you're invoking
-        a simple replacement operation.
-    """
-    request_args = {}
-    request_args["value"] = kwargs.get("value") or "fakevalue"
-    request_args["regex"] = (
-        kwargs.get("regex") or "(?<=\\/\\/)[a-z]+(?=(?:|-secondary)\\.(?:table|blob|queue)\\.core\\.windows\\.net)"
-    )
-    request_args["group_for_replace"] = kwargs.get("group_for_replace")
-
-    if sanitizer == ProxyRecordingSanitizer.URI:
-        requests.post(
-            "{}/Admin/AddSanitizer".format(PROXY_URL),
-            headers={"x-abstraction-identifier": ProxyRecordingSanitizer.URI.value},
-            json={
-                "regex": request_args["regex"],
-                "value": request_args["value"],
-                "groupForReplace": request_args["group_for_replace"],
-            },
-        )
 
 
 def is_live():

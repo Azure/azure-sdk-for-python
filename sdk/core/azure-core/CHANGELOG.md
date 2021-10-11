@@ -1,8 +1,18 @@
 # Release History
 
-## 1.19.0 (Unreleased)
+## 1.19.1 (Unreleased)
 
 ### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- respect text encoding specified in argument (thanks to @ryohji for the contribution)  #20796
+
+### Other Changes
+
+## 1.19.0 (2021-09-30)
 
 ### Breaking Changes in the Provisional `azure.core.rest` package
 
@@ -11,10 +21,6 @@ your transport responses should inherit from them and implement them.
 - The properties of the `azure.core.rest` responses are now all read-only
 
 - HttpLoggingPolicy integrates logs into one record #19925
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.18.0 (2021-09-02)
 

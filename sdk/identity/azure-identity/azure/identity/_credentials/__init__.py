@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from .application import AzureApplicationCredential
 from .authorization_code import AuthorizationCodeCredential
 from .azure_powershell import AzurePowerShellCredential
 from .browser import InteractiveBrowserCredential
@@ -22,7 +21,6 @@ from .vscode import VisualStudioCodeCredential
 
 __all__ = [
     "AuthorizationCodeCredential",
-    "AzureApplicationCredential",
     "AzureCliCredential",
     "AzurePowerShellCredential",
     "CertificateCredential",

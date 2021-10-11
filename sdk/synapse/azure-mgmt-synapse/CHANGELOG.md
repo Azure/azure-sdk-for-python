@@ -1,5 +1,19 @@
 # Release History
 
+## 2.1.0b2 (2021-10-09)
+
+**Features**
+
+  - Added operation group KustoPoolOperations
+  - Added operation group KustoPoolChildResourceOperations
+  - Added operation group KustoPoolsOperations
+  - Added operation group KustoPoolAttachedDatabaseConfigurationsOperations
+  - Added operation group KustoOperationsOperations
+  - Added operation group KustoPoolDatabasesOperations
+  - Added operation group KustoPoolDataConnectionsOperations
+  - Added operation group KustoPoolPrincipalAssignmentsOperations
+  - Added operation group KustoPoolDatabasePrincipalAssignmentsOperations
+
 ## 2.1.0b1 (2021-09-06)
 
 **Features**
