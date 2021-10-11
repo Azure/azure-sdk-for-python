@@ -1,6 +1,6 @@
 # Storage Blob Service SDK Migration Guide from <= 2.x to 12.x
 
-In this section, we list the main changes you need to be aware of when converting your Storage Blob SDK library from Version <= 2.X to Version 12.X.
+In this section, we list the main changes you need to be aware of when converting your Storage Blob SDK library from version <= 2.X to version 12.X.
 In version 12 we also support asynchronous APIs.
 
 ## Converting Core Classes
