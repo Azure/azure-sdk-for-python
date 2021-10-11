@@ -1629,7 +1629,7 @@ blob_object = service.get_blob_to_text("<container_name>", "<blob_name>")
 text_content = blob_object.content
 ```
 
-In V12, currently download can be done through download_blob API.
+In V12, the download operation can be done through the download_blob API.
 Here's the equivalent of `get_blob_to_text`.
 ```python
 from azure.storage.blob import BlobServiceClient
