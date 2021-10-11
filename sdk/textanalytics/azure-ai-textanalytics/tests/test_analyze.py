@@ -803,30 +803,32 @@ class TestAnalyze(TextAnalyticsTest):
             {"id": "5", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
         ]
 
+        actions = [
+            AnalyzeSentimentAction(),
+            RecognizePiiEntitiesAction(),
+            RecognizeEntitiesAction(),
+            RecognizeLinkedEntitiesAction(),
+            ExtractSummaryAction(order_by="Rank"),
+            RecognizePiiEntitiesAction(categories_filter=[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER]),
+            ExtractKeyPhrasesAction(),
+            RecognizeEntitiesAction(),
+            AnalyzeSentimentAction(show_opinion_mining=True),
+            RecognizeLinkedEntitiesAction(),
+            ExtractSummaryAction(max_sentence_count=1),
+            ExtractKeyPhrasesAction(),
+        ]
+
         response = client.begin_analyze_actions(
             docs,
-            actions=[
-                AnalyzeSentimentAction(),
-                RecognizePiiEntitiesAction(),
-                RecognizeEntitiesAction(),
-                RecognizeLinkedEntitiesAction(),
-                ExtractSummaryAction(order_by="Rank"),
-                RecognizePiiEntitiesAction(categories_filter=[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER]),
-                ExtractKeyPhrasesAction(),
-                RecognizeEntitiesAction(),
-                AnalyzeSentimentAction(show_opinion_mining=True),
-                RecognizeLinkedEntitiesAction(),
-                ExtractSummaryAction(max_sentence_count=1),
-                ExtractKeyPhrasesAction(),
-            ],
+            actions=actions,
             polling_interval=self._interval(),
         ).result()
 
         action_results = list(response)
         assert len(action_results) == len(docs)
-        assert len(action_results[0]) == 12
-        assert len(action_results[1]) == 12
-        assert len(action_results[2]) == 12
+        assert len(action_results[0]) == len(actions)
+        assert len(action_results[1]) == len(actions)
+        assert len(action_results[2]) == len(actions)
 
         for idx, action_result in enumerate(action_results):
             if idx == 0:
@@ -888,20 +890,22 @@ class TestAnalyze(TextAnalyticsTest):
         docs = [{"id": "5", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
                 {"id": "2", "text": ""}]
 
+        actions = [
+            ExtractSummaryAction(max_sentence_count=3),
+            RecognizePiiEntitiesAction(),
+            ExtractSummaryAction(max_sentence_count=5)
+        ]
+
         response = client.begin_analyze_actions(
             docs,
-            actions=[
-                ExtractSummaryAction(max_sentence_count=3),
-                RecognizePiiEntitiesAction(),
-                ExtractSummaryAction(max_sentence_count=5)
-            ],
+            actions=actions,
             polling_interval=self._interval(),
         ).result()
 
         action_results = list(response)
         assert len(action_results) == len(docs)
-        assert len(action_results[0]) == 3
-        assert len(action_results[1]) == 3
+        assert len(action_results[0]) == len(actions)
+        assert len(action_results[1]) == len(actions)
 
         # first doc
         assert isinstance(action_results[0][0], ExtractSummaryResult)
