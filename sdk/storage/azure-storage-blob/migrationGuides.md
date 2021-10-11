@@ -4,7 +4,7 @@ In this section, we list the main changes you need to be aware of when convertin
 In version 12 we also support asynchronous APIs.
 
 ## Converting Core Classes
-<= 2.X synchronous classes have been replaced, as well as new asynchronous counterparts added.
+<= 2.X synchronous classes have been replaced. New asynchronous counterparts added.
 
 | <= 2.X Classes (Clients)  | V12 Clients | NEW Asynchronous clients |
 |---:|---:|---:|
