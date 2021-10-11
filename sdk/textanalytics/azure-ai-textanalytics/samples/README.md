@@ -31,9 +31,9 @@ These sample programs show common scenarios for the Text Analytics client's offe
 |[sample_analyze_healthcare_entities.py][analyze_healthcare_entities_sample] and [sample_analyze_healthcare_entities_async.py][analyze_healthcare_entities_sample_async]|Analyze healthcare entities|
 |[sample_analyze_actions.py][analyze_sample] and [sample_analyze_actions_async.py][analyze_sample_async]|Run multiple analyses together in a single request|
 |[sample_extract_summary.py][extract_summary_sample] and [sample_extract_summary_async.py][extract_summary_sample_async]|As part of the analyze API, run extractive text summarization on documents|
-|[sample_recognize_custom_entities.py][recognize_custom_entities_sample] and [sample_recognize_custom_entities_async.py][recognize_custom_entities_sample_async]|Build a custom model to recognize custom entities on documents|
-|[sample_single_category_classify.py][single_category_classify_sample] and [sample_single_category_classify_async.py][single_category_classify_sample_async]|Build a custom model to classify documents into a single category|
-|[sample_multi_category_classify.py][multi_category_classify_sample] and [sample_multi_category_classify_async.py][multi_category_classify_sample_async]|Build a custom model to classify documents into multiple categories|
+|[sample_recognize_custom_entities.py][recognize_custom_entities_sample] and [sample_recognize_custom_entities_async.py][recognize_custom_entities_sample_async]|Use a custom model to recognize custom entities in documents|
+|[sample_single_category_classify.py][single_category_classify_sample] and [sample_single_category_classify_async.py][single_category_classify_sample_async]|Use a custom model to classify documents into a single category|
+|[sample_multi_category_classify.py][multi_category_classify_sample] and [sample_multi_category_classify_async.py][multi_category_classify_sample_async]|Use a custom model to classify documents into multiple categories|
 
 ## Prerequisites
 * Python 2.7, or 3.6 or later is required to use this package (3.6 or later if using asyncio)
