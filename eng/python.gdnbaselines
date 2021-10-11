@@ -8,19 +8,6 @@
     }
   },
   "results": {
-    "dc3ef2edd56d4353f3c7f7f008467efe12a262eaf612d230ab749f63e4511ec2": {
-      "signature": "dc3ef2edd56d4353f3c7f7f008467efe12a262eaf612d230ab749f63e4511ec2",
-      "target": "doc/dev/mgmt/generating-integration-test.md",
-      "memberOf": [
-        "baseline"
-      ],
-      "tool": "CredentialScanner",
-      "ruleId": "CSCAN-GENERAL0060",
-      "justification": null,
-      "createdDate": "2021-01-29 23:26:49Z",
-      "expirationDate": null,
-      "type": null
-    },
     "7150351e888744538d5cedab15d29a34266793c4c03c7faa0e6c31279fdcd613": {
       "signature": "7150351e888744538d5cedab15d29a34266793c4c03c7faa0e6c31279fdcd613",
       "target": "doc/dev/mgmt/tests.md",
