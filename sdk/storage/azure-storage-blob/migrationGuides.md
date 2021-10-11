@@ -97,7 +97,7 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="163" valign="top">
                 <p align="right">
-                    It’s an attribute on ContainerClient, you can instanciate a
+                    It’s an attribute on ContainerClient, you can instantiate a
                     ContainerClient and do container_client.url to get the url.
                 </p>
             </td>
