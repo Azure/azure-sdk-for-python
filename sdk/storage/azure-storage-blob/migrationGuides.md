@@ -1526,7 +1526,7 @@ In version 12 we also support asynchronous APIs.
 </table>
 
 ## Build Client with Shared Key Credential
-Initiate client in Version 2.X
+Instantiate client in Version 2.X
 ```python
 from azure.storage.blob import BlockBlobService
 service = BlockBlobService("<storage-account-name>", "<account-access-key>", endpoint_suffix="<endpoint_suffix>")
