@@ -75,7 +75,7 @@ In version 12 we also support asynchronous APIs.
             <td width="163" valign="top">
                 <p align="right">
                     It’s an attribute on BlobClient, you can instanciate a
-                    BlobClient and do blob_client.url to get the url.
+                    BlobClient and call blob_client.url to get the url.
                 </p>
             </td>
             <td width="107" valign="top">
