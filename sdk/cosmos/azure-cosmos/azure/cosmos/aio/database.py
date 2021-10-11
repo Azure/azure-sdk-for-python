@@ -42,6 +42,9 @@ __all__ = ("DatabaseProxy",)
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
+#Missing query methods:
+#list_containers(), query_containers(), list_users(), query_users(), read_offer(), replace_throughput()
+
 class DatabaseProxy(object):
     """An interface to interact with a specific database.
 
@@ -97,6 +100,16 @@ class DatabaseProxy(object):
     def _get_container_link(self, container_or_id):
         # type: (Union[str, ContainerProxy, Dict[str, Any]]) -> str
         return u"{}/colls/{}".format(self.database_link, self._get_container_id(container_or_id))
+
+    def _get_user_link(self, user_or_id):
+        # type: (Union[UserProxy, str, Dict[str, Any]]) -> str
+        if isinstance(user_or_id, six.string_types):
+            return u"{}/users/{}".format(self.database_link, user_or_id)
+        try:
+            return cast("UserProxy", user_or_id).user_link
+        except AttributeError:
+            pass
+        return u"{}/users/{}".format(self.database_link, cast("Dict[str, str]", user_or_id)["id"])
 
     @distributed_trace_async
     async def read(self, populate_query_metrics=None, **kwargs):
@@ -419,5 +432,148 @@ class DatabaseProxy(object):
 
         collection_link = self._get_container_link(container)
         result = await self.client_connection.DeleteContainer(collection_link, options=request_options, **kwargs)
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, result)
+
+    @distributed_trace_async
+    async def create_user(self, body, **kwargs):
+        # type: (Dict[str, Any], Any) -> UserProxy
+        """Create a new user in the container.
+
+        To update or replace an existing user, use the
+        :func:`ContainerProxy.upsert_user` method.
+
+        :param body: A dict-like object with an `id` key and value representing the user to be created.
+            The user ID must be unique within the database, and consist of no more than 255 characters.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: A `UserProxy` instance representing the new user.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user couldn't be created.
+        :rtype: ~azure.cosmos.UserProxy
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START create_user]
+                :end-before: [END create_user]
+                :language: python
+                :dedent: 0
+                :caption: Create a database user:
+                :name: create_user
+        """
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+
+        user = await self.client_connection.CreateUser(
+            database_link=self.database_link, user=body, options=request_options, **kwargs)
+
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, user)
+
+        return UserProxy(
+            client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
+        )
+
+    def get_user_client(self, user):
+        # type: (Union[str, UserProxy, Dict[str, Any]]) -> UserProxy
+        """Get a `UserProxy` for a user with specified ID.
+
+        :param user: The ID (name), dict representing the properties or :class:`UserProxy`
+            instance of the user to be retrieved.
+        :returns: A `UserProxy` instance representing the retrieved user.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user couldn't be retrieved.
+        :rtype: ~azure.cosmos.UserProxy
+        """
+        if isinstance(user, UserProxy):
+            id_value = user.id
+        else:
+            try:
+                id_value = user["id"]
+            except TypeError:
+                id_value = user
+
+        return UserProxy(client_connection=self.client_connection, id=id_value, database_link=self.database_link)
+
+    @distributed_trace_async
+    async def upsert_user(self, body, **kwargs):
+        # type: (Dict[str, Any], Any) -> UserProxy
+        """Insert or update the specified user.
+
+        If the user already exists in the container, it is replaced. If the user
+        does not already exist, it is inserted.
+
+        :param body: A dict-like object representing the user to update or insert.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: A `UserProxy` instance representing the upserted user.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user could not be upserted.
+        :rtype: ~azure.cosmos.UserProxy
+        """
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+
+        user = await self.client_connection.UpsertUser(
+            database_link=self.database_link, user=body, options=request_options, **kwargs
+        )
+
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, user)
+
+        return UserProxy(
+            client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
+        )
+
+    @distributed_trace_async
+    async def replace_user(
+        self,
+        user,  # type: Union[str, UserProxy, Dict[str, Any]]
+        body,  # type: Dict[str, Any]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> UserProxy
+        """Replaces the specified user if it exists in the container.
+
+        :param user: The ID (name), dict representing the properties or :class:`UserProxy`
+            instance of the user to be replaced.
+        :param body: A dict-like object representing the user to replace.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: A `UserProxy` instance representing the user after replace went through.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
+            If the replace failed or the user with given ID does not exist.
+        :rtype: ~azure.cosmos.UserProxy
+        """
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+
+        replaced_user = await self.client_connection.ReplaceUser(
+            user_link=self._get_user_link(user), user=body, options=request_options, **kwargs
+        )  # type: Dict[str, str]
+
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, replaced_user)
+
+        return UserProxy(
+            client_connection=self.client_connection,
+            id=replaced_user["id"],
+            database_link=self.database_link,
+            properties=replaced_user
+        )
+
+    @distributed_trace_async
+    async def delete_user(self, user, **kwargs):
+        # type: (Union[str, UserProxy, Dict[str, Any]], Any) -> None
+        """Delete the specified user from the container.
+
+        :param user: The ID (name), dict representing the properties or :class:`UserProxy`
+            instance of the user to be deleted.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The user wasn't deleted successfully.
+        :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The user does not exist in the container.
+        :rtype: None
+        """
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+
+        result = await self.client_connection.DeleteUser(
+            user_link=self._get_user_link(user), options=request_options, **kwargs
+        )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)

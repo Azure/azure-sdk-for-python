@@ -22,11 +22,13 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
+#Missing methods:
+#list_databases(), query_databases(), 
+
 from typing import Any, Dict, Optional, Union, cast, Iterable, List
-from azure.core.tracing.decorator_async import distributed_trace_async  # pylint: disable=unused-import
 
 import six
-from azure.core.tracing.decorator import distributed_trace  # type: ignore
+from azure.core.tracing.decorator_async import distributed_trace_async  # pylint: disable=unused-import
 
 from ..cosmos_client import _parse_connection_str, _build_auth
 from ._cosmos_client_connection_async import CosmosClientConnection
@@ -319,3 +321,18 @@ class CosmosClient(object):
         await self.client_connection.DeleteDatabase(database_link, options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
+
+    @distributed_trace_async
+    async def get_database_account(self, **kwargs):
+        # type: (Any) -> DatabaseAccount
+        """Retrieve the database account information.
+
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
+        :rtype: ~azure.cosmos.DatabaseAccount
+        """
+        response_hook = kwargs.pop('response_hook', None)
+        result = await self.client_connection.GetDatabaseAccount(**kwargs)
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+        return result

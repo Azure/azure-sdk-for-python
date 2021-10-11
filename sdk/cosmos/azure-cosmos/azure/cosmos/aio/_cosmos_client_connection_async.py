@@ -62,7 +62,6 @@ from ..partition_key import _Undefined, _Empty
 
 # pylint: disable=protected-access
 
-
 class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     """Represents a document client.
 
@@ -211,6 +210,12 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             self._setup_kwargs['database_account'] = await self._global_endpoint_manager._GetDatabaseAccount(**self._setup_kwargs)
             await self._global_endpoint_manager.force_refresh(self._setup_kwargs['database_account'])
 
+    def _GetDatabaseIdWithPathForUser(self, database_link, user):  # pylint: disable=no-self-use
+        CosmosClientConnection.__ValidateResource(user)
+        path = base.GetPathFromLink(database_link, "users")
+        database_id = base.GetResourceIdOrFullNameFromLink(database_link)
+        return database_id, path
+
     async def GetDatabaseAccount(self, url_connection=None, **kwargs):
         """Gets database account info.
 
@@ -275,6 +280,28 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         CosmosClientConnection.__ValidateResource(database)
         path = "/dbs"
         return await self.Create(database, path, "dbs", None, None, options, **kwargs)
+
+    async def CreateUser(self, database_link, user, options=None, **kwargs):
+        """Creates a user.
+
+        :param str database_link:
+            The link to the database.
+        :param dict user:
+            The Azure Cosmos user to create.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The created User.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        database_id, path = self._GetDatabaseIdWithPathForUser(database_link, user)
+        return await self.Create(user, path, "users", database_id, None, options, **kwargs)
 
     async def CreateContainer(self, database_link, collection, options=None, **kwargs):
         """Creates a collection in a database.
@@ -368,6 +395,26 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         # update session for write request
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         return result
+
+    async def UpsertUser(self, database_link, user, options=None, **kwargs):
+        """Upserts a user.
+
+        :param str database_link:
+            The link to the database.
+        :param dict user:
+            The Azure Cosmos user to upsert.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The upserted User.
+        :rtype: dict
+        """
+        if options is None:
+            options = {}
+
+        database_id, path = self._GetDatabaseIdWithPathForUser(database_link, user)
+        return await self.Upsert(user, path, "users", database_id, None, options, **kwargs)
 
     async def UpsertItem(self, database_or_container_link, document, options=None, **kwargs):
         """Upserts a document in a collection.
@@ -527,6 +574,26 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         return await self.Read(path, "docs", document_id, None, options, **kwargs)
 
+    async def ReadConflict(self, conflict_link, options=None, **kwargs):
+        """Reads a conflict.
+
+        :param str conflict_link:
+            The link to the conflict.
+        :param dict options:
+
+        :return:
+            The read Conflict.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(conflict_link)
+        conflict_id = base.GetResourceIdOrFullNameFromLink(conflict_link)
+        return await self.Read(path, "conflicts", conflict_id, None, options, **kwargs)
+
     async def Read(self, path, typ, id, initial_headers, options=None, **kwargs):  # pylint: disable=redefined-builtin
         """Reads a Azure Cosmos resource and returns it.
 
@@ -577,6 +644,29 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             request_data=None,
             **kwargs
         )
+
+    async def ReplaceUser(self, user_link, user, options=None, **kwargs):
+        """Replaces a user and return it.
+
+        :param str user_link:
+            The link to the user entity.
+        :param dict user:
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The new User.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        CosmosClientConnection.__ValidateResource(user)
+        path = base.GetPathFromLink(user_link)
+        user_id = base.GetResourceIdOrFullNameFromLink(user_link)
+        return await self.Replace(user, path, "users", user_id, None, options, **kwargs)
 
     async def ReplaceContainer(self, collection_link, collection, options=None, **kwargs):
         """Replaces a collection and return it.
@@ -714,6 +804,27 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
         return await self.DeleteResource(path, "dbs", database_id, None, options, **kwargs)
 
+    async def DeleteUser(self, user_link, options=None, **kwargs):
+        """Deletes a user.
+
+        :param str user_link:
+            The link to the user entity.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The deleted user.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(user_link)
+        user_id = base.GetResourceIdOrFullNameFromLink(user_link)
+        return await self.DeleteResource(path, "users", user_id, None, options, **kwargs)
+
     async def DeleteContainer(self, collection_link, options=None, **kwargs):
         """Deletes a collection.
 
@@ -756,6 +867,27 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         path = base.GetPathFromLink(document_link)
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         return await self.DeleteResource(path, "docs", document_id, None, options, **kwargs)
+
+    async def DeleteConflict(self, conflict_link, options=None, **kwargs):
+        """Deletes a conflict.
+
+        :param str conflict_link:
+            The link to the conflict.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The deleted Conflict.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(conflict_link)
+        conflict_id = base.GetResourceIdOrFullNameFromLink(conflict_link)
+        return await self.DeleteResource(path, "conflicts", conflict_id, None, options, **kwargs)
 
     async def DeleteResource(self, path, typ, id, initial_headers, options=None, **kwargs):  # pylint: disable=redefined-builtin
         """Deletes a Azure Cosmos resource and returns it.

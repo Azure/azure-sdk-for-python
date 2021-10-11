@@ -42,6 +42,8 @@ __all__ = ("ContainerProxy",)
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
+# Missing container query methods:
+# query_items(), query_items_change_feed(), read_all_items(), query_conflicts(), list_conflicts(), replace_throughput(), read_offer()
 
 class ContainerProxy(object):
     """An interface to interact with a specific DB Container.
@@ -93,10 +95,58 @@ class ContainerProxy(object):
             return u"{}/docs/{}".format(self.container_link, item_or_link)
         return item_or_link["_self"]
 
+    def _get_conflict_link(self, conflict_or_link):
+        # type: (Union[Dict[str, Any], str]) -> str
+        if isinstance(conflict_or_link, six.string_types):
+            return u"{}/conflicts/{}".format(self.container_link, conflict_or_link)
+        return conflict_or_link["_self"]
+
     def _set_partition_key(self, partition_key):
         if partition_key == NonePartitionKeyValue:
             return CosmosClientConnection._return_undefined_or_empty_partition_key(self.is_system_key) #might have to await here
         return partition_key
+
+    @distributed_trace_async
+    async def read(
+        self,
+        populate_query_metrics=None,  # type: Optional[bool]
+        populate_partition_key_range_statistics=None,  # type: Optional[bool]
+        populate_quota_info=None,  # type: Optional[bool]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Dict[str, Any]
+        """Read the container properties.
+
+        :param populate_query_metrics: Enable returning query metrics in response headers.
+        :param populate_partition_key_range_statistics: Enable returning partition key
+            range statistics in response headers.
+        :param populate_quota_info: Enable returning collection storage quota information in response headers.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
+            This includes if the container does not exist.
+        :returns: Dict representing the retrieved container.
+        :rtype: dict[str, Any]
+        """
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        if populate_query_metrics is not None:
+            request_options["populateQueryMetrics"] = populate_query_metrics
+        if populate_partition_key_range_statistics is not None:
+            request_options["populatePartitionKeyRangeStatistics"] = populate_partition_key_range_statistics
+        if populate_quota_info is not None:
+            request_options["populateQuotaInfo"] = populate_quota_info
+
+        collection_link = self.container_link
+        self._properties = await self.client_connection.ReadContainer(
+            collection_link, options=request_options, **kwargs
+        )
+
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, self._properties)
+
+        return cast('Dict[str, Any]', self._properties)
 
     @distributed_trace_async
     async def create_item(
@@ -149,48 +199,6 @@ class ContainerProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
-
-    @distributed_trace_async
-    async def read(
-        self,
-        populate_query_metrics=None,  # type: Optional[bool]
-        populate_partition_key_range_statistics=None,  # type: Optional[bool]
-        populate_quota_info=None,  # type: Optional[bool]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Dict[str, Any]
-        """Read the container properties.
-
-        :param populate_query_metrics: Enable returning query metrics in response headers.
-        :param populate_partition_key_range_statistics: Enable returning partition key
-            range statistics in response headers.
-        :param populate_quota_info: Enable returning collection storage quota information in response headers.
-        :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
-            This includes if the container does not exist.
-        :returns: Dict representing the retrieved container.
-        :rtype: dict[str, Any]
-        """
-        request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
-        if populate_query_metrics is not None:
-            request_options["populateQueryMetrics"] = populate_query_metrics
-        if populate_partition_key_range_statistics is not None:
-            request_options["populatePartitionKeyRangeStatistics"] = populate_partition_key_range_statistics
-        if populate_quota_info is not None:
-            request_options["populateQuotaInfo"] = populate_quota_info
-
-        collection_link = self.container_link
-        self._properties = await self.client_connection.ReadContainer(
-            collection_link, options=request_options, **kwargs
-        )
-
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, self._properties)
-
-        return cast('Dict[str, Any]', self._properties)
 
     @distributed_trace_async
     async def read_item(
@@ -381,5 +389,54 @@ class ContainerProxy(object):
 
         document_link = self._get_document_link(item)
         result = await self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, result)
+
+    @distributed_trace_async
+    async def get_conflict(self, conflict, partition_key, **kwargs):
+        # type: (Union[str, Dict[str, Any]], Any, Any) -> Dict[str, str]
+        """Get the conflict identified by `conflict`.
+
+        :param conflict: The ID (name) or dict representing the conflict to retrieve.
+        :param partition_key: Partition key for the conflict to retrieve.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: A dict representing the retrieved conflict.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given conflict couldn't be retrieved.
+        :rtype: dict[str, Any]
+        """
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        if partition_key is not None:
+            request_options["partitionKey"] = self._set_partition_key(partition_key)
+
+        result = await self.client_connection.ReadConflict(
+            conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
+        )
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, result)
+        return result
+
+    @distributed_trace_async
+    async def delete_conflict(self, conflict, partition_key, **kwargs):
+        # type: (Union[str, Dict[str, Any]], Any, Any) -> None
+        """Delete a specified conflict from the container.
+
+        If the conflict does not already exist in the container, an exception is raised.
+
+        :param conflict: The ID (name) or dict representing the conflict to be deleted.
+        :param partition_key: Partition key for the conflict to delete.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The conflict wasn't deleted successfully.
+        :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The conflict does not exist in the container.
+        :rtype: None
+        """
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        if partition_key is not None:
+            request_options["partitionKey"] = self._set_partition_key(partition_key)
+
+        result = await self.client_connection.DeleteConflict(
+            conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
+        )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
