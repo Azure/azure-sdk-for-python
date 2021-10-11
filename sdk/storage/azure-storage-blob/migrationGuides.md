@@ -1619,7 +1619,7 @@ blob_service_client = BlobServiceClient("https://<my-storage-account-name>.blob.
 
 
 ## Download Blob
-In V2.X, you can do `get_blob_to_stream`, `get_blob_to_path`, `get_blob_to_bytes`, `get_blob_to_text`. These APIs returns
+In V2.X, you can call `get_blob_to_stream`, `get_blob_to_path`, `get_blob_to_bytes`, `get_blob_to_text`. These APIs return
 a Blob object.
 Here's an example of `get_blob_to_text`.
 ```python
