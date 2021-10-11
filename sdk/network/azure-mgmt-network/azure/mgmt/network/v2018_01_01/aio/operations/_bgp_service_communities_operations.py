@@ -43,7 +43,7 @@ class BgpServiceCommunitiesOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BgpServiceCommunityListResult"]:
         """Gets all the available bgp service communities.
 
