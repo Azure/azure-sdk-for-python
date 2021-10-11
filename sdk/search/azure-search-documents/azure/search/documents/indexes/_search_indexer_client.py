@@ -179,7 +179,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         if kwargs.get('select', None):
-            kwargs['select'] = ','.join(kwargs['select'])    
+            kwargs['select'] = ','.join(kwargs['select'])
         result = self._client.indexers.list(**kwargs)
         return result.indexers
 
