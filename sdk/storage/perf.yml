@@ -12,6 +12,7 @@ resources:
     type: github
     endpoint: Azure
     name: Azure/azure-sdk-tools
+    ref: perf-automation
 
 steps:
   - checkout: self 
