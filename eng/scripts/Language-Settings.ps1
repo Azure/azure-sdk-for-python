@@ -172,12 +172,25 @@ function ValidatePackage($packageName, $packageVersion, $workingDirectory) {
   # possible
   # https://github.com/Azure/azure-sdk-for-python/issues/20109
   try {
-    Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder"
-    $pipInstallOutput = pip `
-      install `
-      $packageExpression `
-      --no-cache-dir `
-      --target $installTargetFolder 2>&1
+    $pipInstallOutput = ""
+    $extraIndexUrl = " --extra-index-url=$PackageSourceOverride"
+    if ($PackageSourceOverride) {
+      Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder --extra-index-url=$PackageSourceOverride"
+      $pipInstallOutput = pip `
+        install `
+        $packageExpression `
+        --no-cache-dir `
+        --target $installTargetFolder `
+        --extra-index-url=$PackageSourceOverride 2>&1
+    }
+    else {
+      Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder"
+      $pipInstallOutput = pip `
+        install `
+        $packageExpression `
+        --no-cache-dir `
+        --target $installTargetFolder 2>&1
+    }
     if ($LASTEXITCODE -ne 0) {
       LogWarning "pip install failed for $packageExpression"
       Write-Host $pipInstallOutput
@@ -231,7 +244,6 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
   $outputPackages = @()
   foreach ($package in $packageConfig.packages) {
     $packageName = $package.package_info.name
-
     if (!$packageName) { 
       Write-Host "Keeping package with no name: $($package.package_info)"
       $outputPackages += $package
@@ -301,6 +313,15 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
         -Value $packageVersion `
         -PassThru `
         -Force 
+      if ($PackageSourceOverride) {
+        $package.package_info = Add-Member `
+          -InputObject $package.package_info `
+          -MemberType NoteProperty `
+          -Name 'extra_index_url' `
+          -Value $PackageSourceOverride `
+          -PassThru `
+          -Force 
+      }
     }
 
     Write-Host "Keeping tracked package: $packageName."
@@ -334,23 +355,35 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
     if ($Mode -eq 'preview') {
       $packageVersion = "==$($package.VersionPreview)"
     }
-
     if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion -workingDirectory $installValidationFolder)) {
       LogWarning "Package is not valid: $packageName. Cannot onboard."
       continue
     }
 
     Write-Host "Add new package from metadata: $packageName"
-    $package = [ordered]@{
+    if ($PackageSourceOverride) {
+      $package = [ordered]@{
         package_info = [ordered]@{
           name = $packageName;
           install_type = 'pypi';
           prefer_source_distribution = 'true';
           version = $packageVersion;
+          extra_index_url = $PackageSourceOverride
         };
         exclude_path = @("test*","example*","sample*","doc*");
+      }
     }
-
+    else {
+      $package = [ordered]@{
+          package_info = [ordered]@{
+            name = $packageName;
+            install_type = 'pypi';
+            prefer_source_distribution = 'true';
+            version = $packageVersion;
+          };
+          exclude_path = @("test*","example*","sample*","doc*");
+      }
+    }
     $outputPackages += $package
   }
 
