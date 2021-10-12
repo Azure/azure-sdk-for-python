@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-# pylint: disable=unsubscriptable-object
+# pylint: disable=unsubscriptable-object,too-many-public-methods
 # disabled unsubscriptable-object because of pylint bug referenced here:
 # https://github.com/PyCQA/pylint/issues/3882
 
@@ -28,7 +28,12 @@ from .._generated.models import (
     StartCallRecordingResult,
     RecordingContentType,
     RecordingChannelType,
-    RecordingFormatType
+    RecordingFormatType,
+    CallParticipant,
+    CallMediaType,
+    CallingEventSubscriptionType,
+    AnswerCallResult,
+    CallRejectReason
     )
 from .._shared.models import CommunicationIdentifier
 from ._content_downloader_async import ContentDownloader
@@ -37,12 +42,21 @@ from .._models import CallLocator, ParallelDownloadOptions
 from ._call_connection_async import CallConnection
 from .._converters import (
     JoinCallRequestConverter,
+    AnswerCallRequestConverter,
+    RedirectCallRequestConverter,
+    RejectCallRequestConverter,
     PlayAudioWithCallLocatorRequestConverter,
     PlayAudioToParticipantWithCallLocatorRequestConverter,
     AddParticipantWithCallLocatorRequestConverter,
     RemoveParticipantWithCallLocatorRequestConverter,
     CancelMediaOperationWithCallLocatorRequestConverter,
-    CancelParticipantMediaOperationWithCallLocatorRequestConverter
+    CancelParticipantMediaOperationWithCallLocatorRequestConverter,
+    GetAllParticipantsWithCallLocatorRequestConverter,
+    GetParticipantWithCallLocatorRequestConverter,
+    MuteParticipantWithCallLocatorRequestConverter,
+    UnmuteParticipantWithCallLocatorRequestConverter,
+    HoldMeetingAudioWithCallLocatorRequestConverter,
+    ResumeMeetingAudioWithCallLocatorRequestConverter
     )
 from .._shared.utils import get_authentication_policy, parse_connection_str
 from .._version import SDK_MONIKER
@@ -228,6 +242,81 @@ class CallingServerClient:
             )
 
     @distributed_trace_async()
+    async def answer_call(
+        self,
+        incoming_call_context: str,
+        callback_uri: Optional[str] = None,
+        requested_media_types: Optional[List[CallMediaType]] = None,
+        requested_call_events: Optional[List[CallingEventSubscriptionType]] = None,
+        **kwargs: Any
+    ) -> AnswerCallResult:
+
+        if not incoming_call_context:
+            raise ValueError("incoming_call_context can not be None")
+
+        answer_call_request = AnswerCallRequestConverter.convert(
+            incoming_call_context=incoming_call_context,
+            callback_uri=callback_uri,
+            requested_media_types=requested_media_types,
+            requested_call_events=requested_call_events
+            )
+
+        return await self._server_call_client.answer_call(
+            answer_call_request=answer_call_request,
+            **kwargs
+        )
+
+    @distributed_trace_async()
+    async def reject_call(
+        self,
+        incoming_call_context: Optional[str] = None,
+        call_reject_reason: Optional[CallRejectReason] = None,
+        callback_uri: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+
+        if not incoming_call_context:
+            raise ValueError("incoming_call_context can not be None")
+
+        reject_call_request = RejectCallRequestConverter.convert(
+            incoming_call_context=incoming_call_context,
+            call_reject_reason=call_reject_reason,
+            callback_uri=callback_uri
+            )
+
+        return await self._server_call_client.reject_call(
+            reject_call_request=reject_call_request,
+            **kwargs
+        )
+
+    @distributed_trace_async()
+    async def redirect_call(
+        self,
+        incoming_call_context,  # type: str
+        targets,  # type: List[CommunicationIdentifier]
+        callback_uri=None,  # type: str
+        timeout_in_seconds=None,  # type: int
+        **kwargs  # type: Any
+    ):  # type: (...) -> None
+
+        if not incoming_call_context:
+            raise ValueError("incoming_call_context can not be None")
+        if not targets:
+            raise ValueError("targets can not be None")
+
+        redirect_call_request = RedirectCallRequestConverter.convert(
+            incoming_call_context=incoming_call_context,
+            target_identities=[serialize_identifier(m) for m in targets],
+            callback_uri=callback_uri,
+            timeout_in_seconds=timeout_in_seconds
+            )
+
+        return await self._server_call_client.redirect_call(
+            redirect_call_request=redirect_call_request,
+            **kwargs
+        )
+
+    @distributed_trace_async()
     async def play_audio(
         self,
         call_locator: 'CallLocator',
@@ -331,10 +420,15 @@ class CallingServerClient:
     @distributed_trace_async()
     async def remove_participant(
         self,
-        call_locator: 'CallLocator',
-        participant: 'CommunicationIdentifier',
+        call_locator: CallLocator,
+        participant: CommunicationIdentifier,
         **kwargs: Any
     ) -> None:
+
+        if not call_locator:
+            raise ValueError("call_locator can not be None")
+        if not participant:
+            raise ValueError("participant can not be None")
 
         remove_participant_with_call_locator_request = RemoveParticipantWithCallLocatorRequestConverter.convert(
             serialize_call_locator(call_locator),
@@ -343,6 +437,82 @@ class CallingServerClient:
 
         return await self._server_call_client.remove_participant(
             remove_participant_with_call_locator_request=remove_participant_with_call_locator_request,
+            **kwargs
+        )
+
+    @distributed_trace_async()
+    async def get_participants(
+            self,
+            call_locator: CallLocator,
+            **kwargs: Any
+        ) -> List[CallParticipant]:
+
+        get_all_participants_with_call_locator_request = GetAllParticipantsWithCallLocatorRequestConverter.convert(
+            serialize_call_locator(call_locator)
+            )
+
+        return await self._server_call_client.get_participants(
+            get_all_participants_with_call_locator_request=get_all_participants_with_call_locator_request,
+            **kwargs
+        )
+
+    @distributed_trace_async()
+    async def get_participant(
+            self,
+            call_locator: CallLocator,
+            participant: CommunicationIdentifier,
+            **kwargs: Any
+        ) -> List[CallParticipant]:
+
+        get_participant_with_call_locator_request = GetParticipantWithCallLocatorRequestConverter.convert(
+            serialize_call_locator(call_locator),
+            serialize_identifier(participant)
+            )
+
+        return await self._server_call_client.get_participant(
+            get_participant_with_call_locator_request=get_participant_with_call_locator_request,
+            **kwargs
+        )
+
+    @distributed_trace_async()
+    async def mute_participant(
+            self,
+            call_locator,  # type: CallLocator
+            participant,  # type: CommunicationIdentifier
+            **kwargs  # type: Any
+        ):  # type: (...) -> None
+
+        if not participant:
+            raise ValueError("participant can not be None")
+
+        mute_participant_with_call_locator_request = MuteParticipantWithCallLocatorRequestConverter.convert(
+            serialize_call_locator(call_locator),
+            serialize_identifier(participant)
+            )
+
+        return await self._server_call_client.mute_participant(
+            mute_participant_with_call_locator_request=mute_participant_with_call_locator_request,
+            **kwargs
+        )
+
+    @distributed_trace_async()
+    async def unmute_participant(
+            self,
+            call_locator,  # type: CallLocator
+            participant,  # type: CommunicationIdentifier
+            **kwargs  # type: Any
+        ):  # type: (...) -> None
+
+        if not participant:
+            raise ValueError("participant can not be None")
+
+        unmute_participant_with_call_locator_request = UnmuteParticipantWithCallLocatorRequestConverter.convert(
+            serialize_call_locator(call_locator),
+            serialize_identifier(participant)
+            )
+
+        return await self._server_call_client.unmute_participant(
+            unmute_participant_with_call_locator_request=unmute_participant_with_call_locator_request,
             **kwargs
         )
 
@@ -396,6 +566,48 @@ class CallingServerClient:
             cancel_participant_media_operation_request=cancel_participant_media_operation_request,
             **kwargs
             )
+
+    @distributed_trace_async()
+    async def hold_participant_meeting_audio(
+            self,
+            call_locator,  # type: CallLocator
+            participant,  # type: CommunicationIdentifier
+            **kwargs  # type: Any
+        ):  # type: (...) -> None
+
+        if not participant:
+            raise ValueError("participant can not be None")
+
+        hold_meeting_audio_with_call_locator_request = HoldMeetingAudioWithCallLocatorRequestConverter.convert(
+            serialize_call_locator(call_locator),
+            serialize_identifier(participant)
+            )
+
+        return await self._server_call_client.hold_participant_meeting_audio(
+            hold_meeting_audio_with_call_locator_request=hold_meeting_audio_with_call_locator_request,
+            **kwargs
+        )
+
+    @distributed_trace_async()
+    async def resume_participant_meeting_audio(
+            self,
+            call_locator,  # type: CallLocator
+            participant,  # type: CommunicationIdentifier
+            **kwargs  # type: Any
+        ):  # type: (...) -> None
+
+        if not participant:
+            raise ValueError("participant can not be None")
+
+        resume_meeting_audio_with_call_locator_request = ResumeMeetingAudioWithCallLocatorRequestConverter.convert(
+            serialize_call_locator(call_locator),
+            serialize_identifier(participant)
+            )
+
+        return await self._server_call_client.resume_participant_meeting_audio(
+            resume_meeting_audio_with_call_locator_request=resume_meeting_audio_with_call_locator_request,
+            **kwargs
+        )
 
     @distributed_trace_async()
     async def start_recording( # pylint: disable=too-many-arguments
