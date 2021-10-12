@@ -52,7 +52,7 @@ class PageBlobOperations:
         blob_content_length: int,
         timeout: Optional[int] = None,
         tier: Optional[Union[str, "_models.PremiumPageBlobAccessTier"]] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[str] = None,
         blob_sequence_number: Optional[int] = 0,
         request_id_parameter: Optional[str] = None,
         blob_tags_string: Optional[str] = None,
@@ -87,7 +87,7 @@ class PageBlobOperations:
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: dict[str, str]
+        :type metadata: str
         :param blob_sequence_number: Set for page blobs only. The sequence number is a user-controlled
          value that you can use to track requests. The value of the sequence number must be between 0
          and 2^63 - 1.

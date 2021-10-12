@@ -501,7 +501,7 @@ def build_set_metadata_request(
 ):
     # type: (...) -> HttpRequest
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
-    metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
+    metadata = kwargs.pop('metadata', None)  # type: Optional[str]
     lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
     encryption_key = kwargs.pop('encryption_key', None)  # type: Optional[str]
     encryption_key_sha256 = kwargs.pop('encryption_key_sha256', None)  # type: Optional[str]
@@ -529,7 +529,7 @@ def build_set_metadata_request(
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if metadata is not None:
-        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
+        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, 'str')
     if lease_id is not None:
         header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if encryption_key is not None:
@@ -846,7 +846,7 @@ def build_create_snapshot_request(
 ):
     # type: (...) -> HttpRequest
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
-    metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
+    metadata = kwargs.pop('metadata', None)  # type: Optional[str]
     encryption_key = kwargs.pop('encryption_key', None)  # type: Optional[str]
     encryption_key_sha256 = kwargs.pop('encryption_key_sha256', None)  # type: Optional[str]
     encryption_algorithm = kwargs.pop('encryption_algorithm', None)  # type: Optional[Union[str, "_models.EncryptionAlgorithmType"]]
@@ -874,7 +874,7 @@ def build_create_snapshot_request(
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if metadata is not None:
-        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
+        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, 'str')
     if encryption_key is not None:
         header_parameters['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
     if encryption_key_sha256 is not None:
@@ -915,7 +915,7 @@ def build_start_copy_from_url_request(
     # type: (...) -> HttpRequest
     copy_source = kwargs.pop('copy_source')  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
-    metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
+    metadata = kwargs.pop('metadata', None)  # type: Optional[str]
     tier = kwargs.pop('tier', None)  # type: Optional[Union[str, "_models.AccessTierOptional"]]
     rehydrate_priority = kwargs.pop('rehydrate_priority', None)  # type: Optional[Union[str, "_models.RehydratePriority"]]
     source_if_modified_since = kwargs.pop('source_if_modified_since', None)  # type: Optional[datetime.datetime]
@@ -949,7 +949,7 @@ def build_start_copy_from_url_request(
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if metadata is not None:
-        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
+        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, 'str')
     if tier is not None:
         header_parameters['x-ms-access-tier'] = _SERIALIZER.header("tier", tier, 'str')
     if rehydrate_priority is not None:
@@ -1007,7 +1007,7 @@ def build_copy_from_url_request(
     # type: (...) -> HttpRequest
     copy_source = kwargs.pop('copy_source')  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
-    metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
+    metadata = kwargs.pop('metadata', None)  # type: Optional[str]
     tier = kwargs.pop('tier', None)  # type: Optional[Union[str, "_models.AccessTierOptional"]]
     source_if_modified_since = kwargs.pop('source_if_modified_since', None)  # type: Optional[datetime.datetime]
     source_if_unmodified_since = kwargs.pop('source_if_unmodified_since', None)  # type: Optional[datetime.datetime]
@@ -1042,7 +1042,7 @@ def build_copy_from_url_request(
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     header_parameters['x-ms-requires-sync'] = _SERIALIZER.header("x_ms_requires_sync", x_ms_requires_sync, 'str')
     if metadata is not None:
-        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
+        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, 'str')
     if tier is not None:
         header_parameters['x-ms-access-tier'] = _SERIALIZER.header("tier", tier, 'str')
     if source_if_modified_since is not None:
@@ -1527,9 +1527,9 @@ class BlobOperations(object):
         response_headers = {}
         if response.status_code == 200:
             response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-            response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
+            response_headers['x-ms-meta']=self._deserialize('str', response.headers.get('x-ms-meta'))
             response_headers['x-ms-or-policy-id']=self._deserialize('str', response.headers.get('x-ms-or-policy-id'))
-            response_headers['x-ms-or']=self._deserialize('{str}', response.headers.get('x-ms-or'))
+            response_headers['x-ms-or']=self._deserialize('str', response.headers.get('x-ms-or'))
             response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
             response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
             response_headers['Content-Range']=self._deserialize('str', response.headers.get('Content-Range'))
@@ -1573,9 +1573,9 @@ class BlobOperations(object):
 
         if response.status_code == 206:
             response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-            response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
+            response_headers['x-ms-meta']=self._deserialize('str', response.headers.get('x-ms-meta'))
             response_headers['x-ms-or-policy-id']=self._deserialize('str', response.headers.get('x-ms-or-policy-id'))
-            response_headers['x-ms-or']=self._deserialize('{str}', response.headers.get('x-ms-or'))
+            response_headers['x-ms-or']=self._deserialize('str', response.headers.get('x-ms-or'))
             response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
             response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
             response_headers['Content-Range']=self._deserialize('str', response.headers.get('Content-Range'))
@@ -1731,9 +1731,9 @@ class BlobOperations(object):
         response_headers = {}
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
         response_headers['x-ms-creation-time']=self._deserialize('rfc-1123', response.headers.get('x-ms-creation-time'))
-        response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
+        response_headers['x-ms-meta']=self._deserialize('str', response.headers.get('x-ms-meta'))
         response_headers['x-ms-or-policy-id']=self._deserialize('str', response.headers.get('x-ms-or-policy-id'))
-        response_headers['x-ms-or']=self._deserialize('{str}', response.headers.get('x-ms-or'))
+        response_headers['x-ms-or']=self._deserialize('str', response.headers.get('x-ms-or'))
         response_headers['x-ms-blob-type']=self._deserialize('str', response.headers.get('x-ms-blob-type'))
         response_headers['x-ms-copy-completion-time']=self._deserialize('rfc-1123', response.headers.get('x-ms-copy-completion-time'))
         response_headers['x-ms-copy-status-description']=self._deserialize('str', response.headers.get('x-ms-copy-status-description'))
@@ -2370,7 +2370,7 @@ class BlobOperations(object):
     def set_metadata(
         self,
         timeout=None,  # type: Optional[int]
-        metadata=None,  # type: Optional[Dict[str, str]]
+        metadata=None,  # type: Optional[str]
         request_id_parameter=None,  # type: Optional[str]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
         cpk_info=None,  # type: Optional["_models.CpkInfo"]
@@ -2394,7 +2394,7 @@ class BlobOperations(object):
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: dict[str, str]
+        :type metadata: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
@@ -2959,7 +2959,7 @@ class BlobOperations(object):
     def create_snapshot(
         self,
         timeout=None,  # type: Optional[int]
-        metadata=None,  # type: Optional[Dict[str, str]]
+        metadata=None,  # type: Optional[str]
         request_id_parameter=None,  # type: Optional[str]
         cpk_info=None,  # type: Optional["_models.CpkInfo"]
         cpk_scope_info=None,  # type: Optional["_models.CpkScopeInfo"]
@@ -2982,7 +2982,7 @@ class BlobOperations(object):
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: dict[str, str]
+        :type metadata: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
@@ -3083,7 +3083,7 @@ class BlobOperations(object):
         self,
         copy_source,  # type: str
         timeout=None,  # type: Optional[int]
-        metadata=None,  # type: Optional[Dict[str, str]]
+        metadata=None,  # type: Optional[str]
         tier=None,  # type: Optional[Union[str, "_models.AccessTierOptional"]]
         rehydrate_priority=None,  # type: Optional[Union[str, "_models.RehydratePriority"]]
         request_id_parameter=None,  # type: Optional[str]
@@ -3117,7 +3117,7 @@ class BlobOperations(object):
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: dict[str, str]
+        :type metadata: str
         :param tier: Optional. Indicates the tier to be set on the blob.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param rehydrate_priority: Optional: Indicates the priority with which to rehydrate an archived
@@ -3244,7 +3244,7 @@ class BlobOperations(object):
         self,
         copy_source,  # type: str
         timeout=None,  # type: Optional[int]
-        metadata=None,  # type: Optional[Dict[str, str]]
+        metadata=None,  # type: Optional[str]
         tier=None,  # type: Optional[Union[str, "_models.AccessTierOptional"]]
         request_id_parameter=None,  # type: Optional[str]
         source_content_md5=None,  # type: Optional[bytearray]
@@ -3279,7 +3279,7 @@ class BlobOperations(object):
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: dict[str, str]
+        :type metadata: str
         :param tier: Optional. Indicates the tier to be set on the blob.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -3746,7 +3746,7 @@ class BlobOperations(object):
         response_headers = {}
         if response.status_code == 200:
             response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-            response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
+            response_headers['x-ms-meta']=self._deserialize('str', response.headers.get('x-ms-meta'))
             response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
             response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
             response_headers['Content-Range']=self._deserialize('str', response.headers.get('Content-Range'))
@@ -3782,7 +3782,7 @@ class BlobOperations(object):
 
         if response.status_code == 206:
             response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-            response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
+            response_headers['x-ms-meta']=self._deserialize('str', response.headers.get('x-ms-meta'))
             response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
             response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
             response_headers['Content-Range']=self._deserialize('str', response.headers.get('Content-Range'))

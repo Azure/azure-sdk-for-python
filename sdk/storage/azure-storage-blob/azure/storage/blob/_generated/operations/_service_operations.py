@@ -264,7 +264,6 @@ def build_submit_batch_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    multipart_content_type = kwargs.pop('multipart_content_type')  # type: str
     content_length = kwargs.pop('content_length')  # type: int
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
@@ -288,6 +287,8 @@ def build_submit_batch_request(
     header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
         header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
     header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
@@ -811,9 +812,6 @@ class ServiceOperations(object):
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
-        :keyword multipart_content_type: Required. The value of this header must be multipart/mixed
-         with a batch boundary. Example header value: multipart/mixed; boundary=batch_:code:`<GUID>`.
-        :paramtype multipart_content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IO, or the result of cls(response)
         :rtype: IO
@@ -825,12 +823,11 @@ class ServiceOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        multipart_content_type = kwargs.pop('multipart_content_type')  # type: str
+        content_type = kwargs.pop('content_type', "application/xml")  # type: Optional[str]
 
-        content = self._serialize.body(body, 'IO')
+        content = self._serialize.body(body, 'IO', is_xml=True)
 
         request = build_submit_batch_request(
-            multipart_content_type=multipart_content_type,
             content_length=content_length,
             timeout=timeout,
             request_id_parameter=request_id_parameter,

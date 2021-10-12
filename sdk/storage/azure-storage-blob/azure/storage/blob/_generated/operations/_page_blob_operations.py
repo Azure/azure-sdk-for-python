@@ -43,7 +43,7 @@ def build_create_request(
     blob_content_language = kwargs.pop('blob_content_language', None)  # type: Optional[str]
     blob_content_md5 = kwargs.pop('blob_content_md5', None)  # type: Optional[bytearray]
     blob_cache_control = kwargs.pop('blob_cache_control', None)  # type: Optional[str]
-    metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
+    metadata = kwargs.pop('metadata', None)  # type: Optional[str]
     lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
     blob_content_disposition = kwargs.pop('blob_content_disposition', None)  # type: Optional[str]
     encryption_key = kwargs.pop('encryption_key', None)  # type: Optional[str]
@@ -90,7 +90,7 @@ def build_create_request(
     if blob_cache_control is not None:
         header_parameters['x-ms-blob-cache-control'] = _SERIALIZER.header("blob_cache_control", blob_cache_control, 'str')
     if metadata is not None:
-        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
+        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, 'str')
     if lease_id is not None:
         header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if blob_content_disposition is not None:
@@ -744,7 +744,7 @@ class PageBlobOperations(object):
         blob_content_length,  # type: int
         timeout=None,  # type: Optional[int]
         tier=None,  # type: Optional[Union[str, "_models.PremiumPageBlobAccessTier"]]
-        metadata=None,  # type: Optional[Dict[str, str]]
+        metadata=None,  # type: Optional[str]
         blob_sequence_number=0,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
         blob_tags_string=None,  # type: Optional[str]
@@ -780,7 +780,7 @@ class PageBlobOperations(object):
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: dict[str, str]
+        :type metadata: str
         :param blob_sequence_number: Set for page blobs only. The sequence number is a user-controlled
          value that you can use to track requests. The value of the sequence number must be between 0
          and 2^63 - 1.

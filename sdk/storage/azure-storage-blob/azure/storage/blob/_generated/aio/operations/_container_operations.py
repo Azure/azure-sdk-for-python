@@ -48,7 +48,7 @@ class ContainerOperations:
     async def create(
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[str] = None,
         access: Optional[Union[str, "_models.PublicAccessType"]] = None,
         request_id_parameter: Optional[str] = None,
         container_cpk_scope_info: Optional["_models.ContainerCpkScopeInfo"] = None,
@@ -69,7 +69,7 @@ class ContainerOperations:
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: dict[str, str]
+        :type metadata: str
         :param access: Specifies whether data in the container may be accessed publicly and the level
          of access.
         :type access: str or ~azure.storage.blob.models.PublicAccessType
@@ -190,7 +190,7 @@ class ContainerOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
+        response_headers['x-ms-meta']=self._deserialize('str', response.headers.get('x-ms-meta'))
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
         response_headers['x-ms-lease-duration']=self._deserialize('str', response.headers.get('x-ms-lease-duration'))
@@ -297,7 +297,7 @@ class ContainerOperations:
     async def set_metadata(
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
@@ -317,7 +317,7 @@ class ContainerOperations:
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: dict[str, str]
+        :type metadata: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
@@ -717,9 +717,6 @@ class ContainerOperations:
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
-        :keyword multipart_content_type: Required. The value of this header must be multipart/mixed
-         with a batch boundary. Example header value: multipart/mixed; boundary=batch_:code:`<GUID>`.
-        :paramtype multipart_content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IO, or the result of cls(response)
         :rtype: IO
@@ -731,12 +728,11 @@ class ContainerOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        multipart_content_type = kwargs.pop('multipart_content_type')  # type: str
+        content_type = kwargs.pop('content_type', "application/xml")  # type: Optional[str]
 
-        content = self._serialize.body(body, 'IO')
+        content = self._serialize.body(body, 'IO', is_xml=True)
 
         request = build_submit_batch_request(
-            multipart_content_type=multipart_content_type,
             content_length=content_length,
             timeout=timeout,
             request_id_parameter=request_id_parameter,

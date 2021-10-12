@@ -35,7 +35,7 @@ def build_create_request(
 ):
     # type: (...) -> HttpRequest
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
-    metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
+    metadata = kwargs.pop('metadata', None)  # type: Optional[str]
     access = kwargs.pop('access', None)  # type: Optional[Union[str, "_models.PublicAccessType"]]
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
     default_encryption_scope = kwargs.pop('default_encryption_scope', None)  # type: Optional[str]
@@ -56,7 +56,7 @@ def build_create_request(
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if metadata is not None:
-        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
+        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, 'str')
     if access is not None:
         header_parameters['x-ms-blob-public-access'] = _SERIALIZER.header("access", access, 'str')
     header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
@@ -165,7 +165,7 @@ def build_set_metadata_request(
     # type: (...) -> HttpRequest
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
-    metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
+    metadata = kwargs.pop('metadata', None)  # type: Optional[str]
     if_modified_since = kwargs.pop('if_modified_since', None)  # type: Optional[datetime.datetime]
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
@@ -188,7 +188,7 @@ def build_set_metadata_request(
     if lease_id is not None:
         header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if metadata is not None:
-        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
+        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, 'str')
     if if_modified_since is not None:
         header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
@@ -386,7 +386,6 @@ def build_submit_batch_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    multipart_content_type = kwargs.pop('multipart_content_type')  # type: str
     content_length = kwargs.pop('content_length')  # type: int
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
@@ -412,6 +411,8 @@ def build_submit_batch_request(
     header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
         header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
     header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
@@ -821,7 +822,7 @@ class ContainerOperations(object):
     def create(
         self,
         timeout=None,  # type: Optional[int]
-        metadata=None,  # type: Optional[Dict[str, str]]
+        metadata=None,  # type: Optional[str]
         access=None,  # type: Optional[Union[str, "_models.PublicAccessType"]]
         request_id_parameter=None,  # type: Optional[str]
         container_cpk_scope_info=None,  # type: Optional["_models.ContainerCpkScopeInfo"]
@@ -843,7 +844,7 @@ class ContainerOperations(object):
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: dict[str, str]
+        :type metadata: str
         :param access: Specifies whether data in the container may be accessed publicly and the level
          of access.
         :type access: str or ~azure.storage.blob.models.PublicAccessType
@@ -965,7 +966,7 @@ class ContainerOperations(object):
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
+        response_headers['x-ms-meta']=self._deserialize('str', response.headers.get('x-ms-meta'))
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
         response_headers['x-ms-lease-duration']=self._deserialize('str', response.headers.get('x-ms-lease-duration'))
@@ -1073,7 +1074,7 @@ class ContainerOperations(object):
     def set_metadata(
         self,
         timeout=None,  # type: Optional[int]
-        metadata=None,  # type: Optional[Dict[str, str]]
+        metadata=None,  # type: Optional[str]
         request_id_parameter=None,  # type: Optional[str]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
         modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
@@ -1094,7 +1095,7 @@ class ContainerOperations(object):
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: dict[str, str]
+        :type metadata: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
@@ -1499,9 +1500,6 @@ class ContainerOperations(object):
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
-        :keyword multipart_content_type: Required. The value of this header must be multipart/mixed
-         with a batch boundary. Example header value: multipart/mixed; boundary=batch_:code:`<GUID>`.
-        :paramtype multipart_content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IO, or the result of cls(response)
         :rtype: IO
@@ -1513,12 +1511,11 @@ class ContainerOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        multipart_content_type = kwargs.pop('multipart_content_type')  # type: str
+        content_type = kwargs.pop('content_type', "application/xml")  # type: Optional[str]
 
-        content = self._serialize.body(body, 'IO')
+        content = self._serialize.body(body, 'IO', is_xml=True)
 
         request = build_submit_batch_request(
-            multipart_content_type=multipart_content_type,
             content_length=content_length,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
