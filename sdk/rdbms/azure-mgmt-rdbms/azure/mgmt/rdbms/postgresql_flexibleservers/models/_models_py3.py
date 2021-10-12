@@ -703,43 +703,6 @@ class HyperscaleNodeEditionCapability(msrest.serialization.Model):
         self.status = None
 
 
-class Identity(msrest.serialization.Model):
-    """Identity for the resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar principal_id: The principal ID of resource identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of resource.
-    :vartype tenant_id: str
-    :param type: The identity type. The only acceptable values to pass in are None and
-     "SystemAssigned". The default value is None.
-    :type type: str
-    """
-
-    _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        type: Optional[str] = None,
-        **kwargs
-    ):
-        super(Identity, self).__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
-        self.type = type
-
-
 class MaintenanceWindow(msrest.serialization.Model):
     """Maintenance window properties of a server.
 
@@ -1036,8 +999,9 @@ class RestartParameter(msrest.serialization.Model):
 
     :param restart_with_failover: Indicates whether to restart the server with failover.
     :type restart_with_failover: bool
-    :param failover_mode: Failover mode.
-    :type failover_mode: str
+    :param failover_mode: Failover mode. Possible values include: "PlannedFailover",
+     "ForcedFailover", "PlannedSwitchover", "ForcedSwitchover".
+    :type failover_mode: str or ~azure.mgmt.rdbms.postgresql_flexibleservers.models.FailoverMode
     """
 
     _attribute_map = {
@@ -1049,7 +1013,7 @@ class RestartParameter(msrest.serialization.Model):
         self,
         *,
         restart_with_failover: Optional[bool] = None,
-        failover_mode: Optional[str] = None,
+        failover_mode: Optional[Union[str, "FailoverMode"]] = None,
         **kwargs
     ):
         super(RestartParameter, self).__init__(**kwargs)
@@ -1124,8 +1088,6 @@ class Server(TrackedResource):
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives.
     :type location: str
-    :param identity: The Azure Active Directory identity of the server.
-    :type identity: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.Identity
     :param sku: The SKU (pricing tier) of the server.
     :type sku: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.Sku
     :ivar system_data: The system metadata relating to this resource.
@@ -1187,7 +1149,6 @@ class Server(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
@@ -1213,7 +1174,6 @@ class Server(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["Identity"] = None,
         sku: Optional["Sku"] = None,
         administrator_login: Optional[str] = None,
         administrator_login_password: Optional[str] = None,
@@ -1231,7 +1191,6 @@ class Server(TrackedResource):
         **kwargs
     ):
         super(Server, self).__init__(tags=tags, location=location, **kwargs)
-        self.identity = identity
         self.sku = sku
         self.system_data = None
         self.administrator_login = administrator_login
