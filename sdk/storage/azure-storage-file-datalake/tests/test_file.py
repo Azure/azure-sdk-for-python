@@ -19,9 +19,8 @@ from azure.storage.filedatalake import ContentSettings, generate_account_sas, ge
     DataLakeFileClient, FileSystemClient, DataLakeDirectoryClient, FileSasPermissions, generate_file_system_sas, \
     FileSystemSasPermissions
 from azure.storage.filedatalake import DataLakeServiceClient
-from testcase import (
-    StorageTestCase,
-    DataLakePreparer)
+from settings.testcase import DataLakePreparer
+from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_DIRECTORY_PREFIX = 'directory'
@@ -32,7 +31,7 @@ FILE_PATH = 'file_output.temp.dat'
 
 class FileTest(StorageTestCase):
     def _setUp(self, account_name, account_key):
-        url = self._get_account_url(account_name)
+        url = self.account_url(account_name, 'dfs')
         self.dsc = DataLakeServiceClient(url, credential=account_key, logging_enable=True)
         self.config = self.dsc._config
 

@@ -4,8 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
-STORAGE_ACCOUNT_NAME = "fakename"
-STORAGE_ACCOUNT_KEY = "fakekey"
+DATALAKE_STORAGE_ACCOUNT_NAME = "fakename"
+DATALAKE_STORAGE_ACCOUNT_KEY = "fakekey"
 
 TENANT_ID = "00000000-0000-0000-0000-000000000000"
 CLIENT_ID = "00000000-0000-0000-0000-000000000000"

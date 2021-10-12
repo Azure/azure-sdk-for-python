@@ -47,6 +47,11 @@ os.environ['SECONDARY_STORAGE_ACCOUNT_KEY'] = os.environ.get('SECONDARY_STORAGE_
 os.environ['AZURE_TEST_RUN_LIVE'] = os.environ.get('AZURE_TEST_RUN_LIVE', None) or RUN_IN_LIVE
 os.environ['AZURE_SKIP_LIVE_RECORDING'] = os.environ.get('AZURE_SKIP_LIVE_RECORDING', None) or SKIP_LIVE_RECORDING
 os.environ['PROTOCOL'] = PROTOCOL
+os.environ['ACCOUNT_URL_SUFFIX'] = ACCOUNT_URL_SUFFIX
+
+os.environ['AZURE_TENANT_ID'] = os.environ.get('AZURE_TENANT_ID', None) or TENANT_ID
+os.environ['AZURE_CLIENT_ID'] = os.environ.get('AZURE_CLIENT_ID', None) or CLIENT_ID
+os.environ['AZURE_CLIENT_SECRET'] = os.environ.get('AZURE_CLIENT_SECRET', None) or CLIENT_SECRET
 
 
 FileSharePreparer = functools.partial(
