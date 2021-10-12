@@ -158,6 +158,9 @@ def get_dict(*keys, **extras):
 
     return out_d
 
+def get_base_url(request):
+    return "http://" + request.host
+
 __all__ = ["assert_with_message",
            "get_dict",
            "jsonify"]

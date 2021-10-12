@@ -15,6 +15,7 @@ from azure.storage.queue.aio import (
     QueueServiceClient,
     QueueClient
 )
+from azure.storage.queue._serialize import _SUPPORTED_API_VERSIONS
 from _shared.asynctestcase import AsyncStorageTestCase
 from _shared.testcase import GlobalStorageAccountPreparer
 # ------------------------------------------------------------------------------
@@ -481,6 +482,7 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
             service = client(
                 self.account_url(storage_account, "queue"), credential=storage_account_key, queue_name='queue')
             await service.close()
+
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

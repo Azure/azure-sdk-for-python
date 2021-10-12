@@ -30,9 +30,6 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
     :keyword str client_secret: One of the application's client secrets. Required only for web apps and web APIs.
-    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
-        the user is registered in. When False, which is the default, the credential will acquire tokens only from the
-        user's home tenant or the tenant specified by **tenant_id**.
     """
 
     async def __aenter__(self):
@@ -66,8 +63,7 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
         redeeming the authorization code.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
-        :keyword str tenant_id: optional tenant to include in the token request. If **allow_multitenant_authentication**
-            is False, specifying a tenant with this argument may raise an exception.
+        :keyword str tenant_id: optional tenant to include in the token request.
 
         :rtype: :class:`azure.core.credentials.AccessToken`
 

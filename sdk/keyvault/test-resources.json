@@ -23,6 +23,12 @@
                 "description": "The client OID to grant access to test resources."
             }
         },
+        "provisionerApplicationOid": {
+            "type": "string",
+            "metadata": {
+                "description": "The provisioner OID to grant access to test resources."
+            }
+        },
         "location": {
             "type": "string",
             "defaultValue": "[resourceGroup().location]",
@@ -83,6 +89,7 @@
         }
     },
     "variables": {
+        "kvApiVersion": "2019-09-01",
         "azureKeyVaultUrl": "[format('https://{0}{1}', parameters('baseName'), parameters('keyVaultDomainSuffix'))]",
         "hsmApiVersion": "2021-04-01-preview",
         "hsmName": "[concat(parameters('baseName'), 'hsm')]",
@@ -107,7 +114,7 @@
     "resources": [
         {
             "type": "Microsoft.KeyVault/vaults",
-            "apiVersion": "2016-10-01",
+            "apiVersion": "[variables('kvApiVersion')]",
             "name": "[parameters('baseName')]",
             "location": "[parameters('location')]",
             "properties": {
@@ -137,7 +144,8 @@
                                 "wrapKey",
                                 "verify",
                                 "sign",
-                                "purge"
+                                "purge",
+                                "rotate"
                             ],
                             "secrets": [
                                 "get",
@@ -188,9 +196,7 @@
             },
             "properties": {
                 "tenantId": "[parameters('tenantId')]",
-                "initialAdminObjectIds": [
-                    "[parameters('testApplicationOid')]"
-                ],
+                "initialAdminObjectIds": "[union(array(parameters('testApplicationOid')), array(parameters('provisionerApplicationOid')))]",
                 "enablePurgeProtection": false,
                 "enableSoftDelete": true,
                 "publicNetworkAccess": "Enabled",

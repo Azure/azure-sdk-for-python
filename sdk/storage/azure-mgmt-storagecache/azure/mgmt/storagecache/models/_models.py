@@ -1390,6 +1390,9 @@ class StorageTarget(StorageTargetResource):
      "Updating".
     :vartype provisioning_state: str or
      ~storage_cache_management_client.models.ProvisioningStateType
+    :param state: Storage target operational state. Possible values include: "Ready", "Busy",
+     "Suspended", "Flushing".
+    :type state: str or ~storage_cache_management_client.models.OperationalStateType
     :param nfs3: Properties when targetType is nfs3.
     :type nfs3: ~storage_cache_management_client.models.Nfs3Target
     :param clfs: Properties when targetType is clfs.
@@ -1418,6 +1421,7 @@ class StorageTarget(StorageTargetResource):
         'junctions': {'key': 'properties.junctions', 'type': '[NamespaceJunction]'},
         'target_type': {'key': 'properties.targetType', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'state': {'key': 'properties.state', 'type': 'str'},
         'nfs3': {'key': 'properties.nfs3', 'type': 'Nfs3Target'},
         'clfs': {'key': 'properties.clfs', 'type': 'ClfsTarget'},
         'unknown': {'key': 'properties.unknown', 'type': 'UnknownTarget'},
@@ -1432,6 +1436,7 @@ class StorageTarget(StorageTargetResource):
         self.junctions = kwargs.get('junctions', None)
         self.target_type = kwargs.get('target_type', None)
         self.provisioning_state = None
+        self.state = kwargs.get('state', None)
         self.nfs3 = kwargs.get('nfs3', None)
         self.clfs = kwargs.get('clfs', None)
         self.unknown = kwargs.get('unknown', None)

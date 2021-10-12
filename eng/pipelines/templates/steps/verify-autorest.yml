@@ -34,6 +34,7 @@ steps:
 
     - task: PythonScript@0
       displayName: 'Verify autorest'
+      continueOnError: true
       inputs:
         scriptPath: 'scripts/devops_tasks/verify_autorest.py'
         arguments: >-

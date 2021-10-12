@@ -47,7 +47,7 @@ class VirtualHubBgpConnectionOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BgpConnection":
         """Retrieves the details of a Virtual Hub Bgp Connection.
 
@@ -110,7 +110,7 @@ class VirtualHubBgpConnectionOperations:
         virtual_hub_name: str,
         connection_name: str,
         parameters: "_models.BgpConnection",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BgpConnection":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.BgpConnection"]
         error_map = {
@@ -169,7 +169,7 @@ class VirtualHubBgpConnectionOperations:
         virtual_hub_name: str,
         connection_name: str,
         parameters: "_models.BgpConnection",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.BgpConnection"]:
         """Creates a VirtualHubBgpConnection resource if it doesn't exist else updates the existing
         VirtualHubBgpConnection.
@@ -184,8 +184,8 @@ class VirtualHubBgpConnectionOperations:
         :type parameters: ~azure.mgmt.network.v2020_08_01.models.BgpConnection
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either BgpConnection or the result of cls(response)
@@ -245,7 +245,7 @@ class VirtualHubBgpConnectionOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -291,7 +291,7 @@ class VirtualHubBgpConnectionOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a VirtualHubBgpConnection.
 
@@ -303,8 +303,8 @@ class VirtualHubBgpConnectionOperations:
         :type connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

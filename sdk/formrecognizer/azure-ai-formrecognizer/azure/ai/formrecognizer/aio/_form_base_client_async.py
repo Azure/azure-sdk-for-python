@@ -13,8 +13,13 @@ from azure.core.pipeline.policies import HttpLoggingPolicy
 from .._generated.aio._form_recognizer_client import (
     FormRecognizerClient as FormRecognizer,
 )
-from .._api_versions import FormRecognizerApiVersion, validate_api_version
-from .._helpers import _get_deserialize, get_authentication_policy, POLLING_INTERVAL, QuotaExceededPolicy
+from .._api_versions import validate_api_version
+from .._helpers import (
+    _get_deserialize,
+    get_authentication_policy,
+    POLLING_INTERVAL,
+    QuotaExceededPolicy,
+)
 from .._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
@@ -31,10 +36,14 @@ class FormRecognizerClientBaseAsync(object):
     ) -> None:
         self._endpoint = endpoint
         self._credential = credential
-        self._api_version = kwargs.pop("api_version", FormRecognizerApiVersion.V2_1)
+        self._api_version = kwargs.pop("api_version", None)
+        if not self._api_version:
+            raise ValueError("'api_version' must be specified.")
         if self._api_version.startswith("v"):  # v2.0 released with this option
             self._api_version = self._api_version[1:]
-        validate_api_version(self._api_version)
+
+        client_kind = kwargs.pop("client_kind")
+        validate_api_version(self._api_version, client_kind)
 
         authentication_policy = get_authentication_policy(credential)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
@@ -61,6 +70,8 @@ class FormRecognizerClientBaseAsync(object):
                 "op",
                 "pages",
                 "readingOrder",
+                "stringIndexType",
+                "api-version",
             }
         )
         self._client = FormRecognizer(
@@ -68,7 +79,9 @@ class FormRecognizerClientBaseAsync(object):
             credential=credential,  # type: ignore
             api_version=self._api_version,
             sdk_moniker=USER_AGENT,
-            authentication_policy=kwargs.get("authentication_policy", authentication_policy),
+            authentication_policy=kwargs.get(
+                "authentication_policy", authentication_policy
+            ),
             http_logging_policy=kwargs.get("http_logging_policy", http_logging_policy),
             per_retry_policies=kwargs.get("per_retry_policies", QuotaExceededPolicy()),
             polling_interval=polling_interval,

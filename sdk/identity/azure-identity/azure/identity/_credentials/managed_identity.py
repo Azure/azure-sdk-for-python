@@ -69,10 +69,14 @@ class ManagedIdentityCredential(object):
             _LOGGER.info("%s will use token exchange", self.__class__.__name__)
             from .token_exchange import TokenExchangeCredential
 
+            client_id = kwargs.pop("client_id", None) or os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
+            if not client_id:
+                raise ValueError('Configure the environment with a client ID or pass a value for "client_id" argument')
+
             self._credential = TokenExchangeCredential(
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
-                client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
-                token_file_path=os.environ[EnvironmentVariables.TOKEN_FILE_PATH],
+                client_id=client_id,
+                token_file_path=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
                 **kwargs
             )
         else:
@@ -106,5 +110,10 @@ class ManagedIdentityCredential(object):
         """
 
         if not self._credential:
-            raise CredentialUnavailableError(message="No managed identity endpoint found.")
+            raise CredentialUnavailableError(
+                message="No managed identity endpoint found. \n"
+                        "The Target Azure platform could not be determined from environment variables. \n"
+                        "Visit https://aka.ms/azsdk/python/identity/managedidentitycredential/troubleshoot to "
+                        "troubleshoot this issue."
+            )
         return self._credential.get_token(*scopes, **kwargs)

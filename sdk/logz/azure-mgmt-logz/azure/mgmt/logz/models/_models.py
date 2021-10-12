@@ -635,11 +635,11 @@ class MonitorProperties(msrest.serialization.Model):
      "Canceled", "Deleted", "NotSpecified".
     :vartype provisioning_state: str or ~microsoft_logz.models.ProvisioningState
     :param monitoring_status: Flag specifying if the resource monitoring is enabled or disabled.
-     Possible values include: "Enabled", "Disabled".
+     Possible values include: "Enabled", "Disabled". Default value: "Enabled".
     :type monitoring_status: str or ~microsoft_logz.models.MonitoringStatus
     :param marketplace_subscription_status: Flag specifying the Marketplace Subscription Status of
      the resource. If payment is not made in time, the resource will go in Suspended state. Possible
-     values include: "Active", "Suspended".
+     values include: "Active", "Suspended". Default value: "Active".
     :type marketplace_subscription_status: str or
      ~microsoft_logz.models.MarketplaceSubscriptionStatus
     :param logz_organization_properties:
@@ -677,8 +677,8 @@ class MonitorProperties(msrest.serialization.Model):
     ):
         super(MonitorProperties, self).__init__(**kwargs)
         self.provisioning_state = None
-        self.monitoring_status = kwargs.get('monitoring_status', None)
-        self.marketplace_subscription_status = kwargs.get('marketplace_subscription_status', None)
+        self.monitoring_status = kwargs.get('monitoring_status', "Enabled")
+        self.marketplace_subscription_status = kwargs.get('marketplace_subscription_status', "Active")
         self.logz_organization_properties = kwargs.get('logz_organization_properties', None)
         self.user_info = kwargs.get('user_info', None)
         self.plan_data = kwargs.get('plan_data', None)
@@ -690,7 +690,7 @@ class MonitorUpdateProperties(msrest.serialization.Model):
     """The set of properties that can be update in a PATCH request to a monitor resource.
 
     :param monitoring_status: Flag specifying if the resource monitoring is enabled or disabled.
-     Possible values include: "Enabled", "Disabled".
+     Possible values include: "Enabled", "Disabled". Default value: "Enabled".
     :type monitoring_status: str or ~microsoft_logz.models.MonitoringStatus
     """
 
@@ -703,7 +703,7 @@ class MonitorUpdateProperties(msrest.serialization.Model):
         **kwargs
     ):
         super(MonitorUpdateProperties, self).__init__(**kwargs)
-        self.monitoring_status = kwargs.get('monitoring_status', None)
+        self.monitoring_status = kwargs.get('monitoring_status', "Enabled")
 
 
 class OperationDisplay(msrest.serialization.Model):

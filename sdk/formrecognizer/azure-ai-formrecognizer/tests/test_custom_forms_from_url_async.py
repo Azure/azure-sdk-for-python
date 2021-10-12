@@ -7,117 +7,42 @@
 import pytest
 import functools
 from azure.core.credentials import AzureKeyCredential
-from azure.core.exceptions import HttpResponseError, ServiceRequestError, ClientAuthenticationError
-from azure.ai.formrecognizer.aio import FormRecognizerClient, FormTrainingClient
-from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
+from azure.ai.formrecognizer.aio import FormRecognizerClient, FormTrainingClient, DocumentAnalysisClient, DocumentModelAdministrationClient
+from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
+from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer._response_handlers import prepare_form_result
+from azure.ai.formrecognizer import AnalyzeResult
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 
-
-GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
+DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
+FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
 
 class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
-    async def test_custom_forms_encoded_url(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
-        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
-        with pytest.raises(HttpResponseError) as e:
-            async with client:
-                poller = await client.begin_recognize_custom_forms_from_url(
-                    model_id="00000000-0000-0000-0000-000000000000",
-                    form_url="https://fakeuri.com/blank%20space"
-                )
-        self.assertIn("https://fakeuri.com/blank%20space", e.value.response.request.body)
-
-    @FormRecognizerPreparer()
-    async def test_custom_form_none_model_id(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
-        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
+    async def test_document_analysis_none_model(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+        client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with self.assertRaises(ValueError):
             async with client:
-                await client.begin_recognize_custom_forms_from_url(model_id=None, form_url="https://badurl.jpg")
+                await client.begin_analyze_document_from_url(model=None, document_url="https://badurl.jpg")
 
     @FormRecognizerPreparer()
-    async def test_custom_form_empty_model_id(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
-        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
+    async def test_document_analysis_empty_model_id(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+        client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with self.assertRaises(ValueError):
             async with client:
-                await client.begin_recognize_custom_forms_from_url(model_id="", form_url="https://badurl.jpg")
+                await client.begin_analyze_document_from_url(model="", document_url="https://badurl.jpg")
 
     @FormRecognizerPreparer()
-    async def test_custom_form_url_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
-        with self.assertRaises(ServiceRequestError):
-            client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
-            async with client:
-                poller = await client.begin_recognize_custom_forms_from_url(model_id="xx", form_url=self.form_url_jpg)
-                result = await poller.result()
-
-    @FormRecognizerPreparer()
-    async def test_url_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
-        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
-        with self.assertRaises(ClientAuthenticationError):
-            async with client:
-                poller = await client.begin_recognize_custom_forms_from_url(model_id="xx", form_url=self.form_url_jpg)
-                result = await poller.result()
-
-    @FormRecognizerPreparer()
-    async def test_pass_stream_into_url(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
-        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
-
-        with open(self.unsupported_content_py, "rb") as fd:
-            with self.assertRaises(HttpResponseError):
-                async with client:
-                    poller = await client.begin_recognize_custom_forms_from_url(
-                        model_id="xxx",
-                        form_url=fd,
-                    )
-                    result = await poller.result()
-
-    @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    @pytest.mark.skip("Error code mismatch: canary returns 2001, canadacentral returns 2003")
-    async def test_form_bad_url(self, client, formrecognizer_storage_container_sas_url):
+    @FormTrainingClientPreparer()
+    async def test_custom_form_multipage_unlabeled(self, client, formrecognizer_multipage_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
-
+        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf")
         async with client:
-            training_poller = await client.begin_training(formrecognizer_storage_container_sas_url, use_training_labels=False)
-            model = await training_poller.result()
-
-            with pytest.raises(HttpResponseError) as e:
-                async with fr_client:
-                    poller = await fr_client.begin_recognize_custom_forms_from_url(
-                        model.model_id,
-                        form_url="https://badurl.jpg"
-                    )
-                    result = await poller.result()
-            self.assertEqual(e.value.error.code, "1001")
-            self.assertIsNotNone(e.value.error.message)
-
-    @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    async def test_form_unlabeled(self, client, formrecognizer_storage_container_sas_url):
-        fr_client = client.get_form_recognizer_client()
-
-        async with client:
-            training_poller = await client.begin_training(formrecognizer_storage_container_sas_url, use_training_labels=False)
-            model = await training_poller.result()
-
-            async with fr_client:
-                poller = await fr_client.begin_recognize_custom_forms_from_url(model.model_id, self.form_url_jpg)
-                form = await poller.result()
-
-        self.assertEqual(form[0].form_type, "form-0")
-        self.assertUnlabeledRecognizedFormHasValues(form[0], model)
-
-    @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    async def test_custom_form_multipage_unlabeled(self, client, formrecognizer_multipage_storage_container_sas_url):
-        fr_client = client.get_form_recognizer_client()
-        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url, "multipage-training-data", "multipage_invoice1.pdf")
-        async with client:
-            training_poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url, use_training_labels=False)
+            training_poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=False)
             model = await training_poller.result()
 
             async with fr_client:
@@ -134,29 +59,13 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             self.assertUnlabeledRecognizedFormHasValues(form, model)
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    async def test_form_labeled(self, client, formrecognizer_storage_container_sas_url):
+    @FormTrainingClientPreparer()
+    async def test_form_multipage_labeled(self, client, formrecognizer_multipage_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
-
-        async with client:
-            training_poller = await client.begin_training(formrecognizer_storage_container_sas_url, use_training_labels=True, model_name="labeled")
-            model = await training_poller.result()
-
-            async with fr_client:
-                poller = await fr_client.begin_recognize_custom_forms_from_url(model.model_id, self.form_url_jpg)
-                form = await poller.result()
-
-        self.assertEqual(form[0].form_type, "custom:labeled")
-        self.assertLabeledRecognizedFormHasValues(form[0], model)
-
-    @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    async def test_form_multipage_labeled(self, client, formrecognizer_multipage_storage_container_sas_url):
-        fr_client = client.get_form_recognizer_client()
-        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url, "multipage-training-data", "multipage_invoice1.pdf")
+        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf")
         async with client:
             training_poller = await client.begin_training(
-                formrecognizer_multipage_storage_container_sas_url,
+                formrecognizer_multipage_storage_container_sas_url_v2,
                 use_training_labels=True
             )
             model = await training_poller.result()
@@ -173,9 +82,10 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             self.assertLabeledRecognizedFormHasValues(form, model)
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    async def test_form_unlabeled_transform(self, client, formrecognizer_storage_container_sas_url):
+    @FormTrainingClientPreparer()
+    async def test_multipage_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
+        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf")
         responses = []
 
         def callback(raw_response, _, headers):
@@ -185,46 +95,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(form)
 
         async with client:
-            training_poller = await client.begin_training(formrecognizer_storage_container_sas_url, use_training_labels=False)
-            model = await training_poller.result()
-
-            async with fr_client:
-                poller = await fr_client.begin_recognize_custom_forms_from_url(
-                    model.model_id,
-                    self.form_url_jpg,
-                    include_field_elements=True,
-                    cls=callback
-                )
-                form = await poller.result()
-
-        actual = responses[0]
-        recognized_form = responses[1]
-        read_results = actual.analyze_result.read_results
-        page_results = actual.analyze_result.page_results
-        actual_fields = actual.analyze_result.page_results[0].key_value_pairs
-
-        self.assertFormPagesTransformCorrect(recognized_form[0].pages, read_results, page_results)
-        self.assertEqual(recognized_form[0].page_range.first_page_number, page_results[0].page)
-        self.assertEqual(recognized_form[0].page_range.last_page_number, page_results[0].page)
-        self.assertIsNone(recognized_form[0].form_type_confidence)
-        self.assertIsNotNone(recognized_form[0].model_id)
-        self.assertUnlabeledFormFieldDictTransformCorrect(recognized_form[0].fields, actual_fields, read_results)
-
-    @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    async def test_multipage_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url):
-        fr_client = client.get_form_recognizer_client()
-        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url, "multipage-training-data", "multipage_invoice1.pdf")
-        responses = []
-
-        def callback(raw_response, _, headers):
-            analyze_result = fr_client._deserialize(AnalyzeOperationResult, raw_response)
-            form = prepare_form_result(analyze_result, model.model_id)
-            responses.append(analyze_result)
-            responses.append(form)
-
-        async with client:
-            training_poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url, use_training_labels=False)
+            training_poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=False)
             model = await training_poller.result()
 
             async with fr_client:
@@ -251,10 +122,10 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results)
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    async def test_form_labeled_transform(self, client, formrecognizer_storage_container_sas_url):
+    @FormTrainingClientPreparer()
+    async def test_multipage_labeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
-
+        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf")
         responses = []
 
         def callback(raw_response, _, headers):
@@ -264,46 +135,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(form)
 
         async with client:
-            training_poller = await client.begin_training(formrecognizer_storage_container_sas_url, use_training_labels=True)
-            model = await training_poller.result()
-
-            async with fr_client:
-                poller = await fr_client.begin_recognize_custom_forms_from_url(
-                    model.model_id,
-                    self.form_url_jpg,
-                    include_field_elements=True,
-                    cls=callback
-                )
-                form = await poller.result()
-
-        actual = responses[0]
-        recognized_form = responses[1]
-        read_results = actual.analyze_result.read_results
-        page_results = actual.analyze_result.page_results
-        actual_fields = actual.analyze_result.document_results[0].fields
-
-        self.assertFormPagesTransformCorrect(recognized_form[0].pages, read_results, page_results)
-        self.assertEqual(recognized_form[0].page_range.first_page_number, page_results[0].page)
-        self.assertEqual(recognized_form[0].page_range.last_page_number, page_results[0].page)
-        self.assertIsNotNone(recognized_form[0].form_type_confidence)
-        self.assertIsNotNone(recognized_form[0].model_id)
-        self.assertFormFieldsTransformCorrect(recognized_form[0].fields, actual_fields, read_results)
-
-    @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    async def test_multipage_labeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url):
-        fr_client = client.get_form_recognizer_client()
-        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url, "multipage-training-data", "multipage_invoice1.pdf")
-        responses = []
-
-        def callback(raw_response, _, headers):
-            analyze_result = fr_client._deserialize(AnalyzeOperationResult, raw_response)
-            form = prepare_form_result(analyze_result, model.model_id)
-            responses.append(analyze_result)
-            responses.append(form)
-
-        async with client:
-            training_poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url, use_training_labels=True)
+            training_poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=True)
             model = await training_poller.result()
 
             async with fr_client:
@@ -331,7 +163,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparer()
+    @FormTrainingClientPreparer()
     @pytest.mark.live_test_only
     async def test_custom_form_continuation_token(self, client, formrecognizer_storage_container_sas_url):
         fr_client = client.get_form_recognizer_client()
@@ -356,10 +188,10 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
                 await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    async def test_custom_form_multipage_vendor_set_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2):
+    @FormTrainingClientPreparer()
+    async def test_custom_form_multipage_vendor_set_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2_v2):
         fr_client = client.get_form_recognizer_client()
-        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url_2, "multipage-vendor-forms", "multi1.pdf")
+        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url_2_v2, "multipage-vendor-forms", "multi1.pdf")
         responses = []
 
         def callback(raw_response, _, headers):
@@ -369,7 +201,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(form)
 
         async with client:
-            poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_2, use_training_labels=False)
+            poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_2_v2, use_training_labels=False)
             model = await poller.result()
 
             async with fr_client:
@@ -394,10 +226,10 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results)
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    async def test_custom_form_multipage_vendor_set_labeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2):
+    @FormTrainingClientPreparer()
+    async def test_custom_form_multipage_vendor_set_labeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2_v2):
         fr_client = client.get_form_recognizer_client()
-        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url_2, "multipage-vendor-forms", "multi1.pdf")
+        blob_sas_url = self.get_blob_url(formrecognizer_multipage_storage_container_sas_url_2_v2, "multipage-vendor-forms", "multi1.pdf")
         responses = []
 
         def callback(raw_response, _, headers):
@@ -407,7 +239,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(form)
 
         async with client:
-            poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_2, use_training_labels=True)
+            poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_2_v2, use_training_labels=True)
             model = await poller.result()
 
             async with fr_client:
@@ -434,42 +266,50 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    async def test_custom_form_selection_mark(self, client, formrecognizer_selection_mark_storage_container_sas_url):
-        fr_client = client.get_form_recognizer_client()
+    @DocumentModelAdministrationClientPreparer()
+    async def test_custom_document_selection_mark(self, client, formrecognizer_selection_mark_storage_container_sas_url):
+        fr_client = client.get_document_analysis_client()
 
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = fr_client._deserialize(AnalyzeOperationResult, raw_response)
-            form = prepare_form_result(analyze_result, model.model_id)
+            analyze_result = fr_client._deserialize(AnalyzeResultOperation, raw_response)
+            document = AnalyzeResult._from_generated(analyze_result.analyze_result)
             responses.append(analyze_result)
-            responses.append(form)
+            responses.append(document)
 
         async with client:
-            poller = await client.begin_training(formrecognizer_selection_mark_storage_container_sas_url, use_training_labels=True)
+            poller = await client.begin_build_model(formrecognizer_selection_mark_storage_container_sas_url)
             model = await poller.result()
 
 
 
-            poller = await fr_client.begin_recognize_custom_forms_from_url(
-                model_id=model.model_id,
-                form_url=self.selection_mark_url_pdf,
-                include_field_elements=True,
+            poller = await fr_client.begin_analyze_document_from_url(
+                model=model.model_id,
+                document_url=self.selection_mark_url_pdf,
                 cls=callback
             )
-            form = await poller.result()
+            document = await poller.result()
+        raw_analyze_result = responses[0].analyze_result
+        returned_model = responses[1]
 
-        actual = responses[0]
-        recognized_form = responses[1]
-        read_results = actual.analyze_result.read_results
-        page_results = actual.analyze_result.page_results
-        actual_fields = actual.analyze_result.document_results[0].fields
+        # Check AnalyzeResult
+        assert returned_model.model_id == raw_analyze_result.model_id
+        assert returned_model.api_version == raw_analyze_result.api_version
+        assert returned_model.content == raw_analyze_result.content
 
-        self.assertFormPagesTransformCorrect(recognized_form[0].pages, read_results, page_results)
+        self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
+        self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
+        self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
+        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentEntitiesTransformCorrect(returned_model.entities, raw_analyze_result.entities)
+        self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
+
+        # check page range
+        assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparer()
+    @FormTrainingClientPreparer()
     async def test_pages_kwarg_specified(self, client, formrecognizer_testing_data_container_sas_url):
         fr_client = client.get_form_recognizer_client()
         blob_sas_url = self.get_blob_url(formrecognizer_testing_data_container_sas_url, "testingdata", "multi1.pdf")
@@ -488,78 +328,86 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             assert result
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparer()
+    @DocumentModelAdministrationClientPreparer()
     async def test_label_tables_variable_rows(self, client, formrecognizer_table_variable_rows_container_sas_url):
-        fr_client = client.get_form_recognizer_client()
+        fr_client = client.get_document_analysis_client()
 
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = fr_client._deserialize(AnalyzeOperationResult, raw_response)
-            form = prepare_form_result(analyze_result, model.model_id)
+            analyze_result = fr_client._deserialize(AnalyzeResultOperation, raw_response)
+            document = AnalyzeResult._from_generated(analyze_result.analyze_result)
             responses.append(analyze_result)
-            responses.append(form)
+            responses.append(document)
 
         async with client:
-            training_poller = await client.begin_training(
-                formrecognizer_table_variable_rows_container_sas_url, use_training_labels=True)
-            model = await training_poller.result()
+            build_poller = await client.begin_build_model(
+                formrecognizer_table_variable_rows_container_sas_url)
+            model = await build_poller.result()
 
-            poller = await fr_client.begin_recognize_custom_forms_from_url(
+            poller = await fr_client.begin_analyze_document_from_url(
                 model.model_id,
                 self.label_table_variable_row_url_pdf,
                 cls=callback
             )
-            form = await poller.result()
+            document = await poller.result()
 
-        actual = responses[0]
-        recognized_form = responses[1]
-        read_results = actual.analyze_result.read_results
-        document_results = actual.analyze_result.document_results
+        raw_analyze_result = responses[0].analyze_result
+        returned_model = responses[1]
 
-        for form, actual in zip(recognized_form, document_results):
-            self.assertEqual(form.page_range.first_page_number, actual.page_range[0])
-            self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
-            self.assertEqual(form.form_type, "custom:"+model.model_id)
-            self.assertIsNotNone(form.form_type_confidence)
-            self.assertEqual(form.model_id, model.model_id)
-            self.assertEqual(type(form.fields["table"].value), list)
-            self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
+        # Check AnalyzeResult
+        assert returned_model.model_id == raw_analyze_result.model_id
+        assert returned_model.api_version == raw_analyze_result.api_version
+        assert returned_model.content == raw_analyze_result.content
+
+        self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
+        self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
+        self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
+        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentEntitiesTransformCorrect(returned_model.entities, raw_analyze_result.entities)
+        self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
+
+        # check page range
+        assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparer()
+    @DocumentModelAdministrationClientPreparer()
     async def test_label_tables_fixed_rows(self, client, formrecognizer_table_fixed_rows_container_sas_url):
-        fr_client = client.get_form_recognizer_client()
+        fr_client = client.get_document_analysis_client()
 
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = fr_client._deserialize(AnalyzeOperationResult, raw_response)
-            form = prepare_form_result(analyze_result, model.model_id)
+            analyze_result = fr_client._deserialize(AnalyzeResultOperation, raw_response)
+            document = AnalyzeResult._from_generated(analyze_result.analyze_result)
             responses.append(analyze_result)
-            responses.append(form)
+            responses.append(document)
 
         async with client:
-            training_poller = await client.begin_training(formrecognizer_table_fixed_rows_container_sas_url, use_training_labels=True)
-            model = await training_poller.result()
+            build_poller = await client.begin_build_model(formrecognizer_table_fixed_rows_container_sas_url)
+            model = await build_poller.result()
 
-            poller = await fr_client.begin_recognize_custom_forms_from_url(
+            poller = await fr_client.begin_analyze_document_from_url(
                 model.model_id,
                 self.label_table_fixed_row_url_pdf,
                 cls=callback
             )
             form = await poller.result()
 
-        actual = responses[0]
-        recognized_form = responses[1]
-        read_results = actual.analyze_result.read_results
-        document_results = actual.analyze_result.document_results
+        raw_analyze_result = responses[0].analyze_result
+        returned_model = responses[1]
 
-        for form, actual in zip(recognized_form, document_results):
-            self.assertEqual(form.page_range.first_page_number, actual.page_range[0])
-            self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
-            self.assertEqual(form.form_type, "custom:"+model.model_id)
-            self.assertIsNotNone(form.form_type_confidence)
-            self.assertEqual(form.model_id, model.model_id)
-            self.assertEqual(type(form.fields["table"].value), dict)
-            self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
+        # Check AnalyzeResult
+        assert returned_model.model_id == raw_analyze_result.model_id
+        assert returned_model.api_version == raw_analyze_result.api_version
+        assert returned_model.content == raw_analyze_result.content
+
+        self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
+        self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
+        self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
+        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentEntitiesTransformCorrect(returned_model.entities, raw_analyze_result.entities)
+        self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
+
+        # check page range
+        assert len(raw_analyze_result.pages) == len(returned_model.pages)

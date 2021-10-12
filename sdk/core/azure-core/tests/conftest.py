@@ -29,6 +29,7 @@ import signal
 import os
 import subprocess
 import random
+import platform
 from six.moves import urllib
 from rest_client import TestRestClient
 import sys
@@ -71,6 +72,11 @@ def start_testserver():
     port = get_port()
     os.environ["FLASK_APP"] = "coretestserver"
     os.environ["FLASK_PORT"] = str(port)
+    if platform.python_implementation() == 'PyPy':
+        # pypy is now getting mad at us for some of our encoding / text, so need
+        # to set these additional env vars for pypy
+        os.environ["LC_ALL"] = "C.UTF-8"
+        os.environ["LANG"] = "C.UTF-8"
     cmd = "flask run -p {}".format(port)
     if os.name == 'nt': #On windows, subprocess creation works without being in the shell
         child_process = subprocess.Popen(cmd, env=dict(os.environ))

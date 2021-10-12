@@ -10,12 +10,16 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated import SearchClient as _SearchServiceClient
-from ._generated.models import SearchIndexerSkillset
+from .models import SearchIndexerSkillset
 from ._utils import (
     get_access_conditions,
     normalize_endpoint,
 )
-from .models import SearchIndexerDataSourceConnection
+from .models import (
+    EntityRecognitionSkillVersion,
+    SearchIndexerDataSourceConnection,
+    SentimentSkillVersion
+)
 from .._api_versions import DEFAULT_VERSION
 from .._headers_mixin import HeadersMixin
 from .._utils import get_authentication_policy
@@ -110,6 +114,11 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         :param indexer: The definition of the indexer to create or update.
         :type indexer: ~azure.search.documents.indexes.models.SearchIndexer
+        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements.
+        :paramtype skip_indexer_reset_requirement_for_cache: bool
+        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
+         detection.
+        :paramtype disable_cache_reprocessing_change_detection: bool
         :return: The created IndexSearchIndexerer
         :rtype: ~azure.search.documents.indexes.models.SearchIndexer
         """
@@ -326,9 +335,12 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
+        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements.
+        :paramtype skip_indexer_reset_requirement_for_cache: bool
         :return: The created SearchIndexerDataSourceConnection
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         """
+
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
             data_source_connection,
@@ -469,7 +481,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.skillsets.list(**kwargs)
-        return result.skillsets
+        return [SearchIndexerSkillset._from_generated(skillset) for skillset in result.skillsets] # pylint:disable=protected-access
 
     @distributed_trace
     def get_skillset_names(self, **kwargs):
@@ -507,7 +519,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        return self._client.skillsets.get(name, **kwargs)
+        result = self._client.skillsets.get(name, **kwargs)
+        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
 
     @distributed_trace
     def delete_skillset(self, skillset, **kwargs):
@@ -563,8 +576,11 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        _validate_skillset(skillset)
+        skillset = skillset._to_generated() if hasattr(skillset, '_to_generated') else skillset # pylint:disable=protected-access
 
-        return self._client.skillsets.create(skillset, **kwargs)
+        result = self._client.skillsets.create(skillset, **kwargs)
+        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
 
     @distributed_trace
     def create_or_update_skillset(self, skillset, **kwargs):
@@ -576,6 +592,11 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
+        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements.
+        :paramtype skip_indexer_reset_requirement_for_cache: bool
+        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
+         detection.
+        :paramtype disable_cache_reprocessing_change_detection: bool
         :return: The created or updated SearchIndexerSkillset
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
 
@@ -585,10 +606,54 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             skillset, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         kwargs.update(access_condition)
+        _validate_skillset(skillset)
+        skillset = skillset._to_generated() if hasattr(skillset, '_to_generated') else skillset # pylint:disable=protected-access
 
-        return self._client.skillsets.create_or_update(
+        result = self._client.skillsets.create_or_update(
             skillset_name=skillset.name,
             skillset=skillset,
             error_map=error_map,
             **kwargs
         )
+        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
+
+def _validate_skillset(skillset):
+    """Validates any multi-version skills in the skillset to verify that unsupported
+    parameters are not supplied by the user.
+    """
+    skills = getattr(skillset, 'skills', None)
+    if not skills:
+        return
+
+    error_strings = []
+    for skill in skills:
+        try:
+            skill_version = skill.get('skill_version')
+        except AttributeError:
+            skill_version = getattr(skill, 'skill_version', None)
+        if not skill_version:
+            continue
+
+        if skill_version == SentimentSkillVersion.V1:
+            unsupported = ['model_version', 'include_opinion_mining']
+        elif skill_version == SentimentSkillVersion.V3:
+            unsupported = []
+        elif skill_version == EntityRecognitionSkillVersion.V1:
+            unsupported = ['model_version']
+        elif skill_version == EntityRecognitionSkillVersion.V3:
+            unsupported = ['include_typeless_entities']
+
+        errors = []
+        for item in unsupported:
+            try:
+                if skill.get(item, None):
+                    errors.append(item)
+            except AttributeError:
+                if skill.__dict__.get(item, None):
+                    errors.append(item)
+        if errors:
+            error_strings.append("Unsupported parameters for skill version {}: {}".format(
+                skill_version, ", ".join(errors))
+            )
+    if error_strings:
+        raise ValueError("\n".join(error_strings))
