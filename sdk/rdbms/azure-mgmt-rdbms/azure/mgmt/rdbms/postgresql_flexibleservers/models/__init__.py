@@ -22,7 +22,6 @@ try:
     from ._models_py3 import FlexibleServerEditionCapability
     from ._models_py3 import HighAvailability
     from ._models_py3 import HyperscaleNodeEditionCapability
-    from ._models_py3 import Identity
     from ._models_py3 import MaintenanceWindow
     from ._models_py3 import NameAvailability
     from ._models_py3 import NameAvailabilityRequest
@@ -63,7 +62,6 @@ except (SyntaxError, ImportError):
     from ._models import FlexibleServerEditionCapability  # type: ignore
     from ._models import HighAvailability  # type: ignore
     from ._models import HyperscaleNodeEditionCapability  # type: ignore
-    from ._models import Identity  # type: ignore
     from ._models import MaintenanceWindow  # type: ignore
     from ._models import NameAvailability  # type: ignore
     from ._models import NameAvailabilityRequest  # type: ignore
@@ -94,6 +92,7 @@ from ._postgre_sql_management_client_enums import (
     CreateMode,
     CreateModeForUpdate,
     CreatedByType,
+    FailoverMode,
     GeoRedundantBackupEnum,
     HighAvailabilityMode,
     OperationOrigin,
@@ -120,7 +119,6 @@ __all__ = [
     'FlexibleServerEditionCapability',
     'HighAvailability',
     'HyperscaleNodeEditionCapability',
-    'Identity',
     'MaintenanceWindow',
     'NameAvailability',
     'NameAvailabilityRequest',
@@ -149,6 +147,7 @@ __all__ = [
     'CreateMode',
     'CreateModeForUpdate',
     'CreatedByType',
+    'FailoverMode',
     'GeoRedundantBackupEnum',
     'HighAvailabilityMode',
     'OperationOrigin',

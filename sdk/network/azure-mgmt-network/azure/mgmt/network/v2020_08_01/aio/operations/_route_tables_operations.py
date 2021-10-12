@@ -47,7 +47,7 @@ class RouteTablesOperations:
         self,
         resource_group_name: str,
         route_table_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -91,7 +91,7 @@ class RouteTablesOperations:
         self,
         resource_group_name: str,
         route_table_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified route table.
 
@@ -101,8 +101,8 @@ class RouteTablesOperations:
         :type route_table_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -156,7 +156,7 @@ class RouteTablesOperations:
         resource_group_name: str,
         route_table_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RouteTable":
         """Gets the specified route table.
 
@@ -219,7 +219,7 @@ class RouteTablesOperations:
         resource_group_name: str,
         route_table_name: str,
         parameters: "_models.RouteTable",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RouteTable":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteTable"]
         error_map = {
@@ -276,7 +276,7 @@ class RouteTablesOperations:
         resource_group_name: str,
         route_table_name: str,
         parameters: "_models.RouteTable",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.RouteTable"]:
         """Create or updates a route table in a specified resource group.
 
@@ -288,8 +288,8 @@ class RouteTablesOperations:
         :type parameters: ~azure.mgmt.network.v2020_08_01.models.RouteTable
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either RouteTable or the result of cls(response)
@@ -347,7 +347,7 @@ class RouteTablesOperations:
         resource_group_name: str,
         route_table_name: str,
         parameters: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RouteTable":
         """Updates a route table tags.
 
@@ -411,7 +411,7 @@ class RouteTablesOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RouteTableListResult"]:
         """Gets all route tables in a resource group.
 
@@ -480,7 +480,7 @@ class RouteTablesOperations:
 
     def list_all(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RouteTableListResult"]:
         """Gets all route tables in a subscription.
 
