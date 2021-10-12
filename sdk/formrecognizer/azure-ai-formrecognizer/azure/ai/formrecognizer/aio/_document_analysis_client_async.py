@@ -151,7 +151,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         :param str model: A unique model identifier can be passed in as a string.
             Use this to specify the custom model ID or prebuilt model ID. Prebuilt model IDs supported
             can be found here: https://aka.ms/azsdk/formrecognizer/models
-        :param str document_url: The URL of the document to analyze. The input must be a valid, properly encoded, 
+        :param str document_url: The URL of the document to analyze. The input must be a valid, properly encoded,
             and publicly accessible URL of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
         :keyword str pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
             and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
