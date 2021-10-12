@@ -514,6 +514,8 @@ class Resource(msrest.serialization.Model):
     :type location: str
     :param tags: A set of tags. The resource tags.
     :type tags: dict[str, str]
+    :param zones: The zones for the container group.
+    :type zones: list[str]
     """
 
     _validation = {
@@ -528,6 +530,7 @@ class Resource(msrest.serialization.Model):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'zones': {'key': 'zones', 'type': '[str]'},
     }
 
     def __init__(
@@ -535,6 +538,7 @@ class Resource(msrest.serialization.Model):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
+        zones: Optional[List[str]] = None,
         **kwargs
     ):
         super(Resource, self).__init__(**kwargs)
@@ -543,6 +547,7 @@ class Resource(msrest.serialization.Model):
         self.type = None
         self.location = location
         self.tags = tags
+        self.zones = zones
 
 
 class ContainerGroup(Resource):
@@ -562,6 +567,8 @@ class ContainerGroup(Resource):
     :type location: str
     :param tags: A set of tags. The resource tags.
     :type tags: dict[str, str]
+    :param zones: The zones for the container group.
+    :type zones: list[str]
     :param identity: The identity of the container group, if configured.
     :type identity: ~azure.mgmt.containerinstance.models.ContainerGroupIdentity
     :ivar provisioning_state: The provisioning state of the container group. This only appears in
@@ -620,6 +627,7 @@ class ContainerGroup(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'zones': {'key': 'zones', 'type': '[str]'},
         'identity': {'key': 'identity', 'type': 'ContainerGroupIdentity'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'containers': {'key': 'properties.containers', 'type': '[Container]'},
@@ -644,6 +652,7 @@ class ContainerGroup(Resource):
         os_type: Union[str, "OperatingSystemTypes"],
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
+        zones: Optional[List[str]] = None,
         identity: Optional["ContainerGroupIdentity"] = None,
         image_registry_credentials: Optional[List["ImageRegistryCredential"]] = None,
         restart_policy: Optional[Union[str, "ContainerGroupRestartPolicy"]] = None,
@@ -657,7 +666,7 @@ class ContainerGroup(Resource):
         init_containers: Optional[List["InitContainerDefinition"]] = None,
         **kwargs
     ):
-        super(ContainerGroup, self).__init__(location=location, tags=tags, **kwargs)
+        super(ContainerGroup, self).__init__(location=location, tags=tags, zones=zones, **kwargs)
         self.identity = identity
         self.provisioning_state = None
         self.containers = containers
