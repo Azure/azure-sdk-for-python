@@ -15,8 +15,10 @@ resources:
     ref: perf-automation
 
 steps:
-  - checkout: self 
+  - checkout: self
+    fetchDepth: 1
   - checkout: azure-sdk-tools
+    fetchDepth: 1
 
   - script: dotnet run -- run --help
     displayName: Run perf tests
