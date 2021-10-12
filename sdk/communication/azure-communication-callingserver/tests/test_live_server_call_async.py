@@ -11,7 +11,6 @@ from azure.communication.callingserver.aio import CallingServerClient
 from azure.communication.callingserver import (
     PlayAudioOptions,
     CommunicationUserIdentifier,
-    ServerCallLocator,
     GroupCallLocator
     )
 
@@ -153,7 +152,6 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
                 CallingServerLiveTestUtils.sleep_if_in_live_mode()
                 await CallingServerLiveTestUtilsAsync.clean_up_connections_async(call_connections)
 
-    @pytest.mark.skip(reason="Skip because the server side bits not ready")
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_run_all_client_functions(self):
         async with self.callingserver_client:
@@ -173,10 +171,8 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
                 CONST.CALLBACK_URI
                 )
 
-            call_locator = ServerCallLocator(group_id)
-
             try:
-                start_call_recording_result = await self.callingserver_client.start_recording(call_locator, CONST.CALLBACK_URI)
+                start_call_recording_result = await self.callingserver_client.start_recording(GroupCallLocator(group_id), CONST.CALLBACK_URI)
                 recording_id = start_call_recording_result.recording_id
 
                 assert recording_id is not None
@@ -201,10 +197,9 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
                 CallingServerLiveTestUtils.sleep_if_in_live_mode()
                 await CallingServerLiveTestUtilsAsync.clean_up_connections_async(call_connections)
 
-    @pytest.mark.skip(reason="Skip because the server side bits not ready")
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_start_recording_fails(self):
         invalid_server_call_id = "aHR0cHM6Ly9jb252LXVzd2UtMDkuY29udi5za3lwZS5jb20vY29udi9EZVF2WEJGVVlFV1NNZkFXYno2azN3P2k9MTEmZT02Mzc1NzIyMjk0Mjc0NTI4Nzk="
 
         with self.assertRaises(HttpResponseError):
-            await self.callingserver_client.start_recording(ServerCallLocator(invalid_server_call_id), CONST.CALLBACK_URI)
+            await self.callingserver_client.start_recording(GroupCallLocator(invalid_server_call_id), CONST.CALLBACK_URI)
