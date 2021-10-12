@@ -414,6 +414,7 @@ class CallingServerClient:
             raise ValueError("recording_state_callback_uri is invalid")
 
         start_call_recording_request = StartCallRecordingWithCallLocatorRequest(
+            call_locator=serialize_call_locator(call_locator),
             recording_state_callback_uri=recording_state_callback_uri,
             recording_content_type=recording_content_type,
             recording_channel_type=recording_channel_type,
@@ -421,13 +422,8 @@ class CallingServerClient:
             **kwargs
         )
 
-        start_call_recording_with_calllocator_request = StartCallRecordingWithCallLocatorRequest(
-            call_locator=serialize_call_locator(call_locator),
-            start_call_recording_request=start_call_recording_request
-        )
-
         return await self._server_call_client.start_recording(
-            start_call_recording_with_calllocator_request,
+            start_call_recording_request,
             **kwargs
         )
 
