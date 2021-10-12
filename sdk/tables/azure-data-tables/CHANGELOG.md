@@ -9,7 +9,7 @@
 
 ### Features Added
 
-- Added support async iterators in `aio.TableClient.submit_transaction (#21083, thank you yashbhutoria).
+- Added support for async iterators in `aio.TableClient.submit_transaction (#21083, thank you yashbhutoria).
 
 ### Other Changes
 
