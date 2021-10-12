@@ -47,7 +47,7 @@ class VirtualNetworkTapsOperations:
         self,
         resource_group_name: str,
         tap_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -91,7 +91,7 @@ class VirtualNetworkTapsOperations:
         self,
         resource_group_name: str,
         tap_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified virtual network tap.
 
@@ -101,8 +101,8 @@ class VirtualNetworkTapsOperations:
         :type tap_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -155,7 +155,7 @@ class VirtualNetworkTapsOperations:
         self,
         resource_group_name: str,
         tap_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualNetworkTap":
         """Gets information about the specified virtual network tap.
 
@@ -214,7 +214,7 @@ class VirtualNetworkTapsOperations:
         resource_group_name: str,
         tap_name: str,
         parameters: "_models.VirtualNetworkTap",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualNetworkTap":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkTap"]
         error_map = {
@@ -271,7 +271,7 @@ class VirtualNetworkTapsOperations:
         resource_group_name: str,
         tap_name: str,
         parameters: "_models.VirtualNetworkTap",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.VirtualNetworkTap"]:
         """Creates or updates a Virtual Network Tap.
 
@@ -283,8 +283,8 @@ class VirtualNetworkTapsOperations:
         :type parameters: ~azure.mgmt.network.v2019_09_01.models.VirtualNetworkTap
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VirtualNetworkTap or the result of cls(response)
@@ -342,7 +342,7 @@ class VirtualNetworkTapsOperations:
         resource_group_name: str,
         tap_name: str,
         tap_parameters: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualNetworkTap":
         """Updates an VirtualNetworkTap tags.
 
@@ -405,7 +405,7 @@ class VirtualNetworkTapsOperations:
 
     def list_all(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VirtualNetworkTapListResult"]:
         """Gets all the VirtualNetworkTaps in a subscription.
 
@@ -472,7 +472,7 @@ class VirtualNetworkTapsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VirtualNetworkTapListResult"]:
         """Gets all the VirtualNetworkTaps in a subscription.
 

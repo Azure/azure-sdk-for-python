@@ -1,5 +1,35 @@
 # Release History
 
+## 23.0.0 (2021-09-02)
+
+**Features**
+
+  - Model HardwareProfile has a new parameter vm_size_properties
+  - Model VirtualMachineScaleSetVMProfile has a new parameter application_profile
+  - Model AdditionalCapabilities has a new parameter hibernation_enabled
+  - Model VirtualMachine has a new parameter application_profile
+  - Model VirtualMachineScaleSetVMExtensionUpdate has a new parameter suppress_failures
+  - Model Gallery has a new parameter soft_delete_policy
+  - Model ScaleInPolicy has a new parameter force_deletion
+  - Model VirtualMachineScaleSetExtensionUpdate has a new parameter suppress_failures
+  - Model GalleryArtifactPublishingProfileBase has a new parameter replication_mode
+  - Model GalleryImageVersionPublishingProfile has a new parameter replication_mode
+  - Model GalleryApplicationVersionPublishingProfile has a new parameter replication_mode
+  - Model ImageReference has a new parameter shared_gallery_image_id
+  - Model VirtualMachineUpdate has a new parameter application_profile
+  - Model VirtualMachineScaleSetVMExtension has a new parameter suppress_failures
+  - Model ResourceSkuLocationInfo has a new parameter type
+  - Model ResourceSkuLocationInfo has a new parameter extended_locations
+  - Model VirtualMachineScaleSetExtension has a new parameter suppress_failures
+  - Model VirtualMachineExtension has a new parameter suppress_failures
+  - Model VirtualMachineExtensionUpdate has a new parameter suppress_failures
+  - Model GalleryUpdate has a new parameter soft_delete_policy
+
+**Breaking changes**
+
+  - Operation ResourceSkusOperations.list has a new signature
+  - Operation VirtualMachinesOperations.begin_deallocate has a new signature
+
 ## 22.1.0 (2021-07-22)
 
 **Features**

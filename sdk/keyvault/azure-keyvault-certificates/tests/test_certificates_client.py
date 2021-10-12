@@ -381,6 +381,9 @@ class CertificateClientTests(CertificatesTestCase, KeyVaultTestCase):
     @all_api_versions()
     @client_setup
     def test_async_request_cancellation_and_deletion(self, client, **kwargs):
+        if self.is_live:
+            pytest.skip("Skipping by default because of pipeline test flakiness: https://github.com/Azure/azure-sdk-for-python/issues/16333")
+
         cert_name = self.get_resource_name("asyncCanceledDeletedCert")
         cert_policy = CertificatePolicy.get_default()
         # create certificate
@@ -593,13 +596,15 @@ class CertificateClientTests(CertificatesTestCase, KeyVaultTestCase):
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
-                try:
-                    body = json.loads(message.message)
-                    if body["provider"] == "Test":
-                        return
-                except (ValueError, KeyError):
-                    # this means the message is not JSON or has no kty property
-                    pass
+                messages_request = message.message.split("/n")
+                for m in messages_request:
+                    try:
+                        body = json.loads(m)
+                        if body["provider"] == "Test":
+                            return
+                    except (ValueError, KeyError):
+                        # this means the message is not JSON or has no kty property
+                        pass
 
         assert False, "Expected request body wasn't logged"
 
@@ -617,12 +622,14 @@ class CertificateClientTests(CertificatesTestCase, KeyVaultTestCase):
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
-                try:
-                    body = json.loads(message.message)
-                    assert body["provider"] != "Test", "Client request body was logged"
-                except (ValueError, KeyError):
-                    # this means the message is not JSON or has no kty property
-                    pass
+                messages_request = message.message.split("/n")
+                for m in messages_request:
+                    try:
+                        body = json.loads(m)
+                        assert body["provider"] != "Test", "Client request body was logged"
+                    except (ValueError, KeyError):
+                        # this means the message is not JSON or has no kty property
+                        pass
 
     @only_2016_10_01()
     @client_setup

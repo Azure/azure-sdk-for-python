@@ -1,6 +1,6 @@
 {
-    "chosen_version": "",
-    "total_api_version_list": ["2020-01-01-preview", "2020-03-01"],
+    "chosen_version": "2021-06-01",
+    "total_api_version_list": ["2021-06-01"],
     "client": {
         "name": "ServiceFabricManagementClient",
         "filename": "_service_fabric_management_client",
@@ -101,15 +101,9 @@
         "clusters": "ClustersOperations",
         "cluster_versions": "ClusterVersionsOperations",
         "operations": "Operations",
-        "application": "ApplicationOperations",
         "application_types": "ApplicationTypesOperations",
         "application_type_versions": "ApplicationTypeVersionsOperations",
         "applications": "ApplicationsOperations",
-        "services": "ServicesOperations",
-        "managed_clusters": "ManagedClustersOperations",
-        "managedcluster": "ManagedclusterOperations",
-        "managed_cluster_versions": "ManagedClusterVersionsOperations",
-        "nodetype": "NodetypeOperations",
-        "node_types": "NodeTypesOperations"
+        "services": "ServicesOperations"
     }
 }

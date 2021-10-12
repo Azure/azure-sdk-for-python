@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('1')?api-version=2021-04-30-Preview
   response:
@@ -22,13 +22,13 @@ interactions:
       cache-control: no-cache
       content-length: '748'
       content-type: application/json; odata.metadata=none
-      date: Wed, 30 Jun 2021 23:18:11 GMT
-      elapsed-time: '101'
+      date: Tue, 31 Aug 2021 17:24:39 GMT
+      elapsed-time: '88'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 6fbba2b6-d9f9-11eb-badd-a0481ca055a9
+      request-id: 5365491a-0a80-11ec-8853-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -41,7 +41,7 @@ interactions:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('2')?api-version=2021-04-30-Preview
   response:
@@ -53,13 +53,13 @@ interactions:
       cache-control: no-cache
       content-length: '449'
       content-type: application/json; odata.metadata=none
-      date: Wed, 30 Jun 2021 23:18:11 GMT
-      elapsed-time: '5'
+      date: Tue, 31 Aug 2021 17:24:39 GMT
+      elapsed-time: '6'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 6fea4cea-d9f9-11eb-9a16-a0481ca055a9
+      request-id: 538b2d9f-0a80-11ec-9e90-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -72,7 +72,7 @@ interactions:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2021-04-30-Preview
   response:
@@ -83,13 +83,13 @@ interactions:
       cache-control: no-cache
       content-length: '438'
       content-type: application/json; odata.metadata=none
-      date: Wed, 30 Jun 2021 23:18:11 GMT
-      elapsed-time: '5'
+      date: Tue, 31 Aug 2021 17:24:39 GMT
+      elapsed-time: '8'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 6ff2afb7-d9f9-11eb-ae05-a0481ca055a9
+      request-id: 5391c3fe-0a80-11ec-b2bf-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -102,7 +102,7 @@ interactions:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2021-04-30-Preview
   response:
@@ -113,13 +113,13 @@ interactions:
       cache-control: no-cache
       content-length: '422'
       content-type: application/json; odata.metadata=none
-      date: Wed, 30 Jun 2021 23:18:11 GMT
-      elapsed-time: '7'
+      date: Tue, 31 Aug 2021 17:24:39 GMT
+      elapsed-time: '13'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 6ffbd293-d9f9-11eb-a867-a0481ca055a9
+      request-id: 5398b074-0a80-11ec-af29-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -132,7 +132,7 @@ interactions:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('5')?api-version=2021-04-30-Preview
   response:
@@ -143,13 +143,13 @@ interactions:
       cache-control: no-cache
       content-length: '424'
       content-type: application/json; odata.metadata=none
-      date: Wed, 30 Jun 2021 23:18:11 GMT
-      elapsed-time: '5'
+      date: Tue, 31 Aug 2021 17:24:39 GMT
+      elapsed-time: '7'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 7004732a-d9f9-11eb-96e4-a0481ca055a9
+      request-id: 53a1ac97-0a80-11ec-96b4-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -162,7 +162,7 @@ interactions:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('6')?api-version=2021-04-30-Preview
   response:
@@ -173,13 +173,13 @@ interactions:
       cache-control: no-cache
       content-length: '301'
       content-type: application/json; odata.metadata=none
-      date: Wed, 30 Jun 2021 23:18:11 GMT
-      elapsed-time: '7'
+      date: Tue, 31 Aug 2021 17:24:39 GMT
+      elapsed-time: '8'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 700da56d-d9f9-11eb-b1c5-a0481ca055a9
+      request-id: 53a8edac-0a80-11ec-91aa-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -192,7 +192,7 @@ interactions:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('7')?api-version=2021-04-30-Preview
   response:
@@ -204,13 +204,13 @@ interactions:
       cache-control: no-cache
       content-length: '357'
       content-type: application/json; odata.metadata=none
-      date: Wed, 30 Jun 2021 23:18:11 GMT
-      elapsed-time: '4'
+      date: Tue, 31 Aug 2021 17:24:39 GMT
+      elapsed-time: '6'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 7016e708-d9f9-11eb-a48d-a0481ca055a9
+      request-id: 53b0436a-0a80-11ec-a764-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -223,7 +223,7 @@ interactions:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('8')?api-version=2021-04-30-Preview
   response:
@@ -236,13 +236,13 @@ interactions:
       cache-control: no-cache
       content-length: '411'
       content-type: application/json; odata.metadata=none
-      date: Wed, 30 Jun 2021 23:18:11 GMT
-      elapsed-time: '3'
+      date: Tue, 31 Aug 2021 17:24:39 GMT
+      elapsed-time: '4'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 701f1d37-d9f9-11eb-b920-a0481ca055a9
+      request-id: 53b7414b-0a80-11ec-bf95-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -255,7 +255,7 @@ interactions:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('9')?api-version=2021-04-30-Preview
   response:
@@ -282,13 +282,13 @@ interactions:
       cache-control: no-cache
       content-length: '1061'
       content-type: application/json; odata.metadata=none
-      date: Wed, 30 Jun 2021 23:18:11 GMT
+      date: Tue, 31 Aug 2021 17:24:39 GMT
       elapsed-time: '10'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 702648df-d9f9-11eb-8ef5-a0481ca055a9
+      request-id: 53bf0a95-0a80-11ec-a45a-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -301,7 +301,7 @@ interactions:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('10')?api-version=2021-04-30-Preview
   response:
@@ -324,13 +324,13 @@ interactions:
       cache-control: no-cache
       content-length: '938'
       content-type: application/json; odata.metadata=none
-      date: Wed, 30 Jun 2021 23:18:11 GMT
+      date: Tue, 31 Aug 2021 17:24:39 GMT
       elapsed-time: '6'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 702f74d0-d9f9-11eb-959a-a0481ca055a9
+      request-id: 53c6f174-0a80-11ec-b849-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:

@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import ErrorAdditionalInfo
+    from ._models_py3 import ErrorDetail
+    from ._models_py3 import ErrorResponse
     from ._models_py3 import Permission
     from ._models_py3 import PermissionGetResult
     from ._models_py3 import ProviderOperation
@@ -21,6 +24,9 @@ try:
     from ._models_py3 import RoleDefinitionFilter
     from ._models_py3 import RoleDefinitionListResult
 except (SyntaxError, ImportError):
+    from ._models import ErrorAdditionalInfo  # type: ignore
+    from ._models import ErrorDetail  # type: ignore
+    from ._models import ErrorResponse  # type: ignore
     from ._models import Permission  # type: ignore
     from ._models import PermissionGetResult  # type: ignore
     from ._models import ProviderOperation  # type: ignore
@@ -36,6 +42,9 @@ except (SyntaxError, ImportError):
     from ._models import RoleDefinitionListResult  # type: ignore
 
 __all__ = [
+    'ErrorAdditionalInfo',
+    'ErrorDetail',
+    'ErrorResponse',
     'Permission',
     'PermissionGetResult',
     'ProviderOperation',

@@ -134,7 +134,7 @@ class CertificateClient(KeyVaultClientBase):
         create_certificate_polling = CreateCertificatePoller(
             get_certificate_command=get_certificate_command, interval=polling_interval
         )
-        return LROPoller(command, create_certificate_operation, None, create_certificate_polling)
+        return LROPoller(command, create_certificate_operation, lambda *_: None, create_certificate_polling)
 
     @distributed_trace
     def get_certificate(self, certificate_name, **kwargs):
@@ -668,13 +668,15 @@ class CertificateClient(KeyVaultClientBase):
                 :caption: Create contacts
                 :dedent: 8
         """
-        contacts = self._client.set_certificate_contacts(
+        new_contacts = self._client.set_certificate_contacts(
             vault_base_url=self.vault_url,
             contacts=self._models.Contacts(contact_list=[c._to_certificate_contacts_item() for c in contacts]),
             error_map=_error_map,
             **kwargs
         )
-        return [CertificateContact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
+        return [
+            CertificateContact._from_certificate_contacts_item(contact_item=item) for item in new_contacts.contact_list
+        ]
 
     @distributed_trace
     def get_contacts(self, **kwargs):
@@ -885,7 +887,7 @@ class CertificateClient(KeyVaultClientBase):
                     phone=contact.phone,
                 )
                 for contact in admin_contacts
-            ]
+            ]  # type: Optional[List[Any]]
         else:
             admin_details = None
         if organization_id or admin_details:
@@ -946,7 +948,7 @@ class CertificateClient(KeyVaultClientBase):
                     phone=contact.phone,
                 )
                 for contact in admin_contacts
-            ]
+            ]  # type: Optional[List[Any]]
         else:
             admin_details = None
         if organization_id or admin_details:

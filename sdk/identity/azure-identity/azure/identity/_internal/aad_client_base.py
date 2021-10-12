@@ -17,6 +17,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from . import get_default_authority, normalize_authority
 from .._internal import resolve_tenant
+from .._internal.aadclient_certificate import AadClientCertificate
 
 try:
     from typing import TYPE_CHECKING
@@ -34,24 +35,24 @@ if TYPE_CHECKING:
     from azure.core.pipeline import AsyncPipeline, Pipeline, PipelineResponse
     from azure.core.pipeline.policies import AsyncHTTPPolicy, HTTPPolicy, SansIOHTTPPolicy
     from azure.core.pipeline.transport import AsyncHttpTransport, HttpTransport
-    from .._internal import AadClientCertificate
 
     PipelineType = Union[AsyncPipeline, Pipeline]
     PolicyType = Union[AsyncHTTPPolicy, HTTPPolicy, SansIOHTTPPolicy]
     TransportType = Union[AsyncHttpTransport, HttpTransport]
+
+JWT_BEARER_ASSERTION = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
 
 
 class AadClientBase(ABC):
     _POST = ["POST"]
 
     def __init__(
-        self, tenant_id, client_id, authority=None, cache=None, allow_multitenant_authentication=False, **kwargs
+        self, tenant_id, client_id, authority=None, cache=None, **kwargs
     ):
-        # type: (str, str, Optional[str], Optional[TokenCache], bool, **Any) -> None
+        # type: (str, str, Optional[str], Optional[TokenCache], **Any) -> None
         self._authority = normalize_authority(authority) if authority else get_default_authority()
 
         self._tenant_id = tenant_id
-        self._allow_multitenant = allow_multitenant_authentication
 
         self._cache = cache or TokenCache()
         self._client_id = client_id
@@ -59,7 +60,7 @@ class AadClientBase(ABC):
 
     def get_cached_access_token(self, scopes, **kwargs):
         # type: (Iterable[str], **Any) -> Optional[AccessToken]
-        tenant = resolve_tenant(self._tenant_id, self._allow_multitenant, **kwargs)
+        tenant = resolve_tenant(self._tenant_id, **kwargs)
         tokens = self._cache.find(
             TokenCache.CredentialType.ACCESS_TOKEN,
             target=list(scopes),
@@ -94,6 +95,10 @@ class AadClientBase(ABC):
 
     @abc.abstractmethod
     def obtain_token_by_refresh_token(self, scopes, refresh_token, **kwargs):
+        pass
+
+    @abc.abstractmethod
+    def obtain_token_on_behalf_of(self, scopes, client_credential, user_assertion, **kwargs):
         pass
 
     @abc.abstractmethod
@@ -173,7 +178,7 @@ class AadClientBase(ABC):
         # type: (Iterable[str], str, **Any) -> HttpRequest
         data = {
             "client_assertion": assertion,
-            "client_assertion_type": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+            "client_assertion_type": JWT_BEARER_ASSERTION,
             "client_id": self._client_id,
             "grant_type": "client_credentials",
             "scope": " ".join(scopes),
@@ -182,8 +187,8 @@ class AadClientBase(ABC):
         request = self._post(data, **kwargs)
         return request
 
-    def _get_client_certificate_request(self, scopes, certificate, **kwargs):
-        # type: (Iterable[str], AadClientCertificate, **Any) -> HttpRequest
+    def _get_client_certificate_assertion(self, certificate, **kwargs):
+        # type: (AadClientCertificate, **Any) -> str
         now = int(time.time())
         header = six.ensure_binary(
             json.dumps({"typ": "JWT", "alg": "RS256", "x5t": certificate.thumbprint}), encoding="utf-8"
@@ -204,8 +209,11 @@ class AadClientBase(ABC):
         jws = base64.urlsafe_b64encode(header) + b"." + base64.urlsafe_b64encode(payload)
         signature = certificate.sign(jws)
         jwt_bytes = jws + b"." + base64.urlsafe_b64encode(signature)
-        assertion = jwt_bytes.decode("utf-8")
+        return jwt_bytes.decode("utf-8")
 
+    def _get_client_certificate_request(self, scopes, certificate, **kwargs):
+        # type: (Iterable[str], AadClientCertificate, **Any) -> HttpRequest
+        assertion = self._get_client_certificate_assertion(certificate, **kwargs)
         return self._get_jwt_assertion_request(scopes, assertion, **kwargs)
 
     def _get_client_secret_request(self, scopes, secret, **kwargs):
@@ -216,6 +224,24 @@ class AadClientBase(ABC):
             "grant_type": "client_credentials",
             "scope": " ".join(scopes),
         }
+        request = self._post(data, **kwargs)
+        return request
+
+    def _get_on_behalf_of_request(self, scopes, client_credential, user_assertion, **kwargs):
+        # type: (Iterable[str], Union[str, AadClientCertificate], str, **Any) -> HttpRequest
+        data = {
+            "assertion": user_assertion,
+            "client_id": self._client_id,
+            "grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer",
+            "requested_token_use": "on_behalf_of",
+            "scope": " ".join(scopes),
+        }
+        if isinstance(client_credential, AadClientCertificate):
+            data["client_assertion"] = self._get_client_certificate_assertion(client_credential)
+            data["client_assertion_type"] = JWT_BEARER_ASSERTION
+        else:
+            data["client_secret"] = client_credential
+
         request = self._post(data, **kwargs)
         return request
 
@@ -233,7 +259,7 @@ class AadClientBase(ABC):
 
     def _get_token_url(self, **kwargs):
         # type: (**Any) -> str
-        tenant = resolve_tenant(self._tenant_id, self._allow_multitenant, **kwargs)
+        tenant = resolve_tenant(self._tenant_id, **kwargs)
         return "/".join((self._authority, tenant, "oauth2/v2.0/token"))
 
     def _post(self, data, **kwargs):

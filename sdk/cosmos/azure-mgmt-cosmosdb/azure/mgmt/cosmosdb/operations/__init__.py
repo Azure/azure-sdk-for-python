@@ -19,11 +19,13 @@ from ._collection_partition_region_operations import CollectionPartitionRegionOp
 from ._collection_partition_operations import CollectionPartitionOperations
 from ._partition_key_range_id_operations import PartitionKeyRangeIdOperations
 from ._partition_key_range_id_region_operations import PartitionKeyRangeIdRegionOperations
+from ._graph_resources_operations import GraphResourcesOperations
 from ._sql_resources_operations import SqlResourcesOperations
 from ._mongo_db_resources_operations import MongoDBResourcesOperations
 from ._table_resources_operations import TableResourcesOperations
 from ._cassandra_resources_operations import CassandraResourcesOperations
 from ._gremlin_resources_operations import GremlinResourcesOperations
+from ._cosmos_db_management_client_operations import CosmosDBManagementClientOperationsMixin
 from ._notebook_workspaces_operations import NotebookWorkspacesOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
@@ -34,6 +36,9 @@ from ._restorable_sql_resources_operations import RestorableSqlResourcesOperatio
 from ._restorable_mongodb_databases_operations import RestorableMongodbDatabasesOperations
 from ._restorable_mongodb_collections_operations import RestorableMongodbCollectionsOperations
 from ._restorable_mongodb_resources_operations import RestorableMongodbResourcesOperations
+from ._cassandra_clusters_operations import CassandraClustersOperations
+from ._cassandra_data_centers_operations import CassandraDataCentersOperations
+from ._service_operations import ServiceOperations
 
 __all__ = [
     'DatabaseAccountsOperations',
@@ -49,11 +54,13 @@ __all__ = [
     'CollectionPartitionOperations',
     'PartitionKeyRangeIdOperations',
     'PartitionKeyRangeIdRegionOperations',
+    'GraphResourcesOperations',
     'SqlResourcesOperations',
     'MongoDBResourcesOperations',
     'TableResourcesOperations',
     'CassandraResourcesOperations',
     'GremlinResourcesOperations',
+    'CosmosDBManagementClientOperationsMixin',
     'NotebookWorkspacesOperations',
     'PrivateEndpointConnectionsOperations',
     'PrivateLinkResourcesOperations',
@@ -64,4 +71,7 @@ __all__ = [
     'RestorableMongodbDatabasesOperations',
     'RestorableMongodbCollectionsOperations',
     'RestorableMongodbResourcesOperations',
+    'CassandraClustersOperations',
+    'CassandraDataCentersOperations',
+    'ServiceOperations',
 ]

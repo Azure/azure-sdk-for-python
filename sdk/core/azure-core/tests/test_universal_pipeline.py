@@ -41,11 +41,6 @@ from azure.core.pipeline import (
     PipelineRequest,
     PipelineContext
 )
-from azure.core.pipeline.transport import (
-    HttpRequest,
-    HttpResponse,
-    RequestsTransportResponse,
-)
 
 from azure.core.pipeline.policies import (
     NetworkTraceLoggingPolicy,
@@ -54,6 +49,8 @@ from azure.core.pipeline.policies import (
     RetryPolicy,
     HTTPPolicy,
 )
+from utils import HTTP_REQUESTS, create_http_request, HTTP_RESPONSES, REQUESTS_TRANSPORT_RESPONSES, create_http_response, create_transport_response, request_and_responses_product
+from azure.core.pipeline._tools import is_rest
 
 def test_pipeline_context():
     kwargs={
@@ -86,26 +83,28 @@ def test_pipeline_context():
     assert len(revived_context) == 1
 
 
-def test_request_history():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_request_history(http_request):
     class Non_deep_copiable(object):
         def __deepcopy__(self, memodict={}):
             raise ValueError()
 
     body = Non_deep_copiable()
-    request = HttpRequest('GET', 'http://localhost/', {'user-agent': 'test_request_history'})
+    request = create_http_request(http_request, 'GET', 'http://localhost/', {'user-agent': 'test_request_history'})
     request.body = body
     request_history = RequestHistory(request)
     assert request_history.http_request.headers == request.headers
     assert request_history.http_request.url == request.url
     assert request_history.http_request.method == request.method
 
-def test_request_history_type_error():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_request_history_type_error(http_request):
     class Non_deep_copiable(object):
         def __deepcopy__(self, memodict={}):
             raise TypeError()
 
     body = Non_deep_copiable()
-    request = HttpRequest('GET', 'http://localhost/', {'user-agent': 'test_request_history'})
+    request = create_http_request(http_request, 'GET', 'http://localhost/', {'user-agent': 'test_request_history'})
     request.body = body
     request_history = RequestHistory(request)
     assert request_history.http_request.headers == request.headers
@@ -113,11 +112,12 @@ def test_request_history_type_error():
     assert request_history.http_request.method == request.method
 
 @mock.patch('azure.core.pipeline.policies._universal._LOGGER')
-def test_no_log(mock_http_logger):
-    universal_request = HttpRequest('GET', 'http://localhost/')
+@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
+def test_no_log(mock_http_logger, http_request, http_response):
+    universal_request = http_request('GET', 'http://localhost/')
     request = PipelineRequest(universal_request, PipelineContext(None))
     http_logger = NetworkTraceLoggingPolicy()
-    response = PipelineResponse(request, HttpResponse(universal_request, None), request.context)
+    response = PipelineResponse(request, create_http_response(http_response, universal_request, None), request.context)
 
     # By default, no log handler for HTTP
     http_logger.on_request(request)
@@ -178,7 +178,8 @@ def test_no_log(mock_http_logger):
     second_count = mock_http_logger.debug.call_count
     assert second_count == first_count * 2
 
-def test_retry_without_http_response():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_retry_without_http_response(http_request):
     class NaughtyPolicy(HTTPPolicy):
         def send(*args):
             raise AzureError('boo')
@@ -186,23 +187,47 @@ def test_retry_without_http_response():
     policies = [RetryPolicy(), NaughtyPolicy()]
     pipeline = Pipeline(policies=policies, transport=None)
     with pytest.raises(AzureError):
-        pipeline.run(HttpRequest('GET', url='https://foo.bar'))
+        pipeline.run(http_request('GET', url='https://foo.bar'))
 
-def test_raw_deserializer():
+@pytest.mark.parametrize("http_request,http_response,requests_transport_response", request_and_responses_product(HTTP_RESPONSES, REQUESTS_TRANSPORT_RESPONSES))
+def test_raw_deserializer(http_request, http_response, requests_transport_response):
     raw_deserializer = ContentDecodePolicy()
     context = PipelineContext(None, stream=False)
-    universal_request = HttpRequest('GET', 'http://localhost/')
+    universal_request = http_request('GET', 'http://localhost/')
     request = PipelineRequest(universal_request, context)
 
     def build_response(body, content_type=None):
-        class MockResponse(HttpResponse):
-            def __init__(self, body, content_type):
-                super(MockResponse, self).__init__(None, None)
-                self._body = body
-                self.content_type = content_type
+        if is_rest(http_response):
+            class MockResponse(http_response):
+                def __init__(self, body, content_type):
+                    super(MockResponse, self).__init__(
+                        request=None,
+                        internal_response=None,
+                        status_code=400,
+                        reason="Bad Request",
+                        content_type="application/json",
+                        headers={},
+                        stream_download_generator=None,
+                    )
+                    self._body = body
+                    self.content_type = content_type
 
-            def body(self):
-                return self._body
+                def body(self):
+                    return self._body
+
+                def read(self):
+                    self._content = self._body
+                    return self.content
+
+        else:
+            class MockResponse(http_response):
+                def __init__(self, body, content_type):
+                    super(MockResponse, self).__init__(None, None)
+                    self._body = body
+                    self.content_type = content_type
+
+                def body(self):
+                    return self._body
 
         return PipelineResponse(request, MockResponse(body, content_type), context)
 
@@ -287,7 +312,7 @@ def test_raw_deserializer():
     req_response.headers["content-type"] = "application/json"
     req_response._content = b'{"success": true}'
     req_response._content_consumed = True
-    response = PipelineResponse(None, RequestsTransportResponse(None, req_response), PipelineContext(None, stream=False))
+    response = PipelineResponse(None, create_transport_response(requests_transport_response, None, req_response), PipelineContext(None, stream=False))
 
     raw_deserializer.on_response(request, response)
     result = response.context["deserialized_data"]

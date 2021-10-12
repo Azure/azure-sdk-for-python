@@ -1,10 +1,17 @@
 # Release History
 
-## 5.6.1 (2021-07-07)
+## 5.6.1 (2021-10-06)
 
-### Fixed
+### Bugs Fixed
 
 - Fixed a bug for checking that `azure.eventhub.amqp.AmqpMessageHeader` and `azure.eventhub.amqp.AmqpMessageProperties` contain specific properties using the `in` keyword.
+
+### Other Changes
+
+- Updated uAMQP dependency to 1.4.3.
+  - Added support for Python 3.10.
+  - Fixed memory leak in win32 socketio and tlsio (issue #19777).
+  - Fixed memory leak in the process of converting AMQPValue into string (issue #19777).
 
 ## 5.6.0 (2021-07-07)
 
