@@ -66,7 +66,8 @@ to authenticate requests.
 
 The Azure Identity library focuses on OAuth authentication with Azure Active
 Directory (AAD). It offers a variety of credential classes capable of acquiring
-an AAD access token. See [Credential Classes](#credential-classes "Credential Classes") below for a list of this library's credential classes.
+an AAD access token. See the [Credential classes](#credential-classes "Credential classes") section below for a list of
+this library's credential classes.
 
 ### DefaultAzureCredential
 
@@ -111,8 +112,8 @@ in any hosting environment which supports managed identities, such as (this list
 
 The following examples are provided below:
 
-- [Authenticating with DefaultAzureCredential](#authenticating-with-defaultazurecredential "Authenticating with DefaultAzureCredential")
-- [Defining a custom authentication flow with ChainedTokenCredential](#defining-a-custom-authentication-flow-with-chainedtokencredential "Defining a custom authentication flow with ChainedTokenCredential")
+- [Authenticate with DefaultAzureCredential](#authenticate-with-defaultazurecredential "Authenticate with DefaultAzureCredential")
+- [Define a custom authentication flow with ChainedTokenCredential](#define-a-custom-authentication-flow-with-chainedtokencredential "Define a custom authentication flow with ChainedTokenCredential")
 - [Async credentials](#async-credentials "Async credentials")
 
 ### Authenticate with `DefaultAzureCredential`
