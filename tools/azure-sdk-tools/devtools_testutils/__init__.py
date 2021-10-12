@@ -18,7 +18,7 @@ from .powershell_preparer import PowerShellPreparer
 from .proxy_testcase import RecordedByProxy
 from .enums import ProxyRecordingSanitizer
 from .helpers import ResponseCallback, RetryCounter
-from .fake_credential import FakeTokenCredential
+from .fake_credential import FakeTokenCredential, STORAGE_ACCOUNT_FAKE_KEY
 
 __all__ = [
     "add_sanitizer",
@@ -43,4 +43,5 @@ __all__ = [
     "ResponseCallback",
     "RetryCounter",
     "FakeTokenCredential",
+    "STORAGE_ACCOUNT_FAKE_KEY"
 ]

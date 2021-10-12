@@ -16,7 +16,7 @@ except ImportError:
 
 import logging
 from devtools_testutils import (
-    PowerShellPreparer)
+    PowerShellPreparer, STORAGE_ACCOUNT_FAKE_KEY)
 try:
     from cStringIO import StringIO      # Python 2
 except ImportError:

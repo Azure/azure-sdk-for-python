@@ -17,8 +17,7 @@ import time
 import zlib
 
 from azure_devtools.scenario_tests import RecordingProcessor
-from devtools_testutils import AzureTestCase, PowerShellPreparer
-from fake_credentials import STORAGE_DATA_LAKE_ACCOUNT_FAKE_KEY
+from devtools_testutils import AzureTestCase, PowerShellPreparer, STORAGE_ACCOUNT_FAKE_KEY
 
 try:
     from cStringIO import StringIO      # Python 2
@@ -39,7 +38,7 @@ LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 DataLakePreparer = functools.partial(
     PowerShellPreparer, "storage",
     datalake_storage_account_name="storagename",
-    datalake_storage_account_key=STORAGE_DATA_LAKE_ACCOUNT_FAKE_KEY
+    datalake_storage_account_key=STORAGE_ACCOUNT_FAKE_KEY
 )
 
 
