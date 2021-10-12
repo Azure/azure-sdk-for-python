@@ -10,4 +10,4 @@ This guide is to help Python SDK users to get unreleased package.
 (2) Wait until swagger generation artifacts is complete.
 
 The following figure shows the wheel and zip of the package.Click to download them.
-![img.png](unreleased_package_guide_example2.png)
+![img.png](unreleased_package_guide_example2.PNG)
