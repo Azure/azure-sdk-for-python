@@ -49,22 +49,9 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         super().__init__(*args, match_body=False, **kwargs)
 
     def _assert_jwks_equal(self, jwk1, jwk2):
-        assert jwk1.kid == jwk2.kid
-        assert jwk1.kty == jwk2.kty
-        assert sorted(jwk1.key_ops) == sorted(jwk2.key_ops)
-        assert jwk1.n == jwk2.n
-        assert jwk1.e == jwk2.e
-        assert jwk1.d == jwk2.d
-        assert jwk1.dp == jwk2.dp
-        assert jwk1.dq == jwk2.dq
-        assert jwk1.qi == jwk2.qi
-        assert jwk1.p == jwk2.p
-        assert jwk1.q == jwk2.q
-        assert jwk1.k == jwk2.k
-        assert jwk1.t == jwk2.t
-        assert jwk1.crv == jwk2.crv
-        assert jwk1.x == jwk2.x
-        assert jwk1.y == jwk2.y
+        for field in JsonWebKey._FIELDS:
+            if field != "key_ops":
+                assert getattr(jwk1, field) == getattr(jwk2, field)
 
     def _assert_key_attributes_equal(self, k1, k2):
         self.assertEqual(k1.name, k2.name)
@@ -127,12 +114,19 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
     async def _update_key_properties(self, client, key, release_policy=None):
         expires = date_parse.parse("2050-01-02T08:00:00.000Z")
         tags = {"foo": "updated tag"}
+        key_ops = ["decrypt", "encrypt"]
+
+        # wait before updating the key to make sure updated_on has a different value
+        if self.is_live:
+            await asyncio.sleep(2)
         key_bundle = await client.update_key_properties(
-            key.name, expires_on=expires, tags=tags, release_policy=release_policy
+            key.name, key_operations=key_ops, expires_on=expires, tags=tags, release_policy=release_policy
         )
+
         assert tags == key_bundle.properties.tags
         assert key.id == key_bundle.id
         assert key.properties.updated_on != key_bundle.properties.updated_on
+        assert sorted(key_ops) == sorted(key_bundle.key_operations)
         if release_policy:
             assert key.properties.release_policy.data != key_bundle.properties.release_policy.data
         return key_bundle
@@ -233,6 +227,8 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         # delete the new key
         deleted_key = await client.delete_key(rsa_key.name)
         self.assertIsNotNone(deleted_key)
+
+        # aside from key_ops, the original updated keys should have the same JWKs
         self._assert_jwks_equal(rsa_key.key, deleted_key.key)
         self.assertEqual(deleted_key.id, rsa_key.id)
         self.assertTrue(

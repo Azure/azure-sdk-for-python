@@ -207,7 +207,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-communication-sms azure-core<2.0.0,>=1.11.0
 #override azure-communication-phonenumbers azure-core<2.0.0,>=1.11.0
 #override azure-communication-identity azure-core<2.0.0,>=1.11.0
-#override azure-communication-network-traversal azure-core<2.0.0,>=1.11.0
+#override azure-communication-networktraversal azure-core<2.0.0,>=1.16.0
 #override azure-mgmt-communication azure-core<2.0.0,>=1.9.0
 #override azure-ai-metricsadvisor azure-core<2.0.0,>=1.6.0
 #override azure-ai-metricsadvisor msrest>=0.6.21
@@ -348,6 +348,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-quota msrest>=0.6.21
 #override azure-mgmt-authorization msrest>=0.6.21
 #override azure-mgmt-azurearcdata msrest>=0.6.21
+#override azure-mgmt-servicelinker msrest>=0.6.21
 #override azure-mgmt-fluidrelay msrest>=0.6.21
 #override azure-ai-language-conversations azure-core<2.0.0,>=1.19.0
 #override azure-ai-language-conversations msrest>=0.6.21

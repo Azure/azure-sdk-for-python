@@ -383,7 +383,7 @@ def find_whl(package_name, version, whl_directory):
 def install_package_from_whl(
     package_whl_path, working_dir, python_sym_link=sys.executable
 ):
-    commands = [python_sym_link, "-m", "pip", "install", package_whl_path, "--extra-index", "https://pypi.python.org/simple"]
+    commands = [python_sym_link, "-m", "pip", "install", package_whl_path, "--extra-index-url", "https://pypi.python.org/simple"]
     run_check_call(commands, working_dir)
     logging.info("Installed package from {}".format(package_whl_path))
 

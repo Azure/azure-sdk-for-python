@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.0.1 Python/3.7.4 (Windows-10-10.0.21390-SP0)
+      - azsdk-python-communication-identity/1.0.1 Python/3.7.4 (Windows-10-10.0.22454-SP0)
       x-ms-date:
-      - Sat, 17 Jul 2021 00:38:51 GMT
+      - Fri, 01 Oct 2021 23:03:08 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -25,13 +25,14 @@ interactions:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions:
-      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
+        2021-10-31-preview
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 17 Jul 2021 00:38:51 GMT
+      - Fri, 01 Oct 2021 23:03:07 GMT
       ms-cv:
-      - li8R230IT0W2BXH+OJvqUA.0
+      - FV1I5QAfBk69A3bUGCU3xg.0
       request-context:
       - appId=
       strict-transport-security:
@@ -41,7 +42,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 93ms
+      - 179ms
     status:
       code: 201
       message: Created
@@ -59,26 +60,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-networktraversal/1.0.0b1 Python/3.7.4 (Windows-10-10.0.21390-SP0)
+      - azsdk-python-communication-networktraversal/1.0.0b1 Python/3.7.4 (Windows-10-10.0.22454-SP0)
       x-ms-date:
-      - Sat, 17 Jul 2021 00:38:52 GMT
+      - Fri, 01 Oct 2021 23:03:08 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/networktraversal/:issueRelayConfiguration?api-version=2021-06-21-preview
   response:
     body:
-      string: '{"expiresOn": "2021-07-17T00:38:52.4840215+00:00", "iceServers": [{"urls":
-        ["turn.skype.com"], "username": "sanitized", "credential": "sanitized"}]}'
+      string: '{"expiresOn": "2021-10-01T23:03:08.8008369+00:00", "iceServers": [{"urls":
+        ["turn.skype.com", "turn:world.relay.skype.com:3478"], "username": "sanitized",
+        "credential": "sanitized"}]}'
     headers:
       api-supported-versions:
       - 2021-02-22-preview1, 2021-06-21-preview
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 17 Jul 2021 00:38:52 GMT
+      - Fri, 01 Oct 2021 23:03:08 GMT
       ms-cv:
-      - znyph9q/bECDayYlLuWYlw.0
+      - T1Tb9K+y6E6pLXFgnCjmmg.0
       request-context:
       - appId=
       strict-transport-security:
@@ -88,7 +90,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 223ms
+      - 128ms
     status:
       code: 200
       message: OK

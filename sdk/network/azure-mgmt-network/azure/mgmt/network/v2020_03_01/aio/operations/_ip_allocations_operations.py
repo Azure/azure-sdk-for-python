@@ -47,7 +47,7 @@ class IpAllocationsOperations:
         self,
         resource_group_name: str,
         ip_allocation_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -91,7 +91,7 @@ class IpAllocationsOperations:
         self,
         resource_group_name: str,
         ip_allocation_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified IpAllocation.
 
@@ -101,8 +101,8 @@ class IpAllocationsOperations:
         :type ip_allocation_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -156,7 +156,7 @@ class IpAllocationsOperations:
         resource_group_name: str,
         ip_allocation_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IpAllocation":
         """Gets the specified IpAllocation by resource group.
 
@@ -219,7 +219,7 @@ class IpAllocationsOperations:
         resource_group_name: str,
         ip_allocation_name: str,
         parameters: "_models.IpAllocation",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IpAllocation":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.IpAllocation"]
         error_map = {
@@ -276,7 +276,7 @@ class IpAllocationsOperations:
         resource_group_name: str,
         ip_allocation_name: str,
         parameters: "_models.IpAllocation",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.IpAllocation"]:
         """Creates or updates an IpAllocation in the specified resource group.
 
@@ -288,8 +288,8 @@ class IpAllocationsOperations:
         :type parameters: ~azure.mgmt.network.v2020_03_01.models.IpAllocation
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either IpAllocation or the result of cls(response)
@@ -347,7 +347,7 @@ class IpAllocationsOperations:
         resource_group_name: str,
         ip_allocation_name: str,
         parameters: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IpAllocation":
         """Updates a IpAllocation tags.
 
@@ -410,7 +410,7 @@ class IpAllocationsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.IpAllocationListResult"]:
         """Gets all IpAllocations in a subscription.
 
@@ -477,7 +477,7 @@ class IpAllocationsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.IpAllocationListResult"]:
         """Gets all IpAllocations in a resource group.
 
