@@ -19,7 +19,7 @@ from azure.storage.blob import (
 )
 from azure.storage.blob._shared.base_client import _format_shared_key_credential
 
-from _shared.testcase import BlobPreparer
+from settings.testcase import BlobPreparer
 from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------

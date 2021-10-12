@@ -16,7 +16,7 @@ from azure.storage.blob import (
     BlobClient,
 )
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.testcase import BlobPreparer
+from settings.testcase import BlobPreparer
 from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------

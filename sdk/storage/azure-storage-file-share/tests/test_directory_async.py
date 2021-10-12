@@ -14,7 +14,7 @@ from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.storage.fileshare import StorageErrorCode
 from azure.storage.fileshare.aio import ShareServiceClient
-from _shared.testcase import FileSharePreparer
+from settings.testcase import FileSharePreparer
 from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------

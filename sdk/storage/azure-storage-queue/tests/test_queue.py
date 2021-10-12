@@ -38,7 +38,7 @@ from azure.storage.queue import (
     generate_queue_sas
 )
 
-from _shared.testcase import QueuePreparer
+from settings.testcase import QueuePreparer
 
 # ------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = 'pyqueuesync'

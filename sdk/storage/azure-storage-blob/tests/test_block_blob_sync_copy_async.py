@@ -21,7 +21,7 @@ from azure.storage.blob.aio import (
 
 from azure.storage.blob._shared.policies import StorageContentValidation
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.testcase import BlobPreparer
+from settings.testcase import BlobPreparer
 from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------

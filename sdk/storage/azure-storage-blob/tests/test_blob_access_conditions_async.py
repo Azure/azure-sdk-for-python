@@ -29,7 +29,7 @@ from azure.storage.blob import (
     generate_container_sas, CustomerProvidedEncryptionKey,
 )
 from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE
-from _shared.testcase import BlobPreparer
+from settings.testcase import BlobPreparer
 from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 from azure.storage.blob.aio import (

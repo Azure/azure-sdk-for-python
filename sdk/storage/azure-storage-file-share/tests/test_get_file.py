@@ -19,7 +19,7 @@ from azure.storage.fileshare import (
     FileProperties
 )
 from devtools_testutils.storage import StorageTestCase
-from _shared.testcase import FileSharePreparer
+from settings.testcase import FileSharePreparer
 
 # ------------------------------------------------------------------------------
 TEST_FILE_PREFIX = 'file'

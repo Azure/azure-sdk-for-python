@@ -6,7 +6,7 @@
 import unittest
 
 from azure.storage.queue import QueueServiceClient
-from _shared.testcase import QueuePreparer
+from settings.testcase import QueuePreparer
 from devtools_testutils.storage import StorageTestCase
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \

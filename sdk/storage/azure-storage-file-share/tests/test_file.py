@@ -33,7 +33,7 @@ from azure.storage.fileshare import (
     NTFSAttributes)
 from azure.storage.fileshare._parser import _datetime_to_str
 from devtools_testutils.storage import StorageTestCase
-from _shared.testcase import FileSharePreparer
+from settings.testcase import FileSharePreparer
 # ------------------------------------------------------------------------------
 TEST_SHARE_PREFIX = 'share'
 TEST_BLOB_PREFIX = 'blob'

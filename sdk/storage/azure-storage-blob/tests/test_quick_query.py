@@ -11,7 +11,7 @@ import os
 import pytest
 from devtools_testutils import StorageAccountPreparer
 
-from _shared.testcase import BlobPreparer
+from settings.testcase import BlobPreparer
 from devtools_testutils.storage import StorageTestCase
 from azure.storage.blob import (
     BlobServiceClient,

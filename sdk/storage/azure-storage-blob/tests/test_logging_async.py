@@ -29,9 +29,10 @@ from azure.storage.blob import (
 
 from azure.storage.blob._shared.shared_access_signature import QueryStringConstants
 
-from _shared.testcase import (
-    LogCaptured, BlobPreparer
+from settings.testcase import (
+    BlobPreparer
 )
+from devtools_testutils.storage import LogCaptured
 from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 

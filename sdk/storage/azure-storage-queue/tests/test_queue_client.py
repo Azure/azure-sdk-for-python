@@ -11,7 +11,7 @@ from azure.storage.queue import (
     QueueServiceClient,
     QueueClient,
 )
-from _shared.testcase import QueuePreparer
+from settings.testcase import QueuePreparer
 from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------

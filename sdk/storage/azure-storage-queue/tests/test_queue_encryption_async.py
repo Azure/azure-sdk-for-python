@@ -48,7 +48,7 @@ from encryption_test_helper import (
     RSAKeyWrapper,
 )
 from devtools_testutils.storage.aio import AsyncStorageTestCase
-from _shared.testcase import QueuePreparer
+from settings.testcase import QueuePreparer
 
 # ------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = 'encryptionqueue'

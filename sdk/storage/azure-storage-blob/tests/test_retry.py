@@ -25,7 +25,7 @@ from azure.storage.blob import (
     ExponentialRetry,
 )
 
-from _shared.testcase import BlobPreparer
+from settings.testcase import BlobPreparer
 from devtools_testutils.storage import StorageTestCase
 
 class RetryRequestTransport(RequestsTransport):

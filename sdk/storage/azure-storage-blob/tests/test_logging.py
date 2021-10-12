@@ -19,11 +19,10 @@ from azure.storage.blob import (
     generate_blob_sas,
     generate_container_sas
 )
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.blob._shared.shared_access_signature import QueryStringConstants
-from devtools_testutils.storage import StorageTestCase
+from devtools_testutils.storage import StorageTestCase, LogCaptured
 
-from _shared.testcase import LogCaptured, BlobPreparer
+from settings.testcase import BlobPreparer
 
 if sys.version_info >= (3,):
     from urllib.parse import parse_qs, quote, urlparse

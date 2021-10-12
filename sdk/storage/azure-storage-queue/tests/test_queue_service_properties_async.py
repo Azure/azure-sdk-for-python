@@ -21,7 +21,7 @@ from azure.storage.queue.aio import (
 )
 
 from devtools_testutils.storage.aio import AsyncStorageTestCase
-from _shared.testcase import QueuePreparer
+from settings.testcase import QueuePreparer
 
 
 # ------------------------------------------------------------------------------

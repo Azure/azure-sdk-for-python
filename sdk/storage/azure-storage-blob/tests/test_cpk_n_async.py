@@ -14,7 +14,7 @@ from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.storage.blob import BlobType, BlobBlock, BlobSasPermissions, generate_blob_sas, ContainerEncryptionScope
 from azure.storage.blob.aio import BlobServiceClient
-from _shared.testcase import BlobPreparer
+from settings.testcase import BlobPreparer
 from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------

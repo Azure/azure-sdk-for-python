@@ -10,7 +10,7 @@ from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
 from devtools_testutils.storage.aio import AsyncStorageTestCase
-from _shared.testcase import BlobPreparer
+from settings.testcase import BlobPreparer
 from azure.storage.blob import BlobProperties
 from azure.storage.blob.aio import BlobServiceClient
 

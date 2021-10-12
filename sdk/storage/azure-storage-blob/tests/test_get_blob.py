@@ -20,7 +20,7 @@ from azure.storage.blob import (
     StorageErrorCode,
     BlobProperties
 )
-from _shared.testcase import BlobPreparer
+from settings.testcase import BlobPreparer
 from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------

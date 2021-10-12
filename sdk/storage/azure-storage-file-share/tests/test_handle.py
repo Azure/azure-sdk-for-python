@@ -15,7 +15,7 @@ from azure.storage.fileshare import (
     ShareClient
 )
 from devtools_testutils.storage import StorageTestCase
-from _shared.testcase import FileSharePreparer
+from settings.testcase import FileSharePreparer
 # ------------------------------------------------------------------------------
 TEST_SHARE_NAME = 'test'
 TEST_SHARE_PREFIX = 'share'

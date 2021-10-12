@@ -14,7 +14,6 @@ try:
 except ImportError:
     import mock
 
-import logging
 from devtools_testutils import (
     PowerShellPreparer, ACCOUNT_FAKE_KEY)
 
@@ -53,37 +52,3 @@ def not_for_emulator(test):
     def skip_test_if_targeting_emulator(self):
         test(self)
     return skip_test_if_targeting_emulator
-
-
-class LogCaptured(object):
-    def __init__(self, test_case=None):
-        # accept the test case so that we may reset logging after capturing logs
-        self.test_case = test_case
-
-    def __enter__(self):
-        # enable logging
-        # it is possible that the global logging flag is turned off
-        self.test_case.enable_logging()
-
-        # create a string stream to send the logs to
-        self.log_stream = StringIO()
-
-        # the handler needs to be stored so that we can remove it later
-        self.handler = logging.StreamHandler(self.log_stream)
-        self.handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
-
-        # get and enable the logger to send the outputs to the string stream
-        self.logger = logging.getLogger('azure.storage')
-        self.logger.level = logging.DEBUG
-        self.logger.addHandler(self.handler)
-
-        # the stream is returned to the user so that the capture logs can be retrieved
-        return self.log_stream
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        # stop the handler, and close the stream to exit
-        self.logger.removeHandler(self.handler)
-        self.log_stream.close()
-
-        # reset logging since we messed with the setting
-        self.test_case.configure_logging()

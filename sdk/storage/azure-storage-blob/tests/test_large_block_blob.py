@@ -23,7 +23,7 @@ if sys.version_info >= (3,):
 else:
     from cStringIO import StringIO as BytesIO
 
-from _shared.testcase import BlobPreparer
+from settings.testcase import BlobPreparer
 from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------

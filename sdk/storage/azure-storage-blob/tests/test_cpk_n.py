@@ -17,7 +17,7 @@ from azure.storage.blob import (
     ContainerEncryptionScope,
     generate_blob_sas
 )
-from _shared.testcase import BlobPreparer
+from settings.testcase import BlobPreparer
 from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------

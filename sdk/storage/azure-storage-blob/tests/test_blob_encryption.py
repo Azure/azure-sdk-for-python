@@ -41,7 +41,7 @@ from encryption_test_helper import (
     KeyResolver,
     RSAKeyWrapper,
 )
-from _shared.testcase import BlobPreparer
+from settings.testcase import BlobPreparer
 from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------

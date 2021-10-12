@@ -17,7 +17,7 @@ from azure.storage.blob.changefeed import (
     ChangeFeedClient,
 )
 from devtools_testutils.storage import StorageTestCase
-from _shared.testcase import ChangeFeedPreparer
+from settings.testcase import ChangeFeedPreparer
 
 @pytest.mark.playback_test_only
 class StorageChangeFeedTest(StorageTestCase):

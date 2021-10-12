@@ -33,7 +33,7 @@ from azure.storage.blob import (
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, BlobAccountPreparer, \
     CachedResourceGroupPreparer
 from azure.storage.blob._shared.policies import StorageContentValidation
-from _shared.testcase import BlobPreparer
+from settings.testcase import BlobPreparer
 from devtools_testutils.storage import StorageTestCase
 
 #------------------------------------------------------------------------------

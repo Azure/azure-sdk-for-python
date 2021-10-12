@@ -38,7 +38,8 @@ from azure.storage.blob import (
     PartialBatchErrorException,
     generate_account_sas, ResourceTypes, AccountSasPermissions)
 
-from _shared.testcase import LogCaptured, BlobPreparer
+from settings.testcase import BlobPreparer
+from devtools_testutils.storage import LogCaptured
 from devtools_testutils.storage.aio import AsyncStorageTestCase
 from azure.storage.blob.aio import (
     BlobServiceClient,

@@ -40,7 +40,7 @@ from encryption_test_helper import (
     KeyResolver,
     RSAKeyWrapper,
 )
-from _shared.testcase import QueuePreparer
+from settings.testcase import QueuePreparer
 from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------

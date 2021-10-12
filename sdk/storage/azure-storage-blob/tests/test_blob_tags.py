@@ -17,7 +17,7 @@ try:
 except ImportError:
     from urllib2 import quote
 
-from _shared.testcase import BlobPreparer
+from settings.testcase import BlobPreparer
 from azure.core.exceptions import (
     ResourceExistsError, ResourceModifiedError, HttpResponseError)
 from azure.storage.blob import (

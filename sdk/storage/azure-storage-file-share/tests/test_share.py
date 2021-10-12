@@ -28,10 +28,8 @@ from azure.storage.fileshare import (
     generate_share_sas,
     ShareRootSquash, ShareProtocols)
 
-from azure.storage.fileshare._generated.models import DeleteSnapshotsOptionType, ListSharesIncludeType
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from devtools_testutils.storage import StorageTestCase
-from _shared.testcase import FileSharePreparer, LogCaptured
+from devtools_testutils.storage import StorageTestCase, LogCaptured
+from settings.testcase import FileSharePreparer
 
 # ------------------------------------------------------------------------------
 TEST_SHARE_PREFIX = 'share'

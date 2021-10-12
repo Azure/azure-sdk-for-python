@@ -14,7 +14,9 @@ from time import sleep
 import pytest
 import requests
 
-from _shared.testcase import LogCaptured, BlobPreparer
+from settings.testcase import BlobPreparer
+from devtools_testutils.storage import LogCaptured
+
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError, ResourceModifiedError
 from azure.storage.blob import (

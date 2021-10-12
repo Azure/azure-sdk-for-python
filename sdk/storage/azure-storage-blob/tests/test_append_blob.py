@@ -28,7 +28,7 @@ from azure.storage.blob import (
     BlobSasPermissions, BlobImmutabilityPolicyMode, ImmutabilityPolicy)
 from azure.storage.blob._shared.policies import StorageContentValidation
 
-from _shared.testcase import BlobPreparer
+from settings.testcase import BlobPreparer
 from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------

@@ -35,7 +35,7 @@ from azure.storage.fileshare.aio import (
     ShareFileClient,
     ShareServiceClient,
 )
-from _shared.testcase import FileSharePreparer
+from settings.testcase import FileSharePreparer
 from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------

@@ -18,7 +18,7 @@ from azure.storage.queue import (
     BinaryBase64DecodePolicy
 )
 from azure.storage.queue._message_encoding import NoEncodePolicy, NoDecodePolicy
-from _shared.testcase import QueuePreparer
+from settings.testcase import QueuePreparer
 
 from devtools_testutils.storage import StorageTestCase
 

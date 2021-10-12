@@ -32,9 +32,9 @@ from azure.storage.fileshare.aio import (
     ShareFileClient,
     ShareClient,
 )
-from _shared.testcase import FileSharePreparer, LogCaptured
+from settings.testcase import FileSharePreparer
 from devtools_testutils.storage.aio import AsyncStorageTestCase
-
+from devtools_testutils.storage import LogCaptured
 # ------------------------------------------------------------------------------
 TEST_SHARE_PREFIX = 'share'
 

@@ -19,7 +19,7 @@ from azure.storage.blob import (
     generate_blob_sas
 )
 from azure.storage.blob import CustomerProvidedEncryptionKey, BlobSasPermissions
-from _shared.testcase import BlobPreparer
+from settings.testcase import BlobPreparer
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from devtools_testutils.storage import StorageTestCase
 
