@@ -16,4 +16,4 @@ The following figure shows the wheel and zip of the package.Click to download th
 (1) If there is no link in the figure above, it may be folded. You can also find it in the check.
 ![img.png](unreleased_package_guide_example3.png)
 
-(2) [Private repo](https://github.com/Azure/azure-rest-api-specs-pr) can only be triggered when the target branch is main
+(2) [Private repo](https://github.com/Azure/azure-rest-api-specs-pr) can only be triggered when the target branch is `main`
