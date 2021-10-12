@@ -214,6 +214,7 @@ $PackageExclusions = @{
   'azure-monitor-query' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/19417';
   'azure-mgmt-network' = 'Manual process used to build';
 }
+
 function Update-python-DocsMsPackages($DocsRepoLocation, $DocsMetadata) {
   Write-Host "Excluded packages:"
   foreach ($excludedPackage in $PackageExclusions.Keys) {
@@ -447,5 +448,29 @@ function GetExistingPackageVersions ($PackageName, $GroupId=$null)
   {
     LogError "Failed to retrieve package versions. `n$_"
     return $null
+  }
+}
+
+function Get-python-DocsMsMetadataForPackage($PackageInfo) { 
+  $readmeName = $PackageInfo.Name.ToLower()
+  Write-Host "Docs.ms Readme name: $($readmeName)"
+
+  # Readme names (which are used in the URL) should not include redundant terms
+  # when viewed in URL form. For example: 
+  # https://docs.microsoft.com/en-us/dotnet/api/overview/azure/storage-blobs-readme
+  # Note how the end of the URL doesn't look like:
+  # ".../azure/azure-storage-blobs-readme" 
+
+  # This logic eliminates a preceeding "azure." in the readme filename.
+  # "azure-storage-blobs" -> "storage-blobs"
+  if ($readmeName.StartsWith('azure-')) {
+    $readmeName = $readmeName.Substring(6)
+  }
+
+  New-Object PSObject -Property @{
+    DocsMsReadMeName = $readmeName
+    LatestReadMeLocation  = 'docs-ref-services/latest'
+    PreviewReadMeLocation = 'docs-ref-services/preview'
+    Suffix = ''
   }
 }
