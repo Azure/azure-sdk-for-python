@@ -62,4 +62,4 @@ class ContentDownloadTests(CommunicationTestCase):
 
     def _verify_metadata(self, metadata):
         self.assertIsNotNone(metadata)
-        self.assertTrue(metadata.__contains__(bytes(self._document_id, 'utf-8')))
+        self.assertTrue(metadata.__contains__(bytes(self._document_id.encode('utf-8'))))
