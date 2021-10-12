@@ -26,35 +26,13 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
-class GeographicResourceLocation(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class JsonFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    #: Used to access an Azure Maps Creator resource in the United States.
-    US = "us"
-    #: Used to access an Azure Maps Creator resource in Europe.
-    EU = "eu"
-
-class Geography(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """This parameter specifies where the Azure Maps Creator resource is located.  Valid values are us
-    and eu.
-    """
-
-    US = "us"
-    EU = "eu"
-
-class ResponseFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    #: `The JavaScript Object Notation Data Interchange Format
-    #: <https://tools.ietf.org/html/rfc8259>`_.
-    JSON = "json"
+    JSON = "json"  #: `The JavaScript Object Notation Data Interchange Format <https://tools.ietf.org/html/rfc8259>`_.
 
 class TimezoneOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    #: Do not include zoneinfo or transitions in the result.
-    NONE = "none"
-    #: Include additional time zone info in the result.
-    ZONE_INFO = "zoneInfo"
-    #: Include transition information in the result (The number of transitions is currently capped at
-    #: 250).
-    TRANSITIONS = "transitions"
-    #: Include both zoneinfo and transitions in the result.
-    ALL = "all"
+    NONE = "none"  #: Do not include zoneinfo or transitions in the result.
+    ZONE_INFO = "zoneInfo"  #: Include additional time zone info in the result.
+    TRANSITIONS = "transitions"  #: Include transition information in the result (The number of transitions is currently capped at 250).
+    ALL = "all"  #: Include both zoneinfo and transitions in the result.

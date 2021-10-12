@@ -12,39 +12,31 @@ try:
     from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse
     from ._models_py3 import IanaId
-    from ._models_py3 import ReferenceTimeByCoordinates
-    from ._models_py3 import ReferenceTimeById
-    from ._models_py3 import RepresentativePoint
+    from ._models_py3 import LatLongPair
+    from ._models_py3 import ReferenceTime
     from ._models_py3 import TimeTransition
-    from ._models_py3 import TimeZoneByCoordinates
-    from ._models_py3 import TimezoneByCoordinatesResult
-    from ._models_py3 import TimezoneById
-    from ._models_py3 import TimezoneByIdResult
-    from ._models_py3 import TimezoneEnumWindow
     from ._models_py3 import TimezoneIanaVersionResult
+    from ._models_py3 import TimezoneId
     from ._models_py3 import TimezoneNames
+    from ._models_py3 import TimezoneResult
+    from ._models_py3 import TimezoneWindows
 except (SyntaxError, ImportError):
     from ._models import CountryRecord  # type: ignore
     from ._models import ErrorAdditionalInfo  # type: ignore
     from ._models import ErrorDetail  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import IanaId  # type: ignore
-    from ._models import ReferenceTimeByCoordinates  # type: ignore
-    from ._models import ReferenceTimeById  # type: ignore
-    from ._models import RepresentativePoint  # type: ignore
+    from ._models import LatLongPair  # type: ignore
+    from ._models import ReferenceTime  # type: ignore
     from ._models import TimeTransition  # type: ignore
-    from ._models import TimeZoneByCoordinates  # type: ignore
-    from ._models import TimezoneByCoordinatesResult  # type: ignore
-    from ._models import TimezoneById  # type: ignore
-    from ._models import TimezoneByIdResult  # type: ignore
-    from ._models import TimezoneEnumWindow  # type: ignore
     from ._models import TimezoneIanaVersionResult  # type: ignore
+    from ._models import TimezoneId  # type: ignore
     from ._models import TimezoneNames  # type: ignore
+    from ._models import TimezoneResult  # type: ignore
+    from ._models import TimezoneWindows  # type: ignore
 
 from ._timezone_client_enums import (
-    GeographicResourceLocation,
-    Geography,
-    ResponseFormat,
+    JsonFormat,
     TimezoneOptions,
 )
 
@@ -54,19 +46,14 @@ __all__ = [
     'ErrorDetail',
     'ErrorResponse',
     'IanaId',
-    'ReferenceTimeByCoordinates',
-    'ReferenceTimeById',
-    'RepresentativePoint',
+    'LatLongPair',
+    'ReferenceTime',
     'TimeTransition',
-    'TimeZoneByCoordinates',
-    'TimezoneByCoordinatesResult',
-    'TimezoneById',
-    'TimezoneByIdResult',
-    'TimezoneEnumWindow',
     'TimezoneIanaVersionResult',
+    'TimezoneId',
     'TimezoneNames',
-    'GeographicResourceLocation',
-    'Geography',
-    'ResponseFormat',
+    'TimezoneResult',
+    'TimezoneWindows',
+    'JsonFormat',
     'TimezoneOptions',
 ]

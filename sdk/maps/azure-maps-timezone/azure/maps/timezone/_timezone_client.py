@@ -13,39 +13,36 @@ from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional, Union
+    from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._configuration import TimezoneClientConfiguration
-from .operations import TimezoneOperations
+from .operations import TimezoneClientOperationsMixin
 from . import models
 
 
-class TimezoneClient(object):
+class TimezoneClient(TimezoneClientOperationsMixin):
     """Azure Maps Time Zone REST APIs.
 
-    :ivar timezone: TimezoneOperations operations
-    :vartype timezone: azure.maps.timezone.operations.TimezoneOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param x_ms_client_id: Specifies which account is intended for usage in conjunction with the Azure AD security model.  It represents a unique ID for the Azure Maps account and can be retrieved from the Azure Maps management  plane Account API. To use Azure AD security in Azure Maps see the following `articles <https://aka.ms/amauthdetails>`_ for guidance.
-    :type x_ms_client_id: str
-    :param geography: This parameter specifies where the Azure Maps Creator resource is located.  Valid values are us and eu.
-    :type geography: str or ~azure.maps.timezone.models.Geography
+    :param client_id: Specifies which account is intended for usage in conjunction with the Azure AD security model.  It represents a unique ID for the Azure Maps account and can be retrieved from the Azure Maps management  plane Account API. To use Azure AD security in Azure Maps see the following `articles <https://aka.ms/amauthdetails>`_ for guidance.
+    :type client_id: str
+    :param str base_url: Service URL
     """
 
     def __init__(
         self,
         credential,  # type: "TokenCredential"
-        x_ms_client_id=None,  # type: Optional[str]
-        geography="us",  # type: Union[str, "_models.Geography"]
+        client_id=None,  # type: Optional[str]
+        base_url=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = 'https://{geography}.atlas.microsoft.com'
-        self._config = TimezoneClientConfiguration(credential, x_ms_client_id, geography, **kwargs)
+        if not base_url:
+            base_url = 'https://atlas.microsoft.com'
+        self._config = TimezoneClientConfiguration(credential, client_id, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -53,26 +50,6 @@ class TimezoneClient(object):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.timezone = TimezoneOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-
-    def _send_request(self, http_request, **kwargs):
-        # type: (HttpRequest, Any) -> HttpResponse
-        """Runs the network request through the client's chained policies.
-
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
-        :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse
-        """
-        path_format_arguments = {
-            'geography': self._serialize.url("self._config.geography", self._config.geography, 'str'),
-        }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
 
     def close(self):
         # type: () -> None

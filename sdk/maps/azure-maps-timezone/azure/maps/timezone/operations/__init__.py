@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._timezone_operations import TimezoneOperations
+from ._timezone_client_operations import TimezoneClientOperationsMixin
 
 __all__ = [
-    'TimezoneOperations',
+    'TimezoneClientOperationsMixin',
 ]

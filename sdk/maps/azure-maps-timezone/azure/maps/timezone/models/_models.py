@@ -48,7 +48,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: object
     """
 
     _validation = {
@@ -145,7 +145,8 @@ class IanaId(msrest.serialization.Model):
     :vartype is_alias: bool
     :ivar alias_of: AliasOf property.
     :vartype alias_of: str
-    :ivar has_zone1970_location: HasZone1970Location property.
+    :ivar has_zone1970_location: This attribute returns ``True`` if the IanaId has any country/zone
+     associated with it.
     :vartype has_zone1970_location: bool
     """
 
@@ -174,7 +175,30 @@ class IanaId(msrest.serialization.Model):
         self.has_zone1970_location = None
 
 
-class ReferenceTimeByCoordinates(msrest.serialization.Model):
+class LatLongPair(msrest.serialization.Model):
+    """A location represented as a latitude and longitude.
+
+    :param latitude: Latitude property.
+    :type latitude: float
+    :param longitude: Longitude property.
+    :type longitude: float
+    """
+
+    _attribute_map = {
+        'latitude': {'key': 'latitude', 'type': 'float'},
+        'longitude': {'key': 'longitude', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LatLongPair, self).__init__(**kwargs)
+        self.latitude = kwargs.get('latitude', None)
+        self.longitude = kwargs.get('longitude', None)
+
+
+class ReferenceTime(msrest.serialization.Model):
     """Details in effect at the local time.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -193,10 +217,12 @@ class ReferenceTimeByCoordinates(msrest.serialization.Model):
     :vartype posix_tz_valid_year: int
     :ivar posix_tz: POSIX string used to set the time zone environment variable.
     :vartype posix_tz: str
-    :ivar sunrise: Sunrise at the given time zone as shown in the ``Tag`` property.
-    :vartype sunrise: str
-    :ivar sunset: Sunset at the given time zone as shown in the ``Tag`` property.
-    :vartype sunset: str
+    :ivar sunrise: Sunrise at the given time zone as shown in the ``Tag`` property. The sunrise is
+     described in the ISO8601 format. (Only be populated if the call is byCoordinates).
+    :vartype sunrise: ~datetime.datetime
+    :ivar sunset: Sunset at the given time zone as shown in the ``Tag`` property. The sunset is
+     described in the ISO8601 format.(Only be populated if the call is byCoordinates).
+    :vartype sunset: ~datetime.datetime
     """
 
     _validation = {
@@ -217,15 +243,15 @@ class ReferenceTimeByCoordinates(msrest.serialization.Model):
         'wall_time': {'key': 'WallTime', 'type': 'str'},
         'posix_tz_valid_year': {'key': 'PosixTzValidYear', 'type': 'int'},
         'posix_tz': {'key': 'PosixTz', 'type': 'str'},
-        'sunrise': {'key': 'Sunrise', 'type': 'str'},
-        'sunset': {'key': 'Sunset', 'type': 'str'},
+        'sunrise': {'key': 'Sunrise', 'type': 'iso-8601'},
+        'sunset': {'key': 'Sunset', 'type': 'iso-8601'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(ReferenceTimeByCoordinates, self).__init__(**kwargs)
+        super(ReferenceTime, self).__init__(**kwargs)
         self.tag = None
         self.standard_offset = None
         self.daylight_savings = None
@@ -234,88 +260,6 @@ class ReferenceTimeByCoordinates(msrest.serialization.Model):
         self.posix_tz = None
         self.sunrise = None
         self.sunset = None
-
-
-class ReferenceTimeById(msrest.serialization.Model):
-    """Details in effect at the local time.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar tag: Time zone name in effect at the reference timestamp (i.e. PST or PDT depending
-     whether Daylight Savings Time is in effect).
-    :vartype tag: str
-    :ivar standard_offset: UTC offset in effect at the ``ReferenceUTCTimestamp``.
-    :vartype standard_offset: str
-    :ivar daylight_savings: Time saving in minutes in effect at the ``ReferenceUTCTimestamp``.
-    :vartype daylight_savings: str
-    :ivar wall_time: Current wall time at the given time zone as shown in the ``Tag`` property.
-    :vartype wall_time: str
-    :ivar posix_tz_valid_year: The year this POSIX string is valid for. Note: A POSIX string will
-     only be valid in the given year.
-    :vartype posix_tz_valid_year: int
-    :ivar posix_tz: POSIX string used to set the time zone environment variable.
-    :vartype posix_tz: str
-    """
-
-    _validation = {
-        'tag': {'readonly': True},
-        'standard_offset': {'readonly': True},
-        'daylight_savings': {'readonly': True},
-        'wall_time': {'readonly': True},
-        'posix_tz_valid_year': {'readonly': True},
-        'posix_tz': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'tag': {'key': 'Tag', 'type': 'str'},
-        'standard_offset': {'key': 'StandardOffset', 'type': 'str'},
-        'daylight_savings': {'key': 'DaylightSavings', 'type': 'str'},
-        'wall_time': {'key': 'WallTime', 'type': 'str'},
-        'posix_tz_valid_year': {'key': 'PosixTzValidYear', 'type': 'int'},
-        'posix_tz': {'key': 'PosixTz', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ReferenceTimeById, self).__init__(**kwargs)
-        self.tag = None
-        self.standard_offset = None
-        self.daylight_savings = None
-        self.wall_time = None
-        self.posix_tz_valid_year = None
-        self.posix_tz = None
-
-
-class RepresentativePoint(msrest.serialization.Model):
-    """Representative point property.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar latitude: Latitude property.
-    :vartype latitude: float
-    :ivar longitude: Longitude property.
-    :vartype longitude: float
-    """
-
-    _validation = {
-        'latitude': {'readonly': True},
-        'longitude': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'latitude': {'key': 'Latitude', 'type': 'float'},
-        'longitude': {'key': 'Longitude', 'type': 'float'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RepresentativePoint, self).__init__(**kwargs)
-        self.latitude = None
-        self.longitude = None
 
 
 class TimeTransition(msrest.serialization.Model):
@@ -363,228 +307,6 @@ class TimeTransition(msrest.serialization.Model):
         self.utc_end = None
 
 
-class TimeZoneByCoordinates(msrest.serialization.Model):
-    """TimeZoneByCoordinates.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Id property.
-    :vartype id: str
-    :ivar aliases: An array of time zone ID aliases.  Only returned when [options]=\ *zoneinfo* or
-     *all*.
-    
-     Note: may be null.
-    :vartype aliases: list[str]
-    :ivar countries: An array of country records. Only returned when [options]=\ *zoneinfo* or
-     *all*.
-    :vartype countries: list[~azure.maps.timezone.models.CountryRecord]
-    :param names: Timezone names object.
-    :type names: ~azure.maps.timezone.models.TimezoneNames
-    :ivar reference_time: Details in effect at the local time.
-    :vartype reference_time: ~azure.maps.timezone.models.ReferenceTimeByCoordinates
-    :ivar representative_point: Representative point property.
-    :vartype representative_point: ~azure.maps.timezone.models.RepresentativePoint
-    :ivar time_transitions: Time zone DST transitions from [transitionsFrom] until timestamp + 1
-     year.
-    :vartype time_transitions: list[~azure.maps.timezone.models.TimeTransition]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'aliases': {'readonly': True},
-        'countries': {'readonly': True},
-        'reference_time': {'readonly': True},
-        'representative_point': {'readonly': True},
-        'time_transitions': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'aliases': {'key': 'Aliases', 'type': '[str]'},
-        'countries': {'key': 'Countries', 'type': '[CountryRecord]'},
-        'names': {'key': 'Names', 'type': 'TimezoneNames'},
-        'reference_time': {'key': 'ReferenceTime', 'type': 'ReferenceTimeByCoordinates'},
-        'representative_point': {'key': 'RepresentativePoint', 'type': 'RepresentativePoint'},
-        'time_transitions': {'key': 'TimeTransitions', 'type': '[TimeTransition]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TimeZoneByCoordinates, self).__init__(**kwargs)
-        self.id = None
-        self.aliases = None
-        self.countries = None
-        self.names = kwargs.get('names', None)
-        self.reference_time = None
-        self.representative_point = None
-        self.time_transitions = None
-
-
-class TimezoneByCoordinatesResult(msrest.serialization.Model):
-    """This object is returned from a successful Timezone By Coordinates call.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar version: Version property.
-    :vartype version: str
-    :ivar reference_utc_timestamp: Reference Utc Timestamp property.
-    :vartype reference_utc_timestamp: ~datetime.datetime
-    :ivar time_zones: TimeZoneByCoordinates array.
-    :vartype time_zones: list[~azure.maps.timezone.models.TimeZoneByCoordinates]
-    """
-
-    _validation = {
-        'version': {'readonly': True},
-        'reference_utc_timestamp': {'readonly': True},
-        'time_zones': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'version': {'key': 'Version', 'type': 'str'},
-        'reference_utc_timestamp': {'key': 'ReferenceUtcTimestamp', 'type': 'iso-8601'},
-        'time_zones': {'key': 'TimeZones', 'type': '[TimeZoneByCoordinates]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TimezoneByCoordinatesResult, self).__init__(**kwargs)
-        self.version = None
-        self.reference_utc_timestamp = None
-        self.time_zones = None
-
-
-class TimezoneById(msrest.serialization.Model):
-    """TimezoneById.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Id property.
-    :vartype id: str
-    :ivar aliases: An array of time zone ID aliases.  Only returned when [options]=\ *zoneinfo* or
-     *all*.
-    
-     Note: may be null.
-    :vartype aliases: list[str]
-    :ivar countries: An array of country records. Only returned when [options]=\ *zoneinfo* or
-     *all*.
-    :vartype countries: list[~azure.maps.timezone.models.CountryRecord]
-    :param names: Timezone names object.
-    :type names: ~azure.maps.timezone.models.TimezoneNames
-    :ivar reference_time: Details in effect at the local time.
-    :vartype reference_time: ~azure.maps.timezone.models.ReferenceTimeById
-    :ivar representative_point: Representative point property.
-    :vartype representative_point: ~azure.maps.timezone.models.RepresentativePoint
-    :ivar time_transitions: Time zone DST transitions from [transitionsFrom] until timestamp + 1
-     year.
-    :vartype time_transitions: list[~azure.maps.timezone.models.TimeTransition]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'aliases': {'readonly': True},
-        'countries': {'readonly': True},
-        'reference_time': {'readonly': True},
-        'representative_point': {'readonly': True},
-        'time_transitions': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'aliases': {'key': 'Aliases', 'type': '[str]'},
-        'countries': {'key': 'Countries', 'type': '[CountryRecord]'},
-        'names': {'key': 'Names', 'type': 'TimezoneNames'},
-        'reference_time': {'key': 'ReferenceTime', 'type': 'ReferenceTimeById'},
-        'representative_point': {'key': 'RepresentativePoint', 'type': 'RepresentativePoint'},
-        'time_transitions': {'key': 'TimeTransitions', 'type': '[TimeTransition]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TimezoneById, self).__init__(**kwargs)
-        self.id = None
-        self.aliases = None
-        self.countries = None
-        self.names = kwargs.get('names', None)
-        self.reference_time = None
-        self.representative_point = None
-        self.time_transitions = None
-
-
-class TimezoneByIdResult(msrest.serialization.Model):
-    """This object is returned from a successful Timezone By ID call.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar version: Version property.
-    :vartype version: str
-    :ivar reference_utc_timestamp: Reference Utc Timestamp property.
-    :vartype reference_utc_timestamp: ~datetime.datetime
-    :ivar time_zones: TimeZoneById array.
-    :vartype time_zones: list[~azure.maps.timezone.models.TimezoneById]
-    """
-
-    _validation = {
-        'version': {'readonly': True},
-        'reference_utc_timestamp': {'readonly': True},
-        'time_zones': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'version': {'key': 'Version', 'type': 'str'},
-        'reference_utc_timestamp': {'key': 'ReferenceUtcTimestamp', 'type': 'iso-8601'},
-        'time_zones': {'key': 'TimeZones', 'type': '[TimezoneById]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TimezoneByIdResult, self).__init__(**kwargs)
-        self.version = None
-        self.reference_utc_timestamp = None
-        self.time_zones = None
-
-
-class TimezoneEnumWindow(msrest.serialization.Model):
-    """TimezoneEnumWindow.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar windows_id: Windows Id property.
-    :vartype windows_id: str
-    :ivar territory: Territory property.
-    :vartype territory: str
-    :param iana_ids: IanaIds array.
-    :type iana_ids: list[str]
-    """
-
-    _validation = {
-        'windows_id': {'readonly': True},
-        'territory': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'windows_id': {'key': 'WindowsId', 'type': 'str'},
-        'territory': {'key': 'Territory', 'type': 'str'},
-        'iana_ids': {'key': 'IanaIds', 'type': '[str]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TimezoneEnumWindow, self).__init__(**kwargs)
-        self.windows_id = None
-        self.territory = None
-        self.iana_ids = kwargs.get('iana_ids', None)
-
-
 class TimezoneIanaVersionResult(msrest.serialization.Model):
     """This object is returned from a successful Timezone IANA Version call.
 
@@ -608,6 +330,64 @@ class TimezoneIanaVersionResult(msrest.serialization.Model):
     ):
         super(TimezoneIanaVersionResult, self).__init__(**kwargs)
         self.version = None
+
+
+class TimezoneId(msrest.serialization.Model):
+    """TimezoneId.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Id property.
+    :vartype id: str
+    :ivar aliases: An array of time zone ID aliases.  Only returned when [options]=\ *zoneinfo* or
+     *all*.
+    
+     Note: may be null.
+    :vartype aliases: list[str]
+    :ivar countries: An array of country records. Only returned when [options]=\ *zoneinfo* or
+     *all*.
+    :vartype countries: list[~azure.maps.timezone.models.CountryRecord]
+    :param names: Timezone names object.
+    :type names: ~azure.maps.timezone.models.TimezoneNames
+    :ivar reference_time: Details in effect at the local time.
+    :vartype reference_time: ~azure.maps.timezone.models.ReferenceTime
+    :param representative_point: A location represented as a latitude and longitude.
+    :type representative_point: ~azure.maps.timezone.models.LatLongPair
+    :ivar time_transitions: Time zone DST transitions from [transitionsFrom] until timestamp + 1
+     year.
+    :vartype time_transitions: list[~azure.maps.timezone.models.TimeTransition]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'aliases': {'readonly': True},
+        'countries': {'readonly': True},
+        'reference_time': {'readonly': True},
+        'time_transitions': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'Id', 'type': 'str'},
+        'aliases': {'key': 'Aliases', 'type': '[str]'},
+        'countries': {'key': 'Countries', 'type': '[CountryRecord]'},
+        'names': {'key': 'Names', 'type': 'TimezoneNames'},
+        'reference_time': {'key': 'ReferenceTime', 'type': 'ReferenceTime'},
+        'representative_point': {'key': 'RepresentativePoint', 'type': 'LatLongPair'},
+        'time_transitions': {'key': 'TimeTransitions', 'type': '[TimeTransition]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TimezoneId, self).__init__(**kwargs)
+        self.id = None
+        self.aliases = None
+        self.countries = None
+        self.names = kwargs.get('names', None)
+        self.reference_time = None
+        self.representative_point = kwargs.get('representative_point', None)
+        self.time_transitions = None
 
 
 class TimezoneNames(msrest.serialization.Model):
@@ -648,3 +428,72 @@ class TimezoneNames(msrest.serialization.Model):
         self.generic = None
         self.standard = None
         self.daylight = None
+
+
+class TimezoneResult(msrest.serialization.Model):
+    """This object is returned from a successful Timezone By ID call or By Coordinates call.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar version: Version property.
+    :vartype version: str
+    :ivar reference_utc_timestamp: Reference Utc Timestamp property.
+    :vartype reference_utc_timestamp: ~datetime.datetime
+    :ivar time_zones: TimeZoneId array.
+    :vartype time_zones: list[~azure.maps.timezone.models.TimezoneId]
+    """
+
+    _validation = {
+        'version': {'readonly': True},
+        'reference_utc_timestamp': {'readonly': True},
+        'time_zones': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'version': {'key': 'Version', 'type': 'str'},
+        'reference_utc_timestamp': {'key': 'ReferenceUtcTimestamp', 'type': 'iso-8601'},
+        'time_zones': {'key': 'TimeZones', 'type': '[TimezoneId]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TimezoneResult, self).__init__(**kwargs)
+        self.version = None
+        self.reference_utc_timestamp = None
+        self.time_zones = None
+
+
+class TimezoneWindows(msrest.serialization.Model):
+    """TimezoneWindows.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar windows_id: Windows Id property.
+    :vartype windows_id: str
+    :ivar territory: Territory property.
+    :vartype territory: str
+    :param iana_ids: IanaIds array.
+    :type iana_ids: list[str]
+    """
+
+    _validation = {
+        'windows_id': {'readonly': True},
+        'territory': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'windows_id': {'key': 'WindowsId', 'type': 'str'},
+        'territory': {'key': 'Territory', 'type': 'str'},
+        'iana_ids': {'key': 'IanaIds', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TimezoneWindows, self).__init__(**kwargs)
+        self.windows_id = None
+        self.territory = None
+        self.iana_ids = kwargs.get('iana_ids', None)
