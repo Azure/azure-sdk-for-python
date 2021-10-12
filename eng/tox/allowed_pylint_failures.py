@@ -59,5 +59,6 @@ PYLINT_ACCEPTABLE_FAILURES = [
     "azure-messaging-nspkg",
     "azure-agrifood-farming",
     "azure-eventhub",
-    "azure-ai-language-questionanswering"
+    "azure-ai-language-questionanswering",
+    "azure-ai-language-conversations"
 ]

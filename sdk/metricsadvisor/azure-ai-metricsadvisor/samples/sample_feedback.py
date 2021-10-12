@@ -34,35 +34,34 @@ def sample_add_feedback():
     subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
     api_key = os.getenv("METRICS_ADVISOR_API_KEY")
     metric_id = os.getenv("METRICS_ADVISOR_METRIC_ID")
-
     client = MetricsAdvisorClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
 
     anomaly_feedback = AnomalyFeedback(metric_id=metric_id,
-                                       dimension_key={"Dim1": "Common Lime"},
-                                       start_time=datetime.datetime(2020, 8, 5),
-                                       end_time=datetime.datetime(2020, 8, 7),
+                                       dimension_key={"category": "Shoes Handbags & Sunglasses"},
+                                       start_time=datetime.datetime(2021, 8, 5),
+                                       end_time=datetime.datetime(2021, 8, 7),
                                        value="NotAnomaly")
     client.add_feedback(anomaly_feedback)
 
     change_point_feedback = ChangePointFeedback(metric_id=metric_id,
-                                                dimension_key={"Dim1": "Common Lime"},
-                                                start_time=datetime.datetime(2020, 8, 5),
-                                                end_time=datetime.datetime(2020, 8, 7),
+                                                dimension_key={"category": "Shoes Handbags & Sunglasses"},
+                                                start_time=datetime.datetime(2021, 8, 5),
+                                                end_time=datetime.datetime(2021, 8, 7),
                                                 value="NotChangePoint")
     client.add_feedback(change_point_feedback)
 
     comment_feedback = CommentFeedback(metric_id=metric_id,
-                                       dimension_key={"Dim1": "Common Lime"},
-                                       start_time=datetime.datetime(2020, 8, 5),
-                                       end_time=datetime.datetime(2020, 8, 7),
+                                       dimension_key={"category": "Shoes Handbags & Sunglasses"},
+                                       start_time=datetime.datetime(2021, 8, 5),
+                                       end_time=datetime.datetime(2021, 8, 7),
                                        value="comment")
     client.add_feedback(comment_feedback)
 
     period_feedback = PeriodFeedback(metric_id=metric_id,
-                                     dimension_key={"Dim1": "Common Lime"},
-                                     start_time=datetime.datetime(2020, 8, 5),
-                                     end_time=datetime.datetime(2020, 8, 7),
+                                     dimension_key={"category": "Shoes Handbags & Sunglasses"},
+                                     start_time=datetime.datetime(2021, 8, 5),
+                                     end_time=datetime.datetime(2021, 8, 7),
                                      period_type="AssignValue",
                                      value=2)
     client.add_feedback(period_feedback)

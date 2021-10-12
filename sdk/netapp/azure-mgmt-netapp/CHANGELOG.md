@@ -1,5 +1,17 @@
 # Release History
 
+## 5.1.0 (2021-09-22)
+
+**Features**
+
+  - Model ServiceSpecification has a new parameter log_specifications
+  - Model MetricSpecification has a new parameter enable_regional_mdm_account
+  - Model MetricSpecification has a new parameter is_internal
+  - Model Volume has a new parameter network_sibling_set_id
+  - Model Volume has a new parameter storage_to_network_proximity
+  - Model Volume has a new parameter network_features
+  - Added operation group NetAppResourceQuotaLimitsOperations
+
 ## 5.0.0 (2021-08-20)
 
 **Features**

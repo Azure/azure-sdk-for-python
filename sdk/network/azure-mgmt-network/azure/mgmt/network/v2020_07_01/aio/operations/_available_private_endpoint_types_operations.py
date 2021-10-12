@@ -44,7 +44,7 @@ class AvailablePrivateEndpointTypesOperations:
     def list(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AvailablePrivateEndpointTypesResult"]:
         """Returns all of the resource types that can be linked to a Private Endpoint in this subscription
         in this region.
@@ -116,7 +116,7 @@ class AvailablePrivateEndpointTypesOperations:
         self,
         location: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AvailablePrivateEndpointTypesResult"]:
         """Returns all of the resource types that can be linked to a Private Endpoint in this subscription
         in this region.
