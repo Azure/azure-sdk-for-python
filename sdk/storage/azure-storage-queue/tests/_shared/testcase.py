@@ -16,7 +16,7 @@ except ImportError:
 
 import logging
 from devtools_testutils import (
-    PowerShellPreparer, STORAGE_ACCOUNT_FAKE_KEY)
+    PowerShellPreparer, ACCOUNT_FAKE_KEY)
 
 try:
     from cStringIO import StringIO      # Python 2
@@ -47,7 +47,7 @@ os.environ['PROTOCOL'] = PROTOCOL
 QueuePreparer = functools.partial(
     PowerShellPreparer, "storage",
     storage_account_name="storagename",
-    storage_account_key=STORAGE_ACCOUNT_FAKE_KEY,
+    storage_account_key=ACCOUNT_FAKE_KEY,
 )
 
 def not_for_emulator(test):

@@ -16,7 +16,7 @@ except ImportError:
 
 import logging
 from devtools_testutils import (
-    PowerShellPreparer, STORAGE_ACCOUNT_FAKE_KEY)
+    PowerShellPreparer, ACCOUNT_FAKE_KEY)
 try:
     from cStringIO import StringIO      # Python 2
 except ImportError:
@@ -52,11 +52,11 @@ os.environ['PROTOCOL'] = PROTOCOL
 FileSharePreparer = functools.partial(
     PowerShellPreparer, "storage",
     storage_account_name="storagename",
-    storage_account_key=STORAGE_ACCOUNT_FAKE_KEY,
+    storage_account_key=ACCOUNT_FAKE_KEY,
     premium_storage_file_account_name="pyacrstoragestorname",
-    premium_storage_file_account_key=STORAGE_ACCOUNT_FAKE_KEY,
+    premium_storage_file_account_key=ACCOUNT_FAKE_KEY,
     secondary_storage_account_name="pyrmtstoragestorname",
-    secondary_storage_account_key=STORAGE_ACCOUNT_FAKE_KEY,
+    secondary_storage_account_key=ACCOUNT_FAKE_KEY,
 )
 
 

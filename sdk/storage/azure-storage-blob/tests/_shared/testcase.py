@@ -10,7 +10,7 @@ import functools
 import os
 import logging
 from devtools_testutils import (
-    PowerShellPreparer, STORAGE_ACCOUNT_FAKE_KEY)
+    PowerShellPreparer, ACCOUNT_FAKE_KEY)
 
 try:
     from cStringIO import StringIO      # Python 2
@@ -47,15 +47,15 @@ os.environ['PROTOCOL'] = PROTOCOL
 BlobPreparer = functools.partial(
     PowerShellPreparer, "storage",
     storage_account_name="storagename",
-    storage_account_key=STORAGE_ACCOUNT_FAKE_KEY,
+    storage_account_key=ACCOUNT_FAKE_KEY,
     secondary_storage_account_name="pyrmtstoragestorname",
-    secondary_storage_account_key=STORAGE_ACCOUNT_FAKE_KEY,
+    secondary_storage_account_key=ACCOUNT_FAKE_KEY,
     blob_storage_account_name="storagenamestorname",
-    blob_storage_account_key=STORAGE_ACCOUNT_FAKE_KEY,
+    blob_storage_account_key=ACCOUNT_FAKE_KEY,
     versioned_storage_account_name="storagenamestorname",
-    versioned_storage_account_key=STORAGE_ACCOUNT_FAKE_KEY,
+    versioned_storage_account_key=ACCOUNT_FAKE_KEY,
     premium_storage_account_name='pyacrstoragestorname',
-    premium_storage_account_key=STORAGE_ACCOUNT_FAKE_KEY,
+    premium_storage_account_key=ACCOUNT_FAKE_KEY,
     storage_resource_group_name="rgname",
 
 )
