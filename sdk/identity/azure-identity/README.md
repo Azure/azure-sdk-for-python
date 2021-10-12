@@ -349,10 +349,9 @@ about using these libraries in their documentation, which is linked from the rel
 
 ### Known issues
 
-- This library does not support [Azure Active Directory B2C][b2c].
+This library doesn't support [Azure AD B2C][b2c].
 
-For other open issues, please refer to the library's
-[GitHub repository](https://github.com/Azure/azure-sdk-for-python/issues?q=is%3Aopen+is%3Aissue+label%3AAzure.Identity).
+For other open issues, refer to the library's [GitHub repository](https://github.com/Azure/azure-sdk-for-python/issues?q=is%3Aopen+is%3Aissue+label%3AAzure.Identity).
 
 ### Provide feedback
 
