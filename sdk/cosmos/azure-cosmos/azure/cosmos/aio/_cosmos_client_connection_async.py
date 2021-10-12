@@ -216,6 +216,41 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
         return database_id, path
 
+    def _GetContainerIdWithPathForSproc(self, collection_link, sproc):  # pylint: disable=no-self-use
+        CosmosClientConnection.__ValidateResource(sproc)
+        sproc = sproc.copy()
+        if sproc.get("serverScript"):
+            sproc["body"] = str(sproc.pop("serverScript", ""))
+        elif sproc.get("body"):
+            sproc["body"] = str(sproc["body"])
+        path = base.GetPathFromLink(collection_link, "sprocs")
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+        return collection_id, path, sproc
+
+    def _GetContainerIdWithPathForTrigger(self, collection_link, trigger):  # pylint: disable=no-self-use
+        CosmosClientConnection.__ValidateResource(trigger)
+        trigger = trigger.copy()
+        if trigger.get("serverScript"):
+            trigger["body"] = str(trigger.pop("serverScript", ""))
+        elif trigger.get("body"):
+            trigger["body"] = str(trigger["body"])
+
+        path = base.GetPathFromLink(collection_link, "triggers")
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+        return collection_id, path, trigger
+
+    def _GetContainerIdWithPathForUDF(self, collection_link, udf):  # pylint: disable=no-self-use
+        CosmosClientConnection.__ValidateResource(udf)
+        udf = udf.copy()
+        if udf.get("serverScript"):
+            udf["body"] = str(udf.pop("serverScript", ""))
+        elif udf.get("body"):
+            udf["body"] = str(udf["body"])
+
+        path = base.GetPathFromLink(collection_link, "udfs")
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+        return collection_id, path, udf
+
     async def GetDatabaseAccount(self, url_connection=None, **kwargs):
         """Gets database account info.
 
@@ -364,6 +399,103 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             options = await self._AddPartitionKey(database_or_container_link, document, options)
 
         return await self.Create(document, path, "docs", collection_id, None, options, **kwargs)
+
+    async def CreateUserDefinedFunction(self, collection_link, udf, options=None, **kwargs):
+        """Creates a user-defined function in a collection.
+
+        :param str collection_link:
+            The link to the collection.
+        :param str udf:
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The created UDF.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        collection_id, path, udf = self._GetContainerIdWithPathForUDF(collection_link, udf)
+        return await self.Create(udf, path, "udfs", collection_id, None, options, **kwargs)
+
+    async def CreateTrigger(self, collection_link, trigger, options=None, **kwargs):
+        """Creates a trigger in a collection.
+
+        :param str collection_link:
+            The link to the document collection.
+        :param dict trigger:
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The created Trigger.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        collection_id, path, trigger = self._GetContainerIdWithPathForTrigger(collection_link, trigger)
+        return await self.Create(trigger, path, "triggers", collection_id, None, options, **kwargs)
+
+    async def CreateStoredProcedure(self, collection_link, sproc, options=None, **kwargs):
+        """Creates a stored procedure in a collection.
+
+        :param str collection_link:
+            The link to the document collection.
+        :param str sproc:
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The created Stored Procedure.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        collection_id, path, sproc = self._GetContainerIdWithPathForSproc(collection_link, sproc)
+        return await self.Create(sproc, path, "sprocs", collection_id, None, options, **kwargs)
+
+    async def ExecuteStoredProcedure(self, sproc_link, params, options=None, **kwargs):
+        """Executes a store procedure.
+
+        :param str sproc_link:
+            The link to the stored procedure.
+        :param dict params:
+            List or None
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The Stored Procedure response.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        initial_headers = dict(self.default_headers)
+        initial_headers.update({http_constants.HttpHeaders.Accept: (runtime_constants.MediaTypes.Json)})
+
+        if params and not isinstance(params, list):
+            params = [params]
+
+        path = base.GetPathFromLink(sproc_link)
+        sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
+        headers = base.GetHeaders(self, initial_headers, "post", path, sproc_id, "sprocs", options)
+
+        # ExecuteStoredProcedure will use WriteEndpoint since it uses POST operation
+        request_params = _request_object.RequestObject("sprocs", documents._OperationType.ExecuteJavaScript)
+        result, self.last_response_headers = await self.__Post(path, request_params, params, headers, **kwargs)
+        return result
 
     async def Create(self, body, path, typ, id, initial_headers, options=None, **kwargs):  # pylint: disable=redefined-builtin
         """Creates a Azure Cosmos resource and returns it.
@@ -574,6 +706,69 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         return await self.Read(path, "docs", document_id, None, options, **kwargs)
 
+    async def ReadUserDefinedFunction(self, udf_link, options=None, **kwargs):
+        """Reads a user-defined function.
+
+        :param str udf_link:
+            The link to the user-defined function.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The read UDF.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(udf_link)
+        udf_id = base.GetResourceIdOrFullNameFromLink(udf_link)
+        return await self.Read(path, "udfs", udf_id, None, options, **kwargs)
+
+    async def ReadStoredProcedure(self, sproc_link, options=None, **kwargs):
+        """Reads a stored procedure.
+
+        :param str sproc_link:
+            The link to the stored procedure.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The read Stored Procedure.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(sproc_link)
+        sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
+        return await self.Read(path, "sprocs", sproc_id, None, options, **kwargs)
+
+    async def ReadTrigger(self, trigger_link, options=None, **kwargs):
+        """Reads a trigger.
+
+        :param str trigger_link:
+            The link to the trigger.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The read Trigger.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(trigger_link)
+        trigger_id = base.GetResourceIdOrFullNameFromLink(trigger_link)
+        return await self.Read(path, "triggers", trigger_id, None, options, **kwargs)
+
     async def ReadConflict(self, conflict_link, options=None, **kwargs):
         """Reads a conflict.
 
@@ -692,6 +887,64 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         return await self.Replace(collection, path, "colls", collection_id, None, options, **kwargs)
 
+    async def ReplaceUserDefinedFunction(self, udf_link, udf, options=None, **kwargs):
+        """Replaces a user-defined function and returns it.
+
+        :param str udf_link:
+            The link to the user-defined function.
+        :param dict udf:
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The new UDF.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        CosmosClientConnection.__ValidateResource(udf)
+        udf = udf.copy()
+        if udf.get("serverScript"):
+            udf["body"] = str(udf["serverScript"])
+        elif udf.get("body"):
+            udf["body"] = str(udf["body"])
+
+        path = base.GetPathFromLink(udf_link)
+        udf_id = base.GetResourceIdOrFullNameFromLink(udf_link)
+        return await self.Replace(udf, path, "udfs", udf_id, None, options, **kwargs)
+
+    async def ReplaceTrigger(self, trigger_link, trigger, options=None, **kwargs):
+        """Replaces a trigger and returns it.
+
+        :param str trigger_link:
+            The link to the trigger.
+        :param dict trigger:
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The replaced Trigger.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        CosmosClientConnection.__ValidateResource(trigger)
+        trigger = trigger.copy()
+        if trigger.get("serverScript"):
+            trigger["body"] = str(trigger["serverScript"])
+        elif trigger.get("body"):
+            trigger["body"] = str(trigger["body"])
+
+        path = base.GetPathFromLink(trigger_link)
+        trigger_id = base.GetResourceIdOrFullNameFromLink(trigger_link)
+        return await self.Replace(trigger, path, "triggers", trigger_id, None, options, **kwargs)
+
     async def ReplaceItem(self, document_link, new_document, options=None, **kwargs):
         """Replaces a document and returns it.
 
@@ -726,6 +979,36 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         options = await self._AddPartitionKey(collection_link, new_document, options)
 
         return await self.Replace(new_document, path, "docs", document_id, None, options, **kwargs)
+
+
+    async def ReplaceStoredProcedure(self, sproc_link, sproc, options=None, **kwargs):
+        """Replaces a stored procedure and returns it.
+
+        :param str sproc_link:
+            The link to the stored procedure.
+        :param dict sproc:
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The replaced Stored Procedure.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        CosmosClientConnection.__ValidateResource(sproc)
+        sproc = sproc.copy()
+        if sproc.get("serverScript"):
+            sproc["body"] = str(sproc["serverScript"])
+        elif sproc.get("body"):
+            sproc["body"] = str(sproc["body"])
+
+        path = base.GetPathFromLink(sproc_link)
+        sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
+        return await self.Replace(sproc, path, "sprocs", sproc_id, None, options, **kwargs)
 
     async def Replace(self, resource, path, typ, id, initial_headers, options=None, **kwargs):  # pylint: disable=redefined-builtin
         """Replaces a Azure Cosmos resource and returns it.
@@ -867,6 +1150,69 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         path = base.GetPathFromLink(document_link)
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         return await self.DeleteResource(path, "docs", document_id, None, options, **kwargs)
+
+    async def DeleteUserDefinedFunction(self, udf_link, options=None, **kwargs):
+        """Deletes a user-defined function.
+
+        :param str udf_link:
+            The link to the user-defined function.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The deleted UDF.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(udf_link)
+        udf_id = base.GetResourceIdOrFullNameFromLink(udf_link)
+        return await self.DeleteResource(path, "udfs", udf_id, None, options, **kwargs)
+
+    async def DeleteTrigger(self, trigger_link, options=None, **kwargs):
+        """Deletes a trigger.
+
+        :param str trigger_link:
+            The link to the trigger.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The deleted Trigger.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(trigger_link)
+        trigger_id = base.GetResourceIdOrFullNameFromLink(trigger_link)
+        return await self.DeleteResource(path, "triggers", trigger_id, None, options, **kwargs)
+
+    async def DeleteStoredProcedure(self, sproc_link, options=None, **kwargs):
+        """Deletes a stored procedure.
+
+        :param str sproc_link:
+            The link to the stored procedure.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The deleted Stored Procedure.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(sproc_link)
+        sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
+        return await self.DeleteResource(path, "sprocs", sproc_id, None, options, **kwargs)
 
     async def DeleteConflict(self, conflict_link, options=None, **kwargs):
         """Deletes a conflict.

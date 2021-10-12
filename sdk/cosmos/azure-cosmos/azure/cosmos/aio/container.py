@@ -25,8 +25,6 @@
 from typing import Any, Dict, List, Optional, Union, Iterable, cast  # pylint: disable=unused-import
 
 import six
-import asyncio
-import time
 from azure.core.tracing.decorator_async import distributed_trace_async  # type: ignore
 
 from ._cosmos_client_connection_async import CosmosClientConnection
@@ -34,7 +32,7 @@ from .._base import build_options
 from ..exceptions import CosmosResourceNotFoundError
 from ..http_constants import StatusCodes
 from ..offer import Offer
-from ..scripts import ScriptsProxy
+from .scripts import ScriptsProxy
 from ..partition_key import NonePartitionKeyValue
 
 __all__ = ("ContainerProxy",)
@@ -88,6 +86,13 @@ class ContainerProxy(object):
                 properties["partitionKey"]["systemKey"] if "systemKey" in properties["partitionKey"] else False
             )
         return cast('bool', self._is_system_key)
+
+    @property
+    def scripts(self):
+        # type: () -> ScriptsProxy
+        if self._scripts is None:
+            self._scripts = ScriptsProxy(self.client_connection, self.container_link, self.is_system_key)
+        return cast('ScriptsProxy', self._scripts)
 
     def _get_document_link(self, item_or_link):
         # type: (Union[Dict[str, Any], str]) -> str
