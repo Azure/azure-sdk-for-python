@@ -639,7 +639,7 @@ class FileSystemTest(StorageTestCase):
             self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
 
-        url = self._get_account_url(datalake_storage_account_name)
+        url = self.account_url(datalake_storage_account_name, 'dfs')
         token_credential = self.generate_oauth_token()
         dsc = DataLakeServiceClient(url, token_credential, logging_enable=True)
         file_system_name = self._get_file_system_reference()
@@ -675,7 +675,7 @@ class FileSystemTest(StorageTestCase):
     async def test_list_paths_using_file_sys_delegation_sas_async(
             self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        url = self._get_account_url(datalake_storage_account_name)
+        url = self.account_url(datalake_storage_account_name, 'dfs')
         token_credential = self.generate_oauth_token()
         dsc = DataLakeServiceClient(url, token_credential)
         file_system_name = self._get_file_system_reference()

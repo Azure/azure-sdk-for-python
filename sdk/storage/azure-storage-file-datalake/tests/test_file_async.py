@@ -429,7 +429,7 @@ class FileTest(StorageTestCase):
                                       )
 
         # doanload the data and make sure it is the same as uploaded data
-        new_file_client = DataLakeFileClient(self._get_account_url(datalake_storage_account_name),
+        new_file_client = DataLakeFileClient(self.account_url(datalake_storage_account_name, 'dfs'),
                                              file_client.file_system_name,
                                              file_client.path_name,
                                              credential=sas_token)
