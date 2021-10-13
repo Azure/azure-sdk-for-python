@@ -10,20 +10,13 @@ import argparse
 import sys
 import os
 import logging
-import platform
 from fnmatch import fnmatch
 
 try:
     from subprocess import TimeoutExpired, check_call, CalledProcessError
 except ImportError:
     from subprocess32 import TimeoutExpired, check_call, CalledProcessError
-from common_tasks import run_check_call
-
-# this assumes the presence of "packaging". this is a safe assumption because this
-# script is only called from tox.ini, which infers the install of eng/test_tools.txt
-from packaging.specifiers import SpecifierSet
-from packaging.version import Version
-from packaging.version import parse
+from common_tasks import run_check_call, compare_python_version
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -138,14 +131,6 @@ IGNORED_SAMPLES = {
     ],
     "azure-ai-language-questionanswering": ["sample_chat.py"],
 }
-
-
-def compare_python_version(version_spec):
-    current_sys_version = parse(platform.python_version())
-    spec_set = SpecifierSet(version_spec)
-
-    return current_sys_version in spec_set
-
 
 def run_check_call_with_timeout(
     command_array,
