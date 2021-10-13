@@ -1882,7 +1882,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # Assert response using blob sas
         self.assertIsNotNone(resp_with_blob_sas['immutability_policy_until_date'])
         self.assertIsNotNone(resp_with_blob_sas['immutability_policy_mode'])
-        
+
         if self.is_live:
             blob_client.delete_immutability_policy()
             blob_client.set_legal_hold(False)

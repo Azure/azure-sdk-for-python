@@ -707,6 +707,10 @@ class BlockBlobOperations(object):
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
         content = body
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.upload.metadata['url'], **path_format_arguments)
 
         request = build_upload_request(
             content_type=content_type,
@@ -737,13 +741,9 @@ class BlockBlobOperations(object):
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
             content=content,
-            template_url=self.upload.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -914,6 +914,10 @@ class BlockBlobOperations(object):
             _source_if_match = source_modified_access_conditions.source_if_match
             _source_if_none_match = source_modified_access_conditions.source_if_none_match
             _source_if_tags = source_modified_access_conditions.source_if_tags
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.put_blob_from_url.metadata['url'], **path_format_arguments)
 
         request = build_put_blob_from_url_request(
             content_length=content_length,
@@ -948,13 +952,9 @@ class BlockBlobOperations(object):
             blob_tags_string=blob_tags_string,
             copy_source_blob_properties=copy_source_blob_properties,
             copy_source_authorization=copy_source_authorization,
-            template_url=self.put_blob_from_url.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1057,6 +1057,10 @@ class BlockBlobOperations(object):
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         content = body
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.stage_block.metadata['url'], **path_format_arguments)
 
         request = build_stage_block_request(
             content_type=content_type,
@@ -1072,13 +1076,9 @@ class BlockBlobOperations(object):
             encryption_scope=_encryption_scope,
             request_id_parameter=request_id_parameter,
             content=content,
-            template_url=self.stage_block.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1197,6 +1197,10 @@ class BlockBlobOperations(object):
             _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
             _source_if_match = source_modified_access_conditions.source_if_match
             _source_if_none_match = source_modified_access_conditions.source_if_none_match
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.stage_block_from_url.metadata['url'], **path_format_arguments)
 
         request = build_stage_block_from_url_request(
             block_id=block_id,
@@ -1217,13 +1221,9 @@ class BlockBlobOperations(object):
             source_if_none_match=_source_if_none_match,
             request_id_parameter=request_id_parameter,
             copy_source_authorization=copy_source_authorization,
-            template_url=self.stage_block_from_url.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1378,6 +1378,10 @@ class BlockBlobOperations(object):
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
         content = self._serialize.body(blocks, 'BlockLookupList', is_xml=True)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.commit_block_list.metadata['url'], **path_format_arguments)
 
         request = build_commit_block_list_request(
             content_type=content_type,
@@ -1408,13 +1412,9 @@ class BlockBlobOperations(object):
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
             content=content,
-            template_url=self.commit_block_list.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1498,6 +1498,10 @@ class BlockBlobOperations(object):
             _lease_id = lease_access_conditions.lease_id
         if modified_access_conditions is not None:
             _if_tags = modified_access_conditions.if_tags
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.get_block_list.metadata['url'], **path_format_arguments)
 
         request = build_get_block_list_request(
             snapshot=snapshot,
@@ -1506,13 +1510,9 @@ class BlockBlobOperations(object):
             lease_id=_lease_id,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            template_url=self.get_block_list.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response

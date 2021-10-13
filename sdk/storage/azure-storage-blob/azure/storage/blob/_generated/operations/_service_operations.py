@@ -401,19 +401,19 @@ class ServiceOperations(object):
         content_type = kwargs.pop('content_type', "application/xml")  # type: Optional[str]
 
         content = self._serialize.body(storage_service_properties, 'StorageServiceProperties', is_xml=True)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.set_properties.metadata['url'], **path_format_arguments)
 
         request = build_set_properties_request(
             content_type=content_type,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             content=content,
-            template_url=self.set_properties.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -465,17 +465,17 @@ class ServiceOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        
-        request = build_get_properties_request(
-            timeout=timeout,
-            request_id_parameter=request_id_parameter,
-            template_url=self.get_properties.metadata['url'],
-        )
-        request = _convert_request(request)
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _url = self._client.format_url(self.get_properties.metadata['url'], **path_format_arguments)
+
+        request = build_get_properties_request(
+            timeout=timeout,
+            request_id_parameter=request_id_parameter,
+            template_url=_url,
+        )
+        request = _convert_request(request)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -531,17 +531,17 @@ class ServiceOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        
-        request = build_get_statistics_request(
-            timeout=timeout,
-            request_id_parameter=request_id_parameter,
-            template_url=self.get_statistics.metadata['url'],
-        )
-        request = _convert_request(request)
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _url = self._client.format_url(self.get_statistics.metadata['url'], **path_format_arguments)
+
+        request = build_get_statistics_request(
+            timeout=timeout,
+            request_id_parameter=request_id_parameter,
+            template_url=_url,
+        )
+        request = _convert_request(request)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -621,7 +621,11 @@ class ServiceOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.list_containers_segment.metadata['url'], **path_format_arguments)
+
         request = build_list_containers_segment_request(
             prefix=prefix,
             marker=marker,
@@ -629,13 +633,9 @@ class ServiceOperations(object):
             include=include,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
-            template_url=self.list_containers_segment.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -696,19 +696,19 @@ class ServiceOperations(object):
         content_type = kwargs.pop('content_type', "application/xml")  # type: Optional[str]
 
         content = self._serialize.body(key_info, 'KeyInfo', is_xml=True)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.get_user_delegation_key.metadata['url'], **path_format_arguments)
 
         request = build_get_user_delegation_key_request(
             content_type=content_type,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             content=content,
-            template_url=self.get_user_delegation_key.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -753,15 +753,15 @@ class ServiceOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        
-        request = build_get_account_info_request(
-            template_url=self.get_account_info.metadata['url'],
-        )
-        request = _convert_request(request)
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _url = self._client.format_url(self.get_account_info.metadata['url'], **path_format_arguments)
+
+        request = build_get_account_info_request(
+            template_url=_url,
+        )
+        request = _convert_request(request)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -828,6 +828,10 @@ class ServiceOperations(object):
         multipart_content_type = kwargs.pop('multipart_content_type')  # type: str
 
         content = self._serialize.body(body, 'IO')
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.submit_batch.metadata['url'], **path_format_arguments)
 
         request = build_submit_batch_request(
             multipart_content_type=multipart_content_type,
@@ -835,13 +839,9 @@ class ServiceOperations(object):
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             content=content,
-            template_url=self.submit_batch.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client._pipeline.run(request, stream=True, **kwargs)
         response = pipeline_response.http_response
@@ -917,20 +917,20 @@ class ServiceOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.filter_blobs.metadata['url'], **path_format_arguments)
+
         request = build_filter_blobs_request(
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             where=where,
             marker=marker,
             maxresults=maxresults,
-            template_url=self.filter_blobs.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response

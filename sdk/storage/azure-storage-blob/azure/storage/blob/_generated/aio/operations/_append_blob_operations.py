@@ -151,6 +151,10 @@ class AppendBlobOperations:
             _if_match = modified_access_conditions.if_match
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.create.metadata['url'], **path_format_arguments)
 
         request = build_create_request(
             content_length=content_length,
@@ -177,13 +181,9 @@ class AppendBlobOperations:
             immutability_policy_expiry=immutability_policy_expiry,
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
-            template_url=self.create.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -305,6 +305,10 @@ class AppendBlobOperations:
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
         content = body
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.append_block.metadata['url'], **path_format_arguments)
 
         request = build_append_block_request(
             content_type=content_type,
@@ -326,13 +330,9 @@ class AppendBlobOperations:
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             content=content,
-            template_url=self.append_block.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -478,6 +478,10 @@ class AppendBlobOperations:
             _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
             _source_if_match = source_modified_access_conditions.source_if_match
             _source_if_none_match = source_modified_access_conditions.source_if_none_match
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.append_block_from_url.metadata['url'], **path_format_arguments)
 
         request = build_append_block_from_url_request(
             source_url=source_url,
@@ -505,13 +509,9 @@ class AppendBlobOperations:
             source_if_none_match=_source_if_none_match,
             request_id_parameter=request_id_parameter,
             copy_source_authorization=copy_source_authorization,
-            template_url=self.append_block_from_url.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -596,6 +596,10 @@ class AppendBlobOperations:
             _if_none_match = modified_access_conditions.if_none_match
         if append_position_access_conditions is not None:
             _append_position = append_position_access_conditions.append_position
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.seal.metadata['url'], **path_format_arguments)
 
         request = build_seal_request(
             timeout=timeout,
@@ -606,13 +610,9 @@ class AppendBlobOperations:
             if_match=_if_match,
             if_none_match=_if_none_match,
             append_position=_append_position,
-            template_url=self.seal.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response

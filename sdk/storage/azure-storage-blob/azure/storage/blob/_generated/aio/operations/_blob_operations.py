@@ -128,6 +128,10 @@ class BlobOperations:
             _if_match = modified_access_conditions.if_match
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.download.metadata['url'], **path_format_arguments)
 
         request = build_download_request(
             snapshot=snapshot,
@@ -146,13 +150,9 @@ class BlobOperations:
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            template_url=self.download.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(request, stream=True, **kwargs)
         response = pipeline_response.http_response
@@ -334,6 +334,10 @@ class BlobOperations:
             _if_match = modified_access_conditions.if_match
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.get_properties.metadata['url'], **path_format_arguments)
 
         request = build_get_properties_request(
             snapshot=snapshot,
@@ -349,13 +353,9 @@ class BlobOperations:
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            template_url=self.get_properties.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -502,6 +502,10 @@ class BlobOperations:
             _if_match = modified_access_conditions.if_match
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.delete.metadata['url'], **path_format_arguments)
 
         request = build_delete_request(
             snapshot=snapshot,
@@ -516,13 +520,9 @@ class BlobOperations:
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             blob_delete_type=blob_delete_type,
-            template_url=self.delete.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -573,17 +573,17 @@ class BlobOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        
-        request = build_undelete_request(
-            timeout=timeout,
-            request_id_parameter=request_id_parameter,
-            template_url=self.undelete.metadata['url'],
-        )
-        request = _convert_request(request)
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _url = self._client.format_url(self.undelete.metadata['url'], **path_format_arguments)
+
+        request = build_undelete_request(
+            timeout=timeout,
+            request_id_parameter=request_id_parameter,
+            template_url=_url,
+        )
+        request = _convert_request(request)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -640,19 +640,19 @@ class BlobOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.set_expiry.metadata['url'], **path_format_arguments)
+
         request = build_set_expiry_request(
             expiry_options=expiry_options,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             expires_on=expires_on,
-            template_url=self.set_expiry.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -742,6 +742,10 @@ class BlobOperations:
             _if_tags = modified_access_conditions.if_tags
         if blob_http_headers is not None:
             _blob_content_disposition = blob_http_headers.blob_content_disposition
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.set_http_headers.metadata['url'], **path_format_arguments)
 
         request = build_set_http_headers_request(
             timeout=timeout,
@@ -758,13 +762,9 @@ class BlobOperations:
             if_tags=_if_tags,
             blob_content_disposition=_blob_content_disposition,
             request_id_parameter=request_id_parameter,
-            template_url=self.set_http_headers.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -831,6 +831,10 @@ class BlobOperations:
         _if_unmodified_since = None
         if modified_access_conditions is not None:
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.set_immutability_policy.metadata['url'], **path_format_arguments)
 
         request = build_set_immutability_policy_request(
             timeout=timeout,
@@ -838,13 +842,9 @@ class BlobOperations:
             if_unmodified_since=_if_unmodified_since,
             immutability_policy_expiry=immutability_policy_expiry,
             immutability_policy_mode=immutability_policy_mode,
-            template_url=self.set_immutability_policy.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -897,17 +897,17 @@ class BlobOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        
-        request = build_delete_immutability_policy_request(
-            timeout=timeout,
-            request_id_parameter=request_id_parameter,
-            template_url=self.delete_immutability_policy.metadata['url'],
-        )
-        request = _convert_request(request)
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _url = self._client.format_url(self.delete_immutability_policy.metadata['url'], **path_format_arguments)
+
+        request = build_delete_immutability_policy_request(
+            timeout=timeout,
+            request_id_parameter=request_id_parameter,
+            template_url=_url,
+        )
+        request = _convert_request(request)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -961,18 +961,18 @@ class BlobOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.set_legal_hold.metadata['url'], **path_format_arguments)
+
         request = build_set_legal_hold_request(
             legal_hold=legal_hold,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
-            template_url=self.set_legal_hold.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1070,6 +1070,10 @@ class BlobOperations:
             _if_match = modified_access_conditions.if_match
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.set_metadata.metadata['url'], **path_format_arguments)
 
         request = build_set_metadata_request(
             timeout=timeout,
@@ -1085,13 +1089,9 @@ class BlobOperations:
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            template_url=self.set_metadata.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1173,6 +1173,10 @@ class BlobOperations:
             _if_match = modified_access_conditions.if_match
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.acquire_lease.metadata['url'], **path_format_arguments)
 
         request = build_acquire_lease_request(
             timeout=timeout,
@@ -1184,13 +1188,9 @@ class BlobOperations:
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            template_url=self.acquire_lease.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1262,6 +1262,10 @@ class BlobOperations:
             _if_match = modified_access_conditions.if_match
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.release_lease.metadata['url'], **path_format_arguments)
 
         request = build_release_lease_request(
             lease_id=lease_id,
@@ -1272,13 +1276,9 @@ class BlobOperations:
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            template_url=self.release_lease.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1349,6 +1349,10 @@ class BlobOperations:
             _if_match = modified_access_conditions.if_match
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.renew_lease.metadata['url'], **path_format_arguments)
 
         request = build_renew_lease_request(
             lease_id=lease_id,
@@ -1359,13 +1363,9 @@ class BlobOperations:
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            template_url=self.renew_lease.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1442,6 +1442,10 @@ class BlobOperations:
             _if_match = modified_access_conditions.if_match
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.change_lease.metadata['url'], **path_format_arguments)
 
         request = build_change_lease_request(
             lease_id=lease_id,
@@ -1453,13 +1457,9 @@ class BlobOperations:
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            template_url=self.change_lease.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1537,6 +1537,10 @@ class BlobOperations:
             _if_match = modified_access_conditions.if_match
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.break_lease.metadata['url'], **path_format_arguments)
 
         request = build_break_lease_request(
             timeout=timeout,
@@ -1547,13 +1551,9 @@ class BlobOperations:
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            template_url=self.break_lease.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1652,6 +1652,10 @@ class BlobOperations:
             _if_tags = modified_access_conditions.if_tags
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.create_snapshot.metadata['url'], **path_format_arguments)
 
         request = build_create_snapshot_request(
             timeout=timeout,
@@ -1667,13 +1671,9 @@ class BlobOperations:
             if_tags=_if_tags,
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
-            template_url=self.create_snapshot.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1803,6 +1803,10 @@ class BlobOperations:
             _if_tags = modified_access_conditions.if_tags
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.start_copy_from_url.metadata['url'], **path_format_arguments)
 
         request = build_start_copy_from_url_request(
             copy_source=copy_source,
@@ -1827,13 +1831,9 @@ class BlobOperations:
             immutability_policy_expiry=immutability_policy_expiry,
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
-            template_url=self.start_copy_from_url.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1962,6 +1962,10 @@ class BlobOperations:
             _if_tags = modified_access_conditions.if_tags
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.copy_from_url.metadata['url'], **path_format_arguments)
 
         request = build_copy_from_url_request(
             copy_source=copy_source,
@@ -1985,13 +1989,9 @@ class BlobOperations:
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
             copy_source_authorization=copy_source_authorization,
-            template_url=self.copy_from_url.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -2060,19 +2060,19 @@ class BlobOperations:
         _lease_id = None
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.abort_copy_from_url.metadata['url'], **path_format_arguments)
 
         request = build_abort_copy_from_url_request(
             copy_id=copy_id,
             timeout=timeout,
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
-            template_url=self.abort_copy_from_url.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -2157,6 +2157,10 @@ class BlobOperations:
             _lease_id = lease_access_conditions.lease_id
         if modified_access_conditions is not None:
             _if_tags = modified_access_conditions.if_tags
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.set_tier.metadata['url'], **path_format_arguments)
 
         request = build_set_tier_request(
             tier=tier,
@@ -2167,13 +2171,9 @@ class BlobOperations:
             request_id_parameter=request_id_parameter,
             lease_id=_lease_id,
             if_tags=_if_tags,
-            template_url=self.set_tier.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -2220,15 +2220,15 @@ class BlobOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        
-        request = build_get_account_info_request(
-            template_url=self.get_account_info.metadata['url'],
-        )
-        request = _convert_request(request)
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _url = self._client.format_url(self.get_account_info.metadata['url'], **path_format_arguments)
+
+        request = build_get_account_info_request(
+            template_url=_url,
+        )
+        request = _convert_request(request)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -2328,6 +2328,10 @@ class BlobOperations:
             content = self._serialize.body(query_request, 'QueryRequest', is_xml=True)
         else:
             content = None
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.query.metadata['url'], **path_format_arguments)
 
         request = build_query_request(
             content_type=content_type,
@@ -2344,13 +2348,9 @@ class BlobOperations:
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             content=content,
-            template_url=self.query.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(request, stream=True, **kwargs)
         response = pipeline_response.http_response
@@ -2493,6 +2493,10 @@ class BlobOperations:
             _if_tags = modified_access_conditions.if_tags
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.get_tags.metadata['url'], **path_format_arguments)
 
         request = build_get_tags_request(
             timeout=timeout,
@@ -2501,13 +2505,9 @@ class BlobOperations:
             version_id=version_id,
             if_tags=_if_tags,
             lease_id=_lease_id,
-            template_url=self.get_tags.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -2594,6 +2594,10 @@ class BlobOperations:
             content = self._serialize.body(tags, 'BlobTags', is_xml=True)
         else:
             content = None
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        _url = self._client.format_url(self.set_tags.metadata['url'], **path_format_arguments)
 
         request = build_set_tags_request(
             content_type=content_type,
@@ -2605,13 +2609,9 @@ class BlobOperations:
             if_tags=_if_tags,
             lease_id=_lease_id,
             content=content,
-            template_url=self.set_tags.metadata['url'],
+            template_url=_url,
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
