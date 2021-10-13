@@ -203,9 +203,9 @@ def auto_close_issue(sdk_repo, item):
         link = issue_info.html_url
         closed_issue_info = f'{package_name},{assignee},{created_at},{closed_at},{link}\n'
         with open(_FILE_OUT, 'w+') as file_out:
-            lines = file.readlines()
+            lines = file_out.readlines()
             lines.insert(1, closed_issue_info)
-            file.writelines(lines)
+            file_out.writelines(lines)
 
 def _get_last_released_date(package_name):
     pypi_link = f'https://pypi.org/project/{package_name}/#history'
