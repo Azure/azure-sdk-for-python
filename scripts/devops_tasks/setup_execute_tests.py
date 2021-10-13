@@ -25,7 +25,7 @@ from common_tasks import (
     clean_coverage,
     is_error_code_5_allowed,
     create_code_coverage_params,
-    filter_packages_for_compatibility
+    filter_packages_by_compatibility_override
 )
 from tox_harness import prep_and_run_tox
 
@@ -296,7 +296,7 @@ if __name__ == "__main__":
         target_dir = root_dir
 
     targeted_packages = process_glob_string(args.glob_string, target_dir, "", args.filter_type)
-    compatible_targeted_packages = filter_packages_for_compatibility(targeted_packages)
+    compatible_targeted_packages = filter_packages_by_compatibility_override(targeted_packages)
 
     if targeted_packages != compatible_targeted_packages:
         logging.info("At least one package incompatible with current platform was detected. Skipping: {}".format(set(targeted_packages) - set(compatible_targeted_packages)))
