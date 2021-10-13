@@ -1,8 +1,10 @@
 # Release History
 
-## 4.6.1 (Unreleased)
+## 4.7.0 (Unreleased)
 
 ### Features Added
+
+- Added support for publishing native CNCF cloudevents.
 
 ### Breaking Changes
 
