@@ -320,7 +320,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             custom_endpoint_hostname=self._config.custom_endpoint_hostname,
             port=self._config.connection_port,
             verify=self._config.connection_verify,
-            override_token_refresh_window=AAD_TOKEN_REFRESH_WINDOW_IN_SECONDS,
+            refresh_window=AAD_TOKEN_REFRESH_WINDOW_IN_SECONDS,
         )
 
     def _close_connection(self):

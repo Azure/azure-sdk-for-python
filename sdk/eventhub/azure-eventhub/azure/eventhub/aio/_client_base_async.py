@@ -198,7 +198,7 @@ class ClientBaseAsync(ClientBase):
             custom_endpoint_hostname=self._config.custom_endpoint_hostname,
             port=self._config.connection_port,
             verify=self._config.connection_verify,
-            override_token_refresh_window=AAD_TOKEN_REFRESH_WINDOW_IN_SECONDS,
+            refresh_window=AAD_TOKEN_REFRESH_WINDOW_IN_SECONDS,
         )
 
     async def _close_connection_async(self) -> None:
