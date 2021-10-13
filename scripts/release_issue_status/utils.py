@@ -205,7 +205,6 @@ def auto_close_issue(sdk_repo, item):
         with open(_FILE_OUT, 'w+') as file_out:
             lines = file.readlines()
             lines.insert(1, closed_issue_info)
-            file_out.write(closed_issue_info)
             file.writelines(lines)
 
 def _get_last_released_date(package_name):
