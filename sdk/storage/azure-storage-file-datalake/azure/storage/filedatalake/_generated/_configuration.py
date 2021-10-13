@@ -23,21 +23,33 @@ class AzureDataLakeStorageRESTAPIConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param url: The URL of the service account, container, or blob that is the targe of the desired operation.
+    :param url: The URL of the service account, container, or blob that is the target of the desired operation.
     :type url: str
+    :param file_system: The filesystem identifier.
+    :type file_system: str
+    :param path: The file or directory path.
+    :type path: str
     """
 
     def __init__(
         self,
         url,  # type: str
+        file_system,  # type: str
+        path,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
+        if file_system is None:
+            raise ValueError("Parameter 'file_system' must not be None.")
+        if path is None:
+            raise ValueError("Parameter 'path' must not be None.")
         super(AzureDataLakeStorageRESTAPIConfiguration, self).__init__(**kwargs)
 
         self.url = url
+        self.file_system = file_system
+        self.path = path
         self.resource = "filesystem"
         self.version = "2020-06-12"
         kwargs.setdefault('sdk_moniker', 'azuredatalakestoragerestapi/{}'.format(VERSION))
