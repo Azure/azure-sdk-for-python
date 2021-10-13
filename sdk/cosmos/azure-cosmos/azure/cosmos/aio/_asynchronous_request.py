@@ -31,7 +31,7 @@ from azure.core.exceptions import DecodeError  # type: ignore
 
 from .. import exceptions
 from .. import http_constants
-from . import _retry_utility_async
+=from . import _retry_utility_async
 from .._synchronized_request import _request_body_from_data
 
 
