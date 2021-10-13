@@ -33,7 +33,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async  # pylint
 from ..cosmos_client import _parse_connection_str, _build_auth
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options
-from ._retry_utility import ConnectionRetryPolicy
+from ._retry_utility_async import ConnectionRetryPolicy
 from .database import DatabaseProxy
 from ..documents import ConnectionPolicy, DatabaseAccount
 from ..exceptions import CosmosResourceNotFoundError

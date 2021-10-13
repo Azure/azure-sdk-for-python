@@ -31,7 +31,7 @@ from azure.core.exceptions import DecodeError  # type: ignore
 
 from .. import exceptions
 from .. import http_constants
-from . import _retry_utility
+=from . import _retry_utility_async
 from .._synchronized_request import _request_body_from_data
 
 
@@ -174,7 +174,7 @@ async def AsynchronousRequest(
         request.headers[http_constants.HttpHeaders.ContentLength] = 0
 
     # Pass _Request function with it's parameters to retry_utility's Execute method that wraps the call with retries
-    return await _retry_utility.ExecuteAsync(
+    return await _retry_utility_async.ExecuteAsync(
         client,
         global_endpoint_manager,
         _Request,
