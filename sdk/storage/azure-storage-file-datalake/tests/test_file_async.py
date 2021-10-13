@@ -415,7 +415,7 @@ class FileTest(StorageTestCase):
 
         # Get user delegation key
         token_credential = self.generate_oauth_token()
-        service_client = DataLakeServiceClient(self._get_oauth_account_url(datalake_storage_account_name), credential=token_credential)
+        service_client = DataLakeServiceClient(self.account_url(datalake_storage_account_name, 'dfs'), credential=token_credential)
         user_delegation_key = await service_client.get_user_delegation_key(datetime.utcnow(),
                                                                            datetime.utcnow() + timedelta(hours=1))
 
