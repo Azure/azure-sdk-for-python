@@ -15,18 +15,20 @@ import unittest
 
 import azure.mgmt.servicebus
 from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureRecordedTestCase, RecordedByProxy
 
 AZURE_LOCATION = 'eastus'
 
-class MgmtServiceBusTest(AzureMgmtTestCase):
+class TestMgmtServiceBusTest(AzureRecordedTestCase):
 
     def setUp(self):
-        super(MgmtServiceBusTest, self).setUp()
+        super(TestMgmtServiceBusTest, self).setUp()
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.servicebus.ServiceBusManagementClient
         )
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @RecordedByProxy
     def test_subscrpition_and_rule(self, resource_group):
 
         RESOURCE_GROUP = resource_group.name
@@ -116,6 +118,7 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
         result = result.result()
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @RecordedByProxy
     def test_topic(self, resource_group):
 
         RESOURCE_GROUP = resource_group.name
