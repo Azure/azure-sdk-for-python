@@ -99,9 +99,9 @@ def terminate_testserver(process):
 @pytest.fixture(autouse=True, scope="package")
 def testserver():
     """Start the Autorest testserver."""
-    server = start_testserver()
-    yield
-    terminate_testserver(server)
+    # server = start_testserver()
+    # yield
+    # terminate_testserver(server)
 
 @pytest.fixture
 def client(port):

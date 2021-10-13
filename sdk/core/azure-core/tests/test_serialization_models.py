@@ -4,7 +4,7 @@
 # ------------------------------------
 from typing import List
 import pytest
-from azure.core.serialization import Model, _PropertyDictTuple
+from azure.core.serialization import Model
 
 def modify_args(init):
     def _wrapper(self, **kwargs):
@@ -16,11 +16,11 @@ def modify_args(init):
 
 
 class BasicResource(Model):
-    _property_to_dict_name = [
-        _PropertyDictTuple("platform_update_domain_count", "platformUpdateDomainCount"),
-        _PropertyDictTuple("platform_fault_domain_count", "platformFaultDomainCount"),
-        _PropertyDictTuple("virtual_machines", "virtualMachines")
-    ]
+    _attribute_map = {
+        "platform_update_domain_count": {"type": "platformUpdateDomainCount"},
+        "platform_fault_domain_count": {"type": "platformFaultDomainCount"},
+        "virtual_machines": {"type": "virtualMachines"}
+    }
 
     @modify_args
     def __init__(
@@ -63,6 +63,8 @@ def test_model_and_dict_equal():
         []
     )
 
+    # check json.dumps, json.loads, check roundtrip is correct
+
 def test_has_no_property():
     dict_response = {
         "platformUpdateDomainCount": 5,
@@ -84,7 +86,7 @@ def test_has_no_property():
     assert model["noprop"] == dict_response["noprop"] == "bonjour!"
 
     # if we update attribute map, it should automatically work
-    model._property_to_dict_name.append(_PropertyDictTuple("noprop", "noprop"))
+    model._property_to_dict_name.append(("noprop", "noprop"))
     assert (
         model.noprop ==
         model["noprop"] ==
@@ -116,4 +118,4 @@ def test_modify_property():
     model.platform_fault_domain_count = 2000
     assert model.platform_fault_domain_count == model["platformFaultDomainCount"] == 2000
 
-def test_
+# def test_

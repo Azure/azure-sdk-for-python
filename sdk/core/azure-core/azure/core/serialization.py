@@ -6,12 +6,13 @@
 # --------------------------------------------------------------------------
 import base64
 from json import JSONEncoder
+import types
 from typing import TYPE_CHECKING
 
 from .utils._utils import _FixedOffset
 
 if TYPE_CHECKING:
-    from typing import List
+    from typing import List, Dict, Optional
     from datetime import timedelta
 
 try:
@@ -137,19 +138,21 @@ def _deserialize(item):
 
 _PropertyValue = namedtuple("PropertyValue", ["original", "deserialized"])
 
-_PropertyDictTuple = namedtuple("_PropertyDictTuple", ["property_name", "dict_name"])
+
+class Metaclass(type):
+
+    def __call__(cls, *args, **kwargs):
+        obj = cls.__new__(cls, *args, **kwargs)
+        obj.__init__(*args, **{
+            obj._get_property_name(kwarg) or kwarg: value
+            for kwarg, value in kwargs.items()
+        })
+        return obj
+
+
 
 class Model(MutableMapping):
-
-    _property_to_dict_name = NotImplementedError()  # type: List[_PropertyDictTuple]
-
-    # def __new__(cls, **kwargs):
-    #     self = cls(**{
-    #         cls._get_property_name(kwarg) or kwarg: value
-    #         for kwarg, value in kwargs.items()
-    #     })
-    #     self._dict = OrderedDict()
-    #     self.update(self._dict, **kwargs)
+    _attribute_map = NotImplementedError()  # type: Dict[str, Dict[str, str]]
 
     def __init__(self, **kwargs):
         self._dict = OrderedDict()
@@ -165,8 +168,8 @@ class Model(MutableMapping):
             "array": {"key": "array", "type": "str"},
         }
         """
-        # deserialized = _deserialize(item) if key in self._attribute_map else item
-        self._dict[key] = _PropertyValue(item, item)
+        deserialized = _deserialize(item) if key in self._attribute_map else item
+        self._dict[key] = _PropertyValue(item, deserialized)
 
     def __getitem__(self, key):
         # return non-deserialized
@@ -212,19 +215,17 @@ class Model(MutableMapping):
 
     @classmethod
     def _get_dict_name(cls, property_name):
-        try:
-            return next(
-                t for t in cls._property_to_dict_name if t.property_name == property_name
-            ).dict_name
-        except StopIteration:
-            return None
+        # type: (str) -> Optional[str]
+        return cls._attribute_map.get(property_name, {"key": None})["key"]
 
     @classmethod
     def _get_property_name(cls, dict_name):
+        # type: (str) -> Optional[str]
         try:
             return next(
-                t for t in cls._property_to_dict_name if t.dict_name == dict_name
-            ).property_name
+                k for k, v in cls._attribute_map.items()
+                if v["key"] == dict_name
+            )
         except StopIteration:
             return None
 
