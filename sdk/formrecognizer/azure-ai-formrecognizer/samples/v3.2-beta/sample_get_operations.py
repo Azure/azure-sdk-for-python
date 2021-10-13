@@ -51,7 +51,7 @@ def sample_get_operations():
 
     # [START get_operation]
     # Get an operation by ID
-    if len(operations) > 0:
+    if operations:
         print("\nGetting operation info by ID: {}".format(operations[0].operation_id))
         operation_info = document_model_admin_client.get_operation(operations[0].operation_id)
         if operation_info.status == "succeeded":
