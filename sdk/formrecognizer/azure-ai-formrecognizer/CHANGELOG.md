@@ -1,8 +1,26 @@
 # Release History
 
-## 3.2.0b1 (2021-10-05)
+## 3.2.0b2 (Unreleased)
 
 This version of the SDK defaults to the latest supported API version, which currently is v2021-09-30-preview.
+
+> Note: Starting with version 2021-09-30-preview, a new set of clients were introduced to leverage the newest features of the Form Recognizer service. Please see the [Migration Guide](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/MIGRATION_GUIDE.md) for detailed instructions on how to update application code from client library version 3.1.X or lower to the latest version. Also, please refer to the [README](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/README.md) for more information about the library. 
+
+### Features Added
+- Added new `DocumentAnalysisClient` with  `begin_analyze_document` and `begin_analyze_document_from_url` methods. Use these methods with the latest Form Recognizer 
+API version to analyze documents, with prebuilt and custom models.
+- Added new models to use with the new `DocumentAnalysisClient`: `AnalyzeResult`, `AnalyzedDocument`, `BoundingRegion`, `DocumentElement`, `DocumentEntity`, `DocumentField`, `DocumentKeyValuePair`, `DocumentKeyValueElement`, `DocumentLine`, `DocumentPage`, `DocumentSelectionMark`, `DocumentSpan`, `DocumentStyle`, `DocumentTable`, `DocumentTableCell`, `DocumentWord`.
+- Added new `DocumentModelAdministrationClient` with methods: `begin_build_model`, `begin_create_composed_model`, `begin_copy_model`, `get_copy_authorization`, `get_model`, `delete_model`, `list_models`, `get_operation`, `list_operations`, `get_account_info`, `get_document_analysis_client`.
+- Added new models to use with the new `DocumentModelAdministrationClient`: `DocumentModel`, `DocumentModelInfo`, `DocTypeInfo`, `ModelOperation`, `ModelOperationInfo`, `AccountInfo`, `DocumentAnalysisError`, `DocumentAnalysisInnerError`.
+- Added samples using the `DocumentAnalysisClient` and `DocumentModelAdministrationClient` under `/samples/v3.2-beta`.
+- Added `DocumentAnalysisApiVersion` to be used with `DocumentAnalysisClient` and `DocumentModelAdministrationClient`.
+
+### Other Changes
+- Python 3.5 is no longer supported in this release.
+
+## 3.2.0b1 (2021-10-07)
+
+This version of the SDK defaults to the latest supported API version, which is currently 2021-09-30-preview.
 
 > Note: Starting with version 2021-09-30-preview, a new set of clients were introduced to leverage the newest features of the Form Recognizer service. Please see the [Migration Guide](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/MIGRATION_GUIDE.md) for detailed instructions on how to update application code from client library version 3.1.X or lower to the latest version. Also, please refer to the [README](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/README.md) for more information about the library. 
 

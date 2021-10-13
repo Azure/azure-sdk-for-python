@@ -35,7 +35,6 @@ def analyze_business_card():
             "./sample_forms/business_cards/business-card-english.jpg",
         )
     )
-    # [START analyze_business_cards]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer import DocumentAnalysisClient
 
@@ -150,7 +149,6 @@ def analyze_business_card():
                         other_phone.value, other_phone.confidence
                     )
                 )
-    # [END analyze_business_cards]
 
 
 if __name__ == "__main__":

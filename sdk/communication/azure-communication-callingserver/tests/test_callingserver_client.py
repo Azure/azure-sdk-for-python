@@ -505,7 +505,7 @@ class TestCallingServerClient(unittest.TestCase):
         CallingServerUnitTestUtils.verify_get_participants_result(result)
 
     @parameterized.expand(CallingServerUnitTestUtils.data_source_test_get_participants_with_call_locator())
-    async def test_get_participants_failed(
+    def test_get_participants_failed(
         self,
         test_name, # type: str
         call_locator, # type: CallLocator

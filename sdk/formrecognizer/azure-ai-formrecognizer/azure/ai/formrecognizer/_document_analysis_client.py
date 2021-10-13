@@ -20,12 +20,12 @@ if TYPE_CHECKING:
 class DocumentAnalysisClient(FormRecognizerClientBase):
     """DocumentAnalysisClient analyzes information from documents and images.
     It is the interface to use for analyzing with prebuilt models (receipts, business cards,
-    invoices, identity documents), analyzing layout from documents, analyzing general prebuilt
-    documents, and analyzing custom documents with built models. It provides different
+    invoices, identity documents), analyzing layout from documents, analyzing general
+    document types, and analyzing custom documents with built models. It provides different
     methods based on inputs from a URL and inputs from a stream.
 
     .. note:: DocumentAnalysisClient should be used with API versions
-        v2021-09-30-preview and up. To use API versions <=v2.1, instantiate a FormRecognizerClient.
+        2021-09-30-preview and up. To use API versions <=v2.1, instantiate a FormRecognizerClient.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
@@ -39,6 +39,9 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
         Setting to an older version may result in reduced feature compatibility. To use API versions
         <=v2.1, instantiate a FormRecognizerClient.
     :paramtype api_version: str or ~azure.ai.formrecognizer.DocumentAnalysisApiVersion
+
+    .. versionadded:: 2021-09-30-preview
+        The *DocumentAnalysisClient* and its client methods.
 
     .. admonition:: Example:
 

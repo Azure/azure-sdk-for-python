@@ -37,7 +37,6 @@ async def analyze_business_card_async():
             "./sample_forms/business_cards/business-card-english.jpg",
         )
     )
-    # [START analyze_business_cards_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 
@@ -153,7 +152,6 @@ async def analyze_business_card_async():
                         other_phone.value, other_phone.confidence
                     )
                 )
-    # [END analyze_business_cards_async]
 
 
 async def main():

@@ -1,5 +1,11 @@
 # Release History
 
+## 0.10.0 (Unreleased)
+
+### Features Added
+
+- re-generated based on tag package-artifacts-composite-v1
+
 ## 0.9.0 (2021-10-05)
 
 ### Features Added
