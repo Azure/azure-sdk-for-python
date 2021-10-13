@@ -30,7 +30,6 @@ from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 from packaging.version import parse
 
-
 DEV_REQ_FILE = "dev_requirements.txt"
 NEW_DEV_REQ_FILE = "new_dev_requirements.txt"
 NEW_REQ_PACKAGES = ["azure-core", "azure-mgmt-core"]
@@ -222,6 +221,10 @@ def compare_python_version(version_spec):
     spec_set = SpecifierSet(version_spec)
 
     return current_sys_version in spec_set
+
+
+def filter_packages_for_compatibility(package_set):
+    return [p for p in package_set if compare_python_version(TEST_COMPATIBILITY_MAP.get(p, '>=2.7'))]
 
 
 # this function is where a glob string gets translated to a list of packages
