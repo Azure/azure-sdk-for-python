@@ -15,7 +15,7 @@ from ._version import VERSION
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
+    from typing import Any
 
     from azure.core.credentials import TokenCredential
 
@@ -47,6 +47,7 @@ class WebPubSubServiceClientConfiguration(Configuration):
 
         self.endpoint = endpoint
         self.credential = credential
+        self.api_version = "2021-10-01"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://webpubsub.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'messaging-webpubsubservice/{}'.format(VERSION))
         self._configure(**kwargs)

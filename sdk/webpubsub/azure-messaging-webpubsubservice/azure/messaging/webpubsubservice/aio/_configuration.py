@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
@@ -44,6 +44,7 @@ class WebPubSubServiceClientConfiguration(Configuration):
 
         self.endpoint = endpoint
         self.credential = credential
+        self.api_version = "2021-10-01"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://webpubsub.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'messaging-webpubsubservice/{}'.format(VERSION))
         self._configure(**kwargs)

@@ -15,7 +15,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ...operations._operations import build_add_connection_to_group_request, build_add_user_to_group_request, build_check_permission_request, build_close_connection_request, build_connection_exists_request, build_generate_client_token_request, build_grant_permission_request, build_group_exists_request, build_remove_connection_from_group_request, build_remove_user_from_all_groups_request, build_remove_user_from_group_request, build_revoke_permission_request, build_send_to_all_request, build_send_to_connection_request, build_send_to_group_request, build_send_to_user_request, build_user_exists_request
+from ...operations._operations import build_add_connection_to_group_request, build_add_user_to_group_request, build_check_permission_request, build_close_all_connections_request, build_close_connection_request, build_close_group_connections_request, build_close_user_connections_request, build_connection_exists_request, build_generate_client_token_request, build_grant_permission_request, build_group_exists_request, build_remove_connection_from_group_request, build_remove_user_from_all_groups_request, build_remove_user_from_group_request, build_revoke_permission_request, build_send_to_all_request, build_send_to_connection_request, build_send_to_group_request, build_send_to_user_request, build_user_exists_request
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -27,10 +27,9 @@ class WebPubSubServiceClientOperationsMixin:
         self,
         hub: str,
         *,
-        user_id: Optional[str] = "",
+        user_id: Optional[str] = None,
         role: Optional[List[str]] = None,
         minutes_to_expire: Optional[int] = 60,
-        api_version: Optional[str] = "2021-08-01-preview",
         **kwargs: Any
     ) -> Any:
         """Generate token for the client to connect Azure Web PubSub service.
@@ -46,8 +45,6 @@ class WebPubSubServiceClientOperationsMixin:
         :paramtype role: list[str]
         :keyword minutes_to_expire: The expire time of the generated token.
         :paramtype minutes_to_expire: int
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: JSON object
         :rtype: Any
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -57,7 +54,7 @@ class WebPubSubServiceClientOperationsMixin:
 
                 # response body for status code(s): 200
                 response.json() == {
-                    "token": "str (optional)"
+                    "token": "str"  # Optional. The token value for the WebSocket client to connect to the service.
                 }
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
@@ -72,7 +69,6 @@ class WebPubSubServiceClientOperationsMixin:
             user_id=user_id,
             role=role,
             minutes_to_expire=minutes_to_expire,
-            api_version=api_version,
             template_url=self.generate_client_token.metadata['url'],
         )
         path_format_arguments = {
@@ -80,7 +76,7 @@ class WebPubSubServiceClientOperationsMixin:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -101,13 +97,67 @@ class WebPubSubServiceClientOperationsMixin:
 
 
     @distributed_trace_async
+    async def close_all_connections(
+        self,
+        hub: str,
+        *,
+        excluded: Optional[List[str]] = None,
+        reason: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """Close the connections in the hub.
+
+        Close the connections in the hub.
+
+        :param hub: Target hub name, which should start with alphabetic characters and only contain
+         alpha-numeric characters or underscore.
+        :type hub: str
+        :keyword excluded: Exclude these connectionIds when closing the connections in the hub.
+        :paramtype excluded: list[str]
+        :keyword reason: The reason closing the client connection.
+        :paramtype reason: str
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        
+        request = build_close_all_connections_request(
+            hub=hub,
+            excluded=excluded,
+            reason=reason,
+            template_url=self.close_all_connections.metadata['url'],
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    close_all_connections.metadata = {'url': '/api/hubs/{hub}/:closeConnections'}  # type: ignore
+
+
+    @distributed_trace_async
     async def send_to_all(
         self,
         hub: str,
         message: Union[IO, str],
         *,
         excluded: Optional[List[str]] = None,
-        api_version: Optional[str] = "2021-08-01-preview",
         **kwargs: Any
     ) -> None:
         """Broadcast content inside request body to all the connected client connections.
@@ -121,8 +171,6 @@ class WebPubSubServiceClientOperationsMixin:
         :type message: IO or str
         :keyword excluded: Excluded connection Ids.
         :paramtype excluded: list[str]
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :keyword str content_type: Media type of the body sent to the API. Default value is
          "application/json". Allowed values are: "application/json", "application/octet-stream",
          "text/plain."
@@ -154,7 +202,6 @@ class WebPubSubServiceClientOperationsMixin:
             hub=hub,
             content_type=content_type,
             excluded=excluded,
-            api_version=api_version,
             json=json,
             content=content,
             template_url=self.send_to_all.metadata['url'],
@@ -164,7 +211,7 @@ class WebPubSubServiceClientOperationsMixin:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -182,8 +229,6 @@ class WebPubSubServiceClientOperationsMixin:
         self,
         hub: str,
         connection_id: str,
-        *,
-        api_version: Optional[str] = "2021-08-01-preview",
         **kwargs: Any
     ) -> None:
         """Check if the connection with the given connectionId exists.
@@ -195,8 +240,6 @@ class WebPubSubServiceClientOperationsMixin:
         :type hub: str
         :param connection_id: The connection Id.
         :type connection_id: str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -211,7 +254,6 @@ class WebPubSubServiceClientOperationsMixin:
         request = build_connection_exists_request(
             hub=hub,
             connection_id=connection_id,
-            api_version=api_version,
             template_url=self.connection_exists.metadata['url'],
         )
         path_format_arguments = {
@@ -219,7 +261,7 @@ class WebPubSubServiceClientOperationsMixin:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
@@ -239,7 +281,6 @@ class WebPubSubServiceClientOperationsMixin:
         connection_id: str,
         *,
         reason: Optional[str] = None,
-        api_version: Optional[str] = "2021-08-01-preview",
         **kwargs: Any
     ) -> None:
         """Close the client connection.
@@ -253,8 +294,6 @@ class WebPubSubServiceClientOperationsMixin:
         :type connection_id: str
         :keyword reason: The reason closing the client connection.
         :paramtype reason: str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -270,7 +309,6 @@ class WebPubSubServiceClientOperationsMixin:
             hub=hub,
             connection_id=connection_id,
             reason=reason,
-            api_version=api_version,
             template_url=self.close_connection.metadata['url'],
         )
         path_format_arguments = {
@@ -278,10 +316,10 @@ class WebPubSubServiceClientOperationsMixin:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -297,8 +335,6 @@ class WebPubSubServiceClientOperationsMixin:
         hub: str,
         connection_id: str,
         message: Union[IO, str],
-        *,
-        api_version: Optional[str] = "2021-08-01-preview",
         **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific connection.
@@ -312,8 +348,6 @@ class WebPubSubServiceClientOperationsMixin:
         :type connection_id: str
         :param message: The payload body.
         :type message: IO or str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :keyword str content_type: Media type of the body sent to the API. Default value is
          "application/json". Allowed values are: "application/json", "application/octet-stream",
          "text/plain."
@@ -345,7 +379,6 @@ class WebPubSubServiceClientOperationsMixin:
             hub=hub,
             connection_id=connection_id,
             content_type=content_type,
-            api_version=api_version,
             json=json,
             content=content,
             template_url=self.send_to_connection.metadata['url'],
@@ -355,7 +388,7 @@ class WebPubSubServiceClientOperationsMixin:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -373,8 +406,6 @@ class WebPubSubServiceClientOperationsMixin:
         self,
         hub: str,
         group: str,
-        *,
-        api_version: Optional[str] = "2021-08-01-preview",
         **kwargs: Any
     ) -> None:
         """Check if there are any client connections inside the given group.
@@ -386,8 +417,6 @@ class WebPubSubServiceClientOperationsMixin:
         :type hub: str
         :param group: Target group name, which length should be greater than 0 and less than 1025.
         :type group: str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -402,7 +431,6 @@ class WebPubSubServiceClientOperationsMixin:
         request = build_group_exists_request(
             hub=hub,
             group=group,
-            api_version=api_version,
             template_url=self.group_exists.metadata['url'],
         )
         path_format_arguments = {
@@ -410,7 +438,7 @@ class WebPubSubServiceClientOperationsMixin:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
@@ -424,6 +452,65 @@ class WebPubSubServiceClientOperationsMixin:
 
 
     @distributed_trace_async
+    async def close_group_connections(
+        self,
+        hub: str,
+        group: str,
+        *,
+        excluded: Optional[List[str]] = None,
+        reason: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """Close connections in the specific group.
+
+        Close connections in the specific group.
+
+        :param hub: Target hub name, which should start with alphabetic characters and only contain
+         alpha-numeric characters or underscore.
+        :type hub: str
+        :param group: Target group name, which length should be greater than 0 and less than 1025.
+        :type group: str
+        :keyword excluded: Exclude these connectionIds when closing the connections in the group.
+        :paramtype excluded: list[str]
+        :keyword reason: The reason closing the client connection.
+        :paramtype reason: str
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        
+        request = build_close_group_connections_request(
+            hub=hub,
+            group=group,
+            excluded=excluded,
+            reason=reason,
+            template_url=self.close_group_connections.metadata['url'],
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    close_group_connections.metadata = {'url': '/api/hubs/{hub}/groups/{group}/:closeConnections'}  # type: ignore
+
+
+    @distributed_trace_async
     async def send_to_group(
         self,
         hub: str,
@@ -431,7 +518,6 @@ class WebPubSubServiceClientOperationsMixin:
         message: Union[IO, str],
         *,
         excluded: Optional[List[str]] = None,
-        api_version: Optional[str] = "2021-08-01-preview",
         **kwargs: Any
     ) -> None:
         """Send content inside request body to a group of connections.
@@ -447,8 +533,6 @@ class WebPubSubServiceClientOperationsMixin:
         :type message: IO or str
         :keyword excluded: Excluded connection Ids.
         :paramtype excluded: list[str]
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :keyword str content_type: Media type of the body sent to the API. Default value is
          "application/json". Allowed values are: "application/json", "application/octet-stream",
          "text/plain."
@@ -481,7 +565,6 @@ class WebPubSubServiceClientOperationsMixin:
             group=group,
             content_type=content_type,
             excluded=excluded,
-            api_version=api_version,
             json=json,
             content=content,
             template_url=self.send_to_group.metadata['url'],
@@ -491,7 +574,7 @@ class WebPubSubServiceClientOperationsMixin:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -510,8 +593,6 @@ class WebPubSubServiceClientOperationsMixin:
         hub: str,
         group: str,
         connection_id: str,
-        *,
-        api_version: Optional[str] = "2021-08-01-preview",
         **kwargs: Any
     ) -> None:
         """Add a connection to the target group.
@@ -525,8 +606,6 @@ class WebPubSubServiceClientOperationsMixin:
         :type group: str
         :param connection_id: Target connection Id.
         :type connection_id: str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -542,7 +621,6 @@ class WebPubSubServiceClientOperationsMixin:
             hub=hub,
             group=group,
             connection_id=connection_id,
-            api_version=api_version,
             template_url=self.add_connection_to_group.metadata['url'],
         )
         path_format_arguments = {
@@ -550,7 +628,7 @@ class WebPubSubServiceClientOperationsMixin:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
@@ -569,8 +647,6 @@ class WebPubSubServiceClientOperationsMixin:
         hub: str,
         group: str,
         connection_id: str,
-        *,
-        api_version: Optional[str] = "2021-08-01-preview",
         **kwargs: Any
     ) -> None:
         """Remove a connection from the target group.
@@ -584,8 +660,6 @@ class WebPubSubServiceClientOperationsMixin:
         :type group: str
         :param connection_id: Target connection Id.
         :type connection_id: str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -601,7 +675,6 @@ class WebPubSubServiceClientOperationsMixin:
             hub=hub,
             group=group,
             connection_id=connection_id,
-            api_version=api_version,
             template_url=self.remove_connection_from_group.metadata['url'],
         )
         path_format_arguments = {
@@ -609,10 +682,10 @@ class WebPubSubServiceClientOperationsMixin:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -627,8 +700,6 @@ class WebPubSubServiceClientOperationsMixin:
         self,
         hub: str,
         user_id: str,
-        *,
-        api_version: Optional[str] = "2021-08-01-preview",
         **kwargs: Any
     ) -> None:
         """Check if there are any client connections connected for the given user.
@@ -640,8 +711,6 @@ class WebPubSubServiceClientOperationsMixin:
         :type hub: str
         :param user_id: Target user Id.
         :type user_id: str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -656,7 +725,6 @@ class WebPubSubServiceClientOperationsMixin:
         request = build_user_exists_request(
             hub=hub,
             user_id=user_id,
-            api_version=api_version,
             template_url=self.user_exists.metadata['url'],
         )
         path_format_arguments = {
@@ -664,7 +732,7 @@ class WebPubSubServiceClientOperationsMixin:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
@@ -678,13 +746,70 @@ class WebPubSubServiceClientOperationsMixin:
 
 
     @distributed_trace_async
+    async def close_user_connections(
+        self,
+        hub: str,
+        user_id: str,
+        *,
+        excluded: Optional[List[str]] = None,
+        reason: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """Close connections for the specific user.
+
+        Close connections for the specific user.
+
+        :param hub: Target hub name, which should start with alphabetic characters and only contain
+         alpha-numeric characters or underscore.
+        :type hub: str
+        :param user_id: The user Id.
+        :type user_id: str
+        :keyword excluded: Exclude these connectionIds when closing the connections for the user.
+        :paramtype excluded: list[str]
+        :keyword reason: The reason closing the client connection.
+        :paramtype reason: str
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        
+        request = build_close_user_connections_request(
+            hub=hub,
+            user_id=user_id,
+            excluded=excluded,
+            reason=reason,
+            template_url=self.close_user_connections.metadata['url'],
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    close_user_connections.metadata = {'url': '/api/hubs/{hub}/users/{userId}/:closeConnections'}  # type: ignore
+
+
+    @distributed_trace_async
     async def send_to_user(
         self,
         hub: str,
         user_id: str,
         message: Union[IO, str],
-        *,
-        api_version: Optional[str] = "2021-08-01-preview",
         **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific user.
@@ -698,8 +823,6 @@ class WebPubSubServiceClientOperationsMixin:
         :type user_id: str
         :param message: The payload body.
         :type message: IO or str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :keyword str content_type: Media type of the body sent to the API. Default value is
          "application/json". Allowed values are: "application/json", "application/octet-stream",
          "text/plain."
@@ -731,7 +854,6 @@ class WebPubSubServiceClientOperationsMixin:
             hub=hub,
             user_id=user_id,
             content_type=content_type,
-            api_version=api_version,
             json=json,
             content=content,
             template_url=self.send_to_user.metadata['url'],
@@ -741,7 +863,7 @@ class WebPubSubServiceClientOperationsMixin:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -760,8 +882,6 @@ class WebPubSubServiceClientOperationsMixin:
         hub: str,
         group: str,
         user_id: str,
-        *,
-        api_version: Optional[str] = "2021-08-01-preview",
         **kwargs: Any
     ) -> None:
         """Add a user to the target group.
@@ -775,8 +895,6 @@ class WebPubSubServiceClientOperationsMixin:
         :type group: str
         :param user_id: Target user Id.
         :type user_id: str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -792,7 +910,6 @@ class WebPubSubServiceClientOperationsMixin:
             hub=hub,
             group=group,
             user_id=user_id,
-            api_version=api_version,
             template_url=self.add_user_to_group.metadata['url'],
         )
         path_format_arguments = {
@@ -800,7 +917,7 @@ class WebPubSubServiceClientOperationsMixin:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
@@ -819,8 +936,6 @@ class WebPubSubServiceClientOperationsMixin:
         hub: str,
         group: str,
         user_id: str,
-        *,
-        api_version: Optional[str] = "2021-08-01-preview",
         **kwargs: Any
     ) -> None:
         """Remove a user from the target group.
@@ -834,8 +949,6 @@ class WebPubSubServiceClientOperationsMixin:
         :type group: str
         :param user_id: Target user Id.
         :type user_id: str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -851,7 +964,6 @@ class WebPubSubServiceClientOperationsMixin:
             hub=hub,
             group=group,
             user_id=user_id,
-            api_version=api_version,
             template_url=self.remove_user_from_group.metadata['url'],
         )
         path_format_arguments = {
@@ -859,10 +971,10 @@ class WebPubSubServiceClientOperationsMixin:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -877,8 +989,6 @@ class WebPubSubServiceClientOperationsMixin:
         self,
         hub: str,
         user_id: str,
-        *,
-        api_version: Optional[str] = "2021-08-01-preview",
         **kwargs: Any
     ) -> None:
         """Remove a user from all groups.
@@ -890,8 +1000,6 @@ class WebPubSubServiceClientOperationsMixin:
         :type hub: str
         :param user_id: Target user Id.
         :type user_id: str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -906,7 +1014,6 @@ class WebPubSubServiceClientOperationsMixin:
         request = build_remove_user_from_all_groups_request(
             hub=hub,
             user_id=user_id,
-            api_version=api_version,
             template_url=self.remove_user_from_all_groups.metadata['url'],
         )
         path_format_arguments = {
@@ -914,10 +1021,10 @@ class WebPubSubServiceClientOperationsMixin:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -935,7 +1042,6 @@ class WebPubSubServiceClientOperationsMixin:
         connection_id: str,
         *,
         target_name: Optional[str] = None,
-        api_version: Optional[str] = "2021-08-01-preview",
         **kwargs: Any
     ) -> None:
         """Grant permission to the connection.
@@ -953,8 +1059,6 @@ class WebPubSubServiceClientOperationsMixin:
         :keyword target_name: The meaning of the target depends on the specific permission. For
          joinLeaveGroup and sendToGroup, targetName is a required parameter standing for the group name.
         :paramtype target_name: str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -971,7 +1075,6 @@ class WebPubSubServiceClientOperationsMixin:
             permission=permission,
             connection_id=connection_id,
             target_name=target_name,
-            api_version=api_version,
             template_url=self.grant_permission.metadata['url'],
         )
         path_format_arguments = {
@@ -979,7 +1082,7 @@ class WebPubSubServiceClientOperationsMixin:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1000,7 +1103,6 @@ class WebPubSubServiceClientOperationsMixin:
         connection_id: str,
         *,
         target_name: Optional[str] = None,
-        api_version: Optional[str] = "2021-08-01-preview",
         **kwargs: Any
     ) -> None:
         """Revoke permission for the connection.
@@ -1018,8 +1120,6 @@ class WebPubSubServiceClientOperationsMixin:
         :keyword target_name: The meaning of the target depends on the specific permission. For
          joinLeaveGroup and sendToGroup, targetName is a required parameter standing for the group name.
         :paramtype target_name: str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1036,7 +1136,6 @@ class WebPubSubServiceClientOperationsMixin:
             permission=permission,
             connection_id=connection_id,
             target_name=target_name,
-            api_version=api_version,
             template_url=self.revoke_permission.metadata['url'],
         )
         path_format_arguments = {
@@ -1044,10 +1143,10 @@ class WebPubSubServiceClientOperationsMixin:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1065,7 +1164,6 @@ class WebPubSubServiceClientOperationsMixin:
         connection_id: str,
         *,
         target_name: Optional[str] = None,
-        api_version: Optional[str] = "2021-08-01-preview",
         **kwargs: Any
     ) -> None:
         """Check if a connection has permission to the specified action.
@@ -1083,8 +1181,6 @@ class WebPubSubServiceClientOperationsMixin:
         :keyword target_name: The meaning of the target depends on the specific permission. For
          joinLeaveGroup and sendToGroup, targetName is a required parameter standing for the group name.
         :paramtype target_name: str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1101,7 +1197,6 @@ class WebPubSubServiceClientOperationsMixin:
             permission=permission,
             connection_id=connection_id,
             target_name=target_name,
-            api_version=api_version,
             template_url=self.check_permission.metadata['url'],
         )
         path_format_arguments = {
@@ -1109,7 +1204,7 @@ class WebPubSubServiceClientOperationsMixin:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:

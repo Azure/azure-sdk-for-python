@@ -12,10 +12,11 @@ import warnings
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
-from azure.core.pipeline.transport._base import _format_url_section
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from msrest import Serializer
+
+from .._vendor import _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -32,11 +33,11 @@ def build_generate_client_token_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    user_id = kwargs.pop('user_id', "")  # type: Optional[str]
+    user_id = kwargs.pop('user_id', None)  # type: Optional[str]
     role = kwargs.pop('role', None)  # type: Optional[List[str]]
     minutes_to_expire = kwargs.pop('minutes_to_expire', 60)  # type: Optional[int]
-    api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
 
+    api_version = "2021-10-01"
     accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/:generateToken')
@@ -54,8 +55,46 @@ def build_generate_client_token_request(
         query_parameters['role'] = [_SERIALIZER.query("role", q, 'str') if q is not None else '' for q in role]
     if minutes_to_expire is not None:
         query_parameters['minutesToExpire'] = _SERIALIZER.query("minutes_to_expire", minutes_to_expire, 'int')
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_close_all_connections_request(
+    hub,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
+    reason = kwargs.pop('reason', None)  # type: Optional[str]
+
+    api_version = "2021-10-01"
+    accept = "application/json, text/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/api/hubs/{hub}/:closeConnections')
+    path_format_arguments = {
+        "hub": _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if excluded is not None:
+        query_parameters['excluded'] = [_SERIALIZER.query("excluded", q, 'str') if q is not None else '' for q in excluded]
+    if reason is not None:
+        query_parameters['reason'] = _SERIALIZER.query("reason", reason, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -77,8 +116,9 @@ def build_send_to_all_request(
     # type: (...) -> HttpRequest
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
-    api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
 
+    api_version = "2021-10-01"
+    accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/:send')
     path_format_arguments = {
@@ -91,13 +131,13 @@ def build_send_to_all_request(
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if excluded is not None:
         query_parameters['excluded'] = [_SERIALIZER.query("excluded", q, 'str') if q is not None else '' for q in excluded]
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
         header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="POST",
@@ -114,8 +154,8 @@ def build_connection_exists_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
-
+    api_version = "2021-10-01"
+    accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/connections/{connectionId}')
     path_format_arguments = {
@@ -127,13 +167,17 @@ def build_connection_exists_request(
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="HEAD",
         url=url,
         params=query_parameters,
+        headers=header_parameters,
         **kwargs
     )
 
@@ -145,8 +189,9 @@ def build_close_connection_request(
 ):
     # type: (...) -> HttpRequest
     reason = kwargs.pop('reason', None)  # type: Optional[str]
-    api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
 
+    api_version = "2021-10-01"
+    accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/connections/{connectionId}')
     path_format_arguments = {
@@ -160,13 +205,17 @@ def build_close_connection_request(
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if reason is not None:
         query_parameters['reason'] = _SERIALIZER.query("reason", reason, 'str')
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="DELETE",
         url=url,
         params=query_parameters,
+        headers=header_parameters,
         **kwargs
     )
 
@@ -178,8 +227,9 @@ def build_send_to_connection_request(
 ):
     # type: (...) -> HttpRequest
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
 
+    api_version = "2021-10-01"
+    accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/connections/{connectionId}/:send')
     path_format_arguments = {
@@ -191,13 +241,13 @@ def build_send_to_connection_request(
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
         header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="POST",
@@ -214,8 +264,8 @@ def build_group_exists_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
-
+    api_version = "2021-10-01"
+    accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/groups/{group}')
     path_format_arguments = {
@@ -227,13 +277,58 @@ def build_group_exists_request(
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="HEAD",
         url=url,
         params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_close_group_connections_request(
+    hub,  # type: str
+    group,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
+    reason = kwargs.pop('reason', None)  # type: Optional[str]
+
+    api_version = "2021-10-01"
+    accept = "application/json, text/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/api/hubs/{hub}/groups/{group}/:closeConnections')
+    path_format_arguments = {
+        "hub": _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
+        "group": _SERIALIZER.url("group", group, 'str', max_length=1024, min_length=1),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if excluded is not None:
+        query_parameters['excluded'] = [_SERIALIZER.query("excluded", q, 'str') if q is not None else '' for q in excluded]
+    if reason is not None:
+        query_parameters['reason'] = _SERIALIZER.query("reason", reason, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
         **kwargs
     )
 
@@ -246,8 +341,9 @@ def build_send_to_group_request(
     # type: (...) -> HttpRequest
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
-    api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
 
+    api_version = "2021-10-01"
+    accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/groups/{group}/:send')
     path_format_arguments = {
@@ -261,13 +357,13 @@ def build_send_to_group_request(
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if excluded is not None:
         query_parameters['excluded'] = [_SERIALIZER.query("excluded", q, 'str') if q is not None else '' for q in excluded]
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
         header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="POST",
@@ -285,8 +381,8 @@ def build_add_connection_to_group_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
-
+    api_version = "2021-10-01"
+    accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/groups/{group}/connections/{connectionId}')
     path_format_arguments = {
@@ -299,13 +395,17 @@ def build_add_connection_to_group_request(
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
         url=url,
         params=query_parameters,
+        headers=header_parameters,
         **kwargs
     )
 
@@ -317,8 +417,8 @@ def build_remove_connection_from_group_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
-
+    api_version = "2021-10-01"
+    accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/groups/{group}/connections/{connectionId}')
     path_format_arguments = {
@@ -331,13 +431,17 @@ def build_remove_connection_from_group_request(
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="DELETE",
         url=url,
         params=query_parameters,
+        headers=header_parameters,
         **kwargs
     )
 
@@ -348,8 +452,8 @@ def build_user_exists_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
-
+    api_version = "2021-10-01"
+    accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}')
     path_format_arguments = {
@@ -361,13 +465,58 @@ def build_user_exists_request(
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="HEAD",
         url=url,
         params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_close_user_connections_request(
+    hub,  # type: str
+    user_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
+    reason = kwargs.pop('reason', None)  # type: Optional[str]
+
+    api_version = "2021-10-01"
+    accept = "application/json, text/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}/:closeConnections')
+    path_format_arguments = {
+        "hub": _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
+        "userId": _SERIALIZER.url("user_id", user_id, 'str', min_length=1),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if excluded is not None:
+        query_parameters['excluded'] = [_SERIALIZER.query("excluded", q, 'str') if q is not None else '' for q in excluded]
+    if reason is not None:
+        query_parameters['reason'] = _SERIALIZER.query("reason", reason, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
         **kwargs
     )
 
@@ -379,8 +528,9 @@ def build_send_to_user_request(
 ):
     # type: (...) -> HttpRequest
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
 
+    api_version = "2021-10-01"
+    accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}/:send')
     path_format_arguments = {
@@ -392,13 +542,13 @@ def build_send_to_user_request(
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
         header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="POST",
@@ -416,8 +566,8 @@ def build_add_user_to_group_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
-
+    api_version = "2021-10-01"
+    accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}/groups/{group}')
     path_format_arguments = {
@@ -430,13 +580,17 @@ def build_add_user_to_group_request(
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
         url=url,
         params=query_parameters,
+        headers=header_parameters,
         **kwargs
     )
 
@@ -448,8 +602,8 @@ def build_remove_user_from_group_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
-
+    api_version = "2021-10-01"
+    accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}/groups/{group}')
     path_format_arguments = {
@@ -462,13 +616,17 @@ def build_remove_user_from_group_request(
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="DELETE",
         url=url,
         params=query_parameters,
+        headers=header_parameters,
         **kwargs
     )
 
@@ -479,8 +637,8 @@ def build_remove_user_from_all_groups_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
-
+    api_version = "2021-10-01"
+    accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}/groups')
     path_format_arguments = {
@@ -492,13 +650,17 @@ def build_remove_user_from_all_groups_request(
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="DELETE",
         url=url,
         params=query_parameters,
+        headers=header_parameters,
         **kwargs
     )
 
@@ -511,8 +673,9 @@ def build_grant_permission_request(
 ):
     # type: (...) -> HttpRequest
     target_name = kwargs.pop('target_name', None)  # type: Optional[str]
-    api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
 
+    api_version = "2021-10-01"
+    accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}')
     path_format_arguments = {
@@ -527,13 +690,17 @@ def build_grant_permission_request(
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if target_name is not None:
         query_parameters['targetName'] = _SERIALIZER.query("target_name", target_name, 'str')
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
         url=url,
         params=query_parameters,
+        headers=header_parameters,
         **kwargs
     )
 
@@ -546,8 +713,9 @@ def build_revoke_permission_request(
 ):
     # type: (...) -> HttpRequest
     target_name = kwargs.pop('target_name', None)  # type: Optional[str]
-    api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
 
+    api_version = "2021-10-01"
+    accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}')
     path_format_arguments = {
@@ -562,13 +730,17 @@ def build_revoke_permission_request(
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if target_name is not None:
         query_parameters['targetName'] = _SERIALIZER.query("target_name", target_name, 'str')
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="DELETE",
         url=url,
         params=query_parameters,
+        headers=header_parameters,
         **kwargs
     )
 
@@ -581,8 +753,9 @@ def build_check_permission_request(
 ):
     # type: (...) -> HttpRequest
     target_name = kwargs.pop('target_name', None)  # type: Optional[str]
-    api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
 
+    api_version = "2021-10-01"
+    accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}')
     path_format_arguments = {
@@ -597,13 +770,17 @@ def build_check_permission_request(
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if target_name is not None:
         query_parameters['targetName'] = _SERIALIZER.query("target_name", target_name, 'str')
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="HEAD",
         url=url,
         params=query_parameters,
+        headers=header_parameters,
         **kwargs
     )
 
@@ -630,8 +807,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         :paramtype role: list[str]
         :keyword minutes_to_expire: The expire time of the generated token.
         :paramtype minutes_to_expire: int
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: JSON object
         :rtype: Any
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -641,7 +816,7 @@ class WebPubSubServiceClientOperationsMixin(object):
 
                 # response body for status code(s): 200
                 response.json() == {
-                    "token": "str (optional)"
+                    "token": "str"  # Optional. The token value for the WebSocket client to connect to the service.
                 }
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
@@ -650,10 +825,9 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        user_id = kwargs.pop('user_id', "")  # type: Optional[str]
+        user_id = kwargs.pop('user_id', None)  # type: Optional[str]
         role = kwargs.pop('role', None)  # type: Optional[List[str]]
         minutes_to_expire = kwargs.pop('minutes_to_expire', 60)  # type: Optional[int]
-        api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
 
         
         request = build_generate_client_token_request(
@@ -661,7 +835,6 @@ class WebPubSubServiceClientOperationsMixin(object):
             user_id=user_id,
             role=role,
             minutes_to_expire=minutes_to_expire,
-            api_version=api_version,
             template_url=self.generate_client_token.metadata['url'],
         )
         path_format_arguments = {
@@ -669,7 +842,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -687,6 +860,62 @@ class WebPubSubServiceClientOperationsMixin(object):
         return deserialized
 
     generate_client_token.metadata = {'url': '/api/hubs/{hub}/:generateToken'}  # type: ignore
+
+
+    @distributed_trace
+    def close_all_connections(
+        self,
+        hub,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Close the connections in the hub.
+
+        Close the connections in the hub.
+
+        :param hub: Target hub name, which should start with alphabetic characters and only contain
+         alpha-numeric characters or underscore.
+        :type hub: str
+        :keyword excluded: Exclude these connectionIds when closing the connections in the hub.
+        :paramtype excluded: list[str]
+        :keyword reason: The reason closing the client connection.
+        :paramtype reason: str
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
+        reason = kwargs.pop('reason', None)  # type: Optional[str]
+
+        
+        request = build_close_all_connections_request(
+            hub=hub,
+            excluded=excluded,
+            reason=reason,
+            template_url=self.close_all_connections.metadata['url'],
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    close_all_connections.metadata = {'url': '/api/hubs/{hub}/:closeConnections'}  # type: ignore
 
 
     @distributed_trace
@@ -708,8 +937,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type message: IO or str
         :keyword excluded: Excluded connection Ids.
         :paramtype excluded: list[str]
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :keyword str content_type: Media type of the body sent to the API. Default value is
          "application/json". Allowed values are: "application/json", "application/octet-stream",
          "text/plain."
@@ -725,7 +952,6 @@ class WebPubSubServiceClientOperationsMixin(object):
 
         content_type = kwargs.pop('content_type', "text/plain")  # type: Optional[str]
         excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
-        api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
 
         json = None
         content = None
@@ -743,7 +969,6 @@ class WebPubSubServiceClientOperationsMixin(object):
             hub=hub,
             content_type=content_type,
             excluded=excluded,
-            api_version=api_version,
             json=json,
             content=content,
             template_url=self.send_to_all.metadata['url'],
@@ -753,7 +978,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -783,8 +1008,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type hub: str
         :param connection_id: The connection Id.
         :type connection_id: str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -795,13 +1018,10 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
-
         
         request = build_connection_exists_request(
             hub=hub,
             connection_id=connection_id,
-            api_version=api_version,
             template_url=self.connection_exists.metadata['url'],
         )
         path_format_arguments = {
@@ -809,7 +1029,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
@@ -841,8 +1061,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type connection_id: str
         :keyword reason: The reason closing the client connection.
         :paramtype reason: str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -854,14 +1072,12 @@ class WebPubSubServiceClientOperationsMixin(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         reason = kwargs.pop('reason', None)  # type: Optional[str]
-        api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
 
         
         request = build_close_connection_request(
             hub=hub,
             connection_id=connection_id,
             reason=reason,
-            api_version=api_version,
             template_url=self.close_connection.metadata['url'],
         )
         path_format_arguments = {
@@ -869,10 +1085,10 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -902,8 +1118,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type connection_id: str
         :param message: The payload body.
         :type message: IO or str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :keyword str content_type: Media type of the body sent to the API. Default value is
          "application/json". Allowed values are: "application/json", "application/octet-stream",
          "text/plain."
@@ -918,7 +1132,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         content_type = kwargs.pop('content_type', "text/plain")  # type: Optional[str]
-        api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
 
         json = None
         content = None
@@ -936,7 +1149,6 @@ class WebPubSubServiceClientOperationsMixin(object):
             hub=hub,
             connection_id=connection_id,
             content_type=content_type,
-            api_version=api_version,
             json=json,
             content=content,
             template_url=self.send_to_connection.metadata['url'],
@@ -946,7 +1158,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -976,8 +1188,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type hub: str
         :param group: Target group name, which length should be greater than 0 and less than 1025.
         :type group: str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -988,13 +1198,10 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
-
         
         request = build_group_exists_request(
             hub=hub,
             group=group,
-            api_version=api_version,
             template_url=self.group_exists.metadata['url'],
         )
         path_format_arguments = {
@@ -1002,7 +1209,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
@@ -1013,6 +1220,66 @@ class WebPubSubServiceClientOperationsMixin(object):
             return cls(pipeline_response, None, {})
 
     group_exists.metadata = {'url': '/api/hubs/{hub}/groups/{group}'}  # type: ignore
+
+
+    @distributed_trace
+    def close_group_connections(
+        self,
+        hub,  # type: str
+        group,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Close connections in the specific group.
+
+        Close connections in the specific group.
+
+        :param hub: Target hub name, which should start with alphabetic characters and only contain
+         alpha-numeric characters or underscore.
+        :type hub: str
+        :param group: Target group name, which length should be greater than 0 and less than 1025.
+        :type group: str
+        :keyword excluded: Exclude these connectionIds when closing the connections in the group.
+        :paramtype excluded: list[str]
+        :keyword reason: The reason closing the client connection.
+        :paramtype reason: str
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
+        reason = kwargs.pop('reason', None)  # type: Optional[str]
+
+        
+        request = build_close_group_connections_request(
+            hub=hub,
+            group=group,
+            excluded=excluded,
+            reason=reason,
+            template_url=self.close_group_connections.metadata['url'],
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    close_group_connections.metadata = {'url': '/api/hubs/{hub}/groups/{group}/:closeConnections'}  # type: ignore
 
 
     @distributed_trace
@@ -1037,8 +1304,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type message: IO or str
         :keyword excluded: Excluded connection Ids.
         :paramtype excluded: list[str]
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :keyword str content_type: Media type of the body sent to the API. Default value is
          "application/json". Allowed values are: "application/json", "application/octet-stream",
          "text/plain."
@@ -1054,7 +1319,6 @@ class WebPubSubServiceClientOperationsMixin(object):
 
         content_type = kwargs.pop('content_type', "text/plain")  # type: Optional[str]
         excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
-        api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
 
         json = None
         content = None
@@ -1073,7 +1337,6 @@ class WebPubSubServiceClientOperationsMixin(object):
             group=group,
             content_type=content_type,
             excluded=excluded,
-            api_version=api_version,
             json=json,
             content=content,
             template_url=self.send_to_group.metadata['url'],
@@ -1083,7 +1346,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -1116,8 +1379,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type group: str
         :param connection_id: Target connection Id.
         :type connection_id: str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1128,14 +1389,11 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
-
         
         request = build_add_connection_to_group_request(
             hub=hub,
             group=group,
             connection_id=connection_id,
-            api_version=api_version,
             template_url=self.add_connection_to_group.metadata['url'],
         )
         path_format_arguments = {
@@ -1143,7 +1401,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
@@ -1176,8 +1434,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type group: str
         :param connection_id: Target connection Id.
         :type connection_id: str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1188,14 +1444,11 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
-
         
         request = build_remove_connection_from_group_request(
             hub=hub,
             group=group,
             connection_id=connection_id,
-            api_version=api_version,
             template_url=self.remove_connection_from_group.metadata['url'],
         )
         path_format_arguments = {
@@ -1203,10 +1456,10 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1233,8 +1486,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type hub: str
         :param user_id: Target user Id.
         :type user_id: str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1245,13 +1496,10 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
-
         
         request = build_user_exists_request(
             hub=hub,
             user_id=user_id,
-            api_version=api_version,
             template_url=self.user_exists.metadata['url'],
         )
         path_format_arguments = {
@@ -1259,7 +1507,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
@@ -1270,6 +1518,66 @@ class WebPubSubServiceClientOperationsMixin(object):
             return cls(pipeline_response, None, {})
 
     user_exists.metadata = {'url': '/api/hubs/{hub}/users/{userId}'}  # type: ignore
+
+
+    @distributed_trace
+    def close_user_connections(
+        self,
+        hub,  # type: str
+        user_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Close connections for the specific user.
+
+        Close connections for the specific user.
+
+        :param hub: Target hub name, which should start with alphabetic characters and only contain
+         alpha-numeric characters or underscore.
+        :type hub: str
+        :param user_id: The user Id.
+        :type user_id: str
+        :keyword excluded: Exclude these connectionIds when closing the connections for the user.
+        :paramtype excluded: list[str]
+        :keyword reason: The reason closing the client connection.
+        :paramtype reason: str
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
+        reason = kwargs.pop('reason', None)  # type: Optional[str]
+
+        
+        request = build_close_user_connections_request(
+            hub=hub,
+            user_id=user_id,
+            excluded=excluded,
+            reason=reason,
+            template_url=self.close_user_connections.metadata['url'],
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    close_user_connections.metadata = {'url': '/api/hubs/{hub}/users/{userId}/:closeConnections'}  # type: ignore
 
 
     @distributed_trace
@@ -1292,8 +1600,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type user_id: str
         :param message: The payload body.
         :type message: IO or str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :keyword str content_type: Media type of the body sent to the API. Default value is
          "application/json". Allowed values are: "application/json", "application/octet-stream",
          "text/plain."
@@ -1308,7 +1614,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         content_type = kwargs.pop('content_type', "text/plain")  # type: Optional[str]
-        api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
 
         json = None
         content = None
@@ -1326,7 +1631,6 @@ class WebPubSubServiceClientOperationsMixin(object):
             hub=hub,
             user_id=user_id,
             content_type=content_type,
-            api_version=api_version,
             json=json,
             content=content,
             template_url=self.send_to_user.metadata['url'],
@@ -1336,7 +1640,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -1369,8 +1673,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type group: str
         :param user_id: Target user Id.
         :type user_id: str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1381,14 +1683,11 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
-
         
         request = build_add_user_to_group_request(
             hub=hub,
             group=group,
             user_id=user_id,
-            api_version=api_version,
             template_url=self.add_user_to_group.metadata['url'],
         )
         path_format_arguments = {
@@ -1396,7 +1695,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
@@ -1429,8 +1728,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type group: str
         :param user_id: Target user Id.
         :type user_id: str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1441,14 +1738,11 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
-
         
         request = build_remove_user_from_group_request(
             hub=hub,
             group=group,
             user_id=user_id,
-            api_version=api_version,
             template_url=self.remove_user_from_group.metadata['url'],
         )
         path_format_arguments = {
@@ -1456,10 +1750,10 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1486,8 +1780,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type hub: str
         :param user_id: Target user Id.
         :type user_id: str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1498,13 +1790,10 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
-
         
         request = build_remove_user_from_all_groups_request(
             hub=hub,
             user_id=user_id,
-            api_version=api_version,
             template_url=self.remove_user_from_all_groups.metadata['url'],
         )
         path_format_arguments = {
@@ -1512,10 +1801,10 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1549,8 +1838,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         :keyword target_name: The meaning of the target depends on the specific permission. For
          joinLeaveGroup and sendToGroup, targetName is a required parameter standing for the group name.
         :paramtype target_name: str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1562,7 +1849,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         target_name = kwargs.pop('target_name', None)  # type: Optional[str]
-        api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
 
         
         request = build_grant_permission_request(
@@ -1570,7 +1856,6 @@ class WebPubSubServiceClientOperationsMixin(object):
             permission=permission,
             connection_id=connection_id,
             target_name=target_name,
-            api_version=api_version,
             template_url=self.grant_permission.metadata['url'],
         )
         path_format_arguments = {
@@ -1578,7 +1863,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1615,8 +1900,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         :keyword target_name: The meaning of the target depends on the specific permission. For
          joinLeaveGroup and sendToGroup, targetName is a required parameter standing for the group name.
         :paramtype target_name: str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1628,7 +1911,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         target_name = kwargs.pop('target_name', None)  # type: Optional[str]
-        api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
 
         
         request = build_revoke_permission_request(
@@ -1636,7 +1918,6 @@ class WebPubSubServiceClientOperationsMixin(object):
             permission=permission,
             connection_id=connection_id,
             target_name=target_name,
-            api_version=api_version,
             template_url=self.revoke_permission.metadata['url'],
         )
         path_format_arguments = {
@@ -1644,10 +1925,10 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1681,8 +1962,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         :keyword target_name: The meaning of the target depends on the specific permission. For
          joinLeaveGroup and sendToGroup, targetName is a required parameter standing for the group name.
         :paramtype target_name: str
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1694,7 +1973,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         target_name = kwargs.pop('target_name', None)  # type: Optional[str]
-        api_version = kwargs.pop('api_version', "2021-08-01-preview")  # type: Optional[str]
 
         
         request = build_check_permission_request(
@@ -1702,7 +1980,6 @@ class WebPubSubServiceClientOperationsMixin(object):
             permission=permission,
             connection_id=connection_id,
             target_name=target_name,
-            api_version=api_version,
             template_url=self.check_permission.metadata['url'],
         )
         path_format_arguments = {
@@ -1710,7 +1987,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
