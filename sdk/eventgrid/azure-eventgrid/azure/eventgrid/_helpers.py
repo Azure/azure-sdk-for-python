@@ -98,7 +98,6 @@ def _is_cloud_event(event):
     except TypeError:
         return False
 
-
 def _is_eventgrid_event(event):
     # type: (Any) -> bool
     required = ("subject", "eventType", "data", "dataVersion", "id", "eventTime")
@@ -141,6 +140,14 @@ def _cloud_event_to_generated(cloud_event, **kwargs):
         additional_properties=cloud_event.extensions,
         **kwargs
     )
+
+def _from_cncf_events(event):
+    res = {item: event[item] for item in event}
+    if isinstance(event.data, six.binary_type):
+        res['data_base64'] = event.data
+    else:
+        res['data'] = event.data
+    return res
 
 def _build_request(endpoint, content_type, events):
     serialize = Serializer()

@@ -33,6 +33,7 @@ from .._helpers import (
     _build_request,
     _cloud_event_to_generated,
     _get_authentication_policy,
+    _from_cncf_events,
 )
 from .._generated.aio import EventGridPublisherClient as EventGridPublisherClientAsync
 from .._version import VERSION
@@ -192,7 +193,13 @@ class EventGridPublisherClient:
                     for e in events  # pylint: disable=protected-access
                 ]
             except AttributeError:
-                pass  # means it's a dictionary
+                ## this is either a dictionary or a CNCF cloud event
+                try:
+                    events = [
+                        _from_cncf_events(e) for e in events
+                    ]
+                except:
+                    pass  # means it's a dictionary
             content_type = "application/cloudevents-batch+json; charset=utf-8"
         elif isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
             for event in events:
