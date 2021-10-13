@@ -36,9 +36,9 @@ LOG = logging.getLogger()
 
 try:
     connection_string = os.environ['WEBPUBSUB_CONNECTION_STRING']
-    reverse_proxy_endpoint = os.environ["WEBPUBSUB_REVERSE_RPOXY_ENDPOINT"]
+    reverse_proxy_endpoint = os.environ["WEBPUBSUB_REVERSE_PROXY_ENDPOINT"]
 except KeyError:
-    LOG.error("Missing environment variable 'WEBPUBSUB_CONNECTION_STRING' or 'WEBPUBSUB_REVERSE_RPOXY_ENDPOINT' - please set if before running the example")
+    LOG.error("Missing environment variable 'WEBPUBSUB_CONNECTION_STRING' or 'WEBPUBSUB_REVERSE_PROXY_ENDPOINT' - please set if before running the example")
     exit()
 
 # Build a client from the connection string. And for this example, we have enabled debug

@@ -29,6 +29,7 @@ class WebpubsubSmokeTest(WebpubsubTest):
         response = client.send_request(request)
         assert response.status_code == 202
 
+    # If reverse_proxy_endpoint is not available, `ServiceRequestError` will be raised
     @WebpubsubPowerShellPreparer()
     def test_webpubsub_send_to_all_api_management_proxy_counter_test(self, webpubsub_endpoint):
         client = self.create_client(endpoint=webpubsub_endpoint, reverse_proxy_endpoint='https://example.azure-api.net')
