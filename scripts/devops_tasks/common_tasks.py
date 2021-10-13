@@ -223,9 +223,16 @@ def compare_python_version(version_spec):
     return current_sys_version in spec_set
 
 
-def filter_packages_by_compatibility_override(package_set, resolve_basename = True):
-    return [p for p in package_set if compare_python_version(TEST_COMPATIBILITY_MAP.get(os.path.basename(p) if resolve_basename else p, '>=2.7'))]
-
+def filter_packages_by_compatibility_override(package_set, resolve_basename=True):
+    return [
+        p
+        for p in package_set
+        if compare_python_version(
+            TEST_COMPATIBILITY_MAP.get(
+                os.path.basename(p) if resolve_basename else p, ">=2.7"
+            )
+        )
+    ]
 
 # this function is where a glob string gets translated to a list of packages
 # It is called by both BUILD (package) and TEST. In the future, this function will be the central location
