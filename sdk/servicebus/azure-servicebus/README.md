@@ -16,6 +16,10 @@ Use the Service Bus client library for Python to communicate between application
 **NOTE**: If you are using version 0.50 or lower and want to migrate to the latest version
 of this package please look at our [migration guide to move from Service Bus V0.50 to Service Bus V7][migration_guide].
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 ## Getting started
 
 ### Install the package

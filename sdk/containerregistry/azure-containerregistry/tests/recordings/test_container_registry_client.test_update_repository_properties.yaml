@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/repo63d41ad4
   response:
@@ -30,7 +30,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Aug 2021 18:13:26 GMT
+      - Mon, 30 Aug 2021 20:34:12 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -55,11 +55,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1347'
+      - '1337'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/exchange
   response:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Aug 2021 18:13:27 GMT
+      - Mon, 30 Aug 2021 20:34:13 GMT
       server:
       - openresty
       strict-transport-security:
@@ -79,7 +79,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.416667'
+      - '166.65'
     status:
       code: 200
       message: OK
@@ -97,7 +97,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -109,7 +109,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Aug 2021 18:13:27 GMT
+      - Mon, 30 Aug 2021 20:34:13 GMT
       server:
       - openresty
       strict-transport-security:
@@ -117,7 +117,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.366667'
+      - '166.633333'
     status:
       code: 200
       message: OK
@@ -131,14 +131,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/repo63d41ad4
   response:
     body:
       string: '{"registry": "yalinlitests.azurecr.io", "imageName": "repo63d41ad4",
-        "createdTime": "2021-08-17T18:13:06.3062049Z", "lastUpdateTime": "2021-08-17T18:13:04.3397751Z",
-        "manifestCount": 11, "tagCount": 1, "changeableAttributes": {"deleteEnabled":
+        "createdTime": "2021-08-30T20:33:51.7700261Z", "lastUpdateTime": "2021-08-30T20:33:49.9977855Z",
+        "manifestCount": 12, "tagCount": 1, "changeableAttributes": {"deleteEnabled":
         true, "writeEnabled": true, "readEnabled": true, "listEnabled": true, "teleportEnabled":
         false}}'
     headers:
@@ -154,7 +154,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Aug 2021 18:13:27 GMT
+      - Mon, 30 Aug 2021 20:34:13 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -182,7 +182,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: PATCH
     uri: https://fake_url.azurecr.io/acr/v1/repo63d41ad4
   response:
@@ -203,7 +203,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Aug 2021 18:13:27 GMT
+      - Mon, 30 Aug 2021 20:34:13 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -228,11 +228,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1347'
+      - '1337'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/exchange
   response:
@@ -244,7 +244,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Aug 2021 18:13:27 GMT
+      - Mon, 30 Aug 2021 20:34:13 GMT
       server:
       - openresty
       strict-transport-security:
@@ -252,7 +252,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.35'
+      - '166.616667'
     status:
       code: 200
       message: OK
@@ -270,7 +270,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -282,7 +282,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Aug 2021 18:13:27 GMT
+      - Mon, 30 Aug 2021 20:34:13 GMT
       server:
       - openresty
       strict-transport-security:
@@ -290,7 +290,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.333333'
+      - '166.6'
     status:
       code: 200
       message: OK
@@ -309,14 +309,14 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: PATCH
     uri: https://fake_url.azurecr.io/acr/v1/repo63d41ad4
   response:
     body:
       string: '{"registry": "yalinlitests.azurecr.io", "imageName": "repo63d41ad4",
-        "createdTime": "2021-08-17T18:13:06.3062049Z", "lastUpdateTime": "2021-08-17T18:13:04.3397751Z",
-        "manifestCount": 11, "tagCount": 1, "changeableAttributes": {"deleteEnabled":
+        "createdTime": "2021-08-30T20:33:51.7700261Z", "lastUpdateTime": "2021-08-30T20:33:49.9977855Z",
+        "manifestCount": 12, "tagCount": 1, "changeableAttributes": {"deleteEnabled":
         false, "writeEnabled": false, "readEnabled": false, "listEnabled": false,
         "teleportEnabled": false}}'
     headers:
@@ -332,7 +332,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Aug 2021 18:13:28 GMT
+      - Mon, 30 Aug 2021 20:34:13 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -360,7 +360,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: PATCH
     uri: https://fake_url.azurecr.io/acr/v1/repo63d41ad4
   response:
@@ -381,7 +381,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Aug 2021 18:13:28 GMT
+      - Mon, 30 Aug 2021 20:34:13 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -406,11 +406,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1347'
+      - '1337'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/exchange
   response:
@@ -422,7 +422,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Aug 2021 18:13:28 GMT
+      - Mon, 30 Aug 2021 20:34:13 GMT
       server:
       - openresty
       strict-transport-security:
@@ -430,7 +430,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.316667'
+      - '166.583333'
     status:
       code: 200
       message: OK
@@ -448,7 +448,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -460,7 +460,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Aug 2021 18:13:28 GMT
+      - Mon, 30 Aug 2021 20:34:14 GMT
       server:
       - openresty
       strict-transport-security:
@@ -468,7 +468,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.3'
+      - '166.566667'
     status:
       code: 200
       message: OK
@@ -487,14 +487,14 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: PATCH
     uri: https://fake_url.azurecr.io/acr/v1/repo63d41ad4
   response:
     body:
       string: '{"registry": "yalinlitests.azurecr.io", "imageName": "repo63d41ad4",
-        "createdTime": "2021-08-17T18:13:06.3062049Z", "lastUpdateTime": "2021-08-17T18:13:04.3397751Z",
-        "manifestCount": 11, "tagCount": 1, "changeableAttributes": {"deleteEnabled":
+        "createdTime": "2021-08-30T20:33:51.7700261Z", "lastUpdateTime": "2021-08-30T20:33:49.9977855Z",
+        "manifestCount": 12, "tagCount": 1, "changeableAttributes": {"deleteEnabled":
         true, "writeEnabled": true, "readEnabled": true, "listEnabled": true, "teleportEnabled":
         false}}'
     headers:
@@ -510,7 +510,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Aug 2021 18:13:28 GMT
+      - Mon, 30 Aug 2021 20:34:14 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

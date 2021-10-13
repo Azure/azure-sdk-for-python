@@ -14,7 +14,7 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/invoice/analyze?includeTextDetails=true
   response:
@@ -22,19 +22,19 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - f9b06ed4-70f7-4750-8ebe-c09c3ab20a05
+      - 83aa7ff0-e154-43e9-b35d-600d36c2e3a2
       content-length:
       - '0'
       date:
-      - Tue, 11 May 2021 02:27:52 GMT
+      - Wed, 22 Sep 2021 05:41:17 GMT
       operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/invoice/analyzeResults/f9b06ed4-70f7-4750-8ebe-c09c3ab20a05
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/invoice/analyzeResults/83aa7ff0-e154-43e9-b35d-600d36c2e3a2
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '221'
+      - '211'
     status:
       code: 202
       message: Accepted
@@ -48,48 +48,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/invoice/analyzeResults/f9b06ed4-70f7-4750-8ebe-c09c3ab20a05
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/invoice/analyzeResults/83aa7ff0-e154-43e9-b35d-600d36c2e3a2
   response:
     body:
-      string: '{"status": "running", "createdDateTime": "2021-05-11T02:27:53Z", "lastUpdatedDateTime":
-        "2021-05-11T02:27:53Z"}'
-    headers:
-      apim-request-id:
-      - c602e68f-b2bb-4a41-822b-eeeeb7e41441
-      content-length:
-      - '106'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 11 May 2021 02:27:58 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '14'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/invoice/analyzeResults/f9b06ed4-70f7-4750-8ebe-c09c3ab20a05
-  response:
-    body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-05-11T02:27:53Z",
-        "lastUpdatedDateTime": "2021-05-11T02:27:58Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-09-22T05:41:17Z",
+        "lastUpdatedDateTime": "2021-09-22T05:41:21Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
         "unit": "inch", "lines": [{"text": "Vendor #:121", "boundingBox": [6.1276,
         1.0667, 7.4833, 1.0667, 7.4833, 1.2403, 6.1276, 1.2403], "words": [{"text":
@@ -654,19 +619,19 @@ interactions:
         0.952, "elements": ["#/readResults/1/lines/2/words/2", "#/readResults/1/lines/2/words/3"]}}}]}}'
     headers:
       apim-request-id:
-      - cfb89f3f-be3a-47e9-a76e-c2e2ce969b62
+      - 0a4fc95f-d87c-4a9a-80c6-9fbe5ef6013a
       content-length:
       - '42011'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 11 May 2021 02:28:03 GMT
+      - Wed, 22 Sep 2021 05:41:23 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '34'
+      - '24'
     status:
       code: 200
       message: OK

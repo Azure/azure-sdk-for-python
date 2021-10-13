@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._network_management_client import NetworkManagementClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['NetworkManagementClient']
 
 try:

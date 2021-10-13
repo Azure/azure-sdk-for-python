@@ -62,15 +62,6 @@ class ClusterEnvironment(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     WINDOWS = "Windows"
     LINUX = "Linux"
 
-class ClusterOsType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Cluster operating system type.
-    """
-
-    WINDOWS = "Windows"
-    UBUNTU = "Ubuntu"
-    RED_HAT = "RedHat"
-    UBUNTU18_04 = "Ubuntu18_04"
-
 class ClusterState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The current state of the cluster.
     
@@ -107,6 +98,21 @@ class ClusterState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     AUTO_SCALE = "AutoScale"
     READY = "Ready"
 
+class ClusterUpgradeCadence(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Indicates when new cluster runtime version upgrades will be applied after they are released. By
+    default is Wave0.
+    """
+
+    #: Cluster upgrade starts immediately after a new version is rolled out. Recommended for Test/Dev
+    #: clusters.
+    WAVE0 = "Wave0"
+    #: Cluster upgrade starts 7 days after a new version is rolled out. Recommended for Pre-prod
+    #: clusters.
+    WAVE1 = "Wave1"
+    #: Cluster upgrade starts 14 days after a new version is rolled out. Recommended for Production
+    #: clusters.
+    WAVE2 = "Wave2"
+
 class DurabilityLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The durability level of the node type. Learn about `DurabilityLevel
     <https://docs.microsoft.com/azure/service-fabric/service-fabric-cluster-capacity>`_.
@@ -122,25 +128,10 @@ class DurabilityLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SILVER = "Silver"
     GOLD = "Gold"
 
-class Enum23(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    WINDOWS = "Windows"
-    UBUNTU = "Ubuntu"
-    RED_HAT = "RedHat"
-    UBUNTU18_04 = "Ubuntu18_04"
-
-class Enum8(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Enum14(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     WINDOWS = "Windows"
     LINUX = "Linux"
-
-class ManagedClusterAddOnFeature(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Available cluster add-on features
-    """
-
-    DNS_SERVICE = "DnsService"
-    BACKUP_RESTORE_SERVICE = "BackupRestoreService"
-    RESOURCE_MONITOR_SERVICE = "ResourceMonitorService"
 
 class ManagedIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of managed identity for the resource.
@@ -156,21 +147,6 @@ class ManagedIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Indicates that no identity is associated with the resource.
     NONE = "None"
 
-class ManagedResourceProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state of the managed resource.
-    """
-
-    NONE = "None"
-    CREATING = "Creating"
-    CREATED = "Created"
-    UPDATING = "Updating"
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    CANCELED = "Canceled"
-    DELETING = "Deleting"
-    DELETED = "Deleted"
-    OTHER = "Other"
-
 class MoveCost(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the move cost for the service.
     """
@@ -183,6 +159,35 @@ class MoveCost(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MEDIUM = "Medium"
     #: Specifies the move cost of the service as High. The value is 3.
     HIGH = "High"
+
+class NotificationCategory(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The category of notification.
+    """
+
+    #: Notification will be regarding wave progress.
+    WAVE_PROGRESS = "WaveProgress"
+
+class NotificationChannel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The notification channel indicates the type of receivers subscribed to the notification, either
+    user or subscription.
+    """
+
+    #: For email user receivers. In this case, the parameter receivers should be a list of email
+    #: addresses that will receive the notifications.
+    EMAIL_USER = "EmailUser"
+    #: For subscription receivers. In this case, the parameter receivers should be a list of roles of
+    #: the subscription for the cluster (eg. Owner, AccountAdmin, etc) that will receive the
+    #: notifications.
+    EMAIL_SUBSCRIPTION = "EmailSubscription"
+
+class NotificationLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The level of notification.
+    """
+
+    #: Receive only critical notifications.
+    CRITICAL = "Critical"
+    #: Receive all notifications.
+    ALL = "All"
 
 class PartitionScheme(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Enumerates the ways that a service can be partitioned.
@@ -200,21 +205,6 @@ class PartitionScheme(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Indicates that the partition is based on string names, and is a NamedPartitionSchemeDescription
     #: object. The value is 3.
     NAMED = "Named"
-
-class ProbeProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """the reference to the load balancer probe used by the load balancing rule.
-    """
-
-    TCP = "tcp"
-    HTTP = "http"
-    HTTPS = "https"
-
-class Protocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The reference to the transport protocol used by the load balancing rule.
-    """
-
-    TCP = "tcp"
-    UDP = "udp"
 
 class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The provisioning state of the cluster resource.
@@ -341,13 +331,22 @@ class ServicePlacementPolicyType(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     #: replicas of a particular partition of the service should be placed atomically. The value is 5.
     NON_PARTIALLY_PLACE_SERVICE = "NonPartiallyPlaceService"
 
-class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Sku Name. Basic will have a minimum of 3 seed nodes and Standard a minimum of 5. Basic only
-    allows 1 node type.
+class SfZonalUpgradeMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """This property controls the logical grouping of VMs in upgrade domains (UDs). This property
+    can't be modified if a node type with multiple Availability Zones is already present in the
+    cluster.
     """
 
-    BASIC = "Basic"
-    STANDARD = "Standard"
+    #: VMs under the node type are grouped into UDs and ignore the zone info in five UDs. This setting
+    #: causes UDs across all zones to be upgraded at the same time. This deployment mode is faster for
+    #: upgrades, we don't recommend it because it goes against the SDP guidelines, which state that
+    #: the updates should be applied to one zone at a time.
+    PARALLEL = "Parallel"
+    #: If this value is omitted or set to Hierarchical, VMs are grouped to reflect the zonal
+    #: distribution in up to 15 UDs. Each of the three zones has five UDs. This ensures that the zones
+    #: are updated one at a time, moving to next zone only after completing five UDs within the first
+    #: zone. This update process is safer for the cluster and the user application.
+    HIERARCHICAL = "Hierarchical"
 
 class StoreName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The local certificate store location.
@@ -364,14 +363,23 @@ class StoreName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
 class UpgradeMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The upgrade mode of the cluster when new Service Fabric runtime version is available.
-    
-    
-    * Automatic - The cluster will be automatically upgraded to the latest Service Fabric runtime
-    version as soon as it is available.
-    * Manual - The cluster will not be automatically upgraded to the latest Service Fabric runtime
-    version. The cluster is upgraded by setting the **clusterCodeVersion** property in the cluster
-    resource.
     """
 
+    #: The cluster will be automatically upgraded to the latest Service Fabric runtime version,
+    #: **upgradeWave** will determine when the upgrade starts after the new version becomes available.
     AUTOMATIC = "Automatic"
+    #: The cluster will not be automatically upgraded to the latest Service Fabric runtime version.
+    #: The cluster is upgraded by setting the **clusterCodeVersion** property in the cluster resource.
     MANUAL = "Manual"
+
+class VmssZonalUpgradeMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """This property defines the upgrade mode for the virtual machine scale set, it is mandatory if a
+    node type with multiple Availability Zones is added.
+    """
+
+    #: Updates will happen in all Availability Zones at once for the virtual machine scale sets.
+    PARALLEL = "Parallel"
+    #: VMs are grouped to reflect the zonal distribution in up to 15 UDs. Each of the three zones has
+    #: five UDs. This ensures that the zones are updated one at a time, moving to next zone only after
+    #: completing five UDs within the first zone.
+    HIERARCHICAL = "Hierarchical"

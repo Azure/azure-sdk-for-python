@@ -1,33 +1,33 @@
 interactions:
 - request:
     body: '{"feedbackType": "Comment", "metricId": "metric_id", "dimensionFilter":
-      {"dimension": {"dimension_name": "Los Angeles"}}, "startTime": "2020-08-05T00:00:00.000Z",
-      "endTime": "2020-10-21T00:00:00.000Z", "value": {"commentValue": "comment"}}'
+      {"dimension": {"category": "Shoes Handbags & Sunglasses"}}, "startTime": "2021-08-05T00:00:00.000Z",
+      "endTime": "2021-09-09T00:00:00.000Z", "value": {"commentValue": "comment"}}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '256'
+      - '276'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b5 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric
+    uri: https://ga-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 28c41b64-77e2-45a7-8f54-12a90273c7f6
+      apim-request-id: 17a8f83f-e5c3-4fb3-84fa-7da2c0cb45fb
       content-length: '0'
-      date: Sat, 12 Jun 2021 00:09:37 GMT
-      location: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/dbf5e503-5685-4d4e-ac16-71185fb914ae
+      date: Wed, 29 Sep 2021 19:43:12 GMT
+      location: https://ga-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/d9581b06-facf-4621-830b-793ffc381b4b
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '5264'
-      x-request-id: 28c41b64-77e2-45a7-8f54-12a90273c7f6
+      x-envoy-upstream-service-time: '311'
+      x-request-id: 17a8f83f-e5c3-4fb3-84fa-7da2c0cb45fb
     status:
       code: 201
       message: Created
-    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/feedback/metric
+    url: https://ga-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/feedback/metric
 version: 1

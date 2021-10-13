@@ -99,9 +99,9 @@ class BlobExpiryOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
 class BlobImmutabilityPolicyMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
+    MUTABLE = "Mutable"
     UNLOCKED = "Unlocked"
     LOCKED = "Locked"
-    MUTABLE = "Mutable"
 
 class BlobType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -175,11 +175,6 @@ class ListContainersIncludeType(with_metaclass(_CaseInsensitiveEnumMeta, str, En
 
     METADATA = "metadata"
     DELETED = "deleted"
-
-class PathRenameMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    LEGACY = "legacy"
-    POSIX = "posix"
 
 class PremiumPageBlobAccessTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 

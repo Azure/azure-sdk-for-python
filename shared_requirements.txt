@@ -95,7 +95,7 @@ azure-keyvault-nspkg
 azure-media-nspkg
 azure-agrifood-nspkg
 azure-purview-nspkg
-azure-schemaregistry==1.0.0b2
+azure-schemaregistry==1.0.0b3
 azure-search-nspkg
 azure-security-nspkg
 azure-synapse-nspkg
@@ -128,6 +128,7 @@ isodate>=0.6.0
 avro<2.0.0,>=1.10.0
 pyjwt>=1.7.1
 chardet<5,>=3.0.2
+backports.functools-lru-cache >= 1.6.4; python_version == "2.7"
 #override azure azure-keyvault~=1.0
 #override azure-mgmt-core azure-core<2.0.0,>=1.15.0
 #override azure-containerregistry azure-core>=1.4.0,<2.0.0
@@ -150,9 +151,9 @@ chardet<5,>=3.0.2
 #override azure-keyvault-secrets azure-core<2.0.0,>=1.7.0
 #override azure-ai-textanalytics msrest>=0.6.21
 #override azure-ai-textanalytics azure-core<2.0.0,>=1.14.0
-#override azure-ai-language-questionanswering azure-core<2.0.0,>=1.16.0
+#override azure-ai-language-questionanswering azure-core<2.0.0,>=1.19.0
 #override azure-ai-language-questionanswering msrest>=0.6.21
-#override azure-search-documents azure-core<2.0.0,>=1.14.0
+#override azure-search-documents azure-core<2.0.0,>=1.19.0
 #override azure-ai-formrecognizer msrest>=0.6.21
 #override azure-ai-formrecognizer azure-core<2.0.0,>=1.13.0
 #override azure-storage-blob azure-core<2.0.0,>=1.10.0
@@ -168,22 +169,22 @@ chardet<5,>=3.0.2
 #override azure-security-attestation msrest>=0.6.21
 #override azure-security-attestation azure-core<2.0.0,>=1.8.2
 #override azure-data-tables msrest>=0.6.19
-#override azure-schemaregistry azure-core<2.0.0,>=1.17.1
+#override azure-schemaregistry azure-core<2.0.0,>=1.19.0
 opencensus>=0.6.0
 opencensus-ext-threading
 opencensus-ext-azure>=0.3.1
-opentelemetry-api<2.0.0,>=1.0.0
-opentelemetry-sdk<2.0.0,>=1.0.0
+opentelemetry-api<2.0.0,>=1.5.0,!=1.10a0
+opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-eventhub-checkpointstoreblob msrest>=0.6.18
 #override azure-eventhub-checkpointstoreblob-aio msrest>=0.6.18
 #override azure-eventhub-checkpointstoreblob azure-core<2.0.0,>=1.10.0
 #override azure-eventhub-checkpointstoreblob-aio azure-core<2.0.0,>=1.10.0
 #override azure-eventhub-checkpointstoreblob-aio aiohttp<4.0,>=3.0
 #override azure-eventhub-checkpointstoretable azure-core<2.0.0,>=1.14.0
-#override azure-eventhub uamqp>=1.4.1,<2.0.0
+#override azure-eventhub uamqp>=1.4.3,<2.0.0
 #override azure-appconfiguration msrest>=0.6.10
 #override azure-mgmt-appconfiguration msrest>=0.6.21
-#override azure-servicebus uamqp>=1.4.1,<2.0.0
+#override azure-servicebus uamqp>=1.4.3,<2.0.0
 #override azure-servicebus msrest>=0.6.17,<2.0.0
 #override azure-servicebus azure-core<2.0.0,>=1.14.0
 #override azure-servicefabric msrest>=0.6.21
@@ -196,7 +197,7 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-data-tables msrest>=0.6.10
 #override azure-ai-anomalydetector azure-core>=1.6.0,<2.0.0
 #override azure-eventgrid msrest>=0.6.21
-#override azure-eventgrid azure-core<2.0.0,>=1.12.0
+#override azure-eventgrid azure-core<2.0.0,>=1.18.0
 #override azure-monitor-query msrest>=0.6.19
 #override azure-monitor-query azure-core<2.0.0,>=1.12.0
 #override azure-communication-chat msrest>=0.6.0
@@ -206,7 +207,7 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-communication-sms azure-core<2.0.0,>=1.11.0
 #override azure-communication-phonenumbers azure-core<2.0.0,>=1.11.0
 #override azure-communication-identity azure-core<2.0.0,>=1.11.0
-#override azure-communication-network-traversal azure-core<2.0.0,>=1.11.0
+#override azure-communication-networktraversal azure-core<2.0.0,>=1.16.0
 #override azure-mgmt-communication azure-core<2.0.0,>=1.9.0
 #override azure-ai-metricsadvisor azure-core<2.0.0,>=1.6.0
 #override azure-ai-metricsadvisor msrest>=0.6.21
@@ -214,8 +215,8 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-ai-translation-document msrest>=0.6.21
 #override azure-monitor-opentelemetry-exporter azure-core<2.0.0,>=1.6.0
 #override azure-monitor-opentelemetry-exporter msrest>=0.6.10
-#override azure-monitor-opentelemetry-exporter opentelemetry-api<2.0.0,>=1.0.0
-#override azure-monitor-opentelemetry-exporter opentelemetry-sdk<2.0.0,>=1.0.0
+#override azure-monitor-opentelemetry-exporter opentelemetry-api<2.0.0,>=1.5.0,!=1.10a0
+#override azure-monitor-opentelemetry-exporter opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-core-tracing-opentelemetry opentelemetry-api<2.0.0,>=1.0.0
 #override azure-identity six>=1.12.0
 #override azure-keyvault-keys six>=1.12.0
@@ -276,10 +277,10 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-databoxedge msrest>=0.6.21
 #override azure-mgmt-kusto msrest>=0.6.21
 #override azure-mgmt-managedservices msrest>=0.6.21
-#override azure-purview-catalog azure-core<2.0.0,>=1.8.2
+#override azure-purview-catalog azure-core<2.0.0,>=1.18.0
 #override azure-purview-catalog msrest>=0.6.21
 #override azure-mgmt-resourcegraph msrest>=0.6.21
-#override azure-purview-scanning azure-core<2.0.0,>=1.8.2
+#override azure-purview-scanning azure-core<2.0.0,>=1.18.0
 #override azure-purview-scanning msrest>=0.6.21
 #override azure-purview-account msrest>=0.6.21
 #override azure-purview-account azure-core<2.0.0,>=1.16.0
@@ -344,3 +345,11 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-servicebus msrest>=0.6.21
 #override azure-mgmt-security msrest>=0.6.21
 #override azure-mgmt-apimanagement msrest>=0.6.21
+#override azure-mgmt-relay msrest>=0.6.21
+#override azure-mgmt-quota msrest>=0.6.21
+#override azure-mgmt-authorization msrest>=0.6.21
+#override azure-mgmt-azurearcdata msrest>=0.6.21
+#override azure-mgmt-servicelinker msrest>=0.6.21
+#override azure-mgmt-fluidrelay msrest>=0.6.21
+#override azure-ai-language-conversations azure-core<2.0.0,>=1.19.0
+#override azure-ai-language-conversations msrest>=0.6.21

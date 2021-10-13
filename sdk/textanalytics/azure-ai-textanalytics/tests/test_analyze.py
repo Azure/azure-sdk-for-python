@@ -429,7 +429,7 @@ class TestAnalyze(TextAnalyticsTest):
         poller.result()
 
         assert isinstance(poller.created_on, datetime.datetime)
-        assert poller.display_name
+        assert not poller.display_name
         assert isinstance(poller.expires_on, datetime.datetime)
         assert poller.actions_failed_count == 0
         assert poller.actions_in_progress_count == 0

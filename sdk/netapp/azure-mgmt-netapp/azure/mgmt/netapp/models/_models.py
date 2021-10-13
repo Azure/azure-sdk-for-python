@@ -1132,6 +1132,29 @@ class HourlySchedule(msrest.serialization.Model):
         self.used_bytes = kwargs.get('used_bytes', None)
 
 
+class LogSpecification(msrest.serialization.Model):
+    """Log Definition of a single resource metric.
+
+    :param name:
+    :type name: str
+    :param display_name:
+    :type display_name: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LogSpecification, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display_name = kwargs.get('display_name', None)
+
+
 class MetricSpecification(msrest.serialization.Model):
     """Metric specification of operation.
 
@@ -1149,6 +1172,8 @@ class MetricSpecification(msrest.serialization.Model):
     :type supported_time_grain_types: list[str]
     :param internal_metric_name: The internal metric name.
     :type internal_metric_name: str
+    :param enable_regional_mdm_account: Whether or not the service is using regional MDM accounts.
+    :type enable_regional_mdm_account: bool
     :param source_mdm_account: The source MDM account.
     :type source_mdm_account: str
     :param source_mdm_namespace: The source MDM namespace.
@@ -1163,6 +1188,8 @@ class MetricSpecification(msrest.serialization.Model):
     :type category: str
     :param resource_id_dimension_name_override: Account Resource Id.
     :type resource_id_dimension_name_override: str
+    :param is_internal: Whether the metric is internal.
+    :type is_internal: bool
     """
 
     _attribute_map = {
@@ -1173,6 +1200,7 @@ class MetricSpecification(msrest.serialization.Model):
         'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[str]'},
         'supported_time_grain_types': {'key': 'supportedTimeGrainTypes', 'type': '[str]'},
         'internal_metric_name': {'key': 'internalMetricName', 'type': 'str'},
+        'enable_regional_mdm_account': {'key': 'enableRegionalMdmAccount', 'type': 'bool'},
         'source_mdm_account': {'key': 'sourceMdmAccount', 'type': 'str'},
         'source_mdm_namespace': {'key': 'sourceMdmNamespace', 'type': 'str'},
         'dimensions': {'key': 'dimensions', 'type': '[Dimension]'},
@@ -1180,6 +1208,7 @@ class MetricSpecification(msrest.serialization.Model):
         'fill_gap_with_zero': {'key': 'fillGapWithZero', 'type': 'bool'},
         'category': {'key': 'category', 'type': 'str'},
         'resource_id_dimension_name_override': {'key': 'resourceIdDimensionNameOverride', 'type': 'str'},
+        'is_internal': {'key': 'isInternal', 'type': 'bool'},
     }
 
     def __init__(
@@ -1194,6 +1223,7 @@ class MetricSpecification(msrest.serialization.Model):
         self.supported_aggregation_types = kwargs.get('supported_aggregation_types', None)
         self.supported_time_grain_types = kwargs.get('supported_time_grain_types', None)
         self.internal_metric_name = kwargs.get('internal_metric_name', None)
+        self.enable_regional_mdm_account = kwargs.get('enable_regional_mdm_account', None)
         self.source_mdm_account = kwargs.get('source_mdm_account', None)
         self.source_mdm_namespace = kwargs.get('source_mdm_namespace', None)
         self.dimensions = kwargs.get('dimensions', None)
@@ -1201,6 +1231,7 @@ class MetricSpecification(msrest.serialization.Model):
         self.fill_gap_with_zero = kwargs.get('fill_gap_with_zero', None)
         self.category = kwargs.get('category', None)
         self.resource_id_dimension_name_override = kwargs.get('resource_id_dimension_name_override', None)
+        self.is_internal = kwargs.get('is_internal', None)
 
 
 class MonthlySchedule(msrest.serialization.Model):
@@ -1599,6 +1630,77 @@ class PoolChangeRequest(msrest.serialization.Model):
         self.new_pool_resource_id = kwargs['new_pool_resource_id']
 
 
+class Resource(msrest.serialization.Model):
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
 class QuotaAvailabilityRequest(msrest.serialization.Model):
     """Quota availability request content.
 
@@ -1647,8 +1749,8 @@ class ReplicationObject(msrest.serialization.Model):
     :param endpoint_type: Indicates whether the local volume is the source or destination for the
      Volume Replication. Possible values include: "src", "dst".
     :type endpoint_type: str or ~azure.mgmt.netapp.models.EndpointType
-    :param replication_schedule: Required. Schedule. Possible values include: "_10minutely",
-     "hourly", "daily".
+    :param replication_schedule: Schedule. Possible values include: "_10minutely", "hourly",
+     "daily".
     :type replication_schedule: str or ~azure.mgmt.netapp.models.ReplicationSchedule
     :param remote_volume_resource_id: Required. The resource ID of the remote volume.
     :type remote_volume_resource_id: str
@@ -1657,7 +1759,6 @@ class ReplicationObject(msrest.serialization.Model):
     """
 
     _validation = {
-        'replication_schedule': {'required': True},
         'remote_volume_resource_id': {'required': True},
     }
 
@@ -1676,7 +1777,7 @@ class ReplicationObject(msrest.serialization.Model):
         super(ReplicationObject, self).__init__(**kwargs)
         self.replication_id = kwargs.get('replication_id', None)
         self.endpoint_type = kwargs.get('endpoint_type', None)
-        self.replication_schedule = kwargs['replication_schedule']
+        self.replication_schedule = kwargs.get('replication_schedule', None)
         self.remote_volume_resource_id = kwargs['remote_volume_resource_id']
         self.remote_volume_region = kwargs.get('remote_volume_region', None)
 
@@ -1847,10 +1948,13 @@ class ServiceSpecification(msrest.serialization.Model):
 
     :param metric_specifications: Metric specifications of operation.
     :type metric_specifications: list[~azure.mgmt.netapp.models.MetricSpecification]
+    :param log_specifications:
+    :type log_specifications: list[~azure.mgmt.netapp.models.LogSpecification]
     """
 
     _attribute_map = {
         'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecification]'},
+        'log_specifications': {'key': 'logSpecifications', 'type': '[LogSpecification]'},
     }
 
     def __init__(
@@ -1859,6 +1963,7 @@ class ServiceSpecification(msrest.serialization.Model):
     ):
         super(ServiceSpecification, self).__init__(**kwargs)
         self.metric_specifications = kwargs.get('metric_specifications', None)
+        self.log_specifications = kwargs.get('log_specifications', None)
 
 
 class Snapshot(msrest.serialization.Model):
@@ -2187,6 +2292,79 @@ class SnapshotsList(msrest.serialization.Model):
         self.value = kwargs.get('value', None)
 
 
+class SubscriptionQuotaItem(ProxyResource):
+    """Information regarding Subscription Quota Item.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar name_properties_name: Quota Item name.
+    :vartype name_properties_name: str
+    :ivar current: The current quota value.
+    :vartype current: int
+    :ivar default: The default quota value.
+    :vartype default: int
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'name_properties_name': {'readonly': True},
+        'current': {'readonly': True},
+        'default': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
+        'current': {'key': 'properties.current', 'type': 'int'},
+        'default': {'key': 'properties.default', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SubscriptionQuotaItem, self).__init__(**kwargs)
+        self.system_data = None
+        self.name_properties_name = None
+        self.current = None
+        self.default = None
+
+
+class SubscriptionQuotaItemList(msrest.serialization.Model):
+    """List of Subscription Quota Items.
+
+    :param value: A list of SubscriptionQuotaItems.
+    :type value: list[~azure.mgmt.netapp.models.SubscriptionQuotaItem]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[SubscriptionQuotaItem]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SubscriptionQuotaItemList, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
@@ -2339,9 +2517,20 @@ class Volume(msrest.serialization.Model):
     :param subnet_id: Required. The Azure Resource URI for a delegated subnet. Must have the
      delegation Microsoft.NetApp/volumes.
     :type subnet_id: str
+    :param network_features: Basic network, or Standard features available to the volume. Possible
+     values include: "Basic", "Standard". Default value: "Basic".
+    :type network_features: str or ~azure.mgmt.netapp.models.NetworkFeatures
+    :ivar network_sibling_set_id: Network Sibling Set ID for the the group of volumes sharing
+     networking resources.
+    :vartype network_sibling_set_id: str
+    :ivar storage_to_network_proximity: Provides storage to network proximity information for the
+     volume. Possible values include: "Default", "T1", "T2".
+    :vartype storage_to_network_proximity: str or
+     ~azure.mgmt.netapp.models.VolumeStorageToNetworkProximity
     :ivar mount_targets: List of mount targets.
     :vartype mount_targets: list[~azure.mgmt.netapp.models.MountTargetProperties]
-    :param volume_type: What type of volume is this.
+    :param volume_type: What type of volume is this. For destination volumes in Cross Region
+     Replication, set type to DataProtection.
     :type volume_type: str
     :param data_protection: DataProtection type volumes include an object containing details of the
      replication.
@@ -2413,6 +2602,8 @@ class Volume(msrest.serialization.Model):
         'backup_id': {'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}|(\\?([^\/]*[\/])*)([^\/]+)$'},
         'baremetal_tenant_id': {'readonly': True},
         'subnet_id': {'required': True},
+        'network_sibling_set_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
+        'storage_to_network_proximity': {'readonly': True},
         'mount_targets': {'readonly': True},
         'throughput_mibps': {'maximum': 4500, 'minimum': 0},
         'coolness_period': {'maximum': 63, 'minimum': 7},
@@ -2438,6 +2629,9 @@ class Volume(msrest.serialization.Model):
         'backup_id': {'key': 'properties.backupId', 'type': 'str'},
         'baremetal_tenant_id': {'key': 'properties.baremetalTenantId', 'type': 'str'},
         'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
+        'network_features': {'key': 'properties.networkFeatures', 'type': 'str'},
+        'network_sibling_set_id': {'key': 'properties.networkSiblingSetId', 'type': 'str'},
+        'storage_to_network_proximity': {'key': 'properties.storageToNetworkProximity', 'type': 'str'},
         'mount_targets': {'key': 'properties.mountTargets', 'type': '[MountTargetProperties]'},
         'volume_type': {'key': 'properties.volumeType', 'type': 'str'},
         'data_protection': {'key': 'properties.dataProtection', 'type': 'VolumePropertiesDataProtection'},
@@ -2482,6 +2676,9 @@ class Volume(msrest.serialization.Model):
         self.backup_id = kwargs.get('backup_id', None)
         self.baremetal_tenant_id = None
         self.subnet_id = kwargs['subnet_id']
+        self.network_features = kwargs.get('network_features', "Basic")
+        self.network_sibling_set_id = None
+        self.storage_to_network_proximity = None
         self.mount_targets = None
         self.volume_type = kwargs.get('volume_type', None)
         self.data_protection = kwargs.get('data_protection', None)

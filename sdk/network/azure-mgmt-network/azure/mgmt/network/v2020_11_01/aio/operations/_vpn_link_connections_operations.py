@@ -49,7 +49,7 @@ class VpnLinkConnectionsOperations:
         gateway_name: str,
         connection_name: str,
         link_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -98,7 +98,7 @@ class VpnLinkConnectionsOperations:
         gateway_name: str,
         connection_name: str,
         link_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Resets the VpnLink connection specified.
 
@@ -112,8 +112,8 @@ class VpnLinkConnectionsOperations:
         :type link_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -172,7 +172,7 @@ class VpnLinkConnectionsOperations:
         gateway_name: str,
         connection_name: str,
         link_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional[str]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional[str]]
         error_map = {
@@ -226,7 +226,7 @@ class VpnLinkConnectionsOperations:
         gateway_name: str,
         connection_name: str,
         link_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[str]:
         """Lists IKE Security Associations for Vpn Site Link Connection in the specified resource group.
 
@@ -240,8 +240,8 @@ class VpnLinkConnectionsOperations:
         :type link_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either str or the result of cls(response)
@@ -302,7 +302,7 @@ class VpnLinkConnectionsOperations:
         resource_group_name: str,
         gateway_name: str,
         connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListVpnSiteLinkConnectionsResult"]:
         """Retrieves all vpn site link connections for a particular virtual wan vpn gateway vpn
         connection.

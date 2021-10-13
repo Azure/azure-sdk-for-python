@@ -23,27 +23,20 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import abc
 import copy
-from json import loads
 
-from typing import TYPE_CHECKING, cast
-
-from azure.core.exceptions import HttpResponseError
+from typing import TYPE_CHECKING
 
 from ..utils._utils import _case_insensitive_dict
 from ._helpers import (
-    FilesType,
     set_content_body,
     set_json_body,
     set_multipart_body,
     set_urlencoded_body,
-    format_parameters,
-    to_pipeline_transport_request_helper,
-    from_pipeline_transport_request_helper,
-    get_charset_encoding,
-    decode_to_text,
+    _format_parameters_helper,
+    HttpRequestBackcompatMixin,
 )
-from ..exceptions import ResponseNotReadError
 if TYPE_CHECKING:
     from typing import (
         Iterable,
@@ -52,18 +45,21 @@ if TYPE_CHECKING:
         Iterator,
         Union,
         Dict,
+        MutableMapping,
     )
-    from ._helpers import HeadersType
     ByteStream = Iterable[bytes]
     ContentType = Union[str, bytes, ByteStream]
 
-    from ._helpers import HeadersType, ContentTypeBase as ContentType
+    from ._helpers import ContentTypeBase as ContentType
 
-
+try:
+    ABC = abc.ABC
+except AttributeError:  # Python 2.7, abc exists, but not ABC
+    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
 
 ################################## CLASSES ######################################
 
-class HttpRequest(object):
+class HttpRequest(HttpRequestBackcompatMixin):
     """Provisional object that represents an HTTP request.
 
     **This object is provisional**, meaning it may be changed in a future release.
@@ -107,7 +103,7 @@ class HttpRequest(object):
 
         params = kwargs.pop("params", None)
         if params:
-            self.url = format_parameters(self.url, params)
+            _format_parameters_helper(self, params)
         self._files = None
         self._data = None
 
@@ -127,10 +123,14 @@ class HttpRequest(object):
                 )
             )
 
-    def _set_body(self, content, data, files, json):
-        # type: (Optional[ContentType], Optional[dict], Optional[FilesType], Any) -> HeadersType
+    def _set_body(self, **kwargs):
+        # type: (Any) -> MutableMapping[str, str]
         """Sets the body of the request, and returns the default headers
         """
+        content = kwargs.pop("content", None)
+        data = kwargs.pop("data", None)
+        files = kwargs.pop("files", None)
+        json = kwargs.pop("json", None)
         default_headers = {}
         if data is not None and not isinstance(data, dict):
             # should we warn?
@@ -179,41 +179,78 @@ class HttpRequest(object):
             )
             request._data = copy.deepcopy(self._data, memo)
             request._files = copy.deepcopy(self._files, memo)
+            self._add_backcompat_properties(request, memo)
             return request
         except (ValueError, TypeError):
             return copy.copy(self)
 
-    def _to_pipeline_transport_request(self):
-        return to_pipeline_transport_request_helper(self)
-
-    @classmethod
-    def _from_pipeline_transport_request(cls, pipeline_transport_request):
-        return from_pipeline_transport_request_helper(cls, pipeline_transport_request)
-
-class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
-
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
-        self.request = kwargs.pop("request")
-        self._internal_response = kwargs.pop("internal_response")
-        self.status_code = None
-        self.headers = {}  # type: HeadersType
-        self.reason = None
-        self.is_closed = False
-        self.is_stream_consumed = False
-        self.content_type = None
-        self._json = None  # this is filled in ContentDecodePolicy, when we deserialize
-        self._connection_data_block_size = None  # type: Optional[int]
-        self._content = None  # type: Optional[bytes]
-        self._text = None  # type: Optional[str]
+class _HttpResponseBase(ABC):
 
     @property
-    def url(self):
+    @abc.abstractmethod
+    def request(self):
+        # type: (...) -> HttpRequest
+        """The request that resulted in this response.
+
+        :rtype: ~azure.core.rest.HttpRequest
+        """
+
+    @property
+    @abc.abstractmethod
+    def status_code(self):
+        # type: (...) -> int
+        """The status code of this response.
+
+        :rtype: int
+        """
+
+    @property
+    @abc.abstractmethod
+    def headers(self):
+        # type: (...) -> Optional[MutableMapping[str, str]]
+        """The response headers. Must be case-insensitive.
+
+        :rtype: MutableMapping[str, str]
+        """
+
+    @property
+    @abc.abstractmethod
+    def reason(self):
         # type: (...) -> str
-        """Returns the URL that resulted in this response"""
-        return self.request.url
+        """The reason phrase for this response.
+
+        :rtype: str
+        """
 
     @property
+    @abc.abstractmethod
+    def content_type(self):
+        # type: (...) -> Optional[str]
+        """The content type of the response.
+
+        :rtype: str
+        """
+
+    @property
+    @abc.abstractmethod
+    def is_closed(self):
+        # type: (...) -> bool
+        """Whether the network connection has been closed yet.
+
+        :rtype: bool
+        """
+
+    @property
+    @abc.abstractmethod
+    def is_stream_consumed(self):
+        # type: (...) -> bool
+        """Whether the stream has been consumed.
+
+        :rtype: bool
+        """
+
+    @property
+    @abc.abstractmethod
     def encoding(self):
         # type: (...) -> Optional[str]
         """Returns the response encoding.
@@ -223,32 +260,36 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
          we return `None`.
         :rtype: optional[str]
         """
-        try:
-            return self._encoding
-        except AttributeError:
-            self._encoding = get_charset_encoding(self)  # type: Optional[str]
-            return self._encoding
 
     @encoding.setter
     def encoding(self, value):
         # type: (str) -> None
-        """Sets the response encoding"""
-        self._encoding = value
-        self._text = None  # clear text cache
+        """Sets the response encoding.
 
+        :rtype: None
+        """
+
+    @property
+    @abc.abstractmethod
+    def url(self):
+        # type: (...) -> str
+        """The URL that resulted in this response.
+
+        :rtype: str
+        """
+
+    @abc.abstractmethod
     def text(self, encoding=None):
         # type: (Optional[str]) -> str
-        """Returns the response body as a string
+        """Returns the response body as a string.
 
         :param optional[str] encoding: The encoding you want to decode the text with. Can
          also be set independently through our encoding property
         :return: The response's content decoded as a string.
+        :rtype: str
         """
-        if self._text is None or encoding:
-            encoding_to_pass = encoding or self.encoding
-            self._text = decode_to_text(encoding_to_pass, self.content)
-        return self._text
 
+    @abc.abstractmethod
     def json(self):
         # type: (...) -> Any
         """Returns the whole body as a json object.
@@ -257,108 +298,82 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
         :rtype: any
         :raises json.decoder.JSONDecodeError or ValueError (in python 2.7) if object is not JSON decodable:
         """
-        # this will trigger errors if response is not read in
-        self.content  # pylint: disable=pointless-statement
-        if not self._json:
-            self._json = loads(self.text())
-        return self._json
 
+    @abc.abstractmethod
     def raise_for_status(self):
         # type: (...) -> None
         """Raises an HttpResponseError if the response has an error status code.
 
         If response is good, does nothing.
+
+        :rtype: None
+        :raises ~azure.core.HttpResponseError if the object has an error status code.:
         """
-        if cast(int, self.status_code) >= 400:
-            raise HttpResponseError(response=self)
 
     @property
+    @abc.abstractmethod
     def content(self):
         # type: (...) -> bytes
-        """Return the response's content in bytes."""
-        if self._content is None:
-            raise ResponseNotReadError(self)
-        return self._content
+        """Return the response's content in bytes.
 
-    def __repr__(self):
-        # type: (...) -> str
-        content_type_str = (
-            ", Content-Type: {}".format(self.content_type) if self.content_type else ""
-        )
-        return "<HttpResponse: {} {}{}>".format(
-            self.status_code, self.reason, content_type_str
-        )
+        :rtype: bytes
+        """
 
-class HttpResponse(_HttpResponseBase):  # pylint: disable=too-many-instance-attributes
-    """**Provisional** object that represents an HTTP response.
+
+class HttpResponse(_HttpResponseBase):
+    """**Provisional** abstract base class for HTTP responses.
 
     **This object is provisional**, meaning it may be changed in a future release.
+    Use this abstract base class to create your own transport responses.
 
-    It is returned from your client's `send_request` method if you pass in
-    an :class:`~azure.core.rest.HttpRequest`
+    Responses implementing this ABC are returned from your client's `send_request` method
+    if you pass in an :class:`~azure.core.rest.HttpRequest`
 
     >>> from azure.core.rest import HttpRequest
     >>> request = HttpRequest('GET', 'http://www.example.com')
     <HttpRequest [GET], url: 'http://www.example.com'>
     >>> response = client.send_request(request)
     <HttpResponse: 200 OK>
-
-    :keyword request: The request that resulted in this response.
-    :paramtype request: ~azure.core.rest.HttpRequest
-    :ivar int status_code: The status code of this response
-    :ivar mapping headers: The case-insensitive response headers.
-     While looking up headers is case-insensitive, when looking up
-     keys in `header.keys()`, we recommend using lowercase.
-    :ivar str reason: The reason phrase for this response
-    :ivar bytes content: The response content in bytes.
-    :ivar str url: The URL that resulted in this response
-    :ivar str encoding: The response encoding. Is settable, by default
-     is the response Content-Type header
-    :ivar str text: The response body as a string.
-    :ivar request: The request that resulted in this response.
-    :vartype request: ~azure.core.rest.HttpRequest
-    :ivar str content_type: The content type of the response
-    :ivar bool is_closed: Whether the network connection has been closed yet
-    :ivar bool is_stream_consumed: When getting a stream response, checks
-     whether the stream has been fully consumed
     """
 
+    @abc.abstractmethod
     def __enter__(self):
         # type: (...) -> HttpResponse
-        return self
+        """Enter this response"""
 
+    @abc.abstractmethod
     def close(self):
         # type: (...) -> None
-        self.is_closed = True
-        self._internal_response.close()
+        """Close this response"""
 
+    @abc.abstractmethod
     def __exit__(self, *args):
         # type: (...) -> None
-        self.close()
+        """Exit this response"""
 
+    @abc.abstractmethod
     def read(self):
         # type: (...) -> bytes
-        """
-        Read the response's bytes.
+        """Read the response's bytes.
 
+        :return: The read in bytes
+        :rtype: bytes
         """
-        if self._content is None:
-            self._content = b"".join(self.iter_bytes())
-        return self.content
 
+    @abc.abstractmethod
     def iter_raw(self):
         # type: () -> Iterator[bytes]
-        """Iterate over the raw response bytes
-        """
-        raise NotImplementedError()
+        """Iterates over the response's bytes. Will not decompress in the process.
 
+        :return: An iterator of bytes from the response
+        :rtype: Iterator[str]
+        """
+
+    @abc.abstractmethod
     def iter_bytes(self):
         # type: () -> Iterator[bytes]
-        """Iterate over the response bytes
-        """
-        raise NotImplementedError()
+        """Iterates over the response's bytes. Will decompress in the process.
 
-    def _close_stream(self):
-        # type: (...) -> None
-        self.is_stream_consumed = True
-        self.close()
+        :return: An iterator of bytes from the response
+        :rtype: Iterator[str]
+        """

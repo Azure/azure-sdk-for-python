@@ -1,29 +1,33 @@
 interactions:
 - request:
-    body: 'b''{"source": "https://fakeuri.com/blank%20space"}'''
+    body: 'b''{"urlSource": "https://fakeuri.com/blank%20space"}'''
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '47'
+      - '50'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyze?includeTextDetails=false
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-businessCard:analyze?stringIndexType=unicodeCodePoint&api-version=2021-07-30-preview
   response:
     body:
-      string: '{"error": {"code": "Timeout", "message": "The operation was timeout."}}'
+      string: '{"error": {"code": "InvalidRequest", "message": "Invalid request.",
+        "innererror": {"code": "InvalidContent", "message": "The file is corrupted
+        or format is unsupported. Refer to documentation for the list of supported
+        formats."}}}'
     headers:
-      apim-request-id: 408b47a5-65e7-4341-b72f-26a9dd089410
-      content-length: '75'
-      content-type: application/json
-      date: Tue, 11 May 2021 00:06:43 GMT
+      apim-request-id: 2ec36219-4ddf-4e42-a2b4-5bc63edd9454
+      content-type: application/json; charset=utf-8
+      date: Tue, 14 Sep 2021 08:46:59 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
       x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '351'
     status:
-      code: 408
-      message: Timeout
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyze?includeTextDetails=false
+      code: 400
+      message: Bad Request
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-businessCard:analyze?stringIndexType=unicodeCodePoint&api-version=2021-07-30-preview
 version: 1
