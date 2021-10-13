@@ -22,11 +22,10 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, List, Optional, Union, Iterable, cast  # pylint: disable=unused-import
+from typing import Any, Dict, List, Optional, Union, Iterable, cast
 
 import six
-import asyncio
-import time
+from azure.core.tracing.decorator import distributed_trace  # pylint: disable=unused-import
 from azure.core.tracing.decorator_async import distributed_trace_async  # type: ignore
 
 from ._cosmos_client_connection_async import CosmosClientConnection
@@ -43,7 +42,7 @@ __all__ = ("ContainerProxy",)
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
 # Missing container query methods:
-# query_items(), query_items_change_feed(), read_all_items(), query_conflicts(), list_conflicts(), replace_throughput(), read_offer()
+# query_conflicts(), list_conflicts(), replace_throughput(), read_offer()
 
 class ContainerProxy(object):
     """An interface to interact with a specific DB Container.
@@ -248,6 +247,172 @@ class ContainerProxy(object):
             response_hook(self.client_connection.last_response_headers, result)
         return result
 
+    @distributed_trace
+    def read_all_items(
+        self,
+        max_item_count=None,  # type: Optional[int]
+        populate_query_metrics=None,  # type: Optional[bool]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable[Dict[str, Any]]
+        """List all the items in the container.
+
+        :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :param populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: An Iterable of items (dicts).
+        :rtype: Iterable[dict[str, Any]]
+        """
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        if max_item_count is not None:
+            feed_options["maxItemCount"] = max_item_count
+        if populate_query_metrics is not None:
+            feed_options["populateQueryMetrics"] = populate_query_metrics
+
+        if hasattr(response_hook, "clear"):
+            response_hook.clear()
+
+        items = self.client_connection.ReadItems(
+            collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs
+        )
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, items)
+        return items
+
+    @distributed_trace
+    def query_items(
+        self,
+        query,  # type: str
+        parameters=None,  # type: Optional[List[Dict[str, object]]]
+        partition_key=None,  # type: Optional[Any]
+        enable_cross_partition_query=None,  # type: Optional[bool]
+        max_item_count=None,  # type: Optional[int]
+        enable_scan_in_query=None,  # type: Optional[bool]
+        populate_query_metrics=None,  # type: Optional[bool]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable[Dict[str, Any]]
+        """Return all results matching the given `query`.
+
+        You can use any value for the container name in the FROM clause, but
+        often the container name is used. In the examples below, the container
+        name is "products," and is aliased as "p" for easier referencing in
+        the WHERE clause.
+
+        :param query: The Azure Cosmos DB SQL query to execute.
+        :param parameters: Optional array of parameters to the query.
+            Each parameter is a dict() with 'name' and 'value' keys.
+            Ignored if no query is provided.
+        :param partition_key: Specifies the partition key value for the item.
+        :param enable_cross_partition_query: Allows sending of more than one request to
+            execute the query in the Azure Cosmos DB service.
+            More than one request is necessary if the query is not scoped to single partition key value.
+        :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :param enable_scan_in_query: Allow scan on the queries which couldn't be served as
+            indexing was opted out on the requested paths.
+        :param populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: An Iterable of items (dicts).
+        :rtype: Iterable[dict[str, Any]]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START query_items]
+                :end-before: [END query_items]
+                :language: python
+                :dedent: 0
+                :caption: Get all products that have not been discontinued:
+                :name: query_items
+
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START query_items_param]
+                :end-before: [END query_items_param]
+                :language: python
+                :dedent: 0
+                :caption: Parameterized query to get all products that have been discontinued:
+                :name: query_items_param
+        """
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        if enable_cross_partition_query is not None:
+            feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
+        if max_item_count is not None:
+            feed_options["maxItemCount"] = max_item_count
+        if populate_query_metrics is not None:
+            feed_options["populateQueryMetrics"] = populate_query_metrics
+        if partition_key is not None:
+            feed_options["partitionKey"] = self._set_partition_key(partition_key)
+        if enable_scan_in_query is not None:
+            feed_options["enableScanInQuery"] = enable_scan_in_query
+
+        if hasattr(response_hook, "clear"):
+            response_hook.clear()
+
+        items = self.client_connection.QueryItems(
+            database_or_container_link=self.container_link,
+            query=query if parameters is None else dict(query=query, parameters=parameters),
+            options=feed_options,
+            partition_key=partition_key,
+            response_hook=response_hook,
+            **kwargs
+        )
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, items)
+        return items
+
+    @distributed_trace
+    def query_items_change_feed(
+        self,
+        partition_key_range_id=None,  # type: Optional[str]
+        is_start_from_beginning=False,  # type: bool
+        continuation=None,  # type: Optional[str]
+        max_item_count=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable[Dict[str, Any]]
+        """Get a sorted list of items that were changed, in the order in which they were modified.
+
+        :param partition_key_range_id: ChangeFeed requests can be executed against specific partition key ranges.
+            This is used to process the change feed in parallel across multiple consumers.
+        :param partition_key: partition key at which ChangeFeed requests are targetted.
+        :param is_start_from_beginning: Get whether change feed should start from
+            beginning (true) or from current (false). By default it's start from current (false).
+        :param continuation: e_tag value to be used as continuation for reading change feed.
+        :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: An Iterable of items (dicts).
+        :rtype: Iterable[dict[str, Any]]
+        """
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        if partition_key_range_id is not None:
+            feed_options["partitionKeyRangeId"] = partition_key_range_id
+        partition_key = kwargs.pop("partitionKey", None)
+        if partition_key is not None:
+            feed_options["partitionKey"] = partition_key
+        if is_start_from_beginning is not None:
+            feed_options["isStartFromBeginning"] = is_start_from_beginning
+        if max_item_count is not None:
+            feed_options["maxItemCount"] = max_item_count
+        if continuation is not None:
+            feed_options["continuation"] = continuation
+
+        if hasattr(response_hook, "clear"):
+            response_hook.clear()
+
+        result = self.client_connection.QueryItemsChangeFeed(
+            self.container_link, options=feed_options, response_hook=response_hook, **kwargs
+        )
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, result)
+        return result
+
     @distributed_trace_async
     async def upsert_item(
         self,
@@ -391,6 +556,159 @@ class ContainerProxy(object):
         result = await self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
+
+    @distributed_trace_async
+    async def read_offer(self, **kwargs):
+        # type: (Any) -> Offer
+        """Read the Offer object for this container.
+
+        If no Offer already exists for the container, an exception is raised.
+
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: Offer for the container.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No offer exists for the container or
+            the offer could not be retrieved.
+        :rtype: ~azure.cosmos.Offer
+        """
+        response_hook = kwargs.pop('response_hook', None)
+        properties = await self._get_properties()
+        link = properties["_self"]
+        query_spec = {
+            "query": "SELECT * FROM root r WHERE r.resource=@link",
+            "parameters": [{"name": "@link", "value": link}],
+        }
+        offers = self.client_connection.QueryOffers(query_spec, **kwargs)
+        if not offers:
+            raise CosmosResourceNotFoundError(
+                status_code=StatusCodes.NOT_FOUND,
+                message="Could not find Offer for container " + self.container_link)
+                
+        throughput, curr_offer = None, None
+        async for offer in offers:
+            if not offer:
+                raise CosmosResourceNotFoundError(
+                    status_code=StatusCodes.NOT_FOUND,
+                    message="Could not find Offer for container " + self.container_link)
+            else:
+                throughput = offer["content"]["offerThroughput"]
+                curr_offer = offer
+            StopAsyncIteration
+
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, offers)
+
+        return Offer(offer_throughput=throughput, properties=curr_offer)
+
+    @distributed_trace_async
+    async def replace_throughput(self, throughput, **kwargs):
+        # type: (int, Any) -> Offer
+        """Replace the container's throughput.
+
+        If no Offer already exists for the container, an exception is raised.
+
+        :param throughput: The throughput to be set (an integer).
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: Offer for the container, updated with new throughput.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No offer exists for the container
+            or the offer could not be updated.
+        :rtype: ~azure.cosmos.Offer
+        """
+        response_hook = kwargs.pop('response_hook', None)
+        properties = await self._get_properties()
+        link = properties["_self"]
+        query_spec = {
+            "query": "SELECT * FROM root r WHERE r.resource=@link",
+            "parameters": [{"name": "@link", "value": link}],
+        }
+        offers = self.client_connection.QueryOffers(query_spec, **kwargs)
+        if not offers:
+            raise CosmosResourceNotFoundError(
+                status_code=StatusCodes.NOT_FOUND,
+                message="Could not find Offer for container " + self.container_link)
+
+        curr_offer = None
+        async for offer in offers:
+            if not offer:
+                raise CosmosResourceNotFoundError(
+                    status_code=StatusCodes.NOT_FOUND,
+                    message="Could not find Offer for container " + self.container_link)
+            else:
+                curr_offer = offer
+            StopAsyncIteration
+
+        new_offer = curr_offer.copy()
+        new_offer["content"]["offerThroughput"] = throughput
+        data = await self.client_connection.ReplaceOffer(offer_link=curr_offer["_self"], offer=curr_offer, **kwargs)
+
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, data)
+
+        return Offer(offer_throughput=data["content"]["offerThroughput"], properties=data)
+
+    @distributed_trace
+    def list_conflicts(self, max_item_count=None, **kwargs):
+        # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
+        """List all the conflicts in the container.
+
+        :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: An Iterable of conflicts (dicts).
+        :rtype: Iterable[dict[str, Any]]
+        """
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        if max_item_count is not None:
+            feed_options["maxItemCount"] = max_item_count
+
+        result = self.client_connection.ReadConflicts(
+            collection_link=self.container_link, feed_options=feed_options, **kwargs
+        )
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, result)
+        return result
+
+    @distributed_trace
+    def query_conflicts(
+        self,
+        query,  # type: str
+        parameters=None,  # type: Optional[List[str]]
+        enable_cross_partition_query=None,  # type: Optional[bool]
+        partition_key=None,  # type: Optional[Any]
+        max_item_count=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable[Dict[str, Any]]
+        """Return all conflicts matching a given `query`.
+
+        :param query: The Azure Cosmos DB SQL query to execute.
+        :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
+        :param enable_cross_partition_query: Allows sending of more than one request to execute
+            the query in the Azure Cosmos DB service.
+            More than one request is necessary if the query is not scoped to single partition key value.
+        :param partition_key: Specifies the partition key value for the item.
+        :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: An Iterable of conflicts (dicts).
+        :rtype: Iterable[dict[str, Any]]
+        """
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        if max_item_count is not None:
+            feed_options["maxItemCount"] = max_item_count
+        if enable_cross_partition_query is not None:
+            feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
+        if partition_key is not None:
+            feed_options["partitionKey"] = self._set_partition_key(partition_key)
+
+        result = self.client_connection.QueryConflicts(
+            collection_link=self.container_link,
+            query=query if parameters is None else dict(query=query, parameters=parameters),
+            options=feed_options,
+            **kwargs
+        )
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, result)
+        return result
 
     @distributed_trace_async
     async def get_conflict(self, conflict, partition_key, **kwargs):

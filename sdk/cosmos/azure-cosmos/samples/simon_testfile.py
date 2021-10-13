@@ -35,50 +35,62 @@ async def async_crud_test():
     async with AsyncClient(endpoint, key) as client:
         db = await client.create_database(db_name)
         print("Created DB, now reading and attempting create_if_not_exist")
+
         await db.read()
         db = await client.create_database_if_not_exists(db_name)
         print("Create if not exist had no problems, deleting DB now")
+
         await client.delete_database(db_name)
         print("DB deleted, now attempting read")
         try:
             await db.read()
         except:
             print("Error returned successfully for reading DB")
+
         print("Re-creating DB for testing container methods")
         db = await client.create_database_if_not_exists(db_name)
         cont = await db.create_container(id=cont_name, partition_key=PartitionKey(path="/lastName"))
-        print("Created CONT, now reading and attempting create_if_not_exists")
+        print("Created container, now reading and attempting create_if_not_exists")
+
         c = await cont.read()
         cont = await db.create_container_if_not_exists(id=cont_name, partition_key=PartitionKey(path="/lastName"))
-        print("Create if not exist had no problems, replacing and deleting CONT now")
+        print("Create if not exist had no problems, replacing and deleting container now")
+
         assert c.get('defaultTtl') is None
         await db.replace_container(container=cont_name, partition_key=PartitionKey(path='/lastName'), default_ttl=ttl)
         c = await cont.read()
         assert c.get('defaultTtl') == 200
-        print("CONT properties changed, now deleting")
+        print("Container properties changed, now deleting")
+
         await db.delete_container(cont_name)
-        print("CONT deleted, now attempting read")
+        print("Container deleted, now attempting read")
         try:
             await cont.read()
         except:
             print("Error returned succesfully")
-        print("Re-creating CONT for testing item methods")
+
+        print("Re-creating container for testing item methods")
         cont = await db.create_container_if_not_exists(id=cont_name, partition_key=PartitionKey(path="/lastName"))
+
         body1 = get_test_item()
         await cont.create_item(body=body1)
         print("Created item, now reading and then upserting/replacing")
+
         body2 = get_test_item()
         await cont.upsert_item(body=body1)
         # Check here for read all items and verify there is still only 1 left after upsert
         await cont.replace_item(item=body1["id"], body=body2)
         print("Item replaced, now attempting read")
+
         try:
             await cont.read_item(item=body1.get("id"), partition_key=body1.get("lastName"))
         except:
             print("Error returned succesfully, reading and deleting replaced item now")
+
         await cont.read_item(item=body2.get("id"), partition_key=body2.get("lastName"))
         await cont.delete_item(item=body2.get("id"), partition_key=body2.get("lastName"))
         print("Item deleted, now attempting read")
+
         try:
             await cont.read_item(item=body2.get("id"), partition_key=body2.get("lastName"))
         except:
@@ -180,15 +192,51 @@ def user_test():
     perms = u.list_permissions()
     print(list(perms))
 
-def wrong_test():
-    # client = SyncClient(endpoint, key)
-    # db = client.get_database_client("db111")
-    # cont = db.get_container_client("c111")
-    # cont.read()
-    # id = "Async_cc4b235e-ce8e-4b4f-835d-3c29182f0639"
-    # cont.read_item(item="wow", partition_key=id)
-    client = SyncClient.from_connection_string("")
-    print(list(client.list_databases()))
+async def qta():
+    async with AsyncClient(endpoint, key) as client:
+        db = await client.create_database_if_not_exists("qta")
+        cont = await db.create_container_if_not_exists(id="qtac", partition_key=PartitionKey(path="/id"))
+        itemId = "Async_e402afa6-badf-43f2-8ddd-83776221cb3a"
+        print("attempting query")
+
+        y = await cont.read_offer()
+        print(type(y))
+        print(y)
+        print(y.properties)
+        print(y.offer_throughput)
+
+        print("replacing")
+        x = await cont.replace_throughput(throughput=400)
+        print(type(x))
+        print(x.properties)
+        print(x.offer_throughput)
+
+        z = cont.list_conflicts()
+        print(type(z))
+        print(z)
+
+        # query = "SELECT * FROM c WHERE c.id=@id"
+        # items = cont.query_items(
+        #     query=query,
+        #     parameters=[{"name":"@id", "value": itemId}],
+        #     enable_cross_partition_query=True)
+
+        # async for item in items:
+        #     print(item)
+
+
+        # x = cont.read_all_items()
+        # #async for item in items
+        # #
+        # async for item in x:
+        #     print(item)
+
+def qt():
+    client = SyncClient(endpoint, key)
+    db = client.create_database_if_not_exists(id="qt")
+    container = db.create_container_if_not_exists(
+        id="qtc",
+		partition_key=PartitionKey(path="/id"))
 
 # async def read_all():
 #     async with AsyncClient(endpoint, key) as client:
@@ -202,7 +250,9 @@ def wrong_test():
 
 async def main():
     # await read_tests()
-    await async_crud_test()
+    # await async_crud_test()
+    await qta()
+    qt()
 
 
 if __name__ == "__main__":

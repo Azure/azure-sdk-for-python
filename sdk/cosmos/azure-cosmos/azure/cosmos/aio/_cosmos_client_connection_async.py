@@ -28,7 +28,6 @@
 # Currently pylint is locked to 2.3.3 and this is fixed in 2.4.4
 from typing import Dict, Any, Optional # pylint: disable=unused-import
 import six
-import asyncio
 from urllib3.util.retry import Retry
 from azure.core.async_paging import AsyncItemPaged
 from azure.core import AsyncPipelineClient
@@ -49,13 +48,13 @@ from .. import documents
 from ..documents import ConnectionPolicy
 from .. import _constants as constants
 from .. import http_constants
-from .. import _query_iterable as query_iterable
+from . import _query_iterable_async as query_iterable
 from .. import _runtime_constants as runtime_constants
 from .. import _request_object
 from . import _asynchronous_request as asynchronous_request
 from . import _global_endpoint_manager_async as global_endpoint_manager_async
 from .._routing import routing_map_provider
-from ._retry_utility import ConnectionRetryPolicy
+from ._retry_utility_async import ConnectionRetryPolicy
 from .. import _session
 from .. import _utils
 from ..partition_key import _Undefined, _Empty
@@ -727,6 +726,24 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         return await self.Replace(new_document, path, "docs", document_id, None, options, **kwargs)
 
+    async def ReplaceOffer(self, offer_link, offer, **kwargs):
+        """Replaces an offer and returns it.
+
+        :param str offer_link:
+            The link to the offer.
+        :param dict offer:
+
+        :return:
+            The replaced Offer.
+        :rtype:
+            dict
+
+        """
+        CosmosClientConnection.__ValidateResource(offer)
+        path = base.GetPathFromLink(offer_link)
+        offer_id = base.GetResourceIdOrFullNameFromLink(offer_link)
+        return await self.Replace(offer, path, "offers", offer_id, None, None, **kwargs)
+
     async def Replace(self, resource, path, typ, id, initial_headers, options=None, **kwargs):  # pylint: disable=redefined-builtin
         """Replaces a Azure Cosmos resource and returns it.
 
@@ -944,6 +961,388 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             **kwargs
         )
 
+    def ReadItems(self, collection_link, feed_options=None, response_hook=None, **kwargs):
+        """Reads all documents in a collection.
+
+        :param str collection_link:
+            The link to the document collection.
+        :param dict feed_options:
+
+        :return:
+            Query Iterable of Documents.
+        :rtype:
+            query_iterable.QueryIterable
+
+        """
+        if feed_options is None:
+            feed_options = {}
+
+        return self.QueryItems(collection_link, None, feed_options, response_hook=response_hook, **kwargs)
+
+    def QueryItems(
+        self,
+        database_or_container_link,
+        query,
+        options=None,
+        partition_key=None,
+        response_hook=None,
+        **kwargs
+    ):
+        """Queries documents in a collection.
+
+        :param str database_or_container_link:
+            The link to the database when using partitioning, otherwise link to the document collection.
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
+        :param str partition_key:
+            Partition key for the query(default value None)
+        :param response_hook:
+            A callable invoked with the response metadata
+
+        :return:
+            Query Iterable of Documents.
+        :rtype:
+            query_iterable.QueryIterable
+
+        """
+        database_or_container_link = base.TrimBeginningAndEndingSlashes(database_or_container_link)
+
+        if options is None:
+            options = {}
+
+        if base.IsDatabaseLink(database_or_container_link):
+            return AsyncItemPaged(
+                self,
+                query,
+                options,
+                database_link=database_or_container_link,
+                partition_key=partition_key,
+                page_iterator_class=query_iterable.QueryIterable
+            )
+
+        path = base.GetPathFromLink(database_or_container_link, "docs")
+        collection_id = base.GetResourceIdOrFullNameFromLink(database_or_container_link)
+
+        async def fetch_fn(options):
+            return (
+                await self.__QueryFeed(
+                    path,
+                    "docs",
+                    collection_id,
+                    lambda r: r["Documents"],
+                    lambda _, b: b,
+                    query,
+                    options,
+                    response_hook=response_hook,
+                    **kwargs
+                ),
+                self.last_response_headers,
+            )
+
+        return AsyncItemPaged(
+            self,
+            query,
+            options,
+            fetch_function=fetch_fn,
+            collection_link=database_or_container_link,
+            page_iterator_class=query_iterable.QueryIterable
+        )
+
+    def QueryItemsChangeFeed(self, collection_link, options=None, response_hook=None, **kwargs):
+        """Queries documents change feed in a collection.
+
+        :param str collection_link:
+            The link to the document collection.
+        :param dict options:
+            The request options for the request.
+            options may also specify partition key range id.
+        :param response_hook:
+            A callable invoked with the response metadata
+
+        :return:
+            Query Iterable of Documents.
+        :rtype:
+            query_iterable.QueryIterable
+
+        """
+
+        partition_key_range_id = None
+        if options is not None and "partitionKeyRangeId" in options:
+            partition_key_range_id = options["partitionKeyRangeId"]
+
+        return self._QueryChangeFeed(
+            collection_link, "Documents", options, partition_key_range_id, response_hook=response_hook, **kwargs
+        )
+
+    def _QueryChangeFeed(
+        self, collection_link, resource_type, options=None, partition_key_range_id=None, response_hook=None, **kwargs
+    ):
+        """Queries change feed of a resource in a collection.
+
+        :param str collection_link:
+            The link to the document collection.
+        :param str resource_type:
+            The type of the resource.
+        :param dict options:
+            The request options for the request.
+        :param str partition_key_range_id:
+            Specifies partition key range id.
+        :param response_hook:
+            A callable invoked with the response metadata
+
+        :return:
+            Query Iterable of Documents.
+        :rtype:
+            query_iterable.QueryIterable
+
+        """
+        if options is None:
+            options = {}
+        options["changeFeed"] = True
+
+        resource_key_map = {"Documents": "docs"}
+
+        # For now, change feed only supports Documents and Partition Key Range resouce type
+        if resource_type not in resource_key_map:
+            raise NotImplementedError(resource_type + " change feed query is not supported.")
+
+        resource_key = resource_key_map[resource_type]
+        path = base.GetPathFromLink(collection_link, resource_key)
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        async def fetch_fn(options):
+            return (
+                await self.__QueryFeed(
+                    path,
+                    resource_key,
+                    collection_id,
+                    lambda r: r[resource_type],
+                    lambda _, b: b,
+                    None,
+                    options,
+                    partition_key_range_id,
+                    response_hook=response_hook,
+                    **kwargs
+                ),
+                self.last_response_headers,
+            )
+
+        return AsyncItemPaged(
+            self,
+            None,
+            options,
+            fetch_function=fetch_fn,
+            collection_link=collection_link,
+            page_iterator_class=query_iterable.QueryIterable
+        )
+
+    def QueryOffers(self, query, options=None, **kwargs):
+        """Query for all offers.
+
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request
+
+        :return:
+            Query Iterable of Offers.
+        :rtype:
+            query_iterable.QueryIterable
+
+        """
+        if options is None:
+            options = {}
+
+        async def fetch_fn(options):
+            return (
+                await self.__QueryFeed(
+                    "/offers", "offers", "", lambda r: r["Offers"], lambda _, b: b, query, options, **kwargs
+                ),
+                self.last_response_headers,
+            )
+
+        return AsyncItemPaged(
+            self, 
+            query, 
+            options, 
+            fetch_function=fetch_fn, 
+            page_iterator_class=query_iterable.QueryIterable
+        )
+
+    def ReadConflicts(self, collection_link, feed_options=None, **kwargs):
+        """Reads conflicts.
+
+        :param str collection_link:
+            The link to the document collection.
+        :param dict feed_options:
+
+        :return:
+            Query Iterable of Conflicts.
+        :rtype:
+            query_iterable.QueryIterable
+
+        """
+        if feed_options is None:
+            feed_options = {}
+
+        return self.QueryConflicts(collection_link, None, feed_options, **kwargs)
+
+    def QueryConflicts(self, collection_link, query, options=None, **kwargs):
+        """Queries conflicts in a collection.
+
+        :param str collection_link:
+            The link to the document collection.
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            Query Iterable of Conflicts.
+        :rtype:
+            query_iterable.QueryIterable
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(collection_link, "conflicts")
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        async def fetch_fn(options):
+            return (
+                await self.__QueryFeed(
+                    path, "conflicts", collection_id, lambda r: r["Conflicts"],
+                    lambda _, b: b, query, options, **kwargs
+                ),
+                self.last_response_headers,
+            )
+
+        return AsyncItemPaged(
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+        )
+
+    async def __QueryFeed(
+        self,
+        path,
+        typ,
+        id_,
+        result_fn,
+        create_fn,
+        query,
+        options=None,
+        partition_key_range_id=None,
+        response_hook=None,
+        is_query_plan=False,
+        **kwargs
+    ):
+        """Query for more than one Azure Cosmos resources.
+
+        :param str path:
+        :param str typ:
+        :param str id_:
+        :param function result_fn:
+        :param function create_fn:
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
+        :param str partition_key_range_id:
+            Specifies partition key range id.
+        :param function response_hook:
+        :param bool is_query_plan:
+            Specififes if the call is to fetch query plan
+
+        :rtype:
+            list
+
+        :raises SystemError: If the query compatibility mode is undefined.
+
+        """
+        if options is None:
+            options = {}
+
+        if query:
+            __GetBodiesFromQueryResult = result_fn
+        else:
+
+            def __GetBodiesFromQueryResult(result):
+                if result is not None:
+                    return [create_fn(self, body) for body in result_fn(result)]
+                # If there is no change feed, the result data is empty and result is None.
+                # This case should be interpreted as an empty array.
+                return []
+
+        initial_headers = self.default_headers.copy()
+        # Copy to make sure that default_headers won't be changed.
+        if query is None:
+            # Query operations will use ReadEndpoint even though it uses GET(for feed requests)
+            request_params = _request_object.RequestObject(typ,
+                        documents._OperationType.QueryPlan if is_query_plan else documents._OperationType.ReadFeed)
+            headers = base.GetHeaders(self, initial_headers, "get", path, id_, typ, options, partition_key_range_id)
+            result, self.last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
+            if response_hook:
+                response_hook(self.last_response_headers, result)
+            return __GetBodiesFromQueryResult(result)
+
+        query = self.__CheckAndUnifyQueryFormat(query)
+
+        initial_headers[http_constants.HttpHeaders.IsQuery] = "true"
+        if not is_query_plan:
+            initial_headers[http_constants.HttpHeaders.IsQuery] = "true"
+
+        if (
+            self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Default
+            or self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Query
+        ):
+            initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.QueryJson
+        elif self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.SqlQuery:
+            initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.SQL
+        else:
+            raise SystemError("Unexpected query compatibility mode.")
+
+        # Query operations will use ReadEndpoint even though it uses POST(for regular query operations)
+        request_params = _request_object.RequestObject(typ, documents._OperationType.SqlQuery)
+        req_headers = base.GetHeaders(self, initial_headers, "post", path, id_, typ, options, partition_key_range_id)
+        result, self.last_response_headers = await self.__Post(path, request_params, query, req_headers, **kwargs)
+
+        if response_hook:
+            response_hook(self.last_response_headers, result)
+
+        return __GetBodiesFromQueryResult(result)
+
+    def __CheckAndUnifyQueryFormat(self, query_body):
+        """Checks and unifies the format of the query body.
+
+        :raises TypeError: If query_body is not of expected type (depending on the query compatibility mode).
+        :raises ValueError: If query_body is a dict but doesn\'t have valid query text.
+        :raises SystemError: If the query compatibility mode is undefined.
+
+        :param (str or dict) query_body:
+
+        :return:
+            The formatted query body.
+        :rtype:
+            dict or string
+        """
+        if (
+            self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Default
+            or self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Query
+        ):
+            if not isinstance(query_body, dict) and not isinstance(query_body, six.string_types):
+                raise TypeError("query body must be a dict or string.")
+            if isinstance(query_body, dict) and not query_body.get("query"):
+                raise ValueError('query body must have valid query text with key "query".')
+            if isinstance(query_body, six.string_types):
+                return {"query": query_body}
+        elif (
+            self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.SqlQuery
+            and not isinstance(query_body, six.string_types)
+        ):
+            raise TypeError("query body must be a string.")
+        else:
+            raise SystemError("Unexpected query compatibility mode.")
+
+        return query_body
+
     def _UpdateSessionIfRequired(self, request_headers, response_result, response_headers):
         """
         Updates session if necessary.
@@ -1096,6 +1495,36 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             return self._return_undefined_or_empty_partition_key(is_system_key)
 
         return partitionKey
+
+    async def _GetQueryPlanThroughGateway(self, query, resource_link, **kwargs):
+        supported_query_features = (documents._QueryFeature.Aggregate + "," +
+                                    documents._QueryFeature.CompositeAggregate + "," +
+                                    documents._QueryFeature.Distinct + "," +
+                                    documents._QueryFeature.MultipleOrderBy + "," +
+                                    documents._QueryFeature.OffsetAndLimit + "," +
+                                    documents._QueryFeature.OrderBy + "," +
+                                    documents._QueryFeature.Top)
+
+        options = {
+            "contentType": runtime_constants.MediaTypes.Json,
+            "isQueryPlanRequest": True,
+            "supportedQueryFeatures": supported_query_features,
+            "queryVersion": http_constants.Versions.QueryVersion
+            }
+
+        resource_link = base.TrimBeginningAndEndingSlashes(resource_link)
+        path = base.GetPathFromLink(resource_link, "docs")
+        resource_id = base.GetResourceIdOrFullNameFromLink(resource_link)
+
+        return await self.__QueryFeed(path,
+                                "docs",
+                                resource_id,
+                                lambda r: r,
+                                None,
+                                query,
+                                options,
+                                is_query_plan=True,
+                                **kwargs)
 
     @staticmethod
     def _return_undefined_or_empty_partition_key(is_system_key):
