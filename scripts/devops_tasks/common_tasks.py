@@ -20,6 +20,7 @@ import textwrap
 import io
 import re
 import fnmatch
+import platform
 
 # Assumes the presence of setuptools
 from pkg_resources import parse_version, parse_requirements, Requirement, WorkingSet, working_set
@@ -214,6 +215,13 @@ def filter_for_compatibility(package_set):
             collected_packages.append(pkg)
 
     return collected_packages
+
+
+def compare_python_version(version_spec):
+    current_sys_version = parse(platform.python_version())
+    spec_set = SpecifierSet(version_spec)
+
+    return current_sys_version in spec_set
 
 
 # this function is where a glob string gets translated to a list of packages
