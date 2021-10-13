@@ -64,6 +64,10 @@ MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
     "azure-mgmt-core",
 ]
 
+TEST_COMPATIBILITY_MAP = {
+    "azure-core-tracing-opentelemetry": "<3.10"
+}
+
 omit_regression = (
     lambda x: "nspkg" not in x
     and "mgmt" not in x
