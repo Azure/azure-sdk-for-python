@@ -346,8 +346,11 @@ def _get_good_result(task, doc_id_order, response_headers, returned_tasks_object
         current_task_type
     )
     property_name = _get_property_name_from_task_type(current_task_type)
-    response_task_to_deserialize = \
-        [task for task in getattr(returned_tasks_object, property_name) if task.task_name == task_name][0]
+    try:
+        response_task_to_deserialize = \
+            next(task for task in getattr(returned_tasks_object, property_name) if task.task_name == task_name)
+    except StopIteration:
+        raise ValueError("Unexpected response from service - unable to deserialize result.")
     return deserialization_callback(
         doc_id_order, response_task_to_deserialize.results, response_headers, lro=True
     )
