@@ -44,10 +44,10 @@ class RemoteRenderingClient(object):
     This client offers functionality to convert assets to the format expected by the runtime, and also to manage the
     lifetime of remote rendering sessions.
 
-    :param remote_rendering_endpoint:
+    :param endpoint:
         The rendering service endpoint. This determines the region in which the rendering session is created and
         asset conversions are performed.
-    :type remote_rendering_endpoint: str
+    :type endpoint: str
     :param account_id: The Azure Remote Rendering account identifier.
     :type account_id: str
     :param account_domain:
@@ -65,7 +65,7 @@ class RemoteRenderingClient(object):
     """
 
     def __init__(self,
-                 remote_rendering_endpoint: str,
+                 endpoint: str,
                  account_id: str,
                  account_domain: str,
                  credential: Union["AsyncTokenCredential", AzureKeyCredential, AccessToken],
@@ -78,8 +78,8 @@ class RemoteRenderingClient(object):
 
         self._account_id = account_id
 
-        if not remote_rendering_endpoint:
-            raise ValueError("remote_rendering_endpoint can not be None")
+        if not endpoint:
+            raise ValueError("endpoint can not be None")
 
         if not account_id:
             raise ValueError("account_id can not be None")
@@ -112,7 +112,7 @@ class RemoteRenderingClient(object):
         self._account_id = account_id
 
         self._client = RemoteRenderingRestClient(
-            endpoint=remote_rendering_endpoint,
+            endpoint=endpoint,
             authentication_policy=authentication_policy,
             sdk_moniker=SDK_MONIKER,
             api_version=self._api_version,

@@ -51,7 +51,7 @@ class RemoteRendererClientPreparer(AzureMgmtPreparer):
 
         key_credential = AzureKeyCredential(remoterendering_arr_account_key)
         client = self.client_cls(
-            remote_rendering_endpoint=remoterendering_arr_service_endpoint,
+            endpoint=remoterendering_arr_service_endpoint,
             account_id=remoterendering_arr_account_id,
             account_domain=remoterendering_arr_account_domain,
             credential=key_credential, polling_interval=polling_interval)

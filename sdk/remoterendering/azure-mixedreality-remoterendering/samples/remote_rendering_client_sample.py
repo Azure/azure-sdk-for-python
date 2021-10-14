@@ -89,7 +89,7 @@ if not relative_input_asset_path:
 key_credential = AzureKeyCredential(account_key)
 
 client = RemoteRenderingClient(
-    remote_rendering_endpoint=arr_endpoint,
+    endpoint=arr_endpoint,
     account_id=account_id,
     account_domain=account_domain,
     credential=key_credential,

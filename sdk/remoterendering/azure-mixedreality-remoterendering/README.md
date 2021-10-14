@@ -46,7 +46,7 @@ There are several different forms of authentication:
 
 See [here](https://docs.microsoft.com/azure/remote-rendering/how-tos/authentication) for detailed instructions and information.
 
-In all the following examples, the client is constructed with a `remote_rendering_endpoint` parameter.
+In all the following examples, the client is constructed with a `endpoint` parameter.
 The available endpoints correspond to regions, and the choice of endpoint determines the region in which the service performs its work.
 An example is `https://remoterendering.eastus2.mixedreality.azure.com`.
 
@@ -72,7 +72,7 @@ arr_endpoint = "<ARR_ENDPOINT>"
 
 key_credential = AzureKeyCredential(account_key)
 client = RemoteRenderingClient(
-    remote_rendering_endpoint=arr_endpoint,
+    endpoint=arr_endpoint,
     account_id=account_id,
     account_domain=account_domain,
     credential=key_credential
@@ -99,7 +99,7 @@ client = MixedRealityStsClient(account_id, account_domain, key_credential)
 token = client.get_token()
 
 client = RemoteRenderingClient(
-    remote_rendering_endpoint=arr_endpoint,
+    endpoint=arr_endpoint,
     account_id=account_id,
     account_domain=account_domain,
     credential=token,

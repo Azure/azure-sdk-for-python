@@ -35,7 +35,7 @@ def create_remote_rendering_client(remoterendering_arr_service_endpoint,
     key_credential = AzureKeyCredential(remoterendering_arr_account_key)
 
     client = RemoteRenderingClient(
-        remote_rendering_endpoint=remoterendering_arr_service_endpoint,
+        endpoint=remoterendering_arr_service_endpoint,
         account_id=remoterendering_arr_account_id,
         account_domain=remoterendering_arr_account_domain,
         credential=key_credential)
@@ -73,35 +73,35 @@ class ClientTests(AzureTestCase):
         key_credential = AzureKeyCredential(remoterendering_arr_account_key)
         with pytest.raises(ValueError):
             RemoteRenderingClient(
-                remote_rendering_endpoint=None,
+                endpoint=None,
                 account_id=remoterendering_arr_account_id,
                 account_domain=remoterendering_arr_account_domain,
                 credential=key_credential)
 
         with pytest.raises(ValueError):
             RemoteRenderingClient(
-                remote_rendering_endpoint=remoterendering_arr_service_endpoint,
+                endpoint=remoterendering_arr_service_endpoint,
                 account_id=None,
                 account_domain=remoterendering_arr_account_domain,
                 credential=key_credential)
 
         with pytest.raises(ValueError):
             RemoteRenderingClient(
-                remote_rendering_endpoint=remoterendering_arr_service_endpoint,
+                endpoint=remoterendering_arr_service_endpoint,
                 account_id=remoterendering_arr_account_id,
                 account_domain=None,
                 credential=key_credential)
 
         with pytest.raises(ValueError):
             RemoteRenderingClient(
-                remote_rendering_endpoint=remoterendering_arr_service_endpoint,
+                endpoint=remoterendering_arr_service_endpoint,
                 account_id=remoterendering_arr_account_id,
                 account_domain=remoterendering_arr_account_domain,
                 credential=None)
 
         with pytest.raises(ValueError):
             RemoteRenderingClient(
-                remote_rendering_endpoint=remoterendering_arr_service_endpoint,
+                endpoint=remoterendering_arr_service_endpoint,
                 account_id=remoterendering_arr_account_id,
                 account_domain=remoterendering_arr_account_domain,
                 credential=key_credential,

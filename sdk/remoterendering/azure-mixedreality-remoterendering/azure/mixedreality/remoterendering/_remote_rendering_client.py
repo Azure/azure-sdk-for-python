@@ -42,7 +42,7 @@ class RemoteRenderingClient(object):
     This client offers functionality to convert assets to the format expected by the runtime, and also to manage the
     lifetime of remote rendering sessions.
 
-    :param str remote_rendering_endpoint:
+    :param str endpoint:
         The rendering service endpoint. This determines the region in which the rendering session is created and
         asset conversions are performed.
     :param str account_id: The Azure Remote Rendering account identifier.
@@ -59,15 +59,15 @@ class RemoteRenderingClient(object):
     :paramtype api_version: str or ~azure.mixedreality.remoterenderings.RemoteRenderingApiVersion
     """
 
-    def __init__(self, remote_rendering_endpoint, account_id, account_domain, credential, **kwargs):
+    def __init__(self, endpoint, account_id, account_domain, credential, **kwargs):
         # type: (str, str, str, Union[TokenCredential, AccessToken], Any) -> None
         self._api_version = kwargs.pop(
             "api_version", RemoteRenderingApiVersion.V2021_01_01
         )
         validate_api_version(self._api_version)
 
-        if not remote_rendering_endpoint:
-            raise ValueError("remote_rendering_endpoint can not be None")
+        if not endpoint:
+            raise ValueError("endpoint can not be None")
 
         if not account_id:
             raise ValueError("account_id can not be None")
@@ -102,7 +102,7 @@ class RemoteRenderingClient(object):
         self._account_id = account_id
 
         self._client = RemoteRenderingRestClient(
-            endpoint=remote_rendering_endpoint,
+            endpoint=endpoint,
             authentication_policy=authentication_policy,
             sdk_moniker=SDK_MONIKER,
             api_version=self._api_version,
