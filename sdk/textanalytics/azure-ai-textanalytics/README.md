@@ -3,17 +3,14 @@
 Text Analytics is a cloud-based service that provides advanced natural language processing over raw text, and includes the following main features:
 
 - Sentiment Analysis
-- Named Entity Recognition
-- Linked Entity Recognition
-- Personally Identifiable Information (PII) Entity Recognition
+- Entity Recognition (Named, Linked, and Personally Identifiable Information (PII) entities)
 - Language Detection
 - Key Phrase Extraction
 - Multiple Analysis
 - Healthcare Entities Analysis
 - Extractive Text Summarization
 - Custom Entity Recognition
-- Custom Single Category Classification
-- Custom Multi Category Classification
+- Custom Single and Multi Category Classification
 
 [Source code][source_code] | [Package (PyPI)][ta_pypi] | [API reference documentation][ta_ref_docs] | [Product documentation][ta_product_documentation] | [Samples][ta_samples]
 
@@ -236,6 +233,10 @@ The following section provides several code snippets covering some of the most c
 - [Detect Language](#detect-language "Detect language")
 - [Healthcare Entities Analysis](#healthcare-entities-analysis "Healthcare Entities Analysis")
 - [Multiple Analysis](#multiple-analysis "Multiple analysis")
+- [Extractive Summarization][extract_summary_sample]
+- [Custom Entity Recognition][recognize_custom_entities_sample]
+- [Custom Single Category Classification][single_category_classify_sample]
+- [Custom Multi Category Classification][multi_category_classify_sample]
 
 ### Analyze sentiment
 

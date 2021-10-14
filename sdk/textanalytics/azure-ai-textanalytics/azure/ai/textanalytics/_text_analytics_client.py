@@ -869,6 +869,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         combine multiple Text Analytics actions into one call. Otherwise, we recommend you use
         the action specific endpoints, for example :func:`analyze_sentiment`.
 
+        .. note:: The following actions are supported with resources created in the `westus2` and `westeurope`
+            regions only: RecognizeCustomEntitiesAction, SingleCategoryClassifyAction, and MultiCategoryClassifyAction
+
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
             use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
