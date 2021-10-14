@@ -62,7 +62,7 @@ class RemoteRenderingPollingAsync(AsyncPollingMethod):
 
     def status(self):
         # type: () -> str
-        raise NotImplementedError("This method needs to be implemented")
+        raise NotImplementedError("This method needs to be implemented in a derived class.")
 
     def finished(self):
         # type: () -> bool
