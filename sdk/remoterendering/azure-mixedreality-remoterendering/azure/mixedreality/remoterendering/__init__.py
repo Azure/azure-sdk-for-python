@@ -4,7 +4,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
-from ._api_version import RemoteRenderingApiVersion
 from ._remote_rendering_client import RemoteRenderingClient
 from ._version import VERSION
 
@@ -18,7 +17,6 @@ from ._generated.models import (AssetConversion, AssetConversionInputSettings,
 
 __all__ = [
     "RemoteRenderingClient",
-    "RemoteRenderingApiVersion",
     "AssetConversion",
     "AssetConversionSettings",
     "AssetConversionInputSettings",
