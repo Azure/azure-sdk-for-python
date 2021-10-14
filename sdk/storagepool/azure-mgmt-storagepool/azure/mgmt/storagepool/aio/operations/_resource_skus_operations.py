@@ -19,8 +19,8 @@ from ... import models as _models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class DiskPoolZonesOperations:
-    """DiskPoolZonesOperations async operations.
+class ResourceSkusOperations:
+    """ResourceSkusOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -45,17 +45,17 @@ class DiskPoolZonesOperations:
         self,
         location: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.DiskPoolZoneListResult"]:
-        """Lists available Disk Pool Skus in an Azure location.
+    ) -> AsyncIterable["_models.ResourceSkuListResult"]:
+        """Lists available StoragePool resources and skus in an Azure location.
 
         :param location: The location of the resource.
         :type location: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DiskPoolZoneListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~storage_pool_management.models.DiskPoolZoneListResult]
+        :return: An iterator like instance of either ResourceSkuListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~storage_pool_management.models.ResourceSkuListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiskPoolZoneListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceSkuListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -88,7 +88,7 @@ class DiskPoolZonesOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('DiskPoolZoneListResult', pipeline_response)
+            deserialized = self._deserialize('ResourceSkuListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -110,4 +110,4 @@ class DiskPoolZonesOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.StoragePool/locations/{location}/diskPoolZones'}  # type: ignore
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.StoragePool/locations/{location}/skus'}  # type: ignore
