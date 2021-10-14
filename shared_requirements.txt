@@ -156,7 +156,7 @@ backports.functools-lru-cache >= 1.6.4; python_version == "2.7"
 #override azure-search-documents azure-core<2.0.0,>=1.19.0
 #override azure-ai-formrecognizer msrest>=0.6.21
 #override azure-ai-formrecognizer azure-core<2.0.0,>=1.13.0
-#override azure-storage-blob azure-core<2.0.0,>=1.10.0
+#override azure-storage-blob azure-core<2.0.0,>=1.19.0
 #override azure-storage-blob msrest>=0.6.21
 #override azure-storage-blob-changefeed azure-storage-blob>=12.5.0,<13.0.0
 #override azure-storage-queue azure-core<2.0.0,>=1.10.0
