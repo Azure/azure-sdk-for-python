@@ -111,9 +111,6 @@ def process_storage_error(storage_error):   # pylint:disable=too-many-statements
         # If it is a JSON response
         elif isinstance(error_body, dict):
             error_dict = error_body.get('error', {})
-        elif isinstance(error_body, str):
-            print(type("abc"))
-            error_dict = {'message': str(error_body)}
         elif not error_code:
             _LOGGER.warning(
                 'Unexpected return type {} from ContentDecodePolicy.deserialize_from_http_generics.', type(error_body))
