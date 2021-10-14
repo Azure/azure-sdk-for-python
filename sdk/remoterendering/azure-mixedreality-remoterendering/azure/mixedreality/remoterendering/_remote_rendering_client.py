@@ -117,9 +117,9 @@ class RemoteRenderingClient(object):
             An ID uniquely identifying the conversion for the remote rendering account. The ID is case sensitive, can
             contain any combination of alphanumeric characters including hyphens and underscores, and cannot contain
             more than 256 characters.
-        :param ~azure.mixedreality.remoterendering.models.AssetConversionInputSettings input_settings: Options for the
+        :param ~azure.mixedreality.remoterendering.AssetConversionInputSettings input_settings: Options for the
             input of the conversion.
-        :param ~azure.mixedreality.remoterendering.models.AssetConversionOutputSettings output_settings: Options for the
+        :param ~azure.mixedreality.remoterendering.AssetConversionOutputSettings output_settings: Options for the
             output of the conversion.
         :return: A poller for the created asset conversion
         :rtype: ~azure.core.polling.LROPoller[AssetConversion]
