@@ -93,7 +93,7 @@ setup(
         'tests',
     ]),
     install_requires=[
-        "azure-core<2.0.0,>=1.10.0",
+        "azure-core<2.0.0,>=1.19.0",
         "msrest>=0.6.21",
         "azure-storage-blob<13.0.0,>=12.9.0b1"
     ],
