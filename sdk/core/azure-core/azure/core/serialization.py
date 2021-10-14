@@ -6,12 +6,10 @@
 # --------------------------------------------------------------------------
 import base64
 from json import JSONEncoder
-from typing import TYPE_CHECKING, Union
-
+from typing import Union, cast
+from datetime import datetime, date, time, timedelta
 from .utils._utils import _FixedOffset
 
-if TYPE_CHECKING:
-    from datetime import datetime, date, time, timedelta
 
 __all__ = ["NULL", "AzureJSONEncoder"]
 
@@ -49,22 +47,22 @@ def _timedelta_as_isostr(td):
     seconds = round(seconds, 6)
 
     # Build date
-    date = ""
+    date_str = ""
     if days:
-        date = "%sD" % days
+        date_str = "%sD" % days
 
     # Build time
-    time = "T"
+    time_str = "T"
 
     # Hours
-    bigger_exists = date or hours
+    bigger_exists = date_str or hours
     if bigger_exists:
-        time += "{:02}H".format(hours)
+        time_str += "{:02}H".format(hours)
 
     # Minutes
     bigger_exists = bigger_exists or minutes
     if bigger_exists:
-        time += "{:02}M".format(minutes)
+        time_str += "{:02}M".format(minutes)
 
     # Seconds
     try:
@@ -78,9 +76,9 @@ def _timedelta_as_isostr(td):
     except AttributeError:  # int.is_integer() raises
         seconds_string = "{:02}".format(seconds)
 
-    time += "{}S".format(seconds_string)
+    time_str += "{}S".format(seconds_string)
 
-    return "P" + date + time
+    return "P" + date_str + time_str
 
 
 def _datetime_as_isostr(dt):
@@ -88,6 +86,7 @@ def _datetime_as_isostr(dt):
     """Converts a datetime.(datetime|date|time|timedelta) object into an ISO 8601 formatted string"""
     # First try datetime.datetime
     if hasattr(dt, "year") and hasattr(dt, "hour"):
+        dt = cast(datetime, dt)
         # astimezone() fails for naive times in Python 2.7, so make make sure dt is aware (tzinfo is set)
         if not dt.tzinfo:
             iso_formatted = dt.replace(tzinfo=TZ_UTC).isoformat()
@@ -97,9 +96,11 @@ def _datetime_as_isostr(dt):
         return iso_formatted.replace("+00:00", "Z")
     # Next try datetime.date or datetime.time
     try:
+        dt = cast(Union[date, time], dt)
         return dt.isoformat()
     # Last, try datetime.timedelta
     except AttributeError:
+        dt = cast(timedelta, dt)
         return _timedelta_as_isostr(dt)
 
 
