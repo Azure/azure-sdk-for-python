@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b2 (2021-10-13)
+## 1.0.0b2 (2021-10-14)
 
 - Change api-version to `2021-10-01`  
 - Add operations to client
