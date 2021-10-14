@@ -6,15 +6,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+import functools
 from typing import TYPE_CHECKING
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import HttpResponse
+from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
+from msrest import Serializer
 
 from .. import models as _models
+from .._vendor import _convert_request
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -23,6 +28,271 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
+_SERIALIZER = Serializer()
+# fmt: off
+
+def build_create_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    properties = kwargs.pop('properties', None)  # type: Optional[str]
+
+    resource = "filesystem"
+    version = "2020-06-12"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/{filesystem}')
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['resource'] = _SERIALIZER.query("resource", resource, 'str')
+    if timeout is not None:
+        query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if request_id_parameter is not None:
+        header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    if properties is not None:
+        header_parameters['x-ms-properties'] = _SERIALIZER.header("properties", properties, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="PUT",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_set_properties_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    properties = kwargs.pop('properties', None)  # type: Optional[str]
+    if_modified_since = kwargs.pop('if_modified_since', None)  # type: Optional[datetime.datetime]
+    if_unmodified_since = kwargs.pop('if_unmodified_since', None)  # type: Optional[datetime.datetime]
+
+    resource = "filesystem"
+    version = "2020-06-12"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/{filesystem}')
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['resource'] = _SERIALIZER.query("resource", resource, 'str')
+    if timeout is not None:
+        query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if request_id_parameter is not None:
+        header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    if properties is not None:
+        header_parameters['x-ms-properties'] = _SERIALIZER.header("properties", properties, 'str')
+    if if_modified_since is not None:
+        header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+    if if_unmodified_since is not None:
+        header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="PATCH",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_get_properties_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+
+    resource = "filesystem"
+    version = "2020-06-12"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/{filesystem}')
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['resource'] = _SERIALIZER.query("resource", resource, 'str')
+    if timeout is not None:
+        query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if request_id_parameter is not None:
+        header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="HEAD",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_delete_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    if_modified_since = kwargs.pop('if_modified_since', None)  # type: Optional[datetime.datetime]
+    if_unmodified_since = kwargs.pop('if_unmodified_since', None)  # type: Optional[datetime.datetime]
+
+    resource = "filesystem"
+    version = "2020-06-12"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/{filesystem}')
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['resource'] = _SERIALIZER.query("resource", resource, 'str')
+    if timeout is not None:
+        query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if request_id_parameter is not None:
+        header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    if if_modified_since is not None:
+        header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+    if if_unmodified_since is not None:
+        header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="DELETE",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_paths_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    recursive = kwargs.pop('recursive')  # type: bool
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    continuation = kwargs.pop('continuation', None)  # type: Optional[str]
+    path = kwargs.pop('path', None)  # type: Optional[str]
+    max_results = kwargs.pop('max_results', None)  # type: Optional[int]
+    upn = kwargs.pop('upn', None)  # type: Optional[bool]
+
+    resource = "filesystem"
+    version = "2020-06-12"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/{filesystem}')
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['resource'] = _SERIALIZER.query("resource", resource, 'str')
+    if timeout is not None:
+        query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+    if continuation is not None:
+        query_parameters['continuation'] = _SERIALIZER.query("continuation", continuation, 'str')
+    if path is not None:
+        query_parameters['directory'] = _SERIALIZER.query("path", path, 'str')
+    query_parameters['recursive'] = _SERIALIZER.query("recursive", recursive, 'bool')
+    if max_results is not None:
+        query_parameters['maxResults'] = _SERIALIZER.query("max_results", max_results, 'int', minimum=1)
+    if upn is not None:
+        query_parameters['upn'] = _SERIALIZER.query("upn", upn, 'bool')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if request_id_parameter is not None:
+        header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_blob_hierarchy_segment_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    prefix = kwargs.pop('prefix', None)  # type: Optional[str]
+    delimiter = kwargs.pop('delimiter', None)  # type: Optional[str]
+    marker = kwargs.pop('marker', None)  # type: Optional[str]
+    max_results = kwargs.pop('max_results', None)  # type: Optional[int]
+    include = kwargs.pop('include', None)  # type: Optional[List[Union[str, "_models.ListBlobsIncludeItem"]]]
+    showonly = kwargs.pop('showonly', "deleted")  # type: Optional[str]
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
+
+    restype = "container"
+    comp = "list"
+    version = "2020-06-12"
+    accept = "application/xml"
+    # Construct URL
+    url = kwargs.pop("template_url", '/{filesystem}')
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['restype'] = _SERIALIZER.query("restype", restype, 'str')
+    query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    if prefix is not None:
+        query_parameters['prefix'] = _SERIALIZER.query("prefix", prefix, 'str')
+    if delimiter is not None:
+        query_parameters['delimiter'] = _SERIALIZER.query("delimiter", delimiter, 'str')
+    if marker is not None:
+        query_parameters['marker'] = _SERIALIZER.query("marker", marker, 'str')
+    if max_results is not None:
+        query_parameters['maxResults'] = _SERIALIZER.query("max_results", max_results, 'int', minimum=1)
+    if include is not None:
+        query_parameters['include'] = _SERIALIZER.query("include", include, '[str]', div=',')
+    if showonly is not None:
+        query_parameters['showonly'] = _SERIALIZER.query("showonly", showonly, 'str')
+    if timeout is not None:
+        query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    if request_id_parameter is not None:
+        header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+# fmt: on
 class FileSystemOperations(object):
     """FileSystemOperations operations.
 
@@ -45,6 +315,7 @@ class FileSystemOperations(object):
         self._deserialize = deserializer
         self._config = config
 
+    @distributed_trace
     def create(
         self,
         request_id_parameter=None,  # type: Optional[str]
@@ -62,8 +333,9 @@ class FileSystemOperations(object):
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param properties: Optional. User-defined properties to be stored with the filesystem, in the
          format of a comma-separated list of name and value pairs "n1=v1, n2=v2, ...", where each value
@@ -83,37 +355,26 @@ class FileSystemOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        accept = "application/json"
 
-        # Construct URL
-        url = self.create.metadata['url']  # type: ignore
         path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        _url = self._client.format_url(self.create.metadata['url'], **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['resource'] = self._serialize.query("self._config.resource", self._config.resource, 'str')
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        request = build_create_request(
+            request_id_parameter=request_id_parameter,
+            timeout=timeout,
+            properties=properties,
+            template_url=_url,
+        )
+        request = _convert_request(request)
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
-        if properties is not None:
-            header_parameters['x-ms-properties'] = self._serialize.header("properties", properties, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.put(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -124,11 +385,14 @@ class FileSystemOperations(object):
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
         response_headers['x-ms-namespace-enabled']=self._deserialize('str', response.headers.get('x-ms-namespace-enabled'))
 
+
         if cls:
             return cls(pipeline_response, None, response_headers)
 
     create.metadata = {'url': '/{filesystem}'}  # type: ignore
 
+
+    @distributed_trace
     def set_properties(
         self,
         request_id_parameter=None,  # type: Optional[str]
@@ -142,15 +406,15 @@ class FileSystemOperations(object):
 
         Set properties for the FileSystem.  This operation supports conditional HTTP requests.  For
         more information, see `Specifying Conditional Headers for Blob Service Operations
-        <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-
-        blob-service-operations>`_.
+        <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
 
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param properties: Optional. User-defined properties to be stored with the filesystem, in the
          format of a comma-separated list of name and value pairs "n1=v1, n2=v2, ...", where each value
@@ -172,47 +436,33 @@ class FileSystemOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _if_modified_since = None
         _if_unmodified_since = None
         if modified_access_conditions is not None:
             _if_modified_since = modified_access_conditions.if_modified_since
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
-        accept = "application/json"
-
-        # Construct URL
-        url = self.set_properties.metadata['url']  # type: ignore
         path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        _url = self._client.format_url(self.set_properties.metadata['url'], **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['resource'] = self._serialize.query("self._config.resource", self._config.resource, 'str')
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        request = build_set_properties_request(
+            request_id_parameter=request_id_parameter,
+            timeout=timeout,
+            properties=properties,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=_url,
+        )
+        request = _convert_request(request)
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
-        if properties is not None:
-            header_parameters['x-ms-properties'] = self._serialize.header("properties", properties, 'str')
-        if _if_modified_since is not None:
-            header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", _if_modified_since, 'rfc-1123')
-        if _if_unmodified_since is not None:
-            header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", _if_unmodified_since, 'rfc-1123')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.patch(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -222,11 +472,14 @@ class FileSystemOperations(object):
         response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
 
+
         if cls:
             return cls(pipeline_response, None, response_headers)
 
     set_properties.metadata = {'url': '/{filesystem}'}  # type: ignore
 
+
+    @distributed_trace
     def get_properties(
         self,
         request_id_parameter=None,  # type: Optional[str]
@@ -242,8 +495,9 @@ class FileSystemOperations(object):
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -255,35 +509,25 @@ class FileSystemOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_properties.metadata['url']  # type: ignore
         path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        _url = self._client.format_url(self.get_properties.metadata['url'], **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['resource'] = self._serialize.query("self._config.resource", self._config.resource, 'str')
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        request = build_get_properties_request(
+            request_id_parameter=request_id_parameter,
+            timeout=timeout,
+            template_url=_url,
+        )
+        request = _convert_request(request)
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.head(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -295,11 +539,14 @@ class FileSystemOperations(object):
         response_headers['x-ms-properties']=self._deserialize('str', response.headers.get('x-ms-properties'))
         response_headers['x-ms-namespace-enabled']=self._deserialize('str', response.headers.get('x-ms-namespace-enabled'))
 
+
         if cls:
             return cls(pipeline_response, None, response_headers)
 
     get_properties.metadata = {'url': '/{filesystem}'}  # type: ignore
 
+
+    @distributed_trace
     def delete(
         self,
         request_id_parameter=None,  # type: Optional[str]
@@ -318,15 +565,15 @@ class FileSystemOperations(object):
         directories within the filesystem, will fail with status code 404 (Not Found) while the
         filesystem is being deleted. This operation supports conditional HTTP requests.  For more
         information, see `Specifying Conditional Headers for Blob Service Operations
-        <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-
-        blob-service-operations>`_.
+        <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
 
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param modified_access_conditions: Parameter group.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
@@ -340,45 +587,32 @@ class FileSystemOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _if_modified_since = None
         _if_unmodified_since = None
         if modified_access_conditions is not None:
             _if_modified_since = modified_access_conditions.if_modified_since
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
-        accept = "application/json"
-
-        # Construct URL
-        url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        _url = self._client.format_url(self.delete.metadata['url'], **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['resource'] = self._serialize.query("self._config.resource", self._config.resource, 'str')
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        request = build_delete_request(
+            request_id_parameter=request_id_parameter,
+            timeout=timeout,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=_url,
+        )
+        request = _convert_request(request)
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
-        if _if_modified_since is not None:
-            header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", _if_modified_since, 'rfc-1123')
-        if _if_unmodified_since is not None:
-            header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", _if_unmodified_since, 'rfc-1123')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -386,11 +620,14 @@ class FileSystemOperations(object):
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
         response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
 
+
         if cls:
             return cls(pipeline_response, None, response_headers)
 
     delete.metadata = {'url': '/{filesystem}'}  # type: ignore
 
+
+    @distributed_trace
     def list_paths(
         self,
         recursive,  # type: bool
@@ -413,8 +650,9 @@ class FileSystemOperations(object):
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param continuation: Optional.  When deleting a directory, the number of paths that are deleted
          with each invocation is limited.  If the number of paths to be deleted exceeds this limit, a
@@ -445,88 +683,76 @@ class FileSystemOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        accept = "application/json"
-
-        # TODO: change this once continuation/next_link autorest PR is merged
-        def prepare_request(next_link=None, cont_token=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            if request_id_parameter is not None:
-                header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter",
-                                                                                     request_id_parameter, 'str')
-            header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version,
-                                                                       'str')
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
+        def prepare_request(next_link=None):
             if not next_link:
-                # Construct URL
-                url = self.list_paths.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+                    "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
                 }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['resource'] = self._serialize.query("self._config.resource", self._config.resource,
-                                                                     'str')
-                if timeout is not None:
-                    query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
-                # TODO: change this once continuation/next_link autorest PR is merged
-                if cont_token is not None:
-                    query_parameters['continuation'] = self._serialize.query("continuation", cont_token, 'str')
-                if path is not None:
-                    query_parameters['directory'] = self._serialize.query("path", path, 'str')
-                query_parameters['recursive'] = self._serialize.query("recursive", recursive, 'bool')
-                if max_results is not None:
-                    query_parameters['maxResults'] = self._serialize.query("max_results", max_results, 'int', minimum=1)
-                if upn is not None:
-                    query_parameters['upn'] = self._serialize.query("upn", upn, 'bool')
+                _url = self._client.format_url(self.list_paths.metadata['url'], **path_format_arguments)
+                
+                request = build_list_paths_request(
+                    recursive=recursive,
+                    request_id_parameter=request_id_parameter,
+                    timeout=timeout,
+                    continuation=continuation,
+                    path=path,
+                    max_results=max_results,
+                    upn=upn,
+                    template_url=_url,
+                )
+                request = _convert_request(request)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
                 path_format_arguments = {
-                    'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+                    "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
                 }
-                url = self._client.format_url(url, **path_format_arguments)
-                request = self._client.get(url, query_parameters, header_parameters)
+                _url = self._client.format_url(next_link, **path_format_arguments)
+                
+                request = build_list_paths_request(
+                    recursive=recursive,
+                    request_id_parameter=request_id_parameter,
+                    timeout=timeout,
+                    continuation=continuation,
+                    path=path,
+                    max_results=max_results,
+                    upn=upn,
+                    template_url=_url,
+                )
+                request = _convert_request(request)
+
+                path_format_arguments = {
+                    "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+                }
+                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            # TODO: change this once continuation/next_link autorest PR is merged
-            try:
-                cont_token = pipeline_response.http_response.headers['x-ms-continuation']
-            except KeyError:
-                cont_token = None
-            deserialized = self._deserialize('PathList', pipeline_response)
+            deserialized = self._deserialize("PathList", pipeline_response)
             list_of_elem = deserialized.paths
             if cls:
                 list_of_elem = cls(list_of_elem)
-            # TODO: change this once continuation/next_link autorest PR is merged
-            return cont_token, iter(list_of_elem)
+            return None, iter(list_of_elem)
 
-        # TODO: change this once continuation/next_link autorest PR is merged
-        def get_next(cont_token=None):
-            cont_token = cont_token if not continuation else continuation
-            request = prepare_request(cont_token=cont_token)
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
 
             pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
+
         return ItemPaged(
             get_next, extract_data
         )
-
     list_paths.metadata = {'url': '/{filesystem}'}  # type: ignore
 
+    @distributed_trace
     def list_blob_hierarchy_segment(
         self,
         prefix=None,  # type: Optional[str]
@@ -566,8 +792,9 @@ class FileSystemOperations(object):
          response.
         :type showonly: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -582,50 +809,31 @@ class FileSystemOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        restype = "container"
-        comp = "list"
-        accept = "application/xml"
 
-        # Construct URL
-        url = self.list_blob_hierarchy_segment.metadata['url']  # type: ignore
         path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        _url = self._client.format_url(self.list_blob_hierarchy_segment.metadata['url'], **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['restype'] = self._serialize.query("restype", restype, 'str')
-        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
-        if prefix is not None:
-            query_parameters['prefix'] = self._serialize.query("prefix", prefix, 'str')
-        if delimiter is not None:
-            query_parameters['delimiter'] = self._serialize.query("delimiter", delimiter, 'str')
-        if marker is not None:
-            query_parameters['marker'] = self._serialize.query("marker", marker, 'str')
-        if max_results is not None:
-            query_parameters['maxResults'] = self._serialize.query("max_results", max_results, 'int', minimum=1)
-        if include is not None:
-            query_parameters['include'] = self._serialize.query("include", include, '[str]', div=',')
-        if showonly is not None:
-            query_parameters['showonly'] = self._serialize.query("showonly", showonly, 'str')
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        request = build_list_blob_hierarchy_segment_request(
+            prefix=prefix,
+            delimiter=delimiter,
+            marker=marker,
+            max_results=max_results,
+            include=include,
+            showonly=showonly,
+            timeout=timeout,
+            request_id_parameter=request_id_parameter,
+            template_url=_url,
+        )
+        request = _convert_request(request)
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
-        if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -634,10 +842,13 @@ class FileSystemOperations(object):
         response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
         response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+
         deserialized = self._deserialize('ListBlobsHierarchySegmentResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
+
     list_blob_hierarchy_segment.metadata = {'url': '/{filesystem}'}  # type: ignore
+
