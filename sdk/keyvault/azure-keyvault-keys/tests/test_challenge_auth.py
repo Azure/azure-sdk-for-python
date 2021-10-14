@@ -74,7 +74,8 @@ def test_challenge_cache():
 
 
 def test_challenge_parsing():
-    authority = "https://login.authority.net/tenant"
+    tenant = "tenant"
+    authority = "https://login.authority.net/{}".format(tenant)
     resource = "https://challenge.resource"
     challenge = HttpChallenge(
         "https://request.uri", challenge="Bearer authorization={}, resource={}".format(authority, resource)
@@ -82,6 +83,7 @@ def test_challenge_parsing():
 
     assert challenge.get_authorization_server() == authority
     assert challenge.get_resource() == resource
+    assert challenge.get_tenant_id() == tenant
 
 
 @empty_challenge_cache
@@ -111,7 +113,7 @@ def test_scope():
                 return Mock(status_code=200)
             raise ValueError("unexpected request")
 
-        def get_token(*scopes):
+        def get_token(*scopes, **_):
             assert len(scopes) == 1
             assert scopes[0] == expected_scope
             return AccessToken(expected_token, 0)
@@ -141,6 +143,56 @@ def test_scope():
 
     test_with_challenge(challenge_with_resource, scope)
     test_with_challenge(challenge_with_scope, scope)
+
+
+@empty_challenge_cache
+def test_tenant():
+    """The policy's token requests should pass the parsed tenant ID from the challenge"""
+
+    expected_content = b"a duck"
+
+    def test_with_challenge(challenge, expected_tenant):
+        expected_token = "expected_token"
+
+        class Requests:
+            count = 0
+
+        def send(request):
+            Requests.count += 1
+            if Requests.count == 1:
+                # first request should be unauthorized and have no content
+                assert not request.body
+                assert request.headers["Content-Length"] == "0"
+                return challenge
+            elif Requests.count == 2:
+                # second request should be authorized according to challenge and have the expected content
+                assert request.headers["Content-Length"]
+                assert request.body == expected_content
+                assert expected_token in request.headers["Authorization"]
+                return Mock(status_code=200)
+            raise ValueError("unexpected request")
+
+        def get_token(*_, **kwargs):
+            assert kwargs.get("tenant_id") == expected_tenant
+            return AccessToken(expected_token, 0)
+
+        credential = Mock(get_token=Mock(wraps=get_token))
+        pipeline = Pipeline(policies=[ChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
+        request = HttpRequest("POST", get_random_url())
+        request.set_bytes_body(expected_content)
+        pipeline.run(request)
+
+        assert credential.get_token.call_count == 1
+
+    tenant = "tenant-id"
+    endpoint = "https://authority.net/{}".format(tenant)
+
+    challenge = Mock(
+        status_code=401,
+        headers={"WWW-Authenticate": 'Bearer authorization="{}", resource=https://challenge.resource'.format(endpoint)},
+    )
+
+    test_with_challenge(challenge, tenant)
 
 
 @empty_challenge_cache

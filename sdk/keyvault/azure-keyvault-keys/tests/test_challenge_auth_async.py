@@ -65,7 +65,7 @@ async def test_scope():
                 return Mock(status_code=200)
             raise ValueError("unexpected request")
 
-        async def get_token(*scopes):
+        async def get_token(*scopes, **_):
             assert len(scopes) == 1
             assert scopes[0] == expected_scope
             return AccessToken(expected_token, 0)
@@ -95,6 +95,57 @@ async def test_scope():
 
     await test_with_challenge(challenge_with_resource, scope)
     await test_with_challenge(challenge_with_scope, scope)
+
+
+@pytest.mark.asyncio
+@empty_challenge_cache
+async def test_tenant():
+    """The policy's token requests should pass the parsed tenant ID from the challenge"""
+
+    expected_content = b"a duck"
+
+    async def test_with_challenge(challenge, expected_tenant):
+        expected_token = "expected_token"
+
+        class Requests:
+            count = 0
+
+        async def send(request):
+            Requests.count += 1
+            if Requests.count == 1:
+                # first request should be unauthorized and have no content
+                assert not request.body
+                assert request.headers["Content-Length"] == "0"
+                return challenge
+            elif Requests.count == 2:
+                # second request should be authorized according to challenge and have the expected content
+                assert request.headers["Content-Length"]
+                assert request.body == expected_content
+                assert expected_token in request.headers["Authorization"]
+                return Mock(status_code=200)
+            raise ValueError("unexpected request")
+
+        async def get_token(*_, **kwargs):
+            assert kwargs.get("tenant_id") == expected_tenant
+            return AccessToken(expected_token, 0)
+
+        credential = Mock(get_token=Mock(wraps=get_token))
+        pipeline = AsyncPipeline(policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
+        request = HttpRequest("POST", get_random_url())
+        request.set_bytes_body(expected_content)
+        await pipeline.run(request)
+
+        assert credential.get_token.call_count == 1
+
+    tenant = "tenant-id"
+    endpoint = "https://authority.net/{}".format(tenant)
+
+    challenge = Mock(
+        status_code=401,
+        headers={"WWW-Authenticate": 'Bearer authorization="{}", resource=https://challenge.resource'.format(endpoint)},
+    )
+
+    await test_with_challenge(challenge, tenant)
 
 
 @pytest.mark.asyncio
