@@ -18,8 +18,13 @@ steps:
   - checkout: self
   - checkout: azure-sdk-tools
 
-  - script: dotnet run -- run --help
-    displayName: Run perf tests
+  - pwsh: |
+      set-content -path config.yml -value "WorkingDirectories:"
+      add-content -path config.yml -value "  Python: $(Agent.BuildDirectory)/azure-sdk-for-python"
+    workingDirectory: azure-sdk-tools/tools/perf-automation/Azure.Sdk.Tools.PerfAutomation
+    displayName: Create config.yml
+
+  - script: dotnet run -- run --no-sync -l python -s "^storage-blob$" -t "^(download|upload|list-blobs)$" -a "warmup 0"
     workingDirectory: azure-sdk-tools/tools/perf-automation/Azure.Sdk.Tools.PerfAutomation
     env:
       AZURE_STORAGE_ACCOUNT_KEY: $(azure-storage-account-key)
@@ -27,3 +32,6 @@ steps:
       AZURE_STORAGE_CONNECTION_STRING: $(azure-storage-connection-string)
       STANDARD_STORAGE_CONNECTION_STRING: $(standard-storage-connection-string)
       STORAGE_CONNECTION_STRING: $(storage-connection-string)
+    displayName: Run perf tests
+
+  # TODO: Add results.json to build artifacts
