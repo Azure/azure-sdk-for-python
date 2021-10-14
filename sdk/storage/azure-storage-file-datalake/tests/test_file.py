@@ -114,6 +114,7 @@ class FileTest(StorageTestCase):
         self.assertTrue(file_client1.exists())
         self.assertFalse(file_client2.exists())
 
+
     @DataLakePreparer()
     def test_create_file_using_oauth_token_credential(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
