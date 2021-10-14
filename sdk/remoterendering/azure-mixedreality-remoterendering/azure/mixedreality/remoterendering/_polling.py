@@ -132,7 +132,7 @@ class ConversionPolling(RemoteRenderingPolling):
 
 
 class SessionPolling(RemoteRenderingPolling):
-    def __init__(self, account_id, polling_interval=5):
+    def __init__(self, account_id, polling_interval=2):
         # type: (str, int) -> None
         def is_terminated(status):
             return status in [
