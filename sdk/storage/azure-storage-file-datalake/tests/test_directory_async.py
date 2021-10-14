@@ -23,13 +23,9 @@ from azure.storage.filedatalake.aio import DataLakeServiceClient, DataLakeDirect
 from azure.storage.filedatalake import AccessControlChangeResult, AccessControlChangeCounters
 from azure.storage.filedatalake._serialize import _SUPPORTED_API_VERSIONS
 
-from asynctestcase import (
-    StorageTestCase,
-)
-
+from devtools_testutils.storage.aio import AsyncStorageTestCase as StorageTestCase
+from settings.testcase import DataLakePreparer
 # ------------------------------------------------------------------------------
-from testcase import DataLakePreparer
-
 TEST_DIRECTORY_PREFIX = 'directory'
 REMOVE_ACL = "mask," + "default:user,default:group," + \
              "user:ec3595d6-2c17-4696-8caa-7e139758d24a,group:ec3595d6-2c17-4696-8caa-7e139758d24a," + \
@@ -53,7 +49,7 @@ class AiohttpTestTransport(AioHttpTransport):
 
 class DirectoryTest(StorageTestCase):
     async def _setUp(self, account_name, account_key):
-        url = self._get_account_url(account_name)
+        url = self.account_url(account_name, 'dfs')
         self.dsc = DataLakeServiceClient(url, credential=account_key,
                                          transport=AiohttpTestTransport())
         self.config = self.dsc._config
