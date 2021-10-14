@@ -29,7 +29,7 @@ In order to follow this tutorial it is highly recommended that you [link your st
 Install the Azure Remote Rendering client library for Python with [pip][pip]:
 
 ```bash
-pip install --pre azure-remote-rendering
+pip install --pre azure-mixedreality-remoterendering
 ```
 
 ## Create and authenticate the client
