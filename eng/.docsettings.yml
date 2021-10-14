@@ -10,6 +10,7 @@ omitted_paths:
   - sdk/identity/azure-identity/tests/*
   - sdk/**/tests/perfstress_tests/*
   - sdk/nspkg/*
+  - sdk/**/swagger/*
 
 language: python
 root_check_enabled: True
@@ -77,6 +78,7 @@ known_content_issues:
   - ['sdk/servicebus/azure-servicebus/tests/perf_tests/README.md', '#4554']
   - ['sdk/servicefabric/azure-servicefabric/README.md', '#4554']
   - ['sdk/storage/azure-storage-blob/swagger/README.md', '#4554']
+  - ['cognitivelanguage/azure-ai-language-questionanswering/swagger/README.md', '#4554']
   - ['sdk/storage/azure-storage-file-datalake/swagger/README.md', '#4554']
   - ['sdk/storage/azure-storage-file-share/swagger/README.md', '#4554']
   - ['sdk/storage/azure-storage/README.md', '#4554']
@@ -91,6 +93,7 @@ known_content_issues:
   - ['sdk/purview/azure-purview-catalog/swagger/README.md',  '#4554']
   - ['sdk/purview/azure-purview-scanning/swagger/README.md',  '#4554']
   - ['sdk/agrifood/azure-agrifood-farming/swagger/README.md',  '#4554']
+  - ['sdk/purview/azure-purview-account/swagger/README.md', '#4554']
   - ['sdk/containerregistry/azure-containerregistry/swagger/README.md', '#4554']
   - ['sdk/appconfiguration/azure-appconfiguration/swagger/README.md', '#4554']
   - ['sdk/attestation/azure-security-attestation/swagger/README.md', '#4554']

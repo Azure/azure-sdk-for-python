@@ -3,19 +3,17 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import functools
-import time
 
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
-from azure.identity._constants import EnvironmentVariables, DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
+from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal import AadClient, AadClientCertificate
-from azure.core.credentials import AccessToken
 
 import pytest
 from msal import TokenCache
 from six.moves.urllib_parse import urlparse
 
 from helpers import build_aad_response, mock_response
-from test_certificate_credential import CERT_PATH
+from test_certificate_credential import PEM_CERT_PATH
 
 try:
     from unittest.mock import Mock, patch
@@ -224,7 +222,7 @@ def test_retries_token_requests():
     transport.send.reset_mock()
 
     with pytest.raises(ServiceRequestError, match=message):
-        client.obtain_token_by_client_certificate("", AadClientCertificate(open(CERT_PATH, "rb").read()))
+        client.obtain_token_by_client_certificate("", AadClientCertificate(open(PEM_CERT_PATH, "rb").read()))
     assert transport.send.call_count > 1
     transport.send.reset_mock()
 
@@ -234,9 +232,13 @@ def test_retries_token_requests():
     transport.send.reset_mock()
 
     with pytest.raises(ServiceRequestError, match=message):
-        client.obtain_token_by_refresh_token("", "")
+        client.obtain_token_by_jwt_assertion("", "")
     assert transport.send.call_count > 1
     transport.send.reset_mock()
+
+    with pytest.raises(ServiceRequestError, match=message):
+        client.obtain_token_by_refresh_token("", "")
+    assert transport.send.call_count > 1
 
 
 def test_shared_cache():
@@ -302,11 +304,7 @@ def test_multitenant_cache():
     assert client_b.get_cached_access_token([scope]) is None
 
     # but C allows multitenant auth and should therefore return the token from tenant_a when appropriate
-    client_c = AadClient(tenant_id=tenant_c, allow_multitenant_authentication=True, **common_args)
+    client_c = AadClient(tenant_id=tenant_c, **common_args)
     assert client_c.get_cached_access_token([scope]) is None
     token = client_c.get_cached_access_token([scope], tenant_id=tenant_a)
     assert token.token == expected_token
-    with patch.dict(
-        "os.environ", {EnvironmentVariables.AZURE_IDENTITY_ENABLE_LEGACY_TENANT_SELECTION: "true"}, clear=True
-    ):
-        assert client_c.get_cached_access_token([scope], tenant_id=tenant_a) is None

@@ -1,19 +1,26 @@
 # Release History
 
-## 5.2.0b1 (Unreleased)
+## 5.2.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 5.2.0b1 (2021-08-09)
 
 This version of the SDK defaults to the latest supported API version, which currently is `v3.2-preview.1`.
 
 ### Features Added
 - Added support for Extractive Summarization actions through the `ExtractSummaryAction` type.
 
-### Breaking Changes
-
 ### Bugs Fixed
 - `RecognizePiiEntitiesAction` option `disable_service_logs` now correctly defaults to `True`.
 
 ### Other Changes
-
 - Python 3.5 is no longer supported.
 
 ## 5.1.0 (2021-07-07)

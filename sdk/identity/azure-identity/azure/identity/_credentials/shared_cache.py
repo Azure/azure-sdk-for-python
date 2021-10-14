@@ -34,10 +34,6 @@ class SharedTokenCacheCredential(object):
     :keyword cache_persistence_options: configuration for persistent token caching. If not provided, the credential
         will use the persistent cache shared by Microsoft development applications
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
-    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
-        the user is registered in. When False, which is the default, the credential will acquire tokens only from the
-        user's home tenant or, if a value was given for **authentication_record**, the tenant specified by the
-        :class:`AuthenticationRecord`.
     """
 
     def __init__(self, username=None, **kwargs):
@@ -47,6 +43,18 @@ class SharedTokenCacheCredential(object):
             self._credential = SilentAuthenticationCredential(**kwargs)  # type: TokenCredential
         else:
             self._credential = _SharedTokenCacheCredential(username=username, **kwargs)
+
+    def __enter__(self):
+        self._credential.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._credential.__exit__(*args)
+
+    def close(self):
+        # type: () -> None
+        """Close the credential's transport session."""
+        self.__exit__()
 
     @log_get_token("SharedTokenCacheCredential")
     def get_token(self, *scopes, **kwargs):
@@ -83,6 +91,15 @@ class SharedTokenCacheCredential(object):
 
 class _SharedTokenCacheCredential(SharedTokenCacheBase):
     """The original SharedTokenCacheCredential, which doesn't use msal.ClientApplication"""
+
+    def __enter__(self):
+        if self._client:
+            self._client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        if self._client:
+            self._client.__exit__(*args)
 
     def get_token(self, *scopes, **kwargs):
         # type (*str, **Any) -> AccessToken

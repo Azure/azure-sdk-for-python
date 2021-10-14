@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_purview_scanning_client import PurviewScanningClient
+from ._purview_scanning_client import PurviewScanningClient
 __all__ = ['PurviewScanningClient']

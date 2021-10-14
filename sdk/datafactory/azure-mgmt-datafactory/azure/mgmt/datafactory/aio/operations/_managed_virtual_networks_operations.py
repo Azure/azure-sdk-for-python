@@ -45,7 +45,7 @@ class ManagedVirtualNetworksOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagedVirtualNetworkListResponse"]:
         """Lists managed Virtual Networks.
 
@@ -122,7 +122,7 @@ class ManagedVirtualNetworksOperations:
         managed_virtual_network_name: str,
         managed_virtual_network: "_models.ManagedVirtualNetworkResource",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedVirtualNetworkResource":
         """Creates or updates a managed Virtual Network.
 
@@ -197,7 +197,7 @@ class ManagedVirtualNetworksOperations:
         factory_name: str,
         managed_virtual_network_name: str,
         if_none_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedVirtualNetworkResource":
         """Gets a managed Virtual Network.
 

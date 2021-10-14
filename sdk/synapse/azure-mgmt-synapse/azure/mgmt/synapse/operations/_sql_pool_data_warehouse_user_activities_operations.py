@@ -75,14 +75,14 @@ class SqlPoolDataWarehouseUserActivitiesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
             'dataWarehouseUserActivityName': self._serialize.url("data_warehouse_user_activity_name", data_warehouse_user_activity_name, 'str'),

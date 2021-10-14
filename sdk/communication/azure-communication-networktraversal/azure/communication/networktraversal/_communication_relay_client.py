@@ -7,7 +7,6 @@
 from typing import TYPE_CHECKING, Any
 
 from azure.core.tracing.decorator import distributed_trace
-from azure.communication.identity import CommunicationUserIdentifier
 
 from ._generated._communication_network_traversal_client\
     import CommunicationNetworkTraversalClient\
@@ -18,6 +17,7 @@ from ._generated.models import CommunicationRelayConfiguration
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+    from azure.communication.identity import CommunicationUserIdentifier
 
 class CommunicationRelayClient(object):
     """Azure Communication Services Relay client.
@@ -85,7 +85,7 @@ class CommunicationRelayClient(object):
     @distributed_trace
     def get_relay_configuration(
             self,
-            user, # type: CommunicationUserIdentifier
+            user=None, # type: CommunicationUserIdentifier
             **kwargs # type: Any
     ):
         # type: (Any) -> CommunicationRelayConfiguration
@@ -94,6 +94,9 @@ class CommunicationRelayClient(object):
         :return: CommunicationRelayConfiguration
         :rtype: ~azure.communication.networktraversal.CommunicationRelayConfiguration
         """
+        if user is None:
+            return self._network_traversal_service_client.communication_network_traversal.issue_relay_configuration(
+                None, **kwargs)
         return self._network_traversal_service_client.communication_network_traversal.issue_relay_configuration(
             user.properties['id'],
             **kwargs)

@@ -45,7 +45,7 @@ class ManagementPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         management_policy_name: Union[str, "_models.ManagementPolicyName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagementPolicy":
         """Gets the managementpolicy associated with the specified storage account.
 
@@ -112,7 +112,7 @@ class ManagementPoliciesOperations:
         account_name: str,
         management_policy_name: Union[str, "_models.ManagementPolicyName"],
         properties: "_models.ManagementPolicy",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagementPolicy":
         """Sets the managementpolicy to the specified storage account.
 
@@ -185,7 +185,7 @@ class ManagementPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         management_policy_name: Union[str, "_models.ManagementPolicyName"],
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the managementpolicy associated with the specified storage account.
 

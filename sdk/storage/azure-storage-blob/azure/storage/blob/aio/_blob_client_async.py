@@ -65,8 +65,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
     :keyword str api_version:
-        The Storage API version to use for requests. Default value is '2019-07-07'.
-        Setting to an older version may result in reduced feature compatibility.
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
         .. versionadded:: 12.2.0
 
@@ -120,8 +120,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             credential=credential,
             **kwargs)
         self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
-        default_api_version = self._client._config.version  # pylint: disable=protected-access
-        self._client._config.version = get_api_version(kwargs, default_api_version)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
     @distributed_trace_async
     async def get_account_information(self, **kwargs): # type: ignore
@@ -847,7 +846,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     @distributed_trace_async
     async def set_legal_hold(self, legal_hold, **kwargs):
-        # type: (**Any) -> Dict[str, Union[str, datetime, bool]]
+        # type: (bool, **Any) -> Dict[str, Union[str, datetime, bool]]
         """The Set Legal Hold operation sets a legal hold on the blob.
 
         .. versionadded:: 12.10.0
@@ -858,7 +857,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Key value pairs of blob tags.
-        :rtype: Dict[str, str]
+        :rtype: Dict[str, Union[str, datetime, bool]]
         """
 
         return await self._client.blob.set_legal_hold(legal_hold, cls=return_response_headers, **kwargs)

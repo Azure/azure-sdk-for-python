@@ -48,7 +48,7 @@ from .._models import (
     AnalyzeSentimentAction,
     AnalyzeHealthcareEntitiesResult,
     ExtractSummaryAction,
-    ExtractSummaryResult
+    ExtractSummaryResult,
 )
 from .._lro import TextAnalyticsOperationResourcePolling
 from ._lro_async import (
@@ -850,7 +850,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 RecognizePiiEntitiesAction,
                 ExtractKeyPhrasesAction,
                 AnalyzeSentimentAction,
-                ExtractSummaryAction
+                ExtractSummaryAction,
             ]
         ],  # pylint: disable=line-too-long
         **kwargs: Any,
@@ -913,7 +913,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :rtype:
             ~azure.ai.textanalytics.aio.AsyncAnalyzeActionsLROPoller[~azure.core.async_paging.AsyncItemPaged[
             list[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult,
-            ExtractKeyPhrasesResult, AnalyzeSentimentResult, ExtractSummaryAction, DocumentError]]]]
+            ExtractKeyPhrasesResult, AnalyzeSentimentResult, ExtractSummaryResult, DocumentError]]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. versionadded:: v3.1
@@ -935,7 +935,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         display_name = kwargs.pop("display_name", None)
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = self._client.models(api_version=self._api_version).MultiLanguageBatchInput(
+        docs = self._client.models(
+            api_version=self._api_version
+        ).MultiLanguageBatchInput(
             documents=_validate_input(documents, "language", language)
         )
         show_stats = kwargs.pop("show_stats", False)
@@ -948,9 +950,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             raise ValueError("Multiple of the same action is not currently supported.")
 
         try:
-            analyze_tasks = self._client.models(api_version=self._api_version).JobManifestTasks(
+            analyze_tasks = self._client.models(
+                api_version=self._api_version
+            ).JobManifestTasks(
                 entity_recognition_tasks=[
-                    t._to_generated(self._api_version)  # pylint: disable=protected-access
+                    t._to_generated(  # pylint: disable=protected-access
+                        self._api_version
+                    )
                     for t in [
                         a
                         for a in actions
@@ -959,7 +965,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     ]
                 ],
                 entity_recognition_pii_tasks=[
-                    t._to_generated(self._api_version)  # pylint: disable=protected-access
+                    t._to_generated(  # pylint: disable=protected-access
+                        self._api_version
+                    )
                     for t in [
                         a
                         for a in actions
@@ -968,7 +976,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     ]
                 ],
                 key_phrase_extraction_tasks=[
-                    t._to_generated(self._api_version)  # pylint: disable=protected-access
+                    t._to_generated(  # pylint: disable=protected-access
+                        self._api_version
+                    )
                     for t in [
                         a
                         for a in actions
@@ -977,7 +987,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     ]
                 ],
                 entity_linking_tasks=[
-                    t._to_generated(self._api_version)  # pylint: disable=protected-access
+                    t._to_generated(  # pylint: disable=protected-access
+                        self._api_version
+                    )
                     for t in [
                         a
                         for a in actions
@@ -986,7 +998,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     ]
                 ],
                 sentiment_analysis_tasks=[
-                    t._to_generated(self._api_version)  # pylint: disable=protected-access
+                    t._to_generated(  # pylint: disable=protected-access
+                        self._api_version
+                    )
                     for t in [
                         a
                         for a in actions
@@ -995,15 +1009,20 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     ]
                 ],
                 extractive_summarization_tasks=[
-                    t._to_generated(self._api_version)  # pylint: disable=protected-access
+                    t._to_generated(  # pylint: disable=protected-access
+                        self._api_version
+                    )
                     for t in [
                         a
                         for a in actions
-                        if _determine_action_type(a) == _AnalyzeActionsType.EXTRACT_SUMMARY
+                        if _determine_action_type(a)
+                        == _AnalyzeActionsType.EXTRACT_SUMMARY
                     ]
-                ]
+                ],
             )
-            analyze_body = self._client.models(api_version=self._api_version).AnalyzeBatchInput(
+            analyze_body = self._client.models(
+                api_version=self._api_version
+            ).AnalyzeBatchInput(
                 display_name=display_name, tasks=analyze_tasks, analysis_input=docs
             )
             return await self._client.begin_analyze(

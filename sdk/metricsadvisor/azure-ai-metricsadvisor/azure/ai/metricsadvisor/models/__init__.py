@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 
-from .._generated.models._microsoft_azure_metrics_advisor_restapi_open_ap_iv2_enums import (
+from .._generated.models import (
     SnoozeScope,
     Severity as AnomalySeverity,
     DataSourceType as DatasourceType,
@@ -41,7 +41,7 @@ from .._generated.models._microsoft_azure_metrics_advisor_restapi_open_ap_iv2_en
     FeedbackType,
     TimeMode as AlertQueryTimeMode,
     DataSourceCredentialType as DatasourceCredentialType,
-    AuthenticationTypeEnum as DatasourceAuthenticationType
+    AuthenticationTypeEnum as DatasourceAuthenticationType,
 )
 
 from .._generated.models import (
@@ -53,7 +53,7 @@ from .._generated.models import (
     MetricSeriesItem as MetricSeriesDefinition,
     IngestionStatus as DataFeedIngestionStatus,
     SeriesIdentity,
-    SeverityFilterCondition
+    SeverityFilterCondition,
 )
 
 from ._models import (

@@ -123,8 +123,7 @@ class HealthcareEntityRelation(str, Enum):
 
 
 class PiiEntityCategory(str, Enum):
-    """Categories of Personally Identifiable Information (PII).
-    """
+    """Categories of Personally Identifiable Information (PII)."""
 
     ABA_ROUTING_NUMBER = "ABARoutingNumber"
     AR_NATIONAL_IDENTITY_NUMBER = "ARNationalIdentityNumber"
@@ -506,10 +505,13 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
     @classmethod
     def _from_generated(cls, healthcare_result):
         entities = [
-            HealthcareEntity._from_generated(e) for e in healthcare_result.entities  # pylint: disable=protected-access
+            HealthcareEntity._from_generated(e)  # pylint: disable=protected-access
+            for e in healthcare_result.entities
         ]
         relations = [
-            HealthcareRelation._from_generated(r, entities)  # pylint: disable=protected-access
+            HealthcareRelation._from_generated(  # pylint: disable=protected-access
+                r, entities
+            )
             for r in healthcare_result.relations
         ]
 
@@ -518,7 +520,9 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
             entities=entities,
             entity_relations=relations,
             warnings=[
-                TextAnalyticsWarning._from_generated(w)  # pylint: disable=protected-access
+                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
+                    w
+                )
                 for w in healthcare_result.warnings
             ],
             statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
@@ -1291,7 +1295,8 @@ class LinkedEntity(DictMixin):
         return cls(
             name=entity.name,
             matches=[
-                LinkedEntityMatch._from_generated(e) for e in entity.matches  # pylint: disable=protected-access
+                LinkedEntityMatch._from_generated(e)  # pylint: disable=protected-access
+                for e in entity.matches
             ],
             language=entity.language,
             data_source_entity_id=entity.id,
@@ -1493,7 +1498,9 @@ class SentenceSentiment(DictMixin):
         if hasattr(sentence, "targets"):
             mined_opinions = (
                 [
-                    MinedOpinion._from_generated(target, results, sentiment)  # pylint: disable=protected-access
+                    MinedOpinion._from_generated(  # pylint: disable=protected-access
+                        target, results, sentiment
+                    )
                     for target in sentence.targets
                 ]
                 if sentence.targets
@@ -2080,7 +2087,7 @@ class RecognizeLinkedEntitiesAction(DictMixin):
 
 class ExtractSummaryAction(DictMixin):
     """ExtractSummaryAction encapsulates the parameters for starting a long-running Extractive
-     Text Summarization operation.
+    Text Summarization operation.
 
     :keyword str model_version: The model version to use for the analysis.
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
@@ -2115,11 +2122,11 @@ class ExtractSummaryAction(DictMixin):
     """
 
     def __init__(self, **kwargs):
-        self.model_version = kwargs.get('model_version', "latest")
+        self.model_version = kwargs.get("model_version", "latest")
         self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
         self.disable_service_logs = kwargs.get("disable_service_logs", False)
-        self.max_sentence_count = kwargs.get('max_sentence_count', 3)
-        self.order_by = kwargs.get('order_by', "Offset")
+        self.max_sentence_count = kwargs.get("max_sentence_count", 3)
+        self.order_by = kwargs.get("order_by", "Offset")
 
     def __repr__(self):
         return (
@@ -2129,7 +2136,7 @@ class ExtractSummaryAction(DictMixin):
                 self.string_index_type,
                 self.disable_service_logs,
                 self.max_sentence_count,
-                self.order_by
+                self.order_by,
             )[:1024]
         )
 
@@ -2140,7 +2147,7 @@ class ExtractSummaryAction(DictMixin):
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
                 sentence_count=self.max_sentence_count,
-                sort_by=self.order_by
+                sort_by=self.order_by,
             )
         )
 
@@ -2161,37 +2168,38 @@ class ExtractSummaryResult(DictMixin):
         results. Always False for an instance of an ExtractSummaryResult.
     """
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        self.id = kwargs.get('id', None)
-        self.sentences = kwargs.get('sentences', None)
-        self.warnings = kwargs.get('warnings', None)
-        self.statistics = kwargs.get('statistics', None)
+    def __init__(self, **kwargs):
+        self.id = kwargs.get("id", None)
+        self.sentences = kwargs.get("sentences", None)
+        self.warnings = kwargs.get("warnings", None)
+        self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
     def __repr__(self):
-        return (
-            "ExtractSummaryResult(id={}, sentences={}, warnings={}, statistics={}, is_error={})".format(
-                self.id,
-                repr(self.sentences),
-                repr(self.warnings),
-                repr(self.statistics),
-                self.is_error
-            )[:1024]
-        )
+        return "ExtractSummaryResult(id={}, sentences={}, warnings={}, statistics={}, is_error={})".format(
+            self.id,
+            repr(self.sentences),
+            repr(self.warnings),
+            repr(self.statistics),
+            self.is_error,
+        )[
+            :1024
+        ]
 
     @classmethod
     def _from_generated(cls, summary):
         return cls(
             id=summary.id,
             sentences=[
-                SummarySentence._from_generated(sentence)  # pylint: disable=protected-access
+                SummarySentence._from_generated(  # pylint: disable=protected-access
+                    sentence
+                )
                 for sentence in summary.sentences
             ],
             warnings=[
-                TextAnalyticsWarning._from_generated(w)  # pylint: disable=protected-access
+                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
+                    w
+                )
                 for w in summary.warnings
             ],
             statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
@@ -2214,24 +2222,19 @@ class SummarySentence(DictMixin):
         by default.
     """
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        self.text = kwargs.get('text', None)
-        self.rank_score = kwargs.get('rank_score', None)
-        self.offset = kwargs.get('offset', None)
-        self.length = kwargs.get('length', None)
+    def __init__(self, **kwargs):
+        self.text = kwargs.get("text", None)
+        self.rank_score = kwargs.get("rank_score", None)
+        self.offset = kwargs.get("offset", None)
+        self.length = kwargs.get("length", None)
 
     def __repr__(self):
-        return (
-            "SummarySentence(text={}, rank_score={}, offset={}, length={})".format(
-                self.text,
-                self.rank_score,
-                self.offset,
-                self.length,
-            )[:1024]
-        )
+        return "SummarySentence(text={}, rank_score={}, offset={}, length={})".format(
+            self.text,
+            self.rank_score,
+            self.offset,
+            self.length,
+        )[:1024]
 
     @classmethod
     def _from_generated(cls, sentence):
@@ -2239,5 +2242,5 @@ class SummarySentence(DictMixin):
             text=sentence.text,
             rank_score=sentence.rank_score,
             offset=sentence.offset,
-            length=sentence.length
+            length=sentence.length,
         )

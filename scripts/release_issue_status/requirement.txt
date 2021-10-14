@@ -1,3 +1,7 @@
 PyGithub
 datetime
+requests
+bs4
 azure.storage.blob==12.8.1
+azure-devops 
+msrest

@@ -29,11 +29,11 @@ def sample_query_knowledgebase():
 
     endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
     key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
-    knowledgebase_project = os.environ["AZURE_QUESTIONANSWERING_PROJECT"]
+    knowledge_base_project = os.environ["AZURE_QUESTIONANSWERING_PROJECT"]
 
     client = QuestionAnsweringClient(endpoint, AzureKeyCredential(key))
     with client:
-        input = qna.KnowledgeBaseQueryOptions(
+        input = qna.QueryKnowledgeBaseOptions(
             question="How long should my Surface battery last?",
             top=3,
             confidence_score_threshold=0.2,
@@ -45,9 +45,9 @@ def sample_query_knowledgebase():
             ),
         )
 
-        output = client.query_knowledgebase(
+        output = client.query_knowledge_base(
             input,
-            project_name=knowledgebase_project,
+            project_name=knowledge_base_project,
             deployment_name="test"
         )
         best_candidate = [a for a in output.answers if a.confidence_score > 0.9][0]

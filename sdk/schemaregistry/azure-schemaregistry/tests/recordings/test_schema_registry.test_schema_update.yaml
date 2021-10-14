@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '"{\"namespace\":\"example.avro\",\"type\":\"record\",\"name\":\"User\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"favorite_number\",\"type\":[\"int\",\"null\"]},{\"name\":\"favorite_color\",\"type\":[\"string\",\"null\"]}]}"'
+    body: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}'
     headers:
       Accept:
       - application/json
@@ -9,46 +9,46 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '245'
+      - '201'
       Content-Type:
       - application/json
-      User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-      X-Schema-Type:
+      Serialization-Type:
       - Avro
+      User-Agent:
+      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update423f1009?api-version=2017-04
+    uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update423f1009?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"e956e8a205a741409cb30bad1b251358"}'
+      string: '{"id":"95e1b9b2b37f47ec8b5c3ad1cc8a59b0"}'
     headers:
       content-type:
       - application/json
       date:
-      - Thu, 12 Nov 2020 05:59:44 GMT
+      - Wed, 29 Sep 2021 16:52:38 GMT
       location:
-      - https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions/9?api-version=2017-04
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions/5?api-version=2020-09-01-preview
+      schema-id:
+      - 95e1b9b2b37f47ec8b5c3ad1cc8a59b0
+      schema-id-location:
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/95e1b9b2b37f47ec8b5c3ad1cc8a59b0?api-version=2020-09-01-preview
+      schema-version:
+      - '5'
+      schema-versions-location:
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/test-schema-update423f1009/versions?api-version=2020-09-01-preview
+      serialization-type:
+      - Avro
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000
       transfer-encoding:
       - chunked
-      x-schema-id:
-      - e956e8a205a741409cb30bad1b251358
-      x-schema-id-location:
-      - https://seankane.servicebus.windows.net:443/$schemagroups/getschemabyid/e956e8a205a741409cb30bad1b251358?api-version=2017-04
-      x-schema-type:
-      - Avro
-      x-schema-version:
-      - '9'
-      x-schema-versions-location:
-      - https://seankane.servicebus.windows.net:443/$schemagroups/azsdk_net_test_group/schemas/test-schema-update423f1009/versions?api-version=2017-04
     status:
       code: 200
       message: OK
 - request:
-    body: '"{\"namespace\":\"example.avro\",\"type\":\"record\",\"name\":\"User\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"favorite_number\",\"type\":[\"int\",\"null\"]},{\"name\":\"favorite_food\",\"type\":[\"string\",\"null\"]}]}"'
+    body: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_food","type":["string","null"]}]}'
     headers:
       Accept:
       - application/json
@@ -57,41 +57,41 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '244'
+      - '200'
       Content-Type:
       - application/json
-      User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-      X-Schema-Type:
+      Serialization-Type:
       - Avro
+      User-Agent:
+      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update423f1009?api-version=2017-04
+    uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update423f1009?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"d3d41c40740d4d0291522954417ea9a5"}'
+      string: '{"id":"15ccba13dd0f4491aaebaa0d5d1c8269"}'
     headers:
       content-type:
       - application/json
       date:
-      - Thu, 12 Nov 2020 05:59:45 GMT
+      - Wed, 29 Sep 2021 16:52:38 GMT
       location:
-      - https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions/10?api-version=2017-04
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions/6?api-version=2020-09-01-preview
+      schema-id:
+      - 15ccba13dd0f4491aaebaa0d5d1c8269
+      schema-id-location:
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/15ccba13dd0f4491aaebaa0d5d1c8269?api-version=2020-09-01-preview
+      schema-version:
+      - '6'
+      schema-versions-location:
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/test-schema-update423f1009/versions?api-version=2020-09-01-preview
+      serialization-type:
+      - Avro
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000
       transfer-encoding:
       - chunked
-      x-schema-id:
-      - d3d41c40740d4d0291522954417ea9a5
-      x-schema-id-location:
-      - https://seankane.servicebus.windows.net:443/$schemagroups/getschemabyid/d3d41c40740d4d0291522954417ea9a5?api-version=2017-04
-      x-schema-type:
-      - Avro
-      x-schema-version:
-      - '10'
-      x-schema-versions-location:
-      - https://seankane.servicebus.windows.net:443/$schemagroups/azsdk_net_test_group/schemas/test-schema-update423f1009/versions?api-version=2017-04
     status:
       code: 200
       message: OK
@@ -99,41 +99,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - text/plain; charset=utf-8
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/d3d41c40740d4d0291522954417ea9a5?api-version=2017-04
+    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/15ccba13dd0f4491aaebaa0d5d1c8269?api-version=2020-09-01-preview
   response:
     body:
-      string: '"{\"namespace\":\"example.avro\",\"type\":\"record\",\"name\":\"User\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"favorite_number\",\"type\":[\"int\",\"null\"]},{\"name\":\"favorite_food\",\"type\":[\"string\",\"null\"]}]}"'
+      string: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_food","type":["string","null"]}]}'
     headers:
       content-type:
       - application/json
       date:
-      - Thu, 12 Nov 2020 05:59:45 GMT
+      - Wed, 29 Sep 2021 16:52:38 GMT
       location:
-      - https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions/10?api-version=2017-04
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions/6?api-version=2020-09-01-preview
+      schema-id:
+      - 15ccba13dd0f4491aaebaa0d5d1c8269
+      schema-id-location:
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/15ccba13dd0f4491aaebaa0d5d1c8269?api-version=2020-09-01-preview
+      schema-version:
+      - '6'
+      schema-versions-location:
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/test-schema-update423f1009/versions?api-version=2020-09-01-preview
+      serialization-type:
+      - Avro
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000
       transfer-encoding:
       - chunked
-      x-schema-id:
-      - d3d41c40740d4d0291522954417ea9a5
-      x-schema-id-location:
-      - https://seankane.servicebus.windows.net:443/$schemagroups/getschemabyid/d3d41c40740d4d0291522954417ea9a5?api-version=2017-04
-      x-schema-type:
-      - Avro
-      x-schema-version:
-      - '10'
-      x-schema-versions-location:
-      - https://seankane.servicebus.windows.net:443/$schemagroups/azsdk_net_test_group/schemas/test-schema-update423f1009/versions?api-version=2017-04
     status:
       code: 200
       message: OK

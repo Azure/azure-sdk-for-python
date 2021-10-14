@@ -46,10 +46,12 @@ class SearchIndexClient(HeadersMixin):
 
     _ODATA_ACCEPT = "application/json;odata.metadata=minimal"  # type: str
 
-    def __init__(self, endpoint: str,
-                 credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
-                 **kwargs
-                 ) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        **kwargs
+    ) -> None:
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._endpoint = normalize_endpoint(endpoint)  # type: str
         self._credential = credential
@@ -83,9 +85,7 @@ class SearchIndexClient(HeadersMixin):
 
     async def close(self):
         # type: () -> None
-        """Close the :class:`~azure.search.documents.indexes.aio.SearchIndexClient` session.
-
-        """
+        """Close the :class:`~azure.search.documents.indexes.aio.SearchIndexClient` session."""
         return await self._client.close()
 
     def get_search_client(self, index_name, **kwargs):
@@ -111,7 +111,9 @@ class SearchIndexClient(HeadersMixin):
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
 
         # pylint:disable=protected-access
-        return self._client.indexes.list(cls=lambda objs: [SearchIndex._from_generated(x) for x in  objs], **kwargs)
+        return self._client.indexes.list(
+            cls=lambda objs: [SearchIndex._from_generated(x) for x in objs], **kwargs
+        )
 
     @distributed_trace
     def list_index_names(self, **kwargs):
@@ -125,7 +127,9 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
 
-        return self._client.indexes.list(cls=lambda objs: [x.name for x in objs], **kwargs)
+        return self._client.indexes.list(
+            cls=lambda objs: [x.name for x in objs], **kwargs
+        )
 
     @distributed_trace_async
     async def get_index(self, name, **kwargs):
@@ -223,14 +227,12 @@ class SearchIndexClient(HeadersMixin):
                 :caption: Creating a new index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        patched_index = index._to_generated()   # pylint:disable=protected-access
+        patched_index = index._to_generated()  # pylint:disable=protected-access
         result = await self._client.indexes.create(patched_index, **kwargs)
         return result
 
     @distributed_trace_async
-    async def create_or_update_index(
-        self, index, allow_index_downtime=None, **kwargs
-    ):
+    async def create_or_update_index(self, index, allow_index_downtime=None, **kwargs):
         # type: (SearchIndex, bool, MatchConditions, **Any) -> SearchIndex
         """Creates a new search index or updates an index if it already exists.
 
@@ -266,7 +268,7 @@ class SearchIndexClient(HeadersMixin):
             index, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         kwargs.update(access_condition)
-        patched_index = index._to_generated()   # pylint:disable=protected-access
+        patched_index = index._to_generated()  # pylint:disable=protected-access
         result = await self._client.indexes.create_or_update(
             index_name=index.name,
             index=patched_index,
@@ -300,7 +302,9 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.indexes.analyze(
-            index_name=index_name, request=analyze_request._to_analyze_request(), **kwargs  # pylint:disable=protected-access
+            index_name=index_name,
+            request=analyze_request._to_analyze_request(),  # pylint:disable=protected-access
+            **kwargs
         )
         return result
 
@@ -365,7 +369,7 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.synonym_maps.get(name, **kwargs)
-        return SynonymMap._from_generated(result)   # pylint:disable=protected-access
+        return SynonymMap._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace_async
     async def delete_synonym_map(self, synonym_map, **kwargs):
@@ -426,9 +430,11 @@ class SearchIndexClient(HeadersMixin):
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        patched_synonym_map = synonym_map._to_generated()   # pylint:disable=protected-access
+        patched_synonym_map = (
+            synonym_map._to_generated()  # pylint:disable=protected-access
+        )
         result = await self._client.synonym_maps.create(patched_synonym_map, **kwargs)
-        return SynonymMap._from_generated(result)   # pylint:disable=protected-access
+        return SynonymMap._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace_async
     async def create_or_update_synonym_map(self, synonym_map, **kwargs):
@@ -449,21 +455,21 @@ class SearchIndexClient(HeadersMixin):
             synonym_map, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         kwargs.update(access_condition)
-        patched_synonym_map = synonym_map._to_generated()   # pylint:disable=protected-access
+        patched_synonym_map = (
+            synonym_map._to_generated()  # pylint:disable=protected-access
+        )
         result = await self._client.synonym_maps.create_or_update(
             synonym_map_name=synonym_map.name,
             synonym_map=patched_synonym_map,
             error_map=error_map,
             **kwargs
         )
-        return SynonymMap._from_generated(result)   # pylint:disable=protected-access
+        return SynonymMap._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace_async
     async def get_service_statistics(self, **kwargs):
         # type: (**Any) -> dict
-        """Get service level statistics for a search service.
-
-        """
+        """Get service level statistics for a search service."""
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.get_service_statistics(**kwargs)
         return result.as_dict()

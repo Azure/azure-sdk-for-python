@@ -159,9 +159,7 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType])
         """
         return self.polling_method().id
 
-    async def cancel(  # type: ignore
-        self, **kwargs
-    ) -> "AsyncLROPoller[None]":
+    async def cancel(self, **kwargs) -> "AsyncLROPoller[None]":  # type: ignore
         """Cancel the operation currently being polled.
 
         :keyword int polling_interval: The polling interval to use to poll the cancellation status.

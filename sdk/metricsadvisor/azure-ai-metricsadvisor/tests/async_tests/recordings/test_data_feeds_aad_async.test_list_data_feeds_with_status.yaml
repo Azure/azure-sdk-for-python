@@ -5,23 +5,23 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b5 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds?status=Paused
+    uri: https://ga-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds?status=Paused
   response:
     body:
       string: '{"value":[]}'
     headers:
-      apim-request-id: 7d497e06-8035-4701-8476-cb25262b71f1
+      apim-request-id: bd5ea9a9-b84a-4225-98a3-c6e51e7a52d0
       content-length: '12'
       content-type: application/json; charset=utf-8
-      date: Sat, 12 Jun 2021 00:06:18 GMT
+      date: Wed, 29 Sep 2021 19:41:27 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '37'
-      x-request-id: 7d497e06-8035-4701-8476-cb25262b71f1
+      x-envoy-upstream-service-time: '46'
+      x-request-id: bd5ea9a9-b84a-4225-98a3-c6e51e7a52d0
     status:
       code: 200
       message: OK
-    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/dataFeeds?status=Paused
+    url: https://ga-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/dataFeeds?status=Paused
 version: 1

@@ -46,7 +46,7 @@ class PrivateLinkHubsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PrivateLinkHubInfoListResult"]:
         """Returns a list of privateLinkHubs in a resource group.
 
@@ -62,7 +62,7 @@ class PrivateLinkHubsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -75,7 +75,7 @@ class PrivateLinkHubsOperations:
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -118,7 +118,7 @@ class PrivateLinkHubsOperations:
         self,
         resource_group_name: str,
         private_link_hub_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateLinkHub":
         """Gets a privateLinkHub.
 
@@ -136,14 +136,14 @@ class PrivateLinkHubsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateLinkHubName': self._serialize.url("private_link_hub_name", private_link_hub_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -178,7 +178,7 @@ class PrivateLinkHubsOperations:
         resource_group_name: str,
         private_link_hub_name: str,
         private_link_hub_patch_info: "_models.PrivateLinkHubPatchInfo",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateLinkHub":
         """Updates a privateLinkHub.
 
@@ -198,7 +198,7 @@ class PrivateLinkHubsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -206,7 +206,7 @@ class PrivateLinkHubsOperations:
         url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateLinkHubName': self._serialize.url("private_link_hub_name", private_link_hub_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -249,7 +249,7 @@ class PrivateLinkHubsOperations:
         resource_group_name: str,
         private_link_hub_name: str,
         private_link_hub_info: "_models.PrivateLinkHub",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateLinkHub":
         """Creates or updates a privateLinkHub.
 
@@ -269,7 +269,7 @@ class PrivateLinkHubsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -277,7 +277,7 @@ class PrivateLinkHubsOperations:
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateLinkHubName': self._serialize.url("private_link_hub_name", private_link_hub_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -319,21 +319,21 @@ class PrivateLinkHubsOperations:
         self,
         resource_group_name: str,
         private_link_hub_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateLinkHubName': self._serialize.url("private_link_hub_name", private_link_hub_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -364,7 +364,7 @@ class PrivateLinkHubsOperations:
         self,
         resource_group_name: str,
         private_link_hub_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a privateLinkHub.
 
@@ -374,8 +374,8 @@ class PrivateLinkHubsOperations:
         :type private_link_hub_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -406,7 +406,7 @@ class PrivateLinkHubsOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateLinkHubName': self._serialize.url("private_link_hub_name", private_link_hub_name, 'str'),
         }
 
@@ -426,7 +426,7 @@ class PrivateLinkHubsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PrivateLinkHubInfoListResult"]:
         """Returns a list of privateLinkHubs in a subscription.
 
@@ -440,7 +440,7 @@ class PrivateLinkHubsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):

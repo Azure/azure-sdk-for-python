@@ -48,7 +48,7 @@ class SqlPoolsOperations:
         resource_group_name: str,
         workspace_name: str,
         sql_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SqlPool":
         """Get SQL pool.
 
@@ -70,14 +70,14 @@ class SqlPoolsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
         }
@@ -114,7 +114,7 @@ class SqlPoolsOperations:
         workspace_name: str,
         sql_pool_name: str,
         sql_pool_info: "_models.SqlPoolPatchInfo",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.SqlPool"]:
         """Update SQL pool.
 
@@ -138,7 +138,7 @@ class SqlPoolsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -146,7 +146,7 @@ class SqlPoolsOperations:
         url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
         }
@@ -189,14 +189,14 @@ class SqlPoolsOperations:
         workspace_name: str,
         sql_pool_name: str,
         sql_pool_info: "_models.SqlPool",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.SqlPool"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SqlPool"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -204,7 +204,7 @@ class SqlPoolsOperations:
         url = self._create_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
         }
@@ -247,7 +247,7 @@ class SqlPoolsOperations:
         workspace_name: str,
         sql_pool_name: str,
         sql_pool_info: "_models.SqlPool",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.SqlPool"]:
         """Create SQL pool.
 
@@ -263,8 +263,8 @@ class SqlPoolsOperations:
         :type sql_pool_info: ~azure.mgmt.synapse.models.SqlPool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SqlPool or the result of cls(response)
@@ -300,7 +300,7 @@ class SqlPoolsOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
         }
@@ -324,21 +324,21 @@ class SqlPoolsOperations:
         resource_group_name: str,
         workspace_name: str,
         sql_pool_name: str,
-        **kwargs
-    ) -> Optional[object]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[object]]
+        **kwargs: Any
+    ) -> Optional[Any]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
         }
@@ -379,8 +379,8 @@ class SqlPoolsOperations:
         resource_group_name: str,
         workspace_name: str,
         sql_pool_name: str,
-        **kwargs
-    ) -> AsyncLROPoller[object]:
+        **kwargs: Any
+    ) -> AsyncLROPoller[Any]:
         """Delete SQL pool.
 
         Delete a SQL pool.
@@ -393,16 +393,16 @@ class SqlPoolsOperations:
         :type sql_pool_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either object or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[object]
+        :return: An instance of AsyncLROPoller that returns either any or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -429,7 +429,7 @@ class SqlPoolsOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
         }
@@ -452,7 +452,7 @@ class SqlPoolsOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SqlPoolInfoListResult"]:
         """List SQL pools.
 
@@ -472,7 +472,7 @@ class SqlPoolsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -485,7 +485,7 @@ class SqlPoolsOperations:
                 url = self.list_by_workspace.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -530,21 +530,21 @@ class SqlPoolsOperations:
         resource_group_name: str,
         workspace_name: str,
         sql_pool_name: str,
-        **kwargs
-    ) -> Optional[object]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[object]]
+        **kwargs: Any
+    ) -> Optional[Any]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
         url = self._pause_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
         }
@@ -582,8 +582,8 @@ class SqlPoolsOperations:
         resource_group_name: str,
         workspace_name: str,
         sql_pool_name: str,
-        **kwargs
-    ) -> AsyncLROPoller[object]:
+        **kwargs: Any
+    ) -> AsyncLROPoller[Any]:
         """Pause SQL pool.
 
         Pause a SQL pool.
@@ -596,16 +596,16 @@ class SqlPoolsOperations:
         :type sql_pool_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either object or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[object]
+        :return: An instance of AsyncLROPoller that returns either any or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -632,7 +632,7 @@ class SqlPoolsOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
         }
@@ -656,21 +656,21 @@ class SqlPoolsOperations:
         resource_group_name: str,
         workspace_name: str,
         sql_pool_name: str,
-        **kwargs
-    ) -> Optional[object]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[object]]
+        **kwargs: Any
+    ) -> Optional[Any]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
         url = self._resume_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
         }
@@ -708,8 +708,8 @@ class SqlPoolsOperations:
         resource_group_name: str,
         workspace_name: str,
         sql_pool_name: str,
-        **kwargs
-    ) -> AsyncLROPoller[object]:
+        **kwargs: Any
+    ) -> AsyncLROPoller[Any]:
         """Resume SQL pool.
 
         Resume a SQL pool.
@@ -722,16 +722,16 @@ class SqlPoolsOperations:
         :type sql_pool_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either object or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[object]
+        :return: An instance of AsyncLROPoller that returns either any or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -758,7 +758,7 @@ class SqlPoolsOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
         }
@@ -783,7 +783,7 @@ class SqlPoolsOperations:
         workspace_name: str,
         sql_pool_name: str,
         parameters: "_models.ResourceMoveDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Rename a SQL pool.
 
@@ -807,14 +807,14 @@ class SqlPoolsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self.rename.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
         }

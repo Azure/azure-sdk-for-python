@@ -18,7 +18,7 @@ from ._models import (
     DocumentTranslationError,
     TranslationGlossary,
     DocumentTranslationInput,
-    FileFormat,
+    DocumentTranslationFileFormat,
 )
 
 __VERSION__ = VERSION
@@ -30,7 +30,7 @@ __all__ = [
     "DocumentTranslationInput",
     "TranslationGlossary",
     "StorageInputType",
-    "FileFormat",
+    "DocumentTranslationFileFormat",
     "TranslationTarget",
     "TranslationStatus",
     "DocumentStatus",

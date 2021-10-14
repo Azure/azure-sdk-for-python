@@ -46,7 +46,7 @@ class IntegrationRuntimeNodesOperations:
         factory_name: str,
         integration_runtime_name: str,
         node_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SelfHostedIntegrationRuntimeNode":
         """Gets a self-hosted integration runtime node.
 
@@ -112,7 +112,7 @@ class IntegrationRuntimeNodesOperations:
         factory_name: str,
         integration_runtime_name: str,
         node_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a self-hosted integration runtime node.
 
@@ -176,7 +176,7 @@ class IntegrationRuntimeNodesOperations:
         integration_runtime_name: str,
         node_name: str,
         update_integration_runtime_node_request: "_models.UpdateIntegrationRuntimeNodeRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SelfHostedIntegrationRuntimeNode":
         """Updates a self-hosted integration runtime node.
 
@@ -250,7 +250,7 @@ class IntegrationRuntimeNodesOperations:
         factory_name: str,
         integration_runtime_name: str,
         node_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IntegrationRuntimeNodeIpAddress":
         """Get the IP address of self-hosted integration runtime node.
 

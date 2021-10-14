@@ -21,14 +21,11 @@ from azure.storage.filedatalake import ContentSettings, DirectorySasPermissions,
 from azure.storage.filedatalake import generate_directory_sas
 from azure.storage.filedatalake.aio import DataLakeServiceClient, DataLakeDirectoryClient
 from azure.storage.filedatalake import AccessControlChangeResult, AccessControlChangeCounters
+from azure.storage.filedatalake._serialize import _SUPPORTED_API_VERSIONS
 
-from asynctestcase import (
-    StorageTestCase,
-)
-
+from devtools_testutils.storage.aio import AsyncStorageTestCase as StorageTestCase
+from settings.testcase import DataLakePreparer
 # ------------------------------------------------------------------------------
-from testcase import DataLakePreparer
-
 TEST_DIRECTORY_PREFIX = 'directory'
 REMOVE_ACL = "mask," + "default:user,default:group," + \
              "user:ec3595d6-2c17-4696-8caa-7e139758d24a,group:ec3595d6-2c17-4696-8caa-7e139758d24a," + \
@@ -52,7 +49,7 @@ class AiohttpTestTransport(AioHttpTransport):
 
 class DirectoryTest(StorageTestCase):
     async def _setUp(self, account_name, account_key):
-        url = self._get_account_url(account_name)
+        url = self.account_url(account_name, 'dfs')
         self.dsc = DataLakeServiceClient(url, credential=account_key,
                                          transport=AiohttpTestTransport())
         self.config = self.dsc._config
@@ -1086,6 +1083,29 @@ class DirectoryTest(StorageTestCase):
         response = await directory_client.create_directory()
         self.assertIsNotNone(response)
 
+    @DataLakePreparer()
+    def test_using_directory_sas_to_create_file(self, datalake_storage_account_name, datalake_storage_account_key):
+        newest_api_version = _SUPPORTED_API_VERSIONS[-1]
+
+        service_client = DataLakeServiceClient("https://abc.dfs.core.windows.net", credential='fake')
+        filesys_client = service_client.get_file_system_client("filesys")
+        dir_client = DataLakeDirectoryClient("https://abc.dfs.core.windows.net", "filesys", "dir", credential='fake')
+        file_client = dir_client.get_file_client("file")
+        self.assertEqual(service_client.api_version, newest_api_version)
+        self.assertEqual(filesys_client.api_version, newest_api_version)
+        self.assertEqual(dir_client.api_version, newest_api_version)
+        self.assertEqual(file_client.api_version, newest_api_version)
+
+        service_client2 = DataLakeServiceClient("https://abc.dfs.core.windows.net", credential='fake',
+                                                api_version="2019-02-02")
+        filesys_client2 = service_client2.get_file_system_client("filesys")
+        dir_client2 = DataLakeDirectoryClient("https://abc.dfs.core.windows.net", "filesys", "dir", credential='fake',
+                                              api_version="2019-02-02")
+        file_client2 = dir_client2.get_file_client("file")
+        self.assertEqual(service_client2.api_version, "2019-02-02")
+        self.assertEqual(filesys_client2.api_version, "2019-02-02")
+        self.assertEqual(dir_client2.api_version, "2019-02-02")
+        self.assertEqual(file_client2.api_version, "2019-02-02")
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

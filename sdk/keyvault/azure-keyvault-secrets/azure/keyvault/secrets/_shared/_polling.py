@@ -33,11 +33,11 @@ class KeyVaultOperationPoller(LROPoller):
     # pylint: disable=arguments-differ
     def __init__(self, polling_method):
         # type: (PollingMethod) -> None
-        super(KeyVaultOperationPoller, self).__init__(None, None, None, NoPolling())
+        super(KeyVaultOperationPoller, self).__init__(None, None, lambda *_: None, NoPolling())
         self._polling_method = polling_method
 
     # pylint: disable=arguments-differ
-    def result(self):
+    def result(self):  # type: ignore
         # type: () -> Any
         """Returns a representation of the final resource without waiting for the operation to complete.
 
