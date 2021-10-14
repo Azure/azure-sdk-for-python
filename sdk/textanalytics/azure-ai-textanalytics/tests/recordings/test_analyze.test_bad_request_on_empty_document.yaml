@@ -2,10 +2,10 @@ interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [], "entityRecognitionPiiTasks": [],
       "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest", "loggingOptOut":
-      false}}], "entityLinkingTasks": [], "sentimentAnalysisTasks": [], "extractiveSummarizationTasks":
-      [], "customEntityRecognitionTasks": [], "customSingleClassificationTasks": [],
-      "customMultiClassificationTasks": []}, "analysisInput": {"documents": [{"id":
-      "0", "text": "", "language": "en"}]}}'
+      false}, "taskName": "0"}], "entityLinkingTasks": [], "sentimentAnalysisTasks":
+      [], "extractiveSummarizationTasks": [], "customEntityRecognitionTasks": [],
+      "customSingleClassificationTasks": [], "customMultiClassificationTasks": []},
+      "analysisInput": {"documents": [{"id": "0", "text": "", "language": "en"}]}}'
     headers:
       Accept:
       - application/json, text/json
@@ -14,7 +14,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '455'
+      - '472'
       Content-Type:
       - application/json
       User-Agent:
@@ -27,11 +27,11 @@ interactions:
         text is empty."}}}'
     headers:
       apim-request-id:
-      - 2d1db232-1e02-4b7a-9047-c464b3caa025
+      - 6eff5795-f82e-4f79-9aaf-19c0aa854ef4
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 Oct 2021 20:48:36 GMT
+      - Thu, 07 Oct 2021 23:39:26 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -39,7 +39,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '28'
+      - '666'
     status:
       code: 400
       message: Bad Request

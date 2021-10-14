@@ -8,6 +8,7 @@ This version of the SDK defaults to the latest supported API version, which curr
 - Added support for Custom Entities Recognition through the `begin_analyze_actions` API with the `RecognizeCustomEntitiesAction` and `RecognizeCustomEntitiesResult` types.
 - Added support for Custom Single Classification through the `begin_analyze_actions` API with the `SingleCategoryClassifyAction` and `SingleCategoryClassifyActionResult` types.
 - Added support for Custom Multi Classification through the `begin_analyze_actions` API with the `MultiCategoryClassifyAction` and `MultiCategoryClassifyActionResult` types.
+- Multiple of the same action type is now supported with `begin_analyze_actions`.
 
 ### Breaking Changes
 

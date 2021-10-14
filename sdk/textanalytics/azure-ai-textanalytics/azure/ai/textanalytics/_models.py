@@ -1798,7 +1798,7 @@ class RecognizeEntitiesAction(DictMixin):
             :1024
         ]
 
-    def _to_generated(self, api_version):
+    def _to_generated(self, api_version, task_id):
         if api_version == DEFAULT_API_VERSION:
             from ._generated.v3_2_preview_2 import models
         else:
@@ -1808,7 +1808,8 @@ class RecognizeEntitiesAction(DictMixin):
                 model_version=self.model_version,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
-            )
+            ),
+            task_name=task_id
         )
 
 
@@ -1875,7 +1876,7 @@ class AnalyzeSentimentAction(DictMixin):
             )[:1024]
         )
 
-    def _to_generated(self, api_version):
+    def _to_generated(self, api_version, task_id):
         if api_version == DEFAULT_API_VERSION:
             from ._generated.v3_2_preview_2 import models
         else:
@@ -1886,7 +1887,8 @@ class AnalyzeSentimentAction(DictMixin):
                 opinion_mining=self.show_opinion_mining,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
-            )
+            ),
+            task_name=task_id
         )
 
 
@@ -1957,7 +1959,7 @@ class RecognizePiiEntitiesAction(DictMixin):
             )[:1024]
         )
 
-    def _to_generated(self, api_version):
+    def _to_generated(self, api_version, task_id):
         if api_version == DEFAULT_API_VERSION:
             from ._generated.v3_2_preview_2 import models
         else:
@@ -1969,7 +1971,8 @@ class RecognizePiiEntitiesAction(DictMixin):
                 pii_categories=self.categories_filter,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
-            )
+            ),
+            task_name=task_id
         )
 
 
@@ -2012,7 +2015,7 @@ class ExtractKeyPhrasesAction(DictMixin):
             )[:1024]
         )
 
-    def _to_generated(self, api_version):
+    def _to_generated(self, api_version, task_id):
         if api_version == DEFAULT_API_VERSION:
             from ._generated.v3_2_preview_2 import models
         else:
@@ -2021,7 +2024,8 @@ class ExtractKeyPhrasesAction(DictMixin):
             parameters=models.KeyPhrasesTaskParameters(
                 model_version=self.model_version,
                 logging_opt_out=self.disable_service_logs,
-            )
+            ),
+            task_name=task_id
         )
 
 
@@ -2074,7 +2078,7 @@ class RecognizeLinkedEntitiesAction(DictMixin):
             )[:1024]
         )
 
-    def _to_generated(self, api_version):
+    def _to_generated(self, api_version, task_id):
         if api_version == DEFAULT_API_VERSION:
             from ._generated.v3_2_preview_2 import models
         else:
@@ -2084,7 +2088,8 @@ class RecognizeLinkedEntitiesAction(DictMixin):
                 model_version=self.model_version,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
-            )
+            ),
+            task_name=task_id
         )
 
 
@@ -2143,7 +2148,7 @@ class ExtractSummaryAction(DictMixin):
             )[:1024]
         )
 
-    def _to_generated(self, api_version):  # pylint: disable=unused-argument
+    def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
         return _v3_2_preview_models.ExtractiveSummarizationTask(
             parameters=_v3_2_preview_models.ExtractiveSummarizationTaskParameters(
                 model_version=self.model_version,
@@ -2151,7 +2156,8 @@ class ExtractSummaryAction(DictMixin):
                 logging_opt_out=self.disable_service_logs,
                 sentence_count=self.max_sentence_count,
                 sort_by=self.order_by,
-            )
+            ),
+            task_name=task_id
         )
 
 
@@ -2304,14 +2310,15 @@ class RecognizeCustomEntitiesAction(DictMixin):
             self.string_index_type,
         )[:1024]
 
-    def _to_generated(self, api_version):  # pylint: disable=unused-argument
+    def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
         return _v3_2_preview_models.CustomEntitiesTask(
             parameters=_v3_2_preview_models.CustomEntitiesTaskParameters(
                 project_name=self.project_name,
                 deployment_name=self.deployment_name,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
-            )
+            ),
+            task_name=task_id
         )
 
 
@@ -2417,13 +2424,14 @@ class MultiCategoryClassifyAction(DictMixin):
             self.disable_service_logs,
         )[:1024]
 
-    def _to_generated(self, api_version):  # pylint: disable=unused-argument
+    def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
         return _v3_2_preview_models.CustomMultiClassificationTask(
             parameters=_v3_2_preview_models.CustomMultiClassificationTaskParameters(
                 project_name=self.project_name,
                 deployment_name=self.deployment_name,
                 logging_opt_out=self.disable_service_logs,
-            )
+            ),
+            task_name=task_id
         )
 
 
@@ -2529,13 +2537,14 @@ class SingleCategoryClassifyAction(DictMixin):
             self.disable_service_logs,
         )[:1024]
 
-    def _to_generated(self, api_version):  # pylint: disable=unused-argument
+    def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
         return _v3_2_preview_models.CustomSingleClassificationTask(
             parameters=_v3_2_preview_models.CustomSingleClassificationTaskParameters(
                 project_name=self.project_name,
                 deployment_name=self.deployment_name,
                 logging_opt_out=self.disable_service_logs,
-            )
+            ),
+            task_name=task_id
         )
 
 

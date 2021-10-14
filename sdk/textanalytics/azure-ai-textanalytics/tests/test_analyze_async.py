@@ -834,20 +834,135 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
-    async def test_multiple_of_same_action_fail(self, client):
-        docs = [{"id": "1", "language": "en", "text": "I did not like the hotel we stayed at."},
-                {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at."}]
+    async def test_multiple_of_same_action(self, client):
+        docs = [
+            {"id": "28", "text": "My SSN is 859-98-0987. Here is another sentence."},
+            {"id": "3", "text": "Is 998.214.865-68 your Brazilian CPF number? Here is another sentence."},
+            {"id": "5", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+        ]
 
-        with pytest.raises(ValueError) as e:
-            await client.begin_analyze_actions(
+        actions = [
+            AnalyzeSentimentAction(),
+            RecognizePiiEntitiesAction(),
+            RecognizeEntitiesAction(),
+            RecognizeLinkedEntitiesAction(),
+            ExtractSummaryAction(order_by="Rank"),
+            RecognizePiiEntitiesAction(categories_filter=[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER]),
+            ExtractKeyPhrasesAction(),
+            RecognizeEntitiesAction(),
+            AnalyzeSentimentAction(show_opinion_mining=True),
+            RecognizeLinkedEntitiesAction(),
+            ExtractSummaryAction(max_sentence_count=1),
+            ExtractKeyPhrasesAction(),
+        ]
+        async with client:
+            response = await (await client.begin_analyze_actions(
                 docs,
-                actions=[
-                    RecognizePiiEntitiesAction(domain_filter="phi"),
-                    RecognizePiiEntitiesAction(),
-                ],
+                actions=actions,
                 polling_interval=self._interval(),
-            )
-        assert "Multiple of the same action is not currently supported." in str(e.value)
+            )).result()
+
+            action_results = []
+            async for p in response:
+                action_results.append(p)
+        assert len(action_results) == len(docs)
+        assert len(action_results[0]) == len(actions)
+        assert len(action_results[1]) == len(actions)
+        assert len(action_results[2]) == len(actions)
+
+        for idx, action_result in enumerate(action_results):
+            if idx == 0:
+                doc_id = "28"
+            elif idx == 1:
+                doc_id = "3"
+            else:
+                doc_id = "5"
+
+            assert isinstance(action_result[0], AnalyzeSentimentResult)
+            assert not all([sentence.mined_opinions for sentence in action_result[0].sentences])
+            assert action_result[0].id == doc_id
+
+            assert isinstance(action_result[1], RecognizePiiEntitiesResult)
+            assert action_result[1].id == doc_id
+
+            assert isinstance(action_result[2], RecognizeEntitiesResult)
+            assert action_result[2].id == doc_id
+
+            assert isinstance(action_result[3], RecognizeLinkedEntitiesResult)
+            assert action_result[3].id == doc_id
+
+            assert isinstance(action_result[4], ExtractSummaryResult)
+            previous_score = 1.0
+            for sentence in action_result[4].sentences:
+                assert sentence.rank_score <= previous_score
+                previous_score = sentence.rank_score
+            assert action_result[4].id == doc_id
+
+            assert isinstance(action_result[5], RecognizePiiEntitiesResult)
+            assert action_result[5].id == doc_id
+            if doc_id == "28":
+                assert action_result[5].entities
+            else:
+                assert not action_result[5].entities
+
+            assert isinstance(action_result[6], ExtractKeyPhrasesResult)
+            assert action_result[6].id == doc_id
+
+            assert isinstance(action_result[7], RecognizeEntitiesResult)
+            assert action_result[7].id == doc_id
+
+            assert isinstance(action_result[8], AnalyzeSentimentResult)
+            assert [sentence.mined_opinions for sentence in action_result[0].sentences]
+            assert action_result[8].id == doc_id
+
+            assert isinstance(action_result[9], RecognizeLinkedEntitiesResult)
+            assert action_result[9].id == doc_id
+
+            assert isinstance(action_result[10], ExtractSummaryResult)
+            assert len(action_result[10].sentences) == 1
+
+            assert isinstance(action_result[11], ExtractKeyPhrasesResult)
+            assert action_result[11].id == doc_id
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_multiple_of_same_action_with_partial_results(self, client):
+        docs = [{"id": "5", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+                {"id": "2", "text": ""}]
+
+        actions = [
+            ExtractSummaryAction(max_sentence_count=3),
+            RecognizePiiEntitiesAction(),
+            ExtractSummaryAction(max_sentence_count=5)
+        ]
+
+        async with client:
+            response = await (await client.begin_analyze_actions(
+                docs,
+                actions=actions,
+                polling_interval=self._interval(),
+            )).result()
+
+            action_results = []
+            async for p in response:
+                action_results.append(p)
+
+        assert len(action_results) == len(docs)
+        assert len(action_results[0]) == len(actions)
+        assert len(action_results[1]) == len(actions)
+
+        # first doc
+        assert isinstance(action_results[0][0], ExtractSummaryResult)
+        assert action_results[0][0].id == "5"
+        assert isinstance(action_results[0][1], RecognizePiiEntitiesResult)
+        assert action_results[0][1].id == "5"
+        assert isinstance(action_results[0][2], ExtractSummaryResult)
+        assert action_results[0][2].id == "5"
+
+        # second doc
+        assert action_results[1][0].is_error
+        assert action_results[1][1].is_error
+        assert action_results[1][2].is_error
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()

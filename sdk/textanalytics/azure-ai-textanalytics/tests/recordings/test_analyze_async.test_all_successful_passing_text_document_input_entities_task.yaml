@@ -1,8 +1,8 @@
 interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
-      "latest", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}}],
-      "entityRecognitionPiiTasks": [], "keyPhraseExtractionTasks": [], "entityLinkingTasks":
+      "latest", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}, "taskName":
+      "0"}], "entityRecognitionPiiTasks": [], "keyPhraseExtractionTasks": [], "entityLinkingTasks":
       [], "sentimentAnalysisTasks": [], "extractiveSummarizationTasks": [], "customEntityRecognitionTasks":
       [], "customSingleClassificationTasks": [], "customMultiClassificationTasks":
       []}, "analysisInput": {"documents": [{"id": "1", "text": "Microsoft was founded
@@ -14,7 +14,7 @@ interactions:
       Accept:
       - application/json, text/json
       Content-Length:
-      - '797'
+      - '814'
       Content-Type:
       - application/json
       User-Agent:
@@ -25,13 +25,13 @@ interactions:
     body:
       string: ''
     headers:
-      apim-request-id: f689db66-ef48-4fe1-a451-48cb6e219120
-      date: Wed, 06 Oct 2021 20:54:46 GMT
-      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/470d5616-4661-4ba8-b962-04d1ea4bb778
+      apim-request-id: ff57dc86-001f-43ef-a0e1-9168803e13a8
+      date: Thu, 07 Oct 2021 23:46:47 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/9e117462-7cbe-4f33-ac1d-bd58c3ecf303
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '267'
+      x-envoy-upstream-service-time: '265'
     status:
       code: 202
       message: Accepted
@@ -42,10 +42,10 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/470d5616-4661-4ba8-b962-04d1ea4bb778?showStats=True
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/9e117462-7cbe-4f33-ac1d-bd58c3ecf303?showStats=True
   response:
     body:
-      string: '{"jobId":"470d5616-4661-4ba8-b962-04d1ea4bb778","lastUpdateDateTime":"2021-10-06T20:54:49Z","createdDateTime":"2021-10-06T20:54:47Z","expirationDateTime":"2021-10-07T20:54:47Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-10-06T20:54:49.259804Z","state":"succeeded","results":{"statistics":{"documentsCount":3,"validDocumentsCount":3,"erroneousDocumentsCount":0,"transactionsCount":3},"documents":[{"id":"1","statistics":{"charactersCount":67,"transactionsCount":1},"entities":[{"text":"Microsoft","category":"Organization","offset":0,"length":9,"confidenceScore":0.99},{"text":"Bill
+      string: '{"jobId":"9e117462-7cbe-4f33-ac1d-bd58c3ecf303","lastUpdateDateTime":"2021-10-07T23:46:50Z","createdDateTime":"2021-10-07T23:46:48Z","expirationDateTime":"2021-10-08T23:46:48Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-10-07T23:46:50.5522957Z","taskName":"0","state":"succeeded","results":{"statistics":{"documentsCount":3,"validDocumentsCount":3,"erroneousDocumentsCount":0,"transactionsCount":3},"documents":[{"id":"1","statistics":{"charactersCount":67,"transactionsCount":1},"entities":[{"text":"Microsoft","category":"Organization","offset":0,"length":9,"confidenceScore":0.99},{"text":"Bill
         Gates","category":"Person","offset":25,"length":10,"confidenceScore":1.0},{"text":"Paul
         Allen","category":"Person","offset":40,"length":10,"confidenceScore":1.0},{"text":"April
         4, 1975","category":"DateTime","subcategory":"Date","offset":54,"length":13,"confidenceScore":0.8}],"warnings":[]},{"id":"2","statistics":{"charactersCount":72,"transactionsCount":1},"entities":[{"text":"Microsoft","category":"Organization","offset":0,"length":9,"confidenceScore":1.0},{"text":"Bill
@@ -56,15 +56,15 @@ interactions:
         Gates","category":"Person","offset":37,"length":10,"confidenceScore":1.0},{"text":"Paul
         Allen","category":"Person","offset":52,"length":10,"confidenceScore":1.0}],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}}]}}'
     headers:
-      apim-request-id: 1bed0454-01d3-44bc-bd96-d75d756f76a8
+      apim-request-id: c5989d14-a32b-478b-800c-c2d1cef3b689
       content-type: application/json; charset=utf-8
-      date: Wed, 06 Oct 2021 20:54:52 GMT
+      date: Thu, 07 Oct 2021 23:46:52 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '86'
+      x-envoy-upstream-service-time: '129'
     status:
       code: 200
       message: OK
-    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/470d5616-4661-4ba8-b962-04d1ea4bb778?showStats=True
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/9e117462-7cbe-4f33-ac1d-bd58c3ecf303?showStats=True
 version: 1

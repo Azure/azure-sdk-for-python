@@ -1,17 +1,19 @@
 interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
-      "bad", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}}], "entityRecognitionPiiTasks":
-      [{"parameters": {"model-version": "bad", "loggingOptOut": true, "stringIndexType":
-      "UnicodeCodePoint"}}], "keyPhraseExtractionTasks": [{"parameters": {"model-version":
-      "bad", "loggingOptOut": false}}], "entityLinkingTasks": [{"parameters": {"model-version":
-      "bad", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}}], "sentimentAnalysisTasks":
-      [{"parameters": {"model-version": "bad", "loggingOptOut": false, "opinionMining":
-      false}}], "extractiveSummarizationTasks": [{"parameters": {"model-version":
-      "bad", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint", "sentenceCount":
-      3, "sortBy": "Offset"}}], "customEntityRecognitionTasks": [], "customSingleClassificationTasks":
-      [], "customMultiClassificationTasks": []}, "analysisInput": {"documents": [{"id":
-      "1", "text": "I did not like the hotel we stayed at.", "language": "english"}]}}'
+      "bad", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}, "taskName":
+      "0"}], "entityRecognitionPiiTasks": [{"parameters": {"model-version": "bad",
+      "loggingOptOut": true, "stringIndexType": "UnicodeCodePoint"}, "taskName": "2"}],
+      "keyPhraseExtractionTasks": [{"parameters": {"model-version": "bad", "loggingOptOut":
+      false}, "taskName": "1"}], "entityLinkingTasks": [{"parameters": {"model-version":
+      "bad", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}, "taskName":
+      "3"}], "sentimentAnalysisTasks": [{"parameters": {"model-version": "bad", "loggingOptOut":
+      false, "opinionMining": false}, "taskName": "4"}], "extractiveSummarizationTasks":
+      [{"parameters": {"model-version": "bad", "loggingOptOut": false, "stringIndexType":
+      "UnicodeCodePoint", "sentenceCount": 3, "sortBy": "Offset"}, "taskName": "5"}],
+      "customEntityRecognitionTasks": [], "customSingleClassificationTasks": [], "customMultiClassificationTasks":
+      []}, "analysisInput": {"documents": [{"id": "1", "text": "I did not like the
+      hotel we stayed at.", "language": "english"}]}}'
     headers:
       Accept:
       - application/json, text/json
@@ -20,7 +22,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1034'
+      - '1136'
       Content-Type:
       - application/json
       User-Agent:
@@ -34,11 +36,11 @@ interactions:
         job task type KeyPhraseExtraction. Supported values latest,2019-10-01,2020-07-01,2021-05-01."}}}'
     headers:
       apim-request-id:
-      - b9f08343-d5c8-45c2-885a-177b6b4c0ddc
+      - 477a0d83-2bcc-4078-b8ae-c323964379b5
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 Oct 2021 20:48:35 GMT
+      - Thu, 07 Oct 2021 23:39:25 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -46,7 +48,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '6'
+      - '654'
     status:
       code: 400
       message: Bad Request

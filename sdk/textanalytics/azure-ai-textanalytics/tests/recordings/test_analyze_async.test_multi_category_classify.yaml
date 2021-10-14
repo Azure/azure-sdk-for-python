@@ -5,11 +5,11 @@ interactions:
       [], "extractiveSummarizationTasks": [], "customEntityRecognitionTasks": [],
       "customSingleClassificationTasks": [], "customMultiClassificationTasks": [{"parameters":
       {"project-name": "textanalytics_multi_category_classify_project_name", "deployment-name":
-      "textanalytics_multi_category_classify_project_name"}}]}, "analysisInput": {"documents":
-      [{"id": "1", "text": "A recent report by the Government Accountability Office
-      (GAO) found that the dramatic increase in oil and natural gas development on
-      federal lands over the past six years has stretched the staff of the BLM to
-      a point that it has been unable to meet its environmental protection responsibilities.",
+      "textanalytics_multi_category_classify_project_name"}, "taskName": "0"}]}, "analysisInput":
+      {"documents": [{"id": "1", "text": "A recent report by the Government Accountability
+      Office (GAO) found that the dramatic increase in oil and natural gas development
+      on federal lands over the past six years has stretched the staff of the BLM
+      to a point that it has been unable to meet its environmental protection responsibilities.",
       "language": "en"}, {"id": "2", "text": "David Schmidt, senior vice president--Food
       Safety, International Food Information Council (IFIC), Washington, D.C., discussed
       the physical activity component.", "language": "en"}, {"id": "3", "text": "I
@@ -19,7 +19,7 @@ interactions:
       Accept:
       - application/json, text/json
       Content-Length:
-      - '1179'
+      - '1196'
       Content-Type:
       - application/json
       User-Agent:
@@ -30,13 +30,13 @@ interactions:
     body:
       string: ''
     headers:
-      apim-request-id: 37c740ab-f288-423f-af9f-6b50db801045
-      date: Wed, 06 Oct 2021 21:18:33 GMT
-      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/b0f6212f-5c05-4285-b047-88bf07e76854
+      apim-request-id: 6d9011ee-6e31-4028-b93c-c2857ad53a6a
+      date: Thu, 07 Oct 2021 23:51:42 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/e80afa11-69df-43f9-8497-d9f888c2b56a
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '585'
+      x-envoy-upstream-service-time: '426'
     status:
       code: 202
       message: Accepted
@@ -47,20 +47,20 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/b0f6212f-5c05-4285-b047-88bf07e76854?showStats=True
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/e80afa11-69df-43f9-8497-d9f888c2b56a?showStats=True
   response:
     body:
-      string: '{"jobId":"b0f6212f-5c05-4285-b047-88bf07e76854","lastUpdateDateTime":"2021-10-06T21:18:38Z","createdDateTime":"2021-10-06T21:18:33Z","expirationDateTime":"2021-10-07T21:18:33Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"customMultiClassificationTasks":[{"lastUpdateDateTime":"2021-10-06T21:18:38.279196Z","state":"succeeded","results":{"statistics":{"documentsCount":3,"validDocumentsCount":3,"erroneousDocumentsCount":0,"transactionsCount":3},"documents":[{"id":"1","classifications":[],"statistics":{"charactersCount":295,"transactionsCount":1},"warnings":[]},{"id":"2","classifications":[],"statistics":{"charactersCount":158,"transactionsCount":1},"warnings":[]},{"id":"3","classifications":[{"category":"BookRestaurant","confidenceScore":0.97}],"statistics":{"charactersCount":121,"transactionsCount":1},"warnings":[]}],"errors":[],"projectName":"textanalytics_multi_category_classify_project_name","deploymentName":"textanalytics_multi_category_classify_project_name"}}]}}'
+      string: '{"jobId":"e80afa11-69df-43f9-8497-d9f888c2b56a","lastUpdateDateTime":"2021-10-07T23:51:43Z","createdDateTime":"2021-10-07T23:51:42Z","expirationDateTime":"2021-10-08T23:51:42Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"customMultiClassificationTasks":[{"lastUpdateDateTime":"2021-10-07T23:51:43.4957598Z","taskName":"0","state":"succeeded","results":{"statistics":{"documentsCount":3,"validDocumentsCount":3,"erroneousDocumentsCount":0,"transactionsCount":3},"documents":[{"id":"1","classifications":[],"statistics":{"charactersCount":295,"transactionsCount":1},"warnings":[]},{"id":"2","classifications":[],"statistics":{"charactersCount":158,"transactionsCount":1},"warnings":[]},{"id":"3","classifications":[{"category":"BookRestaurant","confidenceScore":0.97}],"statistics":{"charactersCount":121,"transactionsCount":1},"warnings":[]}],"errors":[],"projectName":"textanalytics_multi_category_classify_project_name","deploymentName":"textanalytics_multi_category_classify_project_name"}}]}}'
     headers:
-      apim-request-id: 887188d2-99e5-47fe-9144-77b26d9c7343
+      apim-request-id: 21e54369-d37d-441e-bd50-e90462fcf289
       content-type: application/json; charset=utf-8
-      date: Wed, 06 Oct 2021 21:18:39 GMT
+      date: Thu, 07 Oct 2021 23:51:47 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '265'
+      x-envoy-upstream-service-time: '159'
     status:
       code: 200
       message: OK
-    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/b0f6212f-5c05-4285-b047-88bf07e76854?showStats=True
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/e80afa11-69df-43f9-8497-d9f888c2b56a?showStats=True
 version: 1
