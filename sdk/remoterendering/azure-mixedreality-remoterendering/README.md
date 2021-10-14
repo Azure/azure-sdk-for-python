@@ -16,6 +16,10 @@ This SDK supports version "2021-01-01" of the [Remote Rendering REST API](https:
 
 [Product documentation](https://docs.microsoft.com/azure/remote-rendering/)
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 # Getting started
 
 ## Prerequisites
@@ -124,7 +128,12 @@ account_id = "<ACCOUNTD ID>"
 account_domain = "<ACCOUNT_DOMAIN>"
 default_credential = DefaultAzureCredential()
 
-client = RemoteRenderingClient(account_id, account_domain, default_credential)
+client = RemoteRenderingClient(
+    endpoint=arr_endpoint,
+    account_id=account_id,
+    account_domain=account_domain,
+    credential=default_credential
+)
 ```
 
 ## Key concepts
