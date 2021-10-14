@@ -23,6 +23,17 @@
       },
       "PythonVersion": "3.6",
       "CoverageArg": "--disablecov"
+    },
+    {
+      "Config": {
+        "Ubuntu2004_310": {
+          "OSVmImage": "MMSUbuntu20.04",
+          "Pool": "azsdk-pool-mms-ubuntu-2004-general",
+          "PythonVersion": "3.10.0",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false"
+        }
+      }
     }
   ]
 }

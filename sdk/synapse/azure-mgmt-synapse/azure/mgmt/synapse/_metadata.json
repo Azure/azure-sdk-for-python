@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2021-03-01",
-    "total_api_version_list": ["2021-03-01"],
+    "chosen_version": "",
+    "total_api_version_list": ["2021-06-01", "2021-06-01-preview"],
     "client": {
         "name": "SynapseManagementClient",
         "filename": "_synapse_management_client",
@@ -10,8 +10,8 @@
         "azure_arm": true,
         "has_lro_operations": true,
         "client_side_validation": false,
-        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"SynapseManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
-        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"SynapseManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"SynapseManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"SynapseManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}}}"
     },
     "global_parameters": {
         "sync": {
@@ -98,21 +98,10 @@
         "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
-        "big_data_pools": "BigDataPoolsOperations",
+        "azure_ad_only_authentications": "AzureADOnlyAuthenticationsOperations",
         "operations": "Operations",
         "ip_firewall_rules": "IpFirewallRulesOperations",
-        "integration_runtimes": "IntegrationRuntimesOperations",
-        "integration_runtime_node_ip_address": "IntegrationRuntimeNodeIpAddressOperations",
-        "integration_runtime_object_metadata": "IntegrationRuntimeObjectMetadataOperations",
-        "integration_runtime_nodes": "IntegrationRuntimeNodesOperations",
-        "integration_runtime_credentials": "IntegrationRuntimeCredentialsOperations",
-        "integration_runtime_connection_infos": "IntegrationRuntimeConnectionInfosOperations",
-        "integration_runtime_auth_keys": "IntegrationRuntimeAuthKeysOperations",
-        "integration_runtime_monitoring_data": "IntegrationRuntimeMonitoringDataOperations",
-        "integration_runtime_status": "IntegrationRuntimeStatusOperations",
         "keys": "KeysOperations",
-        "library": "LibraryOperations",
-        "libraries": "LibrariesOperations",
         "private_endpoint_connections": "PrivateEndpointConnectionsOperations",
         "private_link_resources": "PrivateLinkResourcesOperations",
         "private_link_hub_private_link_resources": "PrivateLinkHubPrivateLinkResourcesOperations",
@@ -158,12 +147,29 @@
         "workspace_aad_admins": "WorkspaceAadAdminsOperations",
         "workspace_sql_aad_admins": "WorkspaceSqlAadAdminsOperations",
         "workspace_managed_identity_sql_control_settings": "WorkspaceManagedIdentitySqlControlSettingsOperations",
-        "restorable_dropped_sql_pools": "RestorableDroppedSqlPoolsOperations"
-    },
-    "operation_mixins": {
-        "sync_imports": "None",
-        "async_imports": "None",
-        "operations": {
-        }
+        "restorable_dropped_sql_pools": "RestorableDroppedSqlPoolsOperations",
+        "big_data_pools": "BigDataPoolsOperations",
+        "library": "LibraryOperations",
+        "libraries": "LibrariesOperations",
+        "integration_runtimes": "IntegrationRuntimesOperations",
+        "integration_runtime_node_ip_address": "IntegrationRuntimeNodeIpAddressOperations",
+        "integration_runtime_object_metadata": "IntegrationRuntimeObjectMetadataOperations",
+        "integration_runtime_nodes": "IntegrationRuntimeNodesOperations",
+        "integration_runtime_credentials": "IntegrationRuntimeCredentialsOperations",
+        "integration_runtime_connection_infos": "IntegrationRuntimeConnectionInfosOperations",
+        "integration_runtime_auth_keys": "IntegrationRuntimeAuthKeysOperations",
+        "integration_runtime_monitoring_data": "IntegrationRuntimeMonitoringDataOperations",
+        "integration_runtime_status": "IntegrationRuntimeStatusOperations",
+        "spark_configuration": "SparkConfigurationOperations",
+        "spark_configurations": "SparkConfigurationsOperations",
+        "kusto_operations": "KustoOperationsOperations",
+        "kusto_pool": "KustoPoolOperations",
+        "kusto_pools": "KustoPoolsOperations",
+        "kusto_pool_child_resource": "KustoPoolChildResourceOperations",
+        "kusto_pool_attached_database_configurations": "KustoPoolAttachedDatabaseConfigurationsOperations",
+        "kusto_pool_databases": "KustoPoolDatabasesOperations",
+        "kusto_pool_data_connections": "KustoPoolDataConnectionsOperations",
+        "kusto_pool_principal_assignments": "KustoPoolPrincipalAssignmentsOperations",
+        "kusto_pool_database_principal_assignments": "KustoPoolDatabasePrincipalAssignmentsOperations"
     }
 }

@@ -1,5 +1,28 @@
 # Release History
 
+## 2.1.0 (2021-09-22)
+
+**Features**
+
+  - Model Cluster has a new parameter accepted_audiences
+  - Model Cluster has a new parameter allowed_fqdn_list
+  - Model Cluster has a new parameter enable_auto_stop
+  - Model Cluster has a new parameter allowed_ip_range_list
+  - Model Cluster has a new parameter system_data
+  - Model Cluster has a new parameter restrict_outbound_network_access
+  - Model Cluster has a new parameter public_network_access
+  - Model ClusterUpdate has a new parameter accepted_audiences
+  - Model ClusterUpdate has a new parameter allowed_fqdn_list
+  - Model ClusterUpdate has a new parameter enable_auto_stop
+  - Model ClusterUpdate has a new parameter allowed_ip_range_list
+  - Model ClusterUpdate has a new parameter restrict_outbound_network_access
+  - Model ClusterUpdate has a new parameter public_network_access
+  - Added operation AttachedDatabaseConfigurationsOperations.check_name_availability
+  - Added operation ClustersOperations.list_outbound_network_dependencies_endpoints
+  - Added operation group PrivateEndpointConnectionsOperations
+  - Added operation group ManagedPrivateEndpointsOperations
+  - Added operation group PrivateLinkResourcesOperations
+
 ## 2.0.0 (2021-04-26)
 
 **Features**

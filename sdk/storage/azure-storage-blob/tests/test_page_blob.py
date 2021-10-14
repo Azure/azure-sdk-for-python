@@ -165,7 +165,7 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Act
         immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
-                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         resp = blob.create_page_blob(1024, immutability_policy=immutability_policy,
                                      legal_hold=True)
         props = blob.get_blob_properties()
@@ -181,7 +181,7 @@ class StoragePageBlobTest(StorageTestCase):
             blob.delete_immutability_policy()
             blob.set_legal_hold(False)
             blob.delete_blob()
-            mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
+            mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, container_name)
 
     @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()

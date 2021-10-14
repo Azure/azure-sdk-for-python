@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -2097,20 +2097,20 @@ class RoutingTwin(msrest.serialization.Model):
     """Twin reference input parameter. This is an optional parameter.
 
     :param tags: A set of tags. Twin Tags.
-    :type tags: str
+    :type tags: any
     :param properties:
     :type properties: ~azure.mgmt.iothub.v2018_04_01.models.RoutingTwinProperties
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': 'object'},
         'properties': {'key': 'properties', 'type': 'RoutingTwinProperties'},
     }
 
     def __init__(
         self,
         *,
-        tags: Optional[str] = None,
+        tags: Optional[Any] = None,
         properties: Optional["RoutingTwinProperties"] = None,
         **kwargs
     ):
@@ -2123,21 +2123,21 @@ class RoutingTwinProperties(msrest.serialization.Model):
     """RoutingTwinProperties.
 
     :param desired_properties: Twin desired properties.
-    :type desired_properties: str
+    :type desired_properties: any
     :param reported_properties: Twin desired properties.
-    :type reported_properties: str
+    :type reported_properties: any
     """
 
     _attribute_map = {
-        'desired_properties': {'key': 'desiredProperties', 'type': 'str'},
-        'reported_properties': {'key': 'reportedProperties', 'type': 'str'},
+        'desired_properties': {'key': 'desiredProperties', 'type': 'object'},
+        'reported_properties': {'key': 'reportedProperties', 'type': 'object'},
     }
 
     def __init__(
         self,
         *,
-        desired_properties: Optional[str] = None,
-        reported_properties: Optional[str] = None,
+        desired_properties: Optional[Any] = None,
+        reported_properties: Optional[Any] = None,
         **kwargs
     ):
         super(RoutingTwinProperties, self).__init__(**kwargs)

@@ -13,29 +13,29 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/invoice/analyze?includeTextDetails=false
   response:
     body:
       string: '{"error": {"code": "FailedToDownloadImage", "innerError": {"requestId":
-        "9e165a27-9da8-4b63-95e6-bcd2680d264d"}, "message": "Failed to download image
+        "ad2c7875-ce5e-4d83-a804-3aedc827b8bf"}, "message": "Failed to download image
         from input URL."}}'
     headers:
       apim-request-id:
-      - 9e165a27-9da8-4b63-95e6-bcd2680d264d
+      - ad2c7875-ce5e-4d83-a804-3aedc827b8bf
       content-length:
       - '161'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 11 May 2021 02:29:56 GMT
+      - Wed, 22 Sep 2021 05:37:19 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '3338'
+      - '3202'
     status:
       code: 400
       message: Bad Request

@@ -22,10 +22,8 @@ def test_query_response_types():
     summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId, Success, ItemCount, DurationMs"""
 
     # returns LogsQueryResult 
-    result = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
+    result = client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
     assert isinstance(result.tables[0].rows[0][0], datetime) # TimeGenerated generated is a datetime
     assert isinstance(result.tables[0].rows[0][1], six.string_types) # _ResourceId generated is a string
     assert isinstance(result.tables[0].rows[0][2], bool) # Success generated is a bool
     assert isinstance(result.tables[0].rows[0][3], int) # ItemCount generated is a int
-    assert isinstance(result.tables[0].rows[0][4], float) # DurationMs generated is a real
-

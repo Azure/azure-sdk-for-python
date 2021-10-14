@@ -39,7 +39,7 @@ def locate_wheels(base_dir):
 
 def parse_req(req):
     try:
-        req_object = Requirement.parse(req)
+        req_object = Requirement.parse(req.split(";")[0])
         req_name = req_object.key
         spec = str(req_object).replace(req_name, '')
         return (req_name, spec)

@@ -388,7 +388,7 @@ class ServiceOperations(object):
         """Retrieves a user delegation key for the Blob service. This is only a valid operation when using
         bearer token authentication.
 
-        :param key_info:
+        :param key_info: Key information.
         :type key_info: ~azure.storage.blob.models.KeyInfo
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
@@ -562,6 +562,7 @@ class ServiceOperations(object):
         content_type = kwargs.pop("content_type", "application/xml")
         accept = "application/xml"
 
+        multipart_content_type = kwargs.pop("content_type", None)
         # Construct URL
         url = self.submit_batch.metadata['url']  # type: ignore
         path_format_arguments = {
@@ -586,7 +587,7 @@ class ServiceOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(body, 'IO', is_xml=True)
+        body_content = self._serialize.body(body, 'IO')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=True, **kwargs)

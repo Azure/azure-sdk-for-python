@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/Nonexistent/_tags/Nonexistent
   response:
@@ -17,7 +17,7 @@ interactions:
       connection: keep-alive
       content-length: '19'
       content-type: text/plain; charset=utf-8
-      date: Tue, 17 Aug 2021 18:17:32 GMT
+      date: Mon, 30 Aug 2021 20:38:30 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains

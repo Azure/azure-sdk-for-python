@@ -8,7 +8,7 @@ import asyncio
 from datetime import datetime, timezone
 from azure_devtools.perfstress_tests import PerfStressTest
 
-from azure.monitor.query import MetricsQueryClient as SyncMetricsQueryClient, AggregationType
+from azure.monitor.query import MetricsQueryClient as SyncMetricsQueryClient, MetricAggregationType
 from azure.monitor.query.aio import MetricsQueryClient as AsyncMetricsQueryClient
 
 from azure.identity import DefaultAzureCredential as SyncDefaultAzureCredential
@@ -21,7 +21,7 @@ class MetricsPerfTest(PerfStressTest):
         # auth configuration
         self.metrics_uri = self.get_from_env('METRICS_RESOURCE_URI')
         self.names =  ["MatchedEventCount"]
-        self.aggregations = [AggregationType.COUNT]
+        self.aggregations = [MetricAggregationType.COUNT]
 
         # Create clients
         self.metrics_client = SyncMetricsQueryClient(
@@ -46,7 +46,7 @@ class MetricsPerfTest(PerfStressTest):
         Avoid putting any ancilliary logic (e.g. generating UUIDs), and put this in the setup/init instead
         so that we're only measuring the client API call.
         """
-        self.metrics_client.query(
+        self.metrics_client.query_resource(
             self.metrics_uri,
             self.names,
             aggregations=self.aggregations
@@ -59,7 +59,7 @@ class MetricsPerfTest(PerfStressTest):
         Avoid putting any ancilliary logic (e.g. generating UUIDs), and put this in the setup/init instead
         so that we're only measuring the client API call.
         """
-        await self.async_metrics_client.query(
+        await self.async_metrics_client.query_resource(
             self.metrics_uri,
             self.names,
             aggregations=self.aggregations

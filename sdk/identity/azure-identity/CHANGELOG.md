@@ -1,21 +1,36 @@
 # Release History
 
-## 1.7.0b4 (Unreleased)
+## 1.7.0 (2021-10-12)
+
+### Breaking Changes
+> These changes do not impact the API of stable versions such as 1.6.0.
+> Only code written against a beta version such as 1.7.0b1 may be affected.
+
+- The `allow_multitenant_authentication` argument has been removed and the default behavior is now as if it were true.
+  The multitenant authentication feature can be totally disabled by setting the environment variable 
+  `AZURE_IDENTITY_DISABLE_MULTITENANTAUTH` to `True`.
+- `azure.identity.RegionalAuthority` is removed.
+- `regional_authority` argument is removed for `CertificateCredential` and `ClientSecretCredential`.
+- `AzureApplicationCredential` is removed.
+- `client_credential` in the ctor of `OnBehalfOfCredential` is removed. Please use `client_secret` or `client_certificate` instead.
+- Make `user_assertion` in the ctor of `OnBehalfOfCredential` a keyword only argument.
+
+## 1.7.0b4 (2021-09-09)
 
 ### Features Added
 - `CertificateCredential` accepts certificates in PKCS12 format
   ([#13540](https://github.com/Azure/azure-sdk-for-python/issues/13540))
-
-### Breaking Changes
-
-### Bugs Fixed
+- `OnBehalfOfCredential` supports the on-behalf-of authentication flow for
+  accessing resources on behalf of users
+  ([#19308](https://github.com/Azure/azure-sdk-for-python/issues/19308))
+- `DefaultAzureCredential` allows specifying the client ID of interactive browser via keyword argument `interactive_browser_client_id`
+  ([#20487](https://github.com/Azure/azure-sdk-for-python/issues/20487))
 
 ### Other Changes
 - Added context manager methods and `close()` to credentials in the
   `azure.identity` namespace. At the end of a `with` block, or when `close()`
   is called, these credentials close their underlying transport sessions.
   ([#18798](https://github.com/Azure/azure-sdk-for-python/issues/18798))
-
 
 
 ## 1.6.1 (2021-08-19)

@@ -101,8 +101,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
     :keyword str api_version:
-        The Storage API version to use for requests. Default value is '2019-07-07'.
-        Setting to an older version may result in reduced feature compatibility.
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
         .. versionadded:: 12.2.0
 
@@ -176,8 +176,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
-        default_api_version = self._client._config.version  # pylint: disable=protected-access
-        self._client._config.version = get_api_version(kwargs, default_api_version)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
     def _format_url(self, hostname):
         container_name = self.container_name
@@ -853,9 +852,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # type: (str, **Any) -> Dict[str, Any]
         delimiter = '\n'
         input_format = kwargs.pop('blob_format', None)
-        if input_format == QuickQueryDialect.DelimitedJsonDialect:
+        if input_format == QuickQueryDialect.DelimitedJson:
             input_format = DelimitedJsonDialect()
-        if input_format == QuickQueryDialect.DelimitedTextDialect:
+        if input_format == QuickQueryDialect.DelimitedText:
             input_format = DelimitedTextDialect()
         input_parquet_format = input_format == "ParquetDialect"
         if input_format and not input_parquet_format:
@@ -868,9 +867,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                     raise ValueError("The Type of blob_format can only be DelimitedTextDialect or "
                                      "DelimitedJsonDialect or ParquetDialect")
         output_format = kwargs.pop('output_format', None)
-        if output_format == QuickQueryDialect.DelimitedJsonDialect:
+        if output_format == QuickQueryDialect.DelimitedJson:
             output_format = DelimitedJsonDialect()
-        if output_format == QuickQueryDialect.DelimitedTextDialect:
+        if output_format == QuickQueryDialect.DelimitedText:
             output_format = DelimitedTextDialect()
         if output_format:
             if output_format == "ParquetDialect":
