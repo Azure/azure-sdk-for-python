@@ -15,7 +15,7 @@
 
 **Breaking changes**
 
-  - Model WebPubSubResource no longer has parameter features
+  - Model WebPubSubResource no longer has parameter features 
   - Model WebPubSubResource no longer has parameter event_handler
 
 ## 1.0.0b1 (2021-04-16)
