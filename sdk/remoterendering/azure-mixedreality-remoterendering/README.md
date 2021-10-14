@@ -59,7 +59,7 @@ A full list of endpoints in supported regions can be found in the [Azure Remote 
 
 ### Authenticating with account key authentication
 
-Use the `AccountKeyCredential` object to use an account identifier and account key to authenticate:
+Use the `AzureKeyCredential` object to use an account identifier and account key to authenticate:
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -88,6 +88,13 @@ to be used with a Mixed Reality client library:
 ```python
 from azure.mixedreality.authentication import MixedRealityStsClient
 from azure.mixedreality.remoterendering import RemoteRenderingClient
+account_id = "<ACCOUNTD ID>"
+account_domain = "<ACCOUNT_DOMAIN>"
+account_key = "<ACCOUNT_KEY>"
+
+key_credential = AzureKeyCredential(account_key)
+
+client = MixedRealityStsClient(account_id, account_domain, key_credential)
 
 token = client.get_token()
 
