@@ -134,7 +134,9 @@ class ChallengeAuthPolicy(ChallengeAuthPolicyBase, HTTPPolicy):
         if self._need_new_token:
             # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
             scope = challenge.get_scope() or challenge.get_resource() + "/.default"
-            self._token = self._credential.get_token(scope)
+            # pass the tenant ID from the challenge to support multi-tenant authentication when possible
+            tenant_id = challenge.get_tenant_id()
+            self._token = self._credential.get_token(scope, tenant_id=tenant_id)
 
         # ignore mypy's warning because although self._token is Optional, get_token raises when it fails to get a token
         request.http_request.headers["Authorization"] = "Bearer {}".format(self._token.token)  # type: ignore

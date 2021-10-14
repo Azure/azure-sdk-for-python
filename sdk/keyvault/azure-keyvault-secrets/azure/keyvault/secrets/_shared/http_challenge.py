@@ -82,6 +82,12 @@ class HttpChallenge(object):
         """ Returns the scope if present, otherwise empty string. """
         return self.get_value("scope") or ""
 
+    def get_tenant_id(self):
+        """ Returns the tenant ID parsed from the authorization server """
+        authorization_uri = self.get_authorization_server()
+        # the authoritzation server URI should look something like https://login.windows.net/tenant-id
+        return authorization_uri.split("/")[-1]
+
     def supports_pop(self):
         """ Returns True if challenge supports pop token auth else False """
         return self._parameters.get("supportspop", "").lower() == "true"
