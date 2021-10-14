@@ -160,6 +160,7 @@ class ListContainersIncludeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
 
     METADATA = "metadata"
     DELETED = "deleted"
+    SYSTEM = "system"
 
 class PremiumPageBlobAccessTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
