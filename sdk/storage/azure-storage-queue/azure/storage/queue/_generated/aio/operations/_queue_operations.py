@@ -86,6 +86,7 @@ class QueueOperations:
         request = build_create_request(
             timeout=timeout,
             metadata=metadata,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             template_url=_url,
         )
@@ -152,6 +153,7 @@ class QueueOperations:
 
         request = build_delete_request(
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             template_url=_url,
         )
@@ -212,6 +214,7 @@ class QueueOperations:
 
         request = build_get_properties_request(
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             template_url=_url,
         )
@@ -282,6 +285,7 @@ class QueueOperations:
         request = build_set_metadata_request(
             timeout=timeout,
             metadata=metadata,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             template_url=_url,
         )
@@ -342,6 +346,7 @@ class QueueOperations:
 
         request = build_get_access_policy_request(
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             template_url=_url,
         )
@@ -415,6 +420,7 @@ class QueueOperations:
         request = build_set_access_policy_request(
             content_type=content_type,
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             content=content,
             template_url=_url,

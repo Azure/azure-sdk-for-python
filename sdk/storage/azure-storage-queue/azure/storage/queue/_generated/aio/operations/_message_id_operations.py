@@ -105,6 +105,7 @@ class MessageIdOperations:
             pop_receipt=pop_receipt,
             visibilitytimeout=visibilitytimeout,
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             content=content,
             template_url=_url,
@@ -172,6 +173,7 @@ class MessageIdOperations:
         request = build_delete_request(
             pop_receipt=pop_receipt,
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             template_url=_url,
         )

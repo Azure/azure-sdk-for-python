@@ -35,11 +35,11 @@ def build_set_properties_request(
     # type: (...) -> HttpRequest
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    version = kwargs.pop('version', "2018-03-28")  # type: str
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
     restype = "service"
     comp = "properties"
-    version = "2018-03-28"
     accept = "application/xml"
     # Construct URL
     url = kwargs.pop("template_url", '/')
@@ -74,11 +74,11 @@ def build_get_properties_request(
 ):
     # type: (...) -> HttpRequest
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    version = kwargs.pop('version', "2018-03-28")  # type: str
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
     restype = "service"
     comp = "properties"
-    version = "2018-03-28"
     accept = "application/xml"
     # Construct URL
     url = kwargs.pop("template_url", '/')
@@ -111,11 +111,11 @@ def build_get_statistics_request(
 ):
     # type: (...) -> HttpRequest
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    version = kwargs.pop('version', "2018-03-28")  # type: str
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
     restype = "service"
     comp = "stats"
-    version = "2018-03-28"
     accept = "application/xml"
     # Construct URL
     url = kwargs.pop("template_url", '/')
@@ -152,10 +152,10 @@ def build_list_queues_segment_request(
     maxresults = kwargs.pop('maxresults', None)  # type: Optional[int]
     include = kwargs.pop('include', None)  # type: Optional[List[str]]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    version = kwargs.pop('version', "2018-03-28")  # type: str
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
     comp = "list"
-    version = "2018-03-28"
     accept = "application/xml"
     # Construct URL
     url = kwargs.pop("template_url", '/')
@@ -255,6 +255,7 @@ class ServiceOperations(object):
         request = build_set_properties_request(
             content_type=content_type,
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             content=content,
             template_url=_url,
@@ -316,6 +317,7 @@ class ServiceOperations(object):
 
         request = build_get_properties_request(
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             template_url=_url,
         )
@@ -380,6 +382,7 @@ class ServiceOperations(object):
 
         request = build_get_statistics_request(
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             template_url=_url,
         )
@@ -470,6 +473,7 @@ class ServiceOperations(object):
             maxresults=maxresults,
             include=include,
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             template_url=_url,
         )

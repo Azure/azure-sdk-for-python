@@ -36,9 +36,9 @@ def build_dequeue_request(
     number_of_messages = kwargs.pop('number_of_messages', None)  # type: Optional[int]
     visibilitytimeout = kwargs.pop('visibilitytimeout', None)  # type: Optional[int]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    version = kwargs.pop('version', "2018-03-28")  # type: str
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
-    version = "2018-03-28"
     accept = "application/xml"
     # Construct URL
     url = kwargs.pop("template_url", '/{queueName}/messages')
@@ -73,9 +73,9 @@ def build_clear_request(
 ):
     # type: (...) -> HttpRequest
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    version = kwargs.pop('version', "2018-03-28")  # type: str
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
-    version = "2018-03-28"
     accept = "application/xml"
     # Construct URL
     url = kwargs.pop("template_url", '/{queueName}/messages')
@@ -109,9 +109,9 @@ def build_enqueue_request(
     visibilitytimeout = kwargs.pop('visibilitytimeout', None)  # type: Optional[int]
     message_time_to_live = kwargs.pop('message_time_to_live', None)  # type: Optional[int]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    version = kwargs.pop('version', "2018-03-28")  # type: str
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
-    version = "2018-03-28"
     accept = "application/xml"
     # Construct URL
     url = kwargs.pop("template_url", '/{queueName}/messages')
@@ -149,10 +149,10 @@ def build_peek_request(
     # type: (...) -> HttpRequest
     number_of_messages = kwargs.pop('number_of_messages', None)  # type: Optional[int]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    version = kwargs.pop('version', "2018-03-28")  # type: str
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
     peekonly = "true"
-    version = "2018-03-28"
     accept = "application/xml"
     # Construct URL
     url = kwargs.pop("template_url", '/{queueName}/messages')
@@ -253,6 +253,7 @@ class MessagesOperations(object):
             number_of_messages=number_of_messages,
             visibilitytimeout=visibilitytimeout,
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             template_url=_url,
         )
@@ -316,6 +317,7 @@ class MessagesOperations(object):
 
         request = build_clear_request(
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             template_url=_url,
         )
@@ -404,6 +406,7 @@ class MessagesOperations(object):
             visibilitytimeout=visibilitytimeout,
             message_time_to_live=message_time_to_live,
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             content=content,
             template_url=_url,
@@ -476,6 +479,7 @@ class MessagesOperations(object):
         request = build_peek_request(
             number_of_messages=number_of_messages,
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             template_url=_url,
         )

@@ -35,9 +35,9 @@ def build_create_request(
     # type: (...) -> HttpRequest
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
+    version = kwargs.pop('version', "2018-03-28")  # type: str
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
-    version = "2018-03-28"
     accept = "application/xml"
     # Construct URL
     url = kwargs.pop("template_url", '/{queueName}')
@@ -70,9 +70,9 @@ def build_delete_request(
 ):
     # type: (...) -> HttpRequest
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    version = kwargs.pop('version', "2018-03-28")  # type: str
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
-    version = "2018-03-28"
     accept = "application/xml"
     # Construct URL
     url = kwargs.pop("template_url", '/{queueName}')
@@ -103,10 +103,10 @@ def build_get_properties_request(
 ):
     # type: (...) -> HttpRequest
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    version = kwargs.pop('version', "2018-03-28")  # type: str
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
     comp = "metadata"
-    version = "2018-03-28"
     accept = "application/xml"
     # Construct URL
     url = kwargs.pop("template_url", '/{queueName}')
@@ -139,10 +139,10 @@ def build_set_metadata_request(
     # type: (...) -> HttpRequest
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
+    version = kwargs.pop('version', "2018-03-28")  # type: str
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
     comp = "metadata"
-    version = "2018-03-28"
     accept = "application/xml"
     # Construct URL
     url = kwargs.pop("template_url", '/{queueName}')
@@ -176,10 +176,10 @@ def build_get_access_policy_request(
 ):
     # type: (...) -> HttpRequest
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    version = kwargs.pop('version', "2018-03-28")  # type: str
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
     comp = "acl"
-    version = "2018-03-28"
     accept = "application/xml"
     # Construct URL
     url = kwargs.pop("template_url", '/{queueName}')
@@ -212,10 +212,10 @@ def build_set_access_policy_request(
     # type: (...) -> HttpRequest
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    version = kwargs.pop('version', "2018-03-28")  # type: str
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
     comp = "acl"
-    version = "2018-03-28"
     accept = "application/xml"
     # Construct URL
     url = kwargs.pop("template_url", '/{queueName}')
@@ -309,6 +309,7 @@ class QueueOperations(object):
         request = build_create_request(
             timeout=timeout,
             metadata=metadata,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             template_url=_url,
         )
@@ -376,6 +377,7 @@ class QueueOperations(object):
 
         request = build_delete_request(
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             template_url=_url,
         )
@@ -437,6 +439,7 @@ class QueueOperations(object):
 
         request = build_get_properties_request(
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             template_url=_url,
         )
@@ -508,6 +511,7 @@ class QueueOperations(object):
         request = build_set_metadata_request(
             timeout=timeout,
             metadata=metadata,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             template_url=_url,
         )
@@ -569,6 +573,7 @@ class QueueOperations(object):
 
         request = build_get_access_policy_request(
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             template_url=_url,
         )
@@ -643,6 +648,7 @@ class QueueOperations(object):
         request = build_set_access_policy_request(
             content_type=content_type,
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             content=content,
             template_url=_url,

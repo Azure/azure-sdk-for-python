@@ -93,6 +93,7 @@ class MessagesOperations:
             number_of_messages=number_of_messages,
             visibilitytimeout=visibilitytimeout,
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             template_url=_url,
         )
@@ -155,6 +156,7 @@ class MessagesOperations:
 
         request = build_clear_request(
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             template_url=_url,
         )
@@ -242,6 +244,7 @@ class MessagesOperations:
             visibilitytimeout=visibilitytimeout,
             message_time_to_live=message_time_to_live,
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             content=content,
             template_url=_url,
@@ -313,6 +316,7 @@ class MessagesOperations:
         request = build_peek_request(
             number_of_messages=number_of_messages,
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             template_url=_url,
         )

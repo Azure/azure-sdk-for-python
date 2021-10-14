@@ -37,9 +37,9 @@ def build_update_request(
     pop_receipt = kwargs.pop('pop_receipt')  # type: str
     visibilitytimeout = kwargs.pop('visibilitytimeout')  # type: int
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    version = kwargs.pop('version', "2018-03-28")  # type: str
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
-    version = "2018-03-28"
     accept = "application/xml"
     # Construct URL
     url = kwargs.pop("template_url", '/{queueName}/messages/{messageid}')
@@ -75,9 +75,9 @@ def build_delete_request(
     # type: (...) -> HttpRequest
     pop_receipt = kwargs.pop('pop_receipt')  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    version = kwargs.pop('version', "2018-03-28")  # type: str
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
-    version = "2018-03-28"
     accept = "application/xml"
     # Construct URL
     url = kwargs.pop("template_url", '/{queueName}/messages/{messageid}')
@@ -188,6 +188,7 @@ class MessageIdOperations(object):
             pop_receipt=pop_receipt,
             visibilitytimeout=visibilitytimeout,
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             content=content,
             template_url=_url,
@@ -256,6 +257,7 @@ class MessageIdOperations(object):
         request = build_delete_request(
             pop_receipt=pop_receipt,
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             template_url=_url,
         )

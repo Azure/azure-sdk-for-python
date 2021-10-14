@@ -86,6 +86,7 @@ class ServiceOperations:
         request = build_set_properties_request(
             content_type=content_type,
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             content=content,
             template_url=_url,
@@ -146,6 +147,7 @@ class ServiceOperations:
 
         request = build_get_properties_request(
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             template_url=_url,
         )
@@ -209,6 +211,7 @@ class ServiceOperations:
 
         request = build_get_statistics_request(
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             template_url=_url,
         )
@@ -298,6 +301,7 @@ class ServiceOperations:
             maxresults=maxresults,
             include=include,
             timeout=timeout,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             template_url=_url,
         )
