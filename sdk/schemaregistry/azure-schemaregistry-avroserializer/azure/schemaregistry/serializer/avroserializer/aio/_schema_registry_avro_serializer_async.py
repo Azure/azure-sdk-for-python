@@ -31,6 +31,7 @@ from io import BytesIO
 from typing import Any, Dict, Mapping
 import avro
 
+from ._async_lru import alru_cache
 from .._constants import SCHEMA_ID_START_INDEX, SCHEMA_ID_LENGTH, DATA_START_INDEX
 from .._avro_serializer import AvroObjectSerializer
 
@@ -80,7 +81,7 @@ class AvroSerializer(object):
         """
         await self._schema_registry_client.close()
 
-    #@lru_cache(maxsize=128)
+    @alru_cache(maxsize=128)
     async def _get_schema_id(self, schema_name, schema_str, **kwargs):
         # type: (str, str, Any) -> str
         """
@@ -99,7 +100,7 @@ class AvroSerializer(object):
         )
         return schema_properties.schema_id
 
-    #@lru_cache(maxsize=128)
+    @alru_cache(maxsize=128)
     async def _get_schema(self, schema_id, **kwargs):
         # type: (str, Any) -> str
         """
