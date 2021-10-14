@@ -381,6 +381,29 @@ class StorageFileTest(StorageTestCase):
         self.assertTrue(props)
 
     @FileSharePreparer()
+    def test_file_snapshot_exists(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory_name = self.get_resource_name("directory")
+        directory_client = share_client.create_directory(directory_name)
+        file_name = self._get_file_reference()
+        file_client = directory_client.get_file_client(file_name)
+        file_client.upload_file(self.short_byte_data)
+
+        snapshot = share_client.create_snapshot()
+        share_snapshot_client = self.fsc.get_share_client(self.share_name, snapshot=snapshot)
+        file_snapshot_client = share_snapshot_client.get_directory_client(directory_name).get_file_client(file_name)
+
+        file_client.delete_file()
+
+        # Act
+        props = file_snapshot_client.download_file()
+
+        # Assert
+        self.assertTrue(props)
+
+    @FileSharePreparer()
     def test_file_not_exists_with_snapshot(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)

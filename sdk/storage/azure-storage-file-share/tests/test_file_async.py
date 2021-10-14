@@ -379,6 +379,29 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         self.assertTrue(exists)
 
     @FileSharePreparer()
+    async def test_snapshot_exists(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory_name = self.get_resource_name("directory")
+        directory_client = await share_client.create_directory(directory_name)
+        file_name = self._get_file_reference()
+        file_client = directory_client.get_file_client(file_name)
+        await file_client.upload_file(self.short_byte_data)
+
+        snapshot = await share_client.create_snapshot()
+        share_snapshot_client = self.fsc.get_share_client(self.share_name, snapshot=snapshot)
+        file_snapshot_client = share_snapshot_client.get_directory_client(directory_name).get_file_client(file_name)
+
+        await file_client.delete_file()
+
+        # Act
+        props = await file_snapshot_client.download_file()
+
+        # Assert
+        self.assertTrue(props)
+
+    @FileSharePreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_file_not_exists_async(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
