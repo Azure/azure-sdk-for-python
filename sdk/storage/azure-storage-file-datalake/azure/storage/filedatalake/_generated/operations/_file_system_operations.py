@@ -683,58 +683,71 @@ class FileSystemOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        def prepare_request(next_link=None):
+        accept = "application/json"
+
+        # TODO: change this once continuation/next_link autorest PR is merged
+        def prepare_request(next_link=None, cont_token=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            if request_id_parameter is not None:
+                header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter",
+                                                                                     request_id_parameter, 'str')
+            header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version,
+                                                                       'str')
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
             if not next_link:
+                # Construct URL
+                url = self.list_paths.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+                    'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
                 }
-                _url = self._client.format_url(self.list_paths.metadata['url'], **path_format_arguments)
-                
-                request = build_list_paths_request(
-                    recursive=recursive,
-                    request_id_parameter=request_id_parameter,
-                    timeout=timeout,
-                    continuation=continuation,
-                    path=path,
-                    max_results=max_results,
-                    upn=upn,
-                    template_url=_url,
-                )
-                request = _convert_request(request)
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters['resource'] = self._serialize.query("self._config.resource", self._config.resource,
+                                                                     'str')
+                if timeout is not None:
+                    query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+                # TODO: change this once continuation/next_link autorest PR is merged
+                if cont_token is not None:
+                    query_parameters['continuation'] = self._serialize.query("continuation", cont_token, 'str')
+                if path is not None:
+                    query_parameters['directory'] = self._serialize.query("path", path, 'str')
+                query_parameters['recursive'] = self._serialize.query("recursive", recursive, 'bool')
+                if max_results is not None:
+                    query_parameters['maxResults'] = self._serialize.query("max_results", max_results, 'int', minimum=1)
+                if upn is not None:
+                    query_parameters['upn'] = self._serialize.query("upn", upn, 'bool')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
                 path_format_arguments = {
-                    "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+                    'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
                 }
-                _url = self._client.format_url(next_link, **path_format_arguments)
-                
-                request = build_list_paths_request(
-                    recursive=recursive,
-                    request_id_parameter=request_id_parameter,
-                    timeout=timeout,
-                    continuation=continuation,
-                    path=path,
-                    max_results=max_results,
-                    upn=upn,
-                    template_url=_url,
-                )
-                request = _convert_request(request)
-
-                path_format_arguments = {
-                    "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-                }
-                request.method = "GET"
+                url = self._client.format_url(url, **path_format_arguments)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("PathList", pipeline_response)
+            # TODO: change this once continuation/next_link autorest PR is merged
+            try:
+                cont_token = pipeline_response.http_response.headers['x-ms-continuation']
+            except KeyError:
+                cont_token = None
+            deserialized = self._deserialize('PathList', pipeline_response)
             list_of_elem = deserialized.paths
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return None, iter(list_of_elem)
+            # TODO: change this once continuation/next_link autorest PR is merged
+            return cont_token, iter(list_of_elem)
 
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
+        # TODO: change this once continuation/next_link autorest PR is merged
+        def get_next(cont_token=None):
+            cont_token = cont_token if not continuation else continuation
+            request = prepare_request(cont_token=cont_token)
 
             pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
