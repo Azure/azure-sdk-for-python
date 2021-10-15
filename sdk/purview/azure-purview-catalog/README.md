@@ -10,6 +10,10 @@ Azure Purview Catalog is a fully managed cloud service whose users can discover 
 
 [Source code][source_code] | [Package (PyPI)][catalog_pypi] | [API reference documentation][catalog_ref_docs]| [Product documentation][catalog_product_documentation]
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 ## Getting started
 
 ### Prerequisites
