@@ -4,8 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from typing import Optional, Any, Union, Iterator
-
+from typing import Optional, Any, Union, TypeVar, Iterator
 
 try:
     from urllib.parse import urlparse, quote, unquote
@@ -30,6 +29,9 @@ from ._data_lake_lease import DataLakeLeaseClient
 from ._generated import AzureDataLakeStorageRESTAPI
 from ._generated.models import ListBlobsIncludeItem
 from ._deserialize import deserialize_path_properties, process_storage_error, is_file_path
+
+
+ClassType = TypeVar("ClassType")
 
 
 class FileSystemClient(StorageAccountHostsMixin):
@@ -137,11 +139,12 @@ class FileSystemClient(StorageAccountHostsMixin):
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
+            cls,  # type: Type[ClassType]
+            conn_str,  # type: str
             file_system_name,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):  # type: (...) -> FileSystemClient
+        ):  # type: (...) -> ClassType
         """
         Create FileSystemClient from a Connection String.
 
