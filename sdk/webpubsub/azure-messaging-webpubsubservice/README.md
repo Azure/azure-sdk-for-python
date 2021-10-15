@@ -43,7 +43,7 @@ python -m pip install azure-messaging-webpubsubservice
 
 ### Authenticating the client
 
-#### 1. Create with an API Key Credential
+#### 1. Create the client from the service connection string
 
 You can get the [API key][api_key] or [Connection string][connection_string] in the [Azure Portal][azure_portal].
 Once you have the value for the API key, you can pass it as a string into an instance of [AzureKeyCredential][azure-key-credential]. 
