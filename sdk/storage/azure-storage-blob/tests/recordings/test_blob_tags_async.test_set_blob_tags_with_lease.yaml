@@ -2,43 +2,48 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.6.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 06 Nov 2020 21:47:53 GMT
+      - Thu, 07 Oct 2021 06:38:29 GMT
       x-ms-version:
-      - '2020-04-08'
+      - '2020-10-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/containera431473?timeout=5&restype=container
+    uri: https://storagename.blob.core.windows.net/containera431473?restype=container&timeout=5
   response:
     body:
-      string: ''
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
+        specified container already exists.\nRequestId:eea87068-701e-00bb-1245-bbe956000000\nTime:2021-10-07T06:38:29.8747487Z</Message></Error>"
     headers:
-      content-length: '0'
-      date: Fri, 06 Nov 2020 21:47:52 GMT
-      etag: '"0x8D8829D9D9E464C"'
-      last-modified: Fri, 06 Nov 2020 21:47:53 GMT
+      content-length: '230'
+      content-type: application/xml
+      date: Thu, 07 Oct 2021 06:38:29 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2020-04-08'
+      x-ms-error-code: ContainerAlreadyExists
+      x-ms-version: '2020-10-02'
     status:
-      code: 201
-      message: Created
-    url: https://seanmcccanary3.blob.core.windows.net/containera431473?timeout=5&restype=container
+      code: 409
+      message: The specified container already exists.
+    url: https://emilydevtest.blob.core.windows.net/containera431473?restype=container&timeout=5
 - request:
     body: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     headers:
+      Accept:
+      - application/xml
       Content-Length:
       - '1024'
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.6.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 06 Nov 2020 21:47:53 GMT
+      - Thu, 07 Oct 2021 06:38:29 GMT
       x-ms-version:
-      - '2020-04-08'
+      - '2020-10-02'
     method: PUT
     uri: https://storagename.blob.core.windows.net/containera431473/bloba431473
   response:
@@ -47,33 +52,34 @@ interactions:
     headers:
       content-length: '0'
       content-md5: yaNM/IXZgmmMasifdgcavQ==
-      date: Fri, 06 Nov 2020 21:47:53 GMT
-      etag: '"0x8D8829D9DA61294"'
-      last-modified: Fri, 06 Nov 2020 21:47:53 GMT
+      date: Thu, 07 Oct 2021 06:38:29 GMT
+      etag: '"0x8D9895D1353DE86"'
+      last-modified: Thu, 07 Oct 2021 06:38:29 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: ov8U1LLnyKc=
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2020-04-08'
-      x-ms-version-id: '2020-11-06T21:47:53.9308180Z'
+      x-ms-version: '2020-10-02'
     status:
       code: 201
       message: Created
-    url: https://seanmcccanary3.blob.core.windows.net/containera431473/bloba431473
+    url: https://emilydevtest.blob.core.windows.net/containera431473/bloba431473
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.6.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 06 Nov 2020 21:47:53 GMT
+      - Thu, 07 Oct 2021 06:38:29 GMT
       x-ms-lease-action:
       - acquire
       x-ms-lease-duration:
       - '-1'
       x-ms-proposed-lease-id:
-      - c4582a27-fa57-40db-8cc8-379fde913433
+      - c69e8acf-e5b4-46d4-a2bd-da0c98e7fcf1
       x-ms-version:
-      - '2020-04-08'
+      - '2020-10-02'
     method: PUT
     uri: https://storagename.blob.core.windows.net/containera431473/bloba431473?comp=lease
   response:
@@ -81,90 +87,94 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 06 Nov 2020 21:47:53 GMT
-      etag: '"0x8D8829D9DA61294"'
-      last-modified: Fri, 06 Nov 2020 21:47:53 GMT
+      date: Thu, 07 Oct 2021 06:38:29 GMT
+      etag: '"0x8D9895D1353DE86"'
+      last-modified: Thu, 07 Oct 2021 06:38:29 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-lease-id: c4582a27-fa57-40db-8cc8-379fde913433
-      x-ms-version: '2020-04-08'
+      x-ms-lease-id: c69e8acf-e5b4-46d4-a2bd-da0c98e7fcf1
+      x-ms-version: '2020-10-02'
     status:
       code: 201
       message: Created
-    url: https://seanmcccanary3.blob.core.windows.net/containera431473/bloba431473?comp=lease
+    url: https://emilydevtest.blob.core.windows.net/containera431473/bloba431473?comp=lease
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
       <Tags><TagSet><Tag><Key>tag1</Key><Value>firsttag</Value></Tag><Tag><Key>tag2</Key><Value>secondtag</Value></Tag><Tag><Key>tag3</Key><Value>thirdtag</Value></Tag></TagSet></Tags>'
     headers:
+      Accept:
+      - application/xml
       Content-Length:
       - '217'
       Content-Type:
-      - application/xml; charset=utf-8
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.6.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 06 Nov 2020 21:47:54 GMT
+      - Thu, 07 Oct 2021 06:38:29 GMT
       x-ms-version:
-      - '2020-04-08'
+      - '2020-10-02'
     method: PUT
     uri: https://storagename.blob.core.windows.net/containera431473/bloba431473?comp=tags
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>LeaseIdMissing</Code><Message>There
-        is currently a lease on the blob and no lease ID was specified in the request.\nRequestId:dccdd42d-401e-0035-4086-b4b6d6000000\nTime:2020-11-06T21:47:54.1899339Z</Message></Error>"
+        is currently a lease on the blob and no lease ID was specified in the request.\nRequestId:eea87082-701e-00bb-2a45-bbe956000000\nTime:2021-10-07T06:38:30.0718876Z</Message></Error>"
     headers:
       content-length: '268'
       content-type: application/xml
-      date: Fri, 06 Nov 2020 21:47:53 GMT
+      date: Thu, 07 Oct 2021 06:38:29 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: LeaseIdMissing
-      x-ms-version: '2020-04-08'
+      x-ms-version: '2020-10-02'
     status:
       code: 412
       message: There is currently a lease on the blob and no lease ID was specified
         in the request.
-    url: https://seanmcccanary3.blob.core.windows.net/containera431473/bloba431473?comp=tags
+    url: https://emilydevtest.blob.core.windows.net/containera431473/bloba431473?comp=tags
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
       <Tags><TagSet><Tag><Key>tag1</Key><Value>firsttag</Value></Tag><Tag><Key>tag2</Key><Value>secondtag</Value></Tag><Tag><Key>tag3</Key><Value>thirdtag</Value></Tag></TagSet></Tags>'
     headers:
+      Accept:
+      - application/xml
       Content-Length:
       - '217'
       Content-Type:
-      - application/xml; charset=utf-8
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.6.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 06 Nov 2020 21:47:54 GMT
+      - Thu, 07 Oct 2021 06:38:30 GMT
       x-ms-lease-id:
-      - c4582a27-fa57-40db-8cc8-379fde913433
+      - c69e8acf-e5b4-46d4-a2bd-da0c98e7fcf1
       x-ms-version:
-      - '2020-04-08'
+      - '2020-10-02'
     method: PUT
     uri: https://storagename.blob.core.windows.net/containera431473/bloba431473?comp=tags
   response:
     body:
       string: ''
     headers:
-      date: Fri, 06 Nov 2020 21:47:53 GMT
+      date: Thu, 07 Oct 2021 06:38:29 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2020-04-08'
+      x-ms-version: '2020-10-02'
     status:
       code: 204
       message: No Content
-    url: https://seanmcccanary3.blob.core.windows.net/containera431473/bloba431473?comp=tags
+    url: https://emilydevtest.blob.core.windows.net/containera431473/bloba431473?comp=tags
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.6.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 06 Nov 2020 21:47:54 GMT
+      - Thu, 07 Oct 2021 06:38:30 GMT
       x-ms-version:
-      - '2020-04-08'
+      - '2020-10-02'
     method: GET
     uri: https://storagename.blob.core.windows.net/containera431473/bloba431473?comp=tags
   response:
@@ -173,58 +183,58 @@ interactions:
     headers:
       content-length: '220'
       content-type: application/xml
-      date: Fri, 06 Nov 2020 21:47:53 GMT
+      date: Thu, 07 Oct 2021 06:38:29 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       vary: Origin
-      x-ms-version: '2020-04-08'
+      x-ms-version: '2020-10-02'
     status:
       code: 200
       message: OK
-    url: https://seanmcccanary3.blob.core.windows.net/containera431473/bloba431473?comp=tags
+    url: https://emilydevtest.blob.core.windows.net/containera431473/bloba431473?comp=tags
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.6.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 06 Nov 2020 21:47:54 GMT
+      - Thu, 07 Oct 2021 06:38:30 GMT
       x-ms-lease-id:
       - '''d92e6954-3274-4715-811c-727ca7145303'''
       x-ms-version:
-      - '2020-04-08'
+      - '2020-10-02'
     method: GET
     uri: https://storagename.blob.core.windows.net/containera431473/bloba431473?comp=tags
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>InvalidHeaderValue</Code><Message>The
-        value for one of the HTTP headers is not in the correct format.\nRequestId:dccdd4c8-401e-0035-4986-b4b6d6000000\nTime:2020-11-06T21:47:54.3740649Z</Message><HeaderName>x-ms-lease-id</HeaderName><HeaderValue>&apos;d92e6954-3274-4715-811c-727ca7145303&apos;</HeaderValue></Error>"
+        value for one of the HTTP headers is not in the correct format.\nRequestId:eea87106-701e-00bb-2245-bbe956000000\nTime:2021-10-07T06:38:30.2099850Z</Message><HeaderName>x-ms-lease-id</HeaderName><HeaderValue>&apos;d92e6954-3274-4715-811c-727ca7145303&apos;</HeaderValue></Error>"
     headers:
       content-length: '368'
       content-type: application/xml
-      date: Fri, 06 Nov 2020 21:47:53 GMT
+      date: Thu, 07 Oct 2021 06:38:29 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       vary: Origin
       x-ms-error-code: InvalidHeaderValue
-      x-ms-version: '2020-04-08'
+      x-ms-version: '2020-10-02'
     status:
       code: 400
       message: The value for one of the HTTP headers is not in the correct format.
-    url: https://seanmcccanary3.blob.core.windows.net/containera431473/bloba431473?comp=tags
+    url: https://emilydevtest.blob.core.windows.net/containera431473/bloba431473?comp=tags
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.6.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 06 Nov 2020 21:47:54 GMT
+      - Thu, 07 Oct 2021 06:38:30 GMT
       x-ms-lease-id:
-      - c4582a27-fa57-40db-8cc8-379fde913433
+      - c69e8acf-e5b4-46d4-a2bd-da0c98e7fcf1
       x-ms-version:
-      - '2020-04-08'
+      - '2020-10-02'
     method: GET
     uri: https://storagename.blob.core.windows.net/containera431473/bloba431473?comp=tags
   response:
@@ -233,25 +243,27 @@ interactions:
     headers:
       content-length: '220'
       content-type: application/xml
-      date: Fri, 06 Nov 2020 21:47:53 GMT
+      date: Thu, 07 Oct 2021 06:38:29 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       vary: Origin
-      x-ms-version: '2020-04-08'
+      x-ms-version: '2020-10-02'
     status:
       code: 200
       message: OK
-    url: https://seanmcccanary3.blob.core.windows.net/containera431473/bloba431473?comp=tags
+    url: https://emilydevtest.blob.core.windows.net/containera431473/bloba431473?comp=tags
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.6.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 06 Nov 2020 21:47:54 GMT
+      - Thu, 07 Oct 2021 06:38:30 GMT
       x-ms-lease-id:
-      - c4582a27-fa57-40db-8cc8-379fde913433
+      - c69e8acf-e5b4-46d4-a2bd-da0c98e7fcf1
       x-ms-version:
-      - '2020-04-08'
+      - '2020-10-02'
     method: DELETE
     uri: https://storagename.blob.core.windows.net/containera431473/bloba431473
   response:
@@ -259,12 +271,12 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 06 Nov 2020 21:47:53 GMT
+      date: Thu, 07 Oct 2021 06:38:29 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-delete-type-permanent: 'false'
-      x-ms-version: '2020-04-08'
+      x-ms-delete-type-permanent: 'true'
+      x-ms-version: '2020-10-02'
     status:
       code: 202
       message: Accepted
-    url: https://seanmcccanary3.blob.core.windows.net/containera431473/bloba431473
+    url: https://emilydevtest.blob.core.windows.net/containera431473/bloba431473
 version: 1
