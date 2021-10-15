@@ -36,7 +36,7 @@ from ._common import (
 from ._fetcher import HttpFetcher, FilesystemFetcher
 from ._model_query import ModelQuery
 
-if sys.version[0] == '2':
+if sys.version_info < (3, 5):
     from Queue import Queue
 else:
     from queue import Queue

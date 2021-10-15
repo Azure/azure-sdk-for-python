@@ -6,10 +6,8 @@
 import os
 import functools
 import sys
-import asyncio
 from enum import Enum
 from azure.iot.modelsrepository import (
-    ModelsRepositoryClient,
     DEFAULT_LOCATION,
 )
 
