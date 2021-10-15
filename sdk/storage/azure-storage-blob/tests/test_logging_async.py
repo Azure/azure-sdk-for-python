@@ -85,7 +85,28 @@ class StorageLoggingTestAsync(AsyncStorageTestCase):
                 pass
 
     @BlobPreparer()
-    @AsyncStorageTestCase.await_prepared_test
+    async def test_logging_request_and_response_body(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport(), logging_enable=True)
+        await self._setup(bsc)
+        # Arrange
+        container = bsc.get_container_client(self.container_name)
+        request_body = 'testloggingbody'
+        blob_name = self.get_resource_name("testloggingblob")
+        blob_client = container.get_blob_client(blob_name)
+        await blob_client.upload_blob(request_body, overwrite=True)
+        # Act
+        with LogCaptured(self) as log_captured:
+            await blob_client.download_blob()
+            log_as_str = log_captured.getvalue()
+            self.assertFalse(request_body in log_as_str)
+
+        with LogCaptured(self) as log_captured:
+            await blob_client.upload_blob(request_body, overwrite=True, logging_body=True)
+            log_as_str = log_captured.getvalue()
+            self.assertTrue(request_body in log_as_str)
+            self.assertEqual(log_as_str.count(request_body), 1)
+            
+    @BlobPreparer()         
     async def test_authorization_is_scrubbed_off(self, storage_account_name, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         await self._setup(bsc)
