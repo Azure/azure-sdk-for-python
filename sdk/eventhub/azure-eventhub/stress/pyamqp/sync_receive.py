@@ -54,8 +54,8 @@ def receive_fixed_time_interval(
     received_count = [0]
     run_flag = [True]
     all_perf_records = []
-    check_interval = 5
-    run_duration = 120
+    check_interval = 1
+    run_duration = 30
 
     def on_event(partition_context, event):
         received_count[0] += 1
@@ -131,7 +131,7 @@ def receive_fixed_amount(
         prefetch=prefetch
     )
     run_times = 3
-    fixed_amount = 5000
+    fixed_amount = 100_000
     perf_records = []
     received_count = [0]
 

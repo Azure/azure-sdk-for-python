@@ -27,7 +27,7 @@ eh_name_size_pairs = [
     ('pyamqp_1024', 1024)
 ]
 
-EVENT_DATA_COUNT = 10_000
+EVENT_DATA_COUNT = 2_000_000
 PARTITION_ID = "0"
 
 
