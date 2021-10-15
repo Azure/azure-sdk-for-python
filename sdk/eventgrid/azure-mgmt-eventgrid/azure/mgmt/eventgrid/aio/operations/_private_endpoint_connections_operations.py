@@ -46,7 +46,7 @@ class PrivateEndpointConnectionsOperations:
     async def get(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.Enum25"],
+        parent_type: Union[str, "_models.Enum17"],
         parent_name: str,
         private_endpoint_connection_name: str,
         **kwargs: Any
@@ -59,7 +59,7 @@ class PrivateEndpointConnectionsOperations:
         :type resource_group_name: str
         :param parent_type: The type of the parent resource. This can be either \'topics\' or
          \'domains\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum25
+        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum17
         :param parent_name: The name of the parent resource (namely, either, the topic name or domain
          name).
         :type parent_name: str
@@ -76,7 +76,7 @@ class PrivateEndpointConnectionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-15-preview"
+        api_version = "2021-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -117,7 +117,7 @@ class PrivateEndpointConnectionsOperations:
     async def _update_initial(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.Enum26"],
+        parent_type: Union[str, "_models.Enum18"],
         parent_name: str,
         private_endpoint_connection_name: str,
         private_endpoint_connection: "_models.PrivateEndpointConnection",
@@ -128,7 +128,7 @@ class PrivateEndpointConnectionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-15-preview"
+        api_version = "2021-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -178,7 +178,7 @@ class PrivateEndpointConnectionsOperations:
     async def begin_update(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.Enum26"],
+        parent_type: Union[str, "_models.Enum18"],
         parent_name: str,
         private_endpoint_connection_name: str,
         private_endpoint_connection: "_models.PrivateEndpointConnection",
@@ -192,7 +192,7 @@ class PrivateEndpointConnectionsOperations:
         :type resource_group_name: str
         :param parent_type: The type of the parent resource. This can be either \'topics\' or
          \'domains\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum26
+        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum18
         :param parent_name: The name of the parent resource (namely, either, the topic name or domain
          name).
         :type parent_name: str
@@ -264,7 +264,7 @@ class PrivateEndpointConnectionsOperations:
     async def _delete_initial(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.Enum27"],
+        parent_type: Union[str, "_models.Enum19"],
         parent_name: str,
         private_endpoint_connection_name: str,
         **kwargs: Any
@@ -274,7 +274,7 @@ class PrivateEndpointConnectionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-15-preview"
+        api_version = "2021-12-01"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -310,7 +310,7 @@ class PrivateEndpointConnectionsOperations:
     async def begin_delete(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.Enum27"],
+        parent_type: Union[str, "_models.Enum19"],
         parent_name: str,
         private_endpoint_connection_name: str,
         **kwargs: Any
@@ -323,7 +323,7 @@ class PrivateEndpointConnectionsOperations:
         :type resource_group_name: str
         :param parent_type: The type of the parent resource. This can be either \'topics\' or
          \'domains\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum27
+        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum19
         :param parent_name: The name of the parent resource (namely, either, the topic name or domain
          name).
         :type parent_name: str
@@ -389,7 +389,7 @@ class PrivateEndpointConnectionsOperations:
     def list_by_resource(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.Enum28"],
+        parent_type: Union[str, "_models.Enum20"],
         parent_name: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
@@ -403,7 +403,7 @@ class PrivateEndpointConnectionsOperations:
         :type resource_group_name: str
         :param parent_type: The type of the parent resource. This can be either \'topics\' or
          \'domains\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum28
+        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum20
         :param parent_name: The name of the parent resource (namely, either, the topic name or domain
          name).
         :type parent_name: str
@@ -428,7 +428,7 @@ class PrivateEndpointConnectionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-15-preview"
+        api_version = "2021-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):

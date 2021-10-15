@@ -12,10 +12,8 @@ try:
     from ._models_py3 import BoolEqualsAdvancedFilter
     from ._models_py3 import ConnectionState
     from ._models_py3 import DeadLetterDestination
-    from ._models_py3 import DeadLetterWithResourceIdentity
     from ._models_py3 import DeliveryAttributeListResult
     from ._models_py3 import DeliveryAttributeMapping
-    from ._models_py3 import DeliveryWithResourceIdentity
     from ._models_py3 import Domain
     from ._models_py3 import DomainRegenerateKeyRequest
     from ._models_py3 import DomainSharedAccessKeys
@@ -24,64 +22,37 @@ try:
     from ._models_py3 import DomainUpdateParameters
     from ._models_py3 import DomainsListResult
     from ._models_py3 import DynamicDeliveryAttributeMapping
-    from ._models_py3 import EventChannel
-    from ._models_py3 import EventChannelDestination
-    from ._models_py3 import EventChannelFilter
-    from ._models_py3 import EventChannelSource
-    from ._models_py3 import EventChannelsListResult
     from ._models_py3 import EventHubEventSubscriptionDestination
     from ._models_py3 import EventSubscription
     from ._models_py3 import EventSubscriptionDestination
     from ._models_py3 import EventSubscriptionFilter
     from ._models_py3 import EventSubscriptionFullUrl
-    from ._models_py3 import EventSubscriptionIdentity
     from ._models_py3 import EventSubscriptionUpdateParameters
     from ._models_py3 import EventSubscriptionsListResult
     from ._models_py3 import EventType
     from ._models_py3 import EventTypesListResult
-    from ._models_py3 import ExtendedLocation
-    from ._models_py3 import ExtensionTopic
     from ._models_py3 import HybridConnectionEventSubscriptionDestination
     from ._models_py3 import IdentityInfo
     from ._models_py3 import InboundIpRule
     from ._models_py3 import InputSchemaMapping
-    from ._models_py3 import IsNotNullAdvancedFilter
-    from ._models_py3 import IsNullOrUndefinedAdvancedFilter
     from ._models_py3 import JsonField
     from ._models_py3 import JsonFieldWithDefault
     from ._models_py3 import JsonInputSchemaMapping
     from ._models_py3 import NumberGreaterThanAdvancedFilter
     from ._models_py3 import NumberGreaterThanOrEqualsAdvancedFilter
     from ._models_py3 import NumberInAdvancedFilter
-    from ._models_py3 import NumberInRangeAdvancedFilter
     from ._models_py3 import NumberLessThanAdvancedFilter
     from ._models_py3 import NumberLessThanOrEqualsAdvancedFilter
     from ._models_py3 import NumberNotInAdvancedFilter
-    from ._models_py3 import NumberNotInRangeAdvancedFilter
     from ._models_py3 import Operation
     from ._models_py3 import OperationInfo
     from ._models_py3 import OperationsListResult
-    from ._models_py3 import PartnerNamespace
-    from ._models_py3 import PartnerNamespaceRegenerateKeyRequest
-    from ._models_py3 import PartnerNamespaceSharedAccessKeys
-    from ._models_py3 import PartnerNamespaceUpdateParameters
-    from ._models_py3 import PartnerNamespacesListResult
-    from ._models_py3 import PartnerRegistration
-    from ._models_py3 import PartnerRegistrationEventTypesListResult
-    from ._models_py3 import PartnerRegistrationUpdateParameters
-    from ._models_py3 import PartnerRegistrationsListResult
-    from ._models_py3 import PartnerTopic
-    from ._models_py3 import PartnerTopicType
-    from ._models_py3 import PartnerTopicTypesListResult
-    from ._models_py3 import PartnerTopicUpdateParameters
-    from ._models_py3 import PartnerTopicsListResult
     from ._models_py3 import PrivateEndpoint
     from ._models_py3 import PrivateEndpointConnection
     from ._models_py3 import PrivateEndpointConnectionListResult
     from ._models_py3 import PrivateLinkResource
     from ._models_py3 import PrivateLinkResourcesListResult
     from ._models_py3 import Resource
-    from ._models_py3 import ResourceSku
     from ._models_py3 import RetryPolicy
     from ._models_py3 import ServiceBusQueueEventSubscriptionDestination
     from ._models_py3 import ServiceBusTopicEventSubscriptionDestination
@@ -92,9 +63,6 @@ try:
     from ._models_py3 import StringContainsAdvancedFilter
     from ._models_py3 import StringEndsWithAdvancedFilter
     from ._models_py3 import StringInAdvancedFilter
-    from ._models_py3 import StringNotBeginsWithAdvancedFilter
-    from ._models_py3 import StringNotContainsAdvancedFilter
-    from ._models_py3 import StringNotEndsWithAdvancedFilter
     from ._models_py3 import StringNotInAdvancedFilter
     from ._models_py3 import SystemData
     from ._models_py3 import SystemTopic
@@ -116,10 +84,8 @@ except (SyntaxError, ImportError):
     from ._models import BoolEqualsAdvancedFilter  # type: ignore
     from ._models import ConnectionState  # type: ignore
     from ._models import DeadLetterDestination  # type: ignore
-    from ._models import DeadLetterWithResourceIdentity  # type: ignore
     from ._models import DeliveryAttributeListResult  # type: ignore
     from ._models import DeliveryAttributeMapping  # type: ignore
-    from ._models import DeliveryWithResourceIdentity  # type: ignore
     from ._models import Domain  # type: ignore
     from ._models import DomainRegenerateKeyRequest  # type: ignore
     from ._models import DomainSharedAccessKeys  # type: ignore
@@ -128,64 +94,37 @@ except (SyntaxError, ImportError):
     from ._models import DomainUpdateParameters  # type: ignore
     from ._models import DomainsListResult  # type: ignore
     from ._models import DynamicDeliveryAttributeMapping  # type: ignore
-    from ._models import EventChannel  # type: ignore
-    from ._models import EventChannelDestination  # type: ignore
-    from ._models import EventChannelFilter  # type: ignore
-    from ._models import EventChannelSource  # type: ignore
-    from ._models import EventChannelsListResult  # type: ignore
     from ._models import EventHubEventSubscriptionDestination  # type: ignore
     from ._models import EventSubscription  # type: ignore
     from ._models import EventSubscriptionDestination  # type: ignore
     from ._models import EventSubscriptionFilter  # type: ignore
     from ._models import EventSubscriptionFullUrl  # type: ignore
-    from ._models import EventSubscriptionIdentity  # type: ignore
     from ._models import EventSubscriptionUpdateParameters  # type: ignore
     from ._models import EventSubscriptionsListResult  # type: ignore
     from ._models import EventType  # type: ignore
     from ._models import EventTypesListResult  # type: ignore
-    from ._models import ExtendedLocation  # type: ignore
-    from ._models import ExtensionTopic  # type: ignore
     from ._models import HybridConnectionEventSubscriptionDestination  # type: ignore
     from ._models import IdentityInfo  # type: ignore
     from ._models import InboundIpRule  # type: ignore
     from ._models import InputSchemaMapping  # type: ignore
-    from ._models import IsNotNullAdvancedFilter  # type: ignore
-    from ._models import IsNullOrUndefinedAdvancedFilter  # type: ignore
     from ._models import JsonField  # type: ignore
     from ._models import JsonFieldWithDefault  # type: ignore
     from ._models import JsonInputSchemaMapping  # type: ignore
     from ._models import NumberGreaterThanAdvancedFilter  # type: ignore
     from ._models import NumberGreaterThanOrEqualsAdvancedFilter  # type: ignore
     from ._models import NumberInAdvancedFilter  # type: ignore
-    from ._models import NumberInRangeAdvancedFilter  # type: ignore
     from ._models import NumberLessThanAdvancedFilter  # type: ignore
     from ._models import NumberLessThanOrEqualsAdvancedFilter  # type: ignore
     from ._models import NumberNotInAdvancedFilter  # type: ignore
-    from ._models import NumberNotInRangeAdvancedFilter  # type: ignore
     from ._models import Operation  # type: ignore
     from ._models import OperationInfo  # type: ignore
     from ._models import OperationsListResult  # type: ignore
-    from ._models import PartnerNamespace  # type: ignore
-    from ._models import PartnerNamespaceRegenerateKeyRequest  # type: ignore
-    from ._models import PartnerNamespaceSharedAccessKeys  # type: ignore
-    from ._models import PartnerNamespaceUpdateParameters  # type: ignore
-    from ._models import PartnerNamespacesListResult  # type: ignore
-    from ._models import PartnerRegistration  # type: ignore
-    from ._models import PartnerRegistrationEventTypesListResult  # type: ignore
-    from ._models import PartnerRegistrationUpdateParameters  # type: ignore
-    from ._models import PartnerRegistrationsListResult  # type: ignore
-    from ._models import PartnerTopic  # type: ignore
-    from ._models import PartnerTopicType  # type: ignore
-    from ._models import PartnerTopicTypesListResult  # type: ignore
-    from ._models import PartnerTopicUpdateParameters  # type: ignore
-    from ._models import PartnerTopicsListResult  # type: ignore
     from ._models import PrivateEndpoint  # type: ignore
     from ._models import PrivateEndpointConnection  # type: ignore
     from ._models import PrivateEndpointConnectionListResult  # type: ignore
     from ._models import PrivateLinkResource  # type: ignore
     from ._models import PrivateLinkResourcesListResult  # type: ignore
     from ._models import Resource  # type: ignore
-    from ._models import ResourceSku  # type: ignore
     from ._models import RetryPolicy  # type: ignore
     from ._models import ServiceBusQueueEventSubscriptionDestination  # type: ignore
     from ._models import ServiceBusTopicEventSubscriptionDestination  # type: ignore
@@ -196,9 +135,6 @@ except (SyntaxError, ImportError):
     from ._models import StringContainsAdvancedFilter  # type: ignore
     from ._models import StringEndsWithAdvancedFilter  # type: ignore
     from ._models import StringInAdvancedFilter  # type: ignore
-    from ._models import StringNotBeginsWithAdvancedFilter  # type: ignore
-    from ._models import StringNotContainsAdvancedFilter  # type: ignore
-    from ._models import StringNotEndsWithAdvancedFilter  # type: ignore
     from ._models import StringNotInAdvancedFilter  # type: ignore
     from ._models import SystemData  # type: ignore
     from ._models import SystemTopic  # type: ignore
@@ -223,31 +159,20 @@ from ._event_grid_management_client_enums import (
     DomainProvisioningState,
     DomainTopicProvisioningState,
     EndpointType,
-    Enum25,
-    Enum26,
-    Enum27,
-    Enum28,
-    EventChannelProvisioningState,
+    Enum17,
+    Enum18,
+    Enum19,
+    Enum20,
     EventDeliverySchema,
-    EventSubscriptionIdentityType,
     EventSubscriptionProvisioningState,
     IdentityType,
     InputSchema,
     InputSchemaMappingType,
     IpActionType,
-    PartnerNamespaceProvisioningState,
-    PartnerRegistrationProvisioningState,
-    PartnerRegistrationVisibilityState,
-    PartnerTopicActivationState,
-    PartnerTopicProvisioningState,
-    PartnerTopicReadinessState,
-    PartnerTopicTypeAuthorizationState,
     PersistedConnectionStatus,
     PublicNetworkAccess,
-    ResourceKind,
     ResourceProvisioningState,
     ResourceRegionType,
-    Sku,
     TopicProvisioningState,
     TopicTypePropertiesSupportedScopesForSourceItem,
     TopicTypeProvisioningState,
@@ -259,10 +184,8 @@ __all__ = [
     'BoolEqualsAdvancedFilter',
     'ConnectionState',
     'DeadLetterDestination',
-    'DeadLetterWithResourceIdentity',
     'DeliveryAttributeListResult',
     'DeliveryAttributeMapping',
-    'DeliveryWithResourceIdentity',
     'Domain',
     'DomainRegenerateKeyRequest',
     'DomainSharedAccessKeys',
@@ -271,64 +194,37 @@ __all__ = [
     'DomainUpdateParameters',
     'DomainsListResult',
     'DynamicDeliveryAttributeMapping',
-    'EventChannel',
-    'EventChannelDestination',
-    'EventChannelFilter',
-    'EventChannelSource',
-    'EventChannelsListResult',
     'EventHubEventSubscriptionDestination',
     'EventSubscription',
     'EventSubscriptionDestination',
     'EventSubscriptionFilter',
     'EventSubscriptionFullUrl',
-    'EventSubscriptionIdentity',
     'EventSubscriptionUpdateParameters',
     'EventSubscriptionsListResult',
     'EventType',
     'EventTypesListResult',
-    'ExtendedLocation',
-    'ExtensionTopic',
     'HybridConnectionEventSubscriptionDestination',
     'IdentityInfo',
     'InboundIpRule',
     'InputSchemaMapping',
-    'IsNotNullAdvancedFilter',
-    'IsNullOrUndefinedAdvancedFilter',
     'JsonField',
     'JsonFieldWithDefault',
     'JsonInputSchemaMapping',
     'NumberGreaterThanAdvancedFilter',
     'NumberGreaterThanOrEqualsAdvancedFilter',
     'NumberInAdvancedFilter',
-    'NumberInRangeAdvancedFilter',
     'NumberLessThanAdvancedFilter',
     'NumberLessThanOrEqualsAdvancedFilter',
     'NumberNotInAdvancedFilter',
-    'NumberNotInRangeAdvancedFilter',
     'Operation',
     'OperationInfo',
     'OperationsListResult',
-    'PartnerNamespace',
-    'PartnerNamespaceRegenerateKeyRequest',
-    'PartnerNamespaceSharedAccessKeys',
-    'PartnerNamespaceUpdateParameters',
-    'PartnerNamespacesListResult',
-    'PartnerRegistration',
-    'PartnerRegistrationEventTypesListResult',
-    'PartnerRegistrationUpdateParameters',
-    'PartnerRegistrationsListResult',
-    'PartnerTopic',
-    'PartnerTopicType',
-    'PartnerTopicTypesListResult',
-    'PartnerTopicUpdateParameters',
-    'PartnerTopicsListResult',
     'PrivateEndpoint',
     'PrivateEndpointConnection',
     'PrivateEndpointConnectionListResult',
     'PrivateLinkResource',
     'PrivateLinkResourcesListResult',
     'Resource',
-    'ResourceSku',
     'RetryPolicy',
     'ServiceBusQueueEventSubscriptionDestination',
     'ServiceBusTopicEventSubscriptionDestination',
@@ -339,9 +235,6 @@ __all__ = [
     'StringContainsAdvancedFilter',
     'StringEndsWithAdvancedFilter',
     'StringInAdvancedFilter',
-    'StringNotBeginsWithAdvancedFilter',
-    'StringNotContainsAdvancedFilter',
-    'StringNotEndsWithAdvancedFilter',
     'StringNotInAdvancedFilter',
     'SystemData',
     'SystemTopic',
@@ -364,31 +257,20 @@ __all__ = [
     'DomainProvisioningState',
     'DomainTopicProvisioningState',
     'EndpointType',
-    'Enum25',
-    'Enum26',
-    'Enum27',
-    'Enum28',
-    'EventChannelProvisioningState',
+    'Enum17',
+    'Enum18',
+    'Enum19',
+    'Enum20',
     'EventDeliverySchema',
-    'EventSubscriptionIdentityType',
     'EventSubscriptionProvisioningState',
     'IdentityType',
     'InputSchema',
     'InputSchemaMappingType',
     'IpActionType',
-    'PartnerNamespaceProvisioningState',
-    'PartnerRegistrationProvisioningState',
-    'PartnerRegistrationVisibilityState',
-    'PartnerTopicActivationState',
-    'PartnerTopicProvisioningState',
-    'PartnerTopicReadinessState',
-    'PartnerTopicTypeAuthorizationState',
     'PersistedConnectionStatus',
     'PublicNetworkAccess',
-    'ResourceKind',
     'ResourceProvisioningState',
     'ResourceRegionType',
-    'Sku',
     'TopicProvisioningState',
     'TopicTypePropertiesSupportedScopesForSourceItem',
     'TopicTypeProvisioningState',
