@@ -23,8 +23,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class VideosOperations(object):
-    """VideosOperations operations.
+class PipelineTopologiesOperations(object):
+    """PipelineTopologiesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -49,29 +49,32 @@ class VideosOperations(object):
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
+        filter=None,  # type: Optional[str]
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.VideoEntityCollection"]
-        """Retrieves all existing video resources.
+        # type: (...) -> Iterable["_models.PipelineTopologyCollection"]
+        """Retrieves a list of pipeline topologies.
 
-        Retrieves a list of video resources that have been created, along with their JSON
-        representations.
+        Retrieves a list of pipeline topologies that have been added to the account, if any, along with
+        their JSON representation.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param account_name: The Azure Video Analyzer account name.
         :type account_name: str
+        :param filter: Restricts the set of items returned.
+        :type filter: str
         :param top: Specifies a non-negative integer n that limits the number of items returned from a
          collection. The service returns the number of available items up to but not greater than the
          specified value n.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either VideoEntityCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~video_analyzer.models.VideoEntityCollection]
+        :return: An iterator like instance of either PipelineTopologyCollection or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~video_analyzer.models.PipelineTopologyCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VideoEntityCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PipelineTopologyCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -96,6 +99,8 @@ class VideosOperations(object):
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
 
@@ -107,7 +112,7 @@ class VideosOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('VideoEntityCollection', pipeline_response)
+            deserialized = self._deserialize('PipelineTopologyCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -129,32 +134,33 @@ class VideosOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}/videos'}  # type: ignore
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}/pipelineTopologies'}  # type: ignore
 
     def get(
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        video_name,  # type: str
+        pipeline_topology_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.VideoEntity"
-        """Retrieves an existing video resource.
+        # type: (...) -> "_models.PipelineTopology"
+        """Retrieves a specific pipeline topology by name.
 
-        Retrieves an existing video resource with the given name.
+        Retrieves a specific pipeline topology by name. If a topology with that name has been
+        previously created, the call will return the JSON representation of that topology.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param account_name: The Azure Video Analyzer account name.
         :type account_name: str
-        :param video_name: The Video name.
-        :type video_name: str
+        :param pipeline_topology_name: Pipeline topology unique identifier.
+        :type pipeline_topology_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: VideoEntity, or the result of cls(response)
-        :rtype: ~video_analyzer.models.VideoEntity
+        :return: PipelineTopology, or the result of cls(response)
+        :rtype: ~video_analyzer.models.PipelineTopology
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VideoEntity"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PipelineTopology"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -168,7 +174,7 @@ class VideosOperations(object):
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'videoName': self._serialize.url("video_name", video_name, 'str'),
+            'pipelineTopologyName': self._serialize.url("pipeline_topology_name", pipeline_topology_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -189,41 +195,44 @@ class VideosOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('VideoEntity', pipeline_response)
+        deserialized = self._deserialize('PipelineTopology', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}/videos/{videoName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}/pipelineTopologies/{pipelineTopologyName}'}  # type: ignore
 
     def create_or_update(
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        video_name,  # type: str
-        parameters,  # type: "_models.VideoEntity"
+        pipeline_topology_name,  # type: str
+        parameters,  # type: "_models.PipelineTopology"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.VideoEntity"
-        """Creates a new video resource or updates an existing one.
+        # type: (...) -> "_models.PipelineTopology"
+        """Creates or updates a pipeline topology.
 
-        Creates a new video resource or updates an existing video resource with the given name.
+        Creates a new pipeline topology or updates an existing one, with the given name. A pipeline
+        topology describes the processing steps to be applied when processing content for a particular
+        outcome. The topology should be defined according to the scenario to be achieved and can be
+        reused across many pipeline instances which share the same processing characteristics.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param account_name: The Azure Video Analyzer account name.
         :type account_name: str
-        :param video_name: The Video name.
-        :type video_name: str
+        :param pipeline_topology_name: Pipeline topology unique identifier.
+        :type pipeline_topology_name: str
         :param parameters: The request parameters.
-        :type parameters: ~video_analyzer.models.VideoEntity
+        :type parameters: ~video_analyzer.models.PipelineTopology
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: VideoEntity, or the result of cls(response)
-        :rtype: ~video_analyzer.models.VideoEntity
+        :return: PipelineTopology, or the result of cls(response)
+        :rtype: ~video_analyzer.models.PipelineTopology
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VideoEntity"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PipelineTopology"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -238,7 +247,7 @@ class VideosOperations(object):
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'videoName': self._serialize.url("video_name", video_name, 'str'),
+            'pipelineTopologyName': self._serialize.url("pipeline_topology_name", pipeline_topology_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -252,7 +261,7 @@ class VideosOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'VideoEntity')
+        body_content = self._serialize.body(parameters, 'PipelineTopology')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -264,35 +273,36 @@ class VideosOperations(object):
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('VideoEntity', pipeline_response)
+            deserialized = self._deserialize('PipelineTopology', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('VideoEntity', pipeline_response)
+            deserialized = self._deserialize('PipelineTopology', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}/videos/{videoName}'}  # type: ignore
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}/pipelineTopologies/{pipelineTopologyName}'}  # type: ignore
 
     def delete(
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        video_name,  # type: str
+        pipeline_topology_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Deletes an existing video resource and its underlying data.
+        """Deletes a pipeline topology.
 
-        Deletes an existing video resource and its underlying data. This operation is irreversible.
+        Deletes a pipeline topology with the given name. This method should be called after all
+        instances of the topology have been stopped and deleted.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param account_name: The Azure Video Analyzer account name.
         :type account_name: str
-        :param video_name: The Video name.
-        :type video_name: str
+        :param pipeline_topology_name: Pipeline topology unique identifier.
+        :type pipeline_topology_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -312,7 +322,7 @@ class VideosOperations(object):
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'videoName': self._serialize.url("video_name", video_name, 'str'),
+            'pipelineTopologyName': self._serialize.url("pipeline_topology_name", pipeline_topology_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -336,35 +346,38 @@ class VideosOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}/videos/{videoName}'}  # type: ignore
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}/pipelineTopologies/{pipelineTopologyName}'}  # type: ignore
 
     def update(
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        video_name,  # type: str
-        parameters,  # type: "_models.VideoEntity"
+        pipeline_topology_name,  # type: str
+        parameters,  # type: "_models.PipelineTopologyUpdate"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.VideoEntity"
-        """Updates individual properties of an existing video resource.
+        # type: (...) -> "_models.PipelineTopology"
+        """Updates an existing pipeline topology.
 
-        Updates individual properties of an existing video resource with the given name.
+        Updates an existing pipeline topology with the given name. If the associated live pipelines or
+        pipeline jobs are in active or processing state, respectively, then only the description can be
+        updated. Else, the properties that can be updated include: description, parameter declarations,
+        sources, processors, and sinks.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param account_name: The Azure Video Analyzer account name.
         :type account_name: str
-        :param video_name: The Video name.
-        :type video_name: str
+        :param pipeline_topology_name: Pipeline topology unique identifier.
+        :type pipeline_topology_name: str
         :param parameters: The request parameters.
-        :type parameters: ~video_analyzer.models.VideoEntity
+        :type parameters: ~video_analyzer.models.PipelineTopologyUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: VideoEntity, or the result of cls(response)
-        :rtype: ~video_analyzer.models.VideoEntity
+        :return: PipelineTopology, or the result of cls(response)
+        :rtype: ~video_analyzer.models.PipelineTopology
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VideoEntity"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PipelineTopology"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -379,7 +392,7 @@ class VideosOperations(object):
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'videoName': self._serialize.url("video_name", video_name, 'str'),
+            'pipelineTopologyName': self._serialize.url("pipeline_topology_name", pipeline_topology_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -393,7 +406,7 @@ class VideosOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'VideoEntity')
+        body_content = self._serialize.body(parameters, 'PipelineTopologyUpdate')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -404,77 +417,10 @@ class VideosOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('VideoEntity', pipeline_response)
+        deserialized = self._deserialize('PipelineTopology', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}/videos/{videoName}'}  # type: ignore
-
-    def list_content_token(
-        self,
-        resource_group_name,  # type: str
-        account_name,  # type: str
-        video_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.VideoContentToken"
-        """Generates a streaming token which can be used for accessing content from video content URLs.
-
-        Generates a streaming token which can be used for accessing content from video content URLs,
-        for a video resource with the given name.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param account_name: The Azure Video Analyzer account name.
-        :type account_name: str
-        :param video_name: The Video name.
-        :type video_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: VideoContentToken, or the result of cls(response)
-        :rtype: ~video_analyzer.models.VideoContentToken
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VideoContentToken"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-11-01-preview"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.list_content_token.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'videoName': self._serialize.url("video_name", video_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('VideoContentToken', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    list_content_token.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}/videos/{videoName}/listContentToken'}  # type: ignore
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}/pipelineTopologies/{pipelineTopologyName}'}  # type: ignore

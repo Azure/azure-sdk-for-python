@@ -22,8 +22,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class Operations(object):
-    """Operations operations.
+class VideoAnalyzerOperationStatusesOperations(object):
+    """VideoAnalyzerOperationStatusesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -44,21 +44,27 @@ class Operations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def list(
+    def get(
         self,
+        location_name,  # type: str
+        operation_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.OperationCollection"
-        """List Operations.
+        # type: (...) -> "_models.VideoAnalyzerOperationStatus"
+        """Get operation status.
 
-        Lists all the Media operations.
+        Get video analyzer operation status.
 
+        :param location_name: Location name.
+        :type location_name: str
+        :param operation_id: Operation Id.
+        :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: OperationCollection, or the result of cls(response)
-        :rtype: ~video_analyzer.models.OperationCollection
+        :return: VideoAnalyzerOperationStatus, or the result of cls(response)
+        :rtype: ~video_analyzer.models.VideoAnalyzerOperationStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VideoAnalyzerOperationStatus"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -67,7 +73,13 @@ class Operations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.list.metadata['url']  # type: ignore
+        url = self.get.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'locationName': self._serialize.url("location_name", location_name, 'str'),
+            'operationId': self._serialize.url("operation_id", operation_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
@@ -86,10 +98,10 @@ class Operations(object):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('OperationCollection', pipeline_response)
+        deserialized = self._deserialize('VideoAnalyzerOperationStatus', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Media/operations'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Media/locations/{locationName}/videoAnalyzerOperationStatuses/{operationId}'}  # type: ignore
