@@ -89,7 +89,7 @@ Use the returned token credential to authenticate the client:
 
 ## Examples
 
-### Sending a request
+### Broadcast messages 
 
 ```python
 >>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
