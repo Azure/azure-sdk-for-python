@@ -3189,7 +3189,7 @@ class DocumentTableCell(object):
             column_index=data.get("column_index", None),
             row_span=data.get("row_span", 1),
             column_span=data.get("column_span", 1),
-            content=data.get("content", None),
+            content=data.get("content", "content"),
             bounding_regions=[BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
             if len(data.get("bounding_regions", [])) > 0
             else [],

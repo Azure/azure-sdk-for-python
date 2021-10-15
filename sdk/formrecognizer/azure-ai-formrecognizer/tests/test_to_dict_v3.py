@@ -891,9 +891,8 @@ class TestToDict(FormRecognizerTest):
         assert d == final
 
     def test_document_table_cell_to_dict_use_defaults(self):
-        # NOTE: column_span and row_span are not included on purpose to test that the proper defaults are set.
+        # NOTE: content, column_span, and row_span are not included on purpose to test that the proper defaults are set.
         model = _models.DocumentTableCell(
-            kind="content",
             row_index=2,
             column_index=3,
             content="cell content",
