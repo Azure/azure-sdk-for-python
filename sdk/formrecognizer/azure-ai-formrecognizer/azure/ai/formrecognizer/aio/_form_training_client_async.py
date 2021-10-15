@@ -41,7 +41,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
     composing models from a collection of existing models trained with labels.
 
     .. note:: FormTrainingClient should be used with API versions <=v2.1.
-        To use API versions v2021-09-30-preview and up, instantiate a DocumentModelAdministrationClient.
+        To use API versions 2021-09-30-preview and up, instantiate a DocumentModelAdministrationClient.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
@@ -81,15 +81,16 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
     ) -> None:
         api_version = kwargs.pop("api_version", FormRecognizerApiVersion.V2_1)
         super(FormTrainingClient, self).__init__(
-            endpoint=endpoint, credential=credential, api_version=api_version, client_kind="form", **kwargs
+            endpoint=endpoint,
+            credential=credential,
+            api_version=api_version,
+            client_kind="form",
+            **kwargs
         )
 
     @distributed_trace_async
     async def begin_training(
-        self,
-        training_files_url: str,
-        use_training_labels: bool,
-        **kwargs: Any
+        self, training_files_url: str, use_training_labels: bool, **kwargs: Any
     ) -> AsyncLROPoller[CustomFormModel]:
         """Create and train a custom model. The request must include a `training_files_url` parameter that is an
         externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that
@@ -202,7 +203,9 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
             cls=deserialization_callback,
             continuation_token=continuation_token,
             polling=AsyncLROBasePolling(
-                timeout=polling_interval, lro_algorithms=[FormTrainingPolling()], **kwargs
+                timeout=polling_interval,
+                lro_algorithms=[FormTrainingPolling()],
+                **kwargs
             ),
             **kwargs
         )

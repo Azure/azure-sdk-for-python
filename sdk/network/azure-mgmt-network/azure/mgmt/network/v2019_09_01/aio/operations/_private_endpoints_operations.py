@@ -47,7 +47,7 @@ class PrivateEndpointsOperations:
         self,
         resource_group_name: str,
         private_endpoint_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -92,7 +92,7 @@ class PrivateEndpointsOperations:
         self,
         resource_group_name: str,
         private_endpoint_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified private endpoint.
 
@@ -102,8 +102,8 @@ class PrivateEndpointsOperations:
         :type private_endpoint_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -157,7 +157,7 @@ class PrivateEndpointsOperations:
         resource_group_name: str,
         private_endpoint_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateEndpoint":
         """Gets the specified private endpoint by resource group.
 
@@ -221,7 +221,7 @@ class PrivateEndpointsOperations:
         resource_group_name: str,
         private_endpoint_name: str,
         parameters: "_models.PrivateEndpoint",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateEndpoint":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpoint"]
         error_map = {
@@ -279,7 +279,7 @@ class PrivateEndpointsOperations:
         resource_group_name: str,
         private_endpoint_name: str,
         parameters: "_models.PrivateEndpoint",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.PrivateEndpoint"]:
         """Creates or updates an private endpoint in the specified resource group.
 
@@ -291,8 +291,8 @@ class PrivateEndpointsOperations:
         :type parameters: ~azure.mgmt.network.v2019_09_01.models.PrivateEndpoint
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PrivateEndpoint or the result of cls(response)
@@ -348,7 +348,7 @@ class PrivateEndpointsOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PrivateEndpointListResult"]:
         """Gets all private endpoints in a resource group.
 
@@ -418,7 +418,7 @@ class PrivateEndpointsOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PrivateEndpointListResult"]:
         """Gets all private endpoints in a subscription.
 

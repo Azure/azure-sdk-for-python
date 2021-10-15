@@ -2,11 +2,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""Demonstrates custom credential implementation"""
+"""Demonstrates custom credential implementations using existing access tokens and an MSAL client"""
 
+import time
 from typing import TYPE_CHECKING
 
 from azure.core.credentials import AccessToken
+from azure.identity import AuthenticationRequiredError, AzureAuthorityHosts
+import msal
 
 if TYPE_CHECKING:
     from typing import Any, Union
@@ -32,3 +35,25 @@ class StaticTokenCredential(object):
         """get_token is the only method a credential must implement"""
 
         return self._token
+
+
+class MsalTokenCredential(object):
+    """Uses an MSAL client directly to obtain access tokens with an interactive flow."""
+    def __init__(self, tenant_id, client_id):
+        # type: (str, str) -> None
+        self._app = msal.PublicClientApplication(
+            client_id=client_id, authority="https://{}/{}".format(AzureAuthorityHosts.AZURE_PUBLIC_CLOUD, tenant_id)
+        )
+
+    def get_token(self, *scopes, **kwargs):
+        # type: (*str, **Any) -> AccessToken
+        """get_token is the only method a credential must implement"""
+
+        now = int(time.time())
+        result = self._app.acquire_token_interactive(list(scopes), **kwargs)
+
+        try:
+            return AccessToken(result["access_token"], now + int(result["expires_in"]))
+        except:
+            print("\nFailed to get a valid access token")
+            raise AuthenticationRequiredError(scopes)

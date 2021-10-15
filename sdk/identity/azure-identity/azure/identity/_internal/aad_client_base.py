@@ -47,13 +47,12 @@ class AadClientBase(ABC):
     _POST = ["POST"]
 
     def __init__(
-        self, tenant_id, client_id, authority=None, cache=None, allow_multitenant_authentication=False, **kwargs
+        self, tenant_id, client_id, authority=None, cache=None, **kwargs
     ):
-        # type: (str, str, Optional[str], Optional[TokenCache], bool, **Any) -> None
+        # type: (str, str, Optional[str], Optional[TokenCache], **Any) -> None
         self._authority = normalize_authority(authority) if authority else get_default_authority()
 
         self._tenant_id = tenant_id
-        self._allow_multitenant = allow_multitenant_authentication
 
         self._cache = cache or TokenCache()
         self._client_id = client_id
@@ -61,7 +60,7 @@ class AadClientBase(ABC):
 
     def get_cached_access_token(self, scopes, **kwargs):
         # type: (Iterable[str], **Any) -> Optional[AccessToken]
-        tenant = resolve_tenant(self._tenant_id, self._allow_multitenant, **kwargs)
+        tenant = resolve_tenant(self._tenant_id, **kwargs)
         tokens = self._cache.find(
             TokenCache.CredentialType.ACCESS_TOKEN,
             target=list(scopes),
@@ -260,7 +259,7 @@ class AadClientBase(ABC):
 
     def _get_token_url(self, **kwargs):
         # type: (**Any) -> str
-        tenant = resolve_tenant(self._tenant_id, self._allow_multitenant, **kwargs)
+        tenant = resolve_tenant(self._tenant_id, **kwargs)
         return "/".join((self._authority, tenant, "oauth2/v2.0/token"))
 
     def _post(self, data, **kwargs):

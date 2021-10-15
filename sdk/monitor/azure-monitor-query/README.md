@@ -14,6 +14,10 @@ The Azure Monitor Query client library is used to execute read-only queries agai
 - [Samples][samples]
 - [Change log][changelog]
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 ## Getting started
 
 ### Prerequisites
@@ -148,7 +152,7 @@ except HttpResponseError as err:
 
 #### Handle logs query response
 
-The `query_workspace` API returns a union of `LogsQueryResult` and `LogsQueryPartialResult` objects, while the `batch_query` API returns list of `LogsQueryResult`, `LogsQueryPartialResult`, and `LogsQueryError` objects. Here's a hierarchy of the response:
+The `query_workspace` API returns either a `LogsQueryResult` or a `LogsQueryPartialResult` object. The `batch_query` API returns a list that may contain `LogsQueryResult`, `LogsQueryPartialResult`, and `LogsQueryError` objects. Here's a hierarchy of the response:
 
 ```
 LogsQueryResult
@@ -333,10 +337,10 @@ for metric in response.metrics:
 
 #### Handle metrics query response
 
-The metrics query API returns a `MetricsResult` object. The `MetricsResult` object contains properties such as a list of `Metric`-typed objects, `granularity`, `namespace`, and `timespan`. The `Metric` objects list can be accessed using the `metrics` param. Each `Metric` object in this list contains a list of `TimeSeriesElement` objects. Each `TimeSeriesElement` object contains `data` and `metadata_values` properties. In visual form, the object hierarchy of the response resembles the following structure:
+The metrics query API returns a `MetricsQueryResult` object. The `MetricsQueryResult` object contains properties such as a list of `Metric`-typed objects, `granularity`, `namespace`, and `timespan`. The `Metric` objects list can be accessed using the `metrics` param. Each `Metric` object in this list contains a list of `TimeSeriesElement` objects. Each `TimeSeriesElement` object contains `data` and `metadata_values` properties. In visual form, the object hierarchy of the response resembles the following structure:
 
 ```
-MetricsResult
+MetricsQueryResult
 |---granularity
 |---timespan
 |---cost

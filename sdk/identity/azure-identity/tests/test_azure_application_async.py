@@ -4,7 +4,7 @@
 # ------------------------------------
 from unittest.mock import patch
 
-from azure.identity.aio import AzureApplicationCredential
+from azure.identity.aio._credentials.application import AzureApplicationCredential
 from azure.identity._constants import EnvironmentVariables
 
 

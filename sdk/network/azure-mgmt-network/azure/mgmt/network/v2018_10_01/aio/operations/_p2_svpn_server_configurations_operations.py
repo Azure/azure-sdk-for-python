@@ -48,7 +48,7 @@ class P2SVpnServerConfigurationsOperations:
         resource_group_name: str,
         virtual_wan_name: str,
         p2_s_vpn_server_configuration_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.P2SVpnServerConfiguration":
         """Retrieves the details of a P2SVpnServerConfiguration.
 
@@ -112,7 +112,7 @@ class P2SVpnServerConfigurationsOperations:
         virtual_wan_name: str,
         p2_s_vpn_server_configuration_name: str,
         p2_s_vpn_server_configuration_parameters: "_models.P2SVpnServerConfiguration",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.P2SVpnServerConfiguration":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.P2SVpnServerConfiguration"]
         error_map = {
@@ -172,7 +172,7 @@ class P2SVpnServerConfigurationsOperations:
         virtual_wan_name: str,
         p2_s_vpn_server_configuration_name: str,
         p2_s_vpn_server_configuration_parameters: "_models.P2SVpnServerConfiguration",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.P2SVpnServerConfiguration"]:
         """Creates a P2SVpnServerConfiguration to associate with a VirtualWan if it doesn't exist else
         updates the existing P2SVpnServerConfiguration.
@@ -188,8 +188,8 @@ class P2SVpnServerConfigurationsOperations:
         :type p2_s_vpn_server_configuration_parameters: ~azure.mgmt.network.v2018_10_01.models.P2SVpnServerConfiguration
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either P2SVpnServerConfiguration or the result of cls(response)
@@ -249,7 +249,7 @@ class P2SVpnServerConfigurationsOperations:
         resource_group_name: str,
         virtual_wan_name: str,
         p2_s_vpn_server_configuration_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -296,7 +296,7 @@ class P2SVpnServerConfigurationsOperations:
         resource_group_name: str,
         virtual_wan_name: str,
         p2_s_vpn_server_configuration_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a P2SVpnServerConfiguration.
 
@@ -308,8 +308,8 @@ class P2SVpnServerConfigurationsOperations:
         :type p2_s_vpn_server_configuration_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -364,7 +364,7 @@ class P2SVpnServerConfigurationsOperations:
         self,
         resource_group_name: str,
         virtual_wan_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListP2SVpnServerConfigurationsResult"]:
         """Retrieves all P2SVpnServerConfigurations for a particular VirtualWan.
 

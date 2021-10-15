@@ -46,7 +46,7 @@ def generate_enum_content(tuples):
         print(k + " = '" + v + "'\n")
     print("# backward compat names end here.")
     for tup in tup_list:
-        print(tup[0] + " = '" + tup[1] + "'\n")
+        print(tup[0] + " = '" + tup[1].replace('API', 'Api') + "'\n")
     print("# servicebus alias")
     print("ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'")
 

@@ -24,14 +24,14 @@ interactions:
         \     \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
         []\n      }\n    }\n  ]\n}"
     headers:
-      apim-request-id: c6c85372-bf1f-4f8c-98ce-8de52137882a
+      apim-request-id: 9980db27-58c1-485e-995a-933a4e41e08c
       content-length: '583'
       content-type: application/json; charset=utf-8
-      csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTransaction=1
-      date: Tue, 21 Sep 2021 21:06:51 GMT
+      csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
+      date: Thu, 30 Sep 2021 15:52:34 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '139'
+      x-envoy-upstream-service-time: '135'
     status:
       code: 200
       message: OK
