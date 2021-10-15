@@ -888,7 +888,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
             max_page_size=1024)
 
         await self._setup(bsc_with_sas_credential)
-        # blob is encrypted using TEST_SAS_ENCRYPTION_SCOPE
+        # blob is encrypted using TEST_SAS_ENCRYPTION_SCOPE_2
         blob_client, _ = await self._create_block_blob(bsc_with_sas_credential, blob_name="blockblob", data=b'AAABBBCCC', overwrite=True)
 
         #
@@ -914,6 +914,51 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         # TODO: to confirm with Sean/Heidi ses in SAS cannot be set for async copy.
         #  The test failed for async copy (without requires_sync=True)
         await copied_blob_client.start_copy_from_url(blob_client.url, requires_sync=True)
+
+        props = await copied_blob_client.get_blob_properties()
+
+        self.assertEqual(props.encryption_scope, TEST_SAS_ENCRYPTION_SCOPE)
+
+        self._teardown(bsc_with_sas_credential)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_copy_blob_from_url_with_ecryption_scope(self, storage_account_name, storage_account_key):
+        # Arrange
+
+        # create sas for source blob
+        sas_token = generate_account_sas(
+            storage_account_name,
+            account_key=storage_account_key,
+            resource_types=ResourceTypes(object=True, container=True),
+            permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        bsc_with_sas_credential = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=sas_token,
+            connection_data_block_size=1024,
+            max_single_put_size=1024,
+            min_large_block_upload_threshold=1024,
+            max_block_size=1024,
+            max_page_size=1024)
+
+        await self._setup(bsc_with_sas_credential)
+        blob_client, _ = await self._create_block_blob(bsc_with_sas_credential, blob_name="blockblob", data=b'AAABBBCCC', overwrite=True)
+
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            connection_data_block_size=1024,
+            max_single_put_size=1024,
+            min_large_block_upload_threshold=1024,
+            max_block_size=1024,
+            max_page_size=1024)
+        copied_blob = self.get_resource_name('copiedblob')
+        copied_blob_client = bsc.get_blob_client(self.container_name, copied_blob)
+
+        await copied_blob_client.start_copy_from_url(blob_client.url, requires_sync=True,
+                                               encryption_scope=TEST_SAS_ENCRYPTION_SCOPE)
 
         props = await copied_blob_client.get_blob_properties()
 
