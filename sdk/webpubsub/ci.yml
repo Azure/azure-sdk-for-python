@@ -31,3 +31,5 @@ extends:
     Artifacts:
     - name: azure-mgmt-webpubsub
       safeName: azuremgmtwebpubsub
+    - name: azure-messaging-webpubsubservice
+      safeName: azuremessagingwebpubsubservice
