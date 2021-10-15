@@ -6,7 +6,7 @@
 import logging
 import os
 import re
-from queue import Queue
+import sys
 import six.moves.urllib as urllib
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.pipeline import Pipeline
@@ -35,6 +35,11 @@ from ._common import (
 )
 from ._fetcher import HttpFetcher, FilesystemFetcher
 from ._model_query import ModelQuery
+
+if sys.version[0] == '2':
+    from Queue import Queue
+else:
+    from queue import Queue
 
 _LOGGER = logging.getLogger(__name__)
 
