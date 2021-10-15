@@ -65,7 +65,7 @@
 /sdk/containerservice/                                               @samkreter @zqingqing1 @GaneshaThirumurthi
 
 # PRLabel: %Cosmos
-/sdk/cosmos/                                                         @southpolesteve @zfoster
+/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @moderakh 
 
 # PRLabel: %Data Factory
 /sdk/datafactory/                                                    @hvermis
