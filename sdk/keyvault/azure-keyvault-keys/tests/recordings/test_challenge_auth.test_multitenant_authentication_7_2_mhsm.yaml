@@ -1,0 +1,89 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b5 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+    method: POST
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestmultitenant-keyedd01850/create?api-version=7.2
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      content-security-policy:
+      - default-src 'self'
+      content-type:
+      - application/json; charset=utf-8
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      www-authenticate:
+      - Bearer authorization="https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47",
+        resource="https://managedhsm.azure.net"
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-ms-server-latency:
+      - '0'
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: '{"kty": "RSA"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '14'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b5 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+    method: POST
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestmultitenant-keyedd01850/create?api-version=7.2
+  response:
+    body:
+      string: '{"attributes":{"created":1634332160,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1634332160},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestmultitenant-keyedd01850/11223d7f97bd00e2adbbd1734f8915ce","kty":"RSA-HSM","n":"p63FDvI8jWvyHP-3yvibhEv7XMyMbJms7am84eUkQA5vE0NDLjffbXXBF5iZscsQyHkE0pRUo6ZRhD8aU-TfUrVCHeblMrDx8_l3bBB8kpp00tHMOgYiRpVKyhYSleQ0sjDkxo28zDFuNlNqDfjtNKfuKeZV9iURHeSYk9qRwVUvSeblL3j-35l26RMN-RFwZGuGVOxN34hYbIhws6NRDDkF085dVHj3_Q192edyrSpuySpxT-QC-GetGqqWmY3XCv2bUBRHZXiVpvzqEc_g4_TeKIZvwXs5QKDJ4VdOVGg8Vqbk7R3sYWb1IEsBnHaBud6LBKDhxbwVE_5xjv54Vw"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '741'
+      content-security-policy:
+      - default-src 'self'
+      content-type:
+      - application/json; charset=utf-8
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-ms-keyvault-network-info:
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-server-latency:
+      - '781'
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -4,6 +4,10 @@
 
 ### Features Added
 
+- Added support for multi-tenant authentication against Key Vault and Managed HSM when using
+  `azure-identity` 1.7.0 or newer
+  ([#20698](https://github.com/Azure/azure-sdk-for-python/issues/20698))
+
 ### Breaking Changes
 
 ### Bugs Fixed

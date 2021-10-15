@@ -6,7 +6,10 @@
 Tests for the HTTP challenge authentication implementation. These tests aren't parallelizable, because
 the challenge cache is global to the process.
 """
+import asyncio
+import os
 import time
+from uuid import uuid4
 
 try:
     from unittest.mock import Mock, patch
@@ -17,12 +20,45 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.transport import HttpRequest
+from azure.identity.aio import ClientSecretCredential
+from azure.keyvault.keys.aio import KeyClient
 from azure.keyvault.keys._shared import AsyncChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
 import pytest
 
 from _shared.helpers import mock_response, Request
 from _shared.helpers_async import async_validating_transport
+from _shared.test_case_async import KeyVaultTestCase
+from _test_case import client_setup, get_decorator, KeysTestCase
 from test_challenge_auth import empty_challenge_cache, get_policies_for_request_mutation_test, get_random_url
+
+
+all_api_versions = get_decorator(is_async=True)
+
+
+class ChallengeAuthTests(KeysTestCase, KeyVaultTestCase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, match_body=False, **kwargs)
+
+    @all_api_versions()
+    @client_setup
+    async def test_multitenant_authentication(self, client, is_hsm, **kwargs):
+        client_id = os.environ.get("KEYVAULT_CLIENT_ID")
+        client_secret = os.environ.get("KEYVAULT_CLIENT_SECRET")
+        if self.is_live and not client_id and client_secret:
+            pytest.skip("Values for KEYVAULT_CLIENT_ID and KEYVAULT_CLIENT_SECRET are required")
+
+        # we set up a client for this method so it gets awaited, but we actually want to create a new client
+        # this new client should use a credential with an initially fake tenant ID and still succeed with a real request
+        api_version = client.api_version
+        credential = ClientSecretCredential(tenant_id=str(uuid4()), client_id=client_id, client_secret=client_secret)
+        vault_url = self.managed_hsm_url if is_hsm else self.vault_url
+        client = KeyClient(vault_url=vault_url, credential=credential, api_version=api_version)
+
+        if self.is_live:
+            await asyncio.sleep(2)  # to avoid throttling by the service
+        key_name = self.get_resource_name("multitenant-key")
+        key = await client.create_rsa_key(key_name)
+        assert key.id
 
 
 @pytest.mark.asyncio
