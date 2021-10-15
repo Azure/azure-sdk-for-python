@@ -1,5 +1,39 @@
 # Release History
 
+## 10.0.0 (2021-10-15)
+
+**Features**
+
+  - Model Domain has a new parameter disable_local_auth
+  - Model Domain has a new parameter auto_create_topic_with_first_subscription
+  - Model Domain has a new parameter auto_delete_topic_with_last_subscription
+  - Model Topic has a new parameter disable_local_auth
+  - Model DomainUpdateParameters has a new parameter disable_local_auth
+  - Model DomainUpdateParameters has a new parameter auto_create_topic_with_first_subscription
+  - Model DomainUpdateParameters has a new parameter auto_delete_topic_with_last_subscription
+  - Model TopicUpdateParameters has a new parameter disable_local_auth
+
+**Breaking changes**
+
+  - Model EventSubscription no longer has parameter delivery_with_resource_identity
+  - Model EventSubscription no longer has parameter dead_letter_with_resource_identity
+  - Model EventSubscriptionUpdateParameters no longer has parameter delivery_with_resource_identity
+  - Model EventSubscriptionUpdateParameters no longer has parameter dead_letter_with_resource_identity
+  - Model Domain no longer has parameter sku
+  - Model Topic no longer has parameter kind
+  - Model Topic no longer has parameter identity
+  - Model Topic no longer has parameter extended_location
+  - Model Topic no longer has parameter sku
+  - Model DomainUpdateParameters no longer has parameter sku
+  - Model TopicUpdateParameters no longer has parameter identity
+  - Model TopicUpdateParameters no longer has parameter sku
+  - Removed operation group PartnerNamespacesOperations
+  - Removed operation group PartnerTopicEventSubscriptionsOperations
+  - Removed operation group PartnerTopicsOperations
+  - Removed operation group PartnerRegistrationsOperations
+  - Removed operation group ExtensionTopicsOperations
+  - Removed operation group EventChannelsOperations
+
 ## 9.0.0 (2021-05-24)
 
 **Features**
