@@ -1958,7 +1958,6 @@ class StorageCommonBlobTest(StorageTestCase):
             blob_client.container_name,
             blob_client.blob_name,
             snapshot=blob_client.snapshot,
-            account_key=storage_account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
             user_delegation_key=user_delegation_key,
