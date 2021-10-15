@@ -6,7 +6,6 @@ import os
 import dotenv
 import time
 import logging
-from logging.handlers import RotatingFileHandler
 from concurrent.futures import ThreadPoolExecutor
 
 from azure.eventhub import EventHubProducerClient, EventData
