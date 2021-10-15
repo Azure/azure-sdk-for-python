@@ -33,7 +33,7 @@ class CommunicationIdentityClientConfiguration(Configuration):
         super(CommunicationIdentityClientConfiguration, self).__init__(**kwargs)
 
         self.endpoint = endpoint
-        self.api_version = "2021-03-07"
+        self.api_version = "2021-10-31-preview"
         kwargs.setdefault('sdk_moniker', 'communicationidentityclient/{}'.format(VERSION))
         self._configure(**kwargs)
 

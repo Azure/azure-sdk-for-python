@@ -172,3 +172,19 @@ class CommunicationIdentityClient(object):
         return self._identity_service_client.communication_identity.revoke_access_tokens(
             user.properties['id'] if user else None,
             **kwargs)
+
+    @distributed_trace
+    def exchange_user_token(
+            self,
+            token,
+            **kwargs
+        ):
+        # type: (...) -> None
+        """Exchange an AAD access token of a Teams User for a Communication Identity access token..
+
+        :param token: an AAD access token of a Teams User.
+        """
+        return self._identity_service_client.communication_identity.exchange_teams_user_access_token(
+            token,
+            **kwargs)
+    
