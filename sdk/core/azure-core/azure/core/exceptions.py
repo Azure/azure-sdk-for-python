@@ -166,7 +166,7 @@ class ODataV4Format(object):
 
         # details is recursive of this very format
         self.details = []  # type: List[ODataV4Format]
-        for detail_node in json_object.get(cls.DETAILS_LABEL, []):
+        for detail_node in json_object.get(cls.DETAILS_LABEL) or []:
             try:
                 self.details.append(self.__class__(detail_node))
             except Exception:  # pylint: disable=broad-except

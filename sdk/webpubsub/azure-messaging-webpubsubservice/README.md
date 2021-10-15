@@ -1,6 +1,6 @@
 # Azure WebPubSubService client library for Python
 
-[Azure Web PubSub Service](https://aka.ms/awps/doc) is a service that enables you to build real-time messaging web applications using WebSockets and the publish-subscribe pattern. Any platform supporting WebSocket APIs can connect to the service easily, e.g. web pages, mobile applications, edge devices, etc. The service manages the WebSocket connections for you and allows up to 100K \*concurrent connections. It provides powerful APIs for you to manage these clients and deliver real-time messages.
+[Azure Web PubSub Service](https://aka.ms/awps/doc) is a service that enables you to build real-time messaging web applications using WebSockets and the publish-subscribe pattern. Any platform supporting WebSocket APIs can connect to the service easily, e.g. web pages, mobile applications, edge devices, etc. The service manages the WebSocket connections for you and allows up to 100K concurrent connections. It provides powerful APIs for you to manage these clients and deliver real-time messages.
 
 Any scenario that requires real-time publish-subscribe messaging between server and clients or among clients, can use Azure Web PubSub service. Traditional real-time features that often require polling from server or submitting HTTP requests, can also use Azure Web PubSub service.
 
@@ -43,45 +43,77 @@ python -m pip install azure-messaging-webpubsubservice
 
 ### Authenticating the client
 
-In order to interact with the Azure WebPubSub service, you'll need to create an instance of the [WebPubSubServiceClient][webpubsubservice_client_class] class. In order to authenticate against the service, you need to pass in an AzureKeyCredential instance with endpoint and api key. The endpoint and api key can be found on the azure portal.
+#### 1. Create the client from the service connection string
+
+You can get the [API key][api_key] or [Connection string][connection_string] in the [Azure Portal][azure_portal].
+Once you have the value for the API key, you can pass it as a string into an instance of [AzureKeyCredential][azure-key-credential]. 
+Use the key as the credential parameter to authenticate the client:
 
 ```python
 >>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
 >>> from azure.core.credentials import AzureKeyCredential
->>> client = WebPubSubServiceClient(endpoint='<endpoint>', credential=AzureKeyCredential('somesecret'))
->>> client
-<WebPubSubServiceClient endpoint:'<endpoint>'>
+
+>>> client = WebPubSubServiceClient(endpoint='<endpoint>', credential=AzureKeyCredential("<api_key>"))
+```
+
+Once you have the value for the connection string, you can pass it as a string into the function `from_connection_string` and it will 
+authenticate the client:
+```python
+>>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
+
+>>> client = WebPubSubServiceClient.from_connection_string(connection_string='<connection_string>')
+```
+
+#### 2. Create with an Azure Active Directory Credential
+To use an [Azure Active Directory (AAD) token credential][authenticate_with_token],
+provide an instance of the desired credential type obtained from the
+[azure-identity][azure_identity_credentials] library.
+
+To authenticate with AAD, you must first [pip][pip] install [`azure-identity`][azure_identity_pip] and
+[enable AAD authentication on your Webpubsub resource][enable_aad]
+
+After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
+As an example, [DefaultAzureCredential][default_azure_credential]
+can be used to authenticate the client:
+
+Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
+AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
+
+Use the returned token credential to authenticate the client:
+
+```python
+>>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
+>>> from azure.identity import DefaultAzureCredential
+>>> client = WebPubSubServiceClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 ```
 
 ## Examples
 
-### Sending a request
+### Broadcast messages 
 
 ```python
 >>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
->>> from azure.core.credentials import AzureKeyCredential
->>> from azure.messaging.webpubsubservice.rest import build_send_to_all_request
->>> client = WebPubSubServiceClient(endpoint='<endpoint>', credential=AzureKeyCredential('somesecret'))
->>> request = build_send_to_all_request('default', json={ 'Hello':  'webpubsub!' })
->>> request
-<HttpRequest [POST], url: '/api/hubs/default/:send?api-version=2020-10-01'>
->>> response = client.send_request(request)
->>> response
-<RequestsTransportResponse: 202 Accepted>
->>> response.status_code
-202
+>>> from azure.identity import DefaultAzureCredential
+>>> from azure.core.exceptions import HttpResponseError
+
+>>> client = WebPubSubServiceClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 >>> with open('file.json', 'r') as f:
->>>    request = build_send_to_all_request('ahub', content=f, content_type='application/json')
->>>    response = client.send_request(request)
->>> print(response)
-<RequestsTransportResponse: 202 Accepted>
+    try:
+        client.send_to_all('ahub', content=f, content_type='application/json')
+    except HttpResponseError as e:
+        print('service responds error: {}'.format(e.response.json()))
+
 ```
 
 ## Key concepts
 
+### Connection
+
+Connections, represented by a connection id, represent an individual websocket connection to the Web PubSub service. Connection id is always unique.
+
 ### Hub
 
-Hub is a logical set of connections. All connections to Web PubSub connect to a specific hub. Messages that are broadcast to the hub are dispatched to all connections to that hub. For example, hub can be used for different applications, different applications can share one Azure Web PubSub service by using different hub names.
+Hub is a logical concept for a set of connections. Connections are always connected to a specific hub. Messages that are broadcast to the hub are dispatched to all connections to that hub. Hub can be used for different applications, different applications can share one Azure Web PubSub service by using different hub names.
 
 ### Group
 
@@ -91,13 +123,9 @@ Group allow broadcast messages to a subset of connections to the hub. You can ad
 
 Connections to Web PubSub can belong to one user. A user might have multiple connections, for example when a single user is connected across multiple devices or multiple browser tabs.
 
-### Connection
-
-Connections, represented by a connection id, represent an individual websocket connection to the Web PubSub service. Connection id is always unique.
-
 ### Message
 
-A message is either a UTF-8 encoded string, json or raw binary data.
+Using this library, you can send messages to the client connections. A message can either be string text, JSON or binary payload.
 
 ## Troubleshooting
 
@@ -107,10 +135,32 @@ This SDK uses Python standard logging library.
 You can configure logging print out debugging information to the stdout or anywhere you want.
 
 ```python
+import sys
 import logging
+from azure.identity import DefaultAzureCredential
+>>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
 
-logging.basicConfig(level=logging.DEBUG)
-````
+# Create a logger for the 'azure' SDK
+logger = logging.getLogger('azure')
+logger.setLevel(logging.DEBUG)
+
+# Configure a console output
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+
+endpoint = "<endpoint>"
+credential = DefaultAzureCredential()
+
+# This client will log detailed information about its HTTP sessions, at DEBUG level
+client = WebPubSubServiceClient(endpoint=endpoint, credential=credential, logging_enable=True)
+```
+
+Similarly, `logging_enable` can enable detailed logging for a single call,
+even when it isn't enabled for the client:
+
+```python
+result = client.send_to_all(..., logging_enable=True)
+```
 
 Http request and response details are printed to stdout with this logging config.
 
@@ -139,10 +189,19 @@ additional questions or comments.
 [webpubsubservice_docs]: https://aka.ms/awps/doc
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_sub]: https://azure.microsoft.com/free/
-[webpubsubservice_client_class]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubservice/azure/messaging/webpubsubservice/__init__.py
 [package]: https://pypi.org/project/azure-messaging-webpubsubservice/
 [default_cred_ref]: https://aka.ms/azsdk-python-identity-default-cred-ref
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
+[authenticate_with_token]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
+[azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
+[azure_identity_pip]: https://pypi.org/project/azure-identity/
+[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
+[pip]: https://pypi.org/project/pip/
+[enable_aad]: https://docs.microsoft.com/azure/azure-web-pubsub/howto-develop-create-instance
+[api_key]: https://docs.microsoft.com/azure/azure-web-pubsub/howto-websocket-connect?tabs=browser#authorization
+[connection_string]: https://docs.microsoft.com/azure/azure-web-pubsub/howto-websocket-connect?tabs=browser#authorization
+[azure_portal]: https://docs.microsoft.com/azure/azure-web-pubsub/howto-develop-create-instance
+[azure-key-credential]: https://aka.ms/azsdk-python-core-azurekeycredential

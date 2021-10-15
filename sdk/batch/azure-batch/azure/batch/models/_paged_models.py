@@ -168,3 +168,16 @@ class ComputeNodePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ComputeNodePaged, self).__init__(*args, **kwargs)
+class NodeVMExtensionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`NodeVMExtension <azure.batch.models.NodeVMExtension>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[NodeVMExtension]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(NodeVMExtensionPaged, self).__init__(*args, **kwargs)

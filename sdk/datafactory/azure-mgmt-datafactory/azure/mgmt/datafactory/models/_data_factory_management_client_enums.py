@@ -26,6 +26,12 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class AmazonRdsForOraclePartitionOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    NONE = "None"
+    PHYSICAL_PARTITIONS_OF_TABLE = "PhysicalPartitionsOfTable"
+    DYNAMIC_RANGE = "DynamicRange"
+
 class AvroCompressionCodec(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     NONE = "none"
@@ -53,7 +59,7 @@ class AzureSearchIndexWriteBehaviorType(with_metaclass(_CaseInsensitiveEnumMeta,
     MERGE = "Merge"
     UPLOAD = "Upload"
 
-class BlobEventTypesEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BlobEventTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     MICROSOFT_STORAGE_BLOB_CREATED = "Microsoft.Storage.BlobCreated"
     MICROSOFT_STORAGE_BLOB_DELETED = "Microsoft.Storage.BlobDeleted"
@@ -77,14 +83,16 @@ class CassandraSourceReadConsistencyLevels(with_metaclass(_CaseInsensitiveEnumMe
     LOCAL_SERIAL = "LOCAL_SERIAL"
 
 class CompressionCodec(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """All available compressionCodec values.
+    """
 
     NONE = "none"
-    GZIP = "gzip"
-    SNAPPY = "snappy"
     LZO = "lzo"
     BZIP2 = "bzip2"
+    GZIP = "gzip"
     DEFLATE = "deflate"
     ZIP_DEFLATE = "zipDeflate"
+    SNAPPY = "snappy"
     LZ4 = "lz4"
     TAR = "tar"
     TAR_G_ZIP = "tarGZip"
@@ -174,9 +182,7 @@ class DependencyCondition(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     COMPLETED = "Completed"
 
 class DynamicsAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The authentication type to connect to Dynamics server. 'Office365' for online scenario, 'Ifd'
-    for on-premises with Ifd scenario, 'AADServicePrincipal' for Server-To-Server authentication in
-    online scenario. Type: string (or Expression with resultType string).
+    """All available dynamicsAuthenticationType values.
     """
 
     OFFICE365 = "Office365"
@@ -184,22 +190,11 @@ class DynamicsAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     AAD_SERVICE_PRINCIPAL = "AADServicePrincipal"
 
 class DynamicsDeploymentType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The deployment type of the Dynamics instance. 'Online' for Dynamics Online and
-    'OnPremisesWithIfd' for Dynamics on-premises with Ifd. Type: string (or Expression with
-    resultType string).
+    """All available dynamicsDeploymentType values.
     """
 
     ONLINE = "Online"
     ON_PREMISES_WITH_IFD = "OnPremisesWithIfd"
-
-class DynamicsServicePrincipalCredentialType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The service principal credential type to use in Server-To-Server authentication.
-    'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert' for certificate. Type: string (or
-    Expression with resultType string).
-    """
-
-    SERVICE_PRINCIPAL_KEY = "ServicePrincipalKey"
-    SERVICE_PRINCIPAL_CERT = "ServicePrincipalCert"
 
 class DynamicsSinkWriteBehavior(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Defines values for DynamicsSinkWriteBehavior.
@@ -267,7 +262,7 @@ class HBaseAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     BASIC = "Basic"
 
 class HdiNodeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The node types on which the script action should be executed.
+    """All available HdiNodeTypes values.
     """
 
     HEADNODE = "Headnode"
@@ -417,8 +412,7 @@ class JsonFormatFilePattern(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     ARRAY_OF_OBJECTS = "arrayOfObjects"
 
 class JsonWriteFilePattern(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """File pattern of JSON. This setting controls the way a collection of JSON objects will be
-    treated. The default value is 'setOfObjects'. It is case-sensitive.
+    """All available filePatterns.
     """
 
     SET_OF_OBJECTS = "setOfObjects"
@@ -661,6 +655,13 @@ class ServiceNowAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str,
     BASIC = "Basic"
     O_AUTH2 = "OAuth2"
 
+class ServicePrincipalCredentialType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """All available servicePrincipalCredentialType values.
+    """
+
+    SERVICE_PRINCIPAL_KEY = "ServicePrincipalKey"
+    SERVICE_PRINCIPAL_CERT = "ServicePrincipalCert"
+
 class SftpAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The authentication type to be used to connect to the FTP server.
     """
@@ -694,6 +695,22 @@ class SparkThriftTransportProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str,
     SASL = "SASL"
     HTTP = "HTTP "
 
+class SqlAlwaysEncryptedAkvAuthType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Sql always encrypted AKV authentication type. Type: string (or Expression with resultType
+    string).
+    """
+
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
+
+class SqlDWWriteBehaviorEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Specify the write behavior when copying data into sql dw.
+    """
+
+    INSERT = "Insert"
+    UPSERT = "Upsert"
+
 class SqlPartitionOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The partition mechanism that will be used for Sql read in parallel.
     """
@@ -701,6 +718,14 @@ class SqlPartitionOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NONE = "None"
     PHYSICAL_PARTITIONS_OF_TABLE = "PhysicalPartitionsOfTable"
     DYNAMIC_RANGE = "DynamicRange"
+
+class SqlWriteBehaviorEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Specify the write behavior when copying data into sql.
+    """
+
+    INSERT = "Insert"
+    UPSERT = "Upsert"
+    STORED_PROCEDURE = "StoredProcedure"
 
 class SsisLogLocationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of SSIS log location.

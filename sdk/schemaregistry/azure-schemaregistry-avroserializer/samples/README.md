@@ -23,7 +23,7 @@ Several Schema Registry Avro Serializer Python SDK samples are available to you 
     * Receive `EventData` from Event Hubs and deserialize the received bytes.
 
 ## Prerequisites
-- Python 2.7, 3.5 or later.
+- Python 2.7, 3.6 or later.
 - **Microsoft Azure Subscription:**  To use Azure services, including Azure Schema Registry, you'll need a subscription.
 If you do not have an existing Azure account, you may sign up for a free trial or use your MSDN subscriber benefits when you [create an account](https://account.windowsazure.com/Home/Index).
 

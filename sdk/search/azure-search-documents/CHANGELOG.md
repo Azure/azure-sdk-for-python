@@ -1,6 +1,6 @@
 # Release History
 
-## 11.3.0b2 (Unreleased)
+## 11.3.0b5 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,61 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 11.3.0b4 (2021-10-05)
+
+### Features Added
+
+- Added properties to `SearchClient`: `query_answer`, `query_answer_count`,
+  `query_caption`, `query_caption_highlight` and `semantic_fields`.
+
+### Breaking Changes
+
+- Renamed `SearchClient.speller` to `SearchClient.query_speller`.
+- Renamed model `Speller` to `QuerySpellerType`.
+- Renamed model `Answers` to `QueryAnswerType`. 
+- Removed keyword arguments from `SearchClient`: `answers` and `captions`.
+- `SentimentSkill`, `EntityRecognitionSkill`: added client-side validation to prevent sending unsupported parameters.
+- Renamed property `ignore_reset_requirements` to `skip_indexer_reset_requirement_for_cache`.
+
+## 11.3.0b3 (2021-09-08)
+
+### Features Added
+
+- Added new models: 
+  - `azure.search.documents.models.QueryCaptionType`
+  - `azure.search.documents.models.CaptionResult`
+  - `azure.search.documents.indexes.models.CustomEntityLookupSkillLanguage`
+  - `azure.search.documents.indexes.models.EntityRecognitionSkillVersion`
+  - `azure.search.documents.indexes.models.LexicalNormalizerName`
+  - `azure.search.documents.indexes.models.PIIDetectionSkill`
+  - `azure.search.documents.indexes.models.PIIDetectionSkillMaskingMode`
+  - `azure.search.documents.indexes.models.SearchIndexerCache`
+  - `azure.search.documents.indexes.models.SearchIndexerDataIdentity`
+  - `azure.search.documents.indexes.models.SearchIndexerDataNoneIdentity`
+  - `azure.search.documents.indexes.models.SearchIndexerDataUserAssignedIdentity`
+  - `azure.search.documents.indexes.models.SentimentSkillVersion`
+- Added `normalizer_name` property to `AnalyzeTextOptions` model.
+
+### Breaking Changes
+
+- Removed:
+  - `azure.search.documents.indexes.models.SentimentSkillV3`
+  - `azure.search.documents.indexes.models.EntityRecognitionSkillV3`
+- Renamed:
+  - `SearchField.normalizer` renamed to `SearchField.normalizer_name`.
+
+### Other Changes
+- `SentimentSkill` and `EntityRecognitionSkill` can now be created by specifying
+  the `skill_version` keyword argument with a `SentimentSkillVersion` or
+  `EntityRecognitionSkillVersion`, respectively. The default behavior if `skill_version`
+  is not specified is to create a version 1 skill.
+
+## 11.3.0b2 (2021-08-10)
+
+### Features Added
+
+- Added new skills: `SentimentSkillV3`, `EntityLinkingSkill`, `EntityRecognitionSkillV3`
 
 ## 11.3.0b1 (2021-07-07)
 

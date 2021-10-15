@@ -2,9 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.identity.aio._credentials import vscode
 import os
-from unittest import mock
 from unittest.mock import Mock, patch
 from urllib.parse import urlparse
 
@@ -312,3 +310,8 @@ def get_credential_for_shared_cache_test(expected_refresh_token, expected_access
     # this credential uses a mock shared cache, so it works on all platforms
     with patch.object(SharedTokenCacheCredential, "supported", lambda: True):
         return DefaultAzureCredential(_cache=cache, transport=transport, **exclude_other_credentials, **kwargs)
+
+
+def test_unexpected_kwarg():
+    """the credential shouldn't raise when given an unexpected keyword argument"""
+    DefaultAzureCredential(foo=42)

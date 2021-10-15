@@ -1,5 +1,14 @@
 # Release History
 
+## 2.1.0 (2021-08-03)
+
+**Features**
+
+  - Model OperationResultContract has a new parameter id_properties_id
+  - Model OperationResultContract has a new parameter name
+  - Model OperationResultContract has a new parameter type
+  - Model TenantConfigurationSyncStateContract has a new parameter last_operation_id
+
 ## 2.0.0 (2021-03-25)
 
 **Features**

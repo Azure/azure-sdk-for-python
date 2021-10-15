@@ -16,7 +16,7 @@ steps:
       targetPath: $(Build.ArtifactStagingDirectory)
 
   - script: |
-      pip install -r eng/ci_tools.txt
+      pip install -r eng/regression_tools.txt
     displayName: 'Prep Environment'
 
   - template: ../steps/set-dev-build.yml

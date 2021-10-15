@@ -45,7 +45,7 @@ class IntegrationRuntimeConnectionInfosOperations:
         resource_group_name: str,
         workspace_name: str,
         integration_runtime_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IntegrationRuntimeConnectionInfo":
         """Get integration runtime connection info.
 
@@ -67,14 +67,14 @@ class IntegrationRuntimeConnectionInfosOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str'),
         }

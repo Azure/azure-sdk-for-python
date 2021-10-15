@@ -38,7 +38,6 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.pipeline.transport import (
     AsyncHttpTransport,
-    HttpRequest,
     AsyncioRequestsTransport,
     TrioRequestsTransport,
     AioHttpTransport
@@ -55,10 +54,12 @@ import aiohttp
 import trio
 
 import pytest
+from utils import HTTP_REQUESTS
 
 
 @pytest.mark.asyncio
-async def test_sans_io_exception():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_sans_io_exception(http_request):
     class BrokenSender(AsyncHttpTransport):
         async def send(self, request, **config):
             raise ValueError("Broken")
@@ -75,7 +76,7 @@ async def test_sans_io_exception():
 
     pipeline = AsyncPipeline(BrokenSender(), [SansIOHTTPPolicy()])
 
-    req = HttpRequest('GET', '/')
+    req = http_request('GET', '/')
     with pytest.raises(ValueError):
         await pipeline.run(req)
 
@@ -88,11 +89,11 @@ async def test_sans_io_exception():
     with pytest.raises(NotImplementedError):
         await pipeline.run(req)
 
-
 @pytest.mark.asyncio
-async def test_basic_aiohttp():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_basic_aiohttp(port, http_request):
 
-    request = HttpRequest("GET", "https://bing.com")
+    request = http_request("GET", "http://localhost:{}/basic/string".format(port))
     policies = [
         UserAgentPolicy("myusergant"),
         AsyncRedirectPolicy()
@@ -105,10 +106,11 @@ async def test_basic_aiohttp():
     assert isinstance(response.http_response.status_code, int)
 
 @pytest.mark.asyncio
-async def test_basic_aiohttp_separate_session():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_basic_aiohttp_separate_session(port, http_request):
 
     session = aiohttp.ClientSession()
-    request = HttpRequest("GET", "https://bing.com")
+    request = http_request("GET", "http://localhost:{}/basic/string".format(port))
     policies = [
         UserAgentPolicy("myusergant"),
         AsyncRedirectPolicy()
@@ -124,9 +126,10 @@ async def test_basic_aiohttp_separate_session():
     await transport.session.close()
 
 @pytest.mark.asyncio
-async def test_basic_async_requests():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_basic_async_requests(port, http_request):
 
-    request = HttpRequest("GET", "https://bing.com")
+    request = http_request("GET", "http://localhost:{}/basic/string".format(port))
     policies = [
         UserAgentPolicy("myusergant"),
         AsyncRedirectPolicy()
@@ -186,9 +189,10 @@ def test_pass_in_http_logging_policy():
     assert http_logging_policy.allowed_header_names == HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST.union({"x-ms-added-header"})
 
 @pytest.mark.asyncio
-async def test_conf_async_requests():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_conf_async_requests(port, http_request):
 
-    request = HttpRequest("GET", "https://bing.com/")
+    request = http_request("GET", "http://localhost:{}/basic/string".format(port))
     policies = [
         UserAgentPolicy("myusergant"),
         AsyncRedirectPolicy()
@@ -198,10 +202,11 @@ async def test_conf_async_requests():
 
     assert isinstance(response.http_response.status_code, int)
 
-def test_conf_async_trio_requests():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_conf_async_trio_requests(port, http_request):
 
     async def do():
-        request = HttpRequest("GET", "https://bing.com/")
+        request = http_request("GET", "http://localhost:{}/basic/string".format(port))
         policies = [
             UserAgentPolicy("myusergant"),
             AsyncRedirectPolicy()
@@ -213,7 +218,8 @@ def test_conf_async_trio_requests():
     assert isinstance(response.http_response.status_code, int)
 
 @pytest.mark.asyncio
-async def test_retry_without_http_response():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_retry_without_http_response(http_request):
     class NaughtyPolicy(AsyncHTTPPolicy):
         def send(*args):
             raise AzureError('boo')
@@ -221,7 +227,7 @@ async def test_retry_without_http_response():
     policies = [AsyncRetryPolicy(), NaughtyPolicy()]
     pipeline = AsyncPipeline(policies=policies, transport=None)
     with pytest.raises(AzureError):
-        await pipeline.run(HttpRequest('GET', url='https://foo.bar'))
+        await pipeline.run(http_request('GET', url='https://foo.bar'))
 
 @pytest.mark.asyncio
 async def test_add_custom_policy():

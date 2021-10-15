@@ -29,7 +29,6 @@ CWD = dirname(realpath(__file__))
 SCHEMA = open(join(CWD, "..", "hotel_schema.json")).read()
 BATCH = json.load(open(join(CWD, "..", "hotel_small.json"), encoding='utf-8'))
 TIME_TO_SLEEP = 5
-CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net'
 
 def await_prepared_test(test_fn):
     """Synchronous wrapper for async test methods. Used to avoid making changes
@@ -52,7 +51,7 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
         data_source_connection = SearchIndexerDataSourceConnection(
             name=name,
             type="azureblob",
-            connection_string=CONNECTION_STRING,
+            connection_string=self.settings.AZURE_STORAGE_CONNECTION_STRING,
             container=container
         )
         return data_source_connection

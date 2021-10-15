@@ -1,5 +1,41 @@
 # Release History
 
+## 7.3.5 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed bug that `ServiceBusReceiver` can not connect to sessionful entity with session id being empty string.
+- Fixed bug that `ServiceBusMessage.partition_key` can not parse empty string properly.
+
+### Other Changes
+
+## 7.3.4 (2021-10-06)
+
+### Other Changes
+
+- Updated uAMQP dependency to 1.4.3.
+  - Added support for Python 3.10.
+  - Fixed memory leak in win32 socketio and tlsio (issue #19777).
+  - Fixed memory leak in the process of converting AMQPValue into string (issue #19777).
+
+## 7.3.3 (2021-09-08)
+
+### Bugs Fixed
+
+- Improved memory usage of `ServiceBusClient` to automatically discard spawned `ServiceBusSender` or `ServiceBusReceiver` from its handler set when no strong reference to the sender or receiver exists anymore.
+- Reduced CPU load of `azure.servicebus.AutoLockRenewer` during lock renewal.
+
+## 7.3.2 (2021-08-10)
+
+### Bugs Fixed
+
+- Fixed a bug that `azure.servicebus.aio.AutoLockRenewer` crashes on disposal if no messages have been registered (#19642).
+- Fixed a bug that `azure.servicebus.AutoLockRenewer` only supports auto lock renewal for `max_workers` amount of messages/sessions at a time (#19362).
+
 ## 7.3.1 (2021-07-07)
 
 ### Fixed

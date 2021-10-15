@@ -1,5 +1,26 @@
 # Release History
 
+## 11.0.0 (2021-07-12)
+
+**Features**
+
+  - Model ClusterPatch has a new parameter billing_type
+  - Model Workspace has a new parameter features
+  - Model WorkspacePatch has a new parameter features
+  - Model WorkspaceFeatures has a new parameter disable_local_auth
+
+**Breaking changes**
+
+  - Model Workspace no longer has parameter immediate_purge_data_on30_days
+  - Model Workspace no longer has parameter enable_log_access_using_only_resource_permissions
+  - Model Workspace no longer has parameter cluster_resource_id
+  - Model Workspace no longer has parameter enable_data_export
+  - Model WorkspacePatch no longer has parameter immediate_purge_data_on30_days
+  - Model WorkspacePatch no longer has parameter enable_log_access_using_only_resource_permissions
+  - Model WorkspacePatch no longer has parameter cluster_resource_id
+  - Model WorkspacePatch no longer has parameter enable_data_export
+  - Model CapacityReservationProperties no longer has parameter max_capacity
+
 ## 10.0.0 (2021-05-13)
 
 **Features**

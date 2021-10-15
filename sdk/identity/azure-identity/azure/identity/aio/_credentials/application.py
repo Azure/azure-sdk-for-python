@@ -59,14 +59,12 @@ class AzureApplicationCredential(ChainedTokenCredential):
     def __init__(self, **kwargs: "Any") -> None:
         authority = kwargs.pop("authority", None)
         authority = normalize_authority(authority) if authority else get_default_authority()
+        managed_identity_client_id = kwargs.pop(
+            "managed_identity_client_id", os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
+        )
         super().__init__(
             EnvironmentCredential(authority=authority, **kwargs),
-            ManagedIdentityCredential(
-                client_id=kwargs.pop(
-                    "managed_identity_client_id", os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
-                ),
-                **kwargs
-            ),
+            ManagedIdentityCredential(client_id=managed_identity_client_id, **kwargs),
         )
 
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":

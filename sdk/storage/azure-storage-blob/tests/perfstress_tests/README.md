@@ -82,7 +82,7 @@ The tests currently written for the T1 SDK:
 
 ## Running with the test proxy
 Follow the instructions here to install and run the test proxy server:
-https://github.com/Azure/azure-sdk-tools/tree/feature/http-recording-server/tools/test-proxy/Azure.Sdk.Tools.TestProxy
+https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy
 
 Once running, in a separate process run the perf test in question, combined with the `-x` flag to specify the proxy endpoint. (Note, only the HTTPS endpoint is supported for the Legacy tests).
 ```cmd

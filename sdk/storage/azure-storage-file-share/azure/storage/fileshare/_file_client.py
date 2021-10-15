@@ -119,8 +119,8 @@ class ShareFileClient(StorageAccountHostsMixin):
         an instance of a AzureSasCredential from azure.core.credentials or an account
         shared access key.
     :keyword str api_version:
-        The Storage API version to use for requests. Default value is '2019-07-07'.
-        Setting to an older version may result in reduced feature compatibility.
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
         .. versionadded:: 12.1.0
 
@@ -172,8 +172,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             sas_token, credential, share_snapshot=self.snapshot)
         super(ShareFileClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
         self._client = AzureFileStorage(url=self.url, pipeline=self._pipeline)
-        default_api_version = self._client._config.version  # pylint: disable=protected-access
-        self._client._config.version = get_api_version(kwargs, default_api_version) # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
 
     @classmethod
     def from_file_url(
@@ -685,9 +684,9 @@ class ShareFileClient(StorageAccountHostsMixin):
     def download_file(
             self, offset=None,  # type: Optional[int]
             length=None,  # type: Optional[int]
-            **kwargs
+            **kwargs  # type: Any
         ):
-        # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
+        # type: (...) -> StorageStreamDownloader
         """Downloads a file to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the file into
         a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
@@ -1022,11 +1021,12 @@ class ShareFileClient(StorageAccountHostsMixin):
         end_range = offset + length - 1
         destination_range = 'bytes={0}-{1}'.format(offset, end_range)
         source_range = 'bytes={0}-{1}'.format(source_offset, source_offset + length - 1)
-
+        source_authorization = kwargs.pop('source_authorization', None)
         source_mod_conditions = get_source_conditions(kwargs)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
 
         options = {
+            'copy_source_authorization': source_authorization,
             'copy_source': source_url,
             'content_length': 0,
             'source_range': source_range,
@@ -1093,6 +1093,9 @@ class ShareFileClient(StorageAccountHostsMixin):
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
         """
         options = self._upload_range_from_url_options(
             source_url=source_url,

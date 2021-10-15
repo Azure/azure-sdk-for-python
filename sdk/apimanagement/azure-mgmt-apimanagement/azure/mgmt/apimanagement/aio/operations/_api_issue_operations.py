@@ -50,7 +50,7 @@ class ApiIssueOperations:
         expand_comments_attachments: Optional[bool] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.IssueCollection"]:
         """Lists all issues associated with the specified API.
 
@@ -133,7 +133,7 @@ class ApiIssueOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -150,7 +150,7 @@ class ApiIssueOperations:
         service_name: str,
         api_id: str,
         issue_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Gets the entity state (Etag) version of the Issue for an API specified by its identifier.
 
@@ -201,7 +201,7 @@ class ApiIssueOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -220,7 +220,7 @@ class ApiIssueOperations:
         api_id: str,
         issue_id: str,
         expand_comments_attachments: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IssueContract":
         """Gets the details of the Issue for an API specified by its identifier.
 
@@ -275,7 +275,7 @@ class ApiIssueOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -296,7 +296,7 @@ class ApiIssueOperations:
         issue_id: str,
         parameters: "_models.IssueContract",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IssueContract":
         """Creates a new Issue for an API or updates an existing one.
 
@@ -359,7 +359,7 @@ class ApiIssueOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -385,7 +385,7 @@ class ApiIssueOperations:
         issue_id: str,
         if_match: str,
         parameters: "_models.IssueUpdateContract",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IssueContract":
         """Updates an existing issue for an API.
 
@@ -447,7 +447,7 @@ class ApiIssueOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -467,7 +467,7 @@ class ApiIssueOperations:
         api_id: str,
         issue_id: str,
         if_match: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the specified Issue from an API.
 
@@ -522,7 +522,7 @@ class ApiIssueOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

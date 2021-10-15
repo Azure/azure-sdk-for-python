@@ -66,14 +66,13 @@ class AdditionalCapabilities(msrest.serialization.Model):
 class AdditionalUnattendContent(msrest.serialization.Model):
     """Specifies additional XML formatted information that can be included in the Unattend.xml file, which is used by Windows Setup. Contents are defined by setting name, component name, and the pass in which the content is applied.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar pass_name: The pass name. Currently, the only allowable value is OobeSystem. Default
-     value: "OobeSystem".
-    :vartype pass_name: str
-    :ivar component_name: The component name. Currently, the only allowable value is
-     Microsoft-Windows-Shell-Setup. Default value: "Microsoft-Windows-Shell-Setup".
-    :vartype component_name: str
+    :param pass_name: The pass name. Currently, the only allowable value is OobeSystem. The only
+     acceptable values to pass in are None and "OobeSystem". The default value is None.
+    :type pass_name: str
+    :param component_name: The component name. Currently, the only allowable value is
+     Microsoft-Windows-Shell-Setup. The only acceptable values to pass in are None and
+     "Microsoft-Windows-Shell-Setup". The default value is None.
+    :type component_name: str
     :param setting_name: Specifies the name of the setting to which the content applies. Possible
      values are: FirstLogonCommands and AutoLogon. Possible values include: "AutoLogon",
      "FirstLogonCommands".
@@ -84,11 +83,6 @@ class AdditionalUnattendContent(msrest.serialization.Model):
     :type content: str
     """
 
-    _validation = {
-        'pass_name': {'constant': True},
-        'component_name': {'constant': True},
-    }
-
     _attribute_map = {
         'pass_name': {'key': 'passName', 'type': 'str'},
         'component_name': {'key': 'componentName', 'type': 'str'},
@@ -96,17 +90,18 @@ class AdditionalUnattendContent(msrest.serialization.Model):
         'content': {'key': 'content', 'type': 'str'},
     }
 
-    pass_name = "OobeSystem"
-    component_name = "Microsoft-Windows-Shell-Setup"
-
     def __init__(
         self,
         *,
+        pass_name: Optional[str] = None,
+        component_name: Optional[str] = None,
         setting_name: Optional[Union[str, "SettingNames"]] = None,
         content: Optional[str] = None,
         **kwargs
     ):
         super(AdditionalUnattendContent, self).__init__(**kwargs)
+        self.pass_name = pass_name
+        self.component_name = component_name
         self.setting_name = setting_name
         self.content = content
 
@@ -3958,9 +3953,10 @@ class ManagedDiskParameters(SubResource):
 
     :param id: Resource Id.
     :type id: str
-    :param storage_account_type: Specifies the storage account type for the managed disk. NOTE:
-     UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-     include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+    :param storage_account_type: Specifies the storage account type for the managed disk. Managed
+     OS disk storage account type can only be set when you create the scale set. NOTE: UltraSSD_LRS
+     can only be used with data disks, it cannot be used with OS Disk. Possible values include:
+     "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
      "StandardSSD_ZRS".
     :type storage_account_type: str or ~azure.mgmt.compute.v2020_12_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption set resource id for
@@ -5671,8 +5667,6 @@ class ScheduledEventsProfile(msrest.serialization.Model):
 class SecurityProfile(msrest.serialization.Model):
     """Specifies the Security profile settings for the virtual machine or virtual machine scale set.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :param uefi_settings: Specifies the security settings like secure boot and vTPM used while
      creating the virtual machine. :code:`<br>`:code:`<br>`Minimum api-version: 2020-12-01.
     :type uefi_settings: ~azure.mgmt.compute.v2020_12_01.models.UefiSettings
@@ -5682,15 +5676,12 @@ class SecurityProfile(msrest.serialization.Model):
      :code:`<br>`:code:`<br>` Default: The Encryption at host will be disabled unless this property
      is set to true for the resource.
     :type encryption_at_host: bool
-    :ivar security_type: Specifies the SecurityType of the virtual machine. It is set as
+    :param security_type: Specifies the SecurityType of the virtual machine. It is set as
      TrustedLaunch to enable UefiSettings. :code:`<br>`:code:`<br>` Default: UefiSettings will not
-     be enabled unless this property is set as TrustedLaunch. Default value: "TrustedLaunch".
-    :vartype security_type: str
+     be enabled unless this property is set as TrustedLaunch. Possible values include:
+     "TrustedLaunch".
+    :type security_type: str or ~azure.mgmt.compute.v2020_12_01.models.SecurityTypes
     """
-
-    _validation = {
-        'security_type': {'constant': True},
-    }
 
     _attribute_map = {
         'uefi_settings': {'key': 'uefiSettings', 'type': 'UefiSettings'},
@@ -5698,18 +5689,18 @@ class SecurityProfile(msrest.serialization.Model):
         'security_type': {'key': 'securityType', 'type': 'str'},
     }
 
-    security_type = "TrustedLaunch"
-
     def __init__(
         self,
         *,
         uefi_settings: Optional["UefiSettings"] = None,
         encryption_at_host: Optional[bool] = None,
+        security_type: Optional[Union[str, "SecurityTypes"]] = None,
         **kwargs
     ):
         super(SecurityProfile, self).__init__(**kwargs)
         self.uefi_settings = uefi_settings
         self.encryption_at_host = encryption_at_host
+        self.security_type = security_type
 
 
 class ShareInfoElement(msrest.serialization.Model):
@@ -6662,7 +6653,7 @@ class Usage(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar unit: Required. An enum describing the unit of usage measurement. Default value: "Count".
+    :ivar unit: An enum describing the unit of usage measurement. Has constant value: "Count".
     :vartype unit: str
     :param current_value: Required. The current usage of the resource.
     :type current_value: int

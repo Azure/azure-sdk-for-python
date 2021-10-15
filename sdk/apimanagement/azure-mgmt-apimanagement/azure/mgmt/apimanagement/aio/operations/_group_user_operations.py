@@ -49,7 +49,7 @@ class GroupUserOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.UserCollection"]:
         """Lists a collection of user entities associated with the group.
 
@@ -132,7 +132,7 @@ class GroupUserOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -149,7 +149,7 @@ class GroupUserOperations:
         service_name: str,
         group_id: str,
         user_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Checks that user entity specified by identifier is associated with the group entity.
 
@@ -200,7 +200,7 @@ class GroupUserOperations:
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -215,7 +215,7 @@ class GroupUserOperations:
         service_name: str,
         group_id: str,
         user_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.UserContract":
         """Add existing user to existing group.
 
@@ -266,7 +266,7 @@ class GroupUserOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -287,7 +287,7 @@ class GroupUserOperations:
         service_name: str,
         group_id: str,
         user_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Remove existing user from existing group.
 
@@ -338,7 +338,7 @@ class GroupUserOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

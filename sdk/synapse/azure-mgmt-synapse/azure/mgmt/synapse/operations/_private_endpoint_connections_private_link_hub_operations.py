@@ -68,7 +68,7 @@ class PrivateEndpointConnectionsPrivateLinkHubOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -81,7 +81,7 @@ class PrivateEndpointConnectionsPrivateLinkHubOperations(object):
                 url = self.list.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'privateLinkHubName': self._serialize.url("private_link_hub_name", private_link_hub_name, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -120,3 +120,67 @@ class PrivateEndpointConnectionsPrivateLinkHubOperations(object):
             get_next, extract_data
         )
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/privateLinkHubs/{privateLinkHubName}/privateEndpointConnections'}  # type: ignore
+
+    def get(
+        self,
+        resource_group_name,  # type: str
+        private_link_hub_name,  # type: str
+        private_endpoint_connection_name,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.PrivateEndpointConnectionForPrivateLinkHub"
+        """Get all PrivateEndpointConnection in the PrivateLinkHub by name.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param private_link_hub_name: Name of the privateLinkHub.
+        :type private_link_hub_name: str
+        :param private_endpoint_connection_name: Name of the privateEndpointConnection.
+        :type private_endpoint_connection_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: PrivateEndpointConnectionForPrivateLinkHub, or the result of cls(response)
+        :rtype: ~azure.mgmt.synapse.models.PrivateEndpointConnectionForPrivateLinkHub
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionForPrivateLinkHub"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-06-01"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'privateLinkHubName': self._serialize.url("private_link_hub_name", private_link_hub_name, 'str'),
+            'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('PrivateEndpointConnectionForPrivateLinkHub', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/privateLinkHubs/{privateLinkHubName}/privateEndpointConnections/{privateEndpointConnectionName}'}  # type: ignore

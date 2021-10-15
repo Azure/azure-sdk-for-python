@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from typing import Optional, Any, Union
+from typing import Optional, Any, Union, Iterator
 
 
 try:
@@ -14,12 +14,13 @@ except ImportError:
     from urllib2 import quote, unquote  # type: ignore
 import six
 
+from azure.core.pipeline.transport import HttpResponse
 from azure.core.pipeline import Pipeline
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.storage.blob import ContainerClient
 from ._shared.base_client import TransportWrapper, StorageAccountHostsMixin, parse_query, parse_connection_str
-from ._serialize import convert_dfs_url_to_blob_url
+from ._serialize import convert_dfs_url_to_blob_url, get_api_version
 from ._list_paths_helper import DeletedPathPropertiesPaged
 from ._models import LocationMode, FileSystemProperties, PublicAccess, DeletedPathProperties, FileProperties, \
     DirectoryProperties
@@ -105,9 +106,12 @@ class FileSystemClient(StorageAccountHostsMixin):
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
         self._client = AzureDataLakeStorageRESTAPI(self.url, file_system=file_system_name, pipeline=self._pipeline)
+        api_version = get_api_version(kwargs)
+        self._client._config.version = api_version  # pylint: disable=protected-access
         self._datalake_client_for_blob_operation = AzureDataLakeStorageRESTAPI(self._container_client.url,
                                                                                file_system=file_system_name,
                                                                                pipeline=self._pipeline)
+        self._datalake_client_for_blob_operation._config.version = api_version  # pylint: disable=protected-access
 
     def _format_url(self, hostname):
         file_system_name = self.file_system_name
@@ -806,6 +810,71 @@ class FileSystemClient(StorageAccountHostsMixin):
         """
         return self.get_directory_client('/')
 
+    def delete_files(self, *files, **kwargs):
+        # type: (...) -> Iterator[HttpResponse]
+        """Marks the specified files or empty directories for deletion.
+
+        The files/empty directories are later deleted during garbage collection.
+
+        If a delete retention policy is enabled for the service, then this operation soft deletes the
+        files/empty directories and retains the files or snapshots for specified number of days.
+        After specified number of days, files' data is removed from the service during garbage collection.
+        Soft deleted files/empty directories are accessible through :func:`list_deleted_paths()`.
+
+        :param files:
+            The files/empty directories to delete. This can be a single file/empty directory, or multiple values can
+            be supplied, where each value is either the name of the file/directory (str) or
+            FileProperties/DirectoryProperties.
+
+            .. note::
+                When the file/dir type is dict, here's a list of keys, value rules.
+
+                blob name:
+                    key: 'name', value type: str
+                if the file modified or not:
+                    key: 'if_modified_since', 'if_unmodified_since', value type: datetime
+                etag:
+                    key: 'etag', value type: str
+                match the etag or not:
+                    key: 'match_condition', value type: MatchConditions
+                lease:
+                    key: 'lease_id', value type: Union[str, LeaseClient]
+                timeout for subrequest:
+                    key: 'timeout', value type: int
+
+        :type files: list[str], list[dict],
+            or list[Union[~azure.storage.filedatalake.FileProperties, ~azure.storage.filedatalake.DirectoryProperties]
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword bool raise_on_any_failure:
+            This is a boolean param which defaults to True. When this is set, an exception
+            is raised even if there is a single operation failure.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :return: An iterator of responses, one for each blob in order
+        :rtype: Iterator[~azure.core.pipeline.transport.HttpResponse]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_file_system_async.py
+                :start-after: [START batch_delete_files_or_empty_directories]
+                :end-before: [END batch_delete_files_or_empty_directories]
+                :language: python
+                :dedent: 4
+                :caption: Deleting multiple files or empty directories.
+        """
+        return self._container_client.delete_blobs(*files, **kwargs)
+
     def get_directory_client(self, directory  # type: Union[DirectoryProperties, str]
                              ):
         # type: (...) -> DataLakeDirectoryClient
@@ -839,6 +908,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         )
         return DataLakeDirectoryClient(self.url, self.file_system_name, directory_name=directory_name,
                                        credential=self._raw_credential,
+                                       api_version=self.api_version,
                                        _configuration=self._config, _pipeline=_pipeline,
                                        _hosts=self._hosts,
                                        require_encryption=self.require_encryption,
@@ -879,6 +949,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         )
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
+            api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,

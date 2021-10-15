@@ -10,15 +10,27 @@ try:
     from ._models_py3 import AddressSpace
     from ._models_py3 import CreatedBy
     from ._models_py3 import Encryption
+    from ._models_py3 import EncryptionEntitiesDefinition
+    from ._models_py3 import EncryptionV2
+    from ._models_py3 import EncryptionV2KeyVaultProperties
     from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorInfo
     from ._models_py3 import ErrorResponse
+    from ._models_py3 import GroupIdInformation
+    from ._models_py3 import GroupIdInformationProperties
     from ._models_py3 import ManagedIdentityConfiguration
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationListResult
+    from ._models_py3 import PrivateEndpoint
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointConnectionProperties
+    from ._models_py3 import PrivateEndpointConnectionsList
+    from ._models_py3 import PrivateLinkResourcesList
+    from ._models_py3 import PrivateLinkServiceConnectionState
     from ._models_py3 import Resource
     from ._models_py3 import Sku
+    from ._models_py3 import SystemData
     from ._models_py3 import TrackedResource
     from ._models_py3 import VirtualNetworkPeering
     from ._models_py3 import VirtualNetworkPeeringList
@@ -31,21 +43,34 @@ try:
     from ._models_py3 import WorkspaceCustomStringParameter
     from ._models_py3 import WorkspaceEncryptionParameter
     from ._models_py3 import WorkspaceListResult
+    from ._models_py3 import WorkspacePropertiesEncryption
     from ._models_py3 import WorkspaceProviderAuthorization
     from ._models_py3 import WorkspaceUpdate
 except (SyntaxError, ImportError):
     from ._models import AddressSpace  # type: ignore
     from ._models import CreatedBy  # type: ignore
     from ._models import Encryption  # type: ignore
+    from ._models import EncryptionEntitiesDefinition  # type: ignore
+    from ._models import EncryptionV2  # type: ignore
+    from ._models import EncryptionV2KeyVaultProperties  # type: ignore
     from ._models import ErrorDetail  # type: ignore
     from ._models import ErrorInfo  # type: ignore
     from ._models import ErrorResponse  # type: ignore
+    from ._models import GroupIdInformation  # type: ignore
+    from ._models import GroupIdInformationProperties  # type: ignore
     from ._models import ManagedIdentityConfiguration  # type: ignore
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationListResult  # type: ignore
+    from ._models import PrivateEndpoint  # type: ignore
+    from ._models import PrivateEndpointConnection  # type: ignore
+    from ._models import PrivateEndpointConnectionProperties  # type: ignore
+    from ._models import PrivateEndpointConnectionsList  # type: ignore
+    from ._models import PrivateLinkResourcesList  # type: ignore
+    from ._models import PrivateLinkServiceConnectionState  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import Sku  # type: ignore
+    from ._models import SystemData  # type: ignore
     from ._models import TrackedResource  # type: ignore
     from ._models import VirtualNetworkPeering  # type: ignore
     from ._models import VirtualNetworkPeeringList  # type: ignore
@@ -58,30 +83,49 @@ except (SyntaxError, ImportError):
     from ._models import WorkspaceCustomStringParameter  # type: ignore
     from ._models import WorkspaceEncryptionParameter  # type: ignore
     from ._models import WorkspaceListResult  # type: ignore
+    from ._models import WorkspacePropertiesEncryption  # type: ignore
     from ._models import WorkspaceProviderAuthorization  # type: ignore
     from ._models import WorkspaceUpdate  # type: ignore
 
-from ._databricks_client_enums import (
+from ._azure_databricks_management_client_enums import (
+    CreatedByType,
     CustomParameterType,
+    EncryptionKeySource,
     KeySource,
     PeeringProvisioningState,
     PeeringState,
+    PrivateEndpointConnectionProvisioningState,
+    PrivateLinkServiceConnectionStatus,
     ProvisioningState,
+    PublicNetworkAccess,
+    RequiredNsgRules,
 )
 
 __all__ = [
     'AddressSpace',
     'CreatedBy',
     'Encryption',
+    'EncryptionEntitiesDefinition',
+    'EncryptionV2',
+    'EncryptionV2KeyVaultProperties',
     'ErrorDetail',
     'ErrorInfo',
     'ErrorResponse',
+    'GroupIdInformation',
+    'GroupIdInformationProperties',
     'ManagedIdentityConfiguration',
     'Operation',
     'OperationDisplay',
     'OperationListResult',
+    'PrivateEndpoint',
+    'PrivateEndpointConnection',
+    'PrivateEndpointConnectionProperties',
+    'PrivateEndpointConnectionsList',
+    'PrivateLinkResourcesList',
+    'PrivateLinkServiceConnectionState',
     'Resource',
     'Sku',
+    'SystemData',
     'TrackedResource',
     'VirtualNetworkPeering',
     'VirtualNetworkPeeringList',
@@ -94,11 +138,18 @@ __all__ = [
     'WorkspaceCustomStringParameter',
     'WorkspaceEncryptionParameter',
     'WorkspaceListResult',
+    'WorkspacePropertiesEncryption',
     'WorkspaceProviderAuthorization',
     'WorkspaceUpdate',
+    'CreatedByType',
     'CustomParameterType',
+    'EncryptionKeySource',
     'KeySource',
     'PeeringProvisioningState',
     'PeeringState',
+    'PrivateEndpointConnectionProvisioningState',
+    'PrivateLinkServiceConnectionStatus',
     'ProvisioningState',
+    'PublicNetworkAccess',
+    'RequiredNsgRules',
 ]

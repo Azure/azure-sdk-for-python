@@ -3,10 +3,31 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+from typing import TYPE_CHECKING
 
 from six.moves.urllib_parse import urlparse
 
 from .._constants import EnvironmentVariables, KnownAuthorities
+
+if TYPE_CHECKING:
+    from typing import Any, Optional
+
+try:
+    from contextvars import ContextVar
+
+    within_credential_chain = ContextVar("within_credential_chain", default=False)
+except ImportError:
+    # No ContextVar on Python < 3.7. Credentials will behave as if they're never in a chain i.e. they will log fully.
+
+    class AlwaysFalse:
+        # pylint:disable=no-self-use
+        def get(self):
+            return False
+
+        def set(self, _):
+            pass
+
+    within_credential_chain = AlwaysFalse()  # type: ignore
 
 
 def normalize_authority(authority):
@@ -43,6 +64,19 @@ def validate_tenant_id(tenant_id):
         )
 
 
+def resolve_tenant(default_tenant, tenant_id=None, **_):
+    # type: (str, Optional[str], **Any) -> str
+    """Returns the correct tenant for a token request given a credential's configuration"""
+    if (
+        tenant_id is None
+        or default_tenant == "adfs"
+        or os.environ.get(EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH)
+    ):
+        return default_tenant
+
+    return tenant_id
+
+
 # pylint:disable=wrong-import-position
 from .aad_client import AadClient
 from .aad_client_base import AadClientBase
@@ -74,5 +108,6 @@ __all__ = [
     "get_default_authority",
     "InteractiveCredential",
     "normalize_authority",
+    "resolve_tenant",
     "wrap_exceptions",
 ]

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class PatchSchedulesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,8 +45,8 @@ class PatchSchedulesOperations:
         self,
         resource_group_name: str,
         cache_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.RedisPatchScheduleListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.RedisPatchScheduleListResult"]:
         """Gets all patch schedules in the specified redis cache (there is only one).
 
         :param resource_group_name: The name of the resource group.
@@ -58,12 +58,12 @@ class PatchSchedulesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.redis.models.RedisPatchScheduleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RedisPatchScheduleListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RedisPatchScheduleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -105,25 +105,26 @@ class PatchSchedulesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_by_redis_resource.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{cacheName}/patchSchedules'}  # type: ignore
+    list_by_redis_resource.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{cacheName}/patchSchedules'}  # type: ignore
 
     async def create_or_update(
         self,
         resource_group_name: str,
         name: str,
-        default: Union[str, "models.DefaultName"],
-        parameters: "models.RedisPatchSchedule",
-        **kwargs
-    ) -> "models.RedisPatchSchedule":
-        """Create or replace the patching schedule for Redis cache (requires Premium SKU).
+        default: Union[str, "_models.DefaultName"],
+        parameters: "_models.RedisPatchSchedule",
+        **kwargs: Any
+    ) -> "_models.RedisPatchSchedule":
+        """Create or replace the patching schedule for Redis cache.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -138,12 +139,12 @@ class PatchSchedulesOperations:
         :rtype: ~azure.mgmt.redis.models.RedisPatchSchedule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RedisPatchSchedule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RedisPatchSchedule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -175,7 +176,8 @@ class PatchSchedulesOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
             deserialized = self._deserialize('RedisPatchSchedule', pipeline_response)
@@ -187,16 +189,16 @@ class PatchSchedulesOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/patchSchedules/{default}'}  # type: ignore
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{name}/patchSchedules/{default}'}  # type: ignore
 
     async def delete(
         self,
         resource_group_name: str,
         name: str,
-        default: Union[str, "models.DefaultName"],
-        **kwargs
+        default: Union[str, "_models.DefaultName"],
+        **kwargs: Any
     ) -> None:
-        """Deletes the patching schedule of a redis cache (requires Premium SKU).
+        """Deletes the patching schedule of a redis cache.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -214,7 +216,8 @@ class PatchSchedulesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2020-12-01"
+        accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
@@ -232,6 +235,7 @@ class PatchSchedulesOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -239,21 +243,22 @@ class PatchSchedulesOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/patchSchedules/{default}'}  # type: ignore
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{name}/patchSchedules/{default}'}  # type: ignore
 
     async def get(
         self,
         resource_group_name: str,
         name: str,
-        default: Union[str, "models.DefaultName"],
-        **kwargs
-    ) -> "models.RedisPatchSchedule":
-        """Gets the patching schedule of a redis cache (requires Premium SKU).
+        default: Union[str, "_models.DefaultName"],
+        **kwargs: Any
+    ) -> "_models.RedisPatchSchedule":
+        """Gets the patching schedule of a redis cache.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -266,12 +271,12 @@ class PatchSchedulesOperations:
         :rtype: ~azure.mgmt.redis.models.RedisPatchSchedule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RedisPatchSchedule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RedisPatchSchedule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -298,7 +303,8 @@ class PatchSchedulesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RedisPatchSchedule', pipeline_response)
 
@@ -306,4 +312,4 @@ class PatchSchedulesOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/patchSchedules/{default}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{name}/patchSchedules/{default}'}  # type: ignore

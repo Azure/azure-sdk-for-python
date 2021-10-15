@@ -47,7 +47,7 @@ class BindingsOperations:
         service_name: str,
         app_name: str,
         binding_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BindingResource":
         """Get a Binding and its properties.
 
@@ -115,7 +115,7 @@ class BindingsOperations:
         app_name: str,
         binding_name: str,
         binding_resource: "_models.BindingResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BindingResource":
         """Create a new Binding or update an exiting Binding.
 
@@ -189,7 +189,7 @@ class BindingsOperations:
         service_name: str,
         app_name: str,
         binding_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Operation to delete a Binding.
 
@@ -254,7 +254,7 @@ class BindingsOperations:
         app_name: str,
         binding_name: str,
         binding_resource: "_models.BindingResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BindingResource":
         """Operation to update an exiting Binding.
 
@@ -327,7 +327,7 @@ class BindingsOperations:
         resource_group_name: str,
         service_name: str,
         app_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BindingResourceCollection"]:
         """Handles requests to list all resources in an App.
 

@@ -1,7 +1,26 @@
 # Release History
 
-## 0.8.0 (Unreleased)
+## 0.10.0 (Unreleased)
 
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 0.9.0 (2021-10-05)
+
+### Features Added
+
+- re-generated based on tag package-artifacts-composite-v1
+
+## 0.8.0 (2021-08-10)
+
+- Updated API version to "2020-12-01" which is the default API version
+- Added `NotebookOperationResultOperations`, `OperationResultOperations`, `OperationStatusOperations`
+- Added API version "2021-06-01-preview" support
 
 ## 0.7.0 (2021-05-11)
 

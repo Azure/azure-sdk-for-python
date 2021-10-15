@@ -43,7 +43,7 @@ class WorkspaceGitRepoManagementOperations:
         self,
         git_hub_access_token_request: "_models.GitHubAccessTokenRequest",
         client_request_id: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GitHubAccessTokenResponse":
         """Get the GitHub access token.
 
@@ -62,7 +62,7 @@ class WorkspaceGitRepoManagementOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

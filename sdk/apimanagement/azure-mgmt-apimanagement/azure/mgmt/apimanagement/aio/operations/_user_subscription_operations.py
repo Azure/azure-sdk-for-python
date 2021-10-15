@@ -49,7 +49,7 @@ class UserSubscriptionOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SubscriptionCollection"]:
         """Lists the collection of subscriptions of the specified user.
 
@@ -133,7 +133,7 @@ class UserSubscriptionOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -150,7 +150,7 @@ class UserSubscriptionOperations:
         service_name: str,
         user_id: str,
         sid: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SubscriptionContract":
         """Gets the specified Subscription entity associated with a particular user.
 
@@ -201,7 +201,7 @@ class UserSubscriptionOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}

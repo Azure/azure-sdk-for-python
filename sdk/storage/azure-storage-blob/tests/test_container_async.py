@@ -20,7 +20,8 @@ from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError, ResourceModifiedError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, BlobAccountPreparer, \
+    CachedResourceGroupPreparer
 
 from azure.storage.blob import (
     PublicAccess,
@@ -37,7 +38,8 @@ from azure.storage.blob import (
     PartialBatchErrorException,
     generate_account_sas, ResourceTypes, AccountSasPermissions)
 
-from _shared.testcase import LogCaptured, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
+from settings.testcase import BlobPreparer
+from devtools_testutils.storage import LogCaptured
 from devtools_testutils.storage.aio import AsyncStorageTestCase
 from azure.storage.blob.aio import (
     BlobServiceClient,
@@ -83,10 +85,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         return result
 
     #--Test cases for containers -----------------------------------------
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_create_container(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_create_container(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container_name = self._get_container_reference()
 
         # Act
@@ -96,10 +98,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         # Assert
         self.assertTrue(created)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_create_cntnr_w_existing_cntnr_fail_on_exist(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_create_cntnr_w_existing_cntnr_fail_on_exist(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container_name = self._get_container_reference()
 
         # Act
@@ -111,10 +113,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         # Assert
         self.assertTrue(created)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_create_container_with_public_access_container(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_create_container_with_public_access_container(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container_name = self._get_container_reference()
 
         # Act
@@ -124,10 +126,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         # Assert
         self.assertTrue(created)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_create_container_with_public_access_blob(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_create_container_with_public_access_blob(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container_name = self._get_container_reference()
 
         # Act
@@ -138,7 +140,7 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         await blob.upload_blob(u'xyz')
 
         anonymous_service = BlobClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             container_name=container_name,
             blob_name="blob1")
 
@@ -146,10 +148,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertTrue(created)
         await anonymous_service.download_blob()
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_create_container_with_metadata(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_create_container_with_metadata(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container_name = self._get_container_reference()
         metadata = {'hello': 'world', 'number': '42'}
 
@@ -163,10 +165,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         md = md_cr.metadata
         self.assertDictEqual(md, metadata)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_container_exists_with_lease(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_container_exists_with_lease(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         await container.acquire_lease()
 
@@ -177,10 +179,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertTrue(exists)
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_rename_container(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+    async def test_rename_container(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         old_name1 = self._get_container_reference(prefix="oldcontainer1")
         old_name2 = self._get_container_reference(prefix="oldcontainer2")
         new_name = self._get_container_reference(prefix="newcontainer")
@@ -200,9 +202,9 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         props = await new_container.get_container_properties()
         self.assertEqual(new_name, props.name)
 
-    @GlobalStorageAccountPreparer()
-    async def test_download_blob_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key,
+    @BlobPreparer()
+    async def test_download_blob_modified(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key,
                                 max_single_get_size=38,
                                 max_chunk_get_size=38)
         container = await self._create_container(bsc, prefix="cont1")
@@ -221,11 +223,11 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
             data += await chunks.__anext__()
 
     @pytest.mark.skip(reason="Feature not yet enabled. Make sure to record this test once enabled.")
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_rename_container_with_container_client(
-            self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+            self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         old_name1 = self._get_container_reference(prefix="oldcontainer1")
         old_name2 = self._get_container_reference(prefix="oldcontainer2")
         new_name = self._get_container_reference(prefix="newcontainer")
@@ -248,10 +250,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertEqual(new_name, new_container_props.name)
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_rename_container_with_source_lease(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+    async def test_rename_container_with_source_lease(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         old_name = self._get_container_reference(prefix="old")
         new_name = self._get_container_reference(prefix="new")
         container = bsc.get_container_client(old_name)
@@ -265,10 +267,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         props = await new_container.get_container_properties()
         self.assertEqual(new_name, props.name)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_unicode_create_container_unicode_name(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_unicode_create_container_unicode_name(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container_name = u'啊齄丂狛狜'
 
         container = bsc.get_container_client(container_name)
@@ -279,10 +281,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
 
         # Assert
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_list_containers(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_list_containers(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
 
         # Act
@@ -298,11 +300,12 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertNamedItemInContainer(containers, container.container_name)
         self.assertIsNotNone(containers[0].has_immutability_policy)
         self.assertIsNotNone(containers[0].has_legal_hold)
+        self.assertIsNotNone(containers[0].immutable_storage_with_versioning_enabled)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_list_containers_with_prefix(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_list_containers_with_prefix(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
 
         # Act
@@ -317,10 +320,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertEqual(containers[0].name, container.container_name)
         self.assertIsNone(containers[0].metadata)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_list_containers_with_include_metadata(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_list_containers_with_include_metadata(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         metadata = {'hello': 'world', 'number': '42'}
         resp = await container.set_container_metadata(metadata)
@@ -339,10 +342,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertNamedItemInContainer(containers, container.container_name)
         self.assertDictEqual(containers[0].metadata, metadata)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_list_containers_with_public_access(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_list_containers_with_public_access(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
                                      expiry=datetime.utcnow() + timedelta(hours=1),
@@ -362,10 +365,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertNamedItemInContainer(containers, container.container_name)
         self.assertEqual(containers[0].public_access, PublicAccess.Blob)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_list_containers_with_num_results_and_marker(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_list_containers_with_num_results_and_marker(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         prefix = 'listcontainerasync'
         container_names = []
         for i in range(0, 4):
@@ -396,10 +399,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertNamedItemInContainer(containers2, container_names[2])
         self.assertNamedItemInContainer(containers2, container_names[3])
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_set_container_metadata(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_set_container_metadata(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         metadata = {'hello': 'world', 'number': '43'}
         container = await self._create_container(bsc)
 
@@ -410,10 +413,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         # Assert
         self.assertDictEqual(metadata_from_response, metadata)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_set_container_metadata_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_set_container_metadata_with_lease_id(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         metadata = {'hello': 'world', 'number': '43'}
         container = await self._create_container(bsc)
         lease_id = await container.acquire_lease()
@@ -426,10 +429,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         md = md.metadata
         self.assertDictEqual(md, metadata)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_set_container_metadata_with_non_existing_container(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_set_container_metadata_with_non_existing_container(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container_name = self._get_container_reference()
         container = bsc.get_container_client(container_name)
 
@@ -439,10 +442,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
 
         # Assert
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_get_container_metadata(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_get_container_metadata(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         metadata = {'hello': 'world', 'number': '42'}
         container = await self._create_container(bsc)
         await container.set_container_metadata(metadata)
@@ -454,10 +457,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         # Assert
         self.assertDictEqual(md, metadata)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_get_container_metadata_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_get_container_metadata_with_lease_id(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         metadata = {'hello': 'world', 'number': '42'}
         container = await self._create_container(bsc)
         await container.set_container_metadata(metadata)
@@ -470,11 +473,11 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         # Assert
         self.assertDictEqual(md, metadata)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_container_exists(self, resource_group, location, storage_account, storage_account_key):
+    async def test_container_exists(self, storage_account_name, storage_account_key):
         bsc = BlobServiceClient(self.account_url(
-            storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+            storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
 
         container1 = await self._create_container(bsc, prefix="container1")
         container2_name = self._get_container_reference(prefix="container2")
@@ -483,11 +486,11 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertTrue(await container1.exists())
         self.assertFalse(await container2.exists())
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_get_container_properties(self, resource_group, location, storage_account, storage_account_key):
+    async def test_get_container_properties(self, storage_account_name, storage_account_key):
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+            self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         metadata = {'hello': 'world', 'number': '42'}
         container = await self._create_container(bsc)
         await container.set_container_metadata(metadata)
@@ -498,6 +501,7 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         # Assert
         self.assertIsNotNone(props)
         self.assertDictEqual(props.metadata, metadata)
+        self.assertIsNotNone(props.immutable_storage_with_versioning_enabled)
         # self.assertEqual(props.lease.duration, 'infinite')
         # self.assertEqual(props.lease.state, 'leased')
         # self.assertEqual(props.lease.status, 'locked')
@@ -505,10 +509,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertIsNotNone(props.has_immutability_policy)
         self.assertIsNotNone(props.has_legal_hold)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_get_container_properties_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_get_container_properties_with_lease_id(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         metadata = {'hello': 'world', 'number': '42'}
         container = await self._create_container(bsc)
         await container.set_container_metadata(metadata)
@@ -525,10 +529,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertEqual(props.lease.state, 'leased')
         self.assertEqual(props.lease.status, 'locked')
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_get_container_acl(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_get_container_acl(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
 
         # Act
@@ -539,10 +543,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertIsNone(acl.get('public_access'))
         self.assertEqual(len(acl.get('signed_identifiers')), 0)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_get_container_acl_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_get_container_acl_with_lease_id(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         lease_id = await container.acquire_lease()
 
@@ -553,10 +557,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertIsNotNone(acl)
         self.assertIsNone(acl.get('public_access'))
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_set_container_acl(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_set_container_acl(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
 
         # Act
@@ -575,10 +579,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertEqual(len(acl.get('signed_identifiers')), 1)
         self.assertIsNone(acl.get('public_access'))
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_set_container_acl_with_one_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_set_container_acl_with_one_signed_identifier(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         from dateutil.tz import tzutc
         container = await self._create_container(bsc)
 
@@ -594,10 +598,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertIsNotNone(response.get('etag'))
         self.assertIsNotNone(response.get('last_modified'))
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_set_container_acl_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_set_container_acl_with_lease_id(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         lease_id = await container.acquire_lease()
 
@@ -613,10 +617,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertIsNotNone(acl)
         self.assertIsNone(acl.get('public_access'))
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_set_container_acl_with_public_access(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_set_container_acl_with_public_access(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
 
         # Act
@@ -631,10 +635,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertIsNotNone(acl)
         self.assertEqual('container', acl.get('public_access'))
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_set_container_acl_with_empty_signed_identifiers(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_set_container_acl_with_empty_signed_identifiers(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
 
         # Act
@@ -646,10 +650,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertEqual(len(acl.get('signed_identifiers')), 0)
         self.assertIsNone(acl.get('public_access'))
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_set_container_acl_with_signed_identifiers(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_set_container_acl_with_signed_identifiers(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
 
         # Act
@@ -665,10 +669,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertEqual('testid', acl.get('signed_identifiers')[0].id)
         self.assertIsNone(acl.get('public_access'))
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_set_container_acl_with_empty_identifiers(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_set_container_acl_with_empty_identifiers(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         identifiers = {i: None for i in range(0, 3)}
 
@@ -683,10 +687,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertIsNone(acl.get('signed_identifiers')[0].access_policy)
         self.assertIsNone(acl.get('public_access'))
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_set_container_acl_with_three_identifiers(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_set_container_acl_with_three_identifiers(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
                                      expiry=datetime.utcnow() + timedelta(hours=1),
@@ -704,10 +708,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertIsNotNone(acl.get('signed_identifiers')[0].access_policy)
         self.assertIsNone(acl.get('public_access'))
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_set_container_acl_too_many_ids(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_set_container_acl_too_many_ids(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container_name = await self._create_container(bsc)
 
         # Act
@@ -723,10 +727,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
             'Too many access policies provided. The server does not support setting more than 5 access policies on a single resource.'
         )
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_lease_container_acquire_and_release(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_lease_container_acquire_and_release(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
 
         # Act
@@ -735,10 +739,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
 
         # Assert
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_lease_container_renew(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_lease_container_renew(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         lease = await container.acquire_lease(lease_duration=15)
         self.sleep(10)
@@ -755,10 +759,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.sleep(10)
         await container.delete_container()
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_lease_container_break_period(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_lease_container_break_period(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
 
         # Act
@@ -770,10 +774,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         with self.assertRaises(HttpResponseError):
             await container.delete_container(lease=lease)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_lease_container_break_released_lease_fails(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_lease_container_break_released_lease_fails(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         lease = await container.acquire_lease()
         await lease.release()
@@ -784,10 +788,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
 
         # Assert
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_lease_container_with_duration(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_lease_container_with_duration(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
 
         # Act
@@ -799,10 +803,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.sleep(15)
         await container.acquire_lease()
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_lease_container_twice(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_lease_container_twice(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
 
         # Act
@@ -812,10 +816,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         lease2 = await container.acquire_lease(lease_id=lease.id)
         self.assertEqual(lease.id, lease2.id)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_lease_container_with_proposed_lease_id(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_lease_container_with_proposed_lease_id(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
 
         # Act
@@ -825,10 +829,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         # Assert
         self.assertEqual(proposed_lease_id, lease.id)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_lease_container_change_lease_id(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_lease_container_change_lease_id(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
 
         # Act
@@ -845,10 +849,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertNotEqual(lease_id1, lease_id)
         self.assertEqual(lease_id2, lease_id)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_delete_container_with_existing_container(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_delete_container_with_existing_container(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
 
         # Act
@@ -857,10 +861,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         # Assert
         self.assertIsNone(deleted)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_delete_cntnr_w_nonexisting_cntnr_fail_not_exist(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_delete_cntnr_w_nonexisting_cntnr_fail_not_exist(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container_name = self._get_container_reference()
         container = bsc.get_container_client(container_name)
 
@@ -872,10 +876,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
             log_as_str = log_captured.getvalue()
             #self.assertTrue('ERROR' in log_as_str)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_delete_container_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_delete_container_with_lease_id(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         lease = await container.acquire_lease(lease_duration=15)
 
@@ -888,11 +892,11 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
             await container.get_container_properties()
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_undelete_container(self, resource_group, location, storage_account, storage_account_key):
+    async def test_undelete_container(self, storage_account_name, storage_account_key):
         # TODO: container soft delete should enabled by SRP call or use ARM, so make this test as playback only.
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container_client = await self._create_container(bsc)
 
         # Act
@@ -915,10 +919,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
                 props = await restored_ctn_client.get_container_properties()
                 self.assertIsNotNone(props)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_list_names(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_list_names(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         data = b'hello world'
 
@@ -933,10 +937,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
 
         self.assertEqual(blobs, ['blob1', 'blob2'])
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_list_blobs_returns_rehydrate_priority(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_list_blobs_returns_rehydrate_priority(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         data = b'hello world'
 
@@ -949,10 +953,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
             if blob_properties.name == blob_client.blob_name:
                 self.assertEqual(blob_properties.rehydrate_priority, "Standard")
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_list_blobs(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_list_blobs(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         data = b'hello world'
         cr0 = container.get_blob_client('blob1')
@@ -977,10 +981,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertIsNotNone(blobs[0].creation_time)
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_list_blobs_with_object_replication_policy(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+    async def test_list_blobs_with_object_replication_policy(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = await self._create_container(bsc)
         data = b'hello world'
         b_c = container.get_blob_client('blob1')
@@ -1002,10 +1006,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         # Assert
         self.assertIsNot(number_of_blobs_with_policy, 0)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_list_blobs_leased_blob(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_list_blobs_leased_blob(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
@@ -1026,10 +1030,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertEqual(resp[0].lease.status, 'locked')
         self.assertEqual(resp[0].lease.state, 'leased')
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_list_blobs_with_prefix(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_list_blobs_with_prefix(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         data = b'hello world'
         c0 = container.get_blob_client('blob_a1')
@@ -1050,10 +1054,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertNamedItemInContainer(resp, 'blob_a1')
         self.assertNamedItemInContainer(resp, 'blob_a2')
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_list_blobs_with_num_results(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_list_blobs_with_num_results(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         data = b'hello world'
         c0 = container.get_blob_client('blob_a1')
@@ -1077,10 +1081,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertNamedItemInContainer(generator.current_page, 'blob_a1')
         self.assertNamedItemInContainer(generator.current_page, 'blob_a2')
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_list_blobs_with_include_snapshots(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_list_blobs_with_include_snapshots(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
@@ -1102,10 +1106,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertEqual(blobs[2].name, 'blob2')
         self.assertIsNone(blobs[2].snapshot)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_list_blobs_with_include_metadata(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_list_blobs_with_include_metadata(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
@@ -1128,10 +1132,50 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertEqual(blobs[1].metadata['number'], '2')
         self.assertEqual(blobs[1].metadata['name'], 'car')
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
+    async def test_list_blobs_include_deletedwithversion_async(self, versioned_storage_account_name, versioned_storage_account_key):
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        # pytest.skip("Waiting on metadata XML fix in msrest")
+        container = await self._create_container(bsc)
+        data = b'hello world'
+        content_settings = ContentSettings(
+            content_language='spanish',
+            content_disposition='inline')
+        blob1 = container.get_blob_client('blob1')
+        resp = await blob1.upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '1', 'name': 'bob'})
+        version_id_1 = resp['version_id']
+        await blob1.upload_blob(b"abc", overwrite=True)
+        root_content = b"cde"
+        root_version_id = (await blob1.upload_blob(root_content, overwrite=True))['version_id']
+        # this will delete the root blob, while you can still access it through versioning
+        await blob1.delete_blob()
+
+        await container.get_blob_client('blob2').upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
+        await container.get_blob_client('blob3').upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
+
+        # Act
+        blobs = list()
+        
+        # include deletedwithversions will give you all alive root blobs and the the deleted root blobs when versioning is on.
+        async for blob in container.list_blobs(include=["deletedwithversions"]):
+            blobs.append(blob)
+        downloaded_root_content = await (await blob1.download_blob(version_id=root_version_id)).readall()
+        downloaded_original_content = await (await blob1.download_blob(version_id=version_id_1)).readall()
+
+        # Assert
+        self.assertEqual(blobs[0].name, 'blob1')
+        self.assertTrue(blobs[0].has_versions_only)
+        self.assertEqual(root_content, downloaded_root_content)
+        self.assertEqual(data, downloaded_original_content)
+        self.assertEqual(blobs[1].name, 'blob2')
+        self.assertFalse(blobs[1].has_versions_only)
+        self.assertEqual(blobs[2].name, 'blob3')
+        self.assertFalse(blobs[2].has_versions_only)
+
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_list_blobs_with_include_uncommittedblobs(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_list_blobs_with_include_uncommittedblobs(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
@@ -1152,15 +1196,15 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertEqual(blobs[0].name, 'blob1')
         self.assertEqual(blobs[1].name, 'blob2')
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_list_blobs_with_include_copy(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_list_blobs_with_include_copy(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         data = b'hello world'
         await (container.get_blob_client('blob1')).upload_blob(data, metadata={'status': 'original'})
         sourceblob = 'https://{0}.blob.core.windows.net/{1}/blob1'.format(
-            storage_account.name,
+            storage_account_name,
             container.container_name)
 
         blobcopy = container.get_blob_client('blob1copy')
@@ -1192,10 +1236,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertEqual(blobs[1].copy.progress, '11/11')
         self.assertNotEqual(blobs[1].copy.completion_time, None)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_list_blobs_with_delimiter(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_list_blobs_with_delimiter(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         data = b'hello world'
 
@@ -1225,11 +1269,11 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         blob_list = list()
         container_client.delete_blobs(*blob_list)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_delete_blobs_simple(self, resource_group, location, storage_account, storage_account_key):
+    async def test_delete_blobs_simple(self, storage_account_name, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         data = b'hello world'
 
@@ -1253,15 +1297,15 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         assert response[2].status_code == 202
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_batch_blobs_with_container_sas(
-            self, resource_group, location, storage_account, storage_account_key):
+            self, storage_account_name, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container_name = self._get_container_reference("testcont")
         sas_token = generate_container_sas(
-            storage_account.name,
+            storage_account_name,
             container_name,
             account_key=storage_account_key,
             permission=ContainerSasPermissions(read=True, write=True, delete=True, list=True),
@@ -1291,12 +1335,11 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         assert response[1].status_code == 202
         assert response[2].status_code == 202
 
-    @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_delete_blobs_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
+    async def test_delete_blobs_with_if_tags(self, blob_storage_account_name, blob_storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(blob_storage_account_name, "blob"), blob_storage_account_key)
         container = await self._create_container(bsc)
         data = b'hello world'
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
@@ -1337,18 +1380,18 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         assert response[2].status_code == 202
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_delete_blobs_and_snapshot_using_sas(self, resource_group, location, storage_account, storage_account_key):
+    async def test_delete_blobs_and_snapshot_using_sas(self, storage_account_name, storage_account_key):
         # Arrange
         sas_token = generate_account_sas(
-            storage_account.name,
+            storage_account_name,
             account_key=storage_account_key,
             resource_types=ResourceTypes(object=True, container=True),
             permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), sas_token)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), sas_token)
         container = await self._create_container(bsc)
         data = b'hello world'
 
@@ -1390,11 +1433,11 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         assert response[2].status_code == 202
         assert response[3].status_code == 202
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_delete_blobs_simple_no_raise(self, resource_group, location, storage_account, storage_account_key):
+    async def test_delete_blobs_simple_no_raise(self, storage_account_name, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         data = b'hello world'
 
@@ -1417,11 +1460,11 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         assert response[1].status_code == 202
         assert response[2].status_code == 202
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_delete_blobs_snapshot(self, resource_group, location, storage_account, storage_account_key):
+    async def test_delete_blobs_snapshot(self, storage_account_name, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         data = b'hello world'
 
@@ -1454,10 +1497,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
             blobs = await self._to_list(container.list_blobs(include='snapshots'))
             assert len(blobs) == 3  # 3 blobs
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_standard_blob_tier_set_tier_api_batch(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_standard_blob_tier_set_tier_api_batch(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
 
@@ -1499,11 +1542,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
                     'blob3',
                 )
 
-    @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_standard_blob_tier_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+    async def test_standard_blob_tier_with_if_tags(self, blob_storage_account_name, blob_storage_account_key):
+        bsc = BlobServiceClient(self.account_url(blob_storage_account_name, "blob"), blob_storage_account_key)
         container = await self._create_container(bsc)
         tier = StandardBlobTier.Cool
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
@@ -1558,18 +1600,17 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         )
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_standard_blob_tier_set_tiers_with_sas(self, resource_group, location, storage_account,
-                                                   storage_account_key):
+    async def test_standard_blob_tier_set_tiers_with_sas(self, storage_account_name, storage_account_key):
         sas_token = generate_account_sas(
-            storage_account.name,
+            storage_account_name,
             account_key=storage_account_key,
             resource_types=ResourceTypes(object=True, container=True),
             permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), sas_token)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), sas_token)
         container = await self._create_container(bsc)
         tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
 
@@ -1615,10 +1656,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         )
 
     @pytest.mark.skip(reason="Wasn't able to get premium account with batch enabled")
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_premium_tier_set_tier_api_batch(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_premium_tier_set_tier_api_batch(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         url = self._get_premium_account_url()
         credential = self._get_premium_shared_key_credential()
         pbs = BlobServiceClient(url, credential=credential)
@@ -1668,10 +1709,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
                 'blob3',
             )
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_walk_blobs_with_delimiter(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_walk_blobs_with_delimiter(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         data = b'hello world'
 
@@ -1699,10 +1740,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertEqual(len(blob_list), 4)
         self.assertEqual(blob_list, ['a/blob1', 'a/blob2', 'b/c/blob3', 'blob4'])
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_list_blobs_with_include_multiple(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_list_blobs_with_include_multiple(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
@@ -1733,11 +1774,11 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertEqual(blobs[2].metadata['name'], 'car')
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_shared_access_container(self, resource_group, location, storage_account, storage_account_key):
+    async def test_shared_access_container(self, storage_account_name, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         blob_name  = 'blob1'
         data = b'hello world'
@@ -1761,11 +1802,11 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertTrue(response.ok)
         self.assertEqual(data, response.content)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_web_container_normal_operations_working(self, resource_group, location, storage_account, storage_account_key):
+    async def test_web_container_normal_operations_working(self, storage_account_name, storage_account_key):
         web_container = "web"
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
 
         # create the web container in case it does not exist yet
         container = bsc.get_container_client(web_container)
@@ -1795,10 +1836,10 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
             # delete container
             await container.delete_container()
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_download_blob_async(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    async def test_download_blob_async(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         data = b'hello world'
         blob_name = self.get_resource_name("blob")
@@ -1811,9 +1852,9 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         raw = await downloaded.readall()
         assert raw == data
 
-    @GlobalStorageAccountPreparer()
-    async def test_download_blob_in_chunks_where_maxsinglegetsize_is_multiple_of_chunksize(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key,
+    @BlobPreparer()
+    async def test_download_blob_in_chunks_where_maxsinglegetsize_is_multiple_of_chunksize(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key,
                                 transport=AiohttpTestTransport(),
                                 max_single_get_size=1024,
                                 max_chunk_get_size=512)
@@ -1837,9 +1878,9 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
 
         self.assertEqual(downloaded_data, data)
 
-    @GlobalStorageAccountPreparer()
-    async def test_download_blob_in_chunks_where_maxsinglegetsize_not_multiple_of_chunksize(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key,
+    @BlobPreparer()
+    async def test_download_blob_in_chunks_where_maxsinglegetsize_not_multiple_of_chunksize(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key,
                                 transport=AiohttpTestTransport(),
                                 max_single_get_size=1024,
                                 max_chunk_get_size=666)
@@ -1863,9 +1904,9 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
 
         self.assertEqual(downloaded_data, data)
 
-    @GlobalStorageAccountPreparer()
-    async def test_download_blob_in_chunks_where_maxsinglegetsize_smallert_than_chunksize(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key,
+    @BlobPreparer()
+    async def test_download_blob_in_chunks_where_maxsinglegetsize_smallert_than_chunksize(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key,
                                 transport=AiohttpTestTransport(),
                                 max_single_get_size=215,
                                 max_chunk_get_size=512)

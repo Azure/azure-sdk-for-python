@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
+## 1.0.0b6 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,33 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.0.0b5 (2021-09-08)
+
+### Breaking Changes
+- Changed: `list_all_translation_statuses` has been renamed to `list_translation_statuses`
+- Changed: `list_all_document_statuses` has been renamed to `list_document_statuses`
+- Changed: `TranslationStatus` property `documents_cancelled_count` has been renamed to `documents_canceled_count`
+- Changed: `FileFormat` has been renamed to `DocumentTranslationFileFormat`
+- Changed: Operation statuses `Cancelled` and `Cancelling` have been renamed to `Canceled` and `Canceling`, respectively.
+
+### Bugs Fixed
+- The operation `id` under `details` of the poller object now populates correctly.
+
+## 1.0.0b4 (2021-08-10)
+
+### Features Added
+
+- The single translation input version of `begin_translation(source, target, target_language_code)` now accepts keyword arguments
+`storage_type`, `glossaries`, `category_id`, `prefix`, `suffix`, and `source_language_code`.
+
+### Breaking Changes
+
+- Changed: renamed kwargs `translated_before` and `translated_after` to `created_before` and `created_after`, respectively,
+for `list_all_document_statuses`.
+- Changed: renamed `order_by` sorting query option `createdDateTimeUtc` to `created_on` for `list_all_translation_statuses` and
+`list_all_document_statuses`.
+  
 
 ## 1.0.0b3 (2021-07-07)
 

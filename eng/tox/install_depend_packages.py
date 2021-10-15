@@ -13,6 +13,7 @@ from subprocess import check_call
 import logging
 from packaging.specifiers import SpecifierSet
 from pkg_resources import Requirement, parse_version
+
 from pypi_tools.pypi import PyPIClient
 
 setup_parser_path = os.path.abspath(
@@ -27,14 +28,20 @@ PKGS_TXT_FILE = "packages.txt"
 
 logging.getLogger().setLevel(logging.INFO)
 
+# both min and max overrides are *inclusive* of the version targeted
 MINIMUM_VERSION_SUPPORTED_OVERRIDE = {
     'azure-common': '1.1.10',
     'msrest': '0.6.10',
-    'six': '1.9',
     'typing-extensions': '3.6.5',
     'opentelemetry-api': '1.3.0',
-    'cryptography': '3.3',
+    'opentelemetry-sdk': '1.3.0',
     'azure-core': '1.11.0',
+    'requests': '2.19.0',
+    'six': '1.12.0'
+}
+
+MAXIMUM_VERSION_SUPPORTED_OVERRIDE = {
+    'cryptography': '3.4.8'
 }
 
 def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
@@ -74,7 +81,7 @@ def find_released_packages(setup_py_path, dependency_type):
 
 
 def parse_req(req):
-    req_object = Requirement.parse(req)
+    req_object = Requirement.parse(req.split(";")[0])
     pkg_name = req_object.key
     spec = SpecifierSet(str(req_object).replace(pkg_name, ""))
     return pkg_name, spec
@@ -93,6 +100,11 @@ def process_requirement(req, dependency_type):
 
     if pkg_name in MINIMUM_VERSION_SUPPORTED_OVERRIDE:
         versions = [v for v in versions if parse_version(v) >= parse_version(MINIMUM_VERSION_SUPPORTED_OVERRIDE[pkg_name])]
+
+    if pkg_name in MAXIMUM_VERSION_SUPPORTED_OVERRIDE:
+        versions = [v for v in versions if parse_version(v) <= parse_version(MAXIMUM_VERSION_SUPPORTED_OVERRIDE[pkg_name])]
+
+
     # Search from lowest to latest in case of finding minimum dependency
     # Search from latest to lowest in case of finding latest required version
     # reverse the list to get latest version first
@@ -128,7 +140,7 @@ def filter_dev_requirements(setup_py_path, released_packages, temp_dir):
     filtered_req = [
         req
         for req in requirements
-        if os.path.basename(req.replace('\n', '')) not in req_to_exclude
+        if os.path.basename(req.replace('\n', '')) not in req_to_exclude and not any([req.startswith(i) for i in req_to_exclude])
     ]
 
     logging.info("Filtered dev requirements: %s", filtered_req)

@@ -29,9 +29,10 @@ from azure.storage.blob import (
 
 from azure.storage.blob._shared.shared_access_signature import QueryStringConstants
 
-from _shared.testcase import (
-    LogCaptured, GlobalStorageAccountPreparer
+from settings.testcase import (
+    BlobPreparer
 )
+from devtools_testutils.storage import LogCaptured
 from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 
@@ -83,10 +84,9 @@ class StorageLoggingTestAsync(AsyncStorageTestCase):
             except:
                 pass
 
-    @GlobalStorageAccountPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_logging_request_and_response_body(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport(), logging_enable=True)
+    @BlobPreparer()
+    async def test_logging_request_and_response_body(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport(), logging_enable=True)
         await self._setup(bsc)
         # Arrange
         container = bsc.get_container_client(self.container_name)
@@ -105,11 +105,10 @@ class StorageLoggingTestAsync(AsyncStorageTestCase):
             log_as_str = log_captured.getvalue()
             self.assertTrue(request_body in log_as_str)
             self.assertEqual(log_as_str.count(request_body), 1)
-
-    @GlobalStorageAccountPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_authorization_is_scrubbed_off(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
+            
+    @BlobPreparer()         
+    async def test_authorization_is_scrubbed_off(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         await self._setup(bsc)
         # Arrange
         container = bsc.get_container_client(self.container_name)
@@ -124,12 +123,12 @@ class StorageLoggingTestAsync(AsyncStorageTestCase):
             self.assertFalse('SharedKey' in log_as_str)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_sas_signature_is_scrubbed_off(self, resource_group, location, storage_account, storage_account_key):
+    async def test_sas_signature_is_scrubbed_off(self, storage_account_name, storage_account_key):
         # Test can only run live
 
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         await self._setup(bsc)
         # Arrange
         container = bsc.get_container_client(self.container_name)
@@ -157,11 +156,11 @@ class StorageLoggingTestAsync(AsyncStorageTestCase):
             self.assertFalse(signed_signature in log_as_str)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_copy_source_sas_is_scrubbed_off(self, resource_group, location, storage_account, storage_account_key):
+    async def test_copy_source_sas_is_scrubbed_off(self, storage_account_name, storage_account_key):
         # Test can only run live
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         await self._setup(bsc)
         # Arrange
         dest_blob_name = self.get_resource_name('destblob')

@@ -46,7 +46,7 @@ class ConfigServersOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ConfigServerResource":
         """Get the config server and its properties.
 
@@ -106,7 +106,7 @@ class ConfigServersOperations:
         resource_group_name: str,
         service_name: str,
         config_server_resource: "_models.ConfigServerResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ConfigServerResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigServerResource"]
         error_map = {
@@ -163,7 +163,7 @@ class ConfigServersOperations:
         resource_group_name: str,
         service_name: str,
         config_server_resource: "_models.ConfigServerResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ConfigServerResource"]:
         """Update the config server.
 
@@ -176,8 +176,8 @@ class ConfigServersOperations:
         :type config_server_resource: ~azure.mgmt.appplatform.v2020_11_01_preview.models.ConfigServerResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ConfigServerResource or the result of cls(response)
@@ -235,7 +235,7 @@ class ConfigServersOperations:
         resource_group_name: str,
         service_name: str,
         config_server_resource: "_models.ConfigServerResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ConfigServerResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigServerResource"]
         error_map = {
@@ -292,7 +292,7 @@ class ConfigServersOperations:
         resource_group_name: str,
         service_name: str,
         config_server_resource: "_models.ConfigServerResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ConfigServerResource"]:
         """Update the config server.
 
@@ -305,8 +305,8 @@ class ConfigServersOperations:
         :type config_server_resource: ~azure.mgmt.appplatform.v2020_11_01_preview.models.ConfigServerResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ConfigServerResource or the result of cls(response)
@@ -364,7 +364,7 @@ class ConfigServersOperations:
         resource_group_name: str,
         service_name: str,
         config_server_settings: "_models.ConfigServerSettings",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ConfigServerSettingsValidateResult":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigServerSettingsValidateResult"]
         error_map = {
@@ -421,7 +421,7 @@ class ConfigServersOperations:
         resource_group_name: str,
         service_name: str,
         config_server_settings: "_models.ConfigServerSettings",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ConfigServerSettingsValidateResult"]:
         """Check if the config server settings are valid.
 
@@ -434,8 +434,8 @@ class ConfigServersOperations:
         :type config_server_settings: ~azure.mgmt.appplatform.v2020_11_01_preview.models.ConfigServerSettings
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ConfigServerSettingsValidateResult or the result of cls(response)

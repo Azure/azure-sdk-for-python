@@ -48,7 +48,7 @@ class DataFlowsOperations:
         data_flow_name: str,
         data_flow: "_models.DataFlowResource",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataFlowResource":
         """Creates or updates a data flow.
 
@@ -123,7 +123,7 @@ class DataFlowsOperations:
         factory_name: str,
         data_flow_name: str,
         if_none_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataFlowResource":
         """Gets a data flow.
 
@@ -190,7 +190,7 @@ class DataFlowsOperations:
         resource_group_name: str,
         factory_name: str,
         data_flow_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a data flow.
 
@@ -248,7 +248,7 @@ class DataFlowsOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DataFlowListResponse"]:
         """Lists data flows.
 

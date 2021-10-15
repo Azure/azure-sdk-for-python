@@ -1,6 +1,25 @@
 # Release History
 
-## 12.9.0b1 (Unreleased)
+## 12.9.0 (2021-09-15)
+**Stable release of preview features**
+- Added support for service version 2020-10-02 (STG78)
+- Added support for object level immutability policy with versioning (Version Level WORM).
+- Added support for listing deleted root blobs that have versions.
+- Added OAuth support for sync copy blob source.
+
+## 12.9.0b1 (2021-07-27)
+**New Features**
+- Added support for object level immutability policy with versioning (Version Level WORM).
+- Added support for listing deleted root blobs that have versions.
+- Added OAuth support for sync copy blob source.
+
+**Fixes**
+- Fixed a bug for get_block_list (#16314)
+- Ensured that download fails if blob modified mid download
+- Enabled exists() for CPK encrypted blobs (#18041)
+
+**Notes**
+- Deprecated new_name in for undelete container operation
 
 ## 12.8.1 (2021-04-20)
 **Fixes**

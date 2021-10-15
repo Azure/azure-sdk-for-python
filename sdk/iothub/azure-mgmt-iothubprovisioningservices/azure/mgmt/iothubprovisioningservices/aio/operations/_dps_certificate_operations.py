@@ -47,7 +47,7 @@ class DpsCertificateOperations:
         resource_group_name: str,
         provisioning_service_name: str,
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CertificateResponse":
         """Get the certificate from the provisioning service.
 
@@ -117,7 +117,7 @@ class DpsCertificateOperations:
         certificate_name: str,
         certificate_description: "_models.CertificateBodyDescription",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CertificateResponse":
         """Upload the certificate to the provisioning service.
 
@@ -203,7 +203,7 @@ class DpsCertificateOperations:
         certificate_last_updated: Optional[datetime.datetime] = None,
         certificate_has_private_key: Optional[bool] = None,
         certificate_nonce: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete the Provisioning Service Certificate.
 
@@ -301,7 +301,7 @@ class DpsCertificateOperations:
         self,
         resource_group_name: str,
         provisioning_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CertificateListDescription":
         """Get all the certificates tied to the provisioning service.
 
@@ -370,7 +370,7 @@ class DpsCertificateOperations:
         certificate_last_updated: Optional[datetime.datetime] = None,
         certificate_has_private_key: Optional[bool] = None,
         certificate_nonce: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VerificationCodeResponse":
         """Generate verification code for Proof of Possession.
 
@@ -481,7 +481,7 @@ class DpsCertificateOperations:
         certificate_last_updated: Optional[datetime.datetime] = None,
         certificate_has_private_key: Optional[bool] = None,
         certificate_nonce: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CertificateResponse":
         """Verify certificate's private key possession.
 

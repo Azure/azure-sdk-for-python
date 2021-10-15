@@ -7,6 +7,7 @@ from unittest import mock
 from urllib.parse import urlparse
 
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import AzureAuthorityHosts, CredentialUnavailableError
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
@@ -124,9 +125,7 @@ async def test_request_url(authority):
         assert request.body["refresh_token"] == expected_refresh_token
         return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": access_token})
 
-    credential = get_credential(
-        tenant_id=tenant_id, transport=mock.Mock(send=mock_send), authority=authority
-    )
+    credential = get_credential(tenant_id=tenant_id, transport=mock.Mock(send=mock_send), authority=authority)
     with mock.patch(GET_REFRESH_TOKEN, return_value=expected_refresh_token):
         token = await credential.get_token("scope")
     assert token.token == access_token
@@ -134,9 +133,7 @@ async def test_request_url(authority):
     # authority can be configured via environment variable
     with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
         credential = get_credential(tenant_id=tenant_id, transport=mock.Mock(send=mock_send))
-        with mock.patch(
-            GET_REFRESH_TOKEN, return_value=expected_refresh_token
-        ):
+        with mock.patch(GET_REFRESH_TOKEN, return_value=expected_refresh_token):
             await credential.get_token("scope")
     assert token.token == access_token
 
@@ -191,7 +188,7 @@ async def test_no_obtain_token_if_cached():
     token_by_refresh_token = mock.Mock(return_value=expected_token)
     mock_client = mock.Mock(
         get_cached_access_token=mock.Mock(return_value=expected_token),
-        obtain_token_by_refresh_token=wrap_in_future(token_by_refresh_token)
+        obtain_token_by_refresh_token=wrap_in_future(token_by_refresh_token),
     )
 
     credential = get_credential(_client=mock_client)
@@ -214,6 +211,16 @@ async def test_adfs():
     with pytest.raises(CredentialUnavailableError) as ex:
         await credential.get_token("scope")
     assert "adfs" in ex.value.message.lower()
+
+
+@pytest.mark.asyncio
+async def test_custom_cloud_no_authority():
+    """The credential is unavailable when VS Code is configured to use a cloud with no known authority"""
+
+    cloud_name = "AzureCustomCloud"
+    credential = get_credential({"azure.cloud": cloud_name})
+    with pytest.raises(CredentialUnavailableError, match="authority.*" + cloud_name):
+        await credential.get_token("scope")
 
 
 @pytest.mark.asyncio
@@ -258,3 +265,63 @@ async def test_no_user_settings():
         await credential.get_token("scope")
 
     assert transport.send.call_count == 1
+
+
+@pytest.mark.asyncio
+async def test_multitenant_authentication():
+    first_tenant = "first-tenant"
+    first_token = "***"
+    second_tenant = "second-tenant"
+    second_token = first_token * 2
+
+    async def send(request, **_):
+        parsed = urlparse(request.url)
+        tenant = parsed.path.split("/")[1]
+        assert tenant in (first_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
+        token = first_token if tenant == first_tenant else second_token
+        return mock_response(json_payload=build_aad_response(access_token=token))
+
+    credential = get_credential(
+        tenant_id=first_tenant, transport=mock.Mock(send=send)
+    )
+    with mock.patch(GET_REFRESH_TOKEN, lambda _: "**"):
+        token = await credential.get_token("scope")
+    assert token.token == first_token
+
+    token = await credential.get_token("scope", tenant_id=first_tenant)
+    assert token.token == first_token
+
+    with mock.patch(GET_REFRESH_TOKEN, lambda _: "**"):
+        token = await credential.get_token("scope", tenant_id=second_tenant)
+    assert token.token == second_token
+
+    # should still default to the first tenant
+    token = await credential.get_token("scope")
+    assert token.token == first_token
+
+@pytest.mark.asyncio
+async def test_multitenant_authentication_not_allowed():
+    expected_tenant = "expected-tenant"
+    expected_token = "***"
+
+    async def send(request, **_):
+        parsed = urlparse(request.url)
+        tenant = parsed.path.split("/")[1]
+        token = expected_token if tenant == expected_tenant else expected_token * 2
+        return mock_response(json_payload=build_aad_response(access_token=token))
+
+    credential = get_credential(tenant_id=expected_tenant, transport=mock.Mock(send=send))
+
+    with mock.patch(GET_REFRESH_TOKEN, lambda _: "**"):
+        token = await credential.get_token("scope")
+    assert token.token == expected_token
+
+    token = await credential.get_token("scope", tenant_id=expected_tenant)
+    assert token.token == expected_token
+
+    token = await credential.get_token("scope", tenant_id="un" + expected_tenant)
+    assert token.token == expected_token * 2
+
+    with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
+        token = await credential.get_token("scope", tenant_id="un" + expected_tenant)
+        assert token.token == expected_token

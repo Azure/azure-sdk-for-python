@@ -67,6 +67,13 @@ class LeaseStatusType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LOCKED = "locked"
     UNLOCKED = "unlocked"
 
+class ListFilesIncludeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    TIMESTAMPS = "Timestamps"
+    ETAG = "Etag"
+    ATTRIBUTES = "Attributes"
+    PERMISSION_KEY = "PermissionKey"
+
 class ListSharesIncludeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     SNAPSHOTS = "snapshots"

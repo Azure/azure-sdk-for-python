@@ -89,7 +89,7 @@ class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
 
     @property
     def _current_body(self):
-        from .._generated.v3_1.models import JobMetadata
+        from .._generated.models import JobMetadata
 
         return JobMetadata.deserialize(self._pipeline_response)
 
@@ -159,9 +159,7 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType])
         """
         return self.polling_method().id
 
-    async def cancel(  # type: ignore
-        self, **kwargs
-    ) -> "AsyncLROPoller[None]":
+    async def cancel(self, **kwargs) -> "AsyncLROPoller[None]":  # type: ignore
         """Cancel the operation currently being polled.
 
         :keyword int polling_interval: The polling interval to use to poll the cancellation status.
@@ -199,7 +197,7 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType])
 class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
     @property
     def _current_body(self):
-        from .._generated.v3_1.models import AnalyzeJobMetadata
+        from .._generated.models import AnalyzeJobMetadata
 
         return AnalyzeJobMetadata.deserialize(self._pipeline_response)
 

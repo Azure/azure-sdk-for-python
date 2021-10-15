@@ -45,7 +45,7 @@ class BackupResourceEncryptionConfigsOperations:
         vault_name: str,
         resource_group_name: str,
         **kwargs: Any
-    ) -> "_models.BackupResourceEncryptionConfigResource":
+    ) -> "_models.BackupResourceEncryptionConfigExtendedResource":
         """Fetches Vault Encryption config.
 
         :param vault_name: The name of the recovery services vault.
@@ -54,16 +54,16 @@ class BackupResourceEncryptionConfigsOperations:
          present.
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: BackupResourceEncryptionConfigResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.recoveryservicesbackup.models.BackupResourceEncryptionConfigResource
+        :return: BackupResourceEncryptionConfigExtendedResource, or the result of cls(response)
+        :rtype: ~azure.mgmt.recoveryservicesbackup.models.BackupResourceEncryptionConfigExtendedResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupResourceEncryptionConfigResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupResourceEncryptionConfigExtendedResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-07-01"
         accept = "application/json"
 
         # Construct URL
@@ -92,7 +92,7 @@ class BackupResourceEncryptionConfigsOperations:
             error = self._deserialize.failsafe_deserialize(_models.NewErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('BackupResourceEncryptionConfigResource', pipeline_response)
+        deserialized = self._deserialize('BackupResourceEncryptionConfigExtendedResource', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -126,7 +126,7 @@ class BackupResourceEncryptionConfigsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-07-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

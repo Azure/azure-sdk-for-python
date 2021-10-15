@@ -43,7 +43,7 @@ class SecuritySolutionsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SecuritySolutionList"]:
         """Gets a list of Security Solutions for the subscription.
 
@@ -111,7 +111,7 @@ class SecuritySolutionsOperations:
         self,
         resource_group_name: str,
         security_solution_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SecuritySolution":
         """Gets a specific Security Solution.
 

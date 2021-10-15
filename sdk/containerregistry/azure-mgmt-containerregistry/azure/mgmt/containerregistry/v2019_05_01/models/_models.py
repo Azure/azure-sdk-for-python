@@ -830,8 +830,8 @@ class RegistryNameCheckRequest(msrest.serialization.Model):
 
     :param name: Required. The name of the container registry.
     :type name: str
-    :ivar type: Required. The resource type of the container registry. This field must be set to
-     'Microsoft.ContainerRegistry/registries'. Default value:
+    :ivar type: The resource type of the container registry. This field must be set to
+     'Microsoft.ContainerRegistry/registries'. Has constant value:
      "Microsoft.ContainerRegistry/registries".
     :vartype type: str
     """

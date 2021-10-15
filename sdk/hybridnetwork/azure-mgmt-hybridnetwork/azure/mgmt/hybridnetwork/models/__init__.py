@@ -48,6 +48,7 @@ try:
     from ._models_py3 import SshPublicKey
     from ._models_py3 import StorageProfile
     from ._models_py3 import SubResource
+    from ._models_py3 import SystemData
     from ._models_py3 import TagsObject
     from ._models_py3 import TrackedResource
     from ._models_py3 import Vendor
@@ -99,6 +100,7 @@ except (SyntaxError, ImportError):
     from ._models import SshPublicKey  # type: ignore
     from ._models import StorageProfile  # type: ignore
     from ._models import SubResource  # type: ignore
+    from ._models import SystemData  # type: ignore
     from ._models import TagsObject  # type: ignore
     from ._models import TrackedResource  # type: ignore
     from ._models import Vendor  # type: ignore
@@ -110,11 +112,13 @@ except (SyntaxError, ImportError):
     from ._models import VirtualHardDisk  # type: ignore
 
 from ._hybrid_network_management_client_enums import (
+    CreatedByType,
     DeviceType,
     DiskCreateOptionTypes,
     IPAllocationMethod,
     IPVersion,
     NetworkFunctionRoleConfigurationType,
+    NetworkFunctionType,
     OperatingSystemTypes,
     OperationalState,
     ProvisioningState,
@@ -168,6 +172,7 @@ __all__ = [
     'SshPublicKey',
     'StorageProfile',
     'SubResource',
+    'SystemData',
     'TagsObject',
     'TrackedResource',
     'Vendor',
@@ -177,11 +182,13 @@ __all__ = [
     'VendorSku',
     'VendorSkuListResult',
     'VirtualHardDisk',
+    'CreatedByType',
     'DeviceType',
     'DiskCreateOptionTypes',
     'IPAllocationMethod',
     'IPVersion',
     'NetworkFunctionRoleConfigurationType',
+    'NetworkFunctionType',
     'OperatingSystemTypes',
     'OperationalState',
     'ProvisioningState',
