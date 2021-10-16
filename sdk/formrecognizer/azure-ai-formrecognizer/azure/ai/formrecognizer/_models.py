@@ -3108,11 +3108,11 @@ class DocumentTableCell(object):
     """
 
     def __init__(self, **kwargs):
-        self.kind = kwargs.get("kind", "content")
+        self.kind = kwargs.get("kind") or "content"
         self.row_index = kwargs.get("row_index", None)
         self.column_index = kwargs.get("column_index", None)
-        self.row_span = kwargs.get("row_span", 1)
-        self.column_span = kwargs.get("column_span", 1)
+        self.row_span = kwargs.get("row_span") or 1
+        self.column_span = kwargs.get("column_span") or 1
         self.content = kwargs.get("content", None)
         self.bounding_regions = kwargs.get("bounding_regions", None)
         self.spans = kwargs.get("spans", None)
@@ -3120,11 +3120,11 @@ class DocumentTableCell(object):
     @classmethod
     def _from_generated(cls, cell):
         return cls(
-            kind=cell.kind,
+            kind=cell.kind if cell.kind else "content",
             row_index=cell.row_index,
             column_index=cell.column_index,
-            row_span=cell.row_span,
-            column_span=cell.column_span,
+            row_span=cell.row_span if cell.row_span else 1,
+            column_span=cell.column_span if cell.column_span else 1,
             content=cell.content,
             bounding_regions=[
                 BoundingRegion._from_generated(region)
