@@ -422,7 +422,7 @@ class GlobalSchedulesOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        schedule,  # type: "_models.ScheduleFragment"
+        tags=None,  # type: Optional[Dict[str, str]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.Schedule"
@@ -432,8 +432,8 @@ class GlobalSchedulesOperations(object):
         :type resource_group_name: str
         :param name: The name of the schedule.
         :type name: str
-        :param schedule: A schedule.
-        :type schedule: ~azure.mgmt.devtestlabs.models.ScheduleFragment
+        :param tags: The tags of the resource.
+        :type tags: dict[str, str]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Schedule, or the result of cls(response)
         :rtype: ~azure.mgmt.devtestlabs.models.Schedule
@@ -444,6 +444,8 @@ class GlobalSchedulesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+
+        _schedule = _models.ScheduleFragment(tags=tags)
         api_version = "2018-09-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -467,7 +469,7 @@ class GlobalSchedulesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(schedule, 'ScheduleFragment')
+        body_content = self._serialize.body(_schedule, 'ScheduleFragment')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -545,8 +547,8 @@ class GlobalSchedulesOperations(object):
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -672,8 +674,8 @@ class GlobalSchedulesOperations(object):
         :type target_resource_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)

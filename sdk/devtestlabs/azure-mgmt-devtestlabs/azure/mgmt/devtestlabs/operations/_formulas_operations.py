@@ -292,8 +292,8 @@ class FormulasOperations(object):
         :type formula: ~azure.mgmt.devtestlabs.models.Formula
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either Formula or the result of cls(response)
@@ -413,7 +413,7 @@ class FormulasOperations(object):
         resource_group_name,  # type: str
         lab_name,  # type: str
         name,  # type: str
-        formula,  # type: "_models.FormulaFragment"
+        tags=None,  # type: Optional[Dict[str, str]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.Formula"
@@ -425,8 +425,8 @@ class FormulasOperations(object):
         :type lab_name: str
         :param name: The name of the formula.
         :type name: str
-        :param formula: A formula for creating a VM, specifying an image base and other parameters.
-        :type formula: ~azure.mgmt.devtestlabs.models.FormulaFragment
+        :param tags: The tags of the resource.
+        :type tags: dict[str, str]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Formula, or the result of cls(response)
         :rtype: ~azure.mgmt.devtestlabs.models.Formula
@@ -437,6 +437,8 @@ class FormulasOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+
+        _formula = _models.FormulaFragment(tags=tags)
         api_version = "2018-09-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -461,7 +463,7 @@ class FormulasOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(formula, 'FormulaFragment')
+        body_content = self._serialize.body(_formula, 'FormulaFragment')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)

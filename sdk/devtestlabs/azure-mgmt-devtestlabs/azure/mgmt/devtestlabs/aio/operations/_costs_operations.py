@@ -46,7 +46,7 @@ class CostsOperations:
         lab_name: str,
         name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.LabCost":
         """Get cost.
 
@@ -113,7 +113,7 @@ class CostsOperations:
         lab_name: str,
         name: str,
         lab_cost: "_models.LabCost",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.LabCost":
         """Create or replace an existing cost.
 

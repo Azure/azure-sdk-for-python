@@ -50,7 +50,7 @@ class ArmTemplatesOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ArmTemplateList"]:
         """List azure resource manager templates in a given artifact source.
 
@@ -147,7 +147,7 @@ class ArmTemplatesOperations:
         artifact_source_name: str,
         name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ArmTemplate":
         """Get azure resource manager template.
 

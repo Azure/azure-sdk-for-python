@@ -45,7 +45,7 @@ class ServiceRunnersOperations:
         resource_group_name: str,
         lab_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ServiceRunner":
         """Get service runner.
 
@@ -108,7 +108,7 @@ class ServiceRunnersOperations:
         lab_name: str,
         name: str,
         service_runner: "_models.ServiceRunner",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ServiceRunner":
         """Create or replace an existing service runner.
 
@@ -181,7 +181,7 @@ class ServiceRunnersOperations:
         resource_group_name: str,
         lab_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete service runner.
 

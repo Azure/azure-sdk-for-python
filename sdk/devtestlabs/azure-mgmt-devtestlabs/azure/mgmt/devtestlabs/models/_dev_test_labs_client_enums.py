@@ -50,7 +50,7 @@ class CustomImageOsType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NONE = "None"
 
 class EnableStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """If notifications are enabled for this schedule (i.e. Enabled, Disabled).
+    """Indicates if the artifact source is enabled (values: Enabled, Disabled).
     """
 
     ENABLED = "Enabled"
@@ -93,13 +93,18 @@ class HttpStatusCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RESET_CONTENT = "ResetContent"
     PARTIAL_CONTENT = "PartialContent"
     MULTIPLE_CHOICES = "MultipleChoices"
+    AMBIGUOUS = "Ambiguous"
     MOVED_PERMANENTLY = "MovedPermanently"
+    MOVED = "Moved"
+    FOUND = "Found"
     REDIRECT = "Redirect"
     SEE_OTHER = "SeeOther"
+    REDIRECT_METHOD = "RedirectMethod"
     NOT_MODIFIED = "NotModified"
     USE_PROXY = "UseProxy"
     UNUSED = "Unused"
     TEMPORARY_REDIRECT = "TemporaryRedirect"
+    REDIRECT_KEEP_VERB = "RedirectKeepVerb"
     BAD_REQUEST = "BadRequest"
     UNAUTHORIZED = "Unauthorized"
     PAYMENT_REQUIRED = "PaymentRequired"
@@ -133,6 +138,15 @@ class LinuxOsState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NON_DEPROVISIONED = "NonDeprovisioned"
     DEPROVISION_REQUESTED = "DeprovisionRequested"
     DEPROVISION_APPLIED = "DeprovisionApplied"
+
+class ManagedIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Managed identity.
+    """
+
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
 
 class NotificationChannelEventType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The event type for which this notification is enabled (i.e. AutoShutdown, Cost)
@@ -192,6 +206,7 @@ class SourceControlType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     VSO_GIT = "VsoGit"
     GIT_HUB = "GitHub"
+    STORAGE_ACCOUNT = "StorageAccount"
 
 class StorageType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The storage type for the disk (i.e. Standard, Premium).

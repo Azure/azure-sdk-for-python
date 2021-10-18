@@ -43,7 +43,7 @@ class ProviderOperationsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProviderOperationResult"]:
         """Result of the request to list REST API operations.
 

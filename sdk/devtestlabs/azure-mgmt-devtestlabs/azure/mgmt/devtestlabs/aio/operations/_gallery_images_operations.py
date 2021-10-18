@@ -49,7 +49,7 @@ class GalleryImagesOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.GalleryImageList"]:
         """List gallery images in a given lab.
 

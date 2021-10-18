@@ -50,7 +50,7 @@ class ArtifactsOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ArtifactList"]:
         """List artifacts in a given artifact source.
 
@@ -147,7 +147,7 @@ class ArtifactsOperations:
         artifact_source_name: str,
         name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Artifact":
         """Get artifact.
 
@@ -218,7 +218,7 @@ class ArtifactsOperations:
         artifact_source_name: str,
         name: str,
         generate_arm_template_request: "_models.GenerateArmTemplateRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ArmTemplateInfo":
         """Generates an ARM template for the given artifact, uploads the required files to a storage
         account, and validates the generated artifact.

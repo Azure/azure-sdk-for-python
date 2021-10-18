@@ -124,18 +124,10 @@ class ApplicableScheduleFragment(UpdateResource):
 
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
-    :param lab_vms_shutdown: The auto-shutdown schedule, if one has been set at the lab or lab
-     resource level.
-    :type lab_vms_shutdown: ~azure.mgmt.devtestlabs.models.ScheduleFragment
-    :param lab_vms_startup: The auto-startup schedule, if one has been set at the lab or lab
-     resource level.
-    :type lab_vms_startup: ~azure.mgmt.devtestlabs.models.ScheduleFragment
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'lab_vms_shutdown': {'key': 'properties.labVmsShutdown', 'type': 'ScheduleFragment'},
-        'lab_vms_startup': {'key': 'properties.labVmsStartup', 'type': 'ScheduleFragment'},
     }
 
     def __init__(
@@ -143,8 +135,6 @@ class ApplicableScheduleFragment(UpdateResource):
         **kwargs
     ):
         super(ApplicableScheduleFragment, self).__init__(**kwargs)
-        self.lab_vms_shutdown = kwargs.get('lab_vms_shutdown', None)
-        self.lab_vms_startup = kwargs.get('lab_vms_startup', None)
 
 
 class ApplyArtifactsRequest(msrest.serialization.Model):
@@ -190,7 +180,7 @@ class ArmTemplate(Resource):
     :ivar icon: The URI to the icon of the ARM template.
     :vartype icon: str
     :ivar contents: The contents of the ARM template.
-    :vartype contents: object
+    :vartype contents: any
     :ivar created_date: The creation date of the armTemplate.
     :vartype created_date: ~datetime.datetime
     :ivar parameters_value_files_info: File name and parameter values information from all
@@ -250,9 +240,9 @@ class ArmTemplateInfo(msrest.serialization.Model):
     """Information about a generated ARM template.
 
     :param template: The template's contents.
-    :type template: object
+    :type template: any
     :param parameters: The parameters of the ARM template.
-    :type parameters: object
+    :type parameters: any
     """
 
     _attribute_map = {
@@ -315,29 +305,6 @@ class ArmTemplateParameterProperties(msrest.serialization.Model):
         self.value = kwargs.get('value', None)
 
 
-class ArmTemplateParameterPropertiesFragment(msrest.serialization.Model):
-    """Properties of an Azure Resource Manager template parameter.
-
-    :param name: The name of the template parameter.
-    :type name: str
-    :param value: The value of the template parameter.
-    :type value: str
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ArmTemplateParameterPropertiesFragment, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.value = kwargs.get('value', None)
-
-
 class Artifact(Resource):
     """An artifact.
 
@@ -366,7 +333,7 @@ class Artifact(Resource):
     :ivar target_os_type: The artifact's target OS.
     :vartype target_os_type: str
     :ivar parameters: The artifact's parameters.
-    :vartype parameters: object
+    :vartype parameters: any
     :ivar created_date: The artifact's creation date.
     :vartype created_date: ~datetime.datetime
     """
@@ -443,33 +410,6 @@ class ArtifactDeploymentStatusProperties(msrest.serialization.Model):
         self.total_artifacts = kwargs.get('total_artifacts', None)
 
 
-class ArtifactDeploymentStatusPropertiesFragment(msrest.serialization.Model):
-    """Properties of an artifact deployment.
-
-    :param deployment_status: The deployment status of the artifact.
-    :type deployment_status: str
-    :param artifacts_applied: The total count of the artifacts that were successfully applied.
-    :type artifacts_applied: int
-    :param total_artifacts: The total count of the artifacts that were tentatively applied.
-    :type total_artifacts: int
-    """
-
-    _attribute_map = {
-        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
-        'artifacts_applied': {'key': 'artifactsApplied', 'type': 'int'},
-        'total_artifacts': {'key': 'totalArtifacts', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ArtifactDeploymentStatusPropertiesFragment, self).__init__(**kwargs)
-        self.deployment_status = kwargs.get('deployment_status', None)
-        self.artifacts_applied = kwargs.get('artifacts_applied', None)
-        self.total_artifacts = kwargs.get('total_artifacts', None)
-
-
 class ArtifactInstallProperties(msrest.serialization.Model):
     """Properties of an artifact.
 
@@ -504,49 +444,6 @@ class ArtifactInstallProperties(msrest.serialization.Model):
         **kwargs
     ):
         super(ArtifactInstallProperties, self).__init__(**kwargs)
-        self.artifact_id = kwargs.get('artifact_id', None)
-        self.artifact_title = kwargs.get('artifact_title', None)
-        self.parameters = kwargs.get('parameters', None)
-        self.status = kwargs.get('status', None)
-        self.deployment_status_message = kwargs.get('deployment_status_message', None)
-        self.vm_extension_status_message = kwargs.get('vm_extension_status_message', None)
-        self.install_time = kwargs.get('install_time', None)
-
-
-class ArtifactInstallPropertiesFragment(msrest.serialization.Model):
-    """Properties of an artifact.
-
-    :param artifact_id: The artifact's identifier.
-    :type artifact_id: str
-    :param artifact_title: The artifact's title.
-    :type artifact_title: str
-    :param parameters: The parameters of the artifact.
-    :type parameters: list[~azure.mgmt.devtestlabs.models.ArtifactParameterPropertiesFragment]
-    :param status: The status of the artifact.
-    :type status: str
-    :param deployment_status_message: The status message from the deployment.
-    :type deployment_status_message: str
-    :param vm_extension_status_message: The status message from the virtual machine extension.
-    :type vm_extension_status_message: str
-    :param install_time: The time that the artifact starts to install on the virtual machine.
-    :type install_time: ~datetime.datetime
-    """
-
-    _attribute_map = {
-        'artifact_id': {'key': 'artifactId', 'type': 'str'},
-        'artifact_title': {'key': 'artifactTitle', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': '[ArtifactParameterPropertiesFragment]'},
-        'status': {'key': 'status', 'type': 'str'},
-        'deployment_status_message': {'key': 'deploymentStatusMessage', 'type': 'str'},
-        'vm_extension_status_message': {'key': 'vmExtensionStatusMessage', 'type': 'str'},
-        'install_time': {'key': 'installTime', 'type': 'iso-8601'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ArtifactInstallPropertiesFragment, self).__init__(**kwargs)
         self.artifact_id = kwargs.get('artifact_id', None)
         self.artifact_title = kwargs.get('artifact_title', None)
         self.parameters = kwargs.get('parameters', None)
@@ -602,29 +499,6 @@ class ArtifactParameterProperties(msrest.serialization.Model):
         self.value = kwargs.get('value', None)
 
 
-class ArtifactParameterPropertiesFragment(msrest.serialization.Model):
-    """Properties of an artifact parameter.
-
-    :param name: The name of the artifact parameter.
-    :type name: str
-    :param value: The value of the artifact parameter.
-    :type value: str
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ArtifactParameterPropertiesFragment, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.value = kwargs.get('value', None)
-
-
 class ArtifactSource(Resource):
     """Properties of an artifact source.
 
@@ -644,7 +518,8 @@ class ArtifactSource(Resource):
     :type display_name: str
     :param uri: The artifact source's URI.
     :type uri: str
-    :param source_type: The artifact source's type. Possible values include: "VsoGit", "GitHub".
+    :param source_type: The artifact source's type. Possible values include: "VsoGit", "GitHub",
+     "StorageAccount".
     :type source_type: str or ~azure.mgmt.devtestlabs.models.SourceControlType
     :param folder_path: The folder containing artifacts.
     :type folder_path: str
@@ -716,35 +591,10 @@ class ArtifactSourceFragment(UpdateResource):
 
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
-    :param display_name: The artifact source's display name.
-    :type display_name: str
-    :param uri: The artifact source's URI.
-    :type uri: str
-    :param source_type: The artifact source's type. Possible values include: "VsoGit", "GitHub".
-    :type source_type: str or ~azure.mgmt.devtestlabs.models.SourceControlType
-    :param folder_path: The folder containing artifacts.
-    :type folder_path: str
-    :param arm_template_folder_path: The folder containing Azure Resource Manager templates.
-    :type arm_template_folder_path: str
-    :param branch_ref: The artifact source's branch reference.
-    :type branch_ref: str
-    :param security_token: The security token to authenticate to the artifact source.
-    :type security_token: str
-    :param status: Indicates if the artifact source is enabled (values: Enabled, Disabled).
-     Possible values include: "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'uri': {'key': 'properties.uri', 'type': 'str'},
-        'source_type': {'key': 'properties.sourceType', 'type': 'str'},
-        'folder_path': {'key': 'properties.folderPath', 'type': 'str'},
-        'arm_template_folder_path': {'key': 'properties.armTemplateFolderPath', 'type': 'str'},
-        'branch_ref': {'key': 'properties.branchRef', 'type': 'str'},
-        'security_token': {'key': 'properties.securityToken', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
     }
 
     def __init__(
@@ -752,14 +602,6 @@ class ArtifactSourceFragment(UpdateResource):
         **kwargs
     ):
         super(ArtifactSourceFragment, self).__init__(**kwargs)
-        self.display_name = kwargs.get('display_name', None)
-        self.uri = kwargs.get('uri', None)
-        self.source_type = kwargs.get('source_type', None)
-        self.folder_path = kwargs.get('folder_path', None)
-        self.arm_template_folder_path = kwargs.get('arm_template_folder_path', None)
-        self.branch_ref = kwargs.get('branch_ref', None)
-        self.security_token = kwargs.get('security_token', None)
-        self.status = kwargs.get('status', None)
 
 
 class ArtifactSourceList(msrest.serialization.Model):
@@ -808,7 +650,7 @@ class AttachDiskProperties(msrest.serialization.Model):
 class AttachNewDataDiskOptions(msrest.serialization.Model):
     """Properties to attach new disk to the Virtual Machine.
 
-    :param disk_size_gi_b: Size of the disk to be attached in GibiBytes.
+    :param disk_size_gi_b: Size of the disk to be attached in Gibibytes.
     :type disk_size_gi_b: int
     :param disk_name: The name of the disk to be attached.
     :type disk_name: str
@@ -833,34 +675,6 @@ class AttachNewDataDiskOptions(msrest.serialization.Model):
         self.disk_type = kwargs.get('disk_type', None)
 
 
-class AttachNewDataDiskOptionsFragment(msrest.serialization.Model):
-    """Properties to attach new disk to the Virtual Machine.
-
-    :param disk_size_gi_b: Size of the disk to be attached in GibiBytes.
-    :type disk_size_gi_b: int
-    :param disk_name: The name of the disk to be attached.
-    :type disk_name: str
-    :param disk_type: The storage type for the disk (i.e. Standard, Premium). Possible values
-     include: "Standard", "Premium", "StandardSSD".
-    :type disk_type: str or ~azure.mgmt.devtestlabs.models.StorageType
-    """
-
-    _attribute_map = {
-        'disk_size_gi_b': {'key': 'diskSizeGiB', 'type': 'int'},
-        'disk_name': {'key': 'diskName', 'type': 'str'},
-        'disk_type': {'key': 'diskType', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AttachNewDataDiskOptionsFragment, self).__init__(**kwargs)
-        self.disk_size_gi_b = kwargs.get('disk_size_gi_b', None)
-        self.disk_name = kwargs.get('disk_name', None)
-        self.disk_type = kwargs.get('disk_type', None)
-
-
 class BulkCreationParameters(msrest.serialization.Model):
     """Parameters for creating multiple virtual machines as a single action.
 
@@ -877,25 +691,6 @@ class BulkCreationParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(BulkCreationParameters, self).__init__(**kwargs)
-        self.instance_count = kwargs.get('instance_count', None)
-
-
-class BulkCreationParametersFragment(msrest.serialization.Model):
-    """Parameters for creating multiple virtual machines as a single action.
-
-    :param instance_count: The number of virtual machine instances to create.
-    :type instance_count: int
-    """
-
-    _attribute_map = {
-        'instance_count': {'key': 'instanceCount', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(BulkCreationParametersFragment, self).__init__(**kwargs)
         self.instance_count = kwargs.get('instance_count', None)
 
 
@@ -962,38 +757,6 @@ class ComputeDataDisk(msrest.serialization.Model):
         self.disk_size_gi_b = kwargs.get('disk_size_gi_b', None)
 
 
-class ComputeDataDiskFragment(msrest.serialization.Model):
-    """A data disks attached to a virtual machine.
-
-    :param name: Gets data disk name.
-    :type name: str
-    :param disk_uri: When backed by a blob, the URI of underlying blob.
-    :type disk_uri: str
-    :param managed_disk_id: When backed by managed disk, this is the ID of the compute disk
-     resource.
-    :type managed_disk_id: str
-    :param disk_size_gi_b: Gets data disk size in GiB.
-    :type disk_size_gi_b: int
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'disk_uri': {'key': 'diskUri', 'type': 'str'},
-        'managed_disk_id': {'key': 'managedDiskId', 'type': 'str'},
-        'disk_size_gi_b': {'key': 'diskSizeGiB', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ComputeDataDiskFragment, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.disk_uri = kwargs.get('disk_uri', None)
-        self.managed_disk_id = kwargs.get('managed_disk_id', None)
-        self.disk_size_gi_b = kwargs.get('disk_size_gi_b', None)
-
-
 class ComputeVmInstanceViewStatus(msrest.serialization.Model):
     """Status information about a virtual machine.
 
@@ -1016,33 +779,6 @@ class ComputeVmInstanceViewStatus(msrest.serialization.Model):
         **kwargs
     ):
         super(ComputeVmInstanceViewStatus, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.display_status = kwargs.get('display_status', None)
-        self.message = kwargs.get('message', None)
-
-
-class ComputeVmInstanceViewStatusFragment(msrest.serialization.Model):
-    """Status information about a virtual machine.
-
-    :param code: Gets the status Code.
-    :type code: str
-    :param display_status: Gets the short localizable label for the status.
-    :type display_status: str
-    :param message: Gets the message associated with the status.
-    :type message: str
-    """
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'display_status': {'key': 'displayStatus', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ComputeVmInstanceViewStatusFragment, self).__init__(**kwargs)
         self.code = kwargs.get('code', None)
         self.display_status = kwargs.get('display_status', None)
         self.message = kwargs.get('message', None)
@@ -1082,49 +818,6 @@ class ComputeVmProperties(msrest.serialization.Model):
         **kwargs
     ):
         super(ComputeVmProperties, self).__init__(**kwargs)
-        self.statuses = kwargs.get('statuses', None)
-        self.os_type = kwargs.get('os_type', None)
-        self.vm_size = kwargs.get('vm_size', None)
-        self.network_interface_id = kwargs.get('network_interface_id', None)
-        self.os_disk_id = kwargs.get('os_disk_id', None)
-        self.data_disk_ids = kwargs.get('data_disk_ids', None)
-        self.data_disks = kwargs.get('data_disks', None)
-
-
-class ComputeVmPropertiesFragment(msrest.serialization.Model):
-    """Properties of a virtual machine returned by the Microsoft.Compute API.
-
-    :param statuses: Gets the statuses of the virtual machine.
-    :type statuses: list[~azure.mgmt.devtestlabs.models.ComputeVmInstanceViewStatusFragment]
-    :param os_type: Gets the OS type of the virtual machine.
-    :type os_type: str
-    :param vm_size: Gets the size of the virtual machine.
-    :type vm_size: str
-    :param network_interface_id: Gets the network interface ID of the virtual machine.
-    :type network_interface_id: str
-    :param os_disk_id: Gets OS disk blob uri for the virtual machine.
-    :type os_disk_id: str
-    :param data_disk_ids: Gets data disks blob uri for the virtual machine.
-    :type data_disk_ids: list[str]
-    :param data_disks: Gets all data disks attached to the virtual machine.
-    :type data_disks: list[~azure.mgmt.devtestlabs.models.ComputeDataDiskFragment]
-    """
-
-    _attribute_map = {
-        'statuses': {'key': 'statuses', 'type': '[ComputeVmInstanceViewStatusFragment]'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'vm_size': {'key': 'vmSize', 'type': 'str'},
-        'network_interface_id': {'key': 'networkInterfaceId', 'type': 'str'},
-        'os_disk_id': {'key': 'osDiskId', 'type': 'str'},
-        'data_disk_ids': {'key': 'dataDiskIds', 'type': '[str]'},
-        'data_disks': {'key': 'dataDisks', 'type': '[ComputeDataDiskFragment]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ComputeVmPropertiesFragment, self).__init__(**kwargs)
         self.statuses = kwargs.get('statuses', None)
         self.os_type = kwargs.get('os_type', None)
         self.vm_size = kwargs.get('vm_size', None)
@@ -1269,40 +962,10 @@ class CustomImageFragment(UpdateResource):
 
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
-    :param vm: The virtual machine from which the image is to be created.
-    :type vm: ~azure.mgmt.devtestlabs.models.CustomImagePropertiesFromVmFragment
-    :param vhd: The VHD from which the image is to be created.
-    :type vhd: ~azure.mgmt.devtestlabs.models.CustomImagePropertiesCustomFragment
-    :param description: The description of the custom image.
-    :type description: str
-    :param author: The author of the custom image.
-    :type author: str
-    :param managed_image_id: The Managed Image Id backing the custom image.
-    :type managed_image_id: str
-    :param managed_snapshot_id: The Managed Snapshot Id backing the custom image.
-    :type managed_snapshot_id: str
-    :param data_disk_storage_info: Storage information about the data disks present in the custom
-     image.
-    :type data_disk_storage_info:
-     list[~azure.mgmt.devtestlabs.models.DataDiskStorageTypeInfoFragment]
-    :param custom_image_plan: Storage information about the plan related to this custom image.
-    :type custom_image_plan: ~azure.mgmt.devtestlabs.models.CustomImagePropertiesFromPlanFragment
-    :param is_plan_authorized: Whether or not the custom images underlying offer/plan has been
-     enabled for programmatic deployment.
-    :type is_plan_authorized: bool
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'vm': {'key': 'properties.vm', 'type': 'CustomImagePropertiesFromVmFragment'},
-        'vhd': {'key': 'properties.vhd', 'type': 'CustomImagePropertiesCustomFragment'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'author': {'key': 'properties.author', 'type': 'str'},
-        'managed_image_id': {'key': 'properties.managedImageId', 'type': 'str'},
-        'managed_snapshot_id': {'key': 'properties.managedSnapshotId', 'type': 'str'},
-        'data_disk_storage_info': {'key': 'properties.dataDiskStorageInfo', 'type': '[DataDiskStorageTypeInfoFragment]'},
-        'custom_image_plan': {'key': 'properties.customImagePlan', 'type': 'CustomImagePropertiesFromPlanFragment'},
-        'is_plan_authorized': {'key': 'properties.isPlanAuthorized', 'type': 'bool'},
     }
 
     def __init__(
@@ -1310,15 +973,6 @@ class CustomImageFragment(UpdateResource):
         **kwargs
     ):
         super(CustomImageFragment, self).__init__(**kwargs)
-        self.vm = kwargs.get('vm', None)
-        self.vhd = kwargs.get('vhd', None)
-        self.description = kwargs.get('description', None)
-        self.author = kwargs.get('author', None)
-        self.managed_image_id = kwargs.get('managed_image_id', None)
-        self.managed_snapshot_id = kwargs.get('managed_snapshot_id', None)
-        self.data_disk_storage_info = kwargs.get('data_disk_storage_info', None)
-        self.custom_image_plan = kwargs.get('custom_image_plan', None)
-        self.is_plan_authorized = kwargs.get('is_plan_authorized', None)
 
 
 class CustomImageList(msrest.serialization.Model):
@@ -1378,34 +1032,6 @@ class CustomImagePropertiesCustom(msrest.serialization.Model):
         self.os_type = kwargs['os_type']
 
 
-class CustomImagePropertiesCustomFragment(msrest.serialization.Model):
-    """Properties for creating a custom image from a VHD.
-
-    :param image_name: The image name.
-    :type image_name: str
-    :param sys_prep: Indicates whether sysprep has been run on the VHD.
-    :type sys_prep: bool
-    :param os_type: The OS type of the custom image (i.e. Windows, Linux). Possible values include:
-     "Windows", "Linux", "None".
-    :type os_type: str or ~azure.mgmt.devtestlabs.models.CustomImageOsType
-    """
-
-    _attribute_map = {
-        'image_name': {'key': 'imageName', 'type': 'str'},
-        'sys_prep': {'key': 'sysPrep', 'type': 'bool'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CustomImagePropertiesCustomFragment, self).__init__(**kwargs)
-        self.image_name = kwargs.get('image_name', None)
-        self.sys_prep = kwargs.get('sys_prep', None)
-        self.os_type = kwargs.get('os_type', None)
-
-
 class CustomImagePropertiesFromPlan(msrest.serialization.Model):
     """Properties for plan on a custom image.
 
@@ -1435,35 +1061,6 @@ class CustomImagePropertiesFromPlan(msrest.serialization.Model):
         self.offer = kwargs.get('offer', None)
 
 
-class CustomImagePropertiesFromPlanFragment(msrest.serialization.Model):
-    """Properties for plan on a custom image.
-
-    :param id: The id of the plan, equivalent to name of the plan.
-    :type id: str
-    :param publisher: The publisher for the plan from the marketplace image the custom image is
-     derived from.
-    :type publisher: str
-    :param offer: The offer for the plan from the marketplace image the custom image is derived
-     from.
-    :type offer: str
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'offer': {'key': 'offer', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CustomImagePropertiesFromPlanFragment, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.publisher = kwargs.get('publisher', None)
-        self.offer = kwargs.get('offer', None)
-
-
 class CustomImagePropertiesFromVm(msrest.serialization.Model):
     """Properties for creating a custom image from a virtual machine.
 
@@ -1486,33 +1083,6 @@ class CustomImagePropertiesFromVm(msrest.serialization.Model):
         **kwargs
     ):
         super(CustomImagePropertiesFromVm, self).__init__(**kwargs)
-        self.source_vm_id = kwargs.get('source_vm_id', None)
-        self.windows_os_info = kwargs.get('windows_os_info', None)
-        self.linux_os_info = kwargs.get('linux_os_info', None)
-
-
-class CustomImagePropertiesFromVmFragment(msrest.serialization.Model):
-    """Properties for creating a custom image from a virtual machine.
-
-    :param source_vm_id: The source vm identifier.
-    :type source_vm_id: str
-    :param windows_os_info: The Windows OS information of the VM.
-    :type windows_os_info: ~azure.mgmt.devtestlabs.models.WindowsOsInfoFragment
-    :param linux_os_info: The Linux OS information of the VM.
-    :type linux_os_info: ~azure.mgmt.devtestlabs.models.LinuxOsInfoFragment
-    """
-
-    _attribute_map = {
-        'source_vm_id': {'key': 'sourceVmId', 'type': 'str'},
-        'windows_os_info': {'key': 'windowsOsInfo', 'type': 'WindowsOsInfoFragment'},
-        'linux_os_info': {'key': 'linuxOsInfo', 'type': 'LinuxOsInfoFragment'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CustomImagePropertiesFromVmFragment, self).__init__(**kwargs)
         self.source_vm_id = kwargs.get('source_vm_id', None)
         self.windows_os_info = kwargs.get('windows_os_info', None)
         self.linux_os_info = kwargs.get('linux_os_info', None)
@@ -1547,36 +1117,6 @@ class DataDiskProperties(msrest.serialization.Model):
         self.host_caching = kwargs.get('host_caching', None)
 
 
-class DataDiskPropertiesFragment(msrest.serialization.Model):
-    """Request body for adding a new or existing data disk to a virtual machine.
-
-    :param attach_new_data_disk_options: Specifies options to attach a new disk to the virtual
-     machine.
-    :type attach_new_data_disk_options:
-     ~azure.mgmt.devtestlabs.models.AttachNewDataDiskOptionsFragment
-    :param existing_lab_disk_id: Specifies the existing lab disk id to attach to virtual machine.
-    :type existing_lab_disk_id: str
-    :param host_caching: Caching option for a data disk (i.e. None, ReadOnly, ReadWrite). Possible
-     values include: "None", "ReadOnly", "ReadWrite".
-    :type host_caching: str or ~azure.mgmt.devtestlabs.models.HostCachingOptions
-    """
-
-    _attribute_map = {
-        'attach_new_data_disk_options': {'key': 'attachNewDataDiskOptions', 'type': 'AttachNewDataDiskOptionsFragment'},
-        'existing_lab_disk_id': {'key': 'existingLabDiskId', 'type': 'str'},
-        'host_caching': {'key': 'hostCaching', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataDiskPropertiesFragment, self).__init__(**kwargs)
-        self.attach_new_data_disk_options = kwargs.get('attach_new_data_disk_options', None)
-        self.existing_lab_disk_id = kwargs.get('existing_lab_disk_id', None)
-        self.host_caching = kwargs.get('host_caching', None)
-
-
 class DataDiskStorageTypeInfo(msrest.serialization.Model):
     """Storage information about the data disks present in the custom image.
 
@@ -1601,30 +1141,6 @@ class DataDiskStorageTypeInfo(msrest.serialization.Model):
         self.storage_type = kwargs.get('storage_type', None)
 
 
-class DataDiskStorageTypeInfoFragment(msrest.serialization.Model):
-    """Storage information about the data disks present in the custom image.
-
-    :param lun: Disk Lun.
-    :type lun: str
-    :param storage_type: Disk Storage Type. Possible values include: "Standard", "Premium",
-     "StandardSSD".
-    :type storage_type: str or ~azure.mgmt.devtestlabs.models.StorageType
-    """
-
-    _attribute_map = {
-        'lun': {'key': 'lun', 'type': 'str'},
-        'storage_type': {'key': 'storageType', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataDiskStorageTypeInfoFragment, self).__init__(**kwargs)
-        self.lun = kwargs.get('lun', None)
-        self.storage_type = kwargs.get('storage_type', None)
-
-
 class DayDetails(msrest.serialization.Model):
     """Properties of a daily schedule.
 
@@ -1641,25 +1157,6 @@ class DayDetails(msrest.serialization.Model):
         **kwargs
     ):
         super(DayDetails, self).__init__(**kwargs)
-        self.time = kwargs.get('time', None)
-
-
-class DayDetailsFragment(msrest.serialization.Model):
-    """Properties of a daily schedule.
-
-    :param time: The time of day the schedule will occur.
-    :type time: str
-    """
-
-    _attribute_map = {
-        'time': {'key': 'time', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DayDetailsFragment, self).__init__(**kwargs)
         self.time = kwargs.get('time', None)
 
 
@@ -1719,7 +1216,7 @@ class Disk(Resource):
     :param disk_type: The storage type for the disk (i.e. Standard, Premium). Possible values
      include: "Standard", "Premium", "StandardSSD".
     :type disk_type: str or ~azure.mgmt.devtestlabs.models.StorageType
-    :param disk_size_gi_b: The size of the disk in GibiBytes.
+    :param disk_size_gi_b: The size of the disk in Gibibytes.
     :type disk_size_gi_b: int
     :param leased_by_lab_vm_id: The resource ID of the VM to which this disk is leased.
     :type leased_by_lab_vm_id: str
@@ -1727,6 +1224,8 @@ class Disk(Resource):
     :type disk_blob_name: str
     :param disk_uri: When backed by a blob, the URI of underlying blob.
     :type disk_uri: str
+    :param storage_account_id: When backed by a blob, the storage account where the blob is.
+    :type storage_account_id: str
     :ivar created_date: The creation date of the disk.
     :vartype created_date: ~datetime.datetime
     :param host_caching: The host caching policy of the disk (i.e. None, ReadOnly, ReadWrite).
@@ -1760,6 +1259,7 @@ class Disk(Resource):
         'leased_by_lab_vm_id': {'key': 'properties.leasedByLabVmId', 'type': 'str'},
         'disk_blob_name': {'key': 'properties.diskBlobName', 'type': 'str'},
         'disk_uri': {'key': 'properties.diskUri', 'type': 'str'},
+        'storage_account_id': {'key': 'properties.storageAccountId', 'type': 'str'},
         'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
         'host_caching': {'key': 'properties.hostCaching', 'type': 'str'},
         'managed_disk_id': {'key': 'properties.managedDiskId', 'type': 'str'},
@@ -1777,6 +1277,7 @@ class Disk(Resource):
         self.leased_by_lab_vm_id = kwargs.get('leased_by_lab_vm_id', None)
         self.disk_blob_name = kwargs.get('disk_blob_name', None)
         self.disk_uri = kwargs.get('disk_uri', None)
+        self.storage_account_id = kwargs.get('storage_account_id', None)
         self.created_date = None
         self.host_caching = kwargs.get('host_caching', None)
         self.managed_disk_id = kwargs.get('managed_disk_id', None)
@@ -1789,33 +1290,10 @@ class DiskFragment(UpdateResource):
 
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
-    :param disk_type: The storage type for the disk (i.e. Standard, Premium). Possible values
-     include: "Standard", "Premium", "StandardSSD".
-    :type disk_type: str or ~azure.mgmt.devtestlabs.models.StorageType
-    :param disk_size_gi_b: The size of the disk in GibiBytes.
-    :type disk_size_gi_b: int
-    :param leased_by_lab_vm_id: The resource ID of the VM to which this disk is leased.
-    :type leased_by_lab_vm_id: str
-    :param disk_blob_name: When backed by a blob, the name of the VHD blob without extension.
-    :type disk_blob_name: str
-    :param disk_uri: When backed by a blob, the URI of underlying blob.
-    :type disk_uri: str
-    :param host_caching: The host caching policy of the disk (i.e. None, ReadOnly, ReadWrite).
-    :type host_caching: str
-    :param managed_disk_id: When backed by managed disk, this is the ID of the compute disk
-     resource.
-    :type managed_disk_id: str
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'disk_type': {'key': 'properties.diskType', 'type': 'str'},
-        'disk_size_gi_b': {'key': 'properties.diskSizeGiB', 'type': 'int'},
-        'leased_by_lab_vm_id': {'key': 'properties.leasedByLabVmId', 'type': 'str'},
-        'disk_blob_name': {'key': 'properties.diskBlobName', 'type': 'str'},
-        'disk_uri': {'key': 'properties.diskUri', 'type': 'str'},
-        'host_caching': {'key': 'properties.hostCaching', 'type': 'str'},
-        'managed_disk_id': {'key': 'properties.managedDiskId', 'type': 'str'},
     }
 
     def __init__(
@@ -1823,13 +1301,6 @@ class DiskFragment(UpdateResource):
         **kwargs
     ):
         super(DiskFragment, self).__init__(**kwargs)
-        self.disk_type = kwargs.get('disk_type', None)
-        self.disk_size_gi_b = kwargs.get('disk_size_gi_b', None)
-        self.leased_by_lab_vm_id = kwargs.get('leased_by_lab_vm_id', None)
-        self.disk_blob_name = kwargs.get('disk_blob_name', None)
-        self.disk_uri = kwargs.get('disk_uri', None)
-        self.host_caching = kwargs.get('host_caching', None)
-        self.managed_disk_id = kwargs.get('managed_disk_id', None)
 
 
 class DiskList(msrest.serialization.Model):
@@ -1928,18 +1399,10 @@ class DtlEnvironmentFragment(UpdateResource):
 
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
-    :param deployment_properties: The deployment properties of the environment.
-    :type deployment_properties:
-     ~azure.mgmt.devtestlabs.models.EnvironmentDeploymentPropertiesFragment
-    :param arm_template_display_name: The display name of the Azure Resource Manager template that
-     produced the environment.
-    :type arm_template_display_name: str
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'deployment_properties': {'key': 'properties.deploymentProperties', 'type': 'EnvironmentDeploymentPropertiesFragment'},
-        'arm_template_display_name': {'key': 'properties.armTemplateDisplayName', 'type': 'str'},
     }
 
     def __init__(
@@ -1947,8 +1410,6 @@ class DtlEnvironmentFragment(UpdateResource):
         **kwargs
     ):
         super(DtlEnvironmentFragment, self).__init__(**kwargs)
-        self.deployment_properties = kwargs.get('deployment_properties', None)
-        self.arm_template_display_name = kwargs.get('arm_template_display_name', None)
 
 
 class DtlEnvironmentList(msrest.serialization.Model):
@@ -1993,29 +1454,6 @@ class EnvironmentDeploymentProperties(msrest.serialization.Model):
         **kwargs
     ):
         super(EnvironmentDeploymentProperties, self).__init__(**kwargs)
-        self.arm_template_id = kwargs.get('arm_template_id', None)
-        self.parameters = kwargs.get('parameters', None)
-
-
-class EnvironmentDeploymentPropertiesFragment(msrest.serialization.Model):
-    """Properties of an environment deployment.
-
-    :param arm_template_id: The Azure Resource Manager template's identifier.
-    :type arm_template_id: str
-    :param parameters: The parameters of the Azure Resource Manager template.
-    :type parameters: list[~azure.mgmt.devtestlabs.models.ArmTemplateParameterPropertiesFragment]
-    """
-
-    _attribute_map = {
-        'arm_template_id': {'key': 'armTemplateId', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': '[ArmTemplateParameterPropertiesFragment]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(EnvironmentDeploymentPropertiesFragment, self).__init__(**kwargs)
         self.arm_template_id = kwargs.get('arm_template_id', None)
         self.parameters = kwargs.get('parameters', None)
 
@@ -2109,26 +1547,6 @@ class Event(msrest.serialization.Model):
         self.event_name = kwargs.get('event_name', None)
 
 
-class EventFragment(msrest.serialization.Model):
-    """An event to be notified for.
-
-    :param event_name: The event type for which this notification is enabled (i.e. AutoShutdown,
-     Cost). Possible values include: "AutoShutdown", "Cost".
-    :type event_name: str or ~azure.mgmt.devtestlabs.models.NotificationChannelEventType
-    """
-
-    _attribute_map = {
-        'event_name': {'key': 'eventName', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(EventFragment, self).__init__(**kwargs)
-        self.event_name = kwargs.get('event_name', None)
-
-
 class ExportResourceUsageParameters(msrest.serialization.Model):
     """The parameters of the export operation.
 
@@ -2177,29 +1595,6 @@ class ExternalSubnet(msrest.serialization.Model):
         self.name = kwargs.get('name', None)
 
 
-class ExternalSubnetFragment(msrest.serialization.Model):
-    """Subnet information as returned by the Microsoft.Network API.
-
-    :param id: Gets or sets the identifier.
-    :type id: str
-    :param name: Gets or sets the name.
-    :type name: str
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ExternalSubnetFragment, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
-
-
 class Formula(Resource):
     """A formula for creating a VM, specifying an image base and other parameters.
 
@@ -2217,8 +1612,8 @@ class Formula(Resource):
     :type tags: dict[str, str]
     :param description: The description of the formula.
     :type description: str
-    :param author: The author of the formula.
-    :type author: str
+    :ivar author: The author of the formula.
+    :vartype author: str
     :param os_type: The OS type of the formula.
     :type os_type: str
     :ivar creation_date: The creation date of the formula.
@@ -2237,6 +1632,7 @@ class Formula(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'author': {'readonly': True},
         'creation_date': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'unique_identifier': {'readonly': True},
@@ -2264,7 +1660,7 @@ class Formula(Resource):
     ):
         super(Formula, self).__init__(**kwargs)
         self.description = kwargs.get('description', None)
-        self.author = kwargs.get('author', None)
+        self.author = None
         self.os_type = kwargs.get('os_type', None)
         self.creation_date = None
         self.formula_content = kwargs.get('formula_content', None)
@@ -2278,26 +1674,10 @@ class FormulaFragment(UpdateResource):
 
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
-    :param description: The description of the formula.
-    :type description: str
-    :param author: The author of the formula.
-    :type author: str
-    :param os_type: The OS type of the formula.
-    :type os_type: str
-    :param formula_content: The content of the formula.
-    :type formula_content:
-     ~azure.mgmt.devtestlabs.models.LabVirtualMachineCreationParameterFragment
-    :param vm: Information about a VM from which a formula is to be created.
-    :type vm: ~azure.mgmt.devtestlabs.models.FormulaPropertiesFromVmFragment
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'author': {'key': 'properties.author', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'formula_content': {'key': 'properties.formulaContent', 'type': 'LabVirtualMachineCreationParameterFragment'},
-        'vm': {'key': 'properties.vm', 'type': 'FormulaPropertiesFromVmFragment'},
     }
 
     def __init__(
@@ -2305,11 +1685,6 @@ class FormulaFragment(UpdateResource):
         **kwargs
     ):
         super(FormulaFragment, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
-        self.author = kwargs.get('author', None)
-        self.os_type = kwargs.get('os_type', None)
-        self.formula_content = kwargs.get('formula_content', None)
-        self.vm = kwargs.get('vm', None)
 
 
 class FormulaList(msrest.serialization.Model):
@@ -2351,25 +1726,6 @@ class FormulaPropertiesFromVm(msrest.serialization.Model):
         **kwargs
     ):
         super(FormulaPropertiesFromVm, self).__init__(**kwargs)
-        self.lab_vm_id = kwargs.get('lab_vm_id', None)
-
-
-class FormulaPropertiesFromVmFragment(msrest.serialization.Model):
-    """Information about a VM from which a formula is to be created.
-
-    :param lab_vm_id: The identifier of the VM from which a formula is to be created.
-    :type lab_vm_id: str
-    """
-
-    _attribute_map = {
-        'lab_vm_id': {'key': 'labVmId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(FormulaPropertiesFromVmFragment, self).__init__(**kwargs)
         self.lab_vm_id = kwargs.get('lab_vm_id', None)
 
 
@@ -2503,41 +1859,6 @@ class GalleryImageReference(msrest.serialization.Model):
         self.version = kwargs.get('version', None)
 
 
-class GalleryImageReferenceFragment(msrest.serialization.Model):
-    """The reference information for an Azure Marketplace image.
-
-    :param offer: The offer of the gallery image.
-    :type offer: str
-    :param publisher: The publisher of the gallery image.
-    :type publisher: str
-    :param sku: The SKU of the gallery image.
-    :type sku: str
-    :param os_type: The OS type of the gallery image.
-    :type os_type: str
-    :param version: The version of the gallery image.
-    :type version: str
-    """
-
-    _attribute_map = {
-        'offer': {'key': 'offer', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'str'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GalleryImageReferenceFragment, self).__init__(**kwargs)
-        self.offer = kwargs.get('offer', None)
-        self.publisher = kwargs.get('publisher', None)
-        self.sku = kwargs.get('sku', None)
-        self.os_type = kwargs.get('os_type', None)
-        self.version = kwargs.get('version', None)
-
-
 class GenerateArmTemplateRequest(msrest.serialization.Model):
     """Parameters for generating an ARM template for deploying artifacts.
 
@@ -2628,30 +1949,12 @@ class HourDetails(msrest.serialization.Model):
         self.minute = kwargs.get('minute', None)
 
 
-class HourDetailsFragment(msrest.serialization.Model):
-    """Properties of an hourly schedule.
-
-    :param minute: Minutes of the hour the schedule will run.
-    :type minute: int
-    """
-
-    _attribute_map = {
-        'minute': {'key': 'minute', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(HourDetailsFragment, self).__init__(**kwargs)
-        self.minute = kwargs.get('minute', None)
-
-
 class IdentityProperties(msrest.serialization.Model):
     """Properties of a managed identity.
 
-    :param type: Managed identity.
-    :type type: str
+    :param type: Managed identity. Possible values include: "None", "SystemAssigned",
+     "UserAssigned", "SystemAssigned,UserAssigned".
+    :type type: str or ~azure.mgmt.devtestlabs.models.ManagedIdentityType
     :param principal_id: The principal id of resource identity.
     :type principal_id: str
     :param tenant_id: The tenant identifier of resource.
@@ -2727,35 +2030,6 @@ class InboundNatRule(msrest.serialization.Model):
         **kwargs
     ):
         super(InboundNatRule, self).__init__(**kwargs)
-        self.transport_protocol = kwargs.get('transport_protocol', None)
-        self.frontend_port = kwargs.get('frontend_port', None)
-        self.backend_port = kwargs.get('backend_port', None)
-
-
-class InboundNatRuleFragment(msrest.serialization.Model):
-    """A rule for NAT - exposing a VM's port (backendPort) on the public IP address using a load balancer.
-
-    :param transport_protocol: The transport protocol for the endpoint. Possible values include:
-     "Tcp", "Udp".
-    :type transport_protocol: str or ~azure.mgmt.devtestlabs.models.TransportProtocol
-    :param frontend_port: The external endpoint port of the inbound connection. Possible values
-     range between 1 and 65535, inclusive. If unspecified, a value will be allocated automatically.
-    :type frontend_port: int
-    :param backend_port: The port to which the external traffic will be redirected.
-    :type backend_port: int
-    """
-
-    _attribute_map = {
-        'transport_protocol': {'key': 'transportProtocol', 'type': 'str'},
-        'frontend_port': {'key': 'frontendPort', 'type': 'int'},
-        'backend_port': {'key': 'backendPort', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(InboundNatRuleFragment, self).__init__(**kwargs)
         self.transport_protocol = kwargs.get('transport_protocol', None)
         self.frontend_port = kwargs.get('frontend_port', None)
         self.backend_port = kwargs.get('backend_port', None)
@@ -2954,43 +2228,6 @@ class LabAnnouncementProperties(msrest.serialization.Model):
         self.unique_identifier = None
 
 
-class LabAnnouncementPropertiesFragment(msrest.serialization.Model):
-    """Properties of a lab's announcement banner.
-
-    :param title: The plain text title for the lab announcement.
-    :type title: str
-    :param markdown: The markdown text (if any) that this lab displays in the UI. If left
-     empty/null, nothing will be shown.
-    :type markdown: str
-    :param enabled: Is the lab announcement active/enabled at this time?. Possible values include:
-     "Enabled", "Disabled".
-    :type enabled: str or ~azure.mgmt.devtestlabs.models.EnableStatus
-    :param expiration_date: The time at which the announcement expires (null for never).
-    :type expiration_date: ~datetime.datetime
-    :param expired: Has this announcement expired?.
-    :type expired: bool
-    """
-
-    _attribute_map = {
-        'title': {'key': 'title', 'type': 'str'},
-        'markdown': {'key': 'markdown', 'type': 'str'},
-        'enabled': {'key': 'enabled', 'type': 'str'},
-        'expiration_date': {'key': 'expirationDate', 'type': 'iso-8601'},
-        'expired': {'key': 'expired', 'type': 'bool'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(LabAnnouncementPropertiesFragment, self).__init__(**kwargs)
-        self.title = kwargs.get('title', None)
-        self.markdown = kwargs.get('markdown', None)
-        self.enabled = kwargs.get('enabled', None)
-        self.expiration_date = kwargs.get('expiration_date', None)
-        self.expired = kwargs.get('expired', None)
-
-
 class LabCost(Resource):
     """A cost item.
 
@@ -3126,43 +2363,10 @@ class LabFragment(UpdateResource):
 
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
-    :param lab_storage_type: Type of storage used by the lab. It can be either Premium or Standard.
-     Default is Premium. Possible values include: "Standard", "Premium", "StandardSSD".
-    :type lab_storage_type: str or ~azure.mgmt.devtestlabs.models.StorageType
-    :param mandatory_artifacts_resource_ids_linux: The ordered list of artifact resource IDs that
-     should be applied on all Linux VM creations by default, prior to the artifacts specified by the
-     user.
-    :type mandatory_artifacts_resource_ids_linux: list[str]
-    :param mandatory_artifacts_resource_ids_windows: The ordered list of artifact resource IDs that
-     should be applied on all Windows VM creations by default, prior to the artifacts specified by
-     the user.
-    :type mandatory_artifacts_resource_ids_windows: list[str]
-    :param premium_data_disks: The setting to enable usage of premium data disks.
-     When its value is 'Enabled', creation of standard or premium data disks is allowed.
-     When its value is 'Disabled', only creation of standard data disks is allowed. Possible values
-     include: "Disabled", "Enabled".
-    :type premium_data_disks: str or ~azure.mgmt.devtestlabs.models.PremiumDataDisk
-    :param environment_permission: The access rights to be granted to the user when provisioning an
-     environment. Possible values include: "Reader", "Contributor".
-    :type environment_permission: str or ~azure.mgmt.devtestlabs.models.EnvironmentPermission
-    :param announcement: The properties of any lab announcement associated with this lab.
-    :type announcement: ~azure.mgmt.devtestlabs.models.LabAnnouncementPropertiesFragment
-    :param support: The properties of any lab support message associated with this lab.
-    :type support: ~azure.mgmt.devtestlabs.models.LabSupportPropertiesFragment
-    :param extended_properties: Extended properties of the lab used for experimental features.
-    :type extended_properties: dict[str, str]
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'lab_storage_type': {'key': 'properties.labStorageType', 'type': 'str'},
-        'mandatory_artifacts_resource_ids_linux': {'key': 'properties.mandatoryArtifactsResourceIdsLinux', 'type': '[str]'},
-        'mandatory_artifacts_resource_ids_windows': {'key': 'properties.mandatoryArtifactsResourceIdsWindows', 'type': '[str]'},
-        'premium_data_disks': {'key': 'properties.premiumDataDisks', 'type': 'str'},
-        'environment_permission': {'key': 'properties.environmentPermission', 'type': 'str'},
-        'announcement': {'key': 'properties.announcement', 'type': 'LabAnnouncementPropertiesFragment'},
-        'support': {'key': 'properties.support', 'type': 'LabSupportPropertiesFragment'},
-        'extended_properties': {'key': 'properties.extendedProperties', 'type': '{str}'},
     }
 
     def __init__(
@@ -3170,14 +2374,6 @@ class LabFragment(UpdateResource):
         **kwargs
     ):
         super(LabFragment, self).__init__(**kwargs)
-        self.lab_storage_type = kwargs.get('lab_storage_type', None)
-        self.mandatory_artifacts_resource_ids_linux = kwargs.get('mandatory_artifacts_resource_ids_linux', None)
-        self.mandatory_artifacts_resource_ids_windows = kwargs.get('mandatory_artifacts_resource_ids_windows', None)
-        self.premium_data_disks = kwargs.get('premium_data_disks', None)
-        self.environment_permission = kwargs.get('environment_permission', None)
-        self.announcement = kwargs.get('announcement', None)
-        self.support = kwargs.get('support', None)
-        self.extended_properties = kwargs.get('extended_properties', None)
 
 
 class LabList(msrest.serialization.Model):
@@ -3279,31 +2475,6 @@ class LabSupportProperties(msrest.serialization.Model):
         self.markdown = kwargs.get('markdown', None)
 
 
-class LabSupportPropertiesFragment(msrest.serialization.Model):
-    """Properties of a lab's support banner.
-
-    :param enabled: Is the lab support banner active/enabled at this time?. Possible values
-     include: "Enabled", "Disabled".
-    :type enabled: str or ~azure.mgmt.devtestlabs.models.EnableStatus
-    :param markdown: The markdown text (if any) that this lab displays in the UI. If left
-     empty/null, nothing will be shown.
-    :type markdown: str
-    """
-
-    _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'str'},
-        'markdown': {'key': 'markdown', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(LabSupportPropertiesFragment, self).__init__(**kwargs)
-        self.enabled = kwargs.get('enabled', None)
-        self.markdown = kwargs.get('markdown', None)
-
-
 class LabVhd(msrest.serialization.Model):
     """Properties of a VHD in the lab.
 
@@ -3367,18 +2538,18 @@ class LabVirtualMachine(Resource):
     :type owner_object_id: str
     :param owner_user_principal_name: The user principal name of the virtual machine owner.
     :type owner_user_principal_name: str
-    :param created_by_user_id: The object identifier of the creator of the virtual machine.
-    :type created_by_user_id: str
-    :param created_by_user: The email address of creator of the virtual machine.
-    :type created_by_user: str
+    :ivar created_by_user_id: The object identifier of the creator of the virtual machine.
+    :vartype created_by_user_id: str
+    :ivar created_by_user: The email address of creator of the virtual machine.
+    :vartype created_by_user: str
     :param created_date: The creation date of the virtual machine.
     :type created_date: ~datetime.datetime
-    :param compute_id: The resource identifier (Microsoft.Compute) of the virtual machine.
-    :type compute_id: str
+    :ivar compute_id: The resource identifier (Microsoft.Compute) of the virtual machine.
+    :vartype compute_id: str
     :param custom_image_id: The custom image identifier of the virtual machine.
     :type custom_image_id: str
-    :param os_type: The OS type of the virtual machine.
-    :type os_type: str
+    :ivar os_type: The OS type of the virtual machine.
+    :vartype os_type: str
     :param size: The size of the virtual machine.
     :type size: str
     :param user_name: The user name of the virtual machine.
@@ -3390,8 +2561,8 @@ class LabVirtualMachine(Resource):
     :param is_authentication_with_ssh_key: Indicates whether this virtual machine uses an SSH key
      for authentication.
     :type is_authentication_with_ssh_key: bool
-    :param fqdn: The fully-qualified domain name of the virtual machine.
-    :type fqdn: str
+    :ivar fqdn: The fully-qualified domain name of the virtual machine.
+    :vartype fqdn: str
     :param lab_subnet_name: The lab subnet name of the virtual machine.
     :type lab_subnet_name: str
     :param lab_virtual_network_id: The lab virtual network identifier of the virtual machine.
@@ -3401,8 +2572,8 @@ class LabVirtualMachine(Resource):
     :type disallow_public_ip_address: bool
     :param artifacts: The artifacts to be installed on the virtual machine.
     :type artifacts: list[~azure.mgmt.devtestlabs.models.ArtifactInstallProperties]
-    :param artifact_deployment_status: The artifact deployment status for the virtual machine.
-    :type artifact_deployment_status:
+    :ivar artifact_deployment_status: The artifact deployment status for the virtual machine.
+    :vartype artifact_deployment_status:
      ~azure.mgmt.devtestlabs.models.ArtifactDeploymentStatusProperties
     :param gallery_image_reference: The Microsoft Azure Marketplace image reference of the virtual
      machine.
@@ -3421,10 +2592,10 @@ class LabVirtualMachine(Resource):
     :type allow_claim: bool
     :param storage_type: Storage type to use for virtual machine (i.e. Standard, Premium).
     :type storage_type: str
-    :param virtual_machine_creation_source: Tells source of creation of lab virtual machine. Output
+    :ivar virtual_machine_creation_source: Tells source of creation of lab virtual machine. Output
      property only. Possible values include: "FromCustomImage", "FromGalleryImage",
      "FromSharedGalleryImage".
-    :type virtual_machine_creation_source: str or
+    :vartype virtual_machine_creation_source: str or
      ~azure.mgmt.devtestlabs.models.VirtualMachineCreationSource
     :param environment_id: The resource ID of the environment that contains this virtual machine,
      if any.
@@ -3434,8 +2605,8 @@ class LabVirtualMachine(Resource):
     :type data_disk_parameters: list[~azure.mgmt.devtestlabs.models.DataDiskProperties]
     :param schedule_parameters: Virtual Machine schedules to be created.
     :type schedule_parameters: list[~azure.mgmt.devtestlabs.models.ScheduleCreationParameter]
-    :param last_known_power_state: Last known compute power state captured in DTL.
-    :type last_known_power_state: str
+    :ivar last_known_power_state: Last known compute power state captured in DTL.
+    :vartype last_known_power_state: str
     :ivar provisioning_state: The provisioning status of the resource.
     :vartype provisioning_state: str
     :ivar unique_identifier: The unique immutable identifier of a resource (Guid).
@@ -3446,8 +2617,16 @@ class LabVirtualMachine(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'created_by_user_id': {'readonly': True},
+        'created_by_user': {'readonly': True},
+        'compute_id': {'readonly': True},
+        'os_type': {'readonly': True},
+        'fqdn': {'readonly': True},
+        'artifact_deployment_status': {'readonly': True},
         'compute_vm': {'readonly': True},
         'applicable_schedule': {'readonly': True},
+        'virtual_machine_creation_source': {'readonly': True},
+        'last_known_power_state': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'unique_identifier': {'readonly': True},
     }
@@ -3501,38 +2680,38 @@ class LabVirtualMachine(Resource):
     ):
         super(LabVirtualMachine, self).__init__(**kwargs)
         self.notes = kwargs.get('notes', None)
-        self.owner_object_id = kwargs.get('owner_object_id', None)
+        self.owner_object_id = kwargs.get('owner_object_id', "dynamicValue")
         self.owner_user_principal_name = kwargs.get('owner_user_principal_name', None)
-        self.created_by_user_id = kwargs.get('created_by_user_id', None)
-        self.created_by_user = kwargs.get('created_by_user', None)
+        self.created_by_user_id = None
+        self.created_by_user = None
         self.created_date = kwargs.get('created_date', None)
-        self.compute_id = kwargs.get('compute_id', None)
+        self.compute_id = None
         self.custom_image_id = kwargs.get('custom_image_id', None)
-        self.os_type = kwargs.get('os_type', None)
+        self.os_type = None
         self.size = kwargs.get('size', None)
         self.user_name = kwargs.get('user_name', None)
         self.password = kwargs.get('password', None)
         self.ssh_key = kwargs.get('ssh_key', None)
         self.is_authentication_with_ssh_key = kwargs.get('is_authentication_with_ssh_key', None)
-        self.fqdn = kwargs.get('fqdn', None)
+        self.fqdn = None
         self.lab_subnet_name = kwargs.get('lab_subnet_name', None)
         self.lab_virtual_network_id = kwargs.get('lab_virtual_network_id', None)
-        self.disallow_public_ip_address = kwargs.get('disallow_public_ip_address', None)
+        self.disallow_public_ip_address = kwargs.get('disallow_public_ip_address', False)
         self.artifacts = kwargs.get('artifacts', None)
-        self.artifact_deployment_status = kwargs.get('artifact_deployment_status', None)
+        self.artifact_deployment_status = None
         self.gallery_image_reference = kwargs.get('gallery_image_reference', None)
         self.plan_id = kwargs.get('plan_id', None)
         self.compute_vm = None
         self.network_interface = kwargs.get('network_interface', None)
         self.applicable_schedule = None
         self.expiration_date = kwargs.get('expiration_date', None)
-        self.allow_claim = kwargs.get('allow_claim', None)
-        self.storage_type = kwargs.get('storage_type', None)
-        self.virtual_machine_creation_source = kwargs.get('virtual_machine_creation_source', None)
+        self.allow_claim = kwargs.get('allow_claim', False)
+        self.storage_type = kwargs.get('storage_type', "labStorageType")
+        self.virtual_machine_creation_source = None
         self.environment_id = kwargs.get('environment_id', None)
         self.data_disk_parameters = kwargs.get('data_disk_parameters', None)
         self.schedule_parameters = kwargs.get('schedule_parameters', None)
-        self.last_known_power_state = kwargs.get('last_known_power_state', None)
+        self.last_known_power_state = None
         self.provisioning_state = None
         self.unique_identifier = None
 
@@ -3554,18 +2733,10 @@ class LabVirtualMachineCreationParameter(msrest.serialization.Model):
     :type owner_object_id: str
     :param owner_user_principal_name: The user principal name of the virtual machine owner.
     :type owner_user_principal_name: str
-    :param created_by_user_id: The object identifier of the creator of the virtual machine.
-    :type created_by_user_id: str
-    :param created_by_user: The email address of creator of the virtual machine.
-    :type created_by_user: str
     :param created_date: The creation date of the virtual machine.
     :type created_date: ~datetime.datetime
-    :param compute_id: The resource identifier (Microsoft.Compute) of the virtual machine.
-    :type compute_id: str
     :param custom_image_id: The custom image identifier of the virtual machine.
     :type custom_image_id: str
-    :param os_type: The OS type of the virtual machine.
-    :type os_type: str
     :param size: The size of the virtual machine.
     :type size: str
     :param user_name: The user name of the virtual machine.
@@ -3577,8 +2748,6 @@ class LabVirtualMachineCreationParameter(msrest.serialization.Model):
     :param is_authentication_with_ssh_key: Indicates whether this virtual machine uses an SSH key
      for authentication.
     :type is_authentication_with_ssh_key: bool
-    :param fqdn: The fully-qualified domain name of the virtual machine.
-    :type fqdn: str
     :param lab_subnet_name: The lab subnet name of the virtual machine.
     :type lab_subnet_name: str
     :param lab_virtual_network_id: The lab virtual network identifier of the virtual machine.
@@ -3588,9 +2757,6 @@ class LabVirtualMachineCreationParameter(msrest.serialization.Model):
     :type disallow_public_ip_address: bool
     :param artifacts: The artifacts to be installed on the virtual machine.
     :type artifacts: list[~azure.mgmt.devtestlabs.models.ArtifactInstallProperties]
-    :param artifact_deployment_status: The artifact deployment status for the virtual machine.
-    :type artifact_deployment_status:
-     ~azure.mgmt.devtestlabs.models.ArtifactDeploymentStatusProperties
     :param gallery_image_reference: The Microsoft Azure Marketplace image reference of the virtual
      machine.
     :type gallery_image_reference: ~azure.mgmt.devtestlabs.models.GalleryImageReference
@@ -3604,11 +2770,6 @@ class LabVirtualMachineCreationParameter(msrest.serialization.Model):
     :type allow_claim: bool
     :param storage_type: Storage type to use for virtual machine (i.e. Standard, Premium).
     :type storage_type: str
-    :param virtual_machine_creation_source: Tells source of creation of lab virtual machine. Output
-     property only. Possible values include: "FromCustomImage", "FromGalleryImage",
-     "FromSharedGalleryImage".
-    :type virtual_machine_creation_source: str or
-     ~azure.mgmt.devtestlabs.models.VirtualMachineCreationSource
     :param environment_id: The resource ID of the environment that contains this virtual machine,
      if any.
     :type environment_id: str
@@ -3617,8 +2778,6 @@ class LabVirtualMachineCreationParameter(msrest.serialization.Model):
     :type data_disk_parameters: list[~azure.mgmt.devtestlabs.models.DataDiskProperties]
     :param schedule_parameters: Virtual Machine schedules to be created.
     :type schedule_parameters: list[~azure.mgmt.devtestlabs.models.ScheduleCreationParameter]
-    :param last_known_power_state: Last known compute power state captured in DTL.
-    :type last_known_power_state: str
     """
 
     _attribute_map = {
@@ -3629,34 +2788,26 @@ class LabVirtualMachineCreationParameter(msrest.serialization.Model):
         'notes': {'key': 'properties.notes', 'type': 'str'},
         'owner_object_id': {'key': 'properties.ownerObjectId', 'type': 'str'},
         'owner_user_principal_name': {'key': 'properties.ownerUserPrincipalName', 'type': 'str'},
-        'created_by_user_id': {'key': 'properties.createdByUserId', 'type': 'str'},
-        'created_by_user': {'key': 'properties.createdByUser', 'type': 'str'},
         'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
-        'compute_id': {'key': 'properties.computeId', 'type': 'str'},
         'custom_image_id': {'key': 'properties.customImageId', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
         'size': {'key': 'properties.size', 'type': 'str'},
         'user_name': {'key': 'properties.userName', 'type': 'str'},
         'password': {'key': 'properties.password', 'type': 'str'},
         'ssh_key': {'key': 'properties.sshKey', 'type': 'str'},
         'is_authentication_with_ssh_key': {'key': 'properties.isAuthenticationWithSshKey', 'type': 'bool'},
-        'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
         'lab_subnet_name': {'key': 'properties.labSubnetName', 'type': 'str'},
         'lab_virtual_network_id': {'key': 'properties.labVirtualNetworkId', 'type': 'str'},
         'disallow_public_ip_address': {'key': 'properties.disallowPublicIpAddress', 'type': 'bool'},
         'artifacts': {'key': 'properties.artifacts', 'type': '[ArtifactInstallProperties]'},
-        'artifact_deployment_status': {'key': 'properties.artifactDeploymentStatus', 'type': 'ArtifactDeploymentStatusProperties'},
         'gallery_image_reference': {'key': 'properties.galleryImageReference', 'type': 'GalleryImageReference'},
         'plan_id': {'key': 'properties.planId', 'type': 'str'},
         'network_interface': {'key': 'properties.networkInterface', 'type': 'NetworkInterfaceProperties'},
         'expiration_date': {'key': 'properties.expirationDate', 'type': 'iso-8601'},
         'allow_claim': {'key': 'properties.allowClaim', 'type': 'bool'},
         'storage_type': {'key': 'properties.storageType', 'type': 'str'},
-        'virtual_machine_creation_source': {'key': 'properties.virtualMachineCreationSource', 'type': 'str'},
         'environment_id': {'key': 'properties.environmentId', 'type': 'str'},
         'data_disk_parameters': {'key': 'properties.dataDiskParameters', 'type': '[DataDiskProperties]'},
         'schedule_parameters': {'key': 'properties.scheduleParameters', 'type': '[ScheduleCreationParameter]'},
-        'last_known_power_state': {'key': 'properties.lastKnownPowerState', 'type': 'str'},
     }
 
     def __init__(
@@ -3669,201 +2820,28 @@ class LabVirtualMachineCreationParameter(msrest.serialization.Model):
         self.tags = kwargs.get('tags', None)
         self.bulk_creation_parameters = kwargs.get('bulk_creation_parameters', None)
         self.notes = kwargs.get('notes', None)
-        self.owner_object_id = kwargs.get('owner_object_id', None)
+        self.owner_object_id = kwargs.get('owner_object_id', "dynamicValue")
         self.owner_user_principal_name = kwargs.get('owner_user_principal_name', None)
-        self.created_by_user_id = kwargs.get('created_by_user_id', None)
-        self.created_by_user = kwargs.get('created_by_user', None)
         self.created_date = kwargs.get('created_date', None)
-        self.compute_id = kwargs.get('compute_id', None)
         self.custom_image_id = kwargs.get('custom_image_id', None)
-        self.os_type = kwargs.get('os_type', None)
         self.size = kwargs.get('size', None)
         self.user_name = kwargs.get('user_name', None)
         self.password = kwargs.get('password', None)
         self.ssh_key = kwargs.get('ssh_key', None)
         self.is_authentication_with_ssh_key = kwargs.get('is_authentication_with_ssh_key', None)
-        self.fqdn = kwargs.get('fqdn', None)
         self.lab_subnet_name = kwargs.get('lab_subnet_name', None)
         self.lab_virtual_network_id = kwargs.get('lab_virtual_network_id', None)
-        self.disallow_public_ip_address = kwargs.get('disallow_public_ip_address', None)
+        self.disallow_public_ip_address = kwargs.get('disallow_public_ip_address', False)
         self.artifacts = kwargs.get('artifacts', None)
-        self.artifact_deployment_status = kwargs.get('artifact_deployment_status', None)
         self.gallery_image_reference = kwargs.get('gallery_image_reference', None)
         self.plan_id = kwargs.get('plan_id', None)
         self.network_interface = kwargs.get('network_interface', None)
         self.expiration_date = kwargs.get('expiration_date', None)
-        self.allow_claim = kwargs.get('allow_claim', None)
-        self.storage_type = kwargs.get('storage_type', None)
-        self.virtual_machine_creation_source = kwargs.get('virtual_machine_creation_source', None)
+        self.allow_claim = kwargs.get('allow_claim', False)
+        self.storage_type = kwargs.get('storage_type', "labStorageType")
         self.environment_id = kwargs.get('environment_id', None)
         self.data_disk_parameters = kwargs.get('data_disk_parameters', None)
         self.schedule_parameters = kwargs.get('schedule_parameters', None)
-        self.last_known_power_state = kwargs.get('last_known_power_state', None)
-
-
-class LabVirtualMachineCreationParameterFragment(msrest.serialization.Model):
-    """Properties for creating a virtual machine.
-
-    :param name: The name of the virtual machine or environment.
-    :type name: str
-    :param location: The location of the new virtual machine or environment.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param bulk_creation_parameters: The number of virtual machine instances to create.
-    :type bulk_creation_parameters: ~azure.mgmt.devtestlabs.models.BulkCreationParametersFragment
-    :param notes: The notes of the virtual machine.
-    :type notes: str
-    :param owner_object_id: The object identifier of the owner of the virtual machine.
-    :type owner_object_id: str
-    :param owner_user_principal_name: The user principal name of the virtual machine owner.
-    :type owner_user_principal_name: str
-    :param created_by_user_id: The object identifier of the creator of the virtual machine.
-    :type created_by_user_id: str
-    :param created_by_user: The email address of creator of the virtual machine.
-    :type created_by_user: str
-    :param created_date: The creation date of the virtual machine.
-    :type created_date: ~datetime.datetime
-    :param compute_id: The resource identifier (Microsoft.Compute) of the virtual machine.
-    :type compute_id: str
-    :param custom_image_id: The custom image identifier of the virtual machine.
-    :type custom_image_id: str
-    :param os_type: The OS type of the virtual machine.
-    :type os_type: str
-    :param size: The size of the virtual machine.
-    :type size: str
-    :param user_name: The user name of the virtual machine.
-    :type user_name: str
-    :param password: The password of the virtual machine administrator.
-    :type password: str
-    :param ssh_key: The SSH key of the virtual machine administrator.
-    :type ssh_key: str
-    :param is_authentication_with_ssh_key: Indicates whether this virtual machine uses an SSH key
-     for authentication.
-    :type is_authentication_with_ssh_key: bool
-    :param fqdn: The fully-qualified domain name of the virtual machine.
-    :type fqdn: str
-    :param lab_subnet_name: The lab subnet name of the virtual machine.
-    :type lab_subnet_name: str
-    :param lab_virtual_network_id: The lab virtual network identifier of the virtual machine.
-    :type lab_virtual_network_id: str
-    :param disallow_public_ip_address: Indicates whether the virtual machine is to be created
-     without a public IP address.
-    :type disallow_public_ip_address: bool
-    :param artifacts: The artifacts to be installed on the virtual machine.
-    :type artifacts: list[~azure.mgmt.devtestlabs.models.ArtifactInstallPropertiesFragment]
-    :param artifact_deployment_status: The artifact deployment status for the virtual machine.
-    :type artifact_deployment_status:
-     ~azure.mgmt.devtestlabs.models.ArtifactDeploymentStatusPropertiesFragment
-    :param gallery_image_reference: The Microsoft Azure Marketplace image reference of the virtual
-     machine.
-    :type gallery_image_reference: ~azure.mgmt.devtestlabs.models.GalleryImageReferenceFragment
-    :param plan_id: The id of the plan associated with the virtual machine image.
-    :type plan_id: str
-    :param network_interface: The network interface properties.
-    :type network_interface: ~azure.mgmt.devtestlabs.models.NetworkInterfacePropertiesFragment
-    :param expiration_date: The expiration date for VM.
-    :type expiration_date: ~datetime.datetime
-    :param allow_claim: Indicates whether another user can take ownership of the virtual machine.
-    :type allow_claim: bool
-    :param storage_type: Storage type to use for virtual machine (i.e. Standard, Premium).
-    :type storage_type: str
-    :param virtual_machine_creation_source: Tells source of creation of lab virtual machine. Output
-     property only. Possible values include: "FromCustomImage", "FromGalleryImage",
-     "FromSharedGalleryImage".
-    :type virtual_machine_creation_source: str or
-     ~azure.mgmt.devtestlabs.models.VirtualMachineCreationSource
-    :param environment_id: The resource ID of the environment that contains this virtual machine,
-     if any.
-    :type environment_id: str
-    :param data_disk_parameters: New or existing data disks to attach to the virtual machine after
-     creation.
-    :type data_disk_parameters: list[~azure.mgmt.devtestlabs.models.DataDiskPropertiesFragment]
-    :param schedule_parameters: Virtual Machine schedules to be created.
-    :type schedule_parameters:
-     list[~azure.mgmt.devtestlabs.models.ScheduleCreationParameterFragment]
-    :param last_known_power_state: Last known compute power state captured in DTL.
-    :type last_known_power_state: str
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'bulk_creation_parameters': {'key': 'properties.bulkCreationParameters', 'type': 'BulkCreationParametersFragment'},
-        'notes': {'key': 'properties.notes', 'type': 'str'},
-        'owner_object_id': {'key': 'properties.ownerObjectId', 'type': 'str'},
-        'owner_user_principal_name': {'key': 'properties.ownerUserPrincipalName', 'type': 'str'},
-        'created_by_user_id': {'key': 'properties.createdByUserId', 'type': 'str'},
-        'created_by_user': {'key': 'properties.createdByUser', 'type': 'str'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
-        'compute_id': {'key': 'properties.computeId', 'type': 'str'},
-        'custom_image_id': {'key': 'properties.customImageId', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'size': {'key': 'properties.size', 'type': 'str'},
-        'user_name': {'key': 'properties.userName', 'type': 'str'},
-        'password': {'key': 'properties.password', 'type': 'str'},
-        'ssh_key': {'key': 'properties.sshKey', 'type': 'str'},
-        'is_authentication_with_ssh_key': {'key': 'properties.isAuthenticationWithSshKey', 'type': 'bool'},
-        'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
-        'lab_subnet_name': {'key': 'properties.labSubnetName', 'type': 'str'},
-        'lab_virtual_network_id': {'key': 'properties.labVirtualNetworkId', 'type': 'str'},
-        'disallow_public_ip_address': {'key': 'properties.disallowPublicIpAddress', 'type': 'bool'},
-        'artifacts': {'key': 'properties.artifacts', 'type': '[ArtifactInstallPropertiesFragment]'},
-        'artifact_deployment_status': {'key': 'properties.artifactDeploymentStatus', 'type': 'ArtifactDeploymentStatusPropertiesFragment'},
-        'gallery_image_reference': {'key': 'properties.galleryImageReference', 'type': 'GalleryImageReferenceFragment'},
-        'plan_id': {'key': 'properties.planId', 'type': 'str'},
-        'network_interface': {'key': 'properties.networkInterface', 'type': 'NetworkInterfacePropertiesFragment'},
-        'expiration_date': {'key': 'properties.expirationDate', 'type': 'iso-8601'},
-        'allow_claim': {'key': 'properties.allowClaim', 'type': 'bool'},
-        'storage_type': {'key': 'properties.storageType', 'type': 'str'},
-        'virtual_machine_creation_source': {'key': 'properties.virtualMachineCreationSource', 'type': 'str'},
-        'environment_id': {'key': 'properties.environmentId', 'type': 'str'},
-        'data_disk_parameters': {'key': 'properties.dataDiskParameters', 'type': '[DataDiskPropertiesFragment]'},
-        'schedule_parameters': {'key': 'properties.scheduleParameters', 'type': '[ScheduleCreationParameterFragment]'},
-        'last_known_power_state': {'key': 'properties.lastKnownPowerState', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(LabVirtualMachineCreationParameterFragment, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
-        self.bulk_creation_parameters = kwargs.get('bulk_creation_parameters', None)
-        self.notes = kwargs.get('notes', None)
-        self.owner_object_id = kwargs.get('owner_object_id', None)
-        self.owner_user_principal_name = kwargs.get('owner_user_principal_name', None)
-        self.created_by_user_id = kwargs.get('created_by_user_id', None)
-        self.created_by_user = kwargs.get('created_by_user', None)
-        self.created_date = kwargs.get('created_date', None)
-        self.compute_id = kwargs.get('compute_id', None)
-        self.custom_image_id = kwargs.get('custom_image_id', None)
-        self.os_type = kwargs.get('os_type', None)
-        self.size = kwargs.get('size', None)
-        self.user_name = kwargs.get('user_name', None)
-        self.password = kwargs.get('password', None)
-        self.ssh_key = kwargs.get('ssh_key', None)
-        self.is_authentication_with_ssh_key = kwargs.get('is_authentication_with_ssh_key', None)
-        self.fqdn = kwargs.get('fqdn', None)
-        self.lab_subnet_name = kwargs.get('lab_subnet_name', None)
-        self.lab_virtual_network_id = kwargs.get('lab_virtual_network_id', None)
-        self.disallow_public_ip_address = kwargs.get('disallow_public_ip_address', None)
-        self.artifacts = kwargs.get('artifacts', None)
-        self.artifact_deployment_status = kwargs.get('artifact_deployment_status', None)
-        self.gallery_image_reference = kwargs.get('gallery_image_reference', None)
-        self.plan_id = kwargs.get('plan_id', None)
-        self.network_interface = kwargs.get('network_interface', None)
-        self.expiration_date = kwargs.get('expiration_date', None)
-        self.allow_claim = kwargs.get('allow_claim', None)
-        self.storage_type = kwargs.get('storage_type', None)
-        self.virtual_machine_creation_source = kwargs.get('virtual_machine_creation_source', None)
-        self.environment_id = kwargs.get('environment_id', None)
-        self.data_disk_parameters = kwargs.get('data_disk_parameters', None)
-        self.schedule_parameters = kwargs.get('schedule_parameters', None)
-        self.last_known_power_state = kwargs.get('last_known_power_state', None)
 
 
 class LabVirtualMachineFragment(UpdateResource):
@@ -3871,113 +2849,10 @@ class LabVirtualMachineFragment(UpdateResource):
 
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
-    :param notes: The notes of the virtual machine.
-    :type notes: str
-    :param owner_object_id: The object identifier of the owner of the virtual machine.
-    :type owner_object_id: str
-    :param owner_user_principal_name: The user principal name of the virtual machine owner.
-    :type owner_user_principal_name: str
-    :param created_by_user_id: The object identifier of the creator of the virtual machine.
-    :type created_by_user_id: str
-    :param created_by_user: The email address of creator of the virtual machine.
-    :type created_by_user: str
-    :param created_date: The creation date of the virtual machine.
-    :type created_date: ~datetime.datetime
-    :param compute_id: The resource identifier (Microsoft.Compute) of the virtual machine.
-    :type compute_id: str
-    :param custom_image_id: The custom image identifier of the virtual machine.
-    :type custom_image_id: str
-    :param os_type: The OS type of the virtual machine.
-    :type os_type: str
-    :param size: The size of the virtual machine.
-    :type size: str
-    :param user_name: The user name of the virtual machine.
-    :type user_name: str
-    :param password: The password of the virtual machine administrator.
-    :type password: str
-    :param ssh_key: The SSH key of the virtual machine administrator.
-    :type ssh_key: str
-    :param is_authentication_with_ssh_key: Indicates whether this virtual machine uses an SSH key
-     for authentication.
-    :type is_authentication_with_ssh_key: bool
-    :param fqdn: The fully-qualified domain name of the virtual machine.
-    :type fqdn: str
-    :param lab_subnet_name: The lab subnet name of the virtual machine.
-    :type lab_subnet_name: str
-    :param lab_virtual_network_id: The lab virtual network identifier of the virtual machine.
-    :type lab_virtual_network_id: str
-    :param disallow_public_ip_address: Indicates whether the virtual machine is to be created
-     without a public IP address.
-    :type disallow_public_ip_address: bool
-    :param artifacts: The artifacts to be installed on the virtual machine.
-    :type artifacts: list[~azure.mgmt.devtestlabs.models.ArtifactInstallPropertiesFragment]
-    :param artifact_deployment_status: The artifact deployment status for the virtual machine.
-    :type artifact_deployment_status:
-     ~azure.mgmt.devtestlabs.models.ArtifactDeploymentStatusPropertiesFragment
-    :param gallery_image_reference: The Microsoft Azure Marketplace image reference of the virtual
-     machine.
-    :type gallery_image_reference: ~azure.mgmt.devtestlabs.models.GalleryImageReferenceFragment
-    :param plan_id: The id of the plan associated with the virtual machine image.
-    :type plan_id: str
-    :param network_interface: The network interface properties.
-    :type network_interface: ~azure.mgmt.devtestlabs.models.NetworkInterfacePropertiesFragment
-    :param expiration_date: The expiration date for VM.
-    :type expiration_date: ~datetime.datetime
-    :param allow_claim: Indicates whether another user can take ownership of the virtual machine.
-    :type allow_claim: bool
-    :param storage_type: Storage type to use for virtual machine (i.e. Standard, Premium).
-    :type storage_type: str
-    :param virtual_machine_creation_source: Tells source of creation of lab virtual machine. Output
-     property only. Possible values include: "FromCustomImage", "FromGalleryImage",
-     "FromSharedGalleryImage".
-    :type virtual_machine_creation_source: str or
-     ~azure.mgmt.devtestlabs.models.VirtualMachineCreationSource
-    :param environment_id: The resource ID of the environment that contains this virtual machine,
-     if any.
-    :type environment_id: str
-    :param data_disk_parameters: New or existing data disks to attach to the virtual machine after
-     creation.
-    :type data_disk_parameters: list[~azure.mgmt.devtestlabs.models.DataDiskPropertiesFragment]
-    :param schedule_parameters: Virtual Machine schedules to be created.
-    :type schedule_parameters:
-     list[~azure.mgmt.devtestlabs.models.ScheduleCreationParameterFragment]
-    :param last_known_power_state: Last known compute power state captured in DTL.
-    :type last_known_power_state: str
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'notes': {'key': 'properties.notes', 'type': 'str'},
-        'owner_object_id': {'key': 'properties.ownerObjectId', 'type': 'str'},
-        'owner_user_principal_name': {'key': 'properties.ownerUserPrincipalName', 'type': 'str'},
-        'created_by_user_id': {'key': 'properties.createdByUserId', 'type': 'str'},
-        'created_by_user': {'key': 'properties.createdByUser', 'type': 'str'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
-        'compute_id': {'key': 'properties.computeId', 'type': 'str'},
-        'custom_image_id': {'key': 'properties.customImageId', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'size': {'key': 'properties.size', 'type': 'str'},
-        'user_name': {'key': 'properties.userName', 'type': 'str'},
-        'password': {'key': 'properties.password', 'type': 'str'},
-        'ssh_key': {'key': 'properties.sshKey', 'type': 'str'},
-        'is_authentication_with_ssh_key': {'key': 'properties.isAuthenticationWithSshKey', 'type': 'bool'},
-        'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
-        'lab_subnet_name': {'key': 'properties.labSubnetName', 'type': 'str'},
-        'lab_virtual_network_id': {'key': 'properties.labVirtualNetworkId', 'type': 'str'},
-        'disallow_public_ip_address': {'key': 'properties.disallowPublicIpAddress', 'type': 'bool'},
-        'artifacts': {'key': 'properties.artifacts', 'type': '[ArtifactInstallPropertiesFragment]'},
-        'artifact_deployment_status': {'key': 'properties.artifactDeploymentStatus', 'type': 'ArtifactDeploymentStatusPropertiesFragment'},
-        'gallery_image_reference': {'key': 'properties.galleryImageReference', 'type': 'GalleryImageReferenceFragment'},
-        'plan_id': {'key': 'properties.planId', 'type': 'str'},
-        'network_interface': {'key': 'properties.networkInterface', 'type': 'NetworkInterfacePropertiesFragment'},
-        'expiration_date': {'key': 'properties.expirationDate', 'type': 'iso-8601'},
-        'allow_claim': {'key': 'properties.allowClaim', 'type': 'bool'},
-        'storage_type': {'key': 'properties.storageType', 'type': 'str'},
-        'virtual_machine_creation_source': {'key': 'properties.virtualMachineCreationSource', 'type': 'str'},
-        'environment_id': {'key': 'properties.environmentId', 'type': 'str'},
-        'data_disk_parameters': {'key': 'properties.dataDiskParameters', 'type': '[DataDiskPropertiesFragment]'},
-        'schedule_parameters': {'key': 'properties.scheduleParameters', 'type': '[ScheduleCreationParameterFragment]'},
-        'last_known_power_state': {'key': 'properties.lastKnownPowerState', 'type': 'str'},
     }
 
     def __init__(
@@ -3985,37 +2860,6 @@ class LabVirtualMachineFragment(UpdateResource):
         **kwargs
     ):
         super(LabVirtualMachineFragment, self).__init__(**kwargs)
-        self.notes = kwargs.get('notes', None)
-        self.owner_object_id = kwargs.get('owner_object_id', None)
-        self.owner_user_principal_name = kwargs.get('owner_user_principal_name', None)
-        self.created_by_user_id = kwargs.get('created_by_user_id', None)
-        self.created_by_user = kwargs.get('created_by_user', None)
-        self.created_date = kwargs.get('created_date', None)
-        self.compute_id = kwargs.get('compute_id', None)
-        self.custom_image_id = kwargs.get('custom_image_id', None)
-        self.os_type = kwargs.get('os_type', None)
-        self.size = kwargs.get('size', None)
-        self.user_name = kwargs.get('user_name', None)
-        self.password = kwargs.get('password', None)
-        self.ssh_key = kwargs.get('ssh_key', None)
-        self.is_authentication_with_ssh_key = kwargs.get('is_authentication_with_ssh_key', None)
-        self.fqdn = kwargs.get('fqdn', None)
-        self.lab_subnet_name = kwargs.get('lab_subnet_name', None)
-        self.lab_virtual_network_id = kwargs.get('lab_virtual_network_id', None)
-        self.disallow_public_ip_address = kwargs.get('disallow_public_ip_address', None)
-        self.artifacts = kwargs.get('artifacts', None)
-        self.artifact_deployment_status = kwargs.get('artifact_deployment_status', None)
-        self.gallery_image_reference = kwargs.get('gallery_image_reference', None)
-        self.plan_id = kwargs.get('plan_id', None)
-        self.network_interface = kwargs.get('network_interface', None)
-        self.expiration_date = kwargs.get('expiration_date', None)
-        self.allow_claim = kwargs.get('allow_claim', None)
-        self.storage_type = kwargs.get('storage_type', None)
-        self.virtual_machine_creation_source = kwargs.get('virtual_machine_creation_source', None)
-        self.environment_id = kwargs.get('environment_id', None)
-        self.data_disk_parameters = kwargs.get('data_disk_parameters', None)
-        self.schedule_parameters = kwargs.get('schedule_parameters', None)
-        self.last_known_power_state = kwargs.get('last_known_power_state', None)
 
 
 class LabVirtualMachineList(msrest.serialization.Model):
@@ -4059,27 +2903,6 @@ class LinuxOsInfo(msrest.serialization.Model):
         **kwargs
     ):
         super(LinuxOsInfo, self).__init__(**kwargs)
-        self.linux_os_state = kwargs.get('linux_os_state', None)
-
-
-class LinuxOsInfoFragment(msrest.serialization.Model):
-    """Information about a Linux OS.
-
-    :param linux_os_state: The state of the Linux OS (i.e. NonDeprovisioned, DeprovisionRequested,
-     DeprovisionApplied). Possible values include: "NonDeprovisioned", "DeprovisionRequested",
-     "DeprovisionApplied".
-    :type linux_os_state: str or ~azure.mgmt.devtestlabs.models.LinuxOsState
-    """
-
-    _attribute_map = {
-        'linux_os_state': {'key': 'linuxOsState', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(LinuxOsInfoFragment, self).__init__(**kwargs)
         self.linux_os_state = kwargs.get('linux_os_state', None)
 
 
@@ -4138,61 +2961,6 @@ class NetworkInterfaceProperties(msrest.serialization.Model):
         self.shared_public_ip_address_configuration = kwargs.get('shared_public_ip_address_configuration', None)
 
 
-class NetworkInterfacePropertiesFragment(msrest.serialization.Model):
-    """Properties of a network interface.
-
-    :param virtual_network_id: The resource ID of the virtual network.
-    :type virtual_network_id: str
-    :param subnet_id: The resource ID of the sub net.
-    :type subnet_id: str
-    :param public_ip_address_id: The resource ID of the public IP address.
-    :type public_ip_address_id: str
-    :param public_ip_address: The public IP address.
-    :type public_ip_address: str
-    :param private_ip_address: The private IP address.
-    :type private_ip_address: str
-    :param dns_name: The DNS name.
-    :type dns_name: str
-    :param rdp_authority: The RdpAuthority property is a server DNS host name or IP address
-     followed by the service port number for RDP (Remote Desktop Protocol).
-    :type rdp_authority: str
-    :param ssh_authority: The SshAuthority property is a server DNS host name or IP address
-     followed by the service port number for SSH.
-    :type ssh_authority: str
-    :param shared_public_ip_address_configuration: The configuration for sharing a public IP
-     address across multiple virtual machines.
-    :type shared_public_ip_address_configuration:
-     ~azure.mgmt.devtestlabs.models.SharedPublicIpAddressConfigurationFragment
-    """
-
-    _attribute_map = {
-        'virtual_network_id': {'key': 'virtualNetworkId', 'type': 'str'},
-        'subnet_id': {'key': 'subnetId', 'type': 'str'},
-        'public_ip_address_id': {'key': 'publicIpAddressId', 'type': 'str'},
-        'public_ip_address': {'key': 'publicIpAddress', 'type': 'str'},
-        'private_ip_address': {'key': 'privateIpAddress', 'type': 'str'},
-        'dns_name': {'key': 'dnsName', 'type': 'str'},
-        'rdp_authority': {'key': 'rdpAuthority', 'type': 'str'},
-        'ssh_authority': {'key': 'sshAuthority', 'type': 'str'},
-        'shared_public_ip_address_configuration': {'key': 'sharedPublicIpAddressConfiguration', 'type': 'SharedPublicIpAddressConfigurationFragment'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(NetworkInterfacePropertiesFragment, self).__init__(**kwargs)
-        self.virtual_network_id = kwargs.get('virtual_network_id', None)
-        self.subnet_id = kwargs.get('subnet_id', None)
-        self.public_ip_address_id = kwargs.get('public_ip_address_id', None)
-        self.public_ip_address = kwargs.get('public_ip_address', None)
-        self.private_ip_address = kwargs.get('private_ip_address', None)
-        self.dns_name = kwargs.get('dns_name', None)
-        self.rdp_authority = kwargs.get('rdp_authority', None)
-        self.ssh_authority = kwargs.get('ssh_authority', None)
-        self.shared_public_ip_address_configuration = kwargs.get('shared_public_ip_address_configuration', None)
-
-
 class NotificationChannel(Resource):
     """A notification.
 
@@ -4210,8 +2978,8 @@ class NotificationChannel(Resource):
     :type tags: dict[str, str]
     :param web_hook_url: The webhook URL to send notifications to.
     :type web_hook_url: str
-    :param email_recipient: The email recipient to send notifications to (can be a list of semi-
-     colon separated email addresses).
+    :param email_recipient: The email recipient to send notifications to (can be a list of
+     semi-colon separated email addresses).
     :type email_recipient: str
     :param notification_locale: The locale to use when sending a notification (fallback for
      unsupported languages is EN).
@@ -4273,27 +3041,10 @@ class NotificationChannelFragment(UpdateResource):
 
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
-    :param web_hook_url: The webhook URL to send notifications to.
-    :type web_hook_url: str
-    :param email_recipient: The email recipient to send notifications to (can be a list of semi-
-     colon separated email addresses).
-    :type email_recipient: str
-    :param notification_locale: The locale to use when sending a notification (fallback for
-     unsupported languages is EN).
-    :type notification_locale: str
-    :param description: Description of notification.
-    :type description: str
-    :param events: The list of event for which this notification is enabled.
-    :type events: list[~azure.mgmt.devtestlabs.models.EventFragment]
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'web_hook_url': {'key': 'properties.webHookUrl', 'type': 'str'},
-        'email_recipient': {'key': 'properties.emailRecipient', 'type': 'str'},
-        'notification_locale': {'key': 'properties.notificationLocale', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'events': {'key': 'properties.events', 'type': '[EventFragment]'},
     }
 
     def __init__(
@@ -4301,11 +3052,6 @@ class NotificationChannelFragment(UpdateResource):
         **kwargs
     ):
         super(NotificationChannelFragment, self).__init__(**kwargs)
-        self.web_hook_url = kwargs.get('web_hook_url', None)
-        self.email_recipient = kwargs.get('email_recipient', None)
-        self.notification_locale = kwargs.get('notification_locale', None)
-        self.description = kwargs.get('description', None)
-        self.events = kwargs.get('events', None)
 
 
 class NotificationChannelList(msrest.serialization.Model):
@@ -4341,8 +3087,8 @@ class NotificationSettings(msrest.serialization.Model):
     :type time_in_minutes: int
     :param webhook_url: The webhook URL to which the notification will be sent.
     :type webhook_url: str
-    :param email_recipient: The email recipient to send notifications to (can be a list of semi-
-     colon separated email addresses).
+    :param email_recipient: The email recipient to send notifications to (can be a list of
+     semi-colon separated email addresses).
     :type email_recipient: str
     :param notification_locale: The locale to use when sending a notification (fallback for
      unsupported languages is EN).
@@ -4362,44 +3108,6 @@ class NotificationSettings(msrest.serialization.Model):
         **kwargs
     ):
         super(NotificationSettings, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
-        self.time_in_minutes = kwargs.get('time_in_minutes', None)
-        self.webhook_url = kwargs.get('webhook_url', None)
-        self.email_recipient = kwargs.get('email_recipient', None)
-        self.notification_locale = kwargs.get('notification_locale', None)
-
-
-class NotificationSettingsFragment(msrest.serialization.Model):
-    """Notification settings for a schedule.
-
-    :param status: If notifications are enabled for this schedule (i.e. Enabled, Disabled).
-     Possible values include: "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
-    :param time_in_minutes: Time in minutes before event at which notification will be sent.
-    :type time_in_minutes: int
-    :param webhook_url: The webhook URL to which the notification will be sent.
-    :type webhook_url: str
-    :param email_recipient: The email recipient to send notifications to (can be a list of semi-
-     colon separated email addresses).
-    :type email_recipient: str
-    :param notification_locale: The locale to use when sending a notification (fallback for
-     unsupported languages is EN).
-    :type notification_locale: str
-    """
-
-    _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'time_in_minutes': {'key': 'timeInMinutes', 'type': 'int'},
-        'webhook_url': {'key': 'webhookUrl', 'type': 'str'},
-        'email_recipient': {'key': 'emailRecipient', 'type': 'str'},
-        'notification_locale': {'key': 'notificationLocale', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(NotificationSettingsFragment, self).__init__(**kwargs)
         self.status = kwargs.get('status', None)
         self.time_in_minutes = kwargs.get('time_in_minutes', None)
         self.webhook_url = kwargs.get('webhook_url', None)
@@ -4515,13 +3223,14 @@ class OperationResult(msrest.serialization.Model):
     :type status: str
     :param status_code: The status code for the operation. Possible values include: "Continue",
      "SwitchingProtocols", "OK", "Created", "Accepted", "NonAuthoritativeInformation", "NoContent",
-     "ResetContent", "PartialContent", "MultipleChoices", "MovedPermanently", "Redirect",
-     "SeeOther", "NotModified", "UseProxy", "Unused", "TemporaryRedirect", "BadRequest",
-     "Unauthorized", "PaymentRequired", "Forbidden", "NotFound", "MethodNotAllowed",
-     "NotAcceptable", "ProxyAuthenticationRequired", "RequestTimeout", "Conflict", "Gone",
-     "LengthRequired", "PreconditionFailed", "RequestEntityTooLarge", "RequestUriTooLong",
-     "UnsupportedMediaType", "RequestedRangeNotSatisfiable", "ExpectationFailed", "UpgradeRequired",
-     "InternalServerError", "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout",
+     "ResetContent", "PartialContent", "MultipleChoices", "Ambiguous", "MovedPermanently", "Moved",
+     "Found", "Redirect", "SeeOther", "RedirectMethod", "NotModified", "UseProxy", "Unused",
+     "TemporaryRedirect", "RedirectKeepVerb", "BadRequest", "Unauthorized", "PaymentRequired",
+     "Forbidden", "NotFound", "MethodNotAllowed", "NotAcceptable", "ProxyAuthenticationRequired",
+     "RequestTimeout", "Conflict", "Gone", "LengthRequired", "PreconditionFailed",
+     "RequestEntityTooLarge", "RequestUriTooLong", "UnsupportedMediaType",
+     "RequestedRangeNotSatisfiable", "ExpectationFailed", "UpgradeRequired", "InternalServerError",
+     "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout",
      "HttpVersionNotSupported".
     :type status_code: str or ~azure.mgmt.devtestlabs.models.HttpStatusCode
     :param error: Error details for the operation in case of a failure.
@@ -4573,7 +3282,7 @@ class ParametersValueFileInfo(msrest.serialization.Model):
     :param file_name: File name.
     :type file_name: str
     :param parameters_value_info: Contents of the file.
-    :type parameters_value_info: object
+    :type parameters_value_info: any
     """
 
     _attribute_map = {
@@ -4696,33 +3405,10 @@ class PolicyFragment(UpdateResource):
 
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
-    :param description: The description of the policy.
-    :type description: str
-    :param status: The status of the policy. Possible values include: "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.devtestlabs.models.PolicyStatus
-    :param fact_name: The fact name of the policy (e.g. LabVmCount, LabVmSize, MaxVmsAllowedPerLab,
-     etc. Possible values include: "UserOwnedLabVmCount", "UserOwnedLabPremiumVmCount",
-     "LabVmCount", "LabPremiumVmCount", "LabVmSize", "GalleryImage", "UserOwnedLabVmCountInSubnet",
-     "LabTargetCost", "EnvironmentTemplate", "ScheduleEditPermission".
-    :type fact_name: str or ~azure.mgmt.devtestlabs.models.PolicyFactName
-    :param fact_data: The fact data of the policy.
-    :type fact_data: str
-    :param threshold: The threshold of the policy (i.e. a number for MaxValuePolicy, and a JSON
-     array of values for AllowedValuesPolicy).
-    :type threshold: str
-    :param evaluator_type: The evaluator type of the policy (i.e. AllowedValuesPolicy,
-     MaxValuePolicy). Possible values include: "AllowedValuesPolicy", "MaxValuePolicy".
-    :type evaluator_type: str or ~azure.mgmt.devtestlabs.models.PolicyEvaluatorType
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'fact_name': {'key': 'properties.factName', 'type': 'str'},
-        'fact_data': {'key': 'properties.factData', 'type': 'str'},
-        'threshold': {'key': 'properties.threshold', 'type': 'str'},
-        'evaluator_type': {'key': 'properties.evaluatorType', 'type': 'str'},
     }
 
     def __init__(
@@ -4730,12 +3416,6 @@ class PolicyFragment(UpdateResource):
         **kwargs
     ):
         super(PolicyFragment, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
-        self.status = kwargs.get('status', None)
-        self.fact_name = kwargs.get('fact_name', None)
-        self.fact_data = kwargs.get('fact_data', None)
-        self.threshold = kwargs.get('threshold', None)
-        self.evaluator_type = kwargs.get('evaluator_type', None)
 
 
 class PolicyList(msrest.serialization.Model):
@@ -4827,29 +3507,6 @@ class Port(msrest.serialization.Model):
         **kwargs
     ):
         super(Port, self).__init__(**kwargs)
-        self.transport_protocol = kwargs.get('transport_protocol', None)
-        self.backend_port = kwargs.get('backend_port', None)
-
-
-class PortFragment(msrest.serialization.Model):
-    """Properties of a network port.
-
-    :param transport_protocol: Protocol type of the port. Possible values include: "Tcp", "Udp".
-    :type transport_protocol: str or ~azure.mgmt.devtestlabs.models.TransportProtocol
-    :param backend_port: Backend port of the target virtual machine.
-    :type backend_port: int
-    """
-
-    _attribute_map = {
-        'transport_protocol': {'key': 'transportProtocol', 'type': 'str'},
-        'backend_port': {'key': 'backendPort', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PortFragment, self).__init__(**kwargs)
         self.transport_protocol = kwargs.get('transport_protocol', None)
         self.backend_port = kwargs.get('backend_port', None)
 
@@ -5038,10 +3695,12 @@ class Schedule(Resource):
 class ScheduleCreationParameter(msrest.serialization.Model):
     """Properties for creating a schedule.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :param name: The name of the virtual machine or environment.
     :type name: str
-    :param location: The location of the new virtual machine or environment.
-    :type location: str
+    :ivar location: The location of the new virtual machine or environment.
+    :vartype location: str
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
     :param status: The status of the schedule (i.e. Enabled, Disabled). Possible values include:
@@ -5066,6 +3725,10 @@ class ScheduleCreationParameter(msrest.serialization.Model):
     :type target_resource_id: str
     """
 
+    _validation = {
+        'location': {'readonly': True},
+    }
+
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
@@ -5086,70 +3749,7 @@ class ScheduleCreationParameter(msrest.serialization.Model):
     ):
         super(ScheduleCreationParameter, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
-        self.status = kwargs.get('status', None)
-        self.task_type = kwargs.get('task_type', None)
-        self.weekly_recurrence = kwargs.get('weekly_recurrence', None)
-        self.daily_recurrence = kwargs.get('daily_recurrence', None)
-        self.hourly_recurrence = kwargs.get('hourly_recurrence', None)
-        self.time_zone_id = kwargs.get('time_zone_id', None)
-        self.notification_settings = kwargs.get('notification_settings', None)
-        self.target_resource_id = kwargs.get('target_resource_id', None)
-
-
-class ScheduleCreationParameterFragment(msrest.serialization.Model):
-    """Properties for creating a schedule.
-
-    :param name: The name of the virtual machine or environment.
-    :type name: str
-    :param location: The location of the new virtual machine or environment.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param status: The status of the schedule (i.e. Enabled, Disabled). Possible values include:
-     "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
-    :param task_type: The task type of the schedule (e.g. LabVmsShutdownTask, LabVmAutoStart).
-    :type task_type: str
-    :param weekly_recurrence: If the schedule will occur only some days of the week, specify the
-     weekly recurrence.
-    :type weekly_recurrence: ~azure.mgmt.devtestlabs.models.WeekDetailsFragment
-    :param daily_recurrence: If the schedule will occur once each day of the week, specify the
-     daily recurrence.
-    :type daily_recurrence: ~azure.mgmt.devtestlabs.models.DayDetailsFragment
-    :param hourly_recurrence: If the schedule will occur multiple times a day, specify the hourly
-     recurrence.
-    :type hourly_recurrence: ~azure.mgmt.devtestlabs.models.HourDetailsFragment
-    :param time_zone_id: The time zone ID (e.g. Pacific Standard time).
-    :type time_zone_id: str
-    :param notification_settings: Notification settings.
-    :type notification_settings: ~azure.mgmt.devtestlabs.models.NotificationSettingsFragment
-    :param target_resource_id: The resource ID to which the schedule belongs.
-    :type target_resource_id: str
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'task_type': {'key': 'properties.taskType', 'type': 'str'},
-        'weekly_recurrence': {'key': 'properties.weeklyRecurrence', 'type': 'WeekDetailsFragment'},
-        'daily_recurrence': {'key': 'properties.dailyRecurrence', 'type': 'DayDetailsFragment'},
-        'hourly_recurrence': {'key': 'properties.hourlyRecurrence', 'type': 'HourDetailsFragment'},
-        'time_zone_id': {'key': 'properties.timeZoneId', 'type': 'str'},
-        'notification_settings': {'key': 'properties.notificationSettings', 'type': 'NotificationSettingsFragment'},
-        'target_resource_id': {'key': 'properties.targetResourceId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ScheduleCreationParameterFragment, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.location = kwargs.get('location', None)
+        self.location = None
         self.tags = kwargs.get('tags', None)
         self.status = kwargs.get('status', None)
         self.task_type = kwargs.get('task_type', None)
@@ -5166,38 +3766,10 @@ class ScheduleFragment(UpdateResource):
 
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
-    :param status: The status of the schedule (i.e. Enabled, Disabled). Possible values include:
-     "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
-    :param task_type: The task type of the schedule (e.g. LabVmsShutdownTask, LabVmAutoStart).
-    :type task_type: str
-    :param weekly_recurrence: If the schedule will occur only some days of the week, specify the
-     weekly recurrence.
-    :type weekly_recurrence: ~azure.mgmt.devtestlabs.models.WeekDetailsFragment
-    :param daily_recurrence: If the schedule will occur once each day of the week, specify the
-     daily recurrence.
-    :type daily_recurrence: ~azure.mgmt.devtestlabs.models.DayDetailsFragment
-    :param hourly_recurrence: If the schedule will occur multiple times a day, specify the hourly
-     recurrence.
-    :type hourly_recurrence: ~azure.mgmt.devtestlabs.models.HourDetailsFragment
-    :param time_zone_id: The time zone ID (e.g. Pacific Standard time).
-    :type time_zone_id: str
-    :param notification_settings: Notification settings.
-    :type notification_settings: ~azure.mgmt.devtestlabs.models.NotificationSettingsFragment
-    :param target_resource_id: The resource ID to which the schedule belongs.
-    :type target_resource_id: str
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'task_type': {'key': 'properties.taskType', 'type': 'str'},
-        'weekly_recurrence': {'key': 'properties.weeklyRecurrence', 'type': 'WeekDetailsFragment'},
-        'daily_recurrence': {'key': 'properties.dailyRecurrence', 'type': 'DayDetailsFragment'},
-        'hourly_recurrence': {'key': 'properties.hourlyRecurrence', 'type': 'HourDetailsFragment'},
-        'time_zone_id': {'key': 'properties.timeZoneId', 'type': 'str'},
-        'notification_settings': {'key': 'properties.notificationSettings', 'type': 'NotificationSettingsFragment'},
-        'target_resource_id': {'key': 'properties.targetResourceId', 'type': 'str'},
     }
 
     def __init__(
@@ -5205,14 +3777,6 @@ class ScheduleFragment(UpdateResource):
         **kwargs
     ):
         super(ScheduleFragment, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
-        self.task_type = kwargs.get('task_type', None)
-        self.weekly_recurrence = kwargs.get('weekly_recurrence', None)
-        self.daily_recurrence = kwargs.get('daily_recurrence', None)
-        self.hourly_recurrence = kwargs.get('hourly_recurrence', None)
-        self.time_zone_id = kwargs.get('time_zone_id', None)
-        self.notification_settings = kwargs.get('notification_settings', None)
-        self.target_resource_id = kwargs.get('target_resource_id', None)
 
 
 class ScheduleList(msrest.serialization.Model):
@@ -5295,13 +3859,10 @@ class SecretFragment(UpdateResource):
 
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
-    :param value: The value of the secret for secret creation.
-    :type value: str
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'value': {'key': 'properties.value', 'type': 'str'},
     }
 
     def __init__(
@@ -5309,7 +3870,6 @@ class SecretFragment(UpdateResource):
         **kwargs
     ):
         super(SecretFragment, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
 
 
 class SecretList(msrest.serialization.Model):
@@ -5402,17 +3962,10 @@ class ServiceFabricFragment(UpdateResource):
 
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
-    :param external_service_fabric_id: The backing service fabric resource's id.
-    :type external_service_fabric_id: str
-    :param environment_id: The resource id of the environment under which the service fabric
-     resource is present.
-    :type environment_id: str
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'external_service_fabric_id': {'key': 'properties.externalServiceFabricId', 'type': 'str'},
-        'environment_id': {'key': 'properties.environmentId', 'type': 'str'},
     }
 
     def __init__(
@@ -5420,8 +3973,6 @@ class ServiceFabricFragment(UpdateResource):
         **kwargs
     ):
         super(ServiceFabricFragment, self).__init__(**kwargs)
-        self.external_service_fabric_id = kwargs.get('external_service_fabric_id', None)
-        self.environment_id = kwargs.get('environment_id', None)
 
 
 class ServiceFabricList(msrest.serialization.Model):
@@ -5489,6 +4040,29 @@ class ServiceRunner(Resource):
         self.identity = kwargs.get('identity', None)
 
 
+class ServiceRunnerList(msrest.serialization.Model):
+    """The response of a list operation.
+
+    :param value: Results of the list operation.
+    :type value: list[~azure.mgmt.devtestlabs.models.ServiceRunner]
+    :param next_link: Link for next set of results.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ServiceRunner]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ServiceRunnerList, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
 class SharedPublicIpAddressConfiguration(msrest.serialization.Model):
     """Properties of a virtual machine that determine how it is connected to a load balancer.
 
@@ -5505,25 +4079,6 @@ class SharedPublicIpAddressConfiguration(msrest.serialization.Model):
         **kwargs
     ):
         super(SharedPublicIpAddressConfiguration, self).__init__(**kwargs)
-        self.inbound_nat_rules = kwargs.get('inbound_nat_rules', None)
-
-
-class SharedPublicIpAddressConfigurationFragment(msrest.serialization.Model):
-    """Properties of a virtual machine that determine how it is connected to a load balancer.
-
-    :param inbound_nat_rules: The incoming NAT rules.
-    :type inbound_nat_rules: list[~azure.mgmt.devtestlabs.models.InboundNatRuleFragment]
-    """
-
-    _attribute_map = {
-        'inbound_nat_rules': {'key': 'inboundNatRules', 'type': '[InboundNatRuleFragment]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SharedPublicIpAddressConfigurationFragment, self).__init__(**kwargs)
         self.inbound_nat_rules = kwargs.get('inbound_nat_rules', None)
 
 
@@ -5622,34 +4177,6 @@ class Subnet(msrest.serialization.Model):
         self.allow_public_ip = kwargs.get('allow_public_ip', None)
 
 
-class SubnetFragment(msrest.serialization.Model):
-    """Subnet information.
-
-    :param resource_id: The resource ID of the subnet.
-    :type resource_id: str
-    :param lab_subnet_name: The name of the subnet as seen in the lab.
-    :type lab_subnet_name: str
-    :param allow_public_ip: The permission policy of the subnet for allowing public IP addresses
-     (i.e. Allow, Deny)). Possible values include: "Default", "Deny", "Allow".
-    :type allow_public_ip: str or ~azure.mgmt.devtestlabs.models.UsagePermissionType
-    """
-
-    _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'lab_subnet_name': {'key': 'labSubnetName', 'type': 'str'},
-        'allow_public_ip': {'key': 'allowPublicIp', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SubnetFragment, self).__init__(**kwargs)
-        self.resource_id = kwargs.get('resource_id', None)
-        self.lab_subnet_name = kwargs.get('lab_subnet_name', None)
-        self.allow_public_ip = kwargs.get('allow_public_ip', None)
-
-
 class SubnetOverride(msrest.serialization.Model):
     """Property overrides on a subnet of a virtual network.
 
@@ -5695,51 +4222,6 @@ class SubnetOverride(msrest.serialization.Model):
         self.virtual_network_pool_name = kwargs.get('virtual_network_pool_name', None)
 
 
-class SubnetOverrideFragment(msrest.serialization.Model):
-    """Property overrides on a subnet of a virtual network.
-
-    :param resource_id: The resource ID of the subnet.
-    :type resource_id: str
-    :param lab_subnet_name: The name given to the subnet within the lab.
-    :type lab_subnet_name: str
-    :param use_in_vm_creation_permission: Indicates whether this subnet can be used during virtual
-     machine creation (i.e. Allow, Deny). Possible values include: "Default", "Deny", "Allow".
-    :type use_in_vm_creation_permission: str or ~azure.mgmt.devtestlabs.models.UsagePermissionType
-    :param use_public_ip_address_permission: Indicates whether public IP addresses can be assigned
-     to virtual machines on this subnet (i.e. Allow, Deny). Possible values include: "Default",
-     "Deny", "Allow".
-    :type use_public_ip_address_permission: str or
-     ~azure.mgmt.devtestlabs.models.UsagePermissionType
-    :param shared_public_ip_address_configuration: Properties that virtual machines on this subnet
-     will share.
-    :type shared_public_ip_address_configuration:
-     ~azure.mgmt.devtestlabs.models.SubnetSharedPublicIpAddressConfigurationFragment
-    :param virtual_network_pool_name: The virtual network pool associated with this subnet.
-    :type virtual_network_pool_name: str
-    """
-
-    _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'lab_subnet_name': {'key': 'labSubnetName', 'type': 'str'},
-        'use_in_vm_creation_permission': {'key': 'useInVmCreationPermission', 'type': 'str'},
-        'use_public_ip_address_permission': {'key': 'usePublicIpAddressPermission', 'type': 'str'},
-        'shared_public_ip_address_configuration': {'key': 'sharedPublicIpAddressConfiguration', 'type': 'SubnetSharedPublicIpAddressConfigurationFragment'},
-        'virtual_network_pool_name': {'key': 'virtualNetworkPoolName', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SubnetOverrideFragment, self).__init__(**kwargs)
-        self.resource_id = kwargs.get('resource_id', None)
-        self.lab_subnet_name = kwargs.get('lab_subnet_name', None)
-        self.use_in_vm_creation_permission = kwargs.get('use_in_vm_creation_permission', None)
-        self.use_public_ip_address_permission = kwargs.get('use_public_ip_address_permission', None)
-        self.shared_public_ip_address_configuration = kwargs.get('shared_public_ip_address_configuration', None)
-        self.virtual_network_pool_name = kwargs.get('virtual_network_pool_name', None)
-
-
 class SubnetSharedPublicIpAddressConfiguration(msrest.serialization.Model):
     """Configuration for public IP address sharing.
 
@@ -5756,25 +4238,6 @@ class SubnetSharedPublicIpAddressConfiguration(msrest.serialization.Model):
         **kwargs
     ):
         super(SubnetSharedPublicIpAddressConfiguration, self).__init__(**kwargs)
-        self.allowed_ports = kwargs.get('allowed_ports', None)
-
-
-class SubnetSharedPublicIpAddressConfigurationFragment(msrest.serialization.Model):
-    """Configuration for public IP address sharing.
-
-    :param allowed_ports: Backend ports that virtual machines on this subnet are allowed to expose.
-    :type allowed_ports: list[~azure.mgmt.devtestlabs.models.PortFragment]
-    """
-
-    _attribute_map = {
-        'allowed_ports': {'key': 'allowedPorts', 'type': '[PortFragment]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SubnetSharedPublicIpAddressConfigurationFragment, self).__init__(**kwargs)
         self.allowed_ports = kwargs.get('allowed_ports', None)
 
 
@@ -5883,16 +4346,10 @@ class UserFragment(UpdateResource):
 
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
-    :param identity: The identity of the user.
-    :type identity: ~azure.mgmt.devtestlabs.models.UserIdentityFragment
-    :param secret_store: The secret store of the user.
-    :type secret_store: ~azure.mgmt.devtestlabs.models.UserSecretStoreFragment
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'properties.identity', 'type': 'UserIdentityFragment'},
-        'secret_store': {'key': 'properties.secretStore', 'type': 'UserSecretStoreFragment'},
     }
 
     def __init__(
@@ -5900,8 +4357,6 @@ class UserFragment(UpdateResource):
         **kwargs
     ):
         super(UserFragment, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
-        self.secret_store = kwargs.get('secret_store', None)
 
 
 class UserIdentity(msrest.serialization.Model):
@@ -5934,43 +4389,6 @@ class UserIdentity(msrest.serialization.Model):
         **kwargs
     ):
         super(UserIdentity, self).__init__(**kwargs)
-        self.principal_name = kwargs.get('principal_name', None)
-        self.principal_id = kwargs.get('principal_id', None)
-        self.tenant_id = kwargs.get('tenant_id', None)
-        self.object_id = kwargs.get('object_id', None)
-        self.app_id = kwargs.get('app_id', None)
-
-
-class UserIdentityFragment(msrest.serialization.Model):
-    """Identity attributes of a lab user.
-
-    :param principal_name: Set to the principal name / UPN of the client JWT making the request.
-    :type principal_name: str
-    :param principal_id: Set to the principal Id of the client JWT making the request. Service
-     principal will not have the principal Id.
-    :type principal_id: str
-    :param tenant_id: Set to the tenant ID of the client JWT making the request.
-    :type tenant_id: str
-    :param object_id: Set to the object Id of the client JWT making the request. Not all users have
-     object Id. For CSP (reseller) scenarios for example, object Id is not available.
-    :type object_id: str
-    :param app_id: Set to the app Id of the client JWT making the request.
-    :type app_id: str
-    """
-
-    _attribute_map = {
-        'principal_name': {'key': 'principalName', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'object_id': {'key': 'objectId', 'type': 'str'},
-        'app_id': {'key': 'appId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(UserIdentityFragment, self).__init__(**kwargs)
         self.principal_name = kwargs.get('principal_name', None)
         self.principal_id = kwargs.get('principal_id', None)
         self.tenant_id = kwargs.get('tenant_id', None)
@@ -6020,29 +4438,6 @@ class UserSecretStore(msrest.serialization.Model):
         **kwargs
     ):
         super(UserSecretStore, self).__init__(**kwargs)
-        self.key_vault_uri = kwargs.get('key_vault_uri', None)
-        self.key_vault_id = kwargs.get('key_vault_id', None)
-
-
-class UserSecretStoreFragment(msrest.serialization.Model):
-    """Properties of a user's secret store.
-
-    :param key_vault_uri: The URI of the user's Key vault.
-    :type key_vault_uri: str
-    :param key_vault_id: The ID of the user's Key vault.
-    :type key_vault_id: str
-    """
-
-    _attribute_map = {
-        'key_vault_uri': {'key': 'keyVaultUri', 'type': 'str'},
-        'key_vault_id': {'key': 'keyVaultId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(UserSecretStoreFragment, self).__init__(**kwargs)
         self.key_vault_uri = kwargs.get('key_vault_uri', None)
         self.key_vault_id = kwargs.get('key_vault_id', None)
 
@@ -6127,23 +4522,10 @@ class VirtualNetworkFragment(UpdateResource):
 
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
-    :param allowed_subnets: The allowed subnets of the virtual network.
-    :type allowed_subnets: list[~azure.mgmt.devtestlabs.models.SubnetFragment]
-    :param description: The description of the virtual network.
-    :type description: str
-    :param external_provider_resource_id: The Microsoft.Network resource identifier of the virtual
-     network.
-    :type external_provider_resource_id: str
-    :param subnet_overrides: The subnet overrides of the virtual network.
-    :type subnet_overrides: list[~azure.mgmt.devtestlabs.models.SubnetOverrideFragment]
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'allowed_subnets': {'key': 'properties.allowedSubnets', 'type': '[SubnetFragment]'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'external_provider_resource_id': {'key': 'properties.externalProviderResourceId', 'type': 'str'},
-        'subnet_overrides': {'key': 'properties.subnetOverrides', 'type': '[SubnetOverrideFragment]'},
     }
 
     def __init__(
@@ -6151,10 +4533,6 @@ class VirtualNetworkFragment(UpdateResource):
         **kwargs
     ):
         super(VirtualNetworkFragment, self).__init__(**kwargs)
-        self.allowed_subnets = kwargs.get('allowed_subnets', None)
-        self.description = kwargs.get('description', None)
-        self.external_provider_resource_id = kwargs.get('external_provider_resource_id', None)
-        self.subnet_overrides = kwargs.get('subnet_overrides', None)
 
 
 class VirtualNetworkList(msrest.serialization.Model):
@@ -6204,30 +4582,6 @@ class WeekDetails(msrest.serialization.Model):
         self.time = kwargs.get('time', None)
 
 
-class WeekDetailsFragment(msrest.serialization.Model):
-    """Properties of a weekly schedule.
-
-    :param weekdays: The days of the week for which the schedule is set (e.g. Sunday, Monday,
-     Tuesday, etc.).
-    :type weekdays: list[str]
-    :param time: The time of the day the schedule will occur.
-    :type time: str
-    """
-
-    _attribute_map = {
-        'weekdays': {'key': 'weekdays', 'type': '[str]'},
-        'time': {'key': 'time', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(WeekDetailsFragment, self).__init__(**kwargs)
-        self.weekdays = kwargs.get('weekdays', None)
-        self.time = kwargs.get('time', None)
-
-
 class WindowsOsInfo(msrest.serialization.Model):
     """Information about a Windows OS.
 
@@ -6246,25 +4600,4 @@ class WindowsOsInfo(msrest.serialization.Model):
         **kwargs
     ):
         super(WindowsOsInfo, self).__init__(**kwargs)
-        self.windows_os_state = kwargs.get('windows_os_state', None)
-
-
-class WindowsOsInfoFragment(msrest.serialization.Model):
-    """Information about a Windows OS.
-
-    :param windows_os_state: The state of the Windows OS (i.e. NonSysprepped, SysprepRequested,
-     SysprepApplied). Possible values include: "NonSysprepped", "SysprepRequested",
-     "SysprepApplied".
-    :type windows_os_state: str or ~azure.mgmt.devtestlabs.models.WindowsOsState
-    """
-
-    _attribute_map = {
-        'windows_os_state': {'key': 'windowsOsState', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(WindowsOsInfoFragment, self).__init__(**kwargs)
         self.windows_os_state = kwargs.get('windows_os_state', None)

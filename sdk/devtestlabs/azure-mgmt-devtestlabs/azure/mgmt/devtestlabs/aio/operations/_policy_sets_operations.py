@@ -46,7 +46,7 @@ class PolicySetsOperations:
         lab_name: str,
         name: str,
         policies: Optional[List["_models.EvaluatePoliciesProperties"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.EvaluatePoliciesResponse":
         """Evaluates lab policy.
 

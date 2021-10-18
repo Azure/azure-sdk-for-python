@@ -50,7 +50,7 @@ class LabsOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.LabList"]:
         """List labs in a subscription.
 
@@ -138,7 +138,7 @@ class LabsOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.LabList"]:
         """List labs in a resource group.
 
@@ -227,7 +227,7 @@ class LabsOperations:
         resource_group_name: str,
         name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Lab":
         """Get lab.
 
@@ -290,7 +290,7 @@ class LabsOperations:
         resource_group_name: str,
         name: str,
         lab: "_models.Lab",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Lab":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Lab"]
         error_map = {
@@ -347,7 +347,7 @@ class LabsOperations:
         resource_group_name: str,
         name: str,
         lab: "_models.Lab",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Lab"]:
         """Create or replace an existing lab. This operation can take a while to complete.
 
@@ -359,8 +359,8 @@ class LabsOperations:
         :type lab: ~azure.mgmt.devtestlabs.models.Lab
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Lab or the result of cls(response)
@@ -417,7 +417,7 @@ class LabsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -461,7 +461,7 @@ class LabsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete lab. This operation can take a while to complete.
 
@@ -471,8 +471,8 @@ class LabsOperations:
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -525,8 +525,8 @@ class LabsOperations:
         self,
         resource_group_name: str,
         name: str,
-        lab: "_models.LabFragment",
-        **kwargs
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs: Any
     ) -> "_models.Lab":
         """Allows modifying tags of labs. All other properties will be ignored.
 
@@ -534,8 +534,8 @@ class LabsOperations:
         :type resource_group_name: str
         :param name: The name of the lab.
         :type name: str
-        :param lab: A lab.
-        :type lab: ~azure.mgmt.devtestlabs.models.LabFragment
+        :param tags: The tags of the resource.
+        :type tags: dict[str, str]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Lab, or the result of cls(response)
         :rtype: ~azure.mgmt.devtestlabs.models.Lab
@@ -546,6 +546,8 @@ class LabsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+
+        _lab = _models.LabFragment(tags=tags)
         api_version = "2018-09-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -569,7 +571,7 @@ class LabsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(lab, 'LabFragment')
+        body_content = self._serialize.body(_lab, 'LabFragment')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -591,7 +593,7 @@ class LabsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -635,7 +637,7 @@ class LabsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Claim a random claimable virtual machine in the lab. This operation can take a while to
         complete.
@@ -646,8 +648,8 @@ class LabsOperations:
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -701,7 +703,7 @@ class LabsOperations:
         resource_group_name: str,
         name: str,
         lab_virtual_machine_creation_parameter: "_models.LabVirtualMachineCreationParameter",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -751,7 +753,7 @@ class LabsOperations:
         resource_group_name: str,
         name: str,
         lab_virtual_machine_creation_parameter: "_models.LabVirtualMachineCreationParameter",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Create virtual machines in a lab. This operation can take a while to complete.
 
@@ -763,8 +765,8 @@ class LabsOperations:
         :type lab_virtual_machine_creation_parameter: ~azure.mgmt.devtestlabs.models.LabVirtualMachineCreationParameter
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -820,7 +822,7 @@ class LabsOperations:
         name: str,
         blob_storage_absolute_sas_uri: Optional[str] = None,
         usage_start_date: Optional[datetime.datetime] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -873,7 +875,7 @@ class LabsOperations:
         name: str,
         blob_storage_absolute_sas_uri: Optional[str] = None,
         usage_start_date: Optional[datetime.datetime] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Exports the lab resource usage into a storage account This operation can take a while to
         complete.
@@ -890,8 +892,8 @@ class LabsOperations:
         :type usage_start_date: ~datetime.datetime
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -947,7 +949,7 @@ class LabsOperations:
         resource_group_name: str,
         name: str,
         blob_name: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GenerateUploadUriResponse":
         """Generate a URI for uploading custom disk images to a Lab.
 
@@ -1016,7 +1018,7 @@ class LabsOperations:
         name: str,
         source_virtual_machine_resource_id: Optional[str] = None,
         destination_virtual_machine_name: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -1069,7 +1071,7 @@ class LabsOperations:
         name: str,
         source_virtual_machine_resource_id: Optional[str] = None,
         destination_virtual_machine_name: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Import a virtual machine into a different lab. This operation can take a while to complete.
 
@@ -1085,8 +1087,8 @@ class LabsOperations:
         :type destination_virtual_machine_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -1141,7 +1143,7 @@ class LabsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.LabVhdList"]:
         """List disk images available for custom image creation.
 

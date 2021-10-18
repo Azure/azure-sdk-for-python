@@ -50,7 +50,7 @@ class PoliciesOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyList"]:
         """List policies in a given policy set.
 
@@ -147,7 +147,7 @@ class PoliciesOperations:
         policy_set_name: str,
         name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Policy":
         """Get policy.
 
@@ -218,7 +218,7 @@ class PoliciesOperations:
         policy_set_name: str,
         name: str,
         policy: "_models.Policy",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Policy":
         """Create or replace an existing policy.
 
@@ -295,7 +295,7 @@ class PoliciesOperations:
         lab_name: str,
         policy_set_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete policy.
 
@@ -358,8 +358,8 @@ class PoliciesOperations:
         lab_name: str,
         policy_set_name: str,
         name: str,
-        policy: "_models.PolicyFragment",
-        **kwargs
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs: Any
     ) -> "_models.Policy":
         """Allows modifying tags of policies. All other properties will be ignored.
 
@@ -371,8 +371,8 @@ class PoliciesOperations:
         :type policy_set_name: str
         :param name: The name of the policy.
         :type name: str
-        :param policy: A Policy.
-        :type policy: ~azure.mgmt.devtestlabs.models.PolicyFragment
+        :param tags: The tags of the resource.
+        :type tags: dict[str, str]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Policy, or the result of cls(response)
         :rtype: ~azure.mgmt.devtestlabs.models.Policy
@@ -383,6 +383,8 @@ class PoliciesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+
+        _policy = _models.PolicyFragment(tags=tags)
         api_version = "2018-09-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -408,7 +410,7 @@ class PoliciesOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(policy, 'PolicyFragment')
+        body_content = self._serialize.body(_policy, 'PolicyFragment')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)

@@ -49,7 +49,7 @@ class ArtifactSourcesOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ArtifactSourceList"]:
         """List artifact sources in a given lab.
 
@@ -142,7 +142,7 @@ class ArtifactSourcesOperations:
         lab_name: str,
         name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ArtifactSource":
         """Get artifact source.
 
@@ -209,7 +209,7 @@ class ArtifactSourcesOperations:
         lab_name: str,
         name: str,
         artifact_source: "_models.ArtifactSource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ArtifactSource":
         """Create or replace an existing artifact source.
 
@@ -282,7 +282,7 @@ class ArtifactSourcesOperations:
         resource_group_name: str,
         lab_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete artifact source.
 
@@ -341,8 +341,8 @@ class ArtifactSourcesOperations:
         resource_group_name: str,
         lab_name: str,
         name: str,
-        artifact_source: "_models.ArtifactSourceFragment",
-        **kwargs
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs: Any
     ) -> "_models.ArtifactSource":
         """Allows modifying tags of artifact sources. All other properties will be ignored.
 
@@ -352,8 +352,8 @@ class ArtifactSourcesOperations:
         :type lab_name: str
         :param name: The name of the artifact source.
         :type name: str
-        :param artifact_source: Properties of an artifact source.
-        :type artifact_source: ~azure.mgmt.devtestlabs.models.ArtifactSourceFragment
+        :param tags: The tags of the resource.
+        :type tags: dict[str, str]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ArtifactSource, or the result of cls(response)
         :rtype: ~azure.mgmt.devtestlabs.models.ArtifactSource
@@ -364,6 +364,8 @@ class ArtifactSourcesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+
+        _artifact_source = _models.ArtifactSourceFragment(tags=tags)
         api_version = "2018-09-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -388,7 +390,7 @@ class ArtifactSourcesOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(artifact_source, 'ArtifactSourceFragment')
+        body_content = self._serialize.body(_artifact_source, 'ArtifactSourceFragment')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)

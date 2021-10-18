@@ -52,7 +52,7 @@ class EnvironmentsOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DtlEnvironmentList"]:
         """List environments in a given user profile.
 
@@ -149,7 +149,7 @@ class EnvironmentsOperations:
         user_name: str,
         name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DtlEnvironment":
         """Get environment.
 
@@ -220,7 +220,7 @@ class EnvironmentsOperations:
         user_name: str,
         name: str,
         dtl_environment: "_models.DtlEnvironment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DtlEnvironment":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DtlEnvironment"]
         error_map = {
@@ -281,7 +281,7 @@ class EnvironmentsOperations:
         user_name: str,
         name: str,
         dtl_environment: "_models.DtlEnvironment",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DtlEnvironment"]:
         """Create or replace an existing environment. This operation can take a while to complete.
 
@@ -297,8 +297,8 @@ class EnvironmentsOperations:
         :type dtl_environment: ~azure.mgmt.devtestlabs.models.DtlEnvironment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DtlEnvironment or the result of cls(response)
@@ -361,7 +361,7 @@ class EnvironmentsOperations:
         lab_name: str,
         user_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -409,7 +409,7 @@ class EnvironmentsOperations:
         lab_name: str,
         user_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete environment. This operation can take a while to complete.
 
@@ -423,8 +423,8 @@ class EnvironmentsOperations:
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -483,8 +483,8 @@ class EnvironmentsOperations:
         lab_name: str,
         user_name: str,
         name: str,
-        dtl_environment: "_models.DtlEnvironmentFragment",
-        **kwargs
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs: Any
     ) -> "_models.DtlEnvironment":
         """Allows modifying tags of environments. All other properties will be ignored.
 
@@ -496,8 +496,8 @@ class EnvironmentsOperations:
         :type user_name: str
         :param name: The name of the environment.
         :type name: str
-        :param dtl_environment: An environment, which is essentially an ARM template deployment.
-        :type dtl_environment: ~azure.mgmt.devtestlabs.models.DtlEnvironmentFragment
+        :param tags: The tags of the resource.
+        :type tags: dict[str, str]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DtlEnvironment, or the result of cls(response)
         :rtype: ~azure.mgmt.devtestlabs.models.DtlEnvironment
@@ -508,6 +508,8 @@ class EnvironmentsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+
+        _dtl_environment = _models.DtlEnvironmentFragment(tags=tags)
         api_version = "2018-09-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -533,7 +535,7 @@ class EnvironmentsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(dtl_environment, 'DtlEnvironmentFragment')
+        body_content = self._serialize.body(_dtl_environment, 'DtlEnvironmentFragment')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)

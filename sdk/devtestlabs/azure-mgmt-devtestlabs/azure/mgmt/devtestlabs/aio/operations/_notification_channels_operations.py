@@ -49,7 +49,7 @@ class NotificationChannelsOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NotificationChannelList"]:
         """List notification channels in a given lab.
 
@@ -142,7 +142,7 @@ class NotificationChannelsOperations:
         lab_name: str,
         name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NotificationChannel":
         """Get notification channel.
 
@@ -209,7 +209,7 @@ class NotificationChannelsOperations:
         lab_name: str,
         name: str,
         notification_channel: "_models.NotificationChannel",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NotificationChannel":
         """Create or replace an existing notification channel.
 
@@ -282,7 +282,7 @@ class NotificationChannelsOperations:
         resource_group_name: str,
         lab_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete notification channel.
 
@@ -341,8 +341,8 @@ class NotificationChannelsOperations:
         resource_group_name: str,
         lab_name: str,
         name: str,
-        notification_channel: "_models.NotificationChannelFragment",
-        **kwargs
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs: Any
     ) -> "_models.NotificationChannel":
         """Allows modifying tags of notification channels. All other properties will be ignored.
 
@@ -352,8 +352,8 @@ class NotificationChannelsOperations:
         :type lab_name: str
         :param name: The name of the notification channel.
         :type name: str
-        :param notification_channel: A notification.
-        :type notification_channel: ~azure.mgmt.devtestlabs.models.NotificationChannelFragment
+        :param tags: The tags of the resource.
+        :type tags: dict[str, str]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NotificationChannel, or the result of cls(response)
         :rtype: ~azure.mgmt.devtestlabs.models.NotificationChannel
@@ -364,6 +364,8 @@ class NotificationChannelsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+
+        _notification_channel = _models.NotificationChannelFragment(tags=tags)
         api_version = "2018-09-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -388,7 +390,7 @@ class NotificationChannelsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(notification_channel, 'NotificationChannelFragment')
+        body_content = self._serialize.body(_notification_channel, 'NotificationChannelFragment')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -413,7 +415,7 @@ class NotificationChannelsOperations:
         name: str,
         event_name: Optional[Union[str, "_models.NotificationChannelEventType"]] = None,
         json_payload: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Send notification to provided channel.
 
