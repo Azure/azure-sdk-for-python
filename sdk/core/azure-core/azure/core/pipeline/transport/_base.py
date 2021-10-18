@@ -112,6 +112,21 @@ def _format_url_section(template, **kwargs):
 
 def _strip_and_combine_url_sections(base_section, stub_section, join_symbol):
     # type: (str, str, str) -> str
+    """Strip and combine base and stub URL sections.
+
+    We only join the base and the stub section together with the join symbol if
+    (a) the base section ends with the join symbol or the stub section starts with
+    that symbol
+    OR
+    (b) the base and the stub section are both non-empty strings
+
+    :param str base_section: The section of the base URL we are going to join
+    :param str stub_section: The section of the stub URL we are going to join
+    :param str join_symbol: The symbol we will join them with, if we fulfil criteria
+     a and b.
+    :returns: The joined sections
+    :rtype: str
+    """
     stripped_base = base_section.rstrip(join_symbol)
     stripped_stub = stub_section.lstrip(join_symbol)
     joiner = ""

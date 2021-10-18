@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 - respect text encoding specified in argument (thanks to @ryohji for the contribution)  #20796
+- fix adding unnecessary joiners between URLs during `format_url` #21314
 
 ### Other Changes
 
