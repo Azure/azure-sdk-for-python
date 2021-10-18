@@ -12,6 +12,8 @@
 
 ### Other Changes
 
+- Refactor AzureJSONEncoder (thanks to @Codejune for the contribution)  #21028
+
 ## 1.19.0 (2021-09-30)
 
 ### Breaking Changes in the Provisional `azure.core.rest` package
