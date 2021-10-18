@@ -3,14 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-<<<<<<< HEAD
-
-from typing import TYPE_CHECKING, Any, Dict, List, Optional  # pylint: disable=unused-import
-
-=======
 # pylint: disable=too-many-public-methods
 from typing import TYPE_CHECKING, Any, List, Optional  # pylint: disable=unused-import
->>>>>>> 6ff2ee5661ecebde9a607cbfad9b5576b0250e51
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.exceptions import (
@@ -574,9 +568,6 @@ class CallingServerClient(object):
             **kwargs
             )
 
-<<<<<<< HEAD
-    def start_recording(
-=======
     @distributed_trace()
     def hold_participant_meeting_audio(
             self,
@@ -621,7 +612,6 @@ class CallingServerClient(object):
 
     @distributed_trace()
     def start_recording( # pylint: disable=too-many-arguments
->>>>>>> 6ff2ee5661ecebde9a607cbfad9b5576b0250e51
         self,
         call_locator,  # type: CallLocator
         recording_state_callback_uri,  # type: str
