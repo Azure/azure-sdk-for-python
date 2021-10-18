@@ -15,7 +15,7 @@
   
   Please:
   - Use 1.3.0+ for any `SecretReferenceConfigurationSetting` uses.
-  - Do a GET-AND-SET-BACK for existing `SecretReferenceConfigurationSetting`s to correct the format.
+  - Call a get method for existing `SecretReferenceConfigurationSetting`s and set them back to correct the format.
 
 ### Other Changes
 
