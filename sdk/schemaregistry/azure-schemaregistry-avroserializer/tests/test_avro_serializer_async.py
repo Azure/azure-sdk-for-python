@@ -49,14 +49,15 @@ class AvroSerializerAsyncTests(AzureTestCase):
 
         async with sr_client:
             schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
+            schema_str = "{\"type\": \"record\", \"name\": \"User\", \"namespace\": \"example.avro\", \"fields\": [{\"type\": \"string\", \"name\": \"name\"}, {\"type\": [\"int\", \"null\"], \"name\": \"favorite_number\"}, {\"type\": [\"string\", \"null\"], \"name\": \"favorite_color\"}]}"
             schema = avro.schema.parse(schema_str)
 
             dict_data = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
             encoded_data = await sr_avro_serializer.serialize(dict_data, schema=schema_str)
 
             assert encoded_data[0:4] == b'\0\0\0\0'
-            schema_properties = await sr_client.get_schema_id(schemaregistry_group, schema.fullname, "Avro", str(schema))
-            schema_id = schema_properties.schema_id
+            schema_properties = await sr_client.get_schema_properties(schemaregistry_group, schema.fullname, str(schema), "Avro")
+            schema_id = schema_properties.id
             assert encoded_data[4:36] == schema_id.encode("utf-8")
 
             decoded_data = await sr_avro_serializer.deserialize(encoded_data)
@@ -72,14 +73,15 @@ class AvroSerializerAsyncTests(AzureTestCase):
 
         async with sr_client:
             schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
+            schema_str = "{\"type\": \"record\", \"name\": \"User\", \"namespace\": \"example.avro\", \"fields\": [{\"type\": \"string\", \"name\": \"name\"}, {\"type\": [\"int\", \"null\"], \"name\": \"favorite_number\"}, {\"type\": [\"string\", \"null\"], \"name\": \"favorite_color\"}]}"
             schema = avro.schema.parse(schema_str)
 
             dict_data = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
             encoded_data = await sr_avro_serializer.serialize(dict_data, schema=schema_str)
 
             assert encoded_data[0:4] == b'\0\0\0\0'
-            schema_properties = await sr_client.get_schema_id(schemaregistry_group, schema.fullname, "Avro", str(schema))
-            schema_id = schema_properties.schema_id
+            schema_properties = await sr_client.get_schema_properties(schemaregistry_group, schema.fullname, str(schema), "Avro")
+            schema_id = schema_properties.id
             assert encoded_data[4:36] == schema_id.encode("utf-8")
 
             decoded_data = await sr_avro_serializer.deserialize(encoded_data)

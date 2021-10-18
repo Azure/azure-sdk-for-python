@@ -29,6 +29,7 @@ except ImportError:
     from backports.functools_lru_cache import lru_cache
 from typing import BinaryIO, Union, TypeVar
 from io import BytesIO
+import json
 import avro
 from avro.io import DatumWriter, DatumReader, BinaryDecoder, BinaryEncoder
 

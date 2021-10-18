@@ -62,7 +62,7 @@ class AvroSerializer(object):
         self._auto_register_schema_func = (
                 self._schema_registry_client.register_schema
                 if self._auto_register_schemas
-                else self._schema_registry_client.get_schema_id
+                else self._schema_registry_client.get_schema_properties
             )
 
     async def __aenter__(self):
@@ -96,24 +96,24 @@ class AvroSerializer(object):
         :rtype: str
         """
         schema_properties = await self._auto_register_schema_func(
-            self._schema_group, schema_name, "Avro", schema_str, **kwargs
+            self._schema_group, schema_name, schema_str, "Avro", **kwargs
         )
-        return schema_properties.schema_id
+        return schema_properties.id
 
     @alru_cache(maxsize=128)
     async def _get_schema(self, schema_id, **kwargs):
         # type: (str, Any) -> str
         """
-        Get schema content from local cache with the given schema id.
+        Get schema definition from local cache with the given schema id.
         If there is no item in the local cache, get schema from the service and cache it.
 
         :param str schema_id: Schema id
-        :return: Schema content
+        :return: Schema definition
         """
         schema = await self._schema_registry_client.get_schema(
             schema_id, **kwargs
         )
-        return schema.schema_content
+        return schema.schema_definition
 
     @classmethod
     @lru_cache(maxsize=128)
@@ -166,9 +166,9 @@ class AvroSerializer(object):
         schema_id = value[
             SCHEMA_ID_START_INDEX : (SCHEMA_ID_START_INDEX + SCHEMA_ID_LENGTH)
         ].decode("utf-8")
-        schema_content = await self._get_schema(schema_id, **kwargs)
+        schema_definition = await self._get_schema(schema_id, **kwargs)
 
         dict_value = self._avro_serializer.deserialize(
-            value[DATA_START_INDEX:], schema_content
+            value[DATA_START_INDEX:], schema_definition
         )
         return dict_value
