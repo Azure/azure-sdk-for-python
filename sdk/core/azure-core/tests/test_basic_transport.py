@@ -1200,6 +1200,6 @@ def test_conflict_timeout(caplog, port, http_request):
 def test_aiohttp_loop():
     import asyncio
     from azure.core.pipeline.transport import AioHttpTransport
-    loop = asyncio._get_running_loop()
+    loop = asyncio.get_event_loop()
     with pytest.raises(ValueError):
         transport = AioHttpTransport(loop=loop)

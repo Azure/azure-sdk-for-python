@@ -15,9 +15,8 @@ from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.exceptions import ResourceExistsError
 from azure.storage.blob._shared.base_client import _format_shared_key_credential
 from azure.storage.filedatalake import DataLakeServiceClient
-from testcase import (
-    StorageTestCase,
-    DataLakePreparer)
+from settings.testcase import DataLakePreparer
+from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_DIRECTORY_PREFIX = 'directory'
@@ -29,7 +28,7 @@ LARGEST_BLOCK_SIZE = 4000 * 1024 * 1024
 
 class LargeFileTest(StorageTestCase):
     def _setUp(self, account_name, account_key):
-        url = self._get_account_url(account_name)
+        url = self.account_url(account_name, 'dfs')
         self.payload_dropping_policy = PayloadDroppingPolicy()
         credential_policy = _format_shared_key_credential(account_name,
                                                           account_key)
