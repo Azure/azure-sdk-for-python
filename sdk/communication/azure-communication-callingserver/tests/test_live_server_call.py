@@ -24,7 +24,9 @@ from _shared.utils import get_http_logging_policy
 from utils._live_test_utils import CallingServerLiveTestUtils, RequestReplacerProcessor
 from utils._test_mock_utils import FakeTokenCredential
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import (
+    HttpResponseError
+)
 
 class ServerCallTest(CommunicationTestCase):
 
@@ -195,3 +197,23 @@ class ServerCallTest(CommunicationTestCase):
 
         with self.assertRaises(HttpResponseError):
             self.callingserver_client.start_recording(GroupCallLocator(invalid_server_call_id), CONST.CALLBACK_URI)
+
+    @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
+    def test_delete_success(self):
+        delete_url = CallingServerLiveTestUtils.get_delete_url()  
+        delete_response = self.callingserver_client.delete_recording(delete_url)
+        assert delete_response is not None
+        assert delete_response.status_code == 200
+
+    @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
+    def test_delete_content_not_exists(self):
+        delete_url = CallingServerLiveTestUtils.get_invalid_delete_url()
+        with self.assertRaises(HttpResponseError):
+            self.callingserver_client.delete_recording(delete_url)
+
+    @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
+    def test_delete_content_unauthorized(self):       
+        delete_url = CallingServerLiveTestUtils.get_delete_url()       
+        unauthorized_client = CallingServerClient.from_connection_string("endpoint=https://test.communication.azure.com/;accesskey=1234")
+        with self.assertRaises(HttpResponseError):
+            unauthorized_client.delete_recording(delete_url)

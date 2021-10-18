@@ -11,15 +11,13 @@
 from typing import Any, IO, Optional, TYPE_CHECKING
 from urllib.parse import urlparse
 
+from azure.core.exceptions import HttpResponseError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.core.exceptions import (ClientAuthenticationError, HttpResponseError,
-    ResourceExistsError, ResourceNotFoundError, map_error)
-
-from .._generated import models as _models
+from ..utils._utils import CallingServerUtils
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
+    # pylint: disable=unused-import,ungrouped-imports,unsubscriptable-object
     from typing import Callable, Dict, Generic, TypeVar
 
     T = TypeVar('T')
@@ -50,25 +48,9 @@ class ContentDownloader:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[IO]
-        error_map = {
-            409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response,
-                                                    model=self._deserialize(_models.CommunicationErrorResponse,
-                                                                            response)),
-            401: lambda response: ClientAuthenticationError(response=response,
-                                                            model=self._deserialize(_models.CommunicationErrorResponse,
-                                                                                    response)),
-            403: lambda response: HttpResponseError(response=response,
-                                                    model=self._deserialize(_models.CommunicationErrorResponse,
-                                                                            response)),
-            404: lambda response: ResourceNotFoundError(response=response,
-                                                        model=self._deserialize(_models.CommunicationErrorResponse,
-                                                                                response)),
-            500: lambda response: HttpResponseError(response=response,
-                                                    model=self._deserialize(_models.CommunicationErrorResponse,
-                                                                            response)),
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map = CallingServerUtils.get_error_response_map(
+            kwargs.pop('error_map', {}))
+
 
         # Construct URL
         uri_to_sign_with = self._get_url_to_sign_request_with(content_url)

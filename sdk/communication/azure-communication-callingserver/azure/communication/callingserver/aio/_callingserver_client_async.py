@@ -12,6 +12,10 @@ from typing import TYPE_CHECKING, Any, List, Optional  # pylint: disable=unused-
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.transport import HttpResponse
+from azure.core.exceptions import (
+    HttpResponseError,
+    map_error
+)
 
 from ..utils._utils import CallingServerUtils
 from .._communication_identifier_serializer import serialize_identifier
@@ -58,7 +62,7 @@ from .._converters import (
     HoldMeetingAudioWithCallLocatorRequestConverter,
     ResumeMeetingAudioWithCallLocatorRequestConverter
     )
-from .._shared.utils import get_authentication_policy, parse_connection_str
+from .._shared.utils import get_authentication_policy, get_host_header_policy, parse_connection_str
 from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
@@ -100,6 +104,7 @@ class CallingServerClient:
         self._endpoint = endpoint
         self._callingserver_service_client = AzureCommunicationCallingServerService(
             self._endpoint,
+            headers_policy=get_host_header_policy(endpoint, credential),
             authentication_policy=get_authentication_policy(endpoint, credential, decode_url=True, is_async=True),
             sdk_moniker=SDK_MONIKER,
             **kwargs
@@ -727,6 +732,41 @@ class CallingServerClient:
         )
         await stream_downloader._setup()
         return stream_downloader
+
+    @distributed_trace_async()
+    async def delete_recording(
+        self,
+        content_delete_url: str,
+        **kwargs: Any
+
+    ): # type: (...) -> HttpResponse
+        # pylint: disable=protected-access
+        if not content_delete_url:
+            raise ValueError("content_delete_url can not be None")
+
+        uri_to_sign_with = CallingServerUtils.get_url_to_sign_request_with(self._endpoint, content_delete_url)
+
+        query_parameters = {} # type: Dict[str, Any]
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['UriToSignWith'] = self._callingserver_service_client._serialize.header(
+            name="uri_to_sign_with",
+            data=uri_to_sign_with,
+            data_type='str')
+
+        error_map = CallingServerUtils.get_error_response_map(
+            kwargs.pop('error_map', {}))
+
+        client = self._callingserver_service_client._client
+        request = client.delete(content_delete_url, query_parameters, header_parameters) #pylint: disable=specify-parameter-names-in-call
+        pipeline_response = await client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code,
+                        response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        return response
 
     async def close(self) -> None:
         """Close the :class:

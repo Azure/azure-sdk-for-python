@@ -165,3 +165,12 @@ class CallingServerLiveTestUtils:
         # For recording tests we need to make sure the groupId
         # matches the recorded groupId, or the call will fail.
         return str(uuid.uuid3(uuid.NAMESPACE_OID, test_name))
+
+    @staticmethod
+    # For recording tests, a new delete url should be generated.
+    def get_delete_url():
+        return "https://storage.asm.skype.com/v1/objects/0-wus-d10-0172bbc567cf530ac27da36ec99579f3"
+
+    @staticmethod
+    def get_invalid_delete_url():
+        return "https://storage.asm.skype.com/v1/objects/0-eus-d3-00000000000000000000000000000000"

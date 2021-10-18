@@ -1,0 +1,119 @@
+interactions:
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-identity/1.0.1 Python/3.9.7 (Windows-10-10.0.19043-SP0)
+      x-ms-date:
+      - Thu, 07 Oct 2021 18:28:08 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
+  response:
+    body:
+      string: '{"identity":{"id":"8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000c-fbe4-de4f-73ff-234822000f5f"}}'
+    headers:
+      api-supported-versions:
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
+        2021-10-31-preview
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 07 Oct 2021 18:28:07 GMT
+      ms-cv:
+      - E+I4HYDf4k6axclOlcBbNg.0
+      request-context:
+      - appId=
+      strict-transport-security:
+      - max-age=2592000
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 111ms
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-identity/1.0.1 Python/3.9.7 (Windows-10-10.0.19043-SP0)
+      x-ms-date:
+      - Thu, 07 Oct 2021 18:28:08 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
+  response:
+    body:
+      string: '{"identity":{"id":"8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000c-fbe4-e06b-8ffc-2348220020f3"}}'
+    headers:
+      api-supported-versions:
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
+        2021-10-31-preview
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 07 Oct 2021 18:28:08 GMT
+      ms-cv:
+      - /Z9+xjGfc0KooU9SyAS/oA.0
+      request-context:
+      - appId=
+      strict-transport-security:
+      - max-age=2592000
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 136ms
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      UriToSignWith:
+      - https://acstestbot1.communication.azure.com/v1/objects/0-eus-d3-00000000000000000000000000000000
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.9.7 (Windows-10-10.0.19043-SP0)
+      x-ms-host:
+      - acstestbot1.communication.azure.com
+    method: DELETE
+    uri: https://storage.asm.skype.com/v1/objects/0-eus-d3-00000000000000000000000000000000
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 07 Oct 2021 18:28:08 GMT
+      server: Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+    status:
+      code: 404
+      message: Not Found
+    url: https://storage.asm.skype.com/v1/objects/0-eus-d3-00000000000000000000000000000000
+version: 1

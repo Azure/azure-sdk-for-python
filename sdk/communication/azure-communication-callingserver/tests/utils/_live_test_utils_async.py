@@ -88,3 +88,12 @@ class CallingServerLiveTestUtilsAsync:
         for connection in call_connections:
             if connection is not None:
                 await connection.hang_up()
+
+    @staticmethod
+    def get_delete_url():
+        # For recording tests, a new delete url should be generated.
+        return "https://storage.asm.skype.com/v1/objects/0-wus-d3-ae157c63a416e12d1415e9ea9da8e779"
+
+    @staticmethod
+    def get_invalid_delete_url():
+        return "https://storage.asm.skype.com/v1/objects/0-eus-d3-00000000000000000000000000000000"
