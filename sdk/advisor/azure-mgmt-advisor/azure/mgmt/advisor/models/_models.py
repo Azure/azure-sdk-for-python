@@ -375,11 +375,20 @@ class ResourceMetadata(msrest.serialization.Model):
     :type resource_id: str
     :param source: Source from which recommendation is generated.
     :type source: str
+    :param action: The action to view resource.
+    :type action: dict[str, any]
+    :param singular: The singular user friendly name of resource type. eg: virtual machine.
+    :type singular: str
+    :param plural: The plural user friendly name of resource type. eg: virtual machines.
+    :type plural: str
     """
 
     _attribute_map = {
         'resource_id': {'key': 'resourceId', 'type': 'str'},
         'source': {'key': 'source', 'type': 'str'},
+        'action': {'key': 'action', 'type': '{object}'},
+        'singular': {'key': 'singular', 'type': 'str'},
+        'plural': {'key': 'plural', 'type': 'str'},
     }
 
     def __init__(
@@ -389,6 +398,9 @@ class ResourceMetadata(msrest.serialization.Model):
         super(ResourceMetadata, self).__init__(**kwargs)
         self.resource_id = kwargs.get('resource_id', None)
         self.source = kwargs.get('source', None)
+        self.action = kwargs.get('action', None)
+        self.singular = kwargs.get('singular', None)
+        self.plural = kwargs.get('plural', None)
 
 
 class ResourceRecommendationBase(Resource):
@@ -416,7 +428,7 @@ class ResourceRecommendationBase(Resource):
      recommendation.
     :type last_updated: ~datetime.datetime
     :param metadata: The recommendation metadata.
-    :type metadata: dict[str, object]
+    :type metadata: dict[str, any]
     :param recommendation_type_id: The recommendation-type GUID.
     :type recommendation_type_id: str
     :param risk: The potential risk of not implementing the recommendation. Possible values
@@ -430,6 +442,21 @@ class ResourceRecommendationBase(Resource):
     :type extended_properties: dict[str, str]
     :param resource_metadata: Metadata of resource that was assessed.
     :type resource_metadata: ~azure.mgmt.advisor.models.ResourceMetadata
+    :param description: The detailed description of recommendation.
+    :type description: str
+    :param label: The label of recommendation.
+    :type label: str
+    :param learn_more_link: The link to learn more about recommendation and generation logic.
+    :type learn_more_link: str
+    :param potential_benefits: The potential benefit of implementing recommendation.
+    :type potential_benefits: str
+    :param actions: The list of recommended actions to implement recommendation.
+    :type actions: list[dict[str, any]]
+    :param remediation: The automated way to apply recommendation.
+    :type remediation: dict[str, any]
+    :param exposed_metadata_properties: The recommendation metadata properties exposed to customer
+     to provide additional information.
+    :type exposed_metadata_properties: dict[str, any]
     """
 
     _validation = {
@@ -454,6 +481,13 @@ class ResourceRecommendationBase(Resource):
         'suppression_ids': {'key': 'properties.suppressionIds', 'type': '[str]'},
         'extended_properties': {'key': 'properties.extendedProperties', 'type': '{str}'},
         'resource_metadata': {'key': 'properties.resourceMetadata', 'type': 'ResourceMetadata'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'label': {'key': 'properties.label', 'type': 'str'},
+        'learn_more_link': {'key': 'properties.learnMoreLink', 'type': 'str'},
+        'potential_benefits': {'key': 'properties.potentialBenefits', 'type': 'str'},
+        'actions': {'key': 'properties.actions', 'type': '[{object}]'},
+        'remediation': {'key': 'properties.remediation', 'type': '{object}'},
+        'exposed_metadata_properties': {'key': 'properties.exposedMetadataProperties', 'type': '{object}'},
     }
 
     def __init__(
@@ -473,6 +507,13 @@ class ResourceRecommendationBase(Resource):
         self.suppression_ids = kwargs.get('suppression_ids', None)
         self.extended_properties = kwargs.get('extended_properties', None)
         self.resource_metadata = kwargs.get('resource_metadata', None)
+        self.description = kwargs.get('description', None)
+        self.label = kwargs.get('label', None)
+        self.learn_more_link = kwargs.get('learn_more_link', None)
+        self.potential_benefits = kwargs.get('potential_benefits', None)
+        self.actions = kwargs.get('actions', None)
+        self.remediation = kwargs.get('remediation', None)
+        self.exposed_metadata_properties = kwargs.get('exposed_metadata_properties', None)
 
 
 class ResourceRecommendationBaseListResult(msrest.serialization.Model):
