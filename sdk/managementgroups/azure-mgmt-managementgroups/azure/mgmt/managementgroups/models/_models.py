@@ -65,25 +65,18 @@ class AzureAsyncOperationResults(msrest.serialization.Model):
 class CheckNameAvailabilityRequest(msrest.serialization.Model):
     """Management group name availability check parameters.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :param name: the name to check for availability.
     :type name: str
-    :ivar type: fully qualified resource type which includes provider namespace. Default value:
-     "Microsoft.Management/managementGroups".
-    :vartype type: str
+    :param type: fully qualified resource type which includes provider namespace. The only
+     acceptable values to pass in are None and "Microsoft.Management/managementGroups". The default
+     value is None.
+    :type type: str
     """
-
-    _validation = {
-        'type': {'constant': True},
-    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
-
-    type = "Microsoft.Management/managementGroups"
 
     def __init__(
         self,
@@ -91,6 +84,7 @@ class CheckNameAvailabilityRequest(msrest.serialization.Model):
     ):
         super(CheckNameAvailabilityRequest, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
 
 
 class CheckNameAvailabilityResult(msrest.serialization.Model):
