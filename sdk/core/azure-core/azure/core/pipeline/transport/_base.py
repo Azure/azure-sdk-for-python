@@ -110,6 +110,16 @@ def _format_url_section(template, **kwargs):
             template = "/".join(components)
     # No URL sections left - returning None
 
+def _strip_and_combine_url_sections(base_section, stub_section, join_symbol):
+    # type: (str, str, str) -> str
+    stripped_base = base_section.rstrip(join_symbol)
+    stripped_stub = stub_section.lstrip(join_symbol)
+    joiner = ""
+    if stripped_base != base_section or stripped_stub != stub_section:
+        joiner = join_symbol
+    elif base_section and stub_section:
+        joiner = join_symbol
+    return stripped_base + joiner + stripped_stub
 
 def _urljoin(base_url, stub_url):
     # type: (str, str) -> str
@@ -121,7 +131,9 @@ def _urljoin(base_url, stub_url):
     :rtype: str
     """
     parsed = urlparse(base_url)
-    parsed = parsed._replace(path=parsed.path.rstrip("/") + "/" + stub_url)
+    stub_parsed = urlparse(stub_url)
+    parsed = parsed._replace(path=_strip_and_combine_url_sections(parsed.path, stub_parsed.path, "/"))
+    parsed = parsed._replace(query=_strip_and_combine_url_sections(parsed.query, stub_parsed.query, "&"))
     return parsed.geturl()
 
 class HttpTransport(
