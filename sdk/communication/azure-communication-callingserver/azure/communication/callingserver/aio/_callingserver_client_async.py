@@ -62,7 +62,7 @@ from .._converters import (
     HoldMeetingAudioWithCallLocatorRequestConverter,
     ResumeMeetingAudioWithCallLocatorRequestConverter
     )
-from .._shared.utils import get_authentication_policy, get_header_policy, parse_connection_str
+from .._shared.utils import get_authentication_policy, get_host_header_policy, parse_connection_str
 from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
@@ -104,7 +104,7 @@ class CallingServerClient:
         self._endpoint = endpoint
         self._callingserver_service_client = AzureCommunicationCallingServerService(
             self._endpoint,
-            headers_policy=get_header_policy(endpoint, credential),
+            headers_policy=get_host_header_policy(endpoint, credential),
             authentication_policy=get_authentication_policy(endpoint, credential, decode_url=True, is_async=True),
             sdk_moniker=SDK_MONIKER,
             **kwargs
