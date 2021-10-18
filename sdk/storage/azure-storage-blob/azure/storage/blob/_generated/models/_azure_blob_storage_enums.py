@@ -330,7 +330,7 @@ class StorageErrorCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SEQUENCE_NUMBER_CONDITION_NOT_MET = "SequenceNumberConditionNotMet"
     SEQUENCE_NUMBER_INCREMENT_TOO_LARGE = "SequenceNumberIncrementTooLarge"
     SNAPSHOT_COUNT_EXCEEDED = "SnapshotCountExceeded"
-    SNAPHOT_OPERATION_RATE_EXCEEDED = "SnaphotOperationRateExceeded"
+    SNAPSHOT_OPERATION_RATE_EXCEEDED = "SnapshotOperationRateExceeded"
     SNAPSHOTS_PRESENT = "SnapshotsPresent"
     SOURCE_CONDITION_NOT_MET = "SourceConditionNotMet"
     SYSTEM_IN_USE = "SystemInUse"

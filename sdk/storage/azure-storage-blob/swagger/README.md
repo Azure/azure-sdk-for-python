@@ -136,8 +136,6 @@ directive:
 - from: swagger-document
   where: $.definitions.BlobItemInternal
   transform: |
-    $.discriminator = "OrMetadata";
-    $.required = [ "OrMetadata" ];
     $.properties.OrMetadata = $.properties.ObjectReplicationMetadata;
     $.properties.OrMetadata["x-ms-client-name"] = "ObjectReplicationMetadata";
     delete $.properties.ObjectReplicationMetadata;
