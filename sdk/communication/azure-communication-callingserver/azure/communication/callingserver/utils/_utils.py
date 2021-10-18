@@ -4,7 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from urllib.parse import urlparse
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse # type: ignore
 import validators
 
 from azure.core.exceptions import (

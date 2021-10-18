@@ -121,7 +121,7 @@ def get_authentication_policy(
     raise TypeError("Unsupported credential: {}. Use an access token string to use HMACCredentialsPolicy"
                     "or a token credential from azure.identity".format(type(credential)))
 
-def get_header_policy(
+def get_host_header_policy(
         host, # type: str
         credential, # type: TokenCredential or str
 ):
