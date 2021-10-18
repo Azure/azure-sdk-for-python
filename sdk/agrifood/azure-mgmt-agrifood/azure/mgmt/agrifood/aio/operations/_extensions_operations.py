@@ -74,7 +74,7 @@ class ExtensionsOperations:
         path_format_arguments = {
             'extensionId': self._serialize.url("extension_id", extension_id, 'str'),
             'farmBeatsResourceName': self._serialize.url("farm_beats_resource_name", farm_beats_resource_name, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -137,7 +137,7 @@ class ExtensionsOperations:
         path_format_arguments = {
             'extensionId': self._serialize.url("extension_id", extension_id, 'str'),
             'farmBeatsResourceName': self._serialize.url("farm_beats_resource_name", farm_beats_resource_name, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -200,7 +200,7 @@ class ExtensionsOperations:
         path_format_arguments = {
             'extensionId': self._serialize.url("extension_id", extension_id, 'str'),
             'farmBeatsResourceName': self._serialize.url("farm_beats_resource_name", farm_beats_resource_name, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -263,7 +263,7 @@ class ExtensionsOperations:
         path_format_arguments = {
             'extensionId': self._serialize.url("extension_id", extension_id, 'str'),
             'farmBeatsResourceName': self._serialize.url("farm_beats_resource_name", farm_beats_resource_name, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -337,7 +337,7 @@ class ExtensionsOperations:
                 # Construct URL
                 url = self.list_by_farm_beats.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                     'farmBeatsResourceName': self._serialize.url("farm_beats_resource_name", farm_beats_resource_name, 'str'),
                 }
