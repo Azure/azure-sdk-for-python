@@ -82,10 +82,10 @@ interactions:
         devices directly to your Surface Pro 4 using the USB port, Mini DisplayPort,
         or Bluetooth. Or, connect everything to a Surface Dock (sold separately).
         With Surface Dock, you can switch between fully connected and fully mobile
-        with a single connector.\",\n      \"confidenceScore\": 0.46380000000000005,\n
-        \     \"id\": 64,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
-        \     \"metadata\": {\n        \"explicitlytaggedheading\": \"connect monitors,
-        accessories, and other devices\"\n      },\n      \"dialog\": {\n        \"isContextOnly\":
+        with a single connector.\",\n      \"confidenceScore\": 0.4067,\n      \"id\":
+        64,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
+        {\n        \"explicitlytaggedheading\": \"connect monitors, accessories, and
+        other devices\"\n      },\n      \"dialog\": {\n        \"isContextOnly\":
         false,\n        \"prompts\": [\n          {\n            \"displayOrder\":
         0,\n            \"qnaId\": 65,\n            \"displayText\": \"Set up your
         workspace with Surface Dock\"\n          },\n          {\n            \"displayOrder\":
@@ -99,27 +99,27 @@ interactions:
         is for video only. Audio will play from your Surface speakers unless you\u2019ve
         connected external speakers. For more info about this, see [Surface sound,](http://www.microsoft.com/surface/support/hardware-and-drivers/sound-volume-and-speakers)
         [volume, and audio accessories](http://www.microsoft.com/surface/support/hardware-and-drivers/sound-volume-and-speakers)
-        on Surface.com.\",\n      \"confidenceScore\": 0.4307,\n      \"id\": 68,\n
+        on Surface.com.\",\n      \"confidenceScore\": 0.3392,\n      \"id\": 68,\n
         \     \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
         {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
         []\n      }\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - af2f063d-0c1a-4be9-8022-4748b0b968f4
+      - d0dc208c-60f1-4669-bddb-4522e3949ecf
       content-length:
       - '7136'
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
-      - CognitiveServices.TextAnalytics.QuestionAnsweringTransaction=1
+      - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
       date:
-      - Tue, 21 Sep 2021 21:06:29 GMT
+      - Thu, 30 Sep 2021 15:52:34 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '1908'
+      - '1273'
     status:
       code: 200
       message: OK

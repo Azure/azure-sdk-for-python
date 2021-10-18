@@ -8,9 +8,10 @@ from azure.communication.callingserver.aio import CallingServerClient, CallConne
 from azure.communication.callingserver import (
     CommunicationUserIdentifier,
     CreateCallOptions,
-    MediaType,
-    EventSubscriptionType,
-    ServerCallLocator
+    CallMediaType,
+    CallingEventSubscriptionType,
+    ServerCallLocator,
+    GroupCallLocator
     )
 from utils._live_test_utils import CallingServerLiveTestUtils
 
@@ -40,20 +41,20 @@ class CallingServerLiveTestUtilsAsync:
             # join from_participant to Server Call
             from_options = CreateCallOptions(
                 callback_uri=call_back_uri,
-                requested_media_types=[MediaType.AUDIO],
-                requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED]
+                requested_media_types=[CallMediaType.AUDIO],
+                requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED]
             )
-            from_call_connection = await callingserver_client.join_call(ServerCallLocator(group_id), from_participant, from_options)
+            from_call_connection = await callingserver_client.join_call(GroupCallLocator(group_id), from_participant, from_options)
             CallingServerLiveTestUtilsAsync.validate_callconnection_Async(from_call_connection)
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
 
             # join to_participant to Server Call
             to_options = CreateCallOptions(
                 callback_uri=call_back_uri,
-                requested_media_types=[MediaType.AUDIO],
-                requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED]
+                requested_media_types=[CallMediaType.AUDIO],
+                requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED]
             )
-            to_call_connection = await callingserver_client.join_call(ServerCallLocator(group_id), to_participant, to_options)
+            to_call_connection = await callingserver_client.join_call(GroupCallLocator(group_id), to_participant, to_options)
             CallingServerLiveTestUtilsAsync.validate_callconnection_Async(from_call_connection)
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
 

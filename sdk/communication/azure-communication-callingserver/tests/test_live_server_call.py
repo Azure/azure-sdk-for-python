@@ -10,7 +10,7 @@ from azure.communication.callingserver import (
     CallingServerClient,
     PlayAudioOptions,
     CommunicationUserIdentifier,
-    ServerCallLocator
+    GroupCallLocator
     )
 from azure.communication.callingserver._shared.utils import parse_connection_str
 from azure.identity import DefaultAzureCredential
@@ -63,7 +63,6 @@ class ServerCallTest(CommunicationTestCase):
             http_logging_policy=get_http_logging_policy()
         )
 
-    @pytest.mark.skip(reason="Skip because the server side bits not ready")
     def test_join_play_cancel_hangup_scenario(self):
         # create GroupCalls
         group_id = CallingServerLiveTestUtils.get_group_id("test_join_play_cancel_hangup_scenario")
@@ -81,9 +80,6 @@ class ServerCallTest(CommunicationTestCase):
             CONST.CALLBACK_URI
             )
 
-        # initialize a Server Call
-        server_call = self.callingserver_client.initialize_server_call(group_id)
-
         try:
             # Play Audio
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
@@ -94,7 +90,8 @@ class ServerCallTest(CommunicationTestCase):
                 callback_uri = CONST.AppCallbackUrl,
                 operation_context = OperationContext
                 )
-            play_audio_result = server_call.play_audio(
+            play_audio_result = self.callingserver_client.play_audio(
+                GroupCallLocator(group_id),
                 CONST.AudioFileUrl,
                 options
                 )
@@ -126,16 +123,15 @@ class ServerCallTest(CommunicationTestCase):
             CONST.CALLBACK_URI
             )
 
-        # initialize a Server Call
-        server_call = self.callingserver_client.initialize_server_call(group_id)
-
         try:
             # Add Participant
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
             OperationContext = str(uuid.uuid4())
-            add_participant_result = server_call.add_participant(
-                participant=CommunicationUserIdentifier(CallingServerLiveTestUtils.get_fixed_user_id("0000000c-9f68-6fd6-e57b-254822002248")),
-                callback_uri=None,
+            added_participant = CallingServerLiveTestUtils.get_fixed_user_id("0000000d-06a7-7ed4-bf75-25482200020e")
+            add_participant_result = self.callingserver_client.add_participant(
+                call_locator=GroupCallLocator(group_id),
+                participant=CommunicationUserIdentifier(added_participant),
+                callback_uri=CONST.AppCallbackUrl,
                 alternate_caller_id=None,
                 operation_context=OperationContext
                 )
@@ -144,13 +140,15 @@ class ServerCallTest(CommunicationTestCase):
             # Remove Participant
             participant_id=add_participant_result.participant_id
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
-            server_call.remove_participant(participant_id)
+            self.callingserver_client.remove_participant(
+                GroupCallLocator(group_id),
+                CommunicationUserIdentifier(added_participant)
+                )
         finally:
             # Clean up/Hang up
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
             CallingServerLiveTestUtils.clean_up_connections(call_connections)
 
-    @pytest.mark.skip(reason="Skip because the server side bits not ready")
     def test_run_all_client_functions(self):
         group_id = CallingServerLiveTestUtils.get_group_id("test_run_all_client_functions")
 
@@ -158,7 +156,7 @@ class ServerCallTest(CommunicationTestCase):
             self.recording_processors.extend([
             RequestReplacerProcessor(keys=group_id,
                 replacement=CallingServerLiveTestUtils.get_playback_group_id("test_run_all_client_functions"))])
-        
+
         call_connections = CallingServerLiveTestUtils.create_group_calls(
             self.callingserver_client,
             group_id,
@@ -168,7 +166,7 @@ class ServerCallTest(CommunicationTestCase):
             )
 
         try:
-            start_call_recording_result = self.callingserver_client.start_recording(ServerCallLocator(group_id), CONST.CALLBACK_URI)
+            start_call_recording_result = self.callingserver_client.start_recording(GroupCallLocator(group_id), CONST.CALLBACK_URI)
             recording_id = start_call_recording_result.recording_id
 
             assert recording_id is not None
@@ -194,12 +192,11 @@ class ServerCallTest(CommunicationTestCase):
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
             CallingServerLiveTestUtils.clean_up_connections(call_connections)
 
-    @pytest.mark.skip(reason="Skip because the server side bits not ready")
     def test_start_recording_fails(self):
         invalid_server_call_id = "aHR0cHM6Ly9jb252LXVzd2UtMDkuY29udi5za3lwZS5jb20vY29udi9EZVF2WEJGVVlFV1NNZkFXYno2azN3P2k9MTEmZT02Mzc1NzIyMjk0Mjc0NTI4Nzk="
 
         with self.assertRaises(HttpResponseError):
-            self.callingserver_client.start_recording(ServerCallLocator(invalid_server_call_id), CONST.CALLBACK_URI)
+            self.callingserver_client.start_recording(GroupCallLocator(invalid_server_call_id), CONST.CALLBACK_URI)
 
     @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
     def test_delete_success(self):

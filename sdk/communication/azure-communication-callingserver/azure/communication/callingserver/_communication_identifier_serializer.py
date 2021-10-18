@@ -46,7 +46,7 @@ def deserialize_identifier(identifier_model):
     raw_id = identifier_model.raw_id
 
     if identifier_model.communication_user:
-        return CommunicationUserIdentifier(raw_id, raw_id=raw_id)
+        return CommunicationUserIdentifier(identifier_model.communication_user.id, raw_id=raw_id)
     if identifier_model.phone_number:
         return PhoneNumberIdentifier(identifier_model.phone_number.value, raw_id=raw_id)
     if identifier_model.microsoft_teams_user:

@@ -20,7 +20,7 @@ from azure.core.rest import HttpRequest
 from azure.core.pipeline.policies import (
     CustomHookPolicy, UserAgentPolicy, SansIOHTTPPolicy, RetryPolicy
 )
-from utils import is_rest
+from azure.core.pipeline._tools import is_rest
 from rest_client import TestRestClient
 from azure.core import PipelineClient
 

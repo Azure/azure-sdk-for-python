@@ -8,12 +8,12 @@ interactions:
       your Surface Pro 4 power supply to charge other devices, like a phone, while
       your Surface charges. The USB port on the power supply is only for charging,
       not for data transfer. If you want to use a USB device, plug it into the USB
-      port on your Surface."}], "stringIndexType": "TextElements_v8"}'
+      port on your Surface."}], "language": "en", "stringIndexType": "UnicodeCodePoint"}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '688'
+      - '707'
       Content-Type:
       - application/json
       User-Agent:
@@ -43,14 +43,14 @@ interactions:
         \       \"confidenceScore\": 0.62411773,\n        \"offset\": 11,\n        \"length\":
         7\n      },\n      \"offset\": 110,\n      \"length\": 135\n    }\n  ]\n}"
     headers:
-      apim-request-id: 5f3c0c70-7d76-41fe-84fe-39b61be4f30c
+      apim-request-id: cbb90985-1d4b-4b29-a55e-e2a6bb2ff93b
       content-length: '1481'
       content-type: application/json; charset=utf-8
-      csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
-      date: Tue, 21 Sep 2021 21:07:01 GMT
+      csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=2
+      date: Thu, 30 Sep 2021 15:52:35 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '210'
+      x-envoy-upstream-service-time: '175'
     status:
       code: 200
       message: OK

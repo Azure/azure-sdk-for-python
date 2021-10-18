@@ -8,12 +8,12 @@ interactions:
       your Surface Pro 4 power supply to charge other devices, like a phone, while
       your Surface charges. The USB port on the power supply is only for charging,
       not for data transfer. If you want to use a USB device, plug it into the USB
-      port on your Surface."}], "language": "en"}'
+      port on your Surface."}], "language": "en", "stringIndexType": "UnicodeCodePoint"}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '668'
+      - '707'
       Content-Type:
       - application/json
       User-Agent:
@@ -26,7 +26,7 @@ interactions:
         It takes two to four hours to charge the Surface Pro 4 battery fully from
         an empty state. It can take longer if you\u2019re using your Surface for power-intensive
         activities like gaming or video streaming while you\u2019re charging it.\",\n
-        \     \"confidenceScore\": 0.9298818111419678,\n      \"id\": \"1\",\n      \"answerSpan\":
+        \     \"confidenceScore\": 0.9298818707466125,\n      \"id\": \"1\",\n      \"answerSpan\":
         {\n        \"text\": \"two to four hours\",\n        \"confidenceScore\":
         0.98579097,\n        \"offset\": 28,\n        \"length\": 18\n      },\n      \"offset\":
         0,\n      \"length\": 245\n    },\n    {\n      \"answer\": \"It takes two
@@ -43,14 +43,14 @@ interactions:
         \       \"confidenceScore\": 0.62411773,\n        \"offset\": 11,\n        \"length\":
         7\n      },\n      \"offset\": 110,\n      \"length\": 135\n    }\n  ]\n}"
     headers:
-      apim-request-id: 75d29f93-387d-42b6-92e9-d454c3b09683
-      content-length: '1481'
+      apim-request-id: 5bd3db5f-1a20-4d42-8720-772e5f694ccd
+      content-length: '1478'
       content-type: application/json; charset=utf-8
-      csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
-      date: Tue, 21 Sep 2021 21:07:01 GMT
+      csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=2
+      date: Thu, 30 Sep 2021 15:52:36 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '228'
+      x-envoy-upstream-service-time: '633'
     status:
       code: 200
       message: OK

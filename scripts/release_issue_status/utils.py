@@ -10,6 +10,8 @@ from bs4 import BeautifulSoup
 from msrest.authentication import BasicAuthentication
 import requests
 
+_FILE_OUT = 'published_issues_python.csv'
+
 logging.basicConfig(level=logging.INFO,
                     format='[auto-reply  log] - %(funcName)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 
@@ -186,16 +188,22 @@ def auto_close_issue(sdk_repo, item):
     issue_number, package_name = item.issue_object.number, item.package
     issue_info = sdk_repo.get_issue(number=issue_number)
     issue_author = issue_info.user.login
-    last_comment = list(issue_info.get_comments())[-1]
-    last_comment_date = last_comment.created_at
+    issue_created_date = issue_info.created_at
     last_version, last_time = _get_last_released_date(package_name)
-    if last_time and last_time > last_comment_date:
+    if last_time and last_time > issue_created_date and 'auto-closed' not in item.labels:
         comment = f'Hi @{issue_author}, pypi link: https://pypi.org/project/{package_name}/{last_version}/'
         issue_info.create_comment(body=comment)
         issue_info.edit(state='closed')
         item.issue_object.add_to_labels('auto-closed')
         logging.info(f"issue number：{issue_number} has been closed!")
-
+     
+        created_at = issue_info.created_at.strftime('%Y-%m-%d')
+        closed_at = issue_info.closed_at.strftime('%Y-%m-%d')
+        assignee = issue_info.assignee.login
+        link = issue_info.html_url
+        closed_issue_info = f'{package_name},{assignee},{created_at},{closed_at},{link}\n'
+        with open(_FILE_OUT, 'a+') as file_out:
+            file_out.write(closed_issue_info)
 
 def _get_last_released_date(package_name):
     pypi_link = f'https://pypi.org/project/{package_name}/#history'

@@ -49,7 +49,7 @@ class BodyReplacerProcessor(RecordingProcessor):
             response['body']['string'] = self._replace_keys(response['body']['string'])
 
         return response
-    
+
     def _replace_keys(self, body):
         def _replace_recursively(dictionary):
             for key in dictionary:

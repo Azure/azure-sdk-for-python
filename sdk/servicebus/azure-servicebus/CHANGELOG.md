@@ -1,14 +1,21 @@
 # Release History
 
-## 7.3.4 (Unreleased)
+## 7.3.5 (Unreleased)
 
 ### Features Added
 
-### Breaking Changes
+- Added support to create and update queues and topics of large message size to `ServiceBusAdministrationClient`. This feature is only available for Service Bus of Premium Tier.
+  - Methods`create_queue`, `create_topic`, `update_queue`, `update_topic` on `ServiceBusAdministrationClient` now take a new keyword argument `max_message_size_in_kilobytes`.
+  - `QueueProperties` and `TopicProperties` now have a new instance variable `max_message_size_in_kilobytes`.
 
-### Bugs Fixed
+## 7.3.4 (2021-10-06)
 
 ### Other Changes
+
+- Updated uAMQP dependency to 1.4.3.
+  - Added support for Python 3.10.
+  - Fixed memory leak in win32 socketio and tlsio (issue #19777).
+  - Fixed memory leak in the process of converting AMQPValue into string (issue #19777).
 
 ## 7.3.3 (2021-09-08)
 

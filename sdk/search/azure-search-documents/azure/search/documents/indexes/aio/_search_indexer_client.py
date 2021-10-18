@@ -115,6 +115,11 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         :param indexer: The definition of the indexer to create or update.
         :type indexer: ~azure.search.documents.indexes.models.SearchIndexer
+        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements.
+        :paramtype skip_indexer_reset_requirement_for_cache: bool
+        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
+         detection.
+        :paramtype disable_cache_reprocessing_change_detection: bool
         :return: The created SearchIndexer
         :rtype: ~azure.search.documents.indexes.models.SearchIndexer
         """
@@ -324,6 +329,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
+        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements.
+        :type skip_indexer_reset_requirement_for_cache: bool
         :return: The created SearchIndexerDataSourceConnection
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         """
@@ -571,6 +578,11 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :type skillset: :class:`~azure.search.documents.indexes.models.SearchIndexerSkillset`
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
+        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements.
+        :paramtype skip_indexer_reset_requirement_for_cache: bool
+        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
+         detection.
+        :paramtype disable_cache_reprocessing_change_detection: bool
         :return: The created or updated SearchIndexerSkillset
         :rtype: :class:`~azure.search.documents.indexes.models.SearchIndexerSkillset`
 

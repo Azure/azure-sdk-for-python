@@ -36,12 +36,12 @@ class ContentDownloadTests(CommunicationTestCase):
         metadata = stream.getvalue()
         self._verify_metadata(metadata)
 
-    @pytest.mark.skip(reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
+    @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
     def test_download_content_to_stream_on_chunks_parallel(self):
         stream = self._execute_test(
                 ParallelDownloadOptions(
                     max_concurrency=3,
-                    block_size=100)
+                    block_size=400)
             )
         metadata = stream.getvalue()
         self._verify_metadata(metadata)
@@ -62,4 +62,4 @@ class ContentDownloadTests(CommunicationTestCase):
 
     def _verify_metadata(self, metadata):
         self.assertIsNotNone(metadata)
-        self.assertTrue(metadata.__contains__(bytes(self._document_id, 'utf-8')))
+        self.assertTrue(metadata.__contains__(bytes(self._document_id.encode('utf-8'))))

@@ -1,8 +1,16 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b4 (Unreleased)
 
 ### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b3 (2021-10-05)
 
 ### Breaking Changes
 
@@ -17,11 +25,9 @@
 - `location` instance variable in `SchemaProperties` has been removed.
 - `Schema` and `SchemaProperties` no longer have positional parameters, as they will not be constructed by the user.
 
-### Bugs Fixed
-
 ### Other Changes
 
-- Updated azure-core dependency to 1.17.1.
+- Updated azure-core dependency to 1.19.0.
 - Removed caching support of registered schemas so requests are sent to the service to register schemas, get schema properties, and get schemas.
 
 ## 1.0.0b2 (2021-08-17)

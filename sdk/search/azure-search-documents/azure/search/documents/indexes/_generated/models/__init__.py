@@ -35,6 +35,7 @@ try:
     from ._models_py3 import DistanceScoringFunction
     from ._models_py3 import DistanceScoringParameters
     from ._models_py3 import DocumentExtractionSkill
+    from ._models_py3 import DocumentKeysOrIds
     from ._models_py3 import EdgeNGramTokenFilter
     from ._models_py3 import EdgeNGramTokenFilterV2
     from ._models_py3 import EdgeNGramTokenizer
@@ -87,7 +88,6 @@ try:
     from ._models_py3 import OutputFieldMappingEntry
     from ._models_py3 import PIIDetectionSkill
     from ._models_py3 import PathHierarchyTokenizerV2
-    from ._models_py3 import Paths1Cj7DxmIndexersIndexernameSearchResetdocsPostRequestbodyContentApplicationJsonSchema
     from ._models_py3 import PatternAnalyzer
     from ._models_py3 import PatternCaptureTokenFilter
     from ._models_py3 import PatternReplaceCharFilter
@@ -130,6 +130,7 @@ try:
     from ._models_py3 import ShaperSkill
     from ._models_py3 import ShingleTokenFilter
     from ._models_py3 import Similarity
+    from ._models_py3 import SkillNames
     from ._models_py3 import SnowballTokenFilter
     from ._models_py3 import SoftDeleteColumnDeletionDetectionPolicy
     from ._models_py3 import SplitSkill
@@ -180,6 +181,7 @@ except (SyntaxError, ImportError):
     from ._models import DistanceScoringFunction  # type: ignore
     from ._models import DistanceScoringParameters  # type: ignore
     from ._models import DocumentExtractionSkill  # type: ignore
+    from ._models import DocumentKeysOrIds  # type: ignore
     from ._models import EdgeNGramTokenFilter  # type: ignore
     from ._models import EdgeNGramTokenFilterV2  # type: ignore
     from ._models import EdgeNGramTokenizer  # type: ignore
@@ -232,7 +234,6 @@ except (SyntaxError, ImportError):
     from ._models import OutputFieldMappingEntry  # type: ignore
     from ._models import PIIDetectionSkill  # type: ignore
     from ._models import PathHierarchyTokenizerV2  # type: ignore
-    from ._models import Paths1Cj7DxmIndexersIndexernameSearchResetdocsPostRequestbodyContentApplicationJsonSchema  # type: ignore
     from ._models import PatternAnalyzer  # type: ignore
     from ._models import PatternCaptureTokenFilter  # type: ignore
     from ._models import PatternReplaceCharFilter  # type: ignore
@@ -275,6 +276,7 @@ except (SyntaxError, ImportError):
     from ._models import ShaperSkill  # type: ignore
     from ._models import ShingleTokenFilter  # type: ignore
     from ._models import Similarity  # type: ignore
+    from ._models import SkillNames  # type: ignore
     from ._models import SnowballTokenFilter  # type: ignore
     from ._models import SoftDeleteColumnDeletionDetectionPolicy  # type: ignore
     from ._models import SplitSkill  # type: ignore
@@ -371,6 +373,7 @@ __all__ = [
     'DistanceScoringFunction',
     'DistanceScoringParameters',
     'DocumentExtractionSkill',
+    'DocumentKeysOrIds',
     'EdgeNGramTokenFilter',
     'EdgeNGramTokenFilterV2',
     'EdgeNGramTokenizer',
@@ -423,7 +426,6 @@ __all__ = [
     'OutputFieldMappingEntry',
     'PIIDetectionSkill',
     'PathHierarchyTokenizerV2',
-    'Paths1Cj7DxmIndexersIndexernameSearchResetdocsPostRequestbodyContentApplicationJsonSchema',
     'PatternAnalyzer',
     'PatternCaptureTokenFilter',
     'PatternReplaceCharFilter',
@@ -466,6 +468,7 @@ __all__ = [
     'ShaperSkill',
     'ShingleTokenFilter',
     'Similarity',
+    'SkillNames',
     'SnowballTokenFilter',
     'SoftDeleteColumnDeletionDetectionPolicy',
     'SplitSkill',

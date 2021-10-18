@@ -8,17 +8,16 @@ from ._version import VERSION
 
 from ._call_connection import CallConnection
 from ._callingserver_client import CallingServerClient
-from ._generated.models import (AddParticipantResult,
-                                CancelAllMediaOperationsRequest,
-                                CancelAllMediaOperationsResult,
-                                CreateCallRequest, PhoneNumberIdentifierModel,
-                                PlayAudioRequest, PlayAudioResult,
-                                MediaType, EventSubscriptionType,
-                                OperationStatus, CallConnectionStateChangedEvent,
+from ._generated.models import (AudioRoutingMode, AddParticipantResult, CallConnectionProperties,
+                                CallRejectReason, CreateCallRequest, PhoneNumberIdentifierModel,
+                                PlayAudioRequest, PlayAudioResult, CallParticipant,
+                                CallMediaType, CallingEventSubscriptionType,
+                                CallingOperationStatus, CallConnectionStateChangedEvent,
                                 ToneReceivedEvent, ToneInfo,
                                 PlayAudioResultEvent, CommunicationIdentifierModel,
                                 CommunicationUserIdentifierModel, AddParticipantResultEvent,
-                                CallConnectionState, ToneValue)
+                                CallConnectionState, ToneValue, AnswerCallResult, AudioRoutingGroupResult,
+                                CreateAudioRoutingGroupResult)
 from ._models import (
     CreateCallOptions,
     JoinCallOptions,
@@ -31,19 +30,21 @@ from ._models import (
 from ._shared.models import CommunicationIdentifier, CommunicationUserIdentifier, PhoneNumberIdentifier
 
 __all__ = [
+    'AudioRoutingMode',
     'AddParticipantResult',
-    'CancelAllMediaOperationsRequest',
+    'CallParticipant',
+    'CallRejectReason',
+    'CallConnectionProperties',
     'CallConnection',
     'CallingServerClient',
-    'CancelAllMediaOperationsResult',
     'CommunicationIdentifier',
     'CommunicationUserIdentifier',
     'CreateCallOptions',
     'CreateCallRequest',
-    'EventSubscriptionType',
+    'CallingEventSubscriptionType',
     'JoinCallOptions',
-    'MediaType',
-    'OperationStatus',
+    'CallMediaType',
+    'CallingOperationStatus',
     'PhoneNumberIdentifier',
     'PhoneNumberIdentifierModel',
     'PlayAudioOptions',
@@ -61,6 +62,9 @@ __all__ = [
     'AddParticipantResultEvent',
     'CallConnectionState',
     'ToneValue',
-    'CallingServerEventType'
+    'CallingServerEventType',
+    'AnswerCallResult',
+    'AudioRoutingGroupResult',
+    'CreateAudioRoutingGroupResult'
 ]
 __version__ = VERSION

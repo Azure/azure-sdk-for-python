@@ -8,7 +8,7 @@ interactions:
       your Surface Pro 4 power supply to charge other devices, like a phone, while
       your Surface charges. The USB port on the power supply is only for charging,
       not for data transfer. If you want to use a USB device, plug it into the USB
-      port on your Surface."}], "stringIndexType": "TextElements_v8"}'
+      port on your Surface."}], "language": "en", "stringIndexType": "UnicodeCodePoint"}'
     headers:
       Accept:
       - application/json
@@ -17,7 +17,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '688'
+      - '707'
       Content-Type:
       - application/json
       User-Agent:
@@ -44,25 +44,25 @@ interactions:
         using your Surface for power-intensive activities like gaming or video streaming
         while you\u2019re charging it.\",\n      \"confidenceScore\": 0.05503516271710396,\n
         \     \"id\": \"0\",\n      \"answerSpan\": {\n        \"text\": \"longer\",\n
-        \       \"confidenceScore\": 0.624118,\n        \"offset\": 11,\n        \"length\":
+        \       \"confidenceScore\": 0.62411773,\n        \"offset\": 11,\n        \"length\":
         7\n      },\n      \"offset\": 110,\n      \"length\": 135\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - 16114d30-1c1d-48e1-a023-4d4507a0d97a
+      - f0c97e63-de33-41db-bebd-3a34cc810fad
       content-length:
-      - '1479'
+      - '1481'
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
-      - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
+      - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=2
       date:
-      - Tue, 21 Sep 2021 21:06:57 GMT
+      - Thu, 30 Sep 2021 15:52:34 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '425'
+      - '255'
     status:
       code: 200
       message: OK

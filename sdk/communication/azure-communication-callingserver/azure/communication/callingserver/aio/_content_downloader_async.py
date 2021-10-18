@@ -4,7 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import IO, TYPE_CHECKING
+# pylint: disable=unsubscriptable-object
+# disabled unsubscriptable-object because of pylint bug referenced here:
+# https://github.com/PyCQA/pylint/issues/3882
+
+from typing import Any, IO, Optional, TYPE_CHECKING
 from urllib.parse import urlparse
 
 from azure.core.exceptions import HttpResponseError, map_error
@@ -14,13 +18,13 @@ from ..utils._utils import CallingServerUtils
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports,unsubscriptable-object
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
+    from typing import Callable, Dict, Generic, TypeVar
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse],
         T, Dict[str, Any]], Any]]
 
-class ContentDownloader():
+class ContentDownloader:
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
@@ -29,9 +33,9 @@ class ContentDownloader():
 
     async def download(
         self,
-        content_url, #type: str
-        http_range=None, #type: Optional[str]
-        **kwargs #type: Any
+        content_url: str,
+        http_range: Optional[str] = None,
+        **kwargs: Any
     ) -> IO:
         """The Download operation downloads content.
         :param content_url: The URL where the content is located

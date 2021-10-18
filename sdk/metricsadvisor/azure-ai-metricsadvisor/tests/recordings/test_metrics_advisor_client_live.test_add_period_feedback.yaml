@@ -1,43 +1,43 @@
 interactions:
 - request:
     body: '{"feedbackType": "Period", "metricId": "metric_id", "dimensionFilter":
-      {"dimension": {"dimension_name": "Los Angeles"}}, "value": {"periodType": "AssignValue",
-      "periodValue": 2}}'
+      {"dimension": {"category": "Shoes Handbags & Sunglasses"}}, "value": {"periodType":
+      "AssignValue", "periodValue": 2}}'
     headers:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       Content-Length:
-      - '195'
+      - '215'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b5 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric
+    uri: https://ga-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 8c63f5ec-6279-4f15-aa5a-3631f517ae83
+      - 61af101a-9732-44b3-91ef-41a9c9c4078d
       content-length:
       - '0'
       date:
-      - Fri, 11 Jun 2021 23:44:58 GMT
+      - Wed, 29 Sep 2021 19:38:36 GMT
       location:
-      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/0b26969b-aeba-4293-99a9-169beda87075
+      - https://ga-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/60b0b538-47e2-4fdb-a8d4-242ab3011d82
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '299'
+      - '573'
       x-request-id:
-      - 8c63f5ec-6279-4f15-aa5a-3631f517ae83
+      - 61af101a-9732-44b3-91ef-41a9c9c4078d
     status:
       code: 201
       message: Created

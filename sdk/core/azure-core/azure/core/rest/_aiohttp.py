@@ -28,8 +28,9 @@ import asyncio
 from itertools import groupby
 from typing import AsyncIterator
 from multidict import CIMultiDict
-from ._http_response_impl_async import AsyncHttpResponseImpl
+from ._http_response_impl_async import AsyncHttpResponseImpl, AsyncHttpResponseBackcompatMixin
 from ..pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
+from ..utils._pipeline_transport_rest_shared import _pad_attr_name, _aiohttp_body_helper
 
 class _ItemsView(collections.abc.ItemsView):
     def __init__(self, ref):
@@ -114,7 +115,34 @@ class _CIMultiDict(CIMultiDict):
             values = ", ".join(values)
         return values or default
 
-class RestAioHttpTransportResponse(AsyncHttpResponseImpl):
+class _RestAioHttpTransportResponseBackcompatMixin(AsyncHttpResponseBackcompatMixin):
+    """Backcompat mixin for aiohttp responses.
+
+    Need to add it's own mixin because it has function load_body, which other
+    transport responses don't have, and also because we need to synchronously
+    decompress the body if users call .body()
+    """
+
+    def body(self) -> bytes:
+        """Return the whole body as bytes in memory.
+
+        Have to modify the default behavior here. In AioHttp, we do decompression
+        when accessing the body method. The behavior here is the same as if the
+        caller did an async read of the response first. But for backcompat reasons,
+        we need to support this decompression within the synchronous body method.
+        """
+        return _aiohttp_body_helper(self)
+
+    async def _load_body(self) -> None:
+        """Load in memory the body, so it could be accessible from sync methods."""
+        self._content = await self.read()  # type: ignore
+
+    def __getattr__(self, attr):
+        backcompat_attrs = ["load_body"]
+        attr = _pad_attr_name(attr, backcompat_attrs)
+        return super().__getattr__(attr)
+
+class RestAioHttpTransportResponse(AsyncHttpResponseImpl, _RestAioHttpTransportResponseBackcompatMixin):
     def __init__(
         self,
         *,
@@ -134,6 +162,7 @@ class RestAioHttpTransportResponse(AsyncHttpResponseImpl):
             **kwargs
         )
         self._decompress = decompress
+        self._decompressed_content = None
 
     def __getstate__(self):
         state = self.__dict__.copy()
@@ -141,6 +170,18 @@ class RestAioHttpTransportResponse(AsyncHttpResponseImpl):
         state['_internal_response'] = None  # aiohttp response are not pickable (see headers comments)
         state['headers'] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
         return state
+
+    async def read(self) -> bytes:
+        """Read the response's bytes into memory.
+
+        :return: The response's bytes
+        :rtype: bytes
+        """
+        if not self._content:
+            self._stream_download_check()
+            self._content = await self._internal_response.read()
+        await self._set_read_checks()
+        return _aiohttp_body_helper(self)
 
     async def close(self) -> None:
         """Close the response.
