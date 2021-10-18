@@ -87,7 +87,7 @@ class ManagementConfigurationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CodeMessageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ManagementConfigurationPropertiesList', pipeline_response)
@@ -158,7 +158,7 @@ class ManagementConfigurationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CodeMessageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ManagementConfiguration', pipeline_response)
@@ -221,7 +221,7 @@ class ManagementConfigurationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CodeMessageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -281,7 +281,7 @@ class ManagementConfigurationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CodeMessageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ManagementConfiguration', pipeline_response)

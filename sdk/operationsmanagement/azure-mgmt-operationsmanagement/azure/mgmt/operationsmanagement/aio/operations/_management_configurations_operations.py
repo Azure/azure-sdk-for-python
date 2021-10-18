@@ -42,7 +42,7 @@ class ManagementConfigurationsOperations:
 
     async def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagementConfigurationPropertiesList":
         """Retrieves the ManagementConfigurations list for the subscription.
 
@@ -82,7 +82,7 @@ class ManagementConfigurationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CodeMessageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ManagementConfigurationPropertiesList', pipeline_response)
@@ -98,7 +98,7 @@ class ManagementConfigurationsOperations:
         resource_group_name: str,
         management_configuration_name: str,
         parameters: "_models.ManagementConfiguration",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagementConfiguration":
         """Create/Update ManagementConfiguration.
 
@@ -152,7 +152,7 @@ class ManagementConfigurationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CodeMessageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ManagementConfiguration', pipeline_response)
@@ -167,7 +167,7 @@ class ManagementConfigurationsOperations:
         self,
         resource_group_name: str,
         management_configuration_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the ManagementConfiguration.
 
@@ -214,7 +214,7 @@ class ManagementConfigurationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CodeMessageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -226,7 +226,7 @@ class ManagementConfigurationsOperations:
         self,
         resource_group_name: str,
         management_configuration_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagementConfiguration":
         """Retrieve ManagementConfiguration.
 
@@ -273,7 +273,7 @@ class ManagementConfigurationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CodeMessageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ManagementConfiguration', pipeline_response)
