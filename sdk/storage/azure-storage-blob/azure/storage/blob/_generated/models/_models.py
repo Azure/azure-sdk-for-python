@@ -259,10 +259,17 @@ class BlobItemInternal(msrest.serialization.Model):
     :type metadata: ~azure.storage.blob.models.BlobMetadata
     :param blob_tags: Blob tags.
     :type blob_tags: ~azure.storage.blob.models.BlobTags
+<<<<<<< HEAD
     :param object_replication_metadata: Dictionary of :code:`<string>`.
     :type object_replication_metadata: dict[str, str]
     :param has_versions_only:
     :type has_versions_only: bool
+=======
+    :param has_versions_only:
+    :type has_versions_only: bool
+    :param object_replication_metadata: Dictionary of :code:`<string>`.
+    :type object_replication_metadata: dict[str, str]
+>>>>>>> 6482c48565 (fixed or issue)
     """
 
     _validation = {
