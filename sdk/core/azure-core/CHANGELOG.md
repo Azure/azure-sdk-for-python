@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 - respect text encoding specified in argument (thanks to @ryohji for the contribution)  #20796
+- Fix "coroutine x.read() was never awaited" warning from `ContentDecodePolicy`  #21318
 
 ### Other Changes
 
