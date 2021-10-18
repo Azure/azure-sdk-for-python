@@ -28,6 +28,7 @@ This module is the requests implementation of Pipeline ABC
 """
 from __future__ import absolute_import  # we have a "requests" module that conflicts with "requests" on Py2.7
 import json
+import inspect
 import logging
 import os
 import platform
@@ -617,10 +618,10 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
             mime_type = "application/json"
 
         # Rely on transport implementation to give me "text()" decoded correctly
-        if hasattr(response, "read"):
+        if hasattr(response, "read") and not inspect.iscoroutinefunction(response.read):
             # since users can call deserialize_from_http_generics by themselves
             # we want to make sure our new responses are read before we try to
-            # deserialize
+            # deserialize. Only read sync responses since we're in a sync function
             response.read()
         return cls.deserialize_from_text(response.text(encoding), mime_type, response=response)
 
