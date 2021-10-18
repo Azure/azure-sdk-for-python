@@ -49,21 +49,18 @@ class LogsQueryClient(object):
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword endpoint: The endpoint to connect to. Defaults to 'https://api.loganalytics.io'.
     :paramtype endpoint: str
-    :keyword audience: URL to use for credential authentication with AAD.
-    :paramtype audience: str
     """
 
     def __init__(self, credential, **kwargs):
         # type: (TokenCredential, Any) -> None
-        audience = kwargs.pop("audience", None)
-        endpoint = kwargs.pop("endpoint", "https://api.loganalytics.io/v1")
+        endpoint = kwargs.pop("endpoint", "https://api.loganalytics.io")
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
         self._client = MonitorQueryClient(
             credential=credential,
-            authentication_policy=get_authentication_policy(credential, audience),
-            base_url=self._endpoint,
+            authentication_policy=get_authentication_policy(credential, endpoint),
+            base_url=self._endpoint.rstrip('/') + "/v1",
             **kwargs
         )
         self._query_op = self._client.query

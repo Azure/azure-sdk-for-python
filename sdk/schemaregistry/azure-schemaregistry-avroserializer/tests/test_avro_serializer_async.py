@@ -39,7 +39,7 @@ class AvroSerializerAsyncTests(AzureTestCase):
 
     def create_client(self, fully_qualified_namespace):
         credential = self.get_credential(SchemaRegistryClient, is_async=True)
-        return self.create_client_from_credential(SchemaRegistryClient, credential, endpoint=fully_qualified_namespace, is_async=True)
+        return self.create_client_from_credential(SchemaRegistryClient, credential, fully_qualified_namespace=fully_qualified_namespace, is_async=True)
 
     @pytest.mark.asyncio
     @SchemaRegistryPowerShellPreparer()

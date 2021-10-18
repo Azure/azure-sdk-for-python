@@ -7,11 +7,12 @@ Familiarity with `azure-ai-formrecognizer (3.1.x and below)` package is assumed.
 ## Table of Contents
 - [Migration benefits](#migration-benefits)
 - [Important changes](#important-changes)
+    - [Terminology](#terminology)
     - [Client usage](#client-usage)
-    - [Analyzing document](#analyzing-documents)
+    - [Analyzing documents](#analyzing-documents)
     - [Analyzing a document with a custom model](#analyzing-a-document-with-a-custom-model)
     - [Training a custom model](#training-a-custom-model)
-    - [Manage models](#manage-models)
+    - [Managing models](#managing-models)
 - [Additional samples](#additional-samples)
 
 ## Migration benefits
@@ -20,11 +21,19 @@ A natural question to ask when considering whether to adopt a new version of the
 
 There are many benefits to using the new design of the `azure-ai-formrecognizer (3.2.x)` library. This new version of the library introduces two new clients `DocumentAnalysisClient` and the `DocumentModelAdministrationClient` with unified methods for analyzing documents and provides support for the new features added by the service in API version `2021-09-30-preview` and later.
 
-New features provided by the `DocumentAnalysisClient` include one consolidated method for analyzing document layout, a general prebuilt document model type, along with the same prebuilt models that were included previously (receipts, invoices, business cards, identity documents), and custom models. Moreover, the models introduced in the latest version of the library, such as `AnalyzeResult`, remove hierarchical dependencies between document elements and move them to a more top level and easily accessible position. The service has further improved how to define where elements are located on documents by moving towards `BoundingRegion` definitions allowing for cross-page elements. Document element fields are returned with more information, such as content and spans. 
+New features provided by the `DocumentAnalysisClient` include:
+- One consolidated method for analyzing document layout, a prebuilt general document model type, along with the same prebuilt models that were included previously (receipts, invoices, business cards, ID documents), and custom models.
+- Models introduced in the latest version of the library, such as `AnalyzeResult`, remove hierarchical dependencies between document elements and move them to a more top level and easily accessible position.
+- The Form Recognizer service has further improved how to define where elements are located on documents by moving towards `BoundingRegion` definitions allowing for cross-page elements.
+- Document element fields are returned with more information, such as content and spans. 
 
-When using the `DocumentModelAdministrationClient` to build, compose, or copy models, users can now assign their own model IDs and specify a description. Listing models on the administration client now includes both prebuilt and custom models. When using `get_model()`, users can get the field schema (field names and types that the model can extract) for the model they specified, including for prebuilt models. This client also provides functions for getting information from model operations.
+New features provided by the `DocumentModelAdministrationClient` include:
+- Users can now assign their own model IDs and specify a description when building, composing, or copying models.
+- Listing models now includes both prebuilt and custom models.
+- When using `get_model()`, users can get the field schema (field names and types that the model can extract) for the model they specified, including for prebuilt models. 
+- Ability to get information from model operations that occurred in the last 24 hours.
 
-The below table describes the relationship of each client and its supported API version(s):
+The table below describes the relationship of each client and its supported API version(s):
 
 |API version|Supported clients
 |-|-
@@ -36,13 +45,22 @@ Please refer to the [README][readme] for more information on these new clients.
 
 ## Important changes
 
+### Terminology
+
+Some terminology has changed to reflect the enhanced capabilities of the newest Form Recognizer service APIs. While the service is still called `Form Recognizer`, it is capable of much more than simple recognition and is not limited to documents that are `forms`. As a result, we've made the following broad changes to the terminology used throughout the SDK:
+
+- The word `Document` has broadly replaced the word `Form.` The service supports a wide variety of documents and data-extraction scenarios, not merely limited to `forms.`
+- The word `Analyze` has broadly replaced the word `Recognize.` The document analysis operation executes a data extraction pipeline that supports more than just recognition.
+- Distinctions between `custom` and `prebuilt` models have broadly been eliminated. Prebuilt models are simply models that were created by the Form Recognizer service team and that exist within every Form Recognizer resource.
+- The concept of `model training` has broadly been replaced with `model creation`, `building a model`, or `model administration` (whatever is most appropriate in context), as not all model creation operations involve `training` a model from a data set. When referring to a model schema trained from a data set, we will use the term `document type` instead.
+
 ### Client usage
 
 We continue to support API key and AAD authentication methods when creating the clients. Below are the differences between the two versions:
 
 - In `3.2.x`, we have added `DocumentAnalysisClient` and `DocumentModelAdministrationClient` which support API version `2021-09-30-preview` and later.
-- `FormRecognizerClient` and `FormTrainingClient` will raise an error if called with an API version of `2021-09-30-preview` and later. 
-- In `DocumentAnalysisClient` all prebuilt model methods along with custom model, layout, and a prebuilt document analysis model are unified into two methods called
+- `FormRecognizerClient` and `FormTrainingClient` will continue to work targeting API versions `2.1` and `2.0`.
+- In `DocumentAnalysisClient` all prebuilt model methods along with custom model, layout, and a prebuilt general document analysis model are unified into two methods called
 `begin_analyze_document` and `begin_analyze_document_from_url`.
 - In `FormRecognizerClient` there are two methods (a stream and URL method) for each of the prebuilt models supported by the service. This results in two methods for business card, receipt, identity document, and invoice models, along with a pair of methods for recognizing custom documents and for recognizing content/layout. 
 
@@ -85,7 +103,7 @@ document_model_admin_client = DocumentModelAdministrationClient(
 Differences between the versions:
 - `begin_analyze_document` and `begin_analyze_document_from_url` accept a string with the desired model ID for analysis. The model ID can be any of the prebuilt model IDs or a custom model ID.
 - Along with more consolidated analysis methods in the `DocumentAnalysisClient`, the return types have also been improved and remove the hierarchical dependencies between elements. An instance of the `AnalyzeResult` model is now returned which showcases important document elements, such as key-value pairs, entities, tables, and document fields and values, among others, at the top level of the returned model. This can be contrasted with `RecognizedForm` which included more hierarchical relationships, for instance tables were an element of a `FormPage` and not a top-level element.
-- In the new version of the library, the functionality of `begin_recognize_content` has been added as a prebuilt model and can be called in library version `azure-ai-formrecognizer (3.2.x)` with `begin_analyze_document` by passing in the `prebuilt-layout` model ID. Similarly, to get general prebuilt document information, such as key-value pairs, entities, and text layout, the `prebuilt-document` model ID can be used with `begin_analyze_document`.
+- In the new version of the library, the functionality of `begin_recognize_content` has been added as a prebuilt model and can be called in library version `azure-ai-formrecognizer (3.2.x)` with `begin_analyze_document` by passing in the `prebuilt-layout` model ID. Similarly, to get general document information, such as key-value pairs, entities, and text layout, the `prebuilt-document` model ID can be used with `begin_analyze_document`.
 - When calling `begin_analyze_document` and `begin_analyze_document_from_url` the returned type is an `AnalyzeResult` object, while the various methods used with `FormRecognizerClient` return a list of `RecognizedForm`.
 - The `pages` keyword argument is a string with library version `azure-ai-formrecognizer (3.2.x)`. In `azure-ai-formrecognizer (3.1.x)`, `pages` was a list of strings.
 - The `include_field_elements` keyword argument is not supported with the `DocumentAnalysisClient`, text details are automatically included with API version `2021-09-30-preview` and later.
@@ -223,7 +241,7 @@ for idx, receipt in enumerate(receipts.documents):
 
 Analyzing document content with `3.1.x`:
 
-> NOTE: With version `3.1.x` of the library this method was called with a `language` keyword argument to hint at the language for the document, whereas in version `3.2.x` of the library `locale` is used for this purpose.
+> NOTE: With version `3.1.x` of the library this method had an optional `language` keyword argument to hint at the language for the document, whereas in version `3.2.x` of the library `locale` is used for this purpose.
 
 ```python
 with open(path_to_sample_forms, "rb") as f:
@@ -239,13 +257,13 @@ for idx, content in enumerate(form_pages):
     ))
     for table_idx, table in enumerate(content.tables):
         print("Table # {} has {} rows and {} columns".format(table_idx, table.row_count, table.column_count))
-        print("Table # {} location on page: {}".format(table_idx, format_bounding_box(table.bounding_box)))
+        print("Table # {} location on page: {}".format(table_idx, table.bounding_box))
         for cell in table.cells:
             print("...Cell[{}][{}] has text '{}' within bounding box '{}'".format(
                 cell.row_index,
                 cell.column_index,
                 cell.text,
-                format_bounding_box(cell.bounding_box)
+                cell.bounding_box
             ))
 
     for line_idx, line in enumerate(content.lines):
@@ -253,7 +271,7 @@ for idx, content in enumerate(form_pages):
             line_idx,
             len(line.words),
             line.text,
-            format_bounding_box(line.bounding_box)
+            line.bounding_box
         ))
         if line.appearance:
             if line.appearance.style_name == "handwriting" and line.appearance.style_confidence > 0.8:
@@ -264,7 +282,7 @@ for idx, content in enumerate(form_pages):
     for selection_mark in content.selection_marks:
         print("Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
             selection_mark.state,
-            format_bounding_box(selection_mark.bounding_box),
+            selection_mark.bounding_box,
             selection_mark.confidence
         ))
     print("----------------------------------------")
@@ -299,7 +317,7 @@ for idx, page in enumerate(result.pages):
             "Line # {} has text content '{}' within bounding box '{}'".format(
                 line_idx,
                 line.content,
-                format_bounding_box(line.bounding_box),
+                line.bounding_box,
             )
         )
 
@@ -314,7 +332,7 @@ for idx, page in enumerate(result.pages):
         print(
             "Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
                 selection_mark.state,
-                format_bounding_box(selection_mark.bounding_box),
+                selection_mark.bounding_box,
                 selection_mark.confidence,
             )
         )
@@ -330,7 +348,7 @@ for table_idx, table in enumerate(result.tables):
             "Table # {} location on page: {} is {}".format(
                 table_idx,
                 region.page_number,
-                format_bounding_box(region.bounding_box),
+                region.bounding_box,
             )
         )
     for cell in table.cells:
@@ -345,14 +363,14 @@ for table_idx, table in enumerate(result.tables):
             print(
                 "...content on page {} is within bounding box '{}'".format(
                     region.page_number,
-                    format_bounding_box(region.bounding_box),
+                    region.bounding_box,
                 )
             )
 
 print("----------------------------------------")
 ```
 
-Analyzing general prebuilt document types with `3.2.x`:
+Analyzing general document types with `3.2.x`:
 
 > NOTE: Analyzing a document with the `prebuilt-document` model replaces training without labels in version `3.1.x` of the library.
 
@@ -383,7 +401,7 @@ for page in result.pages:
             "...Line # {} has text content '{}' within bounding box '{}'".format(
                 line_idx,
                 line.content,
-                format_bounding_box(line.bounding_box),
+                line.bounding_box,
             )
         )
 
@@ -398,7 +416,7 @@ for page in result.pages:
         print(
             "...Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
                 selection_mark.state,
-                format_bounding_box(selection_mark.bounding_box),
+                selection_mark.bounding_box,
                 selection_mark.confidence,
             )
         )
@@ -414,7 +432,7 @@ for table_idx, table in enumerate(result.tables):
             "Table # {} location on page: {} is {}".format(
                 table_idx,
                 region.page_number,
-                format_bounding_box(region.bounding_box),
+                region.bounding_box,
             )
         )
     for cell in table.cells:
@@ -429,7 +447,7 @@ for table_idx, table in enumerate(result.tables):
             print(
                 "...content on page {} is within bounding box '{}'\n".format(
                     region.page_number,
-                    format_bounding_box(region.bounding_box),
+                    region.bounding_box,
                 )
             )
 
@@ -437,7 +455,7 @@ print("----Entities found in document----")
 for entity in result.entities:
     print("Entity of category '{}' with sub-category '{}'".format(entity.category, entity.sub_category))
     print("...has content '{}'".format(entity.content))
-    print("...within '{}' bounding regions".format(format_bounding_region(entity.bounding_regions)))
+    print("...within '{}' bounding regions".format(entity.bounding_regions))
     print("...with confidence {}\n".format(entity.confidence))
 
 print("----Key-value pairs found in document----")
@@ -446,14 +464,14 @@ for kv_pair in result.key_value_pairs:
         print(
                 "Key '{}' found within '{}' bounding regions".format(
                     kv_pair.key.content,
-                    format_bounding_region(kv_pair.key.bounding_regions),
+                    kv_pair.key.bounding_regions,
                 )
             )
     if kv_pair.value:
         print(
                 "Value '{}' found within '{}' bounding regions\n".format(
                     kv_pair.value.content,
-                    format_bounding_region(kv_pair.value.bounding_regions),
+                    kv_pair.value.bounding_regions,
                 )
             )
 print("----------------------------------------")
@@ -579,7 +597,7 @@ print("-----------------------------------")
 Differences between the versions:
 - Files for building a new model for version `3.2.x` can be created using the labeling tool found [here][fr_labeling_tool].
 - In version `3.1.x` the `use_training_labels` keyword argument was used to indicate whether to use labeled data when creating the custom model.
-- In version `3.2.x` the `use_training_labels` keyword argument is not supported since training must be carried out with labeled training documents. Additionally train without labels is now replaced with the prebuilt model "prebuilt-document" which extracts entities, key-value pairs, and layout from a document. 
+- In version `3.2.x` the `use_training_labels` keyword argument is not supported since training must be carried out with labeled training documents. Additionally train without labels is now replaced with the prebuilt model `prebuilt-document` which extracts entities, key-value pairs, and layout from a document. 
 
 Train a custom model with `3.1.x`:
 ```python
@@ -635,7 +653,7 @@ for name, doc_type in model.doc_types.items():
         print("Field: '{}' has confidence score {}".format(field_name, confidence))
 ```
 
-### Manage models
+### Managing models
 
 Differences between the versions:
 - When using API version `2021-09-30-preview` and later models no longer include submodels, instead a model can analyze different document types.

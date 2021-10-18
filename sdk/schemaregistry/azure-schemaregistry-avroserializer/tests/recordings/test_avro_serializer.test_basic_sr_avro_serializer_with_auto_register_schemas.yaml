@@ -1,9 +1,8 @@
 interactions:
 - request:
-    body: '"{\"type\": \"record\", \"name\": \"User\", \"namespace\": \"example.avro\",
-      \"fields\": [{\"type\": \"string\", \"name\": \"name\"}, {\"type\": [\"int\",
-      \"null\"], \"name\": \"favorite_number\"}, {\"type\": [\"string\", \"null\"],
-      \"name\": \"favorite_color\"}]}"'
+    body: '{"type": "record", "name": "User", "namespace": "example.avro", "fields":
+      [{"type": "string", "name": "name"}, {"type": ["int", "null"], "name": "favorite_number"},
+      {"type": ["string", "null"], "name": "favorite_color"}]}'
     headers:
       Accept:
       - application/json
@@ -12,15 +11,15 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '265'
+      - '221'
       Content-Type:
       - application/json
-      User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-      X-Schema-Type:
+      Serialization-Type:
       - Avro
+      User-Agent:
+      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/example.avro.User?api-version=2017-04
+    uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/example.avro.User?api-version=2020-09-01-preview
   response:
     body:
       string: '{"id":"3ad352630be04edea2d5db26d4f75eec"}'
@@ -28,25 +27,120 @@ interactions:
       content-type:
       - application/json
       date:
-      - Thu, 14 Oct 2021 22:27:55 GMT
+      - Mon, 18 Oct 2021 18:20:36 GMT
       location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/example.avro.User/versions/1?api-version=2017-04
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/example.avro.User/versions/1?api-version=2020-09-01-preview
+      schema-id:
+      - 3ad352630be04edea2d5db26d4f75eec
+      schema-id-location:
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/3ad352630be04edea2d5db26d4f75eec?api-version=2020-09-01-preview
+      schema-version:
+      - '1'
+      schema-versions-location:
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/example.avro.User/versions?api-version=2020-09-01-preview
+      serialization-type:
+      - Avro
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000
       transfer-encoding:
       - chunked
-      x-schema-id:
-      - 3ad352630be04edea2d5db26d4f75eec
-      x-schema-id-location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/3ad352630be04edea2d5db26d4f75eec?api-version=2017-04
-      x-schema-type:
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"type": "record", "name": "User", "namespace": "example.avro", "fields":
+      [{"type": "string", "name": "name"}, {"type": ["int", "null"], "name": "favorite_number"},
+      {"type": ["string", "null"], "name": "favorite_color"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '221'
+      Content-Type:
+      - application/json
+      Serialization-Type:
       - Avro
-      x-schema-version:
+      User-Agent:
+      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/example.avro.User?api-version=2020-09-01-preview
+  response:
+    body:
+      string: '{"id":"3ad352630be04edea2d5db26d4f75eec"}'
+    headers:
+      content-type:
+      - application/json
+      date:
+      - Mon, 18 Oct 2021 18:20:37 GMT
+      location:
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/example.avro.User/versions/1?api-version=2020-09-01-preview
+      schema-id:
+      - 3ad352630be04edea2d5db26d4f75eec
+      schema-id-location:
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/3ad352630be04edea2d5db26d4f75eec?api-version=2020-09-01-preview
+      schema-version:
       - '1'
-      x-schema-versions-location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/example.avro.User/versions?api-version=2017-04
+      schema-versions-location:
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/example.avro.User/versions?api-version=2020-09-01-preview
+      serialization-type:
+      - Avro
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - text/plain; charset=utf-8
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/3ad352630be04edea2d5db26d4f75eec?api-version=2020-09-01-preview
+  response:
+    body:
+      string: '"{\"type\": \"record\", \"name\": \"User\", \"namespace\": \"example.avro\",
+        \"fields\": [{\"type\": \"string\", \"name\": \"name\"}, {\"type\": [\"int\",
+        \"null\"], \"name\": \"favorite_number\"}, {\"type\": [\"string\", \"null\"],
+        \"name\": \"favorite_color\"}]}"'
+    headers:
+      content-type:
+      - application/json
+      date:
+      - Mon, 18 Oct 2021 18:20:37 GMT
+      location:
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/example.avro.User/versions/1?api-version=2020-09-01-preview
+      schema-id:
+      - 3ad352630be04edea2d5db26d4f75eec
+      schema-id-location:
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/3ad352630be04edea2d5db26d4f75eec?api-version=2020-09-01-preview
+      schema-version:
+      - '1'
+      schema-versions-location:
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/example.avro.User/versions?api-version=2020-09-01-preview
+      serialization-type:
+      - Avro
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000
+      transfer-encoding:
+      - chunked
     status:
       code: 200
       message: OK

@@ -23,12 +23,12 @@ from azure.storage.filedatalake import generate_account_sas, ResourceTypes, Acco
 from azure.storage.filedatalake import AccessPolicy, DirectorySasPermissions, generate_file_system_sas
 from azure.storage.filedatalake.aio import DataLakeServiceClient, DataLakeDirectoryClient, FileSystemClient
 from azure.storage.filedatalake import PublicAccess
-from asynctestcase import (
-    StorageTestCase)
+from azure.storage.filedatalake import FileSystemSasPermissions
+
+from devtools_testutils.storage.aio import AsyncStorageTestCase as StorageTestCase
+from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
-from azure.storage.filedatalake import FileSystemSasPermissions
-from testcase import DataLakePreparer
 
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 
@@ -49,7 +49,7 @@ class AiohttpTestTransport(AioHttpTransport):
 
 class FileSystemTest(StorageTestCase):
     def _setUp(self, account_name, account_key):
-        url = self._get_account_url(account_name)
+        url = self.account_url(account_name, 'dfs')
         self.dsc = DataLakeServiceClient(url, credential=account_key,
                                          transport=AiohttpTestTransport(), logging_enable=True)
         self.config = self.dsc._config
@@ -639,7 +639,7 @@ class FileSystemTest(StorageTestCase):
             self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
 
-        url = self._get_account_url(datalake_storage_account_name)
+        url = self.account_url(datalake_storage_account_name, 'dfs')
         token_credential = self.generate_oauth_token()
         dsc = DataLakeServiceClient(url, token_credential, logging_enable=True)
         file_system_name = self._get_file_system_reference()
@@ -675,7 +675,7 @@ class FileSystemTest(StorageTestCase):
     async def test_list_paths_using_file_sys_delegation_sas_async(
             self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        url = self._get_account_url(datalake_storage_account_name)
+        url = self.account_url(datalake_storage_account_name, 'dfs')
         token_credential = self.generate_oauth_token()
         dsc = DataLakeServiceClient(url, token_credential)
         file_system_name = self._get_file_system_reference()

@@ -7,3 +7,4 @@
 ../../nspkg/azure-keyvault-nspkg
 aiohttp>=3.0; python_version >= '3.5'
 azure-storage-blob==12.6.0
+parameterized>=0.7.3

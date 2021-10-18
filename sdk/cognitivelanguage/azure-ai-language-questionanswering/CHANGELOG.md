@@ -1,6 +1,16 @@
 # Release History
 
-## 1.0.0b2 (unreleased)
+## 1.0.0b3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b2 (2021-10-06)
 
 * We are now targeting service version `2021-07-15-preview`
 

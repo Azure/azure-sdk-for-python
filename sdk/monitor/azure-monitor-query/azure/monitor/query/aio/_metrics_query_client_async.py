@@ -17,7 +17,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._generated.aio._monitor_query_client import (
     MonitorQueryClient,
 )
-from .._models import MetricsResult, MetricDefinition, MetricNamespace
+from .._models import MetricsQueryResult, MetricDefinition, MetricNamespace
 from ._helpers_asyc import get_metrics_authentication_policy
 from .._helpers import construct_iso8601
 
@@ -32,8 +32,6 @@ class MetricsQueryClient(object):
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword endpoint: The endpoint to connect to. Defaults to 'https://management.azure.com'.
     :paramtype endpoint: str
-    :keyword audience: URL to use for credential authentication with AAD.
-    :paramtype audience: str
     """
 
     def __init__(self, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
@@ -55,7 +53,7 @@ class MetricsQueryClient(object):
     @distributed_trace_async
     async def query_resource(
         self, resource_uri: str, metric_names: List[str], **kwargs: Any
-    ) -> MetricsResult:
+    ) -> MetricsQueryResult:
         """Lists the metric values for a resource.
 
         **Note**: Although the start_time, end_time, duration are optional parameters, it is highly
@@ -95,8 +93,8 @@ class MetricsQueryClient(object):
         :paramtype filter: str
         :keyword metric_namespace: Metric namespace to query metric definitions for.
         :paramtype metric_namespace: str
-        :return: A MetricsResult object.
-        :rtype: ~azure.monitor.query.MetricsResult
+        :return: A MetricsQueryResult object.
+        :rtype: ~azure.monitor.query.MetricsQueryResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         timespan = construct_iso8601(kwargs.pop("timespan", None))
@@ -111,7 +109,7 @@ class MetricsQueryClient(object):
         generated = await self._metrics_op.list(
             resource_uri, connection_verify=False, **kwargs
         )
-        return MetricsResult._from_generated( # pylint: disable=protected-access
+        return MetricsQueryResult._from_generated( # pylint: disable=protected-access
             generated
         )
 

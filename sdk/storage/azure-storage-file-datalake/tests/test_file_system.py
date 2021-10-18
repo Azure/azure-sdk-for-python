@@ -16,10 +16,8 @@ from azure.core import MatchConditions
 
 from azure.storage.filedatalake import DataLakeServiceClient, PublicAccess, generate_account_sas, ResourceTypes, \
     AccountSasPermissions
-from testcase import (
-    StorageTestCase,
-    DataLakePreparer)
-
+from settings.testcase import DataLakePreparer
+from devtools_testutils.storage import StorageTestCase
 # ------------------------------------------------------------------------------
 from azure.storage.filedatalake import AccessPolicy, FileSystemSasPermissions
 from azure.storage.filedatalake._list_paths_helper import DirectoryPrefix
@@ -31,7 +29,7 @@ TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 
 class FileSystemTest(StorageTestCase):
     def _setUp(self, account_name, account_key):
-        url = self._get_account_url(account_name)
+        url = self.account_url(account_name, 'dfs')
         self.dsc = DataLakeServiceClient(url, account_key)
         self.config = self.dsc._config
         self.test_file_systems = []

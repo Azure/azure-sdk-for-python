@@ -160,7 +160,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         self._populate_attributes(**kwargs)
         self._session = (
-            ServiceBusSession(self._session_id, self) if self._session_id else None
+            None if self._session_id is None else ServiceBusSession(self._session_id, self)
         )
 
     # Python 3.5 does not allow for yielding from a coroutine, so instead of the try-finally functional wrapper
