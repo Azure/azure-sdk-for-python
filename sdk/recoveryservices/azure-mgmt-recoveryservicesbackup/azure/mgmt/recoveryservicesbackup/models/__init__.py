@@ -267,6 +267,10 @@ try:
     from ._models_py3 import RecoveryPointResourceList
     from ._models_py3 import RecoveryPointTierInformation
     from ._models_py3 import Resource
+    from ._models_py3 import ResourceGuardOperationDetail
+    from ._models_py3 import ResourceGuardProxyBase
+    from ._models_py3 import ResourceGuardProxyBaseResource
+    from ._models_py3 import ResourceGuardProxyBaseResourceList
     from ._models_py3 import ResourceHealthDetails
     from ._models_py3 import ResourceList
     from ._models_py3 import RestoreFileSpecs
@@ -277,6 +281,7 @@ try:
     from ._models_py3 import SQLDataDirectory
     from ._models_py3 import SQLDataDirectoryMapping
     from ._models_py3 import SchedulePolicy
+    from ._models_py3 import SecurityPinBase
     from ._models_py3 import Settings
     from ._models_py3 import SimpleRetentionPolicy
     from ._models_py3 import SimpleSchedulePolicy
@@ -285,6 +290,8 @@ try:
     from ._models_py3 import TargetRestoreInfo
     from ._models_py3 import TokenInformation
     from ._models_py3 import TriggerDataMoveRequest
+    from ._models_py3 import UnlockDeleteRequest
+    from ._models_py3 import UnlockDeleteResponse
     from ._models_py3 import ValidateIaasVMRestoreOperationRequest
     from ._models_py3 import ValidateOperationRequest
     from ._models_py3 import ValidateOperationResponse
@@ -566,6 +573,10 @@ except (SyntaxError, ImportError):
     from ._models import RecoveryPointResourceList  # type: ignore
     from ._models import RecoveryPointTierInformation  # type: ignore
     from ._models import Resource  # type: ignore
+    from ._models import ResourceGuardOperationDetail  # type: ignore
+    from ._models import ResourceGuardProxyBase  # type: ignore
+    from ._models import ResourceGuardProxyBaseResource  # type: ignore
+    from ._models import ResourceGuardProxyBaseResourceList  # type: ignore
     from ._models import ResourceHealthDetails  # type: ignore
     from ._models import ResourceList  # type: ignore
     from ._models import RestoreFileSpecs  # type: ignore
@@ -576,6 +587,7 @@ except (SyntaxError, ImportError):
     from ._models import SQLDataDirectory  # type: ignore
     from ._models import SQLDataDirectoryMapping  # type: ignore
     from ._models import SchedulePolicy  # type: ignore
+    from ._models import SecurityPinBase  # type: ignore
     from ._models import Settings  # type: ignore
     from ._models import SimpleRetentionPolicy  # type: ignore
     from ._models import SimpleSchedulePolicy  # type: ignore
@@ -584,6 +596,8 @@ except (SyntaxError, ImportError):
     from ._models import TargetRestoreInfo  # type: ignore
     from ._models import TokenInformation  # type: ignore
     from ._models import TriggerDataMoveRequest  # type: ignore
+    from ._models import UnlockDeleteRequest  # type: ignore
+    from ._models import UnlockDeleteResponse  # type: ignore
     from ._models import ValidateIaasVMRestoreOperationRequest  # type: ignore
     from ._models import ValidateOperationRequest  # type: ignore
     from ._models import ValidateOperationResponse  # type: ignore
@@ -929,6 +943,10 @@ __all__ = [
     'RecoveryPointResourceList',
     'RecoveryPointTierInformation',
     'Resource',
+    'ResourceGuardOperationDetail',
+    'ResourceGuardProxyBase',
+    'ResourceGuardProxyBaseResource',
+    'ResourceGuardProxyBaseResourceList',
     'ResourceHealthDetails',
     'ResourceList',
     'RestoreFileSpecs',
@@ -939,6 +957,7 @@ __all__ = [
     'SQLDataDirectory',
     'SQLDataDirectoryMapping',
     'SchedulePolicy',
+    'SecurityPinBase',
     'Settings',
     'SimpleRetentionPolicy',
     'SimpleSchedulePolicy',
@@ -947,6 +966,8 @@ __all__ = [
     'TargetRestoreInfo',
     'TokenInformation',
     'TriggerDataMoveRequest',
+    'UnlockDeleteRequest',
+    'UnlockDeleteResponse',
     'ValidateIaasVMRestoreOperationRequest',
     'ValidateOperationRequest',
     'ValidateOperationResponse',

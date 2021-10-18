@@ -684,9 +684,9 @@ class ShareFileClient(StorageAccountHostsMixin):
     def download_file(
             self, offset=None,  # type: Optional[int]
             length=None,  # type: Optional[int]
-            **kwargs
+            **kwargs  # type: Any
         ):
-        # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
+        # type: (...) -> StorageStreamDownloader
         """Downloads a file to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the file into
         a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
