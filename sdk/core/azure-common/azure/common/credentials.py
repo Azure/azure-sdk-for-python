@@ -6,6 +6,7 @@
 
 import os.path
 import time
+import warnings
 try:
     from azure.core.credentials import AccessToken as _AccessToken
 except ImportError:
@@ -112,6 +113,11 @@ def get_azure_cli_credentials(resource=None, with_tenant=False):
     :return: tuple of Credentials and SubscriptionID (and tenant ID if with_tenant)
     :rtype: tuple
     """
+    warnings.warn(
+        "get_client_from_cli_profile is deprecated, please use azure-identity and AzureCliCredential instead",
+        DeprecationWarning
+    )
+
     azure_cli_core_check_failed = False
     try:
         import azure.cli.core
@@ -122,7 +128,7 @@ def get_azure_cli_credentials(resource=None, with_tenant=False):
         azure_cli_core_check_failed = True
 
     if azure_cli_core_check_failed:
-        raise ImportError(
+        raise NotImplementedError(
             "You need to install 'azure-cli-core<2.21.0' to load CLI credentials using this method. " +
             "You should consider using azure-identity and AzureCliCredential instead, as this method is not supported anymore."
         )

@@ -85,7 +85,7 @@ def get_client_from_cli_profile(client_class, **kwargs):
     :raises: ImportError if azure-cli-core package is not available
     """
     warnings.warn(
-        "get_client_from_cli_profile is deprecated, please use azure-identity and AzureCliCredential isntead",
+        "get_client_from_cli_profile is deprecated, please use azure-identity and AzureCliCredential instead",
         DeprecationWarning
     )
 
