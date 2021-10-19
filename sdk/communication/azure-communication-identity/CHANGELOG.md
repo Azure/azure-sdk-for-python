@@ -1,5 +1,9 @@
 # Release History
 
+## 1.2.0-beta.1 (Unreleased)
+### Features Added
+- Added support for Microsoft 365 Teams identities
+
 ## 1.0.1 (2021-06-08)
 ### Bug Fixes
 - Fixed async client to use async bearer token credential policy instead of sync policy.

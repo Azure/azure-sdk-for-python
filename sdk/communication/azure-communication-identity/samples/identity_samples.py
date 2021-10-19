@@ -18,10 +18,16 @@ USAGE:
     2) AZURE_CLIENT_ID - the client ID of your active directory application
     3) AZURE_CLIENT_SECRET - the secret of your active directory application
     4) AZURE_TENANT_ID - the tenant ID of your active directory application
+    5) COMMUNICATION_M365_APP_ID - the application id of M365
+    6) COMMUNICATION_M365_AAD_AUTHORITY - the AAD authority of M365  
+    7) COMMUNICATION_M365_AAD_TENANT - the tenant ID of M365 application
+    8) COMMUNICATION_M365_SCOPE - the scope of M365 application
+    9) COMMUNICATION_MSAL_USERNAME - the username for authenticating via MSAL library
+    10)COMMUNICATION_MSAL_PASSWORD - the password for authenticating via MSAL library 
 """
 import os
 from azure.communication.identity._shared.utils import parse_connection_str
-
+from azure.communication.identity._shared.utils import generate_teams_token
 class CommunicationIdentityClientSamples(object):
 
     def __init__(self):
@@ -29,6 +35,12 @@ class CommunicationIdentityClientSamples(object):
         self.client_id = os.getenv('AZURE_CLIENT_ID')
         self.client_secret = os.getenv('AZURE_CLIENT_SECRET')
         self.tenant_id = os.getenv('AZURE_TENANT_ID')
+        self.m365_app_id = os.getenv('COMMUNICATION_M365_APP_ID') 
+        self.m365_aad_authority = os.getenv('COMMUNICATION_M365_AAD_AUTHORITY') 
+        self.m365_aad_tenant = os.getenv('COMMUNICATION_M365_AAD_TENANT')
+        self.m365_scope = os.getenv('COMMUNICATION_M365_SCOPE') 
+        self.msal_username = os.getenv('COMMUNICATION_MSAL_USERNAME') 
+        self.msal_password = os.getenv('COMMUNICATION_MSAL_PASSWORD') 
 
     def get_token(self):
         from azure.communication.identity import (
@@ -108,10 +120,26 @@ class CommunicationIdentityClientSamples(object):
         identity_client.delete_user(user)
         print(user.properties.get('id') + " deleted")
 
+    def exchange_teams_token(self):
+        from azure.communication.identity import CommunicationIdentityClient
+
+        if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
+            from azure.identity import DefaultAzureCredential
+            endpoint, _ = parse_connection_str(self.connection_string)
+            identity_client = CommunicationIdentityClient(endpoint, DefaultAzureCredential())
+        else:
+            identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
+        access_token_AAD = generate_teams_token(m365_app_id=self.m365_app_id, m365_aad_authority=self.m365_aad_authority, m365_aad_tenant=self.m365_aad_tenant, msal_username=self.msal_username, msal_password=self.msal_password, m365_scope=self.m365_scope) 
+        print("AAD access token of a Teams User: " + access_token_AAD)
+        tokenresponse = identity_client.exchange_teams_token(access_token_AAD)
+        print("Token issued with value: " + tokenresponse.token)
+
+
 if __name__ == '__main__':
     sample = CommunicationIdentityClientSamples()
     sample.create_user()
     sample.create_user_and_token()
     sample.get_token()
     sample.revoke_tokens()
-    sample.delete_user()
+    sample.delete_user() 
+    sample.exchange_teams_token()

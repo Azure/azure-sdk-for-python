@@ -166,6 +166,24 @@ class CommunicationIdentityClient:
             user.properties['id'] if user else None,
             **kwargs)
 
+    @distributed_trace_async
+    async def exchange_teams_token(
+            self,
+            access_token_AAD,
+            **kwargs
+        ) -> AccessToken:
+        """Exchanges an AAD access token of a Teams User for a new Communication Identity access token.
+
+        :param access_token_AAD: an AAD access token of a Teams User
+        :type access_token_AAD: str
+        :return: AccessToken
+        :rtype: ~azure.core.credentials.AccessToken
+        """
+        return await self._identity_service_client.communication_identity.exchange_teams_user_access_token(
+            token=access_token_AAD,
+            cls=lambda pr, u, e: AccessToken(u.token, u.expires_on),
+            **kwargs)
+
     async def __aenter__(self) -> "CommunicationIdentityClient":
         await self._identity_service_client.__aenter__()
         return self
