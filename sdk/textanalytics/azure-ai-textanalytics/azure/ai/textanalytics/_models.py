@@ -2258,7 +2258,8 @@ class SummarySentence(DictMixin):
 
 class RecognizeCustomEntitiesAction(DictMixin):
     """RecognizeCustomEntitiesAction encapsulates the parameters for starting a long-running custom entity
-     recognition operation. To train a model to recognize your custom entities, see TODO
+     recognition operation. To train a model to recognize your custom entities, see
+     https://aka.ms/azsdk/textanalytics/customentityrecognition
 
     :param str project_name: Required. This field indicates the project name for the model.
     :param str deployment_name: This field indicates the deployment name for the model.
@@ -2381,7 +2382,8 @@ class RecognizeCustomEntitiesResult(DictMixin):
 
 class MultiCategoryClassifyAction(DictMixin):
     """MultiCategoryClassifyAction encapsulates the parameters for starting a long-running custom multi category
-    classification operation. To train a model to classify your documents, see TODO
+    classification operation. To train a model to classify your documents, see
+    https://aka.ms/azsdk/textanalytics/customfunctionalities
 
     :param str project_name: Required. This field indicates the project name for the model.
     :param str deployment_name: Required. This field indicates the deployment name for the model.
@@ -2494,7 +2496,8 @@ class MultiCategoryClassifyResult(DictMixin):
 
 class SingleCategoryClassifyAction(DictMixin):
     """SingleCategoryClassifyAction encapsulates the parameters for starting a long-running custom single category
-    classification operation. To train a model to classify your documents, see TODO
+    classification operation. To train a model to classify your documents, see
+    https://aka.ms/azsdk/textanalytics/customfunctionalities
 
     :param str project_name: Required. This field indicates the project name for the model.
     :param str deployment_name: Required. This field indicates the deployment name for the model.

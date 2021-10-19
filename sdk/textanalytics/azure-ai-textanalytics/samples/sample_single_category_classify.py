@@ -14,7 +14,7 @@ DESCRIPTION:
     support tickets that need to be classified as internet, printer, email or hardware issues.
     Classifying documents is available as an action type through the begin_analyze_actions API.
 
-    To train a model to classify your documents, see TODO
+    To train a model to classify your documents, see https://aka.ms/azsdk/textanalytics/customfunctionalities
 
 USAGE:
     python sample_single_category_classify.py
