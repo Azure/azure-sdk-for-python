@@ -170,7 +170,7 @@ def example_send_and_receive_sync():
     message = ServiceBusMessage(
         "Hello World!!",
         session_id="MySessionID",
-        user_properties={'data': 'custom_data'},
+        application_properties={'data': 'custom_data'},
         time_to_live=datetime.timedelta(seconds=30),
         label='MyLabel'
     )

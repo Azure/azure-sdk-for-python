@@ -8,8 +8,8 @@ import functools
 import warnings
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, Dict, List,
-    TYPE_CHECKING
-)
+    TYPE_CHECKING,
+    TypeVar)
 
 
 try:
@@ -52,6 +52,8 @@ if TYPE_CHECKING:
         FilteredBlob
     )
 
+ClassType = TypeVar("ClassType")
+
 
 class BlobServiceClient(StorageAccountHostsMixin):
     """A client to interact with the Blob Service at the account level.
@@ -77,8 +79,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
     :keyword str api_version:
-        The Storage API version to use for requests. Default value is '2019-07-07'.
-        Setting to an older version may result in reduced feature compatibility.
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
         .. versionadded:: 12.2.0
 
@@ -144,10 +146,11 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
+            cls,  # type: Type[ClassType]
+            conn_str,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):  # type: (...) -> BlobServiceClient
+        ):  # type: (...) -> ClassType
         """Create BlobServiceClient from a Connection String.
 
         :param str conn_str:

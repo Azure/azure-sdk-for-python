@@ -1,5 +1,7 @@
 from azure.core.credentials import AccessToken
 
+ACCOUNT_FAKE_KEY = "NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg=="
+
 
 class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
