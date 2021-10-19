@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 import os
+import threading
 import aiohttp
 
 from urllib.parse import urljoin
@@ -21,6 +22,7 @@ class PerfStressTest:
     """
 
     args = {}
+    _global_parallel_index_lock = threading.Lock()
     _global_parallel_index = 0
 
     def __init__(self, arguments):
@@ -31,8 +33,9 @@ class PerfStressTest:
         self._client_kwargs = {}
         self._recording_id = None
 
-        self._parallel_index = PerfStressTest._global_parallel_index
-        PerfStressTest._global_parallel_index += 1
+        with PerfStressTest._global_parallel_index_lock:
+            self._parallel_index = PerfStressTest._global_parallel_index
+            PerfStressTest._global_parallel_index += 1
 
         if self.args.test_proxies:
             self._session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False))
