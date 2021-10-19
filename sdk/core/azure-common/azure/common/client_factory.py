@@ -9,6 +9,7 @@ import json
 import os
 import re
 import sys
+import warnings
 try:
     from inspect import getfullargspec as get_arg_spec
 except ImportError:
@@ -50,7 +51,17 @@ def _client_resource(client_class, cloud):
 def get_client_from_cli_profile(client_class, **kwargs):
     """Return a SDK client initialized with current CLI credentials, CLI default subscription and CLI default cloud.
 
-    This method will fill automatically the following client parameters:
+    *Disclaimer*: This method is not working for CLI installation after 3/2021 (version 2.21.0 of azure-cli-core).
+    Recommended authentication is now to use https://pypi.org/project/azure-identity/ and AzureCLICredential. See example code below:
+
+    .. code:: python
+
+        from azure.identity import AzureCLICredential
+        from azure.mgmt.compute import ComputeManagementClient
+        client = ComputeManagementClient(subscription_id, AzureCLICredential())
+
+
+    For compatible azure-cli-core version (< 2.20.0), This method will fill automatically the following client parameters:
     - credentials/credential
     - subscription_id
     - base_url
@@ -67,10 +78,17 @@ def get_client_from_cli_profile(client_class, **kwargs):
 
     .. versionadded:: 1.1.6
 
+    .. deprecated:: 1.1.28
+
     :param client_class: A SDK client class
     :return: An instantiated client
     :raises: ImportError if azure-cli-core package is not available
     """
+    warnings.warn(
+        "get_client_from_cli_profile is deprecated, please use azure-identity and AzureCLICredential isntead",
+        DeprecationWarning
+    )
+
     cloud = get_cli_active_cloud()
     parameters = {}
     no_credential_sentinel = object()

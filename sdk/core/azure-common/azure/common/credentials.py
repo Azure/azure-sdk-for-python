@@ -17,6 +17,8 @@ def get_cli_profile():
 
     .. versionadded:: 1.1.6
 
+    .. deprecated:: 1.1.28
+
     :return: A CLI Profile
     :rtype: azure.cli.core._profile.Profile
     :raises: ImportError if azure-cli-core package is not available
@@ -27,7 +29,10 @@ def get_cli_profile():
         from azure.cli.core._session import ACCOUNT
         from azure.cli.core._environment import get_config_dir
     except ImportError:
-        raise ImportError("You need to install 'azure-cli-core' to load CLI credentials")
+        raise ImportError(
+            "You need to install 'azure-cli-core<2.21.0' to load CLI credentials using this method. " +
+            "You should consider using azure-identity and AzureCLICredential instead, as this method is not supported anymore."
+        )
 
 
     azure_folder = get_config_dir()
@@ -69,6 +74,7 @@ class _CliCredentials(object):
             resource = scope
 
         credentials = self._get_cred(resource)
+        # _token_retriever() not accessible after azure-cli-core 2.21.0
         _, token, fulltoken = credentials._token_retriever()  # pylint:disable=protected-access
 
         return _AccessToken(token, int(fulltoken['expiresIn'] + time.time()))
@@ -81,7 +87,17 @@ class _CliCredentials(object):
 def get_azure_cli_credentials(resource=None, with_tenant=False):
     """Return Credentials and default SubscriptionID of current loaded profile of the CLI.
 
-    Credentials will be the "az login" command:
+    *Disclaimer*: This method is not working for CLI installation after 3/2021 (version 2.21.0 of azure-cli-core).
+    Recommended authentication is now to use https://pypi.org/project/azure-identity/ and AzureCLICredential. See example code below:
+
+    .. code:: python
+
+        from azure.identity import AzureCLICredential
+        from azure.mgmt.compute import ComputeManagementClient
+        client = ComputeManagementClient(subscription_id, AzureCLICredential())
+
+
+    For compatible azure-cli-core version (< 2.20.0), credentials will be the "az login" command:
     https://docs.microsoft.com/cli/azure/authenticate-azure-cli
 
     Default subscription ID is either the only one you have, or you can define it:
@@ -89,11 +105,28 @@ def get_azure_cli_credentials(resource=None, with_tenant=False):
 
     .. versionadded:: 1.1.6
 
+    .. deprecated:: 1.1.28
+
     :param str resource: The alternative resource for credentials if not ARM (GraphRBac, etc.)
     :param bool with_tenant: If True, return a three-tuple with last as tenant ID
     :return: tuple of Credentials and SubscriptionID (and tenant ID if with_tenant)
     :rtype: tuple
     """
+    azure_cli_core_check_failed = False
+    try:
+        import azure.cli.core
+        minor_version = int(azure.cli.core.__version__.split(".")[1])
+        if minor_version >= 21:
+            azure_cli_core_check_failed = True
+    except Exception:
+        azure_cli_core_check_failed = True
+
+    if azure_cli_core_check_failed:
+        raise ImportError(
+            "You need to install 'azure-cli-core<2.21.0' to load CLI credentials using this method. " +
+            "You should consider using azure-identity and AzureCLICredential instead, as this method is not supported anymore."
+        )
+
     profile = get_cli_profile()
     cred, subscription_id, tenant_id = profile.get_login_credentials(resource=resource)
     cred = _CliCredentials(profile, resource)
