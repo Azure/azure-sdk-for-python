@@ -52,13 +52,13 @@ def get_client_from_cli_profile(client_class, **kwargs):
     """Return a SDK client initialized with current CLI credentials, CLI default subscription and CLI default cloud.
 
     *Disclaimer*: This method is not working for CLI installation after 3/2021 (version 2.21.0 of azure-cli-core).
-    Recommended authentication is now to use https://pypi.org/project/azure-identity/ and AzureCLICredential. See example code below:
+    Recommended authentication is now to use https://pypi.org/project/azure-identity/ and AzureCliCredential. See example code below:
 
     .. code:: python
 
-        from azure.identity import AzureCLICredential
+        from azure.identity import AzureCliCredential
         from azure.mgmt.compute import ComputeManagementClient
-        client = ComputeManagementClient(subscription_id, AzureCLICredential())
+        client = ComputeManagementClient(AzureCliCredential(), subscription_id)
 
 
     For compatible azure-cli-core version (< 2.20.0), This method will fill automatically the following client parameters:
@@ -85,7 +85,7 @@ def get_client_from_cli_profile(client_class, **kwargs):
     :raises: ImportError if azure-cli-core package is not available
     """
     warnings.warn(
-        "get_client_from_cli_profile is deprecated, please use azure-identity and AzureCLICredential isntead",
+        "get_client_from_cli_profile is deprecated, please use azure-identity and AzureCliCredential isntead",
         DeprecationWarning
     )
 

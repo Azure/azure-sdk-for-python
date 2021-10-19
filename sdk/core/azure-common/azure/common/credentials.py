@@ -31,7 +31,7 @@ def get_cli_profile():
     except ImportError:
         raise ImportError(
             "You need to install 'azure-cli-core<2.21.0' to load CLI credentials using this method. " +
-            "You should consider using azure-identity and AzureCLICredential instead, as this method is not supported anymore."
+            "You should consider using azure-identity and AzureCliCredential instead, as this method is not supported anymore."
         )
 
 
@@ -88,13 +88,13 @@ def get_azure_cli_credentials(resource=None, with_tenant=False):
     """Return Credentials and default SubscriptionID of current loaded profile of the CLI.
 
     *Disclaimer*: This method is not working for CLI installation after 3/2021 (version 2.21.0 of azure-cli-core).
-    Recommended authentication is now to use https://pypi.org/project/azure-identity/ and AzureCLICredential. See example code below:
+    Recommended authentication is now to use https://pypi.org/project/azure-identity/ and AzureCliCredential. See example code below:
 
     .. code:: python
 
-        from azure.identity import AzureCLICredential
+        from azure.identity import AzureCliCredential
         from azure.mgmt.compute import ComputeManagementClient
-        client = ComputeManagementClient(subscription_id, AzureCLICredential())
+        client = ComputeManagementClient(AzureCliCredential(), subscription_id)
 
 
     For compatible azure-cli-core version (< 2.20.0), credentials will be the "az login" command:
@@ -124,7 +124,7 @@ def get_azure_cli_credentials(resource=None, with_tenant=False):
     if azure_cli_core_check_failed:
         raise ImportError(
             "You need to install 'azure-cli-core<2.21.0' to load CLI credentials using this method. " +
-            "You should consider using azure-identity and AzureCLICredential instead, as this method is not supported anymore."
+            "You should consider using azure-identity and AzureCliCredential instead, as this method is not supported anymore."
         )
 
     profile = get_cli_profile()
