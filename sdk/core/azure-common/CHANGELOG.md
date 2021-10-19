@@ -1,6 +1,8 @@
 # Release History
 
-## 1.1.28 (Unreleased)
+## 1.1.28 (2021-10-19)
+
+- Raise a NotImplementedError if trying to use CLI credentials were CLI version is higher than 2.21.0  #20657 #21313
 
 ## 1.1.27 (2021-03-23)
 
