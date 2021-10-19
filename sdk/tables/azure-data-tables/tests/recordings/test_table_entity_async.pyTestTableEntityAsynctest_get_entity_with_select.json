@@ -10,10 +10,10 @@
         "Content-Length": "32",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Wed, 22 Sep 2021 00:50:54 GMT",
+        "Date": "Mon, 18 Oct 2021 23:16:38 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "242e3e0f-1b3f-11ec-847b-5cf37093a909",
-        "x-ms-date": "Wed, 22 Sep 2021 00:50:54 GMT",
+        "x-ms-client-request-id": "7212459b-3069-11ec-a170-5cf37093a909",
+        "x-ms-date": "Mon, 18 Oct 2021 23:16:38 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": "{\u0022TableName\u0022: \u0022uttabledd0f2e47\u0022}",
@@ -21,20 +21,20 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
-        "Date": "Wed, 22 Sep 2021 00:50:52 GMT",
-        "Location": "https://yalltbtestsprim.table.core.windows.net/Tables(\u0027uttabledd0f2e47\u0027)",
+        "Date": "Mon, 18 Oct 2021 23:16:31 GMT",
+        "Location": "https://fakeendpoint.table.core.windows.net/Tables(\u0027uttabledd0f2e47\u0027)",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "242e3e0f-1b3f-11ec-847b-5cf37093a909",
-        "x-ms-request-id": "75889c9f-3002-0026-474b-af39c5000000",
+        "x-ms-client-request-id": "7212459b-3069-11ec-a170-5cf37093a909",
+        "x-ms-request-id": "831fb001-6002-0082-6b76-c43063000000",
         "x-ms-version": "2019-02-02"
       },
       "ResponseBody": {
-        "odata.metadata": "https://yalltbtestsprim.table.core.windows.net/$metadata#Tables/@Element",
+        "odata.metadata": "https://fakeendpoint.table.core.windows.net/$metadata#Tables/@Element",
         "TableName": "uttabledd0f2e47"
       }
     },
@@ -48,10 +48,10 @@
         "Content-Length": "711",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Wed, 22 Sep 2021 00:50:54 GMT",
+        "Date": "Mon, 18 Oct 2021 23:16:38 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "24339662-1b3f-11ec-8280-5cf37093a909",
-        "x-ms-date": "Wed, 22 Sep 2021 00:50:54 GMT",
+        "x-ms-client-request-id": "72180101-3069-11ec-8075-5cf37093a909",
+        "x-ms-date": "Mon, 18 Oct 2021 23:16:38 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": "{\u0022PartitionKey\u0022: \u0022pkdd0f2e47\u0022, \u0022PartitionKey@odata.type\u0022: \u0022Edm.String\u0022, \u0022RowKey\u0022: \u0022rkdd0f2e47\u0022, \u0022RowKey@odata.type\u0022: \u0022Edm.String\u0022, \u0022age\u0022: 39, \u0022sex\u0022: \u0022male\u0022, \u0022sex@odata.type\u0022: \u0022Edm.String\u0022, \u0022married\u0022: true, \u0022deceased\u0022: false, \u0022ratio\u0022: 3.1, \u0022ratio@odata.type\u0022: \u0022Edm.Double\u0022, \u0022evenratio\u0022: 3.0, \u0022evenratio@odata.type\u0022: \u0022Edm.Double\u0022, \u0022double\u0022: 5, \u0022double@odata.type\u0022: \u0022Edm.Double\u0022, \u0022large\u0022: 933311100, \u0022Birthday\u0022: \u00221973-10-04T00:00:00.000000Z\u0022, \u0022Birthday@odata.type\u0022: \u0022Edm.DateTime\u0022, \u0022birthday\u0022: \u00221970-10-04T00:00:00.000000Z\u0022, \u0022birthday@odata.type\u0022: \u0022Edm.DateTime\u0022, \u0022binary\u0022: \u0022YmluYXJ5\u0022, \u0022binary@odata.type\u0022: \u0022Edm.Binary\u0022, \u0022other\u0022: 20, \u0022clsid\u0022: \u0022c9da6455-213d-42c9-9a79-3e9149a57833\u0022, \u0022clsid@odata.type\u0022: \u0022Edm.Guid\u0022}",
@@ -59,25 +59,25 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
-        "Date": "Wed, 22 Sep 2021 00:50:52 GMT",
-        "ETag": "W/\u0022datetime\u00272021-09-22T00%3A50%3A52.4528931Z\u0027\u0022",
-        "Location": "https://yalltbtestsprim.table.core.windows.net/uttabledd0f2e47(PartitionKey=\u0027pkdd0f2e47\u0027,RowKey=\u0027rkdd0f2e47\u0027)",
+        "Date": "Mon, 18 Oct 2021 23:16:31 GMT",
+        "ETag": "W/\u0022datetime\u00272021-10-18T23%3A16%3A32.7934636Z\u0027\u0022",
+        "Location": "https://fakeendpoint.table.core.windows.net/uttabledd0f2e47(PartitionKey=\u0027pkdd0f2e47\u0027,RowKey=\u0027rkdd0f2e47\u0027)",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "24339662-1b3f-11ec-8280-5cf37093a909",
-        "x-ms-request-id": "75889cbe-3002-0026-624b-af39c5000000",
+        "x-ms-client-request-id": "72180101-3069-11ec-8075-5cf37093a909",
+        "x-ms-request-id": "831fb008-6002-0082-7076-c43063000000",
         "x-ms-version": "2019-02-02"
       },
       "ResponseBody": {
-        "odata.metadata": "https://yalltbtestsprim.table.core.windows.net/$metadata#uttabledd0f2e47/@Element",
-        "odata.etag": "W/\u0022datetime\u00272021-09-22T00%3A50%3A52.4528931Z\u0027\u0022",
+        "odata.metadata": "https://fakeendpoint.table.core.windows.net/$metadata#uttabledd0f2e47/@Element",
+        "odata.etag": "W/\u0022datetime\u00272021-10-18T23%3A16%3A32.7934636Z\u0027\u0022",
         "PartitionKey": "pkdd0f2e47",
         "RowKey": "rkdd0f2e47",
-        "Timestamp": "2021-09-22T00:50:52.4528931Z",
+        "Timestamp": "2021-10-18T23:16:32.7934636Z",
         "age": 39,
         "sex": "male",
         "married": true,
@@ -105,10 +105,10 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "DataServiceVersion": "3.0",
-        "Date": "Wed, 22 Sep 2021 00:50:54 GMT",
+        "Date": "Mon, 18 Oct 2021 23:16:38 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "243a3f73-1b3f-11ec-bfbc-5cf37093a909",
-        "x-ms-date": "Wed, 22 Sep 2021 00:50:54 GMT",
+        "x-ms-client-request-id": "721c073c-3069-11ec-9b26-5cf37093a909",
+        "x-ms-date": "Mon, 18 Oct 2021 23:16:38 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
@@ -116,21 +116,21 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
-        "Date": "Wed, 22 Sep 2021 00:50:52 GMT",
-        "ETag": "W/\u0022datetime\u00272021-09-22T00%3A50%3A52.4528931Z\u0027\u0022",
+        "Date": "Mon, 18 Oct 2021 23:16:31 GMT",
+        "ETag": "W/\u0022datetime\u00272021-10-18T23%3A16%3A32.7934636Z\u0027\u0022",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "243a3f73-1b3f-11ec-bfbc-5cf37093a909",
-        "x-ms-request-id": "75889cd8-3002-0026-774b-af39c5000000",
+        "x-ms-client-request-id": "721c073c-3069-11ec-9b26-5cf37093a909",
+        "x-ms-request-id": "831fb00f-6002-0082-7776-c43063000000",
         "x-ms-version": "2019-02-02"
       },
       "ResponseBody": {
-        "odata.metadata": "https://yalltbtestsprim.table.core.windows.net/$metadata#uttabledd0f2e47/@Element\u0026$select=age,ratio",
-        "odata.etag": "W/\u0022datetime\u00272021-09-22T00%3A50%3A52.4528931Z\u0027\u0022",
+        "odata.metadata": "https://fakeendpoint.table.core.windows.net/$metadata#uttabledd0f2e47/@Element\u0026$select=age,ratio",
+        "odata.etag": "W/\u0022datetime\u00272021-10-18T23%3A16%3A32.7934636Z\u0027\u0022",
         "age": 39,
         "ratio": 3.1
       }
@@ -143,10 +143,10 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "DataServiceVersion": "3.0",
-        "Date": "Wed, 22 Sep 2021 00:50:54 GMT",
+        "Date": "Mon, 18 Oct 2021 23:16:38 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "243ffe35-1b3f-11ec-aeaf-5cf37093a909",
-        "x-ms-date": "Wed, 22 Sep 2021 00:50:54 GMT",
+        "x-ms-client-request-id": "72201b0c-3069-11ec-b2af-5cf37093a909",
+        "x-ms-date": "Mon, 18 Oct 2021 23:16:38 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
@@ -154,21 +154,21 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
-        "Date": "Wed, 22 Sep 2021 00:50:52 GMT",
-        "ETag": "W/\u0022datetime\u00272021-09-22T00%3A50%3A52.4528931Z\u0027\u0022",
+        "Date": "Mon, 18 Oct 2021 23:16:31 GMT",
+        "ETag": "W/\u0022datetime\u00272021-10-18T23%3A16%3A32.7934636Z\u0027\u0022",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "243ffe35-1b3f-11ec-aeaf-5cf37093a909",
-        "x-ms-request-id": "75889ceb-3002-0026-074b-af39c5000000",
+        "x-ms-client-request-id": "72201b0c-3069-11ec-b2af-5cf37093a909",
+        "x-ms-request-id": "831fb01c-6002-0082-0476-c43063000000",
         "x-ms-version": "2019-02-02"
       },
       "ResponseBody": {
-        "odata.metadata": "https://yalltbtestsprim.table.core.windows.net/$metadata#uttabledd0f2e47/@Element\u0026$select=age,ratio",
-        "odata.etag": "W/\u0022datetime\u00272021-09-22T00%3A50%3A52.4528931Z\u0027\u0022",
+        "odata.metadata": "https://fakeendpoint.table.core.windows.net/$metadata#uttabledd0f2e47/@Element\u0026$select=age,ratio",
+        "odata.etag": "W/\u0022datetime\u00272021-10-18T23%3A16%3A32.7934636Z\u0027\u0022",
         "age": 39,
         "ratio": 3.1
       }
@@ -181,10 +181,10 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "DataServiceVersion": "3.0",
-        "Date": "Wed, 22 Sep 2021 00:50:54 GMT",
+        "Date": "Mon, 18 Oct 2021 23:16:38 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "2445c05c-1b3f-11ec-aabc-5cf37093a909",
-        "x-ms-date": "Wed, 22 Sep 2021 00:50:54 GMT",
+        "x-ms-client-request-id": "7223d502-3069-11ec-b8b7-5cf37093a909",
+        "x-ms-date": "Mon, 18 Oct 2021 23:16:38 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
@@ -192,19 +192,19 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
-        "Date": "Wed, 22 Sep 2021 00:50:52 GMT",
+        "Date": "Mon, 18 Oct 2021 23:16:32 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "2445c05c-1b3f-11ec-aabc-5cf37093a909",
-        "x-ms-request-id": "75889d0d-3002-0026-254b-af39c5000000",
+        "x-ms-client-request-id": "7223d502-3069-11ec-b8b7-5cf37093a909",
+        "x-ms-request-id": "831fb020-6002-0082-0876-c43063000000",
         "x-ms-version": "2019-02-02"
       },
       "ResponseBody": {
-        "odata.metadata": "https://yalltbtestsprim.table.core.windows.net/$metadata#Tables",
+        "odata.metadata": "https://fakeendpoint.table.core.windows.net/$metadata#Tables",
         "value": [
           {
             "TableName": "uttabledd0f2e47"
@@ -220,10 +220,10 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Content-Length": "0",
-        "Date": "Wed, 22 Sep 2021 00:50:54 GMT",
+        "Date": "Mon, 18 Oct 2021 23:16:38 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "2453b5dd-1b3f-11ec-b281-5cf37093a909",
-        "x-ms-date": "Wed, 22 Sep 2021 00:50:54 GMT",
+        "x-ms-client-request-id": "7226db58-3069-11ec-8a1f-5cf37093a909",
+        "x-ms-date": "Mon, 18 Oct 2021 23:16:38 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
@@ -231,14 +231,14 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Wed, 22 Sep 2021 00:50:52 GMT",
+        "Date": "Mon, 18 Oct 2021 23:16:32 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "2453b5dd-1b3f-11ec-b281-5cf37093a909",
-        "x-ms-request-id": "75889d2c-3002-0026-3f4b-af39c5000000",
+        "x-ms-client-request-id": "7226db58-3069-11ec-8a1f-5cf37093a909",
+        "x-ms-request-id": "831fb025-6002-0082-0d76-c43063000000",
         "x-ms-version": "2019-02-02"
       },
       "ResponseBody": null

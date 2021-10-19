@@ -10,21 +10,21 @@
         "Content-Length": "32",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Wed, 22 Sep 2021 01:06:40 GMT",
+        "Date": "Mon, 18 Oct 2021 23:33:09 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "58006296-1b41-11ec-abbb-5cf37093a909",
-        "x-ms-date": "Wed, 22 Sep 2021 01:06:40 GMT",
+        "x-ms-client-request-id": "c0fd8a1e-306b-11ec-8049-5cf37093a909",
+        "x-ms-date": "Mon, 18 Oct 2021 23:33:09 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": "{\u0022TableName\u0022: \u0022uttable5cd2375c\u0022}",
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Wed, 22 Sep 2021 01:06:38 GMT",
-        "ETag": "W/\u0022datetime\u00272021-09-22T01%3A06%3A38.5049608Z\u0027\u0022",
+        "Date": "Mon, 18 Oct 2021 23:33:04 GMT",
+        "ETag": "W/\u0022datetime\u00272021-10-18T23%3A33%3A04.5223432Z\u0027\u0022",
         "Location": "https://yalltbtestsprim.table.cosmos.azure.com/Tables(\u0027uttable5cd2375c\u0027)",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "fe1db170-84c2-4b66-bccc-76bde49a8601"
+        "x-ms-request-id": "816bc5d5-f262-499a-a93f-2a0b0671d749"
       },
       "ResponseBody": {
         "TableName": "uttable5cd2375c",
@@ -41,25 +41,25 @@
         "Content-Length": "295",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Wed, 22 Sep 2021 01:06:40 GMT",
+        "Date": "Mon, 18 Oct 2021 23:33:10 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "584aa53b-1b41-11ec-bc12-5cf37093a909",
-        "x-ms-date": "Wed, 22 Sep 2021 01:06:40 GMT",
+        "x-ms-client-request-id": "c196ac1a-306b-11ec-a02b-5cf37093a909",
+        "x-ms-date": "Mon, 18 Oct 2021 23:33:10 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": "{\u0022PartitionKey\u0022: \u0022pk5cd2375c\u0022, \u0022PartitionKey@odata.type\u0022: \u0022Edm.String\u0022, \u0022RowKey\u0022: \u0022rk5cd2375c\u0022, \u0022RowKey@odata.type\u0022: \u0022Edm.String\u0022, \u0022inf\u0022: \u0022Infinity\u0022, \u0022inf@odata.type\u0022: \u0022Edm.Double\u0022, \u0022negativeinf\u0022: \u0022-Infinity\u0022, \u0022negativeinf@odata.type\u0022: \u0022Edm.Double\u0022, \u0022nan\u0022: \u0022NaN\u0022, \u0022nan@odata.type\u0022: \u0022Edm.Double\u0022}",
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Wed, 22 Sep 2021 01:06:38 GMT",
-        "ETag": "W/\u0022datetime\u00272021-09-22T01%3A06%3A38.8369416Z\u0027\u0022",
+        "Date": "Mon, 18 Oct 2021 23:33:04 GMT",
+        "ETag": "W/\u0022datetime\u00272021-10-18T23%3A33%3A05.2043272Z\u0027\u0022",
         "Location": "https://yalltbtestsprim.table.cosmos.azure.com/uttable5cd2375c(PartitionKey=\u0027pk5cd2375c\u0027,RowKey=\u0027rk5cd2375c\u0027)",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "6a11d90e-95b0-4267-b465-214869195da5"
+        "x-ms-request-id": "80166c02-b326-41f6-a609-2e5fca0b85b9"
       },
       "ResponseBody": {
         "odata.metadata": "https://yalltbtestsprim.table.cosmos.azure.com/uttable5cd2375c/$metadata#uttable5cd2375c/@Element",
-        "odata.etag": "W/\u0022datetime\u00272021-09-22T01%3A06%3A38.8369416Z\u0027\u0022",
+        "odata.etag": "W/\u0022datetime\u00272021-10-18T23%3A33%3A05.2043272Z\u0027\u0022",
         "PartitionKey": "pk5cd2375c",
         "RowKey": "rk5cd2375c",
         "inf@odata.type": "Edm.Double",
@@ -68,7 +68,7 @@
         "negativeinf": "-Infinity",
         "nan@odata.type": "Edm.Double",
         "nan": "NaN",
-        "Timestamp": "2021-09-22T01:06:38.8369416Z"
+        "Timestamp": "2021-10-18T23:33:05.2043272Z"
       }
     },
     {
@@ -79,24 +79,24 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "DataServiceVersion": "3.0",
-        "Date": "Wed, 22 Sep 2021 01:06:41 GMT",
+        "Date": "Mon, 18 Oct 2021 23:33:10 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "585219ff-1b41-11ec-81d1-5cf37093a909",
-        "x-ms-date": "Wed, 22 Sep 2021 01:06:41 GMT",
+        "x-ms-client-request-id": "c1a21b97-306b-11ec-bf86-5cf37093a909",
+        "x-ms-date": "Mon, 18 Oct 2021 23:33:10 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Wed, 22 Sep 2021 01:06:38 GMT",
-        "ETag": "W/\u0022datetime\u00272021-09-22T01%3A06%3A38.8369416Z\u0027\u0022",
+        "Date": "Mon, 18 Oct 2021 23:33:04 GMT",
+        "ETag": "W/\u0022datetime\u00272021-10-18T23%3A33%3A05.2043272Z\u0027\u0022",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "069f186b-51d8-45b8-ab23-216235c59b51"
+        "x-ms-request-id": "9f05faad-eca5-44b4-be08-2df8f23993d0"
       },
       "ResponseBody": {
         "odata.metadata": "https://yalltbtestsprim.table.cosmos.azure.com/uttable5cd2375c/$metadata#uttable5cd2375c/@Element",
-        "odata.etag": "W/\u0022datetime\u00272021-09-22T01%3A06%3A38.8369416Z\u0027\u0022",
+        "odata.etag": "W/\u0022datetime\u00272021-10-18T23%3A33%3A05.2043272Z\u0027\u0022",
         "PartitionKey": "pk5cd2375c",
         "RowKey": "rk5cd2375c",
         "inf@odata.type": "Edm.Double",
@@ -105,7 +105,7 @@
         "negativeinf": "-Infinity",
         "nan@odata.type": "Edm.Double",
         "nan": "NaN",
-        "Timestamp": "2021-09-22T01:06:38.8369416Z"
+        "Timestamp": "2021-10-18T23:33:05.2043272Z"
       }
     },
     {
@@ -116,19 +116,19 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "DataServiceVersion": "3.0",
-        "Date": "Wed, 22 Sep 2021 01:06:41 GMT",
+        "Date": "Mon, 18 Oct 2021 23:33:11 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "5854ba81-1b41-11ec-bf9c-5cf37093a909",
-        "x-ms-date": "Wed, 22 Sep 2021 01:06:41 GMT",
+        "x-ms-client-request-id": "c1a721d3-306b-11ec-a379-5cf37093a909",
+        "x-ms-date": "Mon, 18 Oct 2021 23:33:11 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Wed, 22 Sep 2021 01:06:38 GMT",
+        "Date": "Mon, 18 Oct 2021 23:33:04 GMT",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "44eaf24e-0ea9-4bf9-9596-1d17f04c9b01"
+        "x-ms-request-id": "96f2e087-9f6b-4e18-8ba8-96f22177fea1"
       },
       "ResponseBody": {
         "value": [
@@ -147,17 +147,17 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Content-Length": "0",
-        "Date": "Wed, 22 Sep 2021 01:06:41 GMT",
+        "Date": "Mon, 18 Oct 2021 23:33:11 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "58578edb-1b41-11ec-be3c-5cf37093a909",
-        "x-ms-date": "Wed, 22 Sep 2021 01:06:41 GMT",
+        "x-ms-client-request-id": "c1aab42e-306b-11ec-bf68-5cf37093a909",
+        "x-ms-date": "Mon, 18 Oct 2021 23:33:11 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "Date": "Wed, 22 Sep 2021 01:06:38 GMT",
-        "x-ms-request-id": "8d0553b0-017d-4c47-b168-60721bfd25db"
+        "Date": "Mon, 18 Oct 2021 23:33:04 GMT",
+        "x-ms-request-id": "1b2b59be-9b6b-43e2-99ca-d232703b4646"
       },
       "ResponseBody": null
     }

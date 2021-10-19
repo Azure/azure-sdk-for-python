@@ -11,21 +11,21 @@
         "Content-Length": "32",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Wed, 22 Sep 2021 00:57:04 GMT",
+        "Date": "Mon, 18 Oct 2021 23:22:57 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "0073342e-1b40-11ec-a55f-5cf37093a909",
-        "x-ms-date": "Wed, 22 Sep 2021 00:57:04 GMT",
+        "x-ms-client-request-id": "5420a368-306a-11ec-a5cf-5cf37093a909",
+        "x-ms-date": "Mon, 18 Oct 2021 23:22:57 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": "{\u0022TableName\u0022: \u0022uttable73d02fb3\u0022}",
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Wed, 22 Sep 2021 00:57:01 GMT",
-        "ETag": "W/\u0022datetime\u00272021-09-22T00%3A57%3A02.0813320Z\u0027\u0022",
+        "Date": "Mon, 18 Oct 2021 23:22:52 GMT",
+        "ETag": "W/\u0022datetime\u00272021-10-18T23%3A22%3A52.3432968Z\u0027\u0022",
         "Location": "https://yalltbtestsprim.table.cosmos.azure.com/Tables(\u0027uttable73d02fb3\u0027)",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "de89badb-2b66-4425-8637-9d72f7d06663"
+        "x-ms-request-id": "564e6a76-05fb-401c-a359-0043b06a660b"
       },
       "ResponseBody": {
         "TableName": "uttable73d02fb3",
@@ -41,22 +41,22 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "DataServiceVersion": "3.0",
-        "Date": "Wed, 22 Sep 2021 00:57:04 GMT",
+        "Date": "Mon, 18 Oct 2021 23:22:58 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "00c4ae4a-1b40-11ec-8dee-5cf37093a909",
-        "x-ms-date": "Wed, 22 Sep 2021 00:57:04 GMT",
+        "x-ms-client-request-id": "54b7cf90-306a-11ec-bf6d-5cf37093a909",
+        "x-ms-date": "Mon, 18 Oct 2021 23:22:58 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Wed, 22 Sep 2021 00:57:01 GMT",
+        "Date": "Mon, 18 Oct 2021 23:22:52 GMT",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "70afb46c-1483-4e23-bf31-3eaf44544334"
+        "x-ms-request-id": "4aba7402-0bd7-451e-8637-f7d1c4741511"
       },
       "ResponseBody": [
-        "{\u0022odata.error\u0022:{\u0022code\u0022:\u0022ResourceNotFound\u0022,\u0022message\u0022:{\u0022lang\u0022:\u0022en-us\u0022,\u0022value\u0022:\u0022The specified resource does not exist.\\nRequestID:70afb46c-1483-4e23-bf31-3eaf44544334\\n\u0022}}}\r\n"
+        "{\u0022odata.error\u0022:{\u0022code\u0022:\u0022ResourceNotFound\u0022,\u0022message\u0022:{\u0022lang\u0022:\u0022en-us\u0022,\u0022value\u0022:\u0022The specified resource does not exist.\\nRequestID:4aba7402-0bd7-451e-8637-f7d1c4741511\\n\u0022}}}\r\n"
       ]
     },
     {
@@ -68,19 +68,19 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "DataServiceVersion": "3.0",
-        "Date": "Wed, 22 Sep 2021 00:57:04 GMT",
+        "Date": "Mon, 18 Oct 2021 23:22:58 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "00d18f26-1b40-11ec-9023-5cf37093a909",
-        "x-ms-date": "Wed, 22 Sep 2021 00:57:04 GMT",
+        "x-ms-client-request-id": "54c1ef9a-306a-11ec-87e4-5cf37093a909",
+        "x-ms-date": "Mon, 18 Oct 2021 23:22:58 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Wed, 22 Sep 2021 00:57:01 GMT",
+        "Date": "Mon, 18 Oct 2021 23:22:52 GMT",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "bbc9b7e9-eae4-4dac-96df-ffc540339b56"
+        "x-ms-request-id": "5a9b41fe-3a90-4b96-a913-19f671a5b6df"
       },
       "ResponseBody": {
         "value": [
@@ -100,17 +100,17 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "Date": "Wed, 22 Sep 2021 00:57:04 GMT",
+        "Date": "Mon, 18 Oct 2021 23:22:58 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "00d48455-1b40-11ec-93dd-5cf37093a909",
-        "x-ms-date": "Wed, 22 Sep 2021 00:57:04 GMT",
+        "x-ms-client-request-id": "54c52236-306a-11ec-b2ac-5cf37093a909",
+        "x-ms-date": "Mon, 18 Oct 2021 23:22:58 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "Date": "Wed, 22 Sep 2021 00:57:02 GMT",
-        "x-ms-request-id": "123d39d5-09a4-4266-af8a-70fa626c97fc"
+        "Date": "Mon, 18 Oct 2021 23:22:52 GMT",
+        "x-ms-request-id": "d1db2643-d4d3-448d-821e-6f3e7a18f45b"
       },
       "ResponseBody": null
     }

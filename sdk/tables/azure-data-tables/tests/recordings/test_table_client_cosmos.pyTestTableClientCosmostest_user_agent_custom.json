@@ -9,19 +9,19 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "DataServiceVersion": "3.0",
-        "Date": "Wed, 22 Sep 2021 00:34:27 GMT",
+        "Date": "Mon, 18 Oct 2021 22:59:54 GMT",
         "User-Agent": "TestApp/v1.0 azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "d7ef2a10-1b3c-11ec-9795-5cf37093a909",
-        "x-ms-date": "Wed, 22 Sep 2021 00:34:27 GMT",
+        "x-ms-client-request-id": "1b6f3cb7-3067-11ec-8fdf-5cf37093a909",
+        "x-ms-date": "Mon, 18 Oct 2021 22:59:54 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Wed, 22 Sep 2021 00:34:24 GMT",
+        "Date": "Mon, 18 Oct 2021 22:59:48 GMT",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "23c488a1-1fa9-45a1-9383-316b1fac4a98"
+        "x-ms-request-id": "c4a23ec3-066d-4ac5-a476-918959512776"
       },
       "ResponseBody": {
         "value": [],
@@ -37,19 +37,19 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "DataServiceVersion": "3.0",
-        "Date": "Wed, 22 Sep 2021 00:34:27 GMT",
+        "Date": "Mon, 18 Oct 2021 22:59:54 GMT",
         "User-Agent": "TestApp/v2.0 TestApp/v1.0 azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "d7f9e06b-1b3c-11ec-876f-5cf37093a909",
-        "x-ms-date": "Wed, 22 Sep 2021 00:34:27 GMT",
+        "x-ms-client-request-id": "1b77ff19-3067-11ec-861d-5cf37093a909",
+        "x-ms-date": "Mon, 18 Oct 2021 22:59:54 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Wed, 22 Sep 2021 00:34:24 GMT",
+        "Date": "Mon, 18 Oct 2021 22:59:48 GMT",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "c1c7251f-4953-42b9-a55f-add9aa2a4632"
+        "x-ms-request-id": "4c9b3dca-4f3d-42e7-8eea-b093d26ac1ce"
       },
       "ResponseBody": {
         "value": [],

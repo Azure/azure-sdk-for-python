@@ -10,10 +10,10 @@
         "Connection": "keep-alive",
         "Content-Length": "1143",
         "Content-Type": "application/xml",
-        "Date": "Thu, 23 Sep 2021 16:55:56 GMT",
+        "Date": "Mon, 18 Oct 2021 23:42:44 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "1ef9d05f-1c8f-11ec-bfb9-5cf37093a909",
-        "x-ms-date": "Thu, 23 Sep 2021 16:55:56 GMT",
+        "x-ms-client-request-id": "172fe169-306d-11ec-b425-5cf37093a909",
+        "x-ms-date": "Mon, 18 Oct 2021 23:42:44 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": [
@@ -24,20 +24,20 @@
       "ResponseHeaders": {
         "Content-Length": "327",
         "Content-Type": "application/xml",
-        "Date": "Thu, 23 Sep 2021 16:55:51 GMT",
+        "Date": "Mon, 18 Oct 2021 23:42:37 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "1ef9d05f-1c8f-11ec-bfb9-5cf37093a909",
+        "x-ms-client-request-id": "172fe169-306d-11ec-b425-5cf37093a909",
         "x-ms-error-code": "InvalidXmlDocument",
-        "x-ms-request-id": "a77ea303-5002-001f-029b-b0c2d9000000",
+        "x-ms-request-id": "122addbd-2002-0083-5779-c46fbf000000",
         "x-ms-version": "2019-02-02"
       },
       "ResponseBody": [
         "\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003Cm:error xmlns:m=\u0022http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\u0022\u003E\u003Cm:code\u003EInvalidXmlDocument\u003C/m:code\u003E\u003Cm:message xml:lang=\u0022en-US\u0022\u003EXML specified is not syntactically valid.\n",
-        "RequestId:a77ea303-5002-001f-029b-b0c2d9000000\n",
-        "Time:2021-09-23T16:55:51.7741008Z\u003C/m:message\u003E\u003C/m:error\u003E"
+        "RequestId:122addbd-2002-0083-5779-c46fbf000000\n",
+        "Time:2021-10-18T23:42:38.2884575Z\u003C/m:message\u003E\u003C/m:error\u003E"
       ]
     }
   ],

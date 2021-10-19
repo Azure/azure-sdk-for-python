@@ -10,10 +10,10 @@
         "Connection": "keep-alive",
         "Content-Length": "273",
         "Content-Type": "application/xml",
-        "Date": "Thu, 23 Sep 2021 16:59:43 GMT",
+        "Date": "Mon, 18 Oct 2021 23:46:30 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "a64efec8-1c8f-11ec-b2f4-5cf37093a909",
-        "x-ms-date": "Thu, 23 Sep 2021 16:59:43 GMT",
+        "x-ms-client-request-id": "9e60ce90-306d-11ec-a732-5cf37093a909",
+        "x-ms-date": "Mon, 18 Oct 2021 23:46:30 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": [
@@ -23,12 +23,12 @@
       "StatusCode": 501,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=fullmetadata",
-        "Date": "Thu, 23 Sep 2021 16:59:38 GMT",
+        "Date": "Mon, 18 Oct 2021 23:46:24 GMT",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "832c8e04-bb1d-4cff-9511-695b68d330f5"
+        "x-ms-request-id": "11367982-fc85-475f-a8fb-9fab9887276a"
       },
       "ResponseBody": [
-        "{\u0022odata.error\u0022:{\u0022code\u0022:\u0022NotImplemented\u0022,\u0022message\u0022:{\u0022lang\u0022:\u0022en-us\u0022,\u0022value\u0022:\u0022The requested operation is not supported.\\r\\nActivityId: 832c8e04-bb1d-4cff-9511-695b68d330f5, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/6.2.9200.0\\nRequestID:832c8e04-bb1d-4cff-9511-695b68d330f5\\n\u0022}}}\r\n"
+        "{\u0022odata.error\u0022:{\u0022code\u0022:\u0022NotImplemented\u0022,\u0022message\u0022:{\u0022lang\u0022:\u0022en-us\u0022,\u0022value\u0022:\u0022The requested operation is not supported.\\r\\nActivityId: 11367982-fc85-475f-a8fb-9fab9887276a, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/6.2.9200.0\\nRequestID:11367982-fc85-475f-a8fb-9fab9887276a\\n\u0022}}}\r\n"
       ]
     }
   ],
