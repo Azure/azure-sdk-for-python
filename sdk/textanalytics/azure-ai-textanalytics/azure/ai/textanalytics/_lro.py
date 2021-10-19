@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Generic
 from six.moves.urllib.parse import urlencode
 from azure.core.polling._poller import PollingReturnType
 from azure.core.exceptions import HttpResponseError
-from azure.core.polling import LROPoller, PollingMethod
+from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import (
     LROBasePolling,
     OperationResourcePolling,
@@ -203,12 +203,12 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller, Generic[PollingReturnType]):
         return self.polling_method().id
 
     @classmethod
-    def from_continuation_token(cls, polling_method, continuation_token, **kwargs):
-        # type: (PollingMethod[PollingReturnType], str, Any) -> AnalyzeHealthcareEntitiesLROPoller[PollingReturnType]
+    def from_continuation_token(cls, polling_method, continuation_token, **kwargs):  # type: ignore
+        # type: (AnalyzeHealthcareEntitiesLROPollingMethod, str, Any) -> AnalyzeHealthcareEntitiesLROPoller
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
             continuation_token, **kwargs
         )
-        polling_method._lro_algorithms = [
+        polling_method._lro_algorithms = [  # pylint: disable=protected-access
             TextAnalyticsOperationResourcePolling(
                 show_stats=initial_response.context.options["show_stats"]
             )
@@ -436,12 +436,12 @@ class AnalyzeActionsLROPoller(LROPoller, Generic[PollingReturnType]):
         return self.polling_method().id
 
     @classmethod
-    def from_continuation_token(cls, polling_method, continuation_token, **kwargs):
-        # type: (PollingMethod[PollingReturnType], str, Any) -> AnalyzeActionsLROPoller[PollingReturnType]
+    def from_continuation_token(cls, polling_method, continuation_token, **kwargs):  # type: ignore
+        # type: (AnalyzeActionsLROPollingMethod, str, Any) -> AnalyzeActionsLROPoller
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
             continuation_token, **kwargs
         )
-        polling_method._lro_algorithms = [
+        polling_method._lro_algorithms = [  # pylint: disable=protected-access
             TextAnalyticsOperationResourcePolling(
                 show_stats=initial_response.context.options["show_stats"]
             )

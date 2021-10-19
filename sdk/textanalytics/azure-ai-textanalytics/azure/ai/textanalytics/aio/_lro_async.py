@@ -8,7 +8,7 @@ import base64
 import functools
 from typing import Optional, Any
 from azure.core.exceptions import HttpResponseError
-from azure.core.polling import AsyncLROPoller, PollingMethod
+from azure.core.polling import AsyncLROPoller
 from azure.core.polling.base_polling import OperationFailed, BadStatus
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.polling._async_poller import PollingReturnType
@@ -129,6 +129,7 @@ class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
         self._initial_response.context.options["show_stats"] = self._show_stats
         return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
 
+
 class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType]):
     def polling_method(self) -> AsyncAnalyzeHealthcareEntitiesLROPollingMethod:  # type: ignore
         """Return the polling method associated to this poller."""
@@ -171,12 +172,17 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType])
         return self.polling_method().id
 
     @classmethod
-    def from_continuation_token(cls, polling_method, continuation_token, **kwargs):
-        # type: (PollingMethod[PollingReturnType], str, Any) -> AsyncAnalyzeHealthcareEntitiesLROPoller[PollingReturnType]
+    def from_continuation_token(  # type: ignore
+        cls,
+        polling_method,  # type: AsyncAnalyzeHealthcareEntitiesLROPollingMethod
+        continuation_token,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> AsyncAnalyzeHealthcareEntitiesLROPoller
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
             continuation_token, **kwargs
         )
-        polling_method._lro_algorithms = [
+        polling_method._lro_algorithms = [  # pylint: disable=protected-access
             TextAnalyticsOperationResourcePolling(
                 show_stats=initial_response.context.options["show_stats"]
             )
@@ -185,7 +191,7 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType])
             client,
             initial_response,
             functools.partial(deserialization_callback, initial_response),
-            polling_method
+            polling_method  # type: ignore
         )
 
     async def cancel(self, **kwargs) -> "AsyncLROPoller[None]":  # type: ignore
@@ -389,12 +395,12 @@ class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
         return self.polling_method().id
 
     @classmethod
-    def from_continuation_token(cls, polling_method, continuation_token, **kwargs):
-        # type: (PollingMethod[PollingReturnType], str, Any) -> AsyncAnalyzeActionsLROPoller[PollingReturnType]
+    def from_continuation_token(cls, polling_method, continuation_token, **kwargs):  # type: ignore
+        # type: (AsyncAnalyzeActionsLROPollingMethod, str, Any) -> AsyncAnalyzeActionsLROPoller
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
             continuation_token, **kwargs
         )
-        polling_method._lro_algorithms = [
+        polling_method._lro_algorithms = [  # pylint: disable=protected-access
             TextAnalyticsOperationResourcePolling(
                 show_stats=initial_response.context.options["show_stats"]
             )
@@ -403,5 +409,5 @@ class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
             client,
             initial_response,
             functools.partial(deserialization_callback, initial_response),
-            polling_method
+            polling_method  # type: ignore
         )

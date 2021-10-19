@@ -5,7 +5,6 @@
 # ------------------------------------
 # pylint: disable=too-many-lines
 
-import copy
 from typing import Union, Any, List, Dict, TYPE_CHECKING
 from functools import partial
 from azure.core.async_paging import AsyncItemPaged
@@ -787,11 +786,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         polling_interval = kwargs.pop("polling_interval", 5)
         continuation_token = kwargs.pop("continuation_token", None)
         string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
-        polling_kwargs = kwargs
-        operation_kwargs = copy.copy(kwargs)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
         if disable_service_logs is not None:
-            operation_kwargs["logging_opt_out"] = disable_service_logs
+            kwargs["logging_opt_out"] = disable_service_logs
 
         if continuation_token:
             def get_result_from_cont_token(initial_response, pipeline_response):
@@ -805,9 +802,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 polling_method=AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
                     text_analytics_client=self._client,
                     timeout=polling_interval,
-                    **polling_kwargs
+                    **kwargs
                 ),
-                client=self._client._client,
+                client=self._client._client,  # pylint: disable=protected-access
                 deserialization_callback=get_result_from_cont_token,
                 continuation_token=continuation_token
             )
@@ -837,10 +834,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                             show_stats=show_stats,
                         )
                     ],
-                    **polling_kwargs,
+                    **kwargs,
                 ),
                 continuation_token=continuation_token,
-                **operation_kwargs,
+                **kwargs,
             )
 
         except ValueError as error:
@@ -996,7 +993,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     timeout=polling_interval,
                     **kwargs
                 ),
-                client=self._client._client,
+                client=self._client._client,  # pylint: disable=protected-access
                 deserialization_callback=get_result_from_cont_token,
                 continuation_token=continuation_token
             )
