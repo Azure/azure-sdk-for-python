@@ -2656,10 +2656,12 @@ class DocumentLine(object):
         self.content = kwargs.get("content", None)
         self.bounding_box = kwargs.get("bounding_box", None)
         self.spans = kwargs.get("spans", None)
+        self._parent = kwargs.get("_parent", None)
 
     @classmethod
-    def _from_generated(cls, line):
+    def _from_generated(cls, line, parent):
         return cls(
+            _parent=parent,
             content=line.content,
             bounding_box=get_bounding_box(line),
             spans=prepare_document_spans(line.spans),
@@ -2707,6 +2709,22 @@ class DocumentLine(object):
             if len(data.get("spans", [])) > 0
             else [],
         )
+
+    def get_words(
+        self, mode
+    ):  # pylint: disable=unused-argument,no-self-use
+        # type: (str) -> list[DocumentWord]
+        """Get the child elements found in the span of this DocumentLine.
+        :param str mode: Required. Mode used to search for words. Can be either "overlap" (default) or "contains".
+        :return: list[DocumentWord]
+        :rtype: list[DocumentWord]
+        """
+        # TODO pending mode switch
+        result = []
+        for elem in self._parent.words:
+            if in_span(elem, self.spans):
+                result.append(elem)
+        return  result
 
 
 class DocumentPage(object):
@@ -2756,7 +2774,7 @@ class DocumentPage(object):
             width=page.width,
             height=page.height,
             unit=page.unit,
-            lines=[DocumentLine._from_generated(line) for line in page.lines]
+            lines=[DocumentLine._from_generated(line, page) for line in page.lines]
             if page.lines
             else [],
             words=[DocumentWord._from_generated(word) for word in page.words]
@@ -4039,3 +4057,13 @@ class DocumentAnalysisInnerError(object):
             innererror=DocumentAnalysisInnerError.from_dict(data.get("innererror"))  # type: ignore
             if data.get("innererror") else None
         )
+
+def in_span(element, spans):
+    # type: (Any, list[Point]) -> bool
+    if hasattr(element, "span"):
+        for span in spans:
+            if element.span.offset >= span.offset and (
+                element.span.offset + element.span.length
+            ) <= (span.offset + span.length):
+                return True
+    return False

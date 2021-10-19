@@ -54,6 +54,21 @@ class TestDocumentFromStream(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    def test_document_line_get_words(self, client):
+        with open(self.invoice_pdf, "rb") as fd:
+            document = fd.read()
+
+        poller = client.begin_analyze_document("prebuilt-document", document)
+        result = poller.result()
+        
+        words = result.pages[0].lines[0].get_words("")
+        assert words[0].content == "Contoso"
+        words = result.pages[0].lines[2].get_words("")
+        assert len(words) == 4
+
+
+    @FormRecognizerPreparer()
+    @DocumentAnalysisClientPreparer()
     def test_document_stream_transform_jpg(self, client):
         with open(self.form_jpg, "rb") as fd:
             document = fd.read()
