@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import logging
+from six import string_types
 from azure.core.tracing.decorator import distributed_trace
 from ._resolver import DtmiResolver
 from ._common import DEFAULT_LOCATION, DEFAULT_API_VERSION, CLIENT_INIT_MSG, DependencyModeType
@@ -77,7 +78,7 @@ class ModelsRepositoryClient(object):
         :returns: Dictionary mapping DTMIs to models
         :rtype: dict
         """
-        if isinstance(dtmis, str):
+        if isinstance(dtmis, string_types):
             dtmis = [dtmis]
 
         return self.resolver.resolve(dtmis, dependency_resolution=dependency_resolution, **kwargs)
