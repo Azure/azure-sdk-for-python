@@ -40,7 +40,7 @@ class Model(object):
         self.dtmi = dtmi
         self.extends = extends if extends else []
         self.components = components if components else []
-        self.dependencies = list(extends.union(components))
+        self.dependencies = list(set(extends).union(set(components)))
         self.contents = contents
 
     def __repr__(self):
@@ -84,7 +84,7 @@ class ModelQuery(object):
                     self._parse_component(item.get(ModelProperties.schema.value))
                 )
 
-        return dependencies
+        return list(dependencies)
 
     def _parse_component(self, component):
         dependencies = set()
@@ -102,7 +102,7 @@ class ModelQuery(object):
         elif _is_interface_or_component(component):
             metadata = self._parse_interface(component).dependencies
             dependencies.update(metadata)
-        return dependencies
+        return list(dependencies)
 
 def _is_interface_or_component(root):
     if not isinstance(root, dict):

@@ -9,8 +9,8 @@ import abc
 import os
 import io
 import re
+import urllib
 import six
-from six.moves.urllib.parse import urljoin
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import (
@@ -124,7 +124,7 @@ class HttpFetcher(Fetcher):
         :returns: JSON data at the path
         :rtype: JSON object
         """
-        url = urljoin(self.base_url, path)
+        url = urllib.parse.urljoin(self.base_url, path)
 
         # Fetch
         request = HttpRequest("GET", url)
