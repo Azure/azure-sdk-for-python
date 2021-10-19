@@ -680,7 +680,8 @@ class TableClient(AsyncTablesBaseClient):
             - ('upsert', {'PartitionKey': 'A', 'RowKey': 'B'})
             - ('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}, {'mode': UpdateMode.REPLACE})
 
-        :type operations: Union[Iterable[TransactionOperationType],AsyncIterable[TransactionOperationType]]
+        :type operations:
+         Union[Iterable[Tuple[str, Entity, Mapping[str, Any]]],AsyncIterable[Tuple[str, Entity, Mapping[str, Any]]]]
         :return: A list of mappings with response metadata for each operation in the transaction.
         :rtype: List[Mapping[str, Any]]
         :raises ~azure.data.tables.TableTransactionError:

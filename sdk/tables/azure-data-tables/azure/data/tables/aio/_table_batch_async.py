@@ -71,11 +71,11 @@ class TableBatchOperations(object):
     def add_operation(self, operation: TransactionOperationType) -> None:
         """Add a single operation to a batch."""
         try:
-            operation_kwargs = operation[2]  # type: ignore
-        except IndexError:
-            operation_kwargs = {}
+            operation_type, entity, kwargs = operation  # type: ignore
+        except ValueError:
+            operation_type, entity, kwargs = *operation, {}  # type: ignore
         try:
-            getattr(self, operation[0].lower())(operation[1], **operation_kwargs)
+            getattr(self, operation_type.lower())(entity, **kwargs)
         except AttributeError:
             raise ValueError("Unrecognized operation: {}".format(operation))
 

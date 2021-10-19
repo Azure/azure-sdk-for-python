@@ -693,7 +693,7 @@ class TableClient(TablesBaseClient):
             - ('upsert', {'PartitionKey': 'A', 'RowKey': 'B'})
             - ('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}, {'mode': UpdateMode.REPLACE})
 
-        :type operations: Iterable[TransactionOperationType]
+        :type operations: Iterable[Tuple[str, TableEntity, Mapping[str, Any]]]
         :return: A list of mappings with response metadata for each operation in the transaction.
         :rtype: List[Mapping[str, Any]]
         :raises: :class:`~azure.data.tables.TableTransactionError`
