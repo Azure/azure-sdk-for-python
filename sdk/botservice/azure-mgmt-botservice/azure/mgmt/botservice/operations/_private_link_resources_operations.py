@@ -22,8 +22,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class HostSettingsOperations(object):
-    """HostSettingsOperations operations.
+class PrivateLinkResourcesOperations(object):
+    """PrivateLinkResourcesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -44,19 +44,25 @@ class HostSettingsOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def get(
+    def list_by_bot_resource(
         self,
+        resource_group_name,  # type: str
+        resource_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.HostSettingsResponse"
-        """Get per subscription settings needed to host bot in compute resource such as Azure App Service.
+        # type: (...) -> "_models.PrivateLinkResourceListResult"
+        """Gets the private link resources that need to be created for a Bot.
 
+        :param resource_group_name: The name of the Bot resource group in the user subscription.
+        :type resource_group_name: str
+        :param resource_name: The name of the Bot resource.
+        :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: HostSettingsResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.botservice.models.HostSettingsResponse
+        :return: PrivateLinkResourceListResult, or the result of cls(response)
+        :rtype: ~azure.mgmt.botservice.models.PrivateLinkResourceListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HostSettingsResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResourceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -65,8 +71,10 @@ class HostSettingsOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.get.metadata['url']  # type: ignore
+        url = self.list_by_bot_resource.metadata['url']  # type: ignore
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -88,10 +96,10 @@ class HostSettingsOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('HostSettingsResponse', pipeline_response)
+        deserialized = self._deserialize('PrivateLinkResourceListResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.BotService/hostSettings'}  # type: ignore
+    list_by_bot_resource.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{resourceName}/privateLinkResources'}  # type: ignore
