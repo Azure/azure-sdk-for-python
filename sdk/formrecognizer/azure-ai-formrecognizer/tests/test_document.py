@@ -20,6 +20,19 @@ class TestDocumentFromStream(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    def test_document_word_get_styles(self, client):
+        with open(self.invoice_pdf, "rb") as fd:
+            document = fd.read()
+
+        poller = client.begin_analyze_document("prebuilt-document", document)
+        result = poller.result()
+        
+        styles = result.pages[0].words[0].get_styles()
+        assert len(styles) == 1
+        assert styles[0].is_handwritten == False
+
+    @FormRecognizerPreparer()
+    @DocumentAnalysisClientPreparer()
     def test_document_stream_transform_pdf(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             document = fd.read()

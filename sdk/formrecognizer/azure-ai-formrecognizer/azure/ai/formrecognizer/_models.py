@@ -2749,8 +2749,10 @@ class DocumentPage(object):
         self.lines = kwargs.get("lines", None)
 
     @classmethod
-    def _from_generated(cls, page):
+    def _from_generated(cls, page, parent):
         return cls(
+            # TODO will the parent need to be assigned to documentPage at some point?
+            # And will that assignment change the way DocumentWord accesses AnalyzeResult?
             page_number=page.page_number,
             angle=adjust_text_angle(page.angle),
             width=page.width,
@@ -2759,7 +2761,7 @@ class DocumentPage(object):
             lines=[DocumentLine._from_generated(line) for line in page.lines]
             if page.lines
             else [],
-            words=[DocumentWord._from_generated(word) for word in page.words]
+            words=[DocumentWord._from_generated(word, parent) for word in page.words]
             if page.words
             else [],
             selection_marks=[
@@ -3427,10 +3429,12 @@ class DocumentWord(DocumentElement):
         super(DocumentWord, self).__init__(kind="word", **kwargs)
         self.span = kwargs.get("span", None)
         self.confidence = kwargs.get("confidence", None)
+        self._parent = kwargs.get("_parent", None)
 
     @classmethod
-    def _from_generated(cls, word):
+    def _from_generated(cls, word, parent):
         return cls(
+            _parent=parent,
             content=word.content,
             bounding_box=get_bounding_box(word),
             span=DocumentSpan._from_generated(word.span)
@@ -3483,6 +3487,13 @@ class DocumentWord(DocumentElement):
             confidence=data.get("confidence", None),
         )
 
+    def get_styles(self):
+        # type () -> [DocumentStyle]
+        styles = []
+        for style in self._parent.styles:
+            if in_span(self, style):
+                styles.append(style)
+        return styles
 
 class AnalyzeResult(object):
     """Document analysis result.
@@ -3527,7 +3538,7 @@ class AnalyzeResult(object):
             api_version=response.api_version,
             model_id=response.model_id,
             content=response.content,
-            pages=[DocumentPage._from_generated(page) for page in response.pages]
+            pages=[DocumentPage._from_generated(page, response) for page in response.pages]
             if response.pages
             else [],
             tables=[DocumentTable._from_generated(table) for table in response.tables]
