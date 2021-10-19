@@ -1,6 +1,6 @@
 {
     "chosen_version": "",
-    "total_api_version_list": ["2018-12-20", "2021-07-01"],
+    "total_api_version_list": ["2018-12-20", "2021-08-01"],
     "client": {
         "name": "RecoveryServicesBackupClient",
         "filename": "_recovery_services_backup_client",
