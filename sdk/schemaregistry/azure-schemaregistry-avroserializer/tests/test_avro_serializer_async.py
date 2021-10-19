@@ -23,7 +23,6 @@ import uuid
 import avro
 import avro.io
 from io import BytesIO
-import asyncio
 import pytest
 
 from azure.schemaregistry.aio import SchemaRegistryClient

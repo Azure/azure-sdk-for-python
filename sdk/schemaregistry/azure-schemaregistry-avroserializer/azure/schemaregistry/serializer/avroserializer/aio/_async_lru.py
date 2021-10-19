@@ -59,6 +59,7 @@ def _done_callback(fut, task):
 
 
 def _cache_invalidate(wrapped, typed, *args, **kwargs):
+    # pylint: disable=protected-access
     key = _make_key(args, kwargs, typed)
 
     exists = key in wrapped._cache
@@ -70,6 +71,7 @@ def _cache_invalidate(wrapped, typed, *args, **kwargs):
 
 
 def _cache_clear(wrapped):
+    # pylint: disable=protected-access
     wrapped.hits = wrapped.misses = 0
     wrapped._cache = OrderedDict()
     wrapped.tasks = set()
@@ -79,6 +81,7 @@ def _open(wrapped):
     if not wrapped.closed:
         raise RuntimeError("alru_cache is not closed")
 
+    # pylint: disable=protected-access
     was_closed = (
         wrapped.hits == wrapped.misses == len(wrapped.tasks) == len(wrapped._cache) == 0
     )
@@ -121,6 +124,7 @@ def _close_waited(wrapped, _):
 
 
 def _cache_info(wrapped, maxsize):
+    # pylint: disable=protected-access
     return _CacheInfo(
         wrapped.hits,
         wrapped.misses,
@@ -130,6 +134,7 @@ def _cache_info(wrapped, maxsize):
 
 
 def __cache_touch(wrapped, key):
+    # pylint: disable=protected-access
     try:
         wrapped._cache.move_to_end(key)
     except KeyError:  # not sure is it possible
@@ -154,6 +159,7 @@ def alru_cache(
     cache_exceptions=True,
 ):
     def wrapper(fn):
+        # pylint: disable=protected-access
         _origin = unpartial(fn)
 
         if not asyncio.iscoroutinefunction(_origin):
