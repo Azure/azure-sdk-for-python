@@ -54,7 +54,7 @@ class TestToDict(FormRecognizerTest):
         assert d == final
 
     def test_document_element_to_dict(self):
-        model = _models.DocumentElement(
+        model = _models.DocumentContentElement(
             content="sample",
             bounding_box=[
                 _models.Point(1427.0, 1669.0),
