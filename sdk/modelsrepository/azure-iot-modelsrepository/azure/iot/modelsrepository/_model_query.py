@@ -12,7 +12,7 @@ Note that this implementation is not representative of what an eventual full
 parser implementation would necessarily look like from an API perspective
 """
 import logging
-from six import text_type
+import six
 from .dtmi_conventions import is_valid_dtmi
 from ._common import ModelType, ModelProperties
 
@@ -64,7 +64,7 @@ class ModelQuery(object):
 
     def _parse_interface(self, root):
         dtmi_id = root.get(ModelProperties.id.value)
-        root_dtmi = dtmi_id if isinstance(dtmi_id, text_type) else None
+        root_dtmi = dtmi_id if isinstance(dtmi_id, six.string_types) else None
         extends = self._parse_extends(root)
         contents = self._parse_contents(root)
 
@@ -77,7 +77,6 @@ class ModelQuery(object):
     def _parse_contents(self, root):
         dependencies = set()
         contents = root.get(ModelProperties.contents.value, None)
-
         if isinstance(contents, list):
             for item in contents:
                 dependencies.update(
@@ -88,12 +87,12 @@ class ModelQuery(object):
 
     def _parse_component(self, component):
         dependencies = set()
-        if isinstance(component, text_type) and is_valid_dtmi(component):
+        if isinstance(component, six.string_types) and is_valid_dtmi(component):
             dependencies.add(component)
         elif isinstance(component, list):
             # If it's a list, could have DTMIs or nested models
             for item in component:
-                if isinstance(item, text_type):
+                if isinstance(item, six.string_types):
                     # If there are strings in the list, that's a DTMI reference, so add it
                     dependencies.add(item)
                 elif _is_interface_or_component(item):
@@ -104,12 +103,13 @@ class ModelQuery(object):
             dependencies.update(metadata)
         return dependencies
 
+
 def _is_interface_or_component(root):
     if not isinstance(root, dict):
         return False
 
     interface = root.get(ModelProperties.type.value)
     return (
-        isinstance(interface, text_type) and
+        isinstance(interface, six.string_types) and
         interface in [ModelType.interface.value, ModelType.component.value]
     )

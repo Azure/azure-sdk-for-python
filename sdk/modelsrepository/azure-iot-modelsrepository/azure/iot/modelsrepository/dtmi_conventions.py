@@ -4,8 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 import re
+import six
 from six.moves import urllib
 from ._common import INVALID_DTMI_FORMAT
+
 
 def is_valid_dtmi(dtmi):
     """Checks validity of a DTMI
@@ -15,7 +17,7 @@ def is_valid_dtmi(dtmi):
     :returns: Boolean indicating if DTMI is valid
     :rtype: bool
     """
-    if not isinstance(dtmi, str):
+    if not isinstance(dtmi, six.string_types):
         return False
     pattern = re.compile(
         "^dtmi:[A-Za-z](?:[A-Za-z0-9_]*[A-Za-z0-9])?(?::[A-Za-z](?:[A-Za-z0-9_]*[A-Za-z0-9])?)*;[1-9][0-9]{0,8}$"
@@ -55,7 +57,7 @@ def _convert_dtmi_to_path(dtmi, expanded=False):
     Returns an empty string if the DTMI is invalid.
 
     :param str dtmi : DTMI for a model
-    :param bool expanded: Indicates if the relative path should be for an exapnded model
+    :param bool expanded: Indicates if the relative path should be for an expanded model
 
     :returns: Relative path of the model in a Models Repository
     :rtype: str
