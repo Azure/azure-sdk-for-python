@@ -6,7 +6,6 @@
 import logging
 import os
 import re
-import sys
 import six.moves.urllib as urllib
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.pipeline import AsyncPipeline
@@ -36,10 +35,10 @@ from .._common import (
 from ._fetcher import HttpFetcher, FilesystemFetcher
 from .._model_query import ModelQuery
 
-if sys.version_info < (3, 5):
-    from Queue import Queue
-else:
-    from queue import Queue
+try:
+    import queue
+except ImportError:
+    import Queue as queue
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -123,7 +122,7 @@ class DtmiResolver(object):
             parsed_dtmi = model_metadata.dtmi
             if target_dtmi != parsed_dtmi:
                 raise ModelError(
-                    GENERIC_GET_MODELS_ERROR.format(target_dtmi) +
+                    GENERIC_GET_MODELS_ERROR.format(target_dtmi) + " " +
                     INVALID_DTMI_FORMAT.format(target_dtmi, parsed_dtmi)
                 )
 
@@ -133,7 +132,7 @@ class DtmiResolver(object):
 
 @distributed_trace_async
 async def _prepare_queue(dtmis):
-    to_process_models = Queue()
+    to_process_models = queue.Queue()
     for dtmi in dtmis:
         if is_valid_dtmi(dtmi):
             to_process_models.put(dtmi)

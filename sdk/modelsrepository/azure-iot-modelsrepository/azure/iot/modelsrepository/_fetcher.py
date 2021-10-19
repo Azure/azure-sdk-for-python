@@ -9,8 +9,8 @@ import abc
 import os
 import io
 import re
-import urllib
 import six
+from six.moves.urllib.parse import urljoin
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.exceptions import (
     map_error,
@@ -118,7 +118,7 @@ class HttpFetcher(Fetcher):
         :returns: JSON data at the path
         :rtype: JSON object
         """
-        url = urllib.parse.urljoin(self.base_url, path)
+        url = urljoin(self.base_url, path)
 
         # Fetch
         request = HttpRequest("GET", url)

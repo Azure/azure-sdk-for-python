@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import re
+from six import text_type
 from six.moves import urllib
 from ._common import INVALID_DTMI_FORMAT
 
@@ -15,7 +16,7 @@ def is_valid_dtmi(dtmi):
     :returns: Boolean indicating if DTMI is valid
     :rtype: bool
     """
-    if not isinstance(dtmi, str):
+    if not isinstance(dtmi, text_type):
         return False
     pattern = re.compile(
         "^dtmi:[A-Za-z](?:[A-Za-z0-9_]*[A-Za-z0-9])?(?::[A-Za-z](?:[A-Za-z0-9_]*[A-Za-z0-9])?)*;[1-9][0-9]{0,8}$"
