@@ -6,7 +6,6 @@
 import logging
 import os
 import re
-import sys
 import six.moves.urllib as urllib
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.pipeline import Pipeline
@@ -36,10 +35,11 @@ from ._common import (
 from ._fetcher import HttpFetcher, FilesystemFetcher
 from ._model_query import ModelQuery
 
-if sys.version_info < (3, 5):
-    from Queue import Queue
-else:
-    from queue import Queue
+try:
+    import queue
+except ImportError:
+    import Queue as queue
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -128,8 +128,9 @@ class DtmiResolver(object):
 
         return processed_models
 
+
 def _prepare_queue(dtmis):
-    to_process_models = Queue()
+    to_process_models = queue.Queue()
     for dtmi in dtmis:
         if is_valid_dtmi(dtmi):
             to_process_models.put(dtmi)
@@ -140,6 +141,7 @@ def _prepare_queue(dtmis):
             )
 
     return to_process_models
+
 
 def _create_fetcher(location, **kwargs):
     """Return a Fetcher based upon the type of location"""
