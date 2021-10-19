@@ -1191,3 +1191,60 @@ class TestAnalyze(TextAnalyticsTest):
         assert document_results[1][0].is_error
         assert document_results[1][1].is_error
         assert document_results[1][2].is_error
+
+    @pytest.mark.live_test_only
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_analyze_continuation_token(self, client):
+        docs = [
+            {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+            {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
+            {"id": "3", "text": ""},
+            {"id": "4", "language": "en", "text": "I need a reservation for an indoor restaurant in China. Please don't stop the music. Play music and add it to my playlist"},
+        ]
+
+        actions = [
+            RecognizeEntitiesAction(),
+            RecognizePiiEntitiesAction(),
+            AnalyzeSentimentAction(),
+            ExtractKeyPhrasesAction(),
+        ]
+
+        initial_poller = client.begin_analyze_actions(
+            docs,
+            actions=actions,
+            show_stats=True,
+            polling_interval=self._interval(),
+        )
+
+        cont_token = initial_poller.continuation_token()
+
+        poller = client.begin_analyze_actions(
+            None,
+            None,
+            continuation_token=cont_token,
+            polling_interval=self._interval(),
+        )
+        response = poller.result()
+
+        action_results = list(response)
+        assert len(action_results) == len(docs)
+        action_order = [
+            _AnalyzeActionsType.RECOGNIZE_ENTITIES,
+            _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
+            _AnalyzeActionsType.ANALYZE_SENTIMENT,
+            _AnalyzeActionsType.EXTRACT_KEY_PHRASES,
+        ]
+        document_order = ["1", "2", "3", "4"]
+        for doc_idx, document_results in enumerate(action_results):
+            assert len(document_results) == 4
+            for action_idx, document_result in enumerate(document_results):
+                if doc_idx == 2:
+                    assert document_result.id == document_order[doc_idx]
+                    assert document_result.is_error
+                else:
+                    assert document_result.id == document_order[doc_idx]
+                    assert document_result.statistics
+                    assert self.document_result_to_action_type(document_result) == action_order[action_idx]
+
+        initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

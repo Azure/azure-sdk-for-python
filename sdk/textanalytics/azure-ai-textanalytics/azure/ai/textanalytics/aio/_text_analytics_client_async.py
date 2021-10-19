@@ -782,13 +782,37 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         polling_interval = kwargs.pop("polling_interval", 5)
         continuation_token = kwargs.pop("continuation_token", None)
         string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
+        polling_kwargs = kwargs
+        operation_kwargs = copy.copy(kwargs)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
+        if disable_service_logs is not None:
+            operation_kwargs["logging_opt_out"] = disable_service_logs
+
+        if continuation_token:
+            def get_result_from_cont_token(initial_response, pipeline_response):
+                doc_id_order = initial_response.context.options["doc_id_order"]
+                show_stats = initial_response.context.options["show_stats"]
+                return self._healthcare_result_callback(
+                    doc_id_order, pipeline_response, None, {}, show_stats=show_stats
+                )
+
+            return AsyncAnalyzeHealthcareEntitiesLROPoller.from_continuation_token(
+                polling_method=AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
+                    text_analytics_client=self._client,
+                    timeout=polling_interval,
+                    **polling_kwargs
+                ),
+                client=self._client._client,
+                deserialization_callback=get_result_from_cont_token,
+                continuation_token=continuation_token
+            )
+
+        docs = _validate_input(documents, "language", language)
         doc_id_order = [doc.get("id") for doc in docs]
         my_cls = kwargs.pop(
             "cls",
@@ -796,10 +820,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 self._healthcare_result_callback, doc_id_order, show_stats=show_stats
             ),
         )
-        polling_kwargs = kwargs
-        operation_kwargs = copy.copy(kwargs)
-        if disable_service_logs is not None:
-            operation_kwargs["logging_opt_out"] = disable_service_logs
 
         try:
             return await self._client.begin_health(
@@ -809,9 +829,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 cls=my_cls,
                 polling=AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
                     text_analytics_client=self._client,
+                    doc_id_order=doc_id_order,
+                    show_stats=show_stats,
                     timeout=polling_interval,
                     lro_algorithms=[
-                        TextAnalyticsOperationResourcePolling(show_stats=show_stats)
+                        TextAnalyticsOperationResourcePolling(
+                            show_stats=show_stats,
+                        )
                     ],
                     **polling_kwargs,
                 ),
@@ -953,15 +977,35 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         display_name = kwargs.pop("display_name", None)
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
+
+        show_stats = kwargs.pop("show_stats", False)
+        polling_interval = kwargs.pop("polling_interval", 5)
+        continuation_token = kwargs.pop("continuation_token", None)
+
+        if continuation_token:
+            def get_result_from_cont_token(initial_response, pipeline_response):
+                doc_id_order = initial_response.context.options["doc_id_order"]
+                task_id_order = initial_response.context.options["task_id_order"]
+                show_stats = initial_response.context.options["show_stats"]
+                return self._analyze_result_callback(
+                    doc_id_order, task_id_order, pipeline_response, None, {}, show_stats=show_stats
+                )
+
+            return AsyncAnalyzeActionsLROPoller.from_continuation_token(
+                polling_method=AsyncAnalyzeActionsLROPollingMethod(
+                    timeout=polling_interval,
+                    **kwargs
+                ),
+                client=self._client._client,
+                deserialization_callback=get_result_from_cont_token,
+                continuation_token=continuation_token
+            )
+
         docs = self._client.models(
             api_version=self._api_version
         ).MultiLanguageBatchInput(
             documents=_validate_input(documents, "language", language)
         )
-        show_stats = kwargs.pop("show_stats", False)
-        polling_interval = kwargs.pop("polling_interval", 5)
-        continuation_token = kwargs.pop("continuation_token", None)
-
         doc_id_order = [doc.get("id") for doc in docs.documents]
         try:
             generated_tasks = [
@@ -1031,8 +1075,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 ),
                 polling=AsyncAnalyzeActionsLROPollingMethod(
                     timeout=polling_interval,
+                    show_stats=show_stats,
+                    doc_id_order=doc_id_order,
+                    task_id_order=task_order,
                     lro_algorithms=[
-                        TextAnalyticsOperationResourcePolling(show_stats=show_stats)
+                        TextAnalyticsOperationResourcePolling(
+                            show_stats=show_stats,
+                        )
                     ],
                     **kwargs,
                 ),
