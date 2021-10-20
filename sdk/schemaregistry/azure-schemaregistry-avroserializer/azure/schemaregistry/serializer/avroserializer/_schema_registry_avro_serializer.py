@@ -29,7 +29,6 @@ except ImportError:
     from backports.functools_lru_cache import lru_cache
 from io import BytesIO
 from typing import Any, Dict, Mapping
-import avro
 
 from ._constants import SCHEMA_ID_START_INDEX, SCHEMA_ID_LENGTH, DATA_START_INDEX
 from ._avro_serializer import AvroObjectSerializer

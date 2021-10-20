@@ -25,8 +25,6 @@
 # --------------------------------------------------------------------------
 from io import BytesIO
 from typing import Any, Dict, Mapping
-import avro
-
 from ._async_lru import alru_cache
 from .._constants import SCHEMA_ID_START_INDEX, SCHEMA_ID_LENGTH, DATA_START_INDEX
 from .._avro_serializer import AvroObjectSerializer
