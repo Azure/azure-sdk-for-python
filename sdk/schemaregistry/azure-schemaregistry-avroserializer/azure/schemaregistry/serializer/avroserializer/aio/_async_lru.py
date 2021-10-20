@@ -23,7 +23,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 # --------------------------------------------------------------------------
-# Copying over `aio-libs/async_lru` for the following reasons:
+# Copying over `async_lru.py`[https://github.com/aio-libs/async-lru/blob/master/async_lru.py]
+# from `aio-libs`[https://github.com/aio-libs/async-lru] for the following reasons:
 # 1. There has not been an official release of `async_lru` in 2 years.
 # 2. The last update to the library was a year ago, so it seems the library is
 #    not being actively maintained.

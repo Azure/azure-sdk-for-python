@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Async version of `SchemaRegistryAvroSerializer` has been added under `azure.schemaregistry.serializer.avroserializer.aio`.
+- Async version of `AvroSerializer` has been added under `azure.schemaregistry.serializer.avroserializer.aio`.
 
 ### Breaking Changes
 

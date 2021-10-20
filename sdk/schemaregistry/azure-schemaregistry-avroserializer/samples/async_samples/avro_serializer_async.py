@@ -85,7 +85,6 @@ async def main():
     bytes_data_ben, bytes_data_alice = await serialize(serializer)
     dict_data_ben = await deserialize(serializer, bytes_data_ben)
     dict_data_alice = await deserialize(serializer, bytes_data_alice)
-    await schema_registry.close()
     await serializer.close()
     await token_credential.close()
 

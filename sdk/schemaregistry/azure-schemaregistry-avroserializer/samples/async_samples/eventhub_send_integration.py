@@ -41,12 +41,12 @@ eventhub_producer = EventHubProducerClient.from_connection_string(
     conn_str=EVENTHUB_CONNECTION_STR,
     eventhub_name=EVENTHUB_NAME
 )
-
 # create a AvroSerializer instance
+azure_credential = DefaultAzureCredential()
 avro_serializer = AvroSerializer(
     client=SchemaRegistryClient(
         fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE,
-        credential=DefaultAzureCredential()
+        credential=azure_credential
     ),
     group_name=GROUP_NAME,
     auto_register_schemas=True
@@ -72,6 +72,7 @@ async def main():
 
     await send_event_data_batch(eventhub_producer, avro_serializer)
     await avro_serializer.close()
+    await azure_credential.close()
     await eventhub_producer.close()
 
 if __name__ == "__main__":
