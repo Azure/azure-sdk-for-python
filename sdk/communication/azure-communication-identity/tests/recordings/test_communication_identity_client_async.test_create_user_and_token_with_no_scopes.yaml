@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.0.1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 19 Oct 2021 12:05:16 GMT
+      - Wed, 20 Oct 2021 08:48:23 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -24,12 +24,12 @@ interactions:
         2021-03-31-preview1, 2021-10-31-preview
       content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Tue, 19 Oct 2021 12:05:16 GMT
-      ms-cv: IOAV1C5440WvwMfTRqgryQ.0
+      date: Wed, 20 Oct 2021 08:48:23 GMT
+      ms-cv: BOq5kK+1oUuG1Y22qXNmcQ.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 89ms
+      x-processing-time: 84ms
     status:
       code: 201
       message: Created

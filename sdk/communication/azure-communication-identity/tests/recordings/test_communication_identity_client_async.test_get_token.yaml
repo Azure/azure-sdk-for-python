@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.0.1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 19 Oct 2021 12:05:26 GMT
+      - Wed, 20 Oct 2021 08:48:31 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -24,12 +24,12 @@ interactions:
         2021-03-31-preview1, 2021-10-31-preview
       content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Tue, 19 Oct 2021 12:05:26 GMT
-      ms-cv: 2bH7OkR6j0esrp5VmFnu9A.0
+      date: Wed, 20 Oct 2021 08:48:31 GMT
+      ms-cv: rl7RxjzY30OqCCkcaNUTtw.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 88ms
+      x-processing-time: 87ms
     status:
       code: 201
       message: Created
@@ -44,27 +44,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.0.1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 19 Oct 2021 12:05:26 GMT
+      - Wed, 20 Oct 2021 08:48:31 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-10-31-preview
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-10-20T12:05:27.2555912+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2021-10-21T08:48:32.2468673+00:00"}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
         2021-03-31-preview1, 2021-10-31-preview
       content-length: '804'
       content-type: application/json; charset=utf-8
-      date: Tue, 19 Oct 2021 12:05:26 GMT
-      ms-cv: POTvFm9z/065F0TVKYBb6w.0
+      date: Wed, 20 Oct 2021 08:48:32 GMT
+      ms-cv: RmuekEzWWkaL85fYYZ0Heg.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 96ms
+      x-processing-time: 100ms
     status:
       code: 200
       message: OK

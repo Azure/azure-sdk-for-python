@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.0.1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 19 Oct 2021 12:04:20 GMT
+      - Wed, 20 Oct 2021 08:47:59 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -23,7 +23,7 @@ interactions:
   response:
     body:
       string: '{"identity": {"id": "sanitized"}, "accessToken": {"token": "sanitized",
-        "expiresOn": "2021-10-20T12:04:21.7362204+00:00"}}'
+        "expiresOn": "2021-10-21T08:48:00.0682771+00:00"}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
@@ -33,9 +33,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Oct 2021 12:04:21 GMT
+      - Wed, 20 Oct 2021 08:47:59 GMT
       ms-cv:
-      - tH7/8GTPbEKfmEUOOvBhlQ.0
+      - ZohYANUGWUKMTE88YANjlg.0
       request-context:
       - appId=
       strict-transport-security:
@@ -43,7 +43,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 183ms
+      - 194ms
     status:
       code: 201
       message: Created

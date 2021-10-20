@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.0.1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 19 Oct 2021 12:05:28 GMT
+      - Wed, 20 Oct 2021 08:48:33 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -24,12 +24,12 @@ interactions:
         2021-03-31-preview1, 2021-10-31-preview
       content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Tue, 19 Oct 2021 12:05:28 GMT
-      ms-cv: XkWObZERM0iD1rx/O19Auw.0
+      date: Wed, 20 Oct 2021 08:48:34 GMT
+      ms-cv: 7ArYYDLuuUq7UBGLghkhVg.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 90ms
+      x-processing-time: 88ms
     status:
       code: 201
       message: Created
@@ -44,9 +44,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.0.1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 19 Oct 2021 12:05:28 GMT
+      - Wed, 20 Oct 2021 08:48:34 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -57,13 +57,13 @@ interactions:
         field is required.", "target": "Scopes"}}'
     headers:
       content-type: application/json
-      date: Tue, 19 Oct 2021 12:05:28 GMT
-      ms-cv: ZaxFoXV6K0+WFQ66IJw/RQ.0
+      date: Wed, 20 Oct 2021 08:48:34 GMT
+      ms-cv: r9m+v8WdpkCkAboSfAeBQQ.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 29ms
+      x-processing-time: 18ms
     status:
       code: 400
       message: Bad Request

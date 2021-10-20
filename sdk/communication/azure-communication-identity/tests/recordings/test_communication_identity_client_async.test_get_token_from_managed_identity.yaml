@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.0.1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
     method: POST
     uri: https://sanitized.communication.azure.com/identities?api-version=2021-10-31-preview
   response:
@@ -20,8 +20,8 @@ interactions:
         2021-03-31-preview1, 2021-10-31-preview
       content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Tue, 19 Oct 2021 12:05:27 GMT
-      ms-cv: oP1w7np7KkmWayFZtKnWmw.0
+      date: Wed, 20 Oct 2021 08:48:33 GMT
+      ms-cv: M5+0CP+KMEunJRXE2c2o8A.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
@@ -40,23 +40,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.0.1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
     method: POST
     uri: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-10-31-preview
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-10-20T12:05:28.3555095+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2021-10-21T08:48:33.8817546+00:00"}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
         2021-03-31-preview1, 2021-10-31-preview
       content-length: '804'
       content-type: application/json; charset=utf-8
-      date: Tue, 19 Oct 2021 12:05:27 GMT
-      ms-cv: zzzNgkaxaUeo4Z6YMRLtEg.0
+      date: Wed, 20 Oct 2021 08:48:33 GMT
+      ms-cv: 6/phJD9zgkesbrbWVJQFnw.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 91ms
+      x-processing-time: 97ms
     status:
       code: 200
       message: OK

@@ -9,8 +9,8 @@ interactions:
       Connection:
       - keep-alive
       Cookie:
-      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrkKxask-LHkfkGohsmdQEaMtMCpXVrIj5KvRzyAyun4hpMsrBPZr7tmmDLzZL357RLeIMEngqvO7nBJvQSlUu3r6U0VSIVE09e1B4ucZMASmXqzY-Q5s-_saz1dIVRcJsDdGuSwbneVo7krNkDzCl7fjFNL5OK76-FJ-OJ1UDTzggAA;
-        fpc=AuQX6qYkusBAtmBB9HteKIo; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrWc5wuD9Z45EY_4lyhsBbSAguchQduntHWxJjPJH38PlHeAh4Y0kUa85Qn0r7Ay3fHQRWObL4xpwwUKw5NxIOmpa0WqCMWIVxroFli4m9IBp1bxlgnvHOoK8zpRNER0J36vUXdQw9fSxrBDaV3i0zOZyU0Bq_z4uBkqNznCmZBvcgAA;
+        fpc=AmImb_4Cje9Pn0brw4Ywn84; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
       User-Agent:
       - python-requests/2.26.0
     method: GET
@@ -29,7 +29,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Oct 2021 12:04:25 GMT
+      - Wed, 20 Oct 2021 08:48:06 GMT
       expires:
       - '-1'
       p3p:
@@ -37,7 +37,7 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - fpc=AuQX6qYkusBAtmBB9HteKIo; expires=Thu, 18-Nov-2021 12:04:26 GMT; path=/;
+      - fpc=AmImb_4Cje9Pn0brw4Ywn84; expires=Fri, 19-Nov-2021 08:48:07 GMT; path=/;
         secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
@@ -64,12 +64,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.0.1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
     method: POST
     uri: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2021-10-31-preview
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-10-19T13:04:25.6899664+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2021-10-20T09:48:06.2670555+00:00"}'
     headers:
       api-supported-versions:
       - 2021-03-31-preview1, 2021-10-31-preview
@@ -78,9 +78,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Oct 2021 12:04:28 GMT
+      - Wed, 20 Oct 2021 08:48:08 GMT
       ms-cv:
-      - ol/GYnP1KUGj3JdkAnaSUA.0
+      - 5E54ECh14kqMx1Ajn5myhw.0
       request-context:
       - appId=
       strict-transport-security:
@@ -88,7 +88,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 1004ms
+      - 508ms
     status:
       code: 200
       message: OK

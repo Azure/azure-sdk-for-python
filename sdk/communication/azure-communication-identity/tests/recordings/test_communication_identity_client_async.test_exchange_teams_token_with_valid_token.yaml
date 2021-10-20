@@ -9,8 +9,8 @@ interactions:
       Connection:
       - keep-alive
       Cookie:
-      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevr2MLZxhaE6H-bAr2IglUH9xzygleFXqtu016oct3ow-oy4sl0hWPIqPb5wD2nl1Y3yfF8DI9y5PZ6uYGBgrqzst4EvOZFuJfWxQe7x4PRkcYu-oNsrCZ020NlAFQYtjlizAb5is4KqmHwzbjTYNnAJEEyzgDIH4EuUDcDpUJwdVcgAA;
-        fpc=Ange6WKAqlREkCgqK0dbkVQ; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrBEWsKQuoQBno62xdUlNRRzgPDq-yaDbtqMkLIsIqpWFZUOjRIs6_Ost0AKok-kvWJ2PdFFRDkoXb6P-IEbgMlsl2w8BhHOLZrzB_zWS_f5dS7wJtFmgGO04b_x8mxEe_qCwcFgxtzrJmcDBLlFdevgShsFQivDV_Snrfurcpb-YgAA;
+        fpc=Alt_hl9Vqm1HnEMi6QVz63o; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
       User-Agent:
       - python-requests/2.26.0
     method: GET
@@ -29,7 +29,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Oct 2021 12:05:24 GMT
+      - Wed, 20 Oct 2021 08:48:29 GMT
       expires:
       - '-1'
       p3p:
@@ -37,7 +37,7 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - fpc=Ange6WKAqlREkCgqK0dbkVQ; expires=Thu, 18-Nov-2021 12:05:24 GMT; path=/;
+      - fpc=Alt_hl9Vqm1HnEMi6QVz63o; expires=Fri, 19-Nov-2021 08:48:30 GMT; path=/;
         secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
@@ -46,7 +46,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ests-server:
-      - 2.1.12108.11 - NEULR2 ProdSlices
+      - 2.1.12108.11 - NEULR1 ProdSlices
     status:
       code: 200
       message: OK
@@ -60,26 +60,26 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.0.1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 19 Oct 2021 12:05:25 GMT
+      - Wed, 20 Oct 2021 08:48:30 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2021-10-31-preview
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-10-19T13:05:24.4618759+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2021-10-20T09:48:29.3106517+00:00"}'
     headers:
       api-supported-versions: 2021-03-31-preview1, 2021-10-31-preview
       content-length: '818'
       content-type: application/json; charset=utf-8
-      date: Tue, 19 Oct 2021 12:05:26 GMT
-      ms-cv: UDeMUqW2UU2qj9ZXULA41w.0
+      date: Wed, 20 Oct 2021 08:48:30 GMT
+      ms-cv: uxlPknzjZkKQlSMex0Yepw.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 490ms
+      x-processing-time: 355ms
     status:
       code: 200
       message: OK
