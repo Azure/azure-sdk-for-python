@@ -2,6 +2,12 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       User-Agent:
       - azsdk-python-modelsrepository/1.0.0b2 Python/3.7.9 (Windows-10-10.0.19041-SP0)
     method: GET
@@ -13,30 +19,52 @@ interactions:
         \"2021-10-12T02:01:18.252266+00:00\",\n  \"sourceRepo\": \"Azure/iot-plugandplay-models\",\n
         \ \"totalModelCount\": 19034\n}"
     headers:
-      accept-ranges: bytes
-      access-control-allow-headers: '*'
-      access-control-allow-methods: GET, HEAD, OPTIONS
-      access-control-expose-headers: '*'
-      cache-control: max-age=600
-      content-length: '253'
-      content-md5: 07sbolfOxyRQGSrRDc4P9A==
-      content-type: application/json
-      date: Wed, 20 Oct 2021 20:28:17 GMT
-      etag: '"0x8D98D27B443C511"'
-      expires: Wed, 20 Oct 2021 20:38:17 GMT
-      last-modified: Tue, 12 Oct 2021 02:26:31 GMT
-      server: Windows-Azure-Web/1.0 Microsoft-HTTPAPI/2.0
-      vary: Origin
-      x-cache: HIT
-      x-ms-error-code: ConditionNotMet
-      x-ms-version: '2018-03-28'
+      accept-ranges:
+      - bytes
+      access-control-allow-headers:
+      - '*'
+      access-control-allow-methods:
+      - GET, HEAD, OPTIONS
+      access-control-expose-headers:
+      - '*'
+      age:
+      - '160'
+      cache-control:
+      - max-age=600
+      content-length:
+      - '253'
+      content-md5:
+      - 07sbolfOxyRQGSrRDc4P9A==
+      content-type:
+      - application/json
+      date:
+      - Wed, 20 Oct 2021 21:39:15 GMT
+      etag:
+      - '"0x8D98D27B443C511"'
+      expires:
+      - Wed, 20 Oct 2021 21:49:15 GMT
+      last-modified:
+      - Tue, 12 Oct 2021 02:26:31 GMT
+      server:
+      - ECAcc (sed/E12A)
+      x-cache:
+      - HIT
+      x-ms-error-code:
+      - ConditionNotMet
+      x-ms-version:
+      - '2018-03-28'
     status:
       code: 200
       message: OK
-    url: https://devicemodels.azure.com/metadata.json
 - request:
     body: null
     headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       User-Agent:
       - azsdk-python-modelsrepository/1.0.0b2 Python/3.7.9 (Windows-10-10.0.19041-SP0)
     method: GET
@@ -137,28 +165,48 @@ interactions:
         \"Total available memory on the device in kilobytes. Ex. 256000 kilobytes.\"\n
         \     }\n    ]\n  }\n]"
     headers:
-      accept-ranges: bytes
-      access-control-allow-headers: '*'
-      access-control-allow-methods: GET, HEAD, OPTIONS
-      access-control-expose-headers: '*'
-      age: '395368'
-      content-length: '6751'
-      content-md5: BnZpV2+7Z2t0sxAxOhmBdw==
-      content-type: application/json
-      date: Wed, 20 Oct 2021 20:28:17 GMT
-      etag: '"0x8D8FED94EBE03D1"'
-      last-modified: Wed, 14 Apr 2021 00:07:35 GMT
-      server: ECAcc (sed/E181)
-      x-cache: HIT
-      x-ms-error-code: ConditionNotMet
-      x-ms-version: '2018-03-28'
+      accept-ranges:
+      - bytes
+      access-control-allow-headers:
+      - '*'
+      access-control-allow-methods:
+      - GET, HEAD, OPTIONS
+      access-control-expose-headers:
+      - '*'
+      age:
+      - '399626'
+      content-length:
+      - '6751'
+      content-md5:
+      - BnZpV2+7Z2t0sxAxOhmBdw==
+      content-type:
+      - application/json
+      date:
+      - Wed, 20 Oct 2021 21:39:15 GMT
+      etag:
+      - '"0x8D8FED94EBE03D1"'
+      last-modified:
+      - Wed, 14 Apr 2021 00:07:35 GMT
+      server:
+      - ECAcc (sed/E181)
+      x-cache:
+      - HIT
+      x-ms-error-code:
+      - ConditionNotMet
+      x-ms-version:
+      - '2018-03-28'
     status:
       code: 200
       message: OK
-    url: https://devicemodels.azure.com/dtmi/com/example/temperaturecontroller-1.expanded.json
 - request:
     body: null
     headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       User-Agent:
       - azsdk-python-modelsrepository/1.0.0b2 Python/3.7.9 (Windows-10-10.0.19041-SP0)
     method: GET
@@ -191,28 +239,48 @@ interactions:
         \     \"description\": \"Optional interface with basic device hardware information.\"\n
         \   }\n  ]\n}"
     headers:
-      accept-ranges: bytes
-      access-control-allow-headers: '*'
-      access-control-allow-methods: GET, HEAD, OPTIONS
-      access-control-expose-headers: '*'
-      age: '395368'
-      content-length: '1762'
-      content-md5: w8OrFrbCwZwtVo6WaKDWxQ==
-      content-type: application/json
-      date: Wed, 20 Oct 2021 20:28:17 GMT
-      etag: '"0x8D8FED94EB1F3C8"'
-      last-modified: Wed, 14 Apr 2021 00:07:35 GMT
-      server: ECAcc (sed/E17F)
-      x-cache: HIT
-      x-ms-error-code: ConditionNotMet
-      x-ms-version: '2018-03-28'
+      accept-ranges:
+      - bytes
+      access-control-allow-headers:
+      - '*'
+      access-control-allow-methods:
+      - GET, HEAD, OPTIONS
+      access-control-expose-headers:
+      - '*'
+      age:
+      - '399626'
+      content-length:
+      - '1762'
+      content-md5:
+      - w8OrFrbCwZwtVo6WaKDWxQ==
+      content-type:
+      - application/json
+      date:
+      - Wed, 20 Oct 2021 21:39:15 GMT
+      etag:
+      - '"0x8D8FED94EB1F3C8"'
+      last-modified:
+      - Wed, 14 Apr 2021 00:07:35 GMT
+      server:
+      - ECAcc (sed/E17F)
+      x-cache:
+      - HIT
+      x-ms-error-code:
+      - ConditionNotMet
+      x-ms-version:
+      - '2018-03-28'
     status:
       code: 200
       message: OK
-    url: https://devicemodels.azure.com/dtmi/com/example/temperaturecontroller-1.json
 - request:
     body: null
     headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       User-Agent:
       - azsdk-python-modelsrepository/1.0.0b2 Python/3.7.9 (Windows-10-10.0.19041-SP0)
     method: GET
@@ -313,28 +381,48 @@ interactions:
         \"Total available memory on the device in kilobytes. Ex. 256000 kilobytes.\"\n
         \     }\n    ]\n  }\n]"
     headers:
-      accept-ranges: bytes
-      access-control-allow-headers: '*'
-      access-control-allow-methods: GET, HEAD, OPTIONS
-      access-control-expose-headers: '*'
-      age: '395368'
-      content-length: '6751'
-      content-md5: BnZpV2+7Z2t0sxAxOhmBdw==
-      content-type: application/json
-      date: Wed, 20 Oct 2021 20:28:17 GMT
-      etag: '"0x8D8FED94EBE03D1"'
-      last-modified: Wed, 14 Apr 2021 00:07:35 GMT
-      server: ECAcc (sed/E181)
-      x-cache: HIT
-      x-ms-error-code: ConditionNotMet
-      x-ms-version: '2018-03-28'
+      accept-ranges:
+      - bytes
+      access-control-allow-headers:
+      - '*'
+      access-control-allow-methods:
+      - GET, HEAD, OPTIONS
+      access-control-expose-headers:
+      - '*'
+      age:
+      - '399626'
+      content-length:
+      - '6751'
+      content-md5:
+      - BnZpV2+7Z2t0sxAxOhmBdw==
+      content-type:
+      - application/json
+      date:
+      - Wed, 20 Oct 2021 21:39:15 GMT
+      etag:
+      - '"0x8D8FED94EBE03D1"'
+      last-modified:
+      - Wed, 14 Apr 2021 00:07:35 GMT
+      server:
+      - ECAcc (sed/E181)
+      x-cache:
+      - HIT
+      x-ms-error-code:
+      - ConditionNotMet
+      x-ms-version:
+      - '2018-03-28'
     status:
       code: 200
       message: OK
-    url: https://devicemodels.azure.com/dtmi/com/example/temperaturecontroller-1.expanded.json
 - request:
     body: null
     headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       User-Agent:
       - azsdk-python-modelsrepository/1.0.0b2 Python/3.7.9 (Windows-10-10.0.19041-SP0)
     method: GET
@@ -367,23 +455,37 @@ interactions:
         \     \"description\": \"Optional interface with basic device hardware information.\"\n
         \   }\n  ]\n}"
     headers:
-      accept-ranges: bytes
-      access-control-allow-headers: '*'
-      access-control-allow-methods: GET, HEAD, OPTIONS
-      access-control-expose-headers: '*'
-      age: '395368'
-      content-length: '1762'
-      content-md5: w8OrFrbCwZwtVo6WaKDWxQ==
-      content-type: application/json
-      date: Wed, 20 Oct 2021 20:28:17 GMT
-      etag: '"0x8D8FED94EB1F3C8"'
-      last-modified: Wed, 14 Apr 2021 00:07:35 GMT
-      server: ECAcc (sed/E17F)
-      x-cache: HIT
-      x-ms-error-code: ConditionNotMet
-      x-ms-version: '2018-03-28'
+      accept-ranges:
+      - bytes
+      access-control-allow-headers:
+      - '*'
+      access-control-allow-methods:
+      - GET, HEAD, OPTIONS
+      access-control-expose-headers:
+      - '*'
+      age:
+      - '399626'
+      content-length:
+      - '1762'
+      content-md5:
+      - w8OrFrbCwZwtVo6WaKDWxQ==
+      content-type:
+      - application/json
+      date:
+      - Wed, 20 Oct 2021 21:39:15 GMT
+      etag:
+      - '"0x8D8FED94EB1F3C8"'
+      last-modified:
+      - Wed, 14 Apr 2021 00:07:35 GMT
+      server:
+      - ECAcc (sed/E17F)
+      x-cache:
+      - HIT
+      x-ms-error-code:
+      - ConditionNotMet
+      x-ms-version:
+      - '2018-03-28'
     status:
       code: 200
       message: OK
-    url: https://devicemodels.azure.com/dtmi/com/example/temperaturecontroller-1.json
 version: 1

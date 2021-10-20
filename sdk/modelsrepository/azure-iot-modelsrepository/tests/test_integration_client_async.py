@@ -376,7 +376,7 @@ class TestIntegrationGetModels(AzureTestCase):
         ]
     )
     @await_prepared_test
-    async def test_multiple_calls_single_dtmi_with_dependencies_custom_metadata_expiry(self, _, client_type, has_metadata, expiry):
+    async def test_multiple_calls_custom_metadata_expiry_async(self, _, client_type, has_metadata, expiry):
         root_dtmi = "dtmi:com:example:TemperatureController;1"
         expected_deps = [
             "dtmi:com:example:Thermostat;1",

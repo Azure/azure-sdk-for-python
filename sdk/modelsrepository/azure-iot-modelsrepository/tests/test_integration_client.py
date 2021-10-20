@@ -370,7 +370,7 @@ class TestIntegrationGetModels(AzureTestCase):
             ("Local Client without metadata and zero expiry", ClientType.local.value, False, 0),
         ]
     )
-    def test_multiple_calls_single_dtmi_with_dependencies_custom_metadata_expiry(self, _, client_type, has_metadata, expiry):
+    def test_multiple_calls_custom_metadata_expiry(self, _, client_type, has_metadata, expiry):
         root_dtmi = "dtmi:com:example:TemperatureController;1"
         expected_deps = [
             "dtmi:com:example:Thermostat;1",
