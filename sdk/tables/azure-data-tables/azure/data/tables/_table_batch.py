@@ -100,7 +100,7 @@ class TableBatchOperations(object):
         try:
             operation_type, entity, kwargs = operation  # type: ignore
         except ValueError:
-            operation_type, entity, kwargs = *operation, {}  # type: ignore
+            operation_type, entity, kwargs = operation[0], operation[1], {}  # type: ignore
         try:
             getattr(self, operation_type.lower())(entity, **kwargs)
         except AttributeError:
