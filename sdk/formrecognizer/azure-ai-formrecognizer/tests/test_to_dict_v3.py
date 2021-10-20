@@ -890,6 +890,57 @@ class TestToDict(FormRecognizerTest):
 
         assert d == final
 
+    def test_document_table_cell_to_dict_use_defaults(self):
+        # NOTE: kind, column_span, and row_span are not included on purpose to test that the proper defaults are set.
+        model = _models.DocumentTableCell(
+            row_index=2,
+            column_index=3,
+            content="cell content",
+            bounding_regions=[
+                _models.BoundingRegion(
+                    bounding_box=[_models.Point(1, 2), _models.Point(3, 4)],
+                    page_number=1,
+                ),
+            ],
+            spans=[
+                _models.DocumentSpan(
+                    offset=5,
+                    length=2,
+                ),
+            ],
+        )
+
+        d = model.to_dict()
+
+        final = {
+            "kind": "content",
+            "row_index": 2,
+            "column_index": 3,
+            "row_span": 1,
+            "column_span": 1,
+            "content": "cell content",
+            "bounding_regions": [
+                {
+                    "page_number": 1,
+                    "bounding_box": [
+                        {"x": 1, "y": 2},
+                        {
+                            "x": 3,
+                            "y": 4,
+                        },
+                    ],
+                },
+            ],
+            "spans": [
+                {
+                    "offset": 5,
+                    "length": 2,
+                },
+            ],
+        }
+
+        assert d == final
+
     def test_model_operation_info_to_dict(self):
         model = _models.ModelOperationInfo(
             operation_id="id123",
@@ -1548,8 +1599,23 @@ class TestToDict(FormRecognizerTest):
                     )
                 },
             ),
-            error=_models.FormRecognizerError(
-                code="NotFound", message="model not found"
+            error=_models.DocumentAnalysisError(
+                code="ResourceNotFound",
+                message="Resource was not found",
+                target="resource",
+                details=[
+                    _models.DocumentAnalysisError(
+                        code="ResourceNotFound", message="Resource was not found"
+                    )
+                ],
+                innererror=_models.DocumentAnalysisInnerError(
+                    code="ResourceNotFound",
+                    message="Resource was not found",
+                    innererror=_models.DocumentAnalysisInnerError(
+                        code="ResourceNotFound",
+                        message="Resource was not found",
+                    ),
+                ),
             ),
         )
 
@@ -1620,7 +1686,29 @@ class TestToDict(FormRecognizerTest):
                     }
                 },
             },
-            "error": {"code": "NotFound", "message": "model not found"},
+            "error": {
+                "code": "ResourceNotFound",
+                "message": "Resource was not found",
+                "target": "resource",
+                "details": [
+                    {
+                        "code": "ResourceNotFound",
+                        "message": "Resource was not found",
+                        "target": None,
+                        "details": [],
+                        "innererror": None,
+                    }
+                ],
+                "innererror": {
+                    "code": "ResourceNotFound",
+                    "message": "Resource was not found",
+                    "innererror": {
+                        "code": "ResourceNotFound",
+                        "message": "Resource was not found",
+                        "innererror": None,
+                    },
+                },
+            },
         }
 
         assert d == final
@@ -1876,4 +1964,74 @@ class TestToDict(FormRecognizerTest):
         d = model.to_dict()
 
         final = {"model_limit": 5000, "model_count": 10}
+        assert d == final
+
+    def test_document_analysis_inner_error_to_dict(self):
+        model = _models.DocumentAnalysisInnerError(
+            code="ResourceNotFound",
+            message="Resource was not found",
+            innererror=_models.DocumentAnalysisInnerError(
+                code="ResourceNotFound",
+                message="Resource was not found",
+            ),
+        )
+
+        d = model.to_dict()
+
+        final = {
+            "code": "ResourceNotFound",
+            "message": "Resource was not found",
+            "innererror": {
+                "code": "ResourceNotFound",
+                "message": "Resource was not found",
+                "innererror": None,
+            },
+        }
+        assert d == final
+
+    def test_document_analysis_error_to_dict(self):
+        model = _models.DocumentAnalysisError(
+            code="ResourceNotFound",
+            message="Resource was not found",
+            target="resource",
+            details=[
+                _models.DocumentAnalysisError(
+                    code="ResourceNotFound", message="Resource was not found"
+                )
+            ],
+            innererror=_models.DocumentAnalysisInnerError(
+                code="ResourceNotFound",
+                message="Resource was not found",
+                innererror=_models.DocumentAnalysisInnerError(
+                    code="ResourceNotFound",
+                    message="Resource was not found",
+                ),
+            ),
+        )
+
+        d = model.to_dict()
+
+        final = {
+            "code": "ResourceNotFound",
+            "message": "Resource was not found",
+            "target": "resource",
+            "details": [
+                {
+                    "code": "ResourceNotFound",
+                    "message": "Resource was not found",
+                    "target": None,
+                    "details": [],
+                    "innererror": None,
+                }
+            ],
+            "innererror": {
+                "code": "ResourceNotFound",
+                "message": "Resource was not found",
+                "innererror": {
+                    "code": "ResourceNotFound",
+                    "message": "Resource was not found",
+                    "innererror": None,
+                },
+            },
+        }
         assert d == final

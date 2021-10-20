@@ -20,7 +20,7 @@ from azure.core.rest import HttpRequest
 from azure.core.pipeline.policies import (
     CustomHookPolicy, UserAgentPolicy, SansIOHTTPPolicy, RetryPolicy
 )
-from utils import is_rest
+from azure.core.pipeline._tools import is_rest
 from rest_client import TestRestClient
 from azure.core import PipelineClient
 
@@ -238,6 +238,22 @@ def test_multipart_invalid_key_binary_string():
         )
     assert "Invalid type for data name" in str(e.value)
     assert repr(b"abc") in str(e.value)
+
+def test_data_str_input():
+    data = {
+        'scope': 'fake_scope',
+        u'grant_type': 'refresh_token',
+        'refresh_token': u'REDACTED',
+        'service': 'fake_url.azurecr.io'
+    }
+    request = HttpRequest("POST", "http://localhost:3000/", data=data)
+    assert len(request.content) == 4
+    assert request.content["scope"] == "fake_scope"
+    assert request.content["grant_type"] == "refresh_token"
+    assert request.content["refresh_token"] == u"REDACTED"
+    assert request.content["service"] == "fake_url.azurecr.io"
+    assert len(request.headers) == 1
+    assert request.headers['Content-Type'] == 'application/x-www-form-urlencoded'
 
 @pytest.mark.parametrize(("value"), (object(), {"key": "value"}))
 def test_multipart_invalid_value(value):

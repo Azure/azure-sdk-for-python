@@ -17,12 +17,12 @@ try:
     from ._models_py3 import KnowledgeBaseAnswerPrompt
     from ._models_py3 import KnowledgeBaseAnswerRequestContext
     from ._models_py3 import KnowledgeBaseAnswers
-    from ._models_py3 import KnowledgeBaseQueryOptions
     from ._models_py3 import MetadataFilter
-    from ._models_py3 import StrictFilters
+    from ._models_py3 import QueryFilters
+    from ._models_py3 import QueryKnowledgeBaseOptions
+    from ._models_py3 import QueryTextOptions
     from ._models_py3 import TextAnswer
     from ._models_py3 import TextAnswers
-    from ._models_py3 import TextQueryOptions
     from ._models_py3 import TextRecord
 except (SyntaxError, ImportError):
     from ._models import AnswerSpan  # type: ignore
@@ -35,20 +35,19 @@ except (SyntaxError, ImportError):
     from ._models import KnowledgeBaseAnswerPrompt  # type: ignore
     from ._models import KnowledgeBaseAnswerRequestContext  # type: ignore
     from ._models import KnowledgeBaseAnswers  # type: ignore
-    from ._models import KnowledgeBaseQueryOptions  # type: ignore
     from ._models import MetadataFilter  # type: ignore
-    from ._models import StrictFilters  # type: ignore
+    from ._models import QueryFilters  # type: ignore
+    from ._models import QueryKnowledgeBaseOptions  # type: ignore
+    from ._models import QueryTextOptions  # type: ignore
     from ._models import TextAnswer  # type: ignore
     from ._models import TextAnswers  # type: ignore
-    from ._models import TextQueryOptions  # type: ignore
     from ._models import TextRecord  # type: ignore
 
 from ._question_answering_client_enums import (
-    CompoundOperationKind,
     ErrorCode,
     InnerErrorCode,
+    LogicalOperationKind,
     RankerType,
-    StringIndexType,
 )
 
 __all__ = [
@@ -62,16 +61,15 @@ __all__ = [
     "KnowledgeBaseAnswerPrompt",
     "KnowledgeBaseAnswerRequestContext",
     "KnowledgeBaseAnswers",
-    "KnowledgeBaseQueryOptions",
     "MetadataFilter",
-    "StrictFilters",
+    "QueryFilters",
+    "QueryKnowledgeBaseOptions",
+    "QueryTextOptions",
     "TextAnswer",
     "TextAnswers",
-    "TextQueryOptions",
     "TextRecord",
-    "CompoundOperationKind",
     "ErrorCode",
     "InnerErrorCode",
+    "LogicalOperationKind",
     "RankerType",
-    "StringIndexType",
 ]

@@ -1,6 +1,6 @@
 # Release History
 
-## 4.5.1 (Unreleased)
+## 4.6.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.6.0 (2021-10-05)
+
+### Features Added
+
+- Added new enum values to `SystemEvents`.
 
 ## 4.5.0 (2021-08-10)
 

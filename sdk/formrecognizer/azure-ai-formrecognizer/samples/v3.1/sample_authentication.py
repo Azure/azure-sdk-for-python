@@ -44,7 +44,7 @@ class AuthenticationSample(object):
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-        form_recognizer_client = FormRecognizerClient(endpoint, AzureKeyCredential(key), api_version="2.1")
+        form_recognizer_client = FormRecognizerClient(endpoint, AzureKeyCredential(key))
         # [END create_fr_client_with_key]
         poller = form_recognizer_client.begin_recognize_content_from_url(self.url)
         result = poller.result()
@@ -60,7 +60,7 @@ class AuthenticationSample(object):
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         credential = DefaultAzureCredential()
 
-        form_recognizer_client = FormRecognizerClient(endpoint, credential, api_version="2.1")
+        form_recognizer_client = FormRecognizerClient(endpoint, credential)
         # [END create_fr_client_with_aad]
         poller = form_recognizer_client.begin_recognize_content_from_url(self.url)
         result = poller.result()
@@ -72,7 +72,7 @@ class AuthenticationSample(object):
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-        form_training_client = FormTrainingClient(endpoint, AzureKeyCredential(key), api_version="2.1")
+        form_training_client = FormTrainingClient(endpoint, AzureKeyCredential(key))
         # [END create_ft_client_with_key]
         properties = form_training_client.get_account_properties()
 
@@ -87,7 +87,7 @@ class AuthenticationSample(object):
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         credential = DefaultAzureCredential()
 
-        form_training_client = FormTrainingClient(endpoint, credential, api_version="2.1")
+        form_training_client = FormTrainingClient(endpoint, credential)
         # [END create_ft_client_with_aad]
         properties = form_training_client.get_account_properties()
 

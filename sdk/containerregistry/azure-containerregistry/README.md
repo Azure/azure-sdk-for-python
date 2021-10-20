@@ -42,8 +42,9 @@ The [Azure Identity library][identity] provides easy Azure Active Directory supp
 from azure.containerregistry import ContainerRegistryClient
 from azure.identity import DefaultAzureCredential
 
-account_url = "https://MYCONTAINERREGISTRY.azurecr.io"
-client = ContainerRegistryClient(account_url, DefaultAzureCredential())
+account_url = "https://mycontainerregistry.azurecr.io"
+audience = "https://management.azure.com"
+client = ContainerRegistryClient(account_url, DefaultAzureCredential(), audience=audience)
 ```
 
 ## Key concepts

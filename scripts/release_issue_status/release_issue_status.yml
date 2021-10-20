@@ -38,7 +38,7 @@ jobs:
         export TOKEN=$(USR_TOKEN)
         export HEADERS=$(PIPELINE_HEADERS)
         export URL=$(PIPELINE_URL)
-        export PIPELINE_TOKEN=$(USR_PIPELINE_TOKEN)
+        export PIPELINE_TOKEN=$(PIPELINE-TOKEN)
         export COOKIE=$(USR_TOKEN)
 
         # create virtual env

@@ -83,6 +83,15 @@ from .operations import IntegrationRuntimeMonitoringDataOperations
 from .operations import IntegrationRuntimeStatusOperations
 from .operations import SparkConfigurationOperations
 from .operations import SparkConfigurationsOperations
+from .operations import KustoOperationsOperations
+from .operations import KustoPoolOperations
+from .operations import KustoPoolsOperations
+from .operations import KustoPoolChildResourceOperations
+from .operations import KustoPoolAttachedDatabaseConfigurationsOperations
+from .operations import KustoPoolDatabasesOperations
+from .operations import KustoPoolDataConnectionsOperations
+from .operations import KustoPoolPrincipalAssignmentsOperations
+from .operations import KustoPoolDatabasePrincipalAssignmentsOperations
 from . import models
 
 
@@ -217,6 +226,24 @@ class SynapseManagementClient(object):
     :vartype spark_configuration: azure.mgmt.synapse.operations.SparkConfigurationOperations
     :ivar spark_configurations: SparkConfigurationsOperations operations
     :vartype spark_configurations: azure.mgmt.synapse.operations.SparkConfigurationsOperations
+    :ivar kusto_operations: KustoOperationsOperations operations
+    :vartype kusto_operations: azure.mgmt.synapse.operations.KustoOperationsOperations
+    :ivar kusto_pool: KustoPoolOperations operations
+    :vartype kusto_pool: azure.mgmt.synapse.operations.KustoPoolOperations
+    :ivar kusto_pools: KustoPoolsOperations operations
+    :vartype kusto_pools: azure.mgmt.synapse.operations.KustoPoolsOperations
+    :ivar kusto_pool_child_resource: KustoPoolChildResourceOperations operations
+    :vartype kusto_pool_child_resource: azure.mgmt.synapse.operations.KustoPoolChildResourceOperations
+    :ivar kusto_pool_attached_database_configurations: KustoPoolAttachedDatabaseConfigurationsOperations operations
+    :vartype kusto_pool_attached_database_configurations: azure.mgmt.synapse.operations.KustoPoolAttachedDatabaseConfigurationsOperations
+    :ivar kusto_pool_databases: KustoPoolDatabasesOperations operations
+    :vartype kusto_pool_databases: azure.mgmt.synapse.operations.KustoPoolDatabasesOperations
+    :ivar kusto_pool_data_connections: KustoPoolDataConnectionsOperations operations
+    :vartype kusto_pool_data_connections: azure.mgmt.synapse.operations.KustoPoolDataConnectionsOperations
+    :ivar kusto_pool_principal_assignments: KustoPoolPrincipalAssignmentsOperations operations
+    :vartype kusto_pool_principal_assignments: azure.mgmt.synapse.operations.KustoPoolPrincipalAssignmentsOperations
+    :ivar kusto_pool_database_principal_assignments: KustoPoolDatabasePrincipalAssignmentsOperations operations
+    :vartype kusto_pool_database_principal_assignments: azure.mgmt.synapse.operations.KustoPoolDatabasePrincipalAssignmentsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
@@ -370,6 +397,24 @@ class SynapseManagementClient(object):
         self.spark_configuration = SparkConfigurationOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.spark_configurations = SparkConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.kusto_operations = KustoOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.kusto_pool = KustoPoolOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.kusto_pools = KustoPoolsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.kusto_pool_child_resource = KustoPoolChildResourceOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.kusto_pool_attached_database_configurations = KustoPoolAttachedDatabaseConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.kusto_pool_databases = KustoPoolDatabasesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.kusto_pool_data_connections = KustoPoolDataConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.kusto_pool_principal_assignments = KustoPoolPrincipalAssignmentsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.kusto_pool_database_principal_assignments = KustoPoolDatabasePrincipalAssignmentsOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, http_request, **kwargs):

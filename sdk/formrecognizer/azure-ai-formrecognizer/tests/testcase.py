@@ -642,22 +642,24 @@ class FormRecognizerTest(AzureTestCase):
         if transformed_key_value == [] and not raw_key_value:
             return
         for key_value, expected in zip(transformed_key_value, raw_key_value):
-            self.assertDocumentKeyValueElementTransformCorrect(key_value, expected)
+            self.assertDocumentKeyValueElementTransformCorrect(key_value.key, expected.key)
+            self.assertDocumentKeyValueElementTransformCorrect(key_value.value, expected.value)
             assert key_value.confidence == expected.confidence
 
     def assertDocumentEntitiesTransformCorrect(self, transformed_entity, raw_entity, **kwargs):
         if transformed_entity == [] and not raw_entity:
             return
         
-        assert transformed_entity.category == raw_entity.category
-        assert transformed_entity.sub_category == raw_entity.sub_category
-        assert transformed_entity.content == raw_entity.content
-        assert transformed_entity.confidence == raw_entity.confidence
-        
-        for span, expected_span in zip(transformed_entity.spans or [], raw_entity.spans or []):
-                self.assertSpanTransformCorrect(span, expected_span)
+        for entity, expected in zip(transformed_entity, raw_entity):
+            assert entity.category == expected.category
+            assert entity.sub_category == expected.sub_category
+            assert entity.content == expected.content
+            assert entity.confidence == expected.confidence
             
-        self.assertBoundingRegionsTransformCorrect(transformed_entity.bounding_regions, raw_entity.bounding_regions)
+            for span, expected_span in zip(entity.spans or [], expected.spans or []):
+                    self.assertSpanTransformCorrect(span, expected_span)
+                
+            self.assertBoundingRegionsTransformCorrect(entity.bounding_regions, expected.bounding_regions)
 
     def assertDocumentStylesTransformCorrect(self, transformed_styles, raw_styles, **kwargs):
         if transformed_styles == [] and not raw_styles:
@@ -671,6 +673,8 @@ class FormRecognizerTest(AzureTestCase):
                     self.assertSpanTransformCorrect(span, expected_span)
 
     def assertDocumentKeyValueElementTransformCorrect(self, element, expected, *kwargs):
+        if not element or not expected:
+            return
         assert element.content == expected.content
         
         for span, expected_span in zip(element.spans or [], expected.spans or []):
@@ -694,11 +698,20 @@ class FormRecognizerTest(AzureTestCase):
             self.assertBoundingRegionsTransformCorrect(table.bounding_regions, expected.bounding_regions)
 
     def assertDocumentTableCellTransformCorrect(self, transformed_cell, raw_cell, **kwargs):
-        assert transformed_cell.kind == raw_cell.kind
+        if raw_cell.kind:
+            assert transformed_cell.kind == raw_cell.kind
+        else:
+            assert transformed_cell.kind == "content"
         assert transformed_cell.row_index == raw_cell.row_index
         assert transformed_cell.column_index == raw_cell.column_index
-        assert transformed_cell.row_span == raw_cell.row_span
-        assert transformed_cell.column_span == raw_cell.column_span
+        if raw_cell.row_span:
+            assert transformed_cell.row_span == raw_cell.row_span
+        else:
+            assert transformed_cell.row_span == 1
+        if raw_cell.column_span:
+            assert transformed_cell.column_span == raw_cell.column_span
+        else:
+            assert transformed_cell.column_span == 1
         assert transformed_cell.content == raw_cell.content
 
         for span, expected_span in zip(transformed_cell.spans or [], raw_cell.spans or []):

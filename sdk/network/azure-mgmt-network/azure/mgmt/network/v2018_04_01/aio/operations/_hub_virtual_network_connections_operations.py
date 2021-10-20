@@ -46,7 +46,7 @@ class HubVirtualNetworkConnectionsOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HubVirtualNetworkConnection":
         """Retrieves the details of a HubVirtualNetworkConnection.
 
@@ -108,7 +108,7 @@ class HubVirtualNetworkConnectionsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListHubVirtualNetworkConnectionsResult"]:
         """Retrieves the details of all HubVirtualNetworkConnections.
 

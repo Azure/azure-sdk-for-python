@@ -13,9 +13,9 @@ DESCRIPTION:
     This sample demonstrates how to extract text, selection marks, and layout information from a document
     given through a file.
 
-    Note that selection marks returned from begin_analyze_document() do not return the text associated with
-    the checkbox. For the API to return this information, build a custom model to analyze the checkbox and its text.
-    See sample_build_model_async.py for more information.
+    Note that selection marks returned from begin_analyze_document(model="prebuilt-layout") do not return the text
+    associated with the checkbox. For the API to return this information, build a custom model to analyze the
+    checkbox and its text. See sample_build_model.py for more information.
 
 USAGE:
     python sample_analyze_layout_async.py
@@ -45,7 +45,7 @@ async def analyze_layout_async():
             "./sample_forms/forms/form_selection_mark.png",
         )
     )
-    # [START analyze_layout_async]
+
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 
@@ -65,7 +65,7 @@ async def analyze_layout_async():
     for idx, style in enumerate(result.styles):
         print(
             "Document contains {} content".format(
-                "handwritten" if style.is_handwritte else "no handwritten"
+                "handwritten" if style.is_handwritten else "no handwritten"
             )
         )
 
@@ -133,8 +133,6 @@ async def analyze_layout_async():
                 )
 
     print("----------------------------------------")
-
-    # [END analyze_layout_async]
 
 
 async def main():

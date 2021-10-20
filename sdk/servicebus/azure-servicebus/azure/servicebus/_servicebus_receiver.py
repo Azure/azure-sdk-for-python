@@ -156,7 +156,7 @@ class ServiceBusReceiver(
 
         self._populate_attributes(**kwargs)
         self._session = (
-            ServiceBusSession(self._session_id, self) if self._session_id else None
+            None if self._session_id is None else ServiceBusSession(self._session_id, self)
         )
 
     def __iter__(self):
