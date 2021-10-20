@@ -11,6 +11,6 @@ import uuid
 import pytest
 
 # Ignore async tests for Python < 3.5
-collect_ignore = []
+collect_ignore_glob = []
 if sys.version_info < (3, 5):
-    collect_ignore.append("*_async.py")
+    collect_ignore_glob.append("*_async.py")
