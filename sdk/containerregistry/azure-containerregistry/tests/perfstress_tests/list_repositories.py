@@ -18,8 +18,6 @@ class ListRepositoriesTest(PerfStressTest):
         self.anon_client = ContainerRegistryClient(endpoint=account_url, credential=None, audience=audience)
         self.async_anon_client = AsyncContainerRegistryClient(endpoint=account_url, credential=None, audience=audience)
         
-        self.repository = "node"
-
     async def global_setup(self):
         await super().global_setup()
 
@@ -33,4 +31,4 @@ class ListRepositoriesTest(PerfStressTest):
 
     async def run_async(self):
         async for repository_name in self.async_anon_client.list_repository_names():
-            self.async_anon_client.get_repository_properties(repository_name)
+            await self.async_anon_client.get_repository_properties(repository_name)
