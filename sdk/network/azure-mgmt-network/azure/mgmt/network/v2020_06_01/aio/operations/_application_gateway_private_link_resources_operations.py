@@ -45,7 +45,7 @@ class ApplicationGatewayPrivateLinkResourcesOperations:
         self,
         resource_group_name: str,
         application_gateway_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ApplicationGatewayPrivateLinkResourceListResult"]:
         """Lists all private link resources on an application gateway.
 

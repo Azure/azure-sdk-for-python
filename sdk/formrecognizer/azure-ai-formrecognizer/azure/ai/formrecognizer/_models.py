@@ -3120,11 +3120,11 @@ class DocumentTableCell(object):
     @classmethod
     def _from_generated(cls, cell):
         return cls(
-            kind=cell.kind,
+            kind=cell.kind if cell.kind else "content",
             row_index=cell.row_index,
             column_index=cell.column_index,
-            row_span=cell.row_span,
-            column_span=cell.column_span,
+            row_span=cell.row_span if cell.row_span else 1,
+            column_span=cell.column_span if cell.column_span else 1,
             content=cell.content,
             bounding_regions=[
                 BoundingRegion._from_generated(region)
@@ -3184,11 +3184,11 @@ class DocumentTableCell(object):
         :rtype: DocumentTableCell
         """
         return cls(
-            kind=data.get("kind", None),
+            kind=data.get("kind", "content"),
             row_index=data.get("row_index", None),
             column_index=data.get("column_index", None),
-            row_span=data.get("row_span", None),
-            column_span=data.get("column_span", None),
+            row_span=data.get("row_span", 1),
+            column_span=data.get("column_span", 1),
             content=data.get("content", None),
             bounding_regions=[BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
             if len(data.get("bounding_regions", [])) > 0
