@@ -887,6 +887,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         combine multiple Text Analytics actions into one call. Otherwise, we recommend you use
         the action specific endpoints, for example :func:`analyze_sentiment`.
 
+        .. note:: See the service documentation for regional support of custom action features:
+            https://aka.ms/azsdk/textanalytics/customfunctionalities
+
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
             use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of

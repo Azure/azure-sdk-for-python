@@ -2094,8 +2094,9 @@ class RecognizeLinkedEntitiesAction(DictMixin):
 
 
 class ExtractSummaryAction(DictMixin):
-    """ExtractSummaryAction encapsulates the parameters for starting a long-running Extractive
-    Text Summarization operation.
+    """ExtractSummaryAction encapsulates the parameters for starting a long-running Extractive Text
+    Summarization operation. For a conceptual discussion of extractive summarization, see the service documentation:
+    https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/extractive-summarization
 
     :keyword str model_version: The model version to use for the analysis.
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
@@ -2256,12 +2257,12 @@ class SummarySentence(DictMixin):
 
 
 class RecognizeCustomEntitiesAction(DictMixin):
-    """RecognizeCustomEntitiesAction.
+    """RecognizeCustomEntitiesAction encapsulates the parameters for starting a long-running custom entity
+     recognition operation. To train a model to recognize your custom entities, see
+     https://aka.ms/azsdk/textanalytics/customentityrecognition
 
-    :param project_name: Required. This field indicates the project name for the model.
-    :type project_name: str
-    :param deployment_name: This field indicates the deployment name for the model.
-    :type deployment_name: str
+    :param str project_name: Required. This field indicates the project name for the model.
+    :param str deployment_name: This field indicates the deployment name for the model.
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
@@ -2380,12 +2381,12 @@ class RecognizeCustomEntitiesResult(DictMixin):
 
 
 class MultiCategoryClassifyAction(DictMixin):
-    """MultiCategoryClassifyAction.
+    """MultiCategoryClassifyAction encapsulates the parameters for starting a long-running custom multi category
+    classification operation. To train a model to classify your documents, see
+    https://aka.ms/azsdk/textanalytics/customfunctionalities
 
-    :param project_name: Required. This field indicates the project name for the model.
-    :type project_name: str
-    :param deployment_name: This field indicates the deployment name for the model.
-    :type deployment_name: str
+    :param str project_name: Required. This field indicates the project name for the model.
+    :param str deployment_name: Required. This field indicates the deployment name for the model.
     :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
@@ -2436,10 +2437,11 @@ class MultiCategoryClassifyAction(DictMixin):
 
 
 class MultiCategoryClassifyResult(DictMixin):
-    """MultiCategoryClassifyResult.
+    """MultiCategoryClassifyResult is a result object which contains
+    the classifications for a particular document.
 
-    :ivar str id: Required. Unique, non-empty document identifier.
-    :ivar classifications: Required. Recognized classification results in the document.
+    :ivar str id: Unique, non-empty document identifier.
+    :ivar classifications: Recognized classification results in the document.
     :vartype classifications: list[~azure.ai.textanalytics.ClassificationCategory]
     :ivar warnings: Warnings encountered while processing document.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
@@ -2493,12 +2495,12 @@ class MultiCategoryClassifyResult(DictMixin):
 
 
 class SingleCategoryClassifyAction(DictMixin):
-    """SingleCategoryClassifyAction.
+    """SingleCategoryClassifyAction encapsulates the parameters for starting a long-running custom single category
+    classification operation. To train a model to classify your documents, see
+    https://aka.ms/azsdk/textanalytics/customfunctionalities
 
-    :param project_name: Required. This field indicates the project name for the model.
-    :type project_name: str
-    :param deployment_name: This field indicates the deployment name for the model.
-    :type deployment_name: str
+    :param str project_name: Required. This field indicates the project name for the model.
+    :param str deployment_name: Required. This field indicates the deployment name for the model.
     :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
@@ -2549,10 +2551,11 @@ class SingleCategoryClassifyAction(DictMixin):
 
 
 class SingleCategoryClassifyResult(DictMixin):
-    """SingleCategoryClassifyResult.
+    """SingleCategoryClassifyResult is a result object which contains
+    the classification for a particular document.
 
-    :ivar str id: Required. Unique, non-empty document identifier.
-    :ivar classification: Required. Recognized classification results in the document.
+    :ivar str id: Unique, non-empty document identifier.
+    :ivar classification: Recognized classification results in the document.
     :vartype classification: ~azure.ai.textanalytics.ClassificationCategory
     :ivar warnings: Warnings encountered while processing document.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
@@ -2604,9 +2607,9 @@ class SingleCategoryClassifyResult(DictMixin):
 
 
 class ClassificationCategory(DictMixin):
-    """ClassificationCategory.
+    """ClassificationCategory represents a classification of the input document.
 
-    :ivar str category: Required. Classification type.
+    :ivar str category: Classification type.
     :ivar float confidence_score: Confidence score between 0 and 1 of the recognized classification.
     """
 

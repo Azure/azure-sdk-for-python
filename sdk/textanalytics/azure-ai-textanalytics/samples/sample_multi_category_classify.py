@@ -14,7 +14,7 @@ DESCRIPTION:
     movie plot summaries that must be categorized into movie genres like Sci-Fi, Horror, Comedy, Romance, etc.
     Classifying documents is available as an action type through the begin_analyze_actions API.
 
-    To train a model to classify your documents, see TODO
+    To train a model to classify your documents, see https://aka.ms/azsdk/textanalytics/customfunctionalities
 
 USAGE:
     python sample_multi_category_classify.py
