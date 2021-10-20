@@ -113,10 +113,9 @@ class TrioStreamDownloadGenerator(AsyncIterator):
                 _LOGGER.warning("Incomplete download: %s", err)
                 internal_response.close()
                 raise IncompleteReadError(err, error=err)
-            else:
-                _LOGGER.warning("Unable to stream download: %s", err)
-                internal_response.close()
-                raise HttpResponseError(err, error=err)
+            _LOGGER.warning("Unable to stream download: %s", err)
+            internal_response.close()
+            raise HttpResponseError(err, error=err)
         except Exception as err:
             _LOGGER.warning("Unable to stream download: %s", err)
             internal_response.close()
@@ -196,7 +195,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
         self.open()
         trio_limiter = kwargs.get("trio_limiter", None)
         response = None
-        error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError, IncompleteReadError]]
+        error = None
         data_to_send = await self._retrieve_request_data(request)
         try:
             try:

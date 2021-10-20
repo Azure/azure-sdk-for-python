@@ -173,10 +173,9 @@ class StreamDownloadGenerator(object):
                 _LOGGER.warning("Incomplete download: %s", err)
                 internal_response.close()
                 raise IncompleteReadError(err, error=err)
-            else:
-                _LOGGER.warning("Unable to stream download: %s", err)
-                internal_response.close()
-                raise HttpResponseError(err, error=err)
+            _LOGGER.warning("Unable to stream download: %s", err)
+            internal_response.close()
+            raise HttpResponseError(err, error=err)
         except Exception as err:
             _LOGGER.warning("Unable to stream download: %s", err)
             internal_response.close()
@@ -302,7 +301,7 @@ class RequestsTransport(HttpTransport):
         """
         self.open()
         response = None
-        error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError, IncompleteReadError]]
+        error = None
 
         try:
             connection_timeout = kwargs.pop('connection_timeout', self.connection_config.timeout)
