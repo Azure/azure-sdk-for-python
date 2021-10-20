@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 - respect text encoding specified in argument (thanks to @ryohji for the contribution)  #20796
+- fix type check for `data` input to `azure.core.rest` for python 2.7 users  #21341
 
 ### Other Changes
 
