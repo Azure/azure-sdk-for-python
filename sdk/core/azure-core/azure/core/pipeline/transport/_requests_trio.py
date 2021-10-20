@@ -27,7 +27,7 @@ from collections.abc import AsyncIterator
 import functools
 import logging
 from typing import (
-    Any, Callable, Union, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload
+    Any, Union, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload
 )
 import trio
 import urllib3
@@ -38,6 +38,7 @@ from azure.core.exceptions import (
     ServiceRequestError,
     ServiceResponseError,
     IncompleteReadError,
+    HttpResponseError,
 )
 from azure.core.pipeline import Pipeline
 from ._base import HttpRequest
@@ -107,9 +108,15 @@ class TrioStreamDownloadGenerator(AsyncIterator):
         except requests.exceptions.StreamConsumedError:
             raise
         except requests.exceptions.ChunkedEncodingError as err:
-            _LOGGER.warning("Incomplete download: %s", err)
-            internal_response.close()
-            raise IncompleteReadError(err, error=err)
+            msg = err.__str__()
+            if 'IncompleteRead' in msg:
+                _LOGGER.warning("Incomplete download: %s", err)
+                internal_response.close()
+                raise IncompleteReadError(err, error=err)
+            else:
+                _LOGGER.warning("Unable to stream download: %s", err)
+                internal_response.close()
+                raise HttpResponseError(err, error=err)
         except Exception as err:
             _LOGGER.warning("Unable to stream download: %s", err)
             internal_response.close()
@@ -234,7 +241,13 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
             else:
                 error = ServiceRequestError(err, error=err)
         except requests.exceptions.ChunkedEncodingError as err:
-            error = IncompleteReadError(err, error=err)
+            msg = err.__str__()
+            if 'IncompleteRead' in msg:
+                _LOGGER.warning("Incomplete download: %s", err)
+                error = IncompleteReadError(err, error=err)
+            else:
+                _LOGGER.warning("Unable to stream download: %s", err)
+                error = HttpResponseError(err, error=err)
         except requests.RequestException as err:
             error = ServiceRequestError(err, error=err)
 

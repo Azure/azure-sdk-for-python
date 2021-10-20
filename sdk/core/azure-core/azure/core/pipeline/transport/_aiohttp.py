@@ -305,6 +305,8 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
             internal_response.close()
             raise StopAsyncIteration()
         except aiohttp.client_exceptions.ClientPayloadError as err:
+            # This is the case that server closes connection before we finish the reading. aiohttp library
+            # raises ClientPayloadError.
             _LOGGER.warning("Incomplete download: %s", err)
             internal_response.close()
             raise IncompleteReadError(err, error=err)
@@ -388,6 +390,8 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         try:
             self._content = await self.internal_response.read()
         except aiohttp.client_exceptions.ClientPayloadError as err:
+            # This is the case that server closes connection before we finish the reading. aiohttp library
+            # raises ClientPayloadError.
             raise IncompleteReadError(err, error=err)
 
     def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:
