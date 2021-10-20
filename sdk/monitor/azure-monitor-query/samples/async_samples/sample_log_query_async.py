@@ -27,7 +27,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.identity.aio import DefaultAzureCredential
 
 async def logs_query():
-    credential  = DefaultAzureCredential()
+    credential = DefaultAzureCredential()
 
     client = LogsQueryClient(credential)
 
