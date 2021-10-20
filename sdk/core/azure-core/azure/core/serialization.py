@@ -6,21 +6,14 @@
 # --------------------------------------------------------------------------
 import base64
 from json import JSONEncoder
-import types
 from typing import TYPE_CHECKING
 
 from .utils._utils import _FixedOffset
 
 if TYPE_CHECKING:
-    from typing import List, Dict, Optional
+    from typing import Optional
     from datetime import timedelta
 
-try:
-    from collections.abc import MutableMapping
-except ImportError:
-    from collections import MutableMapping
-
-from collections import OrderedDict, namedtuple
 
 __all__ = ["NULL", "AzureJSONEncoder"]
 
@@ -132,104 +125,46 @@ class AzureJSONEncoder(JSONEncoder):
                 pass
             return super(AzureJSONEncoder, self).default(o)
 
-
 def _deserialize(item):
     return item
 
-_PropertyValue = namedtuple("PropertyValue", ["original", "deserialized"])
+class mark:
+    def __init__(self, original_name):
+        self._original_name = original_name
 
+    def __call__(self, func):
+        original_name = self._original_name
+        def wrapper(self, *args, **kwargs):
+            self._attr_name_to_original_name[func.__name__] = original_name
+            return func(self, *args, **kwargs)
+        return wrapper
 
-class Metaclass(type):
+_MY_MODEL_PROPERTIES = [
+    "_attr_name_to_original_name",
+    "_attr_name_to_original_name_var",
+]
 
-    def __call__(cls, *args, **kwargs):
-        obj = cls.__new__(cls, *args, **kwargs)
-        obj.__init__(*args, **{
-            obj._get_property_name(kwarg) or kwarg: value
-            for kwarg, value in kwargs.items()
-        })
-        return obj
-
-
-
-class Model(MutableMapping):
-    _attribute_map = NotImplementedError()  # type: Dict[str, Dict[str, str]]
-
-    def __init__(self, **kwargs):
-        self._dict = OrderedDict()
-        self.update(self._dict, **kwargs)
-
-    def __setitem__(self, key, item):
-        # if the key is for an attr that we know of
-        # we deserialize it. Then, we keep it as a tuple of
-        # (passed value, deserialized value).
-        # Otherwise, it's just a single value
-        """
-        _attribute_map = {
-            "array": {"key": "array", "type": "str"},
-        }
-        """
-        deserialized = _deserialize(item) if key in self._attribute_map else item
-        self._dict[key] = _PropertyValue(item, deserialized)
-
-    def __getitem__(self, key):
-        # return non-deserialized
-        return self._dict[key].original
-
-    def __delitem__(self, key):
-        self._dict[key] = None
-
-    def __repr__(self):
-        return str(self)
-
-    def __iter__(self):
-        return (key for key in self._dict)
-
-    def __len__(self):
-        return len(self._dict)
+class Model(dict):
 
     def __eq__(self, other):
         """Compare objects by comparing all attributes."""
         if isinstance(other, self.__class__):
-            return self._dict == other._dict
+            return self.__dict__ == other.__dict__
         return False
 
-    def __str__(self):
-        return str({k: v.original for k, v in self._dict.items() if not k.startswith("_")})
+    @property
+    def _attr_name_to_original_name(self):
+        if not hasattr(self, "_attr_name_to_original_name_var"):
+            self._attr_name_to_original_name_var = {}
+        return self._attr_name_to_original_name_var
 
-    def has_key(self, k):
-        return k in self._dict
-
-    def keys(self):
-        return [k for k in self._dict if not k.startswith("_")]
-
-    def values(self):
-        return [v.original for k, v in self._dict.items() if not k.startswith("_")]
-
-    def items(self):
-        return [(k, v.original) for k, v in self._dict.items() if not k.startswith("_")]
-
-    def get(self, key, default=None):
-        if key in self._dict:
-            return self._dict[key]
-        return default
-
-    @classmethod
-    def _get_dict_name(cls, property_name):
-        # type: (str) -> Optional[str]
-        return cls._attribute_map.get(property_name, {"key": None})["key"]
-
-    @classmethod
-    def _get_property_name(cls, dict_name):
-        # type: (str) -> Optional[str]
-        try:
-            return next(
-                k for k, v in cls._attribute_map.items()
-                if v["key"] == dict_name
-            )
-        except StopIteration:
-            return None
+    @_attr_name_to_original_name.setter
+    def _attr_name_to_original_name(self, value):
+        self._attr_name_to_original_name_var = value
 
     def __getattr__(self, attr):
+        if attr in _MY_MODEL_PROPERTIES:
+            return super().__getattribute__(attr)
         if not self.__hasattr__(attr):
             raise AttributeError(
                 "{} instance has no attribute '{}'".format(
@@ -238,24 +173,27 @@ class Model(MutableMapping):
                 )
             )
 
-        return self._dict[self._get_dict_name(attr)].deserialized
+        return self.__getitem__[self._attr_name_to_original_name[attr]]
 
     def __setattr__(self, name, value):
         # the properties on the base class
-        my_model_properties = [
-            "_dict",
-            "_property_to_dict_name",
-        ]
-        if name in my_model_properties:
-            super(Model, self).__setattr__(name, value)
+        if name in _MY_MODEL_PROPERTIES:
+            super().__setattr__(name, value)
         else:
-            self.__setitem__(self._get_dict_name(name), value)
+            self.__setitem__(self._attr_name_to_original_name[name], value)
 
-    def __delattr__(self, name):
-        return self.__delitem__(self._get_dict_name(name))
+    def __delattr__(self, attr):
+        if attr in _MY_MODEL_PROPERTIES:
+            return super().__delattr__(attr)
+        return self.__delitem__(self._attr_name_to_original_name[attr])
 
     def __hasattr__(self, attr):
-        return self._get_dict_name(attr) in self._dict
+        if attr in _MY_MODEL_PROPERTIES:
+            return True
+        try:
+            return bool(self.__getitem__(self._attr_name_to_original_name[attr]))
+        except KeyError:
+            return False
 
     def copy(self):
-        return Model(**self._dict)
+        return Model(self.__dict__)

@@ -4,7 +4,7 @@
 # ------------------------------------
 from typing import List
 import pytest
-from azure.core.serialization import Model
+from azure.core.serialization import Model, mark
 
 def modify_args(init):
     def _wrapper(self, **kwargs):
@@ -16,25 +16,31 @@ def modify_args(init):
 
 
 class BasicResource(Model):
-    _attribute_map = {
-        "platform_update_domain_count": {"type": "platformUpdateDomainCount"},
-        "platform_fault_domain_count": {"type": "platformFaultDomainCount"},
-        "virtual_machines": {"type": "virtualMachines"}
-    }
 
-    @modify_args
-    def __init__(
-        self,
-        *,
-        platform_update_domain_count: int,
-        platform_fault_domain_count: int,
-        virtual_machines: List[str],
-        **kwargs
-    ):
-        super().__init__(**kwargs)
-        self.platform_update_domain_count = platform_update_domain_count
-        self.platform_fault_domain_count = platform_fault_domain_count
-        self.virtual_machines = virtual_machines
+    @property
+    @mark(original_name="platformUpdateDomainCount")
+    def platform_update_domain_count(self):
+        """Hello"""
+
+    @platform_update_domain_count.setter
+    def platform_update_domain_count(self, val):
+        self._platform_update_domain_count = val
+
+    @property
+    def platform_fault_comain_count(self):
+        return self._platform_fault_comain_count
+
+    @platform_fault_comain_count.setter
+    def platform_fault_comain_count(self, val):
+        self._platform_fault_comain_count = val
+
+    @property
+    def virtual_machines(self):
+        return self._virtual_machines
+
+    @virtual_machines.setter
+    def virtual_machines(self, val):
+        self._virtual_machines = val
 
 def test_model_and_dict_equal():
 
@@ -43,7 +49,8 @@ def test_model_and_dict_equal():
         "platformFaultDomainCount": 3,
         "virtualMachines": []
     }
-    model = BasicResource(**dict_response)
+    model = BasicResource(dict_response)
+    model.platform_update_domain_count
     assert (
         model.platform_update_domain_count ==
         model["platformUpdateDomainCount"] ==
