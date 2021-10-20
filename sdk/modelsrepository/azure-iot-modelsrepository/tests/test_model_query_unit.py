@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import os
 import pytest
 from azure.iot.modelsrepository._model_query import (
     ModelQuery

@@ -34,7 +34,7 @@ class Fetcher(object):
     """Interface for fetching from a generic location"""
 
     @distributed_trace_async
-    async def fetch(self, dtmi="", try_from_expanded=True):
+    async def fetch(self, dtmi="", try_from_expanded=True, **kwargs):
         """Fetch and return the contents of the given DTMI. If try_from_expanded
             is true, will try the expanded form first and fall back to non expanded if needed.
 
@@ -50,7 +50,7 @@ class Fetcher(object):
                 info_msg = FETCHING_MODEL_CONTENT.format(dtdl_path)
                 _LOGGER.debug(info_msg)
 
-                return (await self._fetch_model_data(dtdl_path), True)
+                return (await self._fetch_model_data(dtdl_path, **kwargs), True)
             except (ResourceNotFoundError, HttpResponseError):
                 # Fallback to non expanded model
                 info_msg = ERROR_FETCHING_MODEL_CONTENT.format(dtmi)
@@ -61,16 +61,16 @@ class Fetcher(object):
         _LOGGER.debug(info_msg)
 
         # Let errors from this bubble up
-        return (await self._fetch_model_data(dtdl_path), False)
+        return (await self._fetch_model_data(dtdl_path, **kwargs), False)
 
     @distributed_trace_async
-    async def fetch_metadata(self):
+    async def fetch_metadata(self, **kwargs):
         """Fetch and return the repository metadata
 
         :returns: JSON object representing the repository metadata
         :rtype: JSON object
         """
-        return await self._fetch_model_data(METADATA_FILE)
+        return await self._fetch_model_data(METADATA_FILE, **kwargs)
 
     @abc.abstractmethod
     @distributed_trace_async
@@ -111,7 +111,7 @@ class HttpFetcher(Fetcher):
         await self.pipeline.__aexit__(*exc_details)
 
     @distributed_trace_async
-    async def _fetch_model_data(self, path=""):
+    async def _fetch_model_data(self, path="", **kwargs):
         """Fetch and return the contents of a JSON file at a given web path.
 
         :param str path: Path to JSON file (relative to the base_filepath of the Fetcher)
@@ -131,7 +131,7 @@ class HttpFetcher(Fetcher):
         info_msg = "GET {}".format(url)
         _LOGGER.debug(info_msg)
 
-        pipeline_result = await self.pipeline.run(request)
+        pipeline_result = await self.pipeline.run(request, **kwargs)
         response = pipeline_result.http_response
         if response.status_code != 200:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)

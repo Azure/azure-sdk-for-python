@@ -28,19 +28,28 @@ class ModelsRepositoryClient(object):
         :type repository_location: str
         :keyword str api_version: The API version for the Models Repository Service you wish to
             access.
+        :keyword int metadata_expiration: Amount of time in seconds before the client
+            considers the repository metadata stale.
+        :keyword bool metadata_enabled: Whether the client will fetch and cache metadata.
 
         For additional request configuration options, please see [core options](https://aka.ms/azsdk/python/options).
 
         :raises: ValueError if an invalid argument is provided
         """
+        # Store api version here (for now). Currently doesn't do anything
+        self._api_version = kwargs.get("api_version", DEFAULT_API_VERSION)
+        metadata_expiration = kwargs.pop("metadata_expiration", float('inf'))
+        metadata_enabled = kwargs.pop("metadata_enabled", True)
         self.repository_uri = repository_location if repository_location else DEFAULT_LOCATION
         info_msg = CLIENT_INIT_MSG.format(self.repository_uri)
         _LOGGER.debug(info_msg)
 
-        self.resolver = DtmiResolver(location=self.repository_uri, **kwargs)
-
-        # Store api version here (for now). Currently doesn't do anything
-        self._api_version = kwargs.get("api_version", DEFAULT_API_VERSION)
+        self.resolver = DtmiResolver(
+            location=self.repository_uri,
+            metadata_expiration=metadata_expiration,
+            metadata_enabled=metadata_enabled,
+            **kwargs
+        )
 
     async def __aenter__(self):
         await self.resolver.__aenter__()

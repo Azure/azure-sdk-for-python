@@ -361,3 +361,38 @@ class TestIntegrationGetModels(AzureTestCase):
             self.assertTrue(dtmi in model_map.keys())
             model = model_map[dtmi]
             self.assertTrue(model["@id"] == dtmi)
+
+    @parameterized.expand(
+        [
+            ("Remote Client with metadata and zero expiry", ClientType.remote.value, True, 0),
+            ("Remote Client without metadata and zero expiry", ClientType.remote.value, False, 0),
+            ("Local Client with metadata and zero expiry", ClientType.local.value, True, 0),
+            ("Local Client without metadata and zero expiry", ClientType.local.value, False, 0),
+        ]
+    )
+    def test_multiple_calls_single_dtmi_with_dependencies_custom_metadata_expiry(self, _, client_type, has_metadata, expiry):
+        root_dtmi = "dtmi:com:example:TemperatureController;1"
+        expected_deps = [
+            "dtmi:com:example:Thermostat;1",
+            "dtmi:azure:DeviceManagement:DeviceInformation;1",
+        ]
+        expected_dtmis = [root_dtmi] + expected_deps
+
+        repo = determine_repo(client_type=client_type, has_metadata=has_metadata)
+        client = ModelsRepositoryClient(repository_location=repo, metadata_expiration=expiry)
+
+        with client:
+            for _ in range(2):
+                model_map_with_deps = client.get_models(root_dtmi)
+
+                self.assertTrue(len(model_map_with_deps) == len(expected_dtmis))
+                for dtmi in expected_dtmis:
+                    self.assertTrue(dtmi in model_map_with_deps.keys())
+                    model = model_map_with_deps[dtmi]
+                    self.assertTrue(model["@id"] == dtmi)
+
+                model_map_no_deps = client.get_models(root_dtmi, dependency_resolution=DependencyModeType.disabled.value)
+                self.assertTrue(len(model_map_no_deps) == 1)
+                self.assertTrue(root_dtmi in model_map_no_deps.keys())
+                model = model_map_no_deps[root_dtmi]
+                self.assertTrue(model["@id"] == root_dtmi)

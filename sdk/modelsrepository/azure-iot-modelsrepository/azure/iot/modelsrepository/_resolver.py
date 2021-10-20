@@ -33,6 +33,7 @@ from ._common import (
     FETCHER_INIT_MSG,
 )
 from ._fetcher import HttpFetcher, FilesystemFetcher
+from ._metadata_scheduler import MetadataScheduler
 from ._model_query import ModelQuery
 
 try:
@@ -44,13 +45,21 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class DtmiResolver(object):
-    def __init__(self, location, **kwargs):
+    def __init__(self, location, metadata_expiration, metadata_enabled, **kwargs):
+        # type: (str, int, bool, Any) -> None
         """
         :param location: Location of the Models Repository you wish to access.
             This location can be a remote HTTP/HTTPS URL, or a local filesystem path.
         :type location: str
+        :param metadata_expiration: Amount of time in seconds before the client
+            considers the repository metadata stale.
+        :type metadata_expiration: int
+        :param metadata_enabled: Whether the client will fetch and cache metadata.
+        :type metadata_enabled: bool
         """
         self.fetcher = _create_fetcher(location, **kwargs)
+        self._metadata_scheduler = MetadataScheduler(metadata_expiration, metadata_enabled)
+        self._repository_supports_expanded = False
 
     def __enter__(self):
         self.fetcher.__enter__()
@@ -59,7 +68,8 @@ class DtmiResolver(object):
     def __exit__(self, *exc_details):
         self.fetcher.__exit__(*exc_details)
 
-    def resolve(self, dtmis, dependency_resolution=DependencyModeType.enabled.value):
+    def resolve(self, dtmis, dependency_resolution=DependencyModeType.enabled.value, **kwargs):
+        # type: (Union[List[str], str], str, Any) -> Dict[str, Any]
         """Resolve a DTMI from the configured endpoint and return the resulting JSON model.
 
         :param list[str] dtmis: DTMIs to resolve
@@ -73,15 +83,27 @@ class DtmiResolver(object):
         """
         processed_models = {}
         to_process_models = _prepare_queue(dtmis)
-        try_from_expanded = False
 
-        if dependency_resolution == DependencyModeType.enabled.value:
+        if (
+            dependency_resolution == DependencyModeType.enabled.value and
+            self._metadata_scheduler.has_elapsed()
+        ):
             try:
-                metadata = self.fetcher.fetch_metadata()
-                if metadata and metadata.get("features") and metadata["features"].get("expanded"):
-                    try_from_expanded = True
+                metadata = self.fetcher.fetch_metadata(**kwargs)
+                self._repository_supports_expanded = (
+                    metadata and
+                    metadata.get("features") and
+                    metadata["features"].get("expanded")
+                )
+                self._metadata_scheduler.reset()
             except (ResourceNotFoundError, HttpResponseError):
                 _LOGGER.debug(FAILURE_PROCESSING_REPOSITORY_METADATA)
+
+        # Covers case when the repository supports expanded but dependency resolution is disabled.
+        try_from_expanded = (
+            dependency_resolution == DependencyModeType.enabled.value and
+            self._repository_supports_expanded
+        )
 
         while not to_process_models.empty():
             target_dtmi = to_process_models.get()
@@ -94,7 +116,9 @@ class DtmiResolver(object):
             info_msg = PROCESSING_DTMI.format(target_dtmi)
             _LOGGER.debug(info_msg)
 
-            dtdl, expanded_result = self.fetcher.fetch(target_dtmi, try_from_expanded=try_from_expanded)
+            dtdl, expanded_result = self.fetcher.fetch(
+                target_dtmi, try_from_expanded=try_from_expanded, **kwargs
+            )
 
             # Add dependencies if the result is expanded
             if expanded_result:

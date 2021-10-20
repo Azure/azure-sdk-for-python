@@ -32,7 +32,7 @@ _LOGGER = logging.getLogger(__name__)
 class Fetcher(object):
     """Interface for fetching from a generic location"""
 
-    def fetch(self, dtmi="", try_from_expanded=True):
+    def fetch(self, dtmi="", try_from_expanded=True, **kwargs):
         """Fetch and return the contents of the given DTMI. If try_from_expanded
             is true, will try the expanded form first and fall back to non expanded if needed.
 
@@ -48,7 +48,7 @@ class Fetcher(object):
                 info_msg = FETCHING_MODEL_CONTENT.format(dtdl_path)
                 _LOGGER.debug(info_msg)
 
-                return (self._fetch_model_data(dtdl_path), True)
+                return (self._fetch_model_data(dtdl_path, **kwargs), True)
             except (ResourceNotFoundError, HttpResponseError):
                 # Fallback to non expanded model
                 info_msg = ERROR_FETCHING_MODEL_CONTENT.format(dtmi)
@@ -59,7 +59,7 @@ class Fetcher(object):
         _LOGGER.debug(info_msg)
 
         # Let errors from this bubble up
-        return (self._fetch_model_data(dtdl_path), False)
+        return (self._fetch_model_data(dtdl_path, **kwargs), False)
 
     def fetch_metadata(self):
         """Fetch and return the repository metadata
@@ -105,7 +105,7 @@ class HttpFetcher(Fetcher):
     def __exit__(self, *exc_details):
         self.pipeline.__exit__(*exc_details)
 
-    def _fetch_model_data(self, path=""):
+    def _fetch_model_data(self, path="", **kwargs):
         """Fetch and return the contents of a JSON file at a given web path.
 
         :param str path: Path to JSON file (relative to the base_filepath of the Fetcher)
@@ -125,7 +125,7 @@ class HttpFetcher(Fetcher):
         info_msg = "GET {}".format(url)
         _LOGGER.debug(info_msg)
 
-        response = self.pipeline.run(request).http_response
+        response = self.pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
             raise HttpResponseError(
