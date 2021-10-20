@@ -131,7 +131,7 @@ chardet<5,>=3.0.2
 backports.functools-lru-cache >= 1.6.4; python_version == "2.7"
 #override azure azure-keyvault~=1.0
 #override azure-mgmt-core azure-core<2.0.0,>=1.15.0
-#override azure-containerregistry azure-core>=1.16.0,<2.0.0
+#override azure-containerregistry azure-core>=1.19.1,<2.0.0
 #override azure-containerregistry msrest>=0.6.21
 #override azure-core-tracing-opencensus azure-core<2.0.0,>=1.13.0
 #override azure-core-tracing-opentelemetry azure-core<2.0.0,>=1.13.0
