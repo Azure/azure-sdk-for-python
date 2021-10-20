@@ -61,6 +61,7 @@ from ._models import (
     AccountInfo,
     DocumentAnalysisError,
     DocumentAnalysisInnerError,
+    get_document_content_elements,
 )
 from ._api_versions import FormRecognizerApiVersion, DocumentAnalysisApiVersion
 
@@ -123,6 +124,7 @@ __all__ = [
     "AccountInfo",
     "DocumentAnalysisError",
     "DocumentAnalysisInnerError",
+    "get_document_content_elements",
 ]
 
 __VERSION__ = VERSION

@@ -7,7 +7,7 @@
 import functools
 from azure.ai.formrecognizer._generated.models import AnalyzeResultOperation
 from azure.ai.formrecognizer import DocumentAnalysisClient
-from azure.ai.formrecognizer import AnalyzeResult
+from azure.ai.formrecognizer import AnalyzeResult, get_document_content_elements
 from preparers import FormRecognizerPreparer
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -17,6 +17,18 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 
 class TestDocumentFromStream(FormRecognizerTest):
+
+    @FormRecognizerPreparer()
+    @DocumentAnalysisClientPreparer()
+    def test_document_line_get_words(self, client):
+        with open(self.selection_form_pdf, "rb") as fd:
+            document = fd.read()
+
+        poller = client.begin_analyze_document("prebuilt-document", document)
+        result = poller.result()
+
+        res = get_document_content_elements(result.pages[0].lines[13], result.pages[0], ["words", "selection_marks"])
+        assert len(res) == 1
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
