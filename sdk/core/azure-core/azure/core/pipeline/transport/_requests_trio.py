@@ -27,7 +27,7 @@ from collections.abc import AsyncIterator
 import functools
 import logging
 from typing import (
-    Any, Union, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload
+    Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload
 )
 import trio
 import urllib3
@@ -46,7 +46,7 @@ from ._base_async import (
     AsyncHttpResponse,
     _ResponseStopIteration,
     _iterate_response_content)
-from ._requests_basic import RequestsTransportResponse, _read_raw_stream
+from ._requests_basic import RequestsTransportResponse, _read_raw_stream, AzureErrorUnion
 from ._base_requests_async import RequestsAsyncTransportBase
 from .._tools import is_rest as _is_rest
 from .._tools_async import handle_no_stream_rest_response as _handle_no_stream_rest_response
@@ -195,7 +195,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
         self.open()
         trio_limiter = kwargs.get("trio_limiter", None)
         response = None
-        error = None
+        error = None    # type: Optional[AzureErrorUnion]
         data_to_send = await self._retrieve_request_data(request)
         try:
             try:

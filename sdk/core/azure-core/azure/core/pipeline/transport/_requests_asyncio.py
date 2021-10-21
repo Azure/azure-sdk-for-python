@@ -28,7 +28,7 @@ from collections.abc import AsyncIterator
 import functools
 import logging
 from typing import (
-    Any, Union, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload
+    Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload
 )
 import urllib3 # type: ignore
 
@@ -46,7 +46,7 @@ from ._base_async import (
     AsyncHttpResponse,
     _ResponseStopIteration,
     _iterate_response_content)
-from ._requests_basic import RequestsTransportResponse, _read_raw_stream
+from ._requests_basic import RequestsTransportResponse, _read_raw_stream, AzureErrorUnion
 from ._base_requests_async import RequestsAsyncTransportBase
 from .._tools import is_rest as _is_rest
 from .._tools_async import handle_no_stream_rest_response as _handle_no_stream_rest_response
@@ -136,7 +136,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         self.open()
         loop = kwargs.get("loop", _get_running_loop())
         response = None
-        error = None
+        error = None    # type: Optional[AzureErrorUnion]
         data_to_send = await self._retrieve_request_data(request)
         try:
             response = await loop.run_in_executor(

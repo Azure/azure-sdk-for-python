@@ -53,6 +53,13 @@ from .._tools import is_rest as _is_rest, handle_non_stream_rest_response as _ha
 if TYPE_CHECKING:
     from ...rest import HttpRequest as RestHttpRequest, HttpResponse as RestHttpResponse
 
+AzureErrorUnion = Union[
+    ServiceRequestError,
+    ServiceResponseError,
+    IncompleteReadError,
+    HttpResponseError,
+]
+
 PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
@@ -301,7 +308,7 @@ class RequestsTransport(HttpTransport):
         """
         self.open()
         response = None
-        error = None
+        error = None    # type: Optional[AzureErrorUnion]
 
         try:
             connection_timeout = kwargs.pop('connection_timeout', self.connection_config.timeout)
