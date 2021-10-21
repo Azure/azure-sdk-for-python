@@ -41,6 +41,7 @@ from .exceptions import (
     SchemaDeserializationError,
 )
 from ._constants import SCHEMA_ID_START_INDEX, SCHEMA_ID_LENGTH, DATA_START_INDEX
+from ._utils import parse_schema
 
 
 class AvroSerializer(object):
@@ -53,7 +54,7 @@ class AvroSerializer(object):
     :paramtype client: ~azure.schemaregistry.SchemaRegistryClient
     :keyword str group_name: Required. Schema group under which schema should be registered.
     :keyword bool auto_register_schemas: When true, register new schemas passed to serialize.
-     Otherwise, and by default, fail if it has not been pre-registered in the registry.
+     Otherwise, and by default, serialization will fail if the schema has not been pre-registered in the registry.
 
     """
 
@@ -99,8 +100,7 @@ class AvroSerializer(object):
 
         :param schema_name: Name of the schema
         :type schema_name: str
-        :param schema: Schema object
-        :type schema: avro.schema.Schema
+        :param str schema_str: Schema string
         :return: Schema Id
         :rtype: str
         """
