@@ -9,10 +9,10 @@ from requests.utils import DEFAULT_CA_BUNDLE_PATH as CaCertPath
 
 import config
 
-HOST = 'https://simonmoreno-sql3.documents.azure.com:443/'
-MASTER_KEY = 'Bl5eNK9aXEtvqrrPJPLs2gvCdllIZr2Dvm7dmsiVfgrznrlO2CHxSVODgy1ROxr33heMMTEVMp1eEuBFW6jHgw=='
-DATABASE_ID = 'newdb'
-CONTAINER_ID = "index-samples"
+HOST = config.settings['host']
+MASTER_KEY = config.settings['master_key']
+DATABASE_ID = config.settings['database_id']
+CONTAINER_ID = config.settings['container_id']
 PARTITION_KEY = PartitionKey(path='/id', kind='Hash')
 
 # A typical container has the following properties within it's indexingPolicy property
