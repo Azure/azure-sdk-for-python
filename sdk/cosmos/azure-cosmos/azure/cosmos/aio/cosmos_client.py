@@ -22,13 +22,11 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-#Missing methods:
-#list_databases(), query_databases(), 
-
 from typing import Any, Dict, Optional, Union, cast, Iterable, List
 
 import six
-from azure.core.tracing.decorator_async import distributed_trace_async  # pylint: disable=unused-import
+from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.tracing.decorator import distributed_trace
 
 from ..cosmos_client import _parse_connection_str, _build_auth
 from ._cosmos_client_connection_async import CosmosClientConnection
@@ -288,6 +286,78 @@ class CosmosClient(object):
                 id_value = database
 
         return DatabaseProxy(self.client_connection, id_value)
+
+    @distributed_trace
+    def list_databases(
+        self,
+        max_item_count=None,  # type: Optional[int]
+        populate_query_metrics=None,  # type: Optional[bool]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable[Dict[str, Any]]
+        """List the databases in a Cosmos DB SQL database account.
+
+        :param int max_item_count: Max number of items to be returned in the enumeration operation.
+        :param bool populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: An Iterable of database properties (dicts).
+        :rtype: Iterable[dict[str, str]]
+        """
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        if max_item_count is not None:
+            feed_options["maxItemCount"] = max_item_count
+        if populate_query_metrics is not None:
+            feed_options["populateQueryMetrics"] = populate_query_metrics
+
+        result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+        return result
+
+    @distributed_trace
+    def query_databases(
+        self,
+        query=None,  # type: Optional[str]
+        parameters=None,  # type: Optional[List[str]]
+        enable_cross_partition_query=None,  # type: Optional[bool]
+        max_item_count=None,  # type:  Optional[int]
+        populate_query_metrics=None,  # type: Optional[bool]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable[Dict[str, Any]]
+        """Query the databases in a Cosmos DB SQL database account.
+
+        :param str query: The Azure Cosmos DB SQL query to execute.
+        :param list[str] parameters: Optional array of parameters to the query. Ignored if no query is provided.
+        :param bool enable_cross_partition_query: Allow scan on the queries which couldn't be
+            served as indexing was opted out on the requested paths.
+        :param int max_item_count: Max number of items to be returned in the enumeration operation.
+        :param bool populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: An Iterable of database properties (dicts).
+        :rtype: Iterable[dict[str, str]]
+        """
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        if enable_cross_partition_query is not None:
+            feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
+        if max_item_count is not None:
+            feed_options["maxItemCount"] = max_item_count
+        if populate_query_metrics is not None:
+            feed_options["populateQueryMetrics"] = populate_query_metrics
+
+        result = self.client_connection.QueryDatabases(
+            query=query if parameters is None else dict(query=query, parameters=parameters),
+            options=feed_options,
+            **kwargs)
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+        return result
 
     @distributed_trace_async
     async def delete_database(

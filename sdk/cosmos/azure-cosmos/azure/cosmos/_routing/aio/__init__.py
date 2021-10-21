@@ -18,19 +18,3 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
-from ._retry_utility_async import ConnectionRetryPolicy
-from .container import ContainerProxy
-from .cosmos_client import CosmosClient
-from .database import DatabaseProxy
-from .user import UserProxy
-from .scripts import ScriptsProxy
-
-__all__ = (
-    "CosmosClient",
-    "DatabaseProxy",
-    "ContainerProxy",
-    "ScriptsProxy",
-    "UserProxy",
-    "ConnectionRetryPolicy"
-)

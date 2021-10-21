@@ -582,27 +582,16 @@ class ContainerProxy(object):
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        offers = self.client_connection.QueryOffers(query_spec, **kwargs)
-        if not offers:
+        offers = [offer async for offer in self.client_connection.QueryOffers(query_spec, **kwargs)]
+        if len(offers) == 0:
             raise CosmosResourceNotFoundError(
                 status_code=StatusCodes.NOT_FOUND,
-                message="Could not find Offer for container " + self.container_link)
-                
-        throughput, curr_offer = None, None
-        async for offer in offers:
-            if not offer:
-                raise CosmosResourceNotFoundError(
-                    status_code=StatusCodes.NOT_FOUND,
-                    message="Could not find Offer for container " + self.container_link)
-            else:
-                throughput = offer["content"]["offerThroughput"]
-                curr_offer = offer
-            StopAsyncIteration
+                message="Could not find Offer for database " + self.database_link)
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, offers)
-
-        return Offer(offer_throughput=throughput, properties=curr_offer)
+            
+        return Offer(offer_throughput=offers[0]["content"]["offerThroughput"], properties=offers[0])
 
     @distributed_trace_async
     async def replace_throughput(self, throughput, **kwargs):
@@ -625,26 +614,15 @@ class ContainerProxy(object):
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        offers = self.client_connection.QueryOffers(query_spec, **kwargs)
-        if not offers:
+        offers = [offer async for offer in self.client_connection.QueryOffers(query_spec, **kwargs)]
+        if len(offers) == 0:
             raise CosmosResourceNotFoundError(
                 status_code=StatusCodes.NOT_FOUND,
-                message="Could not find Offer for container " + self.container_link)
+                message="Could not find Offer for database " + self.database_link)
 
-        curr_offer = None
-        async for offer in offers:
-            if not offer:
-                raise CosmosResourceNotFoundError(
-                    status_code=StatusCodes.NOT_FOUND,
-                    message="Could not find Offer for container " + self.container_link)
-            else:
-                curr_offer = offer
-            StopAsyncIteration
-
-        new_offer = curr_offer.copy()
+        new_offer = offers[0].copy()
         new_offer["content"]["offerThroughput"] = throughput
-        data = await self.client_connection.ReplaceOffer(offer_link=curr_offer["_self"], offer=curr_offer, **kwargs)
-
+        data = await self.client_connection.ReplaceOffer(offer_link=offers[0]["_self"], offer=offers[0], **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, data)
 

@@ -72,7 +72,7 @@ class _QueryExecutionContextBase(object):
         if not self._has_more_pages():
             return []
 
-        if self._buffer: #might need async version of this
+        if self._buffer:
             # if there is anything in the buffer returns that
             res = list(self._buffer)
             self._buffer.clear()
@@ -93,10 +93,10 @@ class _QueryExecutionContextBase(object):
 
         :return: The next query result.
         :rtype: dict
-        :raises StopIteration: If no more result is left.
+        :raises StopAsyncIteration: If no more result is left.
         """
         if self._has_finished:
-            raise StopIteration
+            raise StopAsyncIteration
 
         if not self._buffer:
 
@@ -104,7 +104,7 @@ class _QueryExecutionContextBase(object):
             self._buffer.extend(results)
 
         if not self._buffer:
-            raise StopIteration
+            raise StopAsyncIteration
 
         return self._buffer.popleft()
 

@@ -10,8 +10,11 @@ from azure.cosmos.cosmos_client import CosmosClient as SyncClient
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
 
-endpoint = ''
-key = ''
+endpoint = 'https://simonmoreno-sql3.documents.azure.com:443/'
+key = 'Bl5eNK9aXEtvqrrPJPLs2gvCdllIZr2Dvm7dmsiVfgrznrlO2CHxSVODgy1ROxr33heMMTEVMp1eEuBFW6jHgw=='
+
+emulator_link = 'https://localhost:8081'
+emulator_key = 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=='
 
 import uuid
 
@@ -27,6 +30,57 @@ def get_test_item():
     'lastName': 'Smith'
     }
     return async_item
+
+def partition_split_test():
+    client = SyncClient(endpoint, key)
+    db = client.create_database_if_not_exists("pker2")
+    container = db.create_container_if_not_exists(id="pkerc2", partition_key=PartitionKey(path="/id"))
+    # db = client.get_database_client("pktest")
+    # container = db.get_container_client("pktestcol")
+    for i in range(100):
+        body = get_test_item()
+        container.create_item(body=body)
+    query = "SELECT * FROM c"
+    success, errors = 0, 0
+    current_pkid = client.client_connection.last_response_headers["x-ms-documentdb-partitionkeyrangeid"]
+    print("created items, waiting 10s, check current partition is {}".format(current_pkid))
+    time.sleep(10)
+    for i in range(10000):
+        try:
+            x = container.query_items(query=query, enable_cross_partition_query=True)
+            print("Success, count: {}".format(len(list(x))))
+            success += 1
+            print("Successes: {}, Errors: {}".format(success, errors))
+            if client.client_connection.last_response_headers["x-ms-documentdb-partitionkeyrangeid"] != current_pkid:
+                current_pkid = client.client_connection.last_response_headers["x-ms-documentdb-partitionkeyrangeid"]
+                print("PARTITION KEY RANGE ID WAS UPDATED TO {}".format(current_pkid))
+                time.sleep(1)
+            time.sleep(1)
+            #Use breakpoint to stop execution, change provisioned RUs on container, wait for x-ms-offer-replace-pending header, then continue
+            #Increase to >10k RUs causes partition split (15k to be safe)
+        except Exception as e:
+            print(e.message)
+            print(e)
+            errors +=1
+            print("Successes: {}, Errors: {}".format(success, errors))
+
+    #create 100 items, for i in 100000, query and sleeping, catch exception, after 10k/11k RU it will split partition
+    #query Select * from c
+    #sleep(1s)
+    #catch exception
+
+async def asynccccc():
+    client = AsyncClient(endpoint, key)
+    db = await client.create_database_if_not_exists("ppppp")
+    async for x in client.list_databases():
+        print("op")
+        print(x)
+    cont = await db.create_container_if_not_exists(id="pppppppp", partition_key=PartitionKey(path="/id"))
+    x = await cont.read()
+    print(x)
+    await client.delete_database("ppppp")
+    await client.close()
+
 
 async def async_crud_test():
     db_name = "crudAsync"
@@ -183,7 +237,7 @@ async def create_tests():
     ids2 = await timed_async_create(db2,cont2,num)
     print(len(ids1) == len(ids2))
 
-def user_test():
+def user_testsss():
     client = SyncClient(endpoint, key)
     db = client.get_database_client("xusud")
     u = db.get_user_client(user="testid")
@@ -199,30 +253,22 @@ async def qta():
         itemId = "Async_e402afa6-badf-43f2-8ddd-83776221cb3a"
         print("attempting query")
 
-        y = await cont.read_offer()
-        print(type(y))
-        print(y)
-        print(y.properties)
-        print(y.offer_throughput)
+        query = "SELECT * FROM c"
+        items = cont.query_items(
+            query=query,
+            parameters=[{"name":"@id", "value": itemId}],
+            enable_cross_partition_query=True)
 
-        print("replacing")
-        x = await cont.replace_throughput(throughput=400)
-        print(type(x))
-        print(x.properties)
-        print(x.offer_throughput)
+        print(items)
+        print(items is None)
+        async for item in items:
+            if not item:
+                print("NO ITEMS")
+            else:
+                print(item)
+        #or
+        list_of_items = [c async for c in items]
 
-        z = cont.list_conflicts()
-        print(type(z))
-        print(z)
-
-        # query = "SELECT * FROM c WHERE c.id=@id"
-        # items = cont.query_items(
-        #     query=query,
-        #     parameters=[{"name":"@id", "value": itemId}],
-        #     enable_cross_partition_query=True)
-
-        # async for item in items:
-        #     print(item)
 
 
         # x = cont.read_all_items()
@@ -231,12 +277,31 @@ async def qta():
         # async for item in x:
         #     print(item)
 
+        # y = await cont.read_offer()
+        # print(type(y))
+        # print(y)
+        # print(y.properties)
+        # print(y.offer_throughput)
+
+        # print("replacing")
+        # x = await cont.replace_throughput(throughput=400)
+        # print(type(x))
+        # print(x.properties)
+        # print(x.offer_throughput)
+
+        # z = cont.list_conflicts()
+        # print(type(z))
+        # print(z)
+
 def qt():
     client = SyncClient(endpoint, key)
     db = client.create_database_if_not_exists(id="qt")
     container = db.create_container_if_not_exists(
         id="qtc",
 		partition_key=PartitionKey(path="/id"))
+
+    x = db.get_container_client("nice")
+    print(x)
 
 # async def read_all():
 #     async with AsyncClient(endpoint, key) as client:
@@ -251,8 +316,7 @@ def qt():
 async def main():
     # await read_tests()
     # await async_crud_test()
-    await qta()
-    qt()
+    await asynccccc()
 
 
 if __name__ == "__main__":

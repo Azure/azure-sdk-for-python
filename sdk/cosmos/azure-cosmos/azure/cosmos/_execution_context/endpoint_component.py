@@ -73,7 +73,7 @@ class _QueryExecutionTopEndpointComponent(_QueryExecutionEndpointComponent):
             res = await self._execution_context.__anext__()
             self._top_count -= 1
             return res
-        raise StopIteration
+        raise StopAsyncIteration
 
 
 class _QueryExecutionDistinctOrderedEndpointComponent(_QueryExecutionEndpointComponent):
@@ -152,7 +152,7 @@ class _QueryExecutionOffsetEndpointComponent(_QueryExecutionEndpointComponent):
             if res is not None:
                 self._offset_count -= 1
             else:
-                raise StopIteration
+                raise StopAsyncIteration
         return await self._execution_context.__anext__()
 
 
@@ -195,4 +195,4 @@ class _QueryExecutionAggregateEndpointComponent(_QueryExecutionEndpointComponent
             res = self._results[self._result_index]
             self._result_index += 1
             return res
-        raise StopIteration
+        raise StopAsyncIteration

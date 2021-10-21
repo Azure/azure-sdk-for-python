@@ -22,7 +22,7 @@
 """Iterable query results in the Azure Cosmos database service.
 """
 from azure.core.async_paging import AsyncPageIterator
-from azure.cosmos._execution_context.aio import execution_dispatcher_async
+from azure.cosmos._execution_context.aio import execution_dispatcher
 
 # pylint: disable=protected-access
 
@@ -72,7 +72,7 @@ class QueryIterable(AsyncPageIterator):
         self._collection_link = collection_link
         self._database_link = database_link
         self._partition_key = partition_key
-        self._ex_context = execution_dispatcher_async._ProxyQueryExecutionContext(
+        self._ex_context = execution_dispatcher._ProxyQueryExecutionContext(
             self._client, self._collection_link, self._query, self._options, self._fetch_function
         )
         super(QueryIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)

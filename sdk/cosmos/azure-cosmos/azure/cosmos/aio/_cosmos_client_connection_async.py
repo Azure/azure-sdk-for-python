@@ -53,7 +53,7 @@ from .. import _runtime_constants as runtime_constants
 from .. import _request_object
 from . import _asynchronous_request as asynchronous_request
 from . import _global_endpoint_manager_async as global_endpoint_manager_async
-from .._routing import routing_map_provider
+from .._routing.aio import routing_map_provider
 from ._retry_utility_async import ConnectionRetryPolicy
 from .. import _session
 from .. import _utils
@@ -399,6 +399,28 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         return await self.Create(document, path, "docs", collection_id, None, options, **kwargs)
 
+    async def CreatePermission(self, user_link, permission, options=None, **kwargs):
+        """Creates a permission for a user.
+
+        :param str user_link:
+            The link to the user entity.
+        :param dict permission:
+            The Azure Cosmos user permission to create.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The created Permission.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        path, user_id = self._GetUserIdWithPathForPermission(permission, user_link)
+        return await self.Create(permission, path, "permissions", user_id, None, options, **kwargs)
+
     async def CreateUserDefinedFunction(self, collection_link, udf, options=None, **kwargs):
         """Creates a user-defined function in a collection.
 
@@ -546,6 +568,28 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         database_id, path = self._GetDatabaseIdWithPathForUser(database_link, user)
         return await self.Upsert(user, path, "users", database_id, None, options, **kwargs)
+
+    async def UpsertPermission(self, user_link, permission, options=None, **kwargs):
+        """Upserts a permission for a user.
+
+        :param str user_link:
+            The link to the user entity.
+        :param dict permission:
+            The Azure Cosmos user permission to upsert.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The upserted permission.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        path, user_id = self._GetUserIdWithPathForPermission(permission, user_link)
+        return await self.Upsert(permission, path, "permissions", user_id, None, options, **kwargs)
 
     async def UpsertItem(self, database_or_container_link, document, options=None, **kwargs):
         """Upserts a document in a collection.
@@ -705,6 +749,48 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         return await self.Read(path, "docs", document_id, None, options, **kwargs)
 
+    async def ReadUser(self, user_link, options=None, **kwargs):
+        """Reads a user.
+
+        :param str user_link:
+            The link to the user entity.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The read User.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(user_link)
+        user_id = base.GetResourceIdOrFullNameFromLink(user_link)
+        return await self.Read(path, "users", user_id, None, options, **kwargs)
+
+    async def ReadPermission(self, permission_link, options=None, **kwargs):
+        """Reads a permission.
+
+        :param str permission_link:
+            The link to the permission.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The read permission.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(permission_link)
+        permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
+        return await self.Read(path, "permissions", permission_id, None, options, **kwargs)
+
     async def ReadUserDefinedFunction(self, udf_link, options=None, **kwargs):
         """Reads a user-defined function.
 
@@ -861,6 +947,29 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         path = base.GetPathFromLink(user_link)
         user_id = base.GetResourceIdOrFullNameFromLink(user_link)
         return await self.Replace(user, path, "users", user_id, None, options, **kwargs)
+
+    async def ReplacePermission(self, permission_link, permission, options=None, **kwargs):
+        """Replaces a permission and return it.
+
+        :param str permission_link:
+            The link to the permission.
+        :param dict permission:
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The new Permission.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        CosmosClientConnection.__ValidateResource(permission)
+        path = base.GetPathFromLink(permission_link)
+        permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
+        return await self.Replace(permission, path, "permissions", permission_id, None, options, **kwargs)
 
     async def ReplaceContainer(self, collection_link, collection, options=None, **kwargs):
         """Replaces a collection and return it.
@@ -1124,6 +1233,27 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         user_id = base.GetResourceIdOrFullNameFromLink(user_link)
         return await self.DeleteResource(path, "users", user_id, None, options, **kwargs)
 
+    async def DeletePermission(self, permission_link, options=None, **kwargs):
+        """Deletes a permission.
+
+        :param str permission_link:
+            The link to the permission.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The deleted Permission.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(permission_link)
+        permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
+        return await self.DeleteResource(path, "permissions", permission_id, None, options, **kwargs)
+
     async def DeleteContainer(self, collection_link, options=None, **kwargs):
         """Deletes a collection.
 
@@ -1304,6 +1434,154 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             request=request,
             request_data=None,
             **kwargs
+        )
+
+    def _ReadPartitionKeyRanges(self, collection_link, feed_options=None, **kwargs):
+        """Reads Partition Key Ranges.
+
+        :param str collection_link:
+            The link to the document collection.
+        :param dict feed_options:
+
+        :return:
+            Query Iterable of PartitionKeyRanges.
+        :rtype:
+            query_iterable.QueryIterable
+
+        """
+        if feed_options is None:
+            feed_options = {}
+
+        return self._QueryPartitionKeyRanges(collection_link, None, feed_options, **kwargs)
+
+    def _QueryPartitionKeyRanges(self, collection_link, query, options=None, **kwargs):
+        """Queries Partition Key Ranges in a collection.
+
+        :param str collection_link:
+            The link to the document collection.
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            Query Iterable of PartitionKeyRanges.
+        :rtype:
+            query_iterable.QueryIterable
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(collection_link, "pkranges")
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        async def fetch_fn(options):
+            return (
+                await self.__QueryFeed(
+                    path, "pkranges", collection_id, lambda r: r["PartitionKeyRanges"],
+                    lambda _, b: b, query, options, **kwargs
+                ),
+                self.last_response_headers,
+            )
+
+        return AsyncItemPaged(
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+        )
+
+    def ReadDatabases(self, options=None, **kwargs):
+        """Reads all databases.
+
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            Query Iterable of Databases.
+        :rtype:
+            query_iterable.QueryIterable
+
+        """
+        if options is None:
+            options = {}
+
+        return self.QueryDatabases(None, options, **kwargs)
+
+    def QueryDatabases(self, query, options=None, **kwargs):
+        """Queries databases.
+
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
+
+        :return: Query Iterable of Databases.
+        :rtype:
+            query_iterable.QueryIterable
+
+        """
+        if options is None:
+            options = {}
+
+        async def fetch_fn(options):
+            return (
+                await self.__QueryFeed(
+                    "/dbs", "dbs", "", lambda r: r["Databases"],
+                    lambda _, b: b, query, options, **kwargs
+                ),
+                self.last_response_headers,
+            )
+
+        return AsyncItemPaged(
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+        )
+
+    def ReadContainers(self, database_link, options=None, **kwargs):
+        """Reads all collections in a database.
+
+        :param str database_link:
+            The link to the database.
+        :param dict options:
+            The request options for the request.
+
+        :return: Query Iterable of Collections.
+        :rtype:
+            query_iterable.QueryIterable
+
+        """
+        if options is None:
+            options = {}
+
+        return self.QueryContainers(database_link, None, options, **kwargs)
+
+    def QueryContainers(self, database_link, query, options=None, **kwargs):
+        """Queries collections in a database.
+
+        :param str database_link:
+            The link to the database.
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
+
+        :return: Query Iterable of Collections.
+        :rtype:
+            query_iterable.QueryIterable
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(database_link, "colls")
+        database_id = base.GetResourceIdOrFullNameFromLink(database_link)
+
+        async def fetch_fn(options):
+            return (
+                await self.__QueryFeed(
+                    path, "colls", database_id, lambda r: r["DocumentCollections"],
+                    lambda _, body: body, query, options, **kwargs
+                ),
+                self.last_response_headers,
+            )
+
+        return AsyncItemPaged(
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
         )
 
     def ReadItems(self, collection_link, feed_options=None, response_hook=None, **kwargs):
@@ -1512,6 +1790,268 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             options, 
             fetch_function=fetch_fn, 
             page_iterator_class=query_iterable.QueryIterable
+        )
+
+    def ReadUsers(self, database_link, options=None, **kwargs):
+        """Reads all users in a database.
+
+        :params str database_link:
+            The link to the database.
+        :params dict options:
+            The request options for the request.
+        :return:
+            Query iterable of Users.
+        :rtype:
+            query_iterable.QueryIterable
+
+        """
+        if options is None:
+            options = {}
+
+        return self.QueryUsers(database_link, None, options, **kwargs)
+
+    def QueryUsers(self, database_link, query, options=None, **kwargs):
+        """Queries users in a database.
+
+        :param str database_link:
+            The link to the database.
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            Query Iterable of Users.
+        :rtype:
+            query_iterable.QueryIterable
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(database_link, "users")
+        database_id = base.GetResourceIdOrFullNameFromLink(database_link)
+
+        async def fetch_fn(options):
+            return (
+                await self.__QueryFeed(
+                    path, "users", database_id, lambda r: r["Users"],
+                    lambda _, b: b, query, options, **kwargs
+                ),
+                self.last_response_headers,
+            )
+
+        return AsyncItemPaged(
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+        )
+
+    def ReadPermissions(self, user_link, options=None, **kwargs):
+        """Reads all permissions for a user.
+
+        :param str user_link:
+            The link to the user entity.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            Query Iterable of Permissions.
+        :rtype:
+            query_iterable.QueryIterable
+
+        """
+        if options is None:
+            options = {}
+
+        return self.QueryPermissions(user_link, None, options, **kwargs)
+
+    def QueryPermissions(self, user_link, query, options=None, **kwargs):
+        """Queries permissions for a user.
+
+        :param str user_link:
+            The link to the user entity.
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            Query Iterable of Permissions.
+        :rtype:
+            query_iterable.QueryIterable
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(user_link, "permissions")
+        user_id = base.GetResourceIdOrFullNameFromLink(user_link)
+
+        async def fetch_fn(options):
+            return (
+                await self.__QueryFeed(
+                    path, "permissions", user_id, lambda r: r["Permissions"], lambda _, b: b, query, options, **kwargs
+                ),
+                self.last_response_headers,
+            )
+
+        return AsyncItemPaged(
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+        )
+
+    def ReadStoredProcedures(self, collection_link, options=None, **kwargs):
+        """Reads all store procedures in a collection.
+
+        :param str collection_link:
+            The link to the document collection.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            Query Iterable of Stored Procedures.
+        :rtype:
+            query_iterable.QueryIterable
+
+        """
+        if options is None:
+            options = {}
+
+        return self.QueryStoredProcedures(collection_link, None, options, **kwargs)
+
+    def QueryStoredProcedures(self, collection_link, query, options=None, **kwargs):
+        """Queries stored procedures in a collection.
+
+        :param str collection_link:
+            The link to the document collection.
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            Query Iterable of Stored Procedures.
+        :rtype:
+            query_iterable.QueryIterable
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(collection_link, "sprocs")
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        async def fetch_fn(options):
+            return (
+                await self.__QueryFeed(
+                    path, "sprocs", collection_id, lambda r: r["StoredProcedures"],
+                    lambda _, b: b, query, options, **kwargs
+                ),
+                self.last_response_headers,
+            )
+
+        return AsyncItemPaged(
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+        )
+
+    def ReadTriggers(self, collection_link, options=None, **kwargs):
+        """Reads all triggers in a collection.
+
+        :param str collection_link:
+            The link to the document collection.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            Query Iterable of Triggers.
+        :rtype:
+            query_iterable.QueryIterable
+
+        """
+        if options is None:
+            options = {}
+
+        return self.QueryTriggers(collection_link, None, options, **kwargs)
+
+    def QueryTriggers(self, collection_link, query, options=None, **kwargs):
+        """Queries triggers in a collection.
+
+        :param str collection_link:
+            The link to the document collection.
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            Query Iterable of Triggers.
+        :rtype:
+            query_iterable.QueryIterable
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(collection_link, "triggers")
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        async def fetch_fn(options):
+            return (
+                await self.__QueryFeed(
+                    path, "triggers", collection_id, lambda r: r["Triggers"], lambda _, b: b, query, options, **kwargs
+                ),
+                self.last_response_headers,
+            )
+
+        return AsyncItemPaged(
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+        )
+
+    def ReadUserDefinedFunctions(self, collection_link, options=None, **kwargs):
+        """Reads all user-defined functions in a collection.
+
+        :param str collection_link:
+            The link to the document collection.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            Query Iterable of UDFs.
+        :rtype:
+            query_iterable.QueryIterable
+
+        """
+        if options is None:
+            options = {}
+
+        return self.QueryUserDefinedFunctions(collection_link, None, options, **kwargs)
+
+    def QueryUserDefinedFunctions(self, collection_link, query, options=None, **kwargs):
+        """Queries user-defined functions in a collection.
+
+        :param str collection_link:
+            The link to the collection.
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            Query Iterable of UDFs.
+        :rtype:
+            query_iterable.QueryIterable
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(collection_link, "udfs")
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        async def fetch_fn(options):
+            return (
+                await self.__QueryFeed(
+                    path, "udfs", collection_id, lambda r: r["UserDefinedFunctions"],
+                    lambda _, b: b, query, options, **kwargs
+                ),
+                self.last_response_headers,
+            )
+
+        return AsyncItemPaged(
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
         )
 
     def ReadConflicts(self, collection_link, feed_options=None, **kwargs):
@@ -1748,6 +2288,12 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         path = base.GetPathFromLink(collection_link, "docs")
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         return collection_id, document, path
+
+    def _GetUserIdWithPathForPermission(self, permission, user_link):  # pylint: disable=no-self-use
+        CosmosClientConnection.__ValidateResource(permission)
+        path = base.GetPathFromLink(user_link, "permissions")
+        user_id = base.GetResourceIdOrFullNameFromLink(user_link)
+        return path, user_id
 
     def RegisterPartitionResolver(self, database_link, partition_resolver):
         """Registers the partition resolver associated with the database link

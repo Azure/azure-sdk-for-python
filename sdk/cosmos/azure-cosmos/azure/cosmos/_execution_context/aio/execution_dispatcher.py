@@ -26,8 +26,8 @@ Cosmos database service.
 from six.moves import xrange
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos._execution_context.execution_dispatcher import _is_partitioned_execution_info, _get_partitioned_execution_info
-from azure.cosmos._execution_context import multi_execution_aggregator
-from azure.cosmos._execution_context.aio.base_execution_context_async import _QueryExecutionContextBase, _DefaultQueryExecutionContext
+from azure.cosmos._execution_context.aio import multi_execution_aggregator
+from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase, _DefaultQueryExecutionContext
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 from azure.cosmos._execution_context import endpoint_component
 from azure.cosmos.documents import _DistinctType

@@ -59,44 +59,42 @@ class ScriptsProxy(object):
             return u"{}/{}/{}".format(self.container_link, typ, script_or_id)
         return script_or_id["_self"]
 
-    #TODO add async query functionality
-    # async def list_stored_procedures(self, max_item_count=None, **kwargs):
-    #     # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
-    #     """List all stored procedures in the container.
+    def list_stored_procedures(self, max_item_count=None, **kwargs):
+        # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
+        """List all stored procedures in the container.
 
-    #     :param int max_item_count: Max number of items to be returned in the enumeration operation.
-    #     :returns: An Iterable of stored procedures (dicts).
-    #     :rtype: Iterable[dict[str, Any]]
-    #     """
-    #     feed_options = build_options(kwargs)
-    #     if max_item_count is not None:
-    #         feed_options["maxItemCount"] = max_item_count
+        :param int max_item_count: Max number of items to be returned in the enumeration operation.
+        :returns: An Iterable of stored procedures (dicts).
+        :rtype: Iterable[dict[str, Any]]
+        """
+        feed_options = build_options(kwargs)
+        if max_item_count is not None:
+            feed_options["maxItemCount"] = max_item_count
 
-    #     return await self.client_connection.ReadStoredProcedures(
-    #         collection_link=self.container_link, options=feed_options, **kwargs
-    #     )
+        return self.client_connection.ReadStoredProcedures(
+            collection_link=self.container_link, options=feed_options, **kwargs
+        )
 
-    #TODO add async query functionality
-    # async def query_stored_procedures(self, query, parameters=None, max_item_count=None, **kwargs):
-    #     # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
-    #     """Return all stored procedures matching the given `query`.
+    def query_stored_procedures(self, query, parameters=None, max_item_count=None, **kwargs):
+        # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
+        """Return all stored procedures matching the given `query`.
 
-    #     :param query: The Azure Cosmos DB SQL query to execute.
-    #     :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
-    #     :param max_item_count: Max number of items to be returned in the enumeration operation.
-    #     :returns: An Iterable of stored procedures (dicts).
-    #     :rtype: Iterable[dict[str, Any]]
-    #     """
-    #     feed_options = build_options(kwargs)
-    #     if max_item_count is not None:
-    #         feed_options["maxItemCount"] = max_item_count
+        :param query: The Azure Cosmos DB SQL query to execute.
+        :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
+        :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :returns: An Iterable of stored procedures (dicts).
+        :rtype: Iterable[dict[str, Any]]
+        """
+        feed_options = build_options(kwargs)
+        if max_item_count is not None:
+            feed_options["maxItemCount"] = max_item_count
 
-    #     return await self.client_connection.QueryStoredProcedures(
-    #         collection_link=self.container_link,
-    #         query=query if parameters is None else dict(query=query, parameters=parameters),
-    #         options=feed_options,
-    #         **kwargs
-    #     )
+        return self.client_connection.QueryStoredProcedures(
+            collection_link=self.container_link,
+            query=query if parameters is None else dict(query=query, parameters=parameters),
+            options=feed_options,
+            **kwargs
+        )
 
     async def get_stored_procedure(self, sproc, **kwargs):
         # type: (Union[str, Dict[str, Any]], Any) -> Dict[str, Any]
@@ -209,44 +207,42 @@ class ScriptsProxy(object):
             **kwargs
         )
 
-    #TODO add query functionality
-    # async def list_triggers(self, max_item_count=None, **kwargs):
-    #     # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
-    #     """List all triggers in the container.
+    def list_triggers(self, max_item_count=None, **kwargs):
+        # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
+        """List all triggers in the container.
 
-    #     :param max_item_count: Max number of items to be returned in the enumeration operation.
-    #     :returns: An Iterable of triggers (dicts).
-    #     :rtype: Iterable[dict[str, Any]]
-    #     """
-    #     feed_options = build_options(kwargs)
-    #     if max_item_count is not None:
-    #         feed_options["maxItemCount"] = max_item_count
+        :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :returns: An Iterable of triggers (dicts).
+        :rtype: Iterable[dict[str, Any]]
+        """
+        feed_options = build_options(kwargs)
+        if max_item_count is not None:
+            feed_options["maxItemCount"] = max_item_count
 
-    #     return await self.client_connection.ReadTriggers(
-    #         collection_link=self.container_link, options=feed_options, **kwargs
-    #     )
+        return self.client_connection.ReadTriggers(
+            collection_link=self.container_link, options=feed_options, **kwargs
+        )
 
-    #TODO add query functionality
-    # async def query_triggers(self, query, parameters=None, max_item_count=None, **kwargs):
-    #     # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
-    #     """Return all triggers matching the given `query`.
+    def query_triggers(self, query, parameters=None, max_item_count=None, **kwargs):
+        # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
+        """Return all triggers matching the given `query`.
 
-    #     :param query: The Azure Cosmos DB SQL query to execute.
-    #     :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
-    #     :param max_item_count: Max number of items to be returned in the enumeration operation.
-    #     :returns: An Iterable of triggers (dicts).
-    #     :rtype: Iterable[dict[str, Any]]
-    #     """
-    #     feed_options = build_options(kwargs)
-    #     if max_item_count is not None:
-    #         feed_options["maxItemCount"] = max_item_count
+        :param query: The Azure Cosmos DB SQL query to execute.
+        :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
+        :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :returns: An Iterable of triggers (dicts).
+        :rtype: Iterable[dict[str, Any]]
+        """
+        feed_options = build_options(kwargs)
+        if max_item_count is not None:
+            feed_options["maxItemCount"] = max_item_count
 
-    #     return await self.client_connection.QueryTriggers(
-    #         collection_link=self.container_link,
-    #         query=query if parameters is None else dict(query=query, parameters=parameters),
-    #         options=feed_options,
-    #         **kwargs
-    #     )
+        return self.client_connection.QueryTriggers(
+            collection_link=self.container_link,
+            query=query if parameters is None else dict(query=query, parameters=parameters),
+            options=feed_options,
+            **kwargs
+        )
 
     async def get_trigger(self, trigger, **kwargs):
         # type: (Union[str, Dict[str, Any]], Any) -> Dict[str, Any]
@@ -319,44 +315,42 @@ class ScriptsProxy(object):
             trigger_link=self._get_resource_link(trigger, ScriptType.Trigger), options=request_options, **kwargs
         )
 
-    #TODO add query functionality
-    # async def list_user_defined_functions(self, max_item_count=None, **kwargs):
-    #     # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
-    #     """List all the user-defined functions in the container.
+    def list_user_defined_functions(self, max_item_count=None, **kwargs):
+        # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
+        """List all the user-defined functions in the container.
 
-    #     :param max_item_count: Max number of items to be returned in the enumeration operation.
-    #     :returns: An Iterable of user-defined functions (dicts).
-    #     :rtype: Iterable[dict[str, Any]]
-    #     """
-    #     feed_options = build_options(kwargs)
-    #     if max_item_count is not None:
-    #         feed_options["maxItemCount"] = max_item_count
+        :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :returns: An Iterable of user-defined functions (dicts).
+        :rtype: Iterable[dict[str, Any]]
+        """
+        feed_options = build_options(kwargs)
+        if max_item_count is not None:
+            feed_options["maxItemCount"] = max_item_count
 
-    #     return await self.client_connection.ReadUserDefinedFunctions(
-    #         collection_link=self.container_link, options=feed_options, **kwargs
-    #     )
+        return self.client_connection.ReadUserDefinedFunctions(
+            collection_link=self.container_link, options=feed_options, **kwargs
+        )
 
-    #TODO add query functionality
-    # async def query_user_defined_functions(self, query, parameters=None, max_item_count=None, **kwargs):
-    #     # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
-    #     """Return user-defined functions matching a given `query`.
+    def query_user_defined_functions(self, query, parameters=None, max_item_count=None, **kwargs):
+        # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
+        """Return user-defined functions matching a given `query`.
 
-    #     :param query: The Azure Cosmos DB SQL query to execute.
-    #     :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
-    #     :param max_item_count: Max number of items to be returned in the enumeration operation.
-    #     :returns: An Iterable of user-defined functions (dicts).
-    #     :rtype: Iterable[dict[str, Any]]
-    #     """
-    #     feed_options = build_options(kwargs)
-    #     if max_item_count is not None:
-    #         feed_options["maxItemCount"] = max_item_count
+        :param query: The Azure Cosmos DB SQL query to execute.
+        :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
+        :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :returns: An Iterable of user-defined functions (dicts).
+        :rtype: Iterable[dict[str, Any]]
+        """
+        feed_options = build_options(kwargs)
+        if max_item_count is not None:
+            feed_options["maxItemCount"] = max_item_count
 
-    #     return await self.client_connection.QueryUserDefinedFunctions(
-    #         collection_link=self.container_link,
-    #         query=query if parameters is None else dict(query=query, parameters=parameters),
-    #         options=feed_options,
-    #         **kwargs
-    #     )
+        return self.client_connection.QueryUserDefinedFunctions(
+            collection_link=self.container_link,
+            query=query if parameters is None else dict(query=query, parameters=parameters),
+            options=feed_options,
+            **kwargs
+        )
 
     async def get_user_defined_function(self, udf, **kwargs):
         # type: (Union[str, Dict[str, Any]], Any) -> Dict[str, Any]

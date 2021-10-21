@@ -52,7 +52,7 @@ class _GlobalEndpointManager(object):
             self.refresh_time_interval_in_ms,
         )
         self.refresh_needed = False
-        self.refresh_lock = asyncio.Lock() #Lock vs. RLock
+        self.refresh_lock = asyncio.Lock()
         self.last_refresh_time = 0
 
     def get_refresh_time_interval_in_ms_stub(self):  # pylint: disable=no-self-use
