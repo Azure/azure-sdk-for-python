@@ -56,7 +56,7 @@ from azure.purview.catalog import PurviewCatalogClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-client = PurviewCatalogClient(endpoint="https://<my-account-name>.catalog.purview.azure.com", credential=credential)
+client = PurviewCatalogClient(endpoint="https://<my-account-name>.purview.azure.com", credential=credential)
 ```
 
 ## Key concepts
@@ -80,7 +80,7 @@ from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
 credential = DefaultAzureCredential()
-client = PurviewCatalogClient(endpoint="https://<my-account-name>.catalog.purview.azure.com", credential=credential)
+client = PurviewCatalogClient(endpoint="https://<my-account-name>.purview.azure.com", credential=credential)
 try:
     response = client.types.get_all_type_definitions()
     # print out all of your entity definitions
@@ -120,7 +120,7 @@ logger.setLevel(logging.DEBUG)
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
-endpoint = "https://<my-account-name>.catalog.purview.azure.com"
+endpoint = "https://<my-account-name>.purview.azure.com"
 credential = DefaultAzureCredential()
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level
