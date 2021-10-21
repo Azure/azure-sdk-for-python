@@ -4040,23 +4040,37 @@ class DocumentAnalysisInnerError(object):
             if data.get("innererror") else None
         )
 
-def get_document_content_elements(base_element, page, search_elements):
-    # type: (DocumentLine, DocumentPage, List[str]) -> List[Union[DocumentElement, DocumentWord, DocumentSelectionMark]]
-    result = []
-    for elem in search_elements:
-        if elem == "words":
-            for word in page.words:
-                # performance wise this is not great since it runs through ALL the words every time even if the line is very short
-                for span in base_element.spans:
-                    if word.span.offset >= span.offset and (
-                        word.span.offset + word.span.length
-                    ) <= (span.offset + span.length):
-                        result.append(word)
-        elif elem == "selection_marks":
-            for mark in page.selection_marks:
-                for span in base_element.spans:
-                    if mark.span.offset >= span.offset and (
-                        mark.span.offset + mark.span.length
-                    ) <= (span.offset + span.length):
-                        result.append(mark)
-    return result
+
+class ElementNavigator(object):
+    """Provides element navigation methods."""
+
+    def get_document_content_elements(base_element, page, search_elements):
+        # type: (DocumentLine, DocumentPage, List[str]) -> List[Union[DocumentElement, DocumentWord, DocumentSelectionMark]]
+        result = []
+        for elem in search_elements:
+            if elem == "words":
+                for word in page.words:
+                    # performance wise this is not great since it runs through ALL the words every time even if the line is very short
+                    for span in base_element.spans:
+                        if word.span.offset >= span.offset and (
+                            word.span.offset + word.span.length
+                        ) <= (span.offset + span.length):
+                            result.append(word)
+            elif elem == "selection_marks":
+                for mark in page.selection_marks:
+                    for span in base_element.spans:
+                        if mark.span.offset >= span.offset and (
+                            mark.span.offset + mark.span.length
+                        ) <= (span.offset + span.length):
+                            result.append(mark)
+        return result
+
+    def get_document_structure_elements(base_element, analyze_result, search_elements):
+        # type: (DocumentLine, AnalyzeResult, List[str]) -> List[Union[DocumentElement, DocumentWord, DocumentSelectionMark]]
+        # TODO implementation
+        return
+
+    def get_styles(element, analyze_result):
+        # type: (Union[DocumentContentElement, DocumentStructureElement, DocumentPageElement], AnalyzeResult) -> List[DocumentStyle]
+        # TODO implementation
+        return
