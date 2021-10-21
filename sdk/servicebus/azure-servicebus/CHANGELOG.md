@@ -4,10 +4,11 @@
 
 ### Features Added
 
-- Stable release of preview features
-  - Added support to create and update queues and topics of large message size to `ServiceBusAdministrationClient`. This feature is only available for Service Bus of Premium Tier.
-    - Methods`create_queue`, `create_topic`, `update_queue`, `update_topic` on `ServiceBusAdministrationClient` now take a new keyword argument `max_message_size_in_kilobytes`.
-    - `QueueProperties` and `TopicProperties` now have a new instance variable `max_message_size_in_kilobytes`.
+- Added support to create and update queues and topics of large message size to `ServiceBusAdministrationClient`. This feature is only available for Service Bus of Premium Tier.
+  - Methods`create_queue`, `create_topic`, `update_queue`, `update_topic` on `ServiceBusAdministrationClient` now take a new keyword argument `max_message_size_in_kilobytes`.
+  - `QueueProperties` and `TopicProperties` now have a new instance variable `max_message_size_in_kilobytes`.
+- The constructor of`ServiceBusAdministrationClient` as well as `ServiceBusAdministrationClient.from_connection_string` now take keyword argument `api_version` to configure the Service Bus API version. Supported service versions are "2021-05" and "2017-04".
+- Added new enum class `azure.servicebus.management.ApiVersion` to represent the supported Service Bus API versions.
 
 ### Breaking Changes
 

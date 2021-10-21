@@ -71,6 +71,7 @@ from ._generated._service_bus_management_client import (
     ServiceBusManagementClient as ServiceBusManagementClientImpl,
 )
 from . import _constants as constants
+from ._api_version import DEFAULT_VERSION
 from ._models import (
     QueueRuntimeProperties,
     QueueProperties,
@@ -96,11 +97,15 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
     :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
     :param credential: To authenticate to manage the entities of the ServiceBus namespace.
     :type credential: TokenCredential
+    :keyword str api_version: The Service Bus API version to use for requests. Default value is the most
+     recent service version that is compatible with the current SDK. Setting to an older version may result
+     in reduced feature compatibility.
     """
 
     def __init__(self, fully_qualified_namespace, credential, **kwargs):
         # type: (str, TokenCredential, Dict[str, Any]) -> None
         self.fully_qualified_namespace = fully_qualified_namespace
+        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._credential = credential
         self._endpoint = "https://" + fully_qualified_namespace
         self._config = ServiceBusManagementClientConfiguration(self._endpoint, **kwargs)
@@ -155,7 +160,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 self._impl.entity.get(
                     entity_name,
                     enrich=enrich,
-                    api_version=constants.API_VERSION,
+                    api_version=self._api_version,
                     **kwargs
                 ),
             )
@@ -173,7 +178,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                     topic_name,
                     subscription_name,
                     enrich=enrich,
-                    api_version=constants.API_VERSION,
+                    api_version=self._api_version,
                     **kwargs
                 ),
             )
@@ -193,7 +198,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                     subscription_name,
                     rule_name,
                     enrich=False,
-                    api_version=constants.API_VERSION,
+                    api_version=self._api_version,
                     **kwargs
                 ),
             )
@@ -228,6 +233,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """Create a client from connection string.
 
         :param str conn_str: The connection string of the Service Bus Namespace.
+        :keyword str api_version: The Service Bus API version to use for requests. Default value is the most
+         recent service version that is compatible with the current SDK. Setting to an older version may result
+         in reduced feature compatibility.
         :rtype: ~azure.servicebus.management.ServiceBusAdministrationClient
         """
         (
@@ -339,7 +347,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :paramtype forward_dead_lettered_messages_to: str
         :keyword max_message_size_in_kilobytes: The maximum size in kilobytes of message payload that
          can be accepted by the queue. This feature is only available when using a Premium namespace
-         and service version "2021-05" or higher.
+         and Service Bus API version "2021-05" or higher.
          The minimum allowed value is 1024 while the maximum allowed value is 102400. Default value is 1024.
         :paramtype max_message_size_in_kilobytes: int
 
@@ -398,7 +406,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 self._impl.entity.put(
                     queue_name,  # type: ignore
                     request_body,
-                    api_version=constants.API_VERSION,
+                    api_version=self._api_version,
                     **kwargs
                 ),
             )
@@ -440,7 +448,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             self._impl.entity.put(
                 queue.name,  # type: ignore
                 request_body,
-                api_version=constants.API_VERSION,
+                api_version=self._api_version,
                 if_match="*",
                 **kwargs
             )
@@ -459,7 +467,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             raise ValueError("queue_name must not be None or empty")
         with _handle_response_error():
             self._impl.entity.delete(
-                queue_name, api_version=constants.API_VERSION, **kwargs  # type: ignore
+                queue_name, api_version=self._api_version, **kwargs  # type: ignore
             )
 
     def list_queues(self, **kwargs):
@@ -482,6 +490,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_QUEUES),
+            api_version=self._api_version,
             **kwargs
         )
         return ItemPaged(get_next, extract_data)
@@ -506,6 +515,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_QUEUES),
+            api_version=self._api_version,
             **kwargs
         )
         return ItemPaged(get_next, extract_data)
@@ -588,8 +598,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :keyword user_metadata: Metadata associated with the topic.
         :paramtype user_metadata: str
         :keyword max_message_size_in_kilobytes: The maximum size in kilobytes of message payload that
-         can be accepted by the topic. This feature is only available when using a Premium namespace
-         and service version "2021-05" or higher.
+         can be accepted by the queue. This feature is only available when using a Premium namespace
+         and Service Bus API version "2021-05" or higher.
          The minimum allowed value is 1024 while the maximum allowed value is 102400. Default value is 1024.
         :paramtype max_message_size_in_kilobytes: int
 
@@ -633,7 +643,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 self._impl.entity.put(
                     topic_name,  # type: ignore
                     request_body,
-                    api_version=constants.API_VERSION,
+                    api_version=self._api_version,
                     **kwargs
                 ),
             )
@@ -673,7 +683,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             self._impl.entity.put(
                 topic.name,  # type: ignore
                 request_body,
-                api_version=constants.API_VERSION,
+                api_version=self._api_version,
                 if_match="*",
                 **kwargs
             )
@@ -688,7 +698,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         _validate_entity_name_type(topic_name)
 
         self._impl.entity.delete(
-            topic_name, api_version=constants.API_VERSION, **kwargs
+            topic_name, api_version=self._api_version, **kwargs
         )
 
     def list_topics(self, **kwargs):
@@ -711,6 +721,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_TOPICS),
+            api_version=self._api_version,
             **kwargs
         )
         return ItemPaged(get_next, extract_data)
@@ -735,6 +746,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_TOPICS),
+            api_version=self._api_version,
             **kwargs
         )
         return ItemPaged(get_next, extract_data)
@@ -884,7 +896,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                     topic_name,
                     subscription_name,  # type: ignore
                     request_body,
-                    api_version=constants.API_VERSION,
+                    api_version=self._api_version,
                     **kwargs
                 ),
             )
@@ -930,7 +942,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 topic_name,
                 subscription.name,
                 request_body,
-                api_version=constants.API_VERSION,
+                api_version=self._api_version,
                 if_match="*",
                 **kwargs
             )
@@ -947,7 +959,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         _validate_topic_and_subscription_types(topic_name, subscription_name)
 
         self._impl.subscription.delete(
-            topic_name, subscription_name, api_version=constants.API_VERSION, **kwargs
+            topic_name, subscription_name, api_version=self._api_version, **kwargs
         )
 
     def list_subscriptions(self, topic_name, **kwargs):
@@ -972,6 +984,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_subscriptions, topic_name),
+            api_version=self._api_version,
             **kwargs
         )
         return ItemPaged(get_next, extract_data)
@@ -998,6 +1011,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_subscriptions, topic_name),
+            api_version=self._api_version,
             **kwargs
         )
         return ItemPaged(get_next, extract_data)
@@ -1070,7 +1084,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 subscription_name,  # type: ignore
                 rule_name,
                 request_body,
-                api_version=constants.API_VERSION,
+                api_version=self._api_version,
                 **kwargs
             )
         entry = RuleDescriptionEntry.deserialize(entry_ele)
@@ -1119,7 +1133,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 subscription_name,
                 rule.name,
                 request_body,
-                api_version=constants.API_VERSION,
+                api_version=self._api_version,
                 if_match="*",
                 **kwargs
             )
@@ -1142,7 +1156,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             topic_name,
             subscription_name,
             rule_name,
-            api_version=constants.API_VERSION,
+            api_version=self._api_version,
             **kwargs
         )
 
@@ -1175,6 +1189,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_rules, topic_name, subscription_name),
+            api_version=self._api_version,
             **kwargs
         )
         return ItemPaged(get_next, extract_data)
@@ -1185,7 +1200,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         :rtype: ~azure.servicebus.management.NamespaceProperties
         """
-        entry_el = self._impl.namespace.get(api_version=constants.API_VERSION, **kwargs)
+        entry_el = self._impl.namespace.get(api_version=self._api_version, **kwargs)
         namespace_entry = NamespacePropertiesEntry.deserialize(entry_el)
         return NamespaceProperties._from_internal_entity(
             namespace_entry.title, namespace_entry.content.namespace_properties
