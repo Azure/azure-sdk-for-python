@@ -20,7 +20,7 @@ from azure.core.paging import ItemPaged
 from azure.storage.blob import ContainerClient
 from ._shared.base_client import TransportWrapper, StorageAccountHostsMixin, parse_query, parse_connection_str
 from ._serialize import convert_dfs_url_to_blob_url, get_api_version
-from ._list_paths_helper import DeletedPathPropertiesPaged
+from ._list_paths_helper import DeletedPathPropertiesPaged, PathPropertiesPaged
 from ._models import LocationMode, FileSystemProperties, PublicAccess, DeletedPathProperties, FileProperties, \
     DirectoryProperties
 from ._data_lake_file_client import DataLakeFileClient
@@ -516,13 +516,14 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :caption: List the paths in the file system.
         """
         timeout = kwargs.pop('timeout', None)
-        return self._client.file_system.list_paths(
-            recursive=recursive,
-            max_results=max_results,
+        command = functools.partial(
+            self._client.file_system.list_paths,
             path=path,
             timeout=timeout,
-            cls=deserialize_path_properties,
             **kwargs)
+        return ItemPaged(
+            command, recursive, path=path, max_results=max_results,
+            page_iterator_class=PathPropertiesPaged, **kwargs)
 
     def create_directory(self, directory,  # type: Union[DirectoryProperties, str]
                          metadata=None,  # type: Optional[Dict[str, str]]
