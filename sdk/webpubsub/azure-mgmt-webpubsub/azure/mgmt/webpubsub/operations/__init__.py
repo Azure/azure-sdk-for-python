@@ -9,6 +9,7 @@
 from ._operations import Operations
 from ._web_pub_sub_operations import WebPubSubOperations
 from ._usages_operations import UsagesOperations
+from ._web_pub_sub_hubs_operations import WebPubSubHubsOperations
 from ._web_pub_sub_private_endpoint_connections_operations import WebPubSubPrivateEndpointConnectionsOperations
 from ._web_pub_sub_private_link_resources_operations import WebPubSubPrivateLinkResourcesOperations
 from ._web_pub_sub_shared_private_link_resources_operations import WebPubSubSharedPrivateLinkResourcesOperations
@@ -17,6 +18,7 @@ __all__ = [
     'Operations',
     'WebPubSubOperations',
     'UsagesOperations',
+    'WebPubSubHubsOperations',
     'WebPubSubPrivateEndpointConnectionsOperations',
     'WebPubSubPrivateLinkResourcesOperations',
     'WebPubSubSharedPrivateLinkResourcesOperations',

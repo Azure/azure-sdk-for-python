@@ -34,6 +34,9 @@ try:
     from ._models_py3 import CapacityReservationProfile
     from ._models_py3 import CapacityReservationUpdate
     from ._models_py3 import CapacityReservationUtilization
+    from ._models_py3 import CommunityGallery
+    from ._models_py3 import CommunityGalleryImage
+    from ._models_py3 import CommunityGalleryImageVersion
     from ._models_py3 import ComputeOperationListResult
     from ._models_py3 import ComputeOperationValue
     from ._models_py3 import DataDisk
@@ -122,6 +125,7 @@ try:
     from ._models_py3 import OrchestrationServiceSummary
     from ._models_py3 import PatchInstallationDetail
     from ._models_py3 import PatchSettings
+    from ._models_py3 import PirCommunityGalleryResource
     from ._models_py3 import PirResource
     from ._models_py3 import PirSharedGalleryResource
     from ._models_py3 import Plan
@@ -336,6 +340,9 @@ except (SyntaxError, ImportError):
     from ._models import CapacityReservationProfile  # type: ignore
     from ._models import CapacityReservationUpdate  # type: ignore
     from ._models import CapacityReservationUtilization  # type: ignore
+    from ._models import CommunityGallery  # type: ignore
+    from ._models import CommunityGalleryImage  # type: ignore
+    from ._models import CommunityGalleryImageVersion  # type: ignore
     from ._models import ComputeOperationListResult  # type: ignore
     from ._models import ComputeOperationValue  # type: ignore
     from ._models import DataDisk  # type: ignore
@@ -424,6 +431,7 @@ except (SyntaxError, ImportError):
     from ._models import OrchestrationServiceSummary  # type: ignore
     from ._models import PatchInstallationDetail  # type: ignore
     from ._models import PatchSettings  # type: ignore
+    from ._models import PirCommunityGalleryResource  # type: ignore
     from ._models import PirResource  # type: ignore
     from ._models import PirSharedGalleryResource  # type: ignore
     from ._models import Plan  # type: ignore
@@ -727,6 +735,9 @@ __all__ = [
     'CapacityReservationProfile',
     'CapacityReservationUpdate',
     'CapacityReservationUtilization',
+    'CommunityGallery',
+    'CommunityGalleryImage',
+    'CommunityGalleryImageVersion',
     'ComputeOperationListResult',
     'ComputeOperationValue',
     'DataDisk',
@@ -815,6 +826,7 @@ __all__ = [
     'OrchestrationServiceSummary',
     'PatchInstallationDetail',
     'PatchSettings',
+    'PirCommunityGalleryResource',
     'PirResource',
     'PirSharedGalleryResource',
     'Plan',

@@ -48,7 +48,7 @@ class ServiceEndpointPolicyDefinitionsOperations:
         resource_group_name: str,
         service_endpoint_policy_name: str,
         service_endpoint_policy_definition_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -92,7 +92,7 @@ class ServiceEndpointPolicyDefinitionsOperations:
         resource_group_name: str,
         service_endpoint_policy_name: str,
         service_endpoint_policy_definition_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified ServiceEndpoint policy definitions.
 
@@ -105,8 +105,8 @@ class ServiceEndpointPolicyDefinitionsOperations:
         :type service_endpoint_policy_definition_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -162,7 +162,7 @@ class ServiceEndpointPolicyDefinitionsOperations:
         resource_group_name: str,
         service_endpoint_policy_name: str,
         service_endpoint_policy_definition_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ServiceEndpointPolicyDefinition":
         """Get the specified service endpoint policy definitions from service endpoint policy.
 
@@ -226,7 +226,7 @@ class ServiceEndpointPolicyDefinitionsOperations:
         service_endpoint_policy_name: str,
         service_endpoint_policy_definition_name: str,
         service_endpoint_policy_definitions: "_models.ServiceEndpointPolicyDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ServiceEndpointPolicyDefinition":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceEndpointPolicyDefinition"]
         error_map = {
@@ -285,7 +285,7 @@ class ServiceEndpointPolicyDefinitionsOperations:
         service_endpoint_policy_name: str,
         service_endpoint_policy_definition_name: str,
         service_endpoint_policy_definitions: "_models.ServiceEndpointPolicyDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ServiceEndpointPolicyDefinition"]:
         """Creates or updates a service endpoint policy definition in the specified service endpoint
         policy.
@@ -302,8 +302,8 @@ class ServiceEndpointPolicyDefinitionsOperations:
         :type service_endpoint_policy_definitions: ~azure.mgmt.network.v2019_04_01.models.ServiceEndpointPolicyDefinition
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ServiceEndpointPolicyDefinition or the result of cls(response)
@@ -362,7 +362,7 @@ class ServiceEndpointPolicyDefinitionsOperations:
         self,
         resource_group_name: str,
         service_endpoint_policy_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ServiceEndpointPolicyDefinitionListResult"]:
         """Gets all service endpoint policy definitions in a service end point policy.
 

@@ -46,7 +46,7 @@ class ExpressRouteLinksOperations:
         resource_group_name: str,
         express_route_port_name: str,
         link_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExpressRouteLink":
         """Retrieves the specified ExpressRouteLink resource.
 
@@ -107,7 +107,7 @@ class ExpressRouteLinksOperations:
         self,
         resource_group_name: str,
         express_route_port_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ExpressRouteLinkListResult"]:
         """Retrieve the ExpressRouteLink sub-resources of the specified ExpressRoutePort resource.
 

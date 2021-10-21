@@ -47,7 +47,7 @@ class NetworkSecurityGroupsOperations:
         self,
         resource_group_name: str,
         network_security_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -89,7 +89,7 @@ class NetworkSecurityGroupsOperations:
         self,
         resource_group_name: str,
         network_security_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified network security group.
 
@@ -99,8 +99,8 @@ class NetworkSecurityGroupsOperations:
         :type network_security_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -154,7 +154,7 @@ class NetworkSecurityGroupsOperations:
         resource_group_name: str,
         network_security_group_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NetworkSecurityGroup":
         """Gets the specified network security group.
 
@@ -217,7 +217,7 @@ class NetworkSecurityGroupsOperations:
         resource_group_name: str,
         network_security_group_name: str,
         parameters: "_models.NetworkSecurityGroup",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NetworkSecurityGroup":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkSecurityGroup"]
         error_map = {
@@ -274,7 +274,7 @@ class NetworkSecurityGroupsOperations:
         resource_group_name: str,
         network_security_group_name: str,
         parameters: "_models.NetworkSecurityGroup",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.NetworkSecurityGroup"]:
         """Creates or updates a network security group in the specified resource group.
 
@@ -287,8 +287,8 @@ class NetworkSecurityGroupsOperations:
         :type parameters: ~azure.mgmt.network.v2018_12_01.models.NetworkSecurityGroup
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either NetworkSecurityGroup or the result of cls(response)
@@ -346,7 +346,7 @@ class NetworkSecurityGroupsOperations:
         resource_group_name: str,
         network_security_group_name: str,
         parameters: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NetworkSecurityGroup":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkSecurityGroup"]
         error_map = {
@@ -399,7 +399,7 @@ class NetworkSecurityGroupsOperations:
         resource_group_name: str,
         network_security_group_name: str,
         parameters: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.NetworkSecurityGroup"]:
         """Updates a network security group tags.
 
@@ -411,8 +411,8 @@ class NetworkSecurityGroupsOperations:
         :type parameters: ~azure.mgmt.network.v2018_12_01.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either NetworkSecurityGroup or the result of cls(response)
@@ -467,7 +467,7 @@ class NetworkSecurityGroupsOperations:
 
     def list_all(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NetworkSecurityGroupListResult"]:
         """Gets all network security groups in a subscription.
 
@@ -534,7 +534,7 @@ class NetworkSecurityGroupsOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NetworkSecurityGroupListResult"]:
         """Gets all network security groups in a resource group.
 

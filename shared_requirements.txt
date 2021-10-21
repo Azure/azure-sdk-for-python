@@ -207,7 +207,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-communication-sms azure-core<2.0.0,>=1.11.0
 #override azure-communication-phonenumbers azure-core<2.0.0,>=1.11.0
 #override azure-communication-identity azure-core<2.0.0,>=1.11.0
-#override azure-communication-network-traversal azure-core<2.0.0,>=1.11.0
+#override azure-communication-networktraversal azure-core<2.0.0,>=1.16.0
 #override azure-mgmt-communication azure-core<2.0.0,>=1.9.0
 #override azure-ai-metricsadvisor azure-core<2.0.0,>=1.6.0
 #override azure-ai-metricsadvisor msrest>=0.6.21
@@ -220,10 +220,11 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-core-tracing-opentelemetry opentelemetry-api<2.0.0,>=1.0.0
 #override azure-identity six>=1.12.0
 #override azure-keyvault-keys six>=1.12.0
-#override azure-messaging-webpubsubservice azure-core<2.0.0,>=1.10.0
-#override azure-messaging-webpubsubservice msrest>=0.6.18
+#override azure-messaging-webpubsubservice azure-core<2.0.0,>=1.19.0
+#override azure-messaging-webpubsubservice msrest>=0.6.21
 #override azure-messaging-webpubsubservice pyjwt>=1.7.1
 #override azure-messaging-webpubsubservice six>=1.12.0
+#override azure-messaging-webpubsubservice cryptography>=2.8.0
 #override azure-mixedreality-authentication azure-core<2.0.0,>=1.4.0
 #override azure-iot-deviceupdate azure-core<2.0.0,>=1.6.0
 #override azure-mgmt-changeanalysis msrest>=0.6.21
@@ -283,6 +284,8 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-purview-scanning msrest>=0.6.21
 #override azure-purview-account msrest>=0.6.21
 #override azure-purview-account azure-core<2.0.0,>=1.16.0
+#override azure-purview-administration msrest>=0.6.21
+#override azure-purview-administration azure-core<2.0.0,>=1.18.0
 #override azure-mgmt-rdbms msrest>=0.6.21
 #override azure-mgmt-peering msrest>=0.6.21
 #override azure-mgmt-elastic msrest>=0.6.21
@@ -348,6 +351,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-quota msrest>=0.6.21
 #override azure-mgmt-authorization msrest>=0.6.21
 #override azure-mgmt-azurearcdata msrest>=0.6.21
+#override azure-mgmt-servicelinker msrest>=0.6.21
 #override azure-mgmt-fluidrelay msrest>=0.6.21
 #override azure-ai-language-conversations azure-core<2.0.0,>=1.19.0
 #override azure-ai-language-conversations msrest>=0.6.21

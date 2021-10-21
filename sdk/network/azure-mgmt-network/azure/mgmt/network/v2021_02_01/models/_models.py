@@ -4358,7 +4358,7 @@ class BastionActiveSession(msrest.serialization.Model):
     :ivar session_id: A unique id for the session.
     :vartype session_id: str
     :ivar start_time: The time when the session started.
-    :vartype start_time: str
+    :vartype start_time: any
     :ivar target_subscription_id: The subscription id for the target virtual machine.
     :vartype target_subscription_id: str
     :ivar resource_type: The type of the resource.
@@ -4396,7 +4396,7 @@ class BastionActiveSession(msrest.serialization.Model):
 
     _attribute_map = {
         'session_id': {'key': 'sessionId', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'object'},
         'target_subscription_id': {'key': 'targetSubscriptionId', 'type': 'str'},
         'resource_type': {'key': 'resourceType', 'type': 'str'},
         'target_host_name': {'key': 'targetHostName', 'type': 'str'},
@@ -15985,20 +15985,37 @@ class PrivateDnsZoneConfig(msrest.serialization.Model):
     :param name: Name of the resource that is unique within a resource group. This name can be used
      to access the resource.
     :type name: str
+    :ivar id: The id of the privateDnsZoneConfig.
+    :vartype id: str
+    :ivar type: Type of resource. Will be specified as private dns zone configurations.
+    :vartype type: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
     :param private_dns_zone_id: The resource id of the private dns zone.
     :type private_dns_zone_id: str
+    :ivar provisioning_state: The provisioning state of the private dns zone group resource.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
+    :vartype provisioning_state: str or ~azure.mgmt.network.v2021_02_01.models.ProvisioningState
     :ivar record_sets: A collection of information regarding a recordSet, holding information to
      identify private resources.
     :vartype record_sets: list[~azure.mgmt.network.v2021_02_01.models.RecordSet]
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+        'provisioning_state': {'readonly': True},
         'record_sets': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'private_dns_zone_id': {'key': 'properties.privateDnsZoneId', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'record_sets': {'key': 'properties.recordSets', 'type': '[RecordSet]'},
     }
 
@@ -16008,7 +16025,11 @@ class PrivateDnsZoneConfig(msrest.serialization.Model):
     ):
         super(PrivateDnsZoneConfig, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
+        self.id = None
+        self.type = None
+        self.etag = None
         self.private_dns_zone_id = kwargs.get('private_dns_zone_id', None)
+        self.provisioning_state = None
         self.record_sets = None
 
 
@@ -16022,6 +16043,8 @@ class PrivateDnsZoneGroup(SubResource):
     :param name: Name of the resource that is unique within a resource group. This name can be used
      to access the resource.
     :type name: str
+    :param type: Type of resource. Will be specified as private dns zone groups.
+    :type type: str
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar provisioning_state: The provisioning state of the private dns zone group resource.
@@ -16041,6 +16064,7 @@ class PrivateDnsZoneGroup(SubResource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'private_dns_zone_configs': {'key': 'properties.privateDnsZoneConfigs', 'type': '[PrivateDnsZoneConfig]'},
@@ -16052,6 +16076,7 @@ class PrivateDnsZoneGroup(SubResource):
     ):
         super(PrivateDnsZoneGroup, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
         self.etag = None
         self.provisioning_state = None
         self.private_dns_zone_configs = kwargs.get('private_dns_zone_configs', None)
@@ -16105,6 +16130,8 @@ class PrivateEndpoint(Resource):
     :type extended_location: ~azure.mgmt.network.v2021_02_01.models.ExtendedLocation
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
+    :param resource_guid: The resource id of private endpoint.
+    :type resource_guid: str
     :param subnet: The ID of the subnet from which the private IP will be allocated.
     :type subnet: ~azure.mgmt.network.v2021_02_01.models.Subnet
     :ivar network_interfaces: An array of references to the network interfaces created for this
@@ -16143,6 +16170,7 @@ class PrivateEndpoint(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'extended_location': {'key': 'extendedLocation', 'type': 'ExtendedLocation'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
         'network_interfaces': {'key': 'properties.networkInterfaces', 'type': '[NetworkInterface]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -16158,6 +16186,7 @@ class PrivateEndpoint(Resource):
         super(PrivateEndpoint, self).__init__(**kwargs)
         self.extended_location = kwargs.get('extended_location', None)
         self.etag = None
+        self.resource_guid = kwargs.get('resource_guid', None)
         self.subnet = kwargs.get('subnet', None)
         self.network_interfaces = None
         self.provisioning_state = None
@@ -16308,6 +16337,8 @@ class PrivateLinkService(Resource):
      configurations.
     :type load_balancer_frontend_ip_configurations:
      list[~azure.mgmt.network.v2021_02_01.models.FrontendIPConfiguration]
+    :param resource_guid: The resource id of private link service.
+    :type resource_guid: str
     :param ip_configurations: An array of private link service IP configurations.
     :type ip_configurations:
      list[~azure.mgmt.network.v2021_02_01.models.PrivateLinkServiceIpConfiguration]
@@ -16353,6 +16384,7 @@ class PrivateLinkService(Resource):
         'extended_location': {'key': 'extendedLocation', 'type': 'ExtendedLocation'},
         'etag': {'key': 'etag', 'type': 'str'},
         'load_balancer_frontend_ip_configurations': {'key': 'properties.loadBalancerFrontendIpConfigurations', 'type': '[FrontendIPConfiguration]'},
+        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[PrivateLinkServiceIpConfiguration]'},
         'network_interfaces': {'key': 'properties.networkInterfaces', 'type': '[NetworkInterface]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -16372,6 +16404,7 @@ class PrivateLinkService(Resource):
         self.extended_location = kwargs.get('extended_location', None)
         self.etag = None
         self.load_balancer_frontend_ip_configurations = kwargs.get('load_balancer_frontend_ip_configurations', None)
+        self.resource_guid = kwargs.get('resource_guid', None)
         self.ip_configurations = kwargs.get('ip_configurations', None)
         self.network_interfaces = None
         self.provisioning_state = None
@@ -16402,6 +16435,9 @@ class PrivateLinkServiceConnection(SubResource):
     :vartype provisioning_state: str or ~azure.mgmt.network.v2021_02_01.models.ProvisioningState
     :param private_link_service_id: The resource id of private link service.
     :type private_link_service_id: str
+    :param resolved_private_link_service_location: The location for the resolved private link
+     service.
+    :type resolved_private_link_service_location: str
     :param group_ids: The ID(s) of the group(s) obtained from the remote resource that this private
      endpoint should connect to.
     :type group_ids: list[str]
@@ -16427,6 +16463,7 @@ class PrivateLinkServiceConnection(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'private_link_service_id': {'key': 'properties.privateLinkServiceId', 'type': 'str'},
+        'resolved_private_link_service_location': {'key': 'properties.resolvedPrivateLinkServiceLocation', 'type': 'str'},
         'group_ids': {'key': 'properties.groupIds', 'type': '[str]'},
         'request_message': {'key': 'properties.requestMessage', 'type': 'str'},
         'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
@@ -16442,6 +16479,7 @@ class PrivateLinkServiceConnection(SubResource):
         self.etag = None
         self.provisioning_state = None
         self.private_link_service_id = kwargs.get('private_link_service_id', None)
+        self.resolved_private_link_service_location = kwargs.get('resolved_private_link_service_location', None)
         self.group_ids = kwargs.get('group_ids', None)
         self.request_message = kwargs.get('request_message', None)
         self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
