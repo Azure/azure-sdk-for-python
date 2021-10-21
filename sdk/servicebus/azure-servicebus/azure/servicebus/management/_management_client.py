@@ -160,7 +160,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 self._impl.entity.get(
                     entity_name,
                     enrich=enrich,
-                    api_version=self._api_version,
+                    api_version=self._api_version,  # type: ignore
                     **kwargs
                 ),
             )
@@ -178,7 +178,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                     topic_name,
                     subscription_name,
                     enrich=enrich,
-                    api_version=self._api_version,
+                    api_version=self._api_version,  # type: ignore
                     **kwargs
                 ),
             )
@@ -198,7 +198,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                     subscription_name,
                     rule_name,
                     enrich=False,
-                    api_version=self._api_version,
+                    api_version=self._api_version,  # type: ignore
                     **kwargs
                 ),
             )
