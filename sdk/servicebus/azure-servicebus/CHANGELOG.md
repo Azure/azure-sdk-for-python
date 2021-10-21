@@ -10,14 +10,10 @@
 - The constructor of`ServiceBusAdministrationClient` as well as `ServiceBusAdministrationClient.from_connection_string` now take keyword argument `api_version` to configure the Service Bus API version. Supported service versions are "2021-05" and "2017-04".
 - Added new enum class `azure.servicebus.management.ApiVersion` to represent the supported Service Bus API versions.
 
-### Breaking Changes
-
 ### Bugs Fixed
 
 - Fixed bug that `ServiceBusReceiver` can not connect to sessionful entity with session id being empty string.
 - Fixed bug that `ServiceBusMessage.partition_key` can not parse empty string properly.
-
-### Other Changes
 
 ## 7.4.0b1 (2021-10-06)
 
