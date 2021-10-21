@@ -128,6 +128,8 @@ class AzureJSONEncoder(JSONEncoder):
 def _deserialize(item):
     return item
 
+_SENTINEL = object()
+
 class mark:
     def __init__(self, original_name):
         self._original_name = original_name
@@ -135,14 +137,17 @@ class mark:
     def __call__(self, func):
         original_name = self._original_name
         def wrapper(self, *args, **kwargs):
-            self._attr_name_to_original_name[func.__name__] = original_name
-            return func(self, *args, **kwargs)
+            if self._get_original_name(func.__name__) == _SENTINEL:
+                self._set_original_name(attr_name=func.__name__, original_name=original_name)
+            return self.__getattr__(func.__name__)
         return wrapper
 
 _MY_MODEL_PROPERTIES = [
     "_attr_name_to_original_name",
-    "_attr_name_to_original_name_var",
+    "_get_original_name",
+    "_set_original_name",
 ]
+
 
 class Model(dict):
 
@@ -150,17 +155,7 @@ class Model(dict):
         """Compare objects by comparing all attributes."""
         if isinstance(other, self.__class__):
             return self.__dict__ == other.__dict__
-        return False
-
-    @property
-    def _attr_name_to_original_name(self):
-        if not hasattr(self, "_attr_name_to_original_name_var"):
-            self._attr_name_to_original_name_var = {}
-        return self._attr_name_to_original_name_var
-
-    @_attr_name_to_original_name.setter
-    def _attr_name_to_original_name(self, value):
-        self._attr_name_to_original_name_var = value
+        return super().__eq__(other)
 
     def __getattr__(self, attr):
         if attr in _MY_MODEL_PROPERTIES:
@@ -173,27 +168,34 @@ class Model(dict):
                 )
             )
 
-        return self.__getitem__[self._attr_name_to_original_name[attr]]
+        return self.__getitem__(self._get_original_name(attr))
+
+    def _get_original_name(self, attr_name):
+        if not hasattr(self, "_attr_name_to_original_name"):
+            self._attr_name_to_original_name = {}
+        return self._attr_name_to_original_name.get(attr_name, _SENTINEL)
+
+    def _set_original_name(self, attr_name, original_name):
+        if not hasattr(self, "_attr_name_to_original_name"):
+            self._attr_name_to_original_name = {}
+        self._attr_name_to_original_name[attr_name] = original_name
 
     def __setattr__(self, name, value):
         # the properties on the base class
         if name in _MY_MODEL_PROPERTIES:
             super().__setattr__(name, value)
         else:
-            self.__setitem__(self._attr_name_to_original_name[name], value)
+            self.__setitem__(self._get_original_name(name), value)
 
     def __delattr__(self, attr):
         if attr in _MY_MODEL_PROPERTIES:
             return super().__delattr__(attr)
-        return self.__delitem__(self._attr_name_to_original_name[attr])
+        return self.__delitem__(self._get_original_name(attr))
 
     def __hasattr__(self, attr):
         if attr in _MY_MODEL_PROPERTIES:
             return True
-        try:
-            return bool(self.__getitem__(self._attr_name_to_original_name[attr]))
-        except KeyError:
-            return False
+        return self._get_original_name(attr) != _SENTINEL
 
     def copy(self):
         return Model(self.__dict__)

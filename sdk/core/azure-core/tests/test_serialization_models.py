@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import List
+import json
 import pytest
 from azure.core.serialization import Model, mark
 
@@ -20,27 +20,18 @@ class BasicResource(Model):
     @property
     @mark(original_name="platformUpdateDomainCount")
     def platform_update_domain_count(self):
-        """Hello"""
-
-    @platform_update_domain_count.setter
-    def platform_update_domain_count(self, val):
-        self._platform_update_domain_count = val
+        """How many times the platform update domain has been counted"""
 
     @property
-    def platform_fault_comain_count(self):
-        return self._platform_fault_comain_count
-
-    @platform_fault_comain_count.setter
-    def platform_fault_comain_count(self, val):
-        self._platform_fault_comain_count = val
+    @mark(original_name="platformFaultDomainCount")
+    def platform_fault_domain_count(self):
+        """How many times the platform fault domain has been counted"""
 
     @property
+    @mark(original_name="virtualMachines")
     def virtual_machines(self):
-        return self._virtual_machines
+        """Number of virtual machines"""
 
-    @virtual_machines.setter
-    def virtual_machines(self, val):
-        self._virtual_machines = val
 
 def test_model_and_dict_equal():
 
@@ -50,7 +41,7 @@ def test_model_and_dict_equal():
         "virtualMachines": []
     }
     model = BasicResource(dict_response)
-    model.platform_update_domain_count
+    assert model == dict_response
     assert (
         model.platform_update_domain_count ==
         model["platformUpdateDomainCount"] ==
@@ -70,7 +61,15 @@ def test_model_and_dict_equal():
         []
     )
 
-    # check json.dumps, json.loads, check roundtrip is correct
+def test_json_roundtrip():
+    dict_response = {
+        "platformUpdateDomainCount": 5,
+        "platformFaultDomainCount": 3,
+        "virtualMachines": []
+    }
+    model = BasicResource(dict_response)
+    assert json.dumps(model) == '{"platformUpdateDomainCount": 5, "platformFaultDomainCount": 3, "virtualMachines": []}'
+    assert json.loads(json.dumps(model)) == model == dict_response
 
 def test_has_no_property():
     dict_response = {
@@ -79,7 +78,7 @@ def test_has_no_property():
         "virtualMachines": [],
         "noprop": "bonjour!"
     }
-    model = BasicResource(**dict_response)
+    model = BasicResource(dict_response)
     assert (
         model.platform_update_domain_count ==
         model["platformUpdateDomainCount"] ==
@@ -87,19 +86,40 @@ def test_has_no_property():
         5
     )
     with pytest.raises(AttributeError) as ex:
-        model.noprop
+        model.no_prop
 
-    assert str(ex.value) == "BasicResource instance has no attribute 'noprop'"
+    assert str(ex.value) == "BasicResource instance has no attribute 'no_prop'"
     assert model["noprop"] == dict_response["noprop"] == "bonjour!"
 
-    # if we update attribute map, it should automatically work
-    model._property_to_dict_name.append(("noprop", "noprop"))
+    # let's add it to model now
+
+    class BasicResourceWithProperty(BasicResource):
+
+        @property
+        @mark(original_name="noprop")
+        def no_prop(self):
+            """Added prop"""
+
+    model = BasicResourceWithProperty(dict_response)
+    model.no_prop
     assert (
-        model.noprop ==
+        model.no_prop ==
         model["noprop"] ==
         dict_response["noprop"] ==
         "bonjour!"
     )
+
+def test_original_and_attr_name_same():
+
+    class MyModel(Model):
+        @property
+        @mark(original_name="hello")
+        def hello(self):
+            """Prop with the same attr and dict name"""
+
+    dict_response = {"hello": "nihao"}
+    model = MyModel(dict_response)
+    assert model.hello == model["hello"] == dict_response["hello"]
 
 def test_modify_dict():
     dict_response = {
