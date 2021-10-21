@@ -22,8 +22,8 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
     2) AZURE_TEXT_ANALYTICS_KEY - your Text Analytics subscription key
-    3) AZURE_TEXT_ANALYTICS_PROJECT_NAME - your Text Analytics Language Studio project name
-    4) AZURE_TEXT_ANALYTICS_DEPLOYMENT_NAME - your Text Analytics deployed model name
+    3) SINGLE_CATEGORY_CLASSIFY_PROJECT_NAME - your Text Analytics Language Studio project name
+    4) SINGLE_CATEGORY_CLASSIFY_DEPLOYMENT_NAME - your Text Analytics deployed model name
 """
 
 
