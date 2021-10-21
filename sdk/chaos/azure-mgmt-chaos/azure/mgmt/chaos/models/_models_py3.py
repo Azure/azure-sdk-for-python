@@ -1576,7 +1576,7 @@ class TargetReference(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Enum of the Target reference type. Has constant value: "ResourceId".
+    :ivar type: Enum of the Target reference type. Has constant value: "ChaosTarget".
     :vartype type: str
     :param id: Required. String of the resource ID of a Target resource.
     :type id: str
@@ -1592,7 +1592,7 @@ class TargetReference(msrest.serialization.Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    type = "ResourceId"
+    type = "ChaosTarget"
 
     def __init__(
         self,
