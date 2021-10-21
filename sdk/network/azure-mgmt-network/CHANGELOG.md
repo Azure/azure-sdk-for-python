@@ -23,6 +23,7 @@
   - Added operation group AdminRulesOperations
   - Added operation group SecurityAdminConfigurationsOperations
   - Added operation group EffectiveConnectivityConfigurationsOperations
+  - Removed old api-version `2017-08-01`
 
 ## 19.1.0 (2021-10-09)
 
