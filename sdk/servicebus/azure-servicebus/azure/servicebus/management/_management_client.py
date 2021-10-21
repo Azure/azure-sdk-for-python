@@ -406,7 +406,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 self._impl.entity.put(
                     queue_name,  # type: ignore
                     request_body,
-                    api_version=self._api_version,
+                    api_version=self._api_version,  # type: ignore
                     **kwargs
                 ),
             )
@@ -448,7 +448,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             self._impl.entity.put(
                 queue.name,  # type: ignore
                 request_body,
-                api_version=self._api_version,
+                api_version=self._api_version,  # type: ignore
                 if_match="*",
                 **kwargs
             )
@@ -490,7 +490,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_QUEUES),
-            api_version=self._api_version,
+            api_version=self._api_version,  # type: ignore
             **kwargs
         )
         return ItemPaged(get_next, extract_data)
@@ -515,7 +515,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_QUEUES),
-            api_version=self._api_version,
+            api_version=self._api_version,  # type: ignore
             **kwargs
         )
         return ItemPaged(get_next, extract_data)
@@ -643,7 +643,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 self._impl.entity.put(
                     topic_name,  # type: ignore
                     request_body,
-                    api_version=self._api_version,
+                    api_version=self._api_version,  # type: ignore
                     **kwargs
                 ),
             )
@@ -683,7 +683,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             self._impl.entity.put(
                 topic.name,  # type: ignore
                 request_body,
-                api_version=self._api_version,
+                api_version=self._api_version,  # type: ignore
                 if_match="*",
                 **kwargs
             )
@@ -698,7 +698,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         _validate_entity_name_type(topic_name)
 
         self._impl.entity.delete(
-            topic_name, api_version=self._api_version, **kwargs
+            topic_name, api_version=self._api_version, **kwargs  # type: ignore
         )
 
     def list_topics(self, **kwargs):
@@ -721,7 +721,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_TOPICS),
-            api_version=self._api_version,
+            api_version=self._api_version,  # type: ignore
             **kwargs
         )
         return ItemPaged(get_next, extract_data)
@@ -746,7 +746,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_TOPICS),
-            api_version=self._api_version,
+            api_version=self._api_version,  # type: ignore
             **kwargs
         )
         return ItemPaged(get_next, extract_data)
@@ -896,7 +896,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                     topic_name,
                     subscription_name,  # type: ignore
                     request_body,
-                    api_version=self._api_version,
+                    api_version=self._api_version,  # type: ignore
                     **kwargs
                 ),
             )
@@ -942,7 +942,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 topic_name,
                 subscription.name,
                 request_body,
-                api_version=self._api_version,
+                api_version=self._api_version,  # type: ignore
                 if_match="*",
                 **kwargs
             )
@@ -959,7 +959,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         _validate_topic_and_subscription_types(topic_name, subscription_name)
 
         self._impl.subscription.delete(
-            topic_name, subscription_name, api_version=self._api_version, **kwargs
+            topic_name, subscription_name, api_version=self._api_version, **kwargs  # type: ignore
         )
 
     def list_subscriptions(self, topic_name, **kwargs):
@@ -984,7 +984,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_subscriptions, topic_name),
-            api_version=self._api_version,
+            api_version=self._api_version,  # type: ignore
             **kwargs
         )
         return ItemPaged(get_next, extract_data)
@@ -1011,7 +1011,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_subscriptions, topic_name),
-            api_version=self._api_version,
+            api_version=self._api_version,  # type: ignore
             **kwargs
         )
         return ItemPaged(get_next, extract_data)
@@ -1084,7 +1084,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 subscription_name,  # type: ignore
                 rule_name,
                 request_body,
-                api_version=self._api_version,
+                api_version=self._api_version,  # type: ignore
                 **kwargs
             )
         entry = RuleDescriptionEntry.deserialize(entry_ele)
@@ -1133,7 +1133,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 subscription_name,
                 rule.name,
                 request_body,
-                api_version=self._api_version,
+                api_version=self._api_version,  # type: ignore
                 if_match="*",
                 **kwargs
             )
@@ -1156,7 +1156,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             topic_name,
             subscription_name,
             rule_name,
-            api_version=self._api_version,
+            api_version=self._api_version,  # type: ignore
             **kwargs
         )
 
@@ -1189,7 +1189,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_rules, topic_name, subscription_name),
-            api_version=self._api_version,
+            api_version=self._api_version,  # type: ignore
             **kwargs
         )
         return ItemPaged(get_next, extract_data)
@@ -1200,7 +1200,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         :rtype: ~azure.servicebus.management.NamespaceProperties
         """
-        entry_el = self._impl.namespace.get(api_version=self._api_version, **kwargs)
+        entry_el = self._impl.namespace.get(api_version=self._api_version, **kwargs)  # type: ignore
         namespace_entry = NamespacePropertiesEntry.deserialize(entry_el)
         return NamespaceProperties._from_internal_entity(
             namespace_entry.title, namespace_entry.content.namespace_properties
