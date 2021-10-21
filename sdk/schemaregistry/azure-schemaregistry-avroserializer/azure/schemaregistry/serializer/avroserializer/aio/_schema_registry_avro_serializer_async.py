@@ -23,16 +23,12 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-try:
-    from functools import lru_cache
-except ImportError:
-    from backports.functools_lru_cache import lru_cache
 from io import BytesIO
 from typing import Any, Dict, Mapping
-
-from ._constants import SCHEMA_ID_START_INDEX, SCHEMA_ID_LENGTH, DATA_START_INDEX
-from ._avro_serializer import AvroObjectSerializer
-from ._utils import parse_schema
+from ._async_lru import alru_cache
+from .._constants import SCHEMA_ID_START_INDEX, SCHEMA_ID_LENGTH, DATA_START_INDEX
+from .._avro_serializer import AvroObjectSerializer
+from .._utils import parse_schema
 
 
 class AvroSerializer(object):
@@ -42,7 +38,7 @@ class AvroSerializer(object):
 
     :keyword client: Required. The schema registry client
      which is used to register schema and retrieve schema from the service.
-    :paramtype client: ~azure.schemaregistry.SchemaRegistryClient
+    :paramtype client: ~azure.schemaregistry.aio.SchemaRegistryClient
     :keyword str group_name: Required. Schema group under which schema should be registered.
     :keyword bool auto_register_schemas: When true, register new schemas passed to serialize.
      Otherwise, and by default, serialization will fail if the schema has not been pre-registered in the registry.
@@ -64,24 +60,24 @@ class AvroSerializer(object):
                 else self._schema_registry_client.get_schema_properties
             )
 
-    def __enter__(self):
+    async def __aenter__(self):
         # type: () -> SchemaRegistryAvroSerializer
-        self._schema_registry_client.__enter__()
+        await self._schema_registry_client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
+    async def __aexit__(self, *exc_details):
         # type: (Any) -> None
-        self._schema_registry_client.__exit__(*exc_details)
+        await self._schema_registry_client.__aexit__(*exc_details)
 
-    def close(self):
+    async def close(self):
         # type: () -> None
         """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
-        self._schema_registry_client.close()
+        await self._schema_registry_client.close()
 
-    @lru_cache(maxsize=128)
-    def _get_schema_id(self, schema_name, schema_str, **kwargs):
+    @alru_cache(maxsize=128, cache_exceptions=False)
+    async def _get_schema_id(self, schema_name, schema_str, **kwargs):
         # type: (str, str, Any) -> str
         """
         Get schema id from local cache with the given schema.
@@ -93,27 +89,27 @@ class AvroSerializer(object):
         :return: Schema Id
         :rtype: str
         """
-        schema_id = self._auto_register_schema_func(
+        schema_properties = await self._auto_register_schema_func(
             self._schema_group, schema_name, schema_str, "Avro", **kwargs
-        ).id
-        return schema_id
+        )
+        return schema_properties.id
 
-    @lru_cache(maxsize=128)
-    def _get_schema(self, schema_id, **kwargs):
+    @alru_cache(maxsize=128, cache_exceptions=False)
+    async def _get_schema(self, schema_id, **kwargs):
         # type: (str, Any) -> str
         """
-        Get schema content from local cache with the given schema id.
+        Get schema definition from local cache with the given schema id.
         If there is no item in the local cache, get schema from the service and cache it.
 
         :param str schema_id: Schema id
-        :return: Schema content
+        :return: Schema definition
         """
-        schema_str = self._schema_registry_client.get_schema(
+        schema = await self._schema_registry_client.get_schema(
             schema_id, **kwargs
-        ).schema_definition
-        return schema_str
+        )
+        return schema.schema_definition
 
-    def serialize(self, value, **kwargs):
+    async def serialize(self, value, **kwargs):
         # type: (Mapping[str, Any], Any) -> bytes
         """
         Encode data with the given schema. The returns bytes are consisted of: The first 4 bytes
@@ -133,7 +129,7 @@ class AvroSerializer(object):
 
         cached_schema = parse_schema(raw_input_schema)
         record_format_identifier = b"\0\0\0\0"
-        schema_id = self._get_schema_id(cached_schema.fullname, str(cached_schema), **kwargs)
+        schema_id = await self._get_schema_id(cached_schema.fullname, str(cached_schema), **kwargs)
         data_bytes = self._avro_serializer.serialize(value, cached_schema)
 
         stream = BytesIO()
@@ -147,7 +143,7 @@ class AvroSerializer(object):
         stream.close()
         return payload
 
-    def deserialize(self, value, **kwargs):
+    async def deserialize(self, value, **kwargs):
         # type: (bytes, Any) -> Dict[str, Any]
         """
         Decode bytes data.
@@ -159,7 +155,7 @@ class AvroSerializer(object):
         schema_id = value[
             SCHEMA_ID_START_INDEX : (SCHEMA_ID_START_INDEX + SCHEMA_ID_LENGTH)
         ].decode("utf-8")
-        schema_definition = self._get_schema(schema_id, **kwargs)
+        schema_definition = await self._get_schema(schema_id, **kwargs)
 
         dict_value = self._avro_serializer.deserialize(
             value[DATA_START_INDEX:], schema_definition
