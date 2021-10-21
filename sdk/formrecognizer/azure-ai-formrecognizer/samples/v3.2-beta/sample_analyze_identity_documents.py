@@ -36,7 +36,6 @@ def analyze_identity_documents():
         )
     )
 
-    # [START analyze_identity_documents]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer import DocumentAnalysisClient
 
@@ -109,7 +108,6 @@ def analyze_identity_documents():
             print(
                 "Region: {} has confidence: {}".format(region.value, region.confidence)
             )
-    # [END analyze_identity_documents]
 
 
 if __name__ == "__main__":

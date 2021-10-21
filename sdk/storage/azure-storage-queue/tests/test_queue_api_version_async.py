@@ -14,8 +14,7 @@ from azure.storage.queue.aio import (
     QueueClient
 )
 from azure.storage.queue._serialize import _SUPPORTED_API_VERSIONS
-from _shared.testcase import GlobalStorageAccountPreparer
-from _shared.asynctestcase import AsyncStorageTestCase
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------
 

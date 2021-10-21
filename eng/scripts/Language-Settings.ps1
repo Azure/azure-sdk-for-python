@@ -172,12 +172,25 @@ function ValidatePackage($packageName, $packageVersion, $workingDirectory) {
   # possible
   # https://github.com/Azure/azure-sdk-for-python/issues/20109
   try {
-    Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder"
-    $pipInstallOutput = pip `
-      install `
-      $packageExpression `
-      --no-cache-dir `
-      --target $installTargetFolder 2>&1
+    $pipInstallOutput = ""
+    $extraIndexUrl = " --extra-index-url=$PackageSourceOverride"
+    if ($PackageSourceOverride) {
+      Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder --extra-index-url=$PackageSourceOverride"
+      $pipInstallOutput = pip `
+        install `
+        $packageExpression `
+        --no-cache-dir `
+        --target $installTargetFolder `
+        --extra-index-url=$PackageSourceOverride 2>&1
+    }
+    else {
+      Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder"
+      $pipInstallOutput = pip `
+        install `
+        $packageExpression `
+        --no-cache-dir `
+        --target $installTargetFolder 2>&1
+    }
     if ($LASTEXITCODE -ne 0) {
       LogWarning "pip install failed for $packageExpression"
       Write-Host $pipInstallOutput
@@ -193,7 +206,8 @@ function ValidatePackage($packageName, $packageVersion, $workingDirectory) {
   return $true
 }
 
-$PackageExclusions = @{ 
+$PackageExclusions = @{
+  'azure-mgmt-webpubsub' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/21346';
   'azure-mgmt-apimanagement' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18084';
   'azure-mgmt-reservations' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18077';
   'azure-mgmt-signalr' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18085';
@@ -201,6 +215,7 @@ $PackageExclusions = @{
   'azure-monitor-query' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/19417';
   'azure-mgmt-network' = 'Manual process used to build';
 }
+
 function Update-python-DocsMsPackages($DocsRepoLocation, $DocsMetadata) {
   Write-Host "Excluded packages:"
   foreach ($excludedPackage in $PackageExclusions.Keys) {
@@ -231,7 +246,6 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
   $outputPackages = @()
   foreach ($package in $packageConfig.packages) {
     $packageName = $package.package_info.name
-
     if (!$packageName) { 
       Write-Host "Keeping package with no name: $($package.package_info)"
       $outputPackages += $package
@@ -301,6 +315,15 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
         -Value $packageVersion `
         -PassThru `
         -Force 
+      if ($PackageSourceOverride) {
+        $package.package_info = Add-Member `
+          -InputObject $package.package_info `
+          -MemberType NoteProperty `
+          -Name 'extra_index_url' `
+          -Value $PackageSourceOverride `
+          -PassThru `
+          -Force 
+      }
     }
 
     Write-Host "Keeping tracked package: $packageName."
@@ -334,23 +357,35 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
     if ($Mode -eq 'preview') {
       $packageVersion = "==$($package.VersionPreview)"
     }
-
     if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion -workingDirectory $installValidationFolder)) {
       LogWarning "Package is not valid: $packageName. Cannot onboard."
       continue
     }
 
     Write-Host "Add new package from metadata: $packageName"
-    $package = [ordered]@{
+    if ($PackageSourceOverride) {
+      $package = [ordered]@{
         package_info = [ordered]@{
           name = $packageName;
           install_type = 'pypi';
           prefer_source_distribution = 'true';
           version = $packageVersion;
+          extra_index_url = $PackageSourceOverride
         };
         exclude_path = @("test*","example*","sample*","doc*");
+      }
     }
-
+    else {
+      $package = [ordered]@{
+          package_info = [ordered]@{
+            name = $packageName;
+            install_type = 'pypi';
+            prefer_source_distribution = 'true';
+            version = $packageVersion;
+          };
+          exclude_path = @("test*","example*","sample*","doc*");
+      }
+    }
     $outputPackages += $package
   }
 
@@ -414,5 +449,29 @@ function GetExistingPackageVersions ($PackageName, $GroupId=$null)
   {
     LogError "Failed to retrieve package versions. `n$_"
     return $null
+  }
+}
+
+function Get-python-DocsMsMetadataForPackage($PackageInfo) { 
+  $readmeName = $PackageInfo.Name.ToLower()
+  Write-Host "Docs.ms Readme name: $($readmeName)"
+
+  # Readme names (which are used in the URL) should not include redundant terms
+  # when viewed in URL form. For example: 
+  # https://docs.microsoft.com/en-us/dotnet/api/overview/azure/storage-blobs-readme
+  # Note how the end of the URL doesn't look like:
+  # ".../azure/azure-storage-blobs-readme" 
+
+  # This logic eliminates a preceeding "azure." in the readme filename.
+  # "azure-storage-blobs" -> "storage-blobs"
+  if ($readmeName.StartsWith('azure-')) {
+    $readmeName = $readmeName.Substring(6)
+  }
+
+  New-Object PSObject -Property @{
+    DocsMsReadMeName = $readmeName
+    LatestReadMeLocation  = 'docs-ref-services/latest'
+    PreviewReadMeLocation = 'docs-ref-services/preview'
+    Suffix = ''
   }
 }

@@ -319,6 +319,8 @@ class ContainerProperties(DictMixin):
     dictionary interface, for example: ``container_props["last_modified"]``.
     Additionally, the container name is available as ``container_props["name"]``.
 
+    :ivar str name:
+        Name of the container.
     :ivar ~datetime.datetime last_modified:
         A datetime object representing the last time the container was modified.
     :ivar str etag:

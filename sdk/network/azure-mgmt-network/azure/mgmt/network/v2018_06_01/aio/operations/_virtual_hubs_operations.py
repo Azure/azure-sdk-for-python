@@ -47,7 +47,7 @@ class VirtualHubsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualHub":
         """Retrieves the details of a VirtualHub.
 
@@ -107,7 +107,7 @@ class VirtualHubsOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         virtual_hub_parameters: "_models.VirtualHub",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualHub":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualHub"]
         error_map = {
@@ -165,7 +165,7 @@ class VirtualHubsOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         virtual_hub_parameters: "_models.VirtualHub",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.VirtualHub"]:
         """Creates a VirtualHub resource if it doesn't exist else updates the existing VirtualHub.
 
@@ -177,8 +177,8 @@ class VirtualHubsOperations:
         :type virtual_hub_parameters: ~azure.mgmt.network.v2018_06_01.models.VirtualHub
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VirtualHub or the result of cls(response)
@@ -236,7 +236,7 @@ class VirtualHubsOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         virtual_hub_parameters: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualHub":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualHub"]
         error_map = {
@@ -294,7 +294,7 @@ class VirtualHubsOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         virtual_hub_parameters: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.VirtualHub"]:
         """Updates VirtualHub tags.
 
@@ -306,8 +306,8 @@ class VirtualHubsOperations:
         :type virtual_hub_parameters: ~azure.mgmt.network.v2018_06_01.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VirtualHub or the result of cls(response)
@@ -364,7 +364,7 @@ class VirtualHubsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -409,7 +409,7 @@ class VirtualHubsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a VirtualHub.
 
@@ -419,8 +419,8 @@ class VirtualHubsOperations:
         :type virtual_hub_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -472,7 +472,7 @@ class VirtualHubsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListVirtualHubsResult"]:
         """Lists all the VirtualHubs in a resource group.
 
@@ -542,7 +542,7 @@ class VirtualHubsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListVirtualHubsResult"]:
         """Lists all the VirtualHubs in a subscription.
 

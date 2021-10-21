@@ -467,6 +467,8 @@ class Resource(msrest.serialization.Model):
     :type location: str
     :param tags: A set of tags. The resource tags.
     :type tags: dict[str, str]
+    :param zones: The zones for the container group.
+    :type zones: list[str]
     """
 
     _validation = {
@@ -481,6 +483,7 @@ class Resource(msrest.serialization.Model):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'zones': {'key': 'zones', 'type': '[str]'},
     }
 
     def __init__(
@@ -493,6 +496,7 @@ class Resource(msrest.serialization.Model):
         self.type = None
         self.location = kwargs.get('location', None)
         self.tags = kwargs.get('tags', None)
+        self.zones = kwargs.get('zones', None)
 
 
 class ContainerGroup(Resource):
@@ -512,6 +516,8 @@ class ContainerGroup(Resource):
     :type location: str
     :param tags: A set of tags. The resource tags.
     :type tags: dict[str, str]
+    :param zones: The zones for the container group.
+    :type zones: list[str]
     :param identity: The identity of the container group, if configured.
     :type identity: ~azure.mgmt.containerinstance.models.ContainerGroupIdentity
     :ivar provisioning_state: The provisioning state of the container group. This only appears in
@@ -570,6 +576,7 @@ class ContainerGroup(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'zones': {'key': 'zones', 'type': '[str]'},
         'identity': {'key': 'identity', 'type': 'ContainerGroupIdentity'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'containers': {'key': 'properties.containers', 'type': '[Container]'},

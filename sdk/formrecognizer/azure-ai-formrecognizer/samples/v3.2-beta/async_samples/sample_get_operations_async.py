@@ -28,7 +28,7 @@ import asyncio
 
 
 async def sample_get_operations_async():
-    # [START list_operations]
+    # [START list_operations_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
 
@@ -39,7 +39,6 @@ async def sample_get_operations_async():
 
     async with document_model_admin_client:
         operations = document_model_admin_client.list_operations()
-        first_operation = await operations.__anext__()
 
         print("The following document model operations exist under my resource:")
         async for operation in operations:
@@ -50,23 +49,28 @@ async def sample_get_operations_async():
             print("Operation created on: {}".format(operation.created_on))
             print("Operation last updated on: {}".format(operation.last_updated_on))
             print("Resource location of successful operation: {}".format(operation.resource_location))
-    # [END list_operations]
+    # [END list_operations_async]
 
-        # [START get_operation]
+        # [START get_operation_async]
         # Get an operation by ID
-        print("\nGetting operation info by ID: {}".format(first_operation.operation_id))
-        operation_info = await document_model_admin_client.get_operation(first_operation.operation_id)
-        if operation_info.status == "succeeded":
-            print("My {} operation is completed.".format(operation_info.kind))
-            result = operation_info.result
-            print("Model ID: {}".format(result.model_id))
-        elif operation_info.status == "failed":
-            print("My {} operation failed.".format(operation_info.kind))
-            error = operation_info.error
-            print("{}: {}".format(error.code, error.message))
-        else:
-            print("My operation status is {}".format(operation_info.status))
-        # [END get_operation]
+        try:
+            first_operation = await operations.__anext__()
+
+            print("\nGetting operation info by ID: {}".format(first_operation.operation_id))
+            operation_info = await document_model_admin_client.get_operation(first_operation.operation_id)
+            if operation_info.status == "succeeded":
+                print("My {} operation is completed.".format(operation_info.kind))
+                result = operation_info.result
+                print("Model ID: {}".format(result.model_id))
+            elif operation_info.status == "failed":
+                print("My {} operation failed.".format(operation_info.kind))
+                error = operation_info.error
+                print("{}: {}".format(error.code, error.message))
+            else:
+                print("My operation status is {}".format(operation_info.status))
+        except StopAsyncIteration:
+            print("No operations found.")
+        # [END get_operation_async]
 
 async def main():
     await sample_get_operations_async()

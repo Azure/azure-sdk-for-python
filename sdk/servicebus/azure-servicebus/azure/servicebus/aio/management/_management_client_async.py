@@ -293,63 +293,58 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :param queue_name: Name of the queue.
         :type queue_name: str
         :keyword authorization_rules: Authorization rules for resource.
-        :paramtype authorization_rules: list[~azure.servicebus.management.AuthorizationRule]
+        :type authorization_rules: list[~azure.servicebus.management.AuthorizationRule]
         :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the queue is
          automatically deleted. The minimum duration is 5 minutes.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :paramtype auto_delete_on_idle: Union[~datetime.timedelta, str]
+        :type auto_delete_on_idle: Union[~datetime.timedelta, str]
         :keyword dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
          letter support when a message expires.
-        :paramtype dead_lettering_on_message_expiration: bool
+        :type dead_lettering_on_message_expiration: bool
         :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
          the duration after which the message expires, starting from when the message is sent to Service
          Bus. This is the default value used when TimeToLive is not set on a message itself.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :paramtype default_message_time_to_live: Union[~datetime.timedelta, str]
+        :type default_message_time_to_live: Union[~datetime.timedelta, str]
         :keyword duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
          duration of the duplicate detection history. The default value is 10 minutes.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :paramtype duplicate_detection_history_time_window: Union[~datetime.timedelta, str]
+        :type duplicate_detection_history_time_window: Union[~datetime.timedelta, str]
         :keyword enable_batched_operations: Value that indicates whether server-side batched operations
          are enabled.
-        :paramtype enable_batched_operations: bool
+        :type enable_batched_operations: bool
         :keyword enable_express: A value that indicates whether Express Entities are enabled. An express
          queue holds a message in memory temporarily before writing it to persistent storage.
-        :paramtype enable_express: bool
+        :type enable_express: bool
         :keyword enable_partitioning: A value that indicates whether the queue is to be partitioned
          across multiple message brokers.
-        :paramtype enable_partitioning: bool
+        :type enable_partitioning: bool
         :keyword lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
          that the message is locked for other receivers. The maximum value for LockDuration is 5
          minutes; the default value is 1 minute.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :paramtype lock_duration: Union[~datetime.timedelta, str]
+        :type lock_duration: Union[~datetime.timedelta, str]
         :keyword max_delivery_count: The maximum delivery count. A message is automatically deadlettered
          after this number of deliveries. Default value is 10.
-        :paramtype max_delivery_count: int
+        :type max_delivery_count: int
         :keyword max_size_in_megabytes: The maximum size of the queue in megabytes, which is the size of
          memory allocated for the queue.
-        :paramtype max_size_in_megabytes: int
+        :type max_size_in_megabytes: int
         :keyword requires_duplicate_detection: A value indicating if this queue requires duplicate
          detection.
-        :paramtype requires_duplicate_detection: bool
+        :type requires_duplicate_detection: bool
         :keyword requires_session: A value that indicates whether the queue supports the concept of
          sessions.
-        :paramtype requires_session: bool
+        :type requires_session: bool
         :keyword forward_to: The name of the recipient entity to which all the messages sent to the queue
          are forwarded to.
-        :paramtype forward_to: str
+        :type forward_to: str
         :keyword user_metadata: Custom metdata that user can associate with the description. Max length
          is 1024 chars.
-        :paramtype user_metadata: str
+        :type user_metadata: str
         :keyword forward_dead_lettered_messages_to: The name of the recipient entity to which all the
          dead-lettered messages of this subscription are forwarded to.
-        :paramtype forward_dead_lettered_messages_to: str
-        :keyword max_message_size_in_kilobytes: The maximum size in kilobytes of message payload that
-         can be accepted by the queue. This feature is only available when using a Premium namespace
-         and service version "2021-05" or higher.
-         The minimum allowed value is 1024 while the maximum allowed value is 102400. Default value is 1024.
-        :paramtype max_message_size_in_kilobytes: int
+        :type forward_dead_lettered_messages_to: str
 
         :rtype: ~azure.servicebus.management.QueueProperties
         """
@@ -390,7 +385,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             forward_to=forward_to,
             forward_dead_lettered_messages_to=forward_dead_lettered_messages_to,
             user_metadata=kwargs.pop("user_metadata", None),
-            max_message_size_in_kilobytes=kwargs.pop("max_message_size_in_kilobytes", None)
         )
         to_create = queue._to_internal_entity(self.fully_qualified_namespace)
         create_entity_body = CreateQueueBody(
@@ -559,46 +553,41 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          the duration after which the message expires, starting from when the message is sent to Service
          Bus. This is the default value used when TimeToLive is not set on a message itself.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :paramtype default_message_time_to_live: Union[~datetime.timedelta, str]
+        :type default_message_time_to_live: Union[~datetime.timedelta, str]
         :keyword max_size_in_megabytes: The maximum size of the topic in megabytes, which is the size of
          memory allocated for the topic.
-        :paramtype max_size_in_megabytes: long
+        :type max_size_in_megabytes: long
         :keyword requires_duplicate_detection: A value indicating if this topic requires duplicate
          detection.
-        :paramtype requires_duplicate_detection: bool
+        :type requires_duplicate_detection: bool
         :keyword duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
          duration of the duplicate detection history. The default value is 10 minutes.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :paramtype duplicate_detection_history_time_window: Union[~datetime.timedelta, str]
+        :type duplicate_detection_history_time_window: Union[~datetime.timedelta, str]
         :keyword enable_batched_operations: Value that indicates whether server-side batched operations
          are enabled.
-        :paramtype enable_batched_operations: bool
+        :type enable_batched_operations: bool
         :keyword size_in_bytes: The size of the topic, in bytes.
-        :paramtype size_in_bytes: int
+        :type size_in_bytes: int
         :keyword filtering_messages_before_publishing: Filter messages before publishing.
-        :paramtype filtering_messages_before_publishing: bool
+        :type filtering_messages_before_publishing: bool
         :keyword authorization_rules: Authorization rules for resource.
-        :paramtype authorization_rules:
+        :type authorization_rules:
          list[~azure.servicebus.management.AuthorizationRule]
         :keyword support_ordering: A value that indicates whether the topic supports ordering.
-        :paramtype support_ordering: bool
+        :type support_ordering: bool
         :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the topic is
          automatically deleted. The minimum duration is 5 minutes.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :paramtype auto_delete_on_idle: Union[~datetime.timedelta, str]
+        :type auto_delete_on_idle: Union[~datetime.timedelta, str]
         :keyword enable_partitioning: A value that indicates whether the topic is to be partitioned
          across multiple message brokers.
-        :paramtype enable_partitioning: bool
+        :type enable_partitioning: bool
         :keyword enable_express: A value that indicates whether Express Entities are enabled. An express
          queue holds a message in memory temporarily before writing it to persistent storage.
-        :paramtype enable_express: bool
+        :type enable_express: bool
         :keyword user_metadata: Metadata associated with the topic.
-        :paramtype user_metadata: str
-        :keyword max_message_size_in_kilobytes: The maximum size in kilobytes of message payload that
-         can be accepted by the topic. This feature is only available when using a Premium namespace
-         and service version "2021-05" or higher.
-         The minimum allowed value is 1024 while the maximum allowed value is 102400. Default value is 1024.
-        :paramtype max_message_size_in_kilobytes: int
+        :type user_metadata: str
 
         :rtype: ~azure.servicebus.management.TopicProperties
         """
@@ -625,7 +614,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             availability_status=None,
             enable_express=kwargs.pop("enable_express", None),
             user_metadata=kwargs.pop("user_metadata", None),
-            max_message_size_in_kilobytes=kwargs.pop("max_message_size_in_kilobytes", None)
         )
         to_create = topic._to_internal_entity()
 
@@ -808,40 +796,40 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          that the message is locked for other receivers. The maximum value for LockDuration is 5
          minutes; the default value is 1 minute.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :paramtype lock_duration: Union[~datetime.timedelta, str]
+        :type lock_duration: Union[~datetime.timedelta, str]
         :keyword requires_session: A value that indicates whether the queue supports the concept of
          sessions.
-        :paramtype requires_session: bool
+        :type requires_session: bool
         :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
          the duration after which the message expires, starting from when the message is sent to Service
          Bus. This is the default value used when TimeToLive is not set on a message itself.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :paramtype default_message_time_to_live: Union[~datetime.timedelta, str]
+        :type default_message_time_to_live: Union[~datetime.timedelta, str]
         :keyword dead_lettering_on_message_expiration: A value that indicates whether this subscription
          has dead letter support when a message expires.
-        :paramtype dead_lettering_on_message_expiration: bool
+        :type dead_lettering_on_message_expiration: bool
         :keyword dead_lettering_on_filter_evaluation_exceptions: A value that indicates whether this
          subscription has dead letter support when a message expires.
-        :paramtype dead_lettering_on_filter_evaluation_exceptions: bool
+        :type dead_lettering_on_filter_evaluation_exceptions: bool
         :keyword max_delivery_count: The maximum delivery count. A message is automatically deadlettered
          after this number of deliveries. Default value is 10.
-        :paramtype max_delivery_count: int
+        :type max_delivery_count: int
         :keyword enable_batched_operations: Value that indicates whether server-side batched operations
          are enabled.
-        :paramtype enable_batched_operations: bool
+        :type enable_batched_operations: bool
         :keyword forward_to: The name of the recipient entity to which all the messages sent to the
          subscription are forwarded to.
-        :paramtype forward_to: str
+        :type forward_to: str
         :keyword user_metadata: Metadata associated with the subscription. Maximum number of characters
          is 1024.
-        :paramtype user_metadata: str
+        :type user_metadata: str
         :keyword forward_dead_lettered_messages_to: The name of the recipient entity to which all the
          messages sent to the subscription are forwarded to.
-        :paramtype forward_dead_lettered_messages_to: str
+        :type forward_dead_lettered_messages_to: str
         :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the subscription is
          automatically deleted. The minimum duration is 5 minutes.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :paramtype auto_delete_on_idle: Union[~datetime.timedelta, str]
+        :type auto_delete_on_idle: Union[~datetime.timedelta, str]
         :rtype:  ~azure.servicebus.management.SubscriptionProperties
         """
         # pylint:disable=protected-access
@@ -1059,10 +1047,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :param rule_name: Name of the rule.
         :type rule_name: str
         :keyword filter: The filter of the rule. The default value is ~azure.servicebus.management.TrueRuleFilter
-        :paramtype filter: Union[~azure.servicebus.management.CorrelationRuleFilter,
+        :type filter: Union[~azure.servicebus.management.CorrelationRuleFilter,
          ~azure.servicebus.management.SqlRuleFilter]
         :keyword action: The action of the rule.
-        :paramtype action: Optional[~azure.servicebus.management.SqlRuleAction]
+        :type action: Optional[~azure.servicebus.management.SqlRuleAction]
 
         :rtype: ~azure.servicebus.management.RuleProperties
         """
