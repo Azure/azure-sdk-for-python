@@ -9,13 +9,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '20'
+      - '13'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 20 Oct 2021 08:48:10 GMT
+      - Thu, 21 Oct 2021 12:49:12 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -28,9 +28,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 Oct 2021 08:48:10 GMT
+      - Thu, 21 Oct 2021 12:49:12 GMT
       ms-cv:
-      - gTT6p4HRvEaF4EGktHcaRg.0
+      - X6KVyEiq4UqBCPvOM6HbsQ.0
       request-context:
       - appId=
       strict-transport-security:

@@ -97,9 +97,9 @@ identity_client.delete_user(user)
 
 ### Exchanging AAD access token of a Teams User for a Communication Identity access token
 
-Use the `exchange_teams_token` method to exchange an AAD access token of a Teams User for a new Communication Identity access token.
+Use the `exchange_teams_user_aad_token` method to exchange an AAD access token of a Teams User for a new Communication Identity access token.
 ```python
-identity_client.exchange_teams_token(access_token_AAD)
+identity_client.exchange_teams_user_aad_token(teams_user_aad_token)
 ```
 
 # Troubleshooting

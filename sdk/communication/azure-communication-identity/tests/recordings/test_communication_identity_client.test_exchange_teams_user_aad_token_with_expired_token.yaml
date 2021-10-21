@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 20 Oct 2021 08:48:10 GMT
+      - Thu, 21 Oct 2021 12:49:12 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -28,9 +28,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 Oct 2021 08:48:10 GMT
+      - Thu, 21 Oct 2021 12:49:13 GMT
       ms-cv:
-      - rP82nkSFF0yMo4GWLVQiXA.0
+      - Am6oYSr7a0u5mtVSBPfPUg.0
       request-context:
       - appId=
       strict-transport-security:
@@ -40,7 +40,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 28ms
+      - 44ms
     status:
       code: 401
       message: Unauthorized

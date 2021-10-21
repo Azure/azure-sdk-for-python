@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 20 Oct 2021 08:48:17 GMT
+      - Thu, 21 Oct 2021 12:49:18 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -32,9 +32,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 20 Oct 2021 08:48:16 GMT
+      - Thu, 21 Oct 2021 12:49:53 GMT
       ms-cv:
-      - SVN8rU4SMkCDoA2CImCGmA.0
+      - es6gULjak0Cof1uLCd9HIQ.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,7 +42,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 93ms
+      - 95ms
     status:
       code: 201
       message: Created
@@ -62,7 +62,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 20 Oct 2021 08:48:17 GMT
+      - Thu, 21 Oct 2021 12:49:53 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -75,9 +75,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 Oct 2021 08:48:17 GMT
+      - Thu, 21 Oct 2021 12:49:53 GMT
       ms-cv:
-      - L5R1RnX4zUyFOWEEIdq+nA.0
+      - msb4XROqgEm0J02mYsIRRw.0
       request-context:
       - appId=
       strict-transport-security:
@@ -87,7 +87,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 28ms
+      - 20ms
     status:
       code: 400
       message: Bad Request

@@ -129,7 +129,7 @@ def _convert_expires_on_datetime_to_utc_int(expires_on):
     return epoch-time.mktime(expires_on.timetuple())
 
 
-def generate_teams_token(
+def generate_teams_user_aad_token(
             m365_app_id, # type: str
             m365_aad_authority, # type: str
             m365_aad_tenant, # type: str

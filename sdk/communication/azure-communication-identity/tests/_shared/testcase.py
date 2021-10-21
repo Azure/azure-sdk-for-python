@@ -10,7 +10,7 @@ from devtools_testutils import AzureTestCase
 from azure_devtools.scenario_tests import RecordingProcessor, ReplayableTest
 from azure_devtools.scenario_tests.utilities import is_text_payload
 from azure.communication.identity._shared.utils import parse_connection_str
-from azure.communication.identity._shared.utils import generate_teams_token
+from azure.communication.identity._shared.utils import generate_teams_user_aad_token
 class ResponseReplacerProcessor(RecordingProcessor):
     def __init__(self, keys=None, replacement="sanitized"):
         self._keys = keys if keys else []
@@ -100,9 +100,9 @@ class CommunicationTestCase(AzureTestCase):
             self._resource_name = endpoint.split(".")[0]
             self.scrubber.register_name_pair(self._resource_name, "sanitized")
 
-    def generate_access_token_AAD(self):
+    def generate_teams_user_aad_token(self):
         if self.is_playback():
-            access_token_AAD = "sanitized"
+            teams_user_aad_token = "sanitized"
         else:
-            access_token_AAD = generate_teams_token(m365_app_id=self.m365_app_id, m365_aad_authority=self.m365_aad_authority, m365_aad_tenant=self.m365_aad_tenant, msal_username=self.msal_username, msal_password=self.msal_password, m365_scope=self.m365_scope)
-        return access_token_AAD
+            teams_user_aad_token = generate_teams_user_aad_token(m365_app_id=self.m365_app_id, m365_aad_authority=self.m365_aad_authority, m365_aad_tenant=self.m365_aad_tenant, msal_username=self.msal_username, msal_password=self.msal_password, m365_scope=self.m365_scope)
+        return teams_user_aad_token

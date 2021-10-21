@@ -20,12 +20,12 @@ interactions:
         2021-03-31-preview1, 2021-10-31-preview
       content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Wed, 20 Oct 2021 08:48:36 GMT
-      ms-cv: f9dhl3rFOUKzThQqJfW/Xg.0
+      date: Thu, 21 Oct 2021 12:50:18 GMT
+      ms-cv: qcziK2RJP0e7JYBWFxry4Q.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 81ms
+      x-processing-time: 255ms
     status:
       code: 201
       message: Created
@@ -45,18 +45,18 @@ interactions:
     uri: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-10-31-preview
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-10-21T08:48:36.9538456+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2021-10-22T12:50:19.4657607+00:00"}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
         2021-03-31-preview1, 2021-10-31-preview
       content-length: '804'
       content-type: application/json; charset=utf-8
-      date: Wed, 20 Oct 2021 08:48:36 GMT
-      ms-cv: PwXy2InjikOu0Ut/7rHB+Q.0
+      date: Thu, 21 Oct 2021 12:50:18 GMT
+      ms-cv: gdOIGztdHkuf2yt7Z89IDw.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 91ms
+      x-processing-time: 99ms
     status:
       code: 200
       message: OK
@@ -76,12 +76,12 @@ interactions:
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
         2021-03-31-preview1, 2021-10-31-preview
-      date: Wed, 20 Oct 2021 08:48:37 GMT
-      ms-cv: FjiK/inCaE+B+eqWdL7Jkg.0
+      date: Thu, 21 Oct 2021 12:50:19 GMT
+      ms-cv: KW8CzC2ScU6Ot1YdRRgXDA.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 230ms
+      x-processing-time: 178ms
     status:
       code: 204
       message: No Content

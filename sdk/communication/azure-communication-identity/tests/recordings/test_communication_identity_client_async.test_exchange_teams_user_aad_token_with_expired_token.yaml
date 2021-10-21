@@ -5,13 +5,13 @@ interactions:
       Accept:
       - application/json
       Content-Length:
-      - '20'
+      - '2015'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 20 Oct 2021 08:48:29 GMT
+      - Thu, 21 Oct 2021 12:50:11 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -22,13 +22,13 @@ interactions:
         token is not valid."}}'
     headers:
       content-type: application/json
-      date: Wed, 20 Oct 2021 08:48:29 GMT
-      ms-cv: nwyfC0pjmEiBp5BVxEDAlg.0
+      date: Thu, 21 Oct 2021 12:50:11 GMT
+      ms-cv: 13snP6UlpU+4BYjgCHdE9Q.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 21ms
+      x-processing-time: 52ms
     status:
       code: 401
       message: Unauthorized

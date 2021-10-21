@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 20 Oct 2021 08:48:00 GMT
+      - Thu, 21 Oct 2021 12:49:04 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -32,9 +32,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 20 Oct 2021 08:48:00 GMT
+      - Thu, 21 Oct 2021 12:49:04 GMT
       ms-cv:
-      - GrQEEHt2i06smL9TlkNRgg.0
+      - /ZVUsKrQqEqrNVUiT+EFbA.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,7 +42,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 174ms
+      - 89ms
     status:
       code: 201
       message: Created
