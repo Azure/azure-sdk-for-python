@@ -259,10 +259,10 @@ class BlobItemInternal(msrest.serialization.Model):
     :type metadata: ~azure.storage.blob.models.BlobMetadata
     :param blob_tags: Blob tags.
     :type blob_tags: ~azure.storage.blob.models.BlobTags
-    :param object_replication_metadata: Dictionary of :code:`<string>`.
-    :type object_replication_metadata: dict[str, str]
     :param has_versions_only:
     :type has_versions_only: bool
+    :param object_replication_metadata: Dictionary of :code:`<string>`.
+    :type object_replication_metadata: dict[str, str]
     """
 
     _validation = {
@@ -281,8 +281,8 @@ class BlobItemInternal(msrest.serialization.Model):
         'properties': {'key': 'Properties', 'type': 'BlobPropertiesInternal'},
         'metadata': {'key': 'Metadata', 'type': 'BlobMetadata'},
         'blob_tags': {'key': 'BlobTags', 'type': 'BlobTags'},
-        'object_replication_metadata': {'key': 'OrMetadata', 'type': '{str}'},
         'has_versions_only': {'key': 'HasVersionsOnly', 'type': 'bool'},
+        'object_replication_metadata': {'key': 'OrMetadata', 'type': '{str}'},
     }
     _xml_map = {
         'name': 'Blob'
@@ -301,8 +301,8 @@ class BlobItemInternal(msrest.serialization.Model):
         self.properties = kwargs['properties']
         self.metadata = kwargs.get('metadata', None)
         self.blob_tags = kwargs.get('blob_tags', None)
-        self.object_replication_metadata = kwargs.get('object_replication_metadata', None)
         self.has_versions_only = kwargs.get('has_versions_only', None)
+        self.object_replication_metadata = kwargs.get('object_replication_metadata', None)
 
 
 class BlobMetadata(msrest.serialization.Model):
