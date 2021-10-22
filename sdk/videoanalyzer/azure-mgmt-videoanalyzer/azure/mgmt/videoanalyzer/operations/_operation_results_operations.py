@@ -22,8 +22,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class Operations(object):
-    """Operations operations.
+class OperationResultsOperations(object):
+    """OperationResultsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -44,21 +44,33 @@ class Operations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def list(
+    def get(
         self,
+        resource_group_name,  # type: str
+        account_name,  # type: str
+        name,  # type: str
+        operation_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.OperationCollection"
-        """List Operations.
+        # type: (...) -> Optional["_models.PrivateEndpointConnection"]
+        """Get operation result.
 
-        Lists all the Media operations.
+        Get private endpoint connection operation result.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param account_name: The Video Analyzer account name.
+        :type account_name: str
+        :param name: Private endpoint connection name.
+        :type name: str
+        :param operation_id: Operation Id.
+        :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: OperationCollection, or the result of cls(response)
-        :rtype: ~video_analyzer.models.OperationCollection
+        :return: PrivateEndpointConnection, or the result of cls(response)
+        :rtype: ~video_analyzer.models.PrivateEndpointConnection or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PrivateEndpointConnection"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -67,7 +79,15 @@ class Operations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.list.metadata['url']  # type: ignore
+        url = self.get.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'operationId': self._serialize.url("operation_id", operation_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
@@ -81,15 +101,17 @@ class Operations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('OperationCollection', pipeline_response)
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Media/operations'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}/privateEndpointConnections/{name}/operationResults/{operationId}'}  # type: ignore

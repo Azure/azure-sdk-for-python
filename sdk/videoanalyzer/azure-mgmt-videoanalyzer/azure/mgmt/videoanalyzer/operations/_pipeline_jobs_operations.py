@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
@@ -19,13 +20,13 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class VideoAnalyzersOperations(object):
-    """VideoAnalyzersOperations operations.
+class PipelineJobsOperations(object):
+    """PipelineJobsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -49,21 +50,33 @@ class VideoAnalyzersOperations(object):
     def list(
         self,
         resource_group_name,  # type: str
+        account_name,  # type: str
+        filter=None,  # type: Optional[str]
+        top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.VideoAnalyzerCollection"
-        """List Video Analyzer accounts.
+        # type: (...) -> Iterable["_models.PipelineJobCollection"]
+        """Retrieves a list of pipeline jobs.
 
-        Lists the Video Analyzer accounts in the specified resource group.
+        Retrieves a list of all live pipelines that have been created, along with their JSON
+        representations.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
+        :param account_name: The Azure Video Analyzer account name.
+        :type account_name: str
+        :param filter: Restricts the set of items returned.
+        :type filter: str
+        :param top: Specifies a non-negative integer n that limits the number of items returned from a
+         collection. The service returns the number of available items up to but not greater than the
+         specified value n.
+        :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: VideoAnalyzerCollection, or the result of cls(response)
-        :rtype: ~video_analyzer.models.VideoAnalyzerCollection
+        :return: An iterator like instance of either PipelineJobCollection or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~video_analyzer.models.PipelineJobCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VideoAnalyzerCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PipelineJobCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -71,60 +84,85 @@ class VideoAnalyzersOperations(object):
         api_version = "2021-11-01-preview"
         accept = "application/json"
 
-        # Construct URL
-        url = self.list.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = self.list.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+                    'accountName': self._serialize.url("account_name", account_name, 'str'),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+                request = self._client.get(url, query_parameters, header_parameters)
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                request = self._client.get(url, query_parameters, header_parameters)
+            return request
 
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize('PipelineJobCollection', pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
 
-        deserialized = self._deserialize('VideoAnalyzerCollection', pipeline_response)
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})
+            if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers'}  # type: ignore
+            return pipeline_response
+
+        return ItemPaged(
+            get_next, extract_data
+        )
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}/pipelineJobs'}  # type: ignore
 
     def get(
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
+        pipeline_job_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.VideoAnalyzer"
-        """Get a Video Analyzer account.
+        # type: (...) -> "_models.PipelineJob"
+        """Gets a specific pipeline job by name.
 
-        Get the details of the specified Video Analyzer account.
+        Retrieves a specific pipeline job by name. If a pipeline job with that name has been previously
+        created, the call will return the JSON representation of that instance.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param account_name: The Video Analyzer account name.
+        :param account_name: The Azure Video Analyzer account name.
         :type account_name: str
+        :param pipeline_job_name: The pipeline job name.
+        :type pipeline_job_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: VideoAnalyzer, or the result of cls(response)
-        :rtype: ~video_analyzer.models.VideoAnalyzer
+        :return: PipelineJob, or the result of cls(response)
+        :rtype: ~video_analyzer.models.PipelineJob
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VideoAnalyzer"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PipelineJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -138,6 +176,7 @@ class VideoAnalyzersOperations(object):
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'pipelineJobName': self._serialize.url("pipeline_job_name", pipeline_job_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -158,23 +197,41 @@ class VideoAnalyzersOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('VideoAnalyzer', pipeline_response)
+        deserialized = self._deserialize('PipelineJob', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}/pipelineJobs/{pipelineJobName}'}  # type: ignore
 
-    def _create_or_update_initial(
+    def create_or_update(
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        parameters,  # type: "_models.VideoAnalyzer"
+        pipeline_job_name,  # type: str
+        parameters,  # type: "_models.PipelineJob"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.VideoAnalyzer"
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VideoAnalyzer"]
+        # type: (...) -> "_models.PipelineJob"
+        """Creates or updates a pipeline job.
+
+        Creates a new pipeline job or updates an existing one, with the given name.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param account_name: The Azure Video Analyzer account name.
+        :type account_name: str
+        :param pipeline_job_name: The pipeline job name.
+        :type pipeline_job_name: str
+        :param parameters: The request parameters.
+        :type parameters: ~video_analyzer.models.PipelineJob
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: PipelineJob, or the result of cls(response)
+        :rtype: ~video_analyzer.models.PipelineJob
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PipelineJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -184,11 +241,12 @@ class VideoAnalyzersOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self._create_or_update_initial.metadata['url']  # type: ignore
+        url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'pipelineJobName': self._serialize.url("pipeline_job_name", pipeline_job_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -202,7 +260,7 @@ class VideoAnalyzersOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'VideoAnalyzer')
+        body_content = self._serialize.body(parameters, 'PipelineJob')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -213,111 +271,36 @@ class VideoAnalyzersOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize('VideoAnalyzer', pipeline_response)
+            deserialized = self._deserialize('PipelineJob', pipeline_response)
 
         if response.status_code == 201:
-            response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
-            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-            response_headers['Azure-AsyncOperation']=self._deserialize('str', response.headers.get('Azure-AsyncOperation'))
-            deserialized = self._deserialize('VideoAnalyzer', pipeline_response)
+            deserialized = self._deserialize('PipelineJob', pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}'}  # type: ignore
-
-    def begin_create_or_update(
-        self,
-        resource_group_name,  # type: str
-        account_name,  # type: str
-        parameters,  # type: "_models.VideoAnalyzer"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.VideoAnalyzer"]
-        """Create or update a Video Analyzer account.
-
-        Create or update an instance of a Video Analyzer account.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param account_name: The Video Analyzer account name.
-        :type account_name: str
-        :param parameters: The request parameters.
-        :type parameters: ~video_analyzer.models.VideoAnalyzer
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either VideoAnalyzer or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~video_analyzer.models.VideoAnalyzer]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VideoAnalyzer"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = self._create_or_update_initial(
-                resource_group_name=resource_group_name,
-                account_name=account_name,
-                parameters=parameters,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-
-        kwargs.pop('error_map', None)
-        kwargs.pop('content_type', None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('VideoAnalyzer', pipeline_response)
-
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'accountName': self._serialize.url("account_name", account_name, 'str'),
-        }
-
-        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        else:
-            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}'}  # type: ignore
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}/pipelineJobs/{pipelineJobName}'}  # type: ignore
 
     def delete(
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
+        pipeline_job_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Delete a Video Analyzer account.
+        """Deletes a pipeline job.
 
-        Delete the specified Video Analyzer account.
+        Deletes a pipeline job with the given name.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param account_name: The Video Analyzer account name.
+        :param account_name: The Azure Video Analyzer account name.
         :type account_name: str
+        :param pipeline_job_name: The pipeline job name.
+        :type pipeline_job_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -337,6 +320,7 @@ class VideoAnalyzersOperations(object):
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'pipelineJobName': self._serialize.url("pipeline_job_name", pipeline_job_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -360,17 +344,36 @@ class VideoAnalyzersOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}'}  # type: ignore
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}/pipelineJobs/{pipelineJobName}'}  # type: ignore
 
-    def _update_initial(
+    def update(
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        parameters,  # type: "_models.VideoAnalyzerUpdate"
+        pipeline_job_name,  # type: str
+        parameters,  # type: "_models.PipelineJobUpdate"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.VideoAnalyzer"
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VideoAnalyzer"]
+        # type: (...) -> "_models.PipelineJob"
+        """Updates an existing pipeline job.
+
+        Updates an existing pipeline job with the given name. Properties that can be updated include:
+        description.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param account_name: The Azure Video Analyzer account name.
+        :type account_name: str
+        :param pipeline_job_name: The pipeline job name.
+        :type pipeline_job_name: str
+        :param parameters: The request parameters.
+        :type parameters: ~video_analyzer.models.PipelineJobUpdate
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: PipelineJob, or the result of cls(response)
+        :rtype: ~video_analyzer.models.PipelineJob
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PipelineJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -380,11 +383,12 @@ class VideoAnalyzersOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self._update_initial.metadata['url']  # type: ignore
+        url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'pipelineJobName': self._serialize.url("pipeline_job_name", pipeline_job_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -398,69 +402,113 @@ class VideoAnalyzersOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'VideoAnalyzerUpdate')
+        body_content = self._serialize.body(parameters, 'PipelineJobUpdate')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        response_headers = {}
-        response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
-        response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-        response_headers['Azure-AsyncOperation']=self._deserialize('str', response.headers.get('Azure-AsyncOperation'))
-        deserialized = self._deserialize('VideoAnalyzer', pipeline_response)
+        deserialized = self._deserialize('PipelineJob', pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}'}  # type: ignore
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}/pipelineJobs/{pipelineJobName}'}  # type: ignore
 
-    def begin_update(
+    def _cancel_initial(
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        parameters,  # type: "_models.VideoAnalyzerUpdate"
+        pipeline_job_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["_models.VideoAnalyzer"]
-        """Update a Video Analyzer account.
+        # type: (...) -> None
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-11-01-preview"
+        accept = "application/json"
 
-        Updates an existing instance of Video Analyzer account.
+        # Construct URL
+        url = self._cancel_initial.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'pipelineJobName': self._serialize.url("pipeline_job_name", pipeline_job_name, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.post(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    _cancel_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}/pipelineJobs/{pipelineJobName}/cancel'}  # type: ignore
+
+    def begin_cancel(
+        self,
+        resource_group_name,  # type: str
+        account_name,  # type: str
+        pipeline_job_name,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller[None]
+        """Cancels a pipeline job.
+
+        Cancels a pipeline job with the given name.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param account_name: The Video Analyzer account name.
+        :param account_name: The Azure Video Analyzer account name.
         :type account_name: str
-        :param parameters: The request parameters.
-        :type parameters: ~video_analyzer.models.VideoAnalyzerUpdate
+        :param pipeline_job_name: The pipeline job name.
+        :type pipeline_job_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling.
          Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either VideoAnalyzer or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~video_analyzer.models.VideoAnalyzer]
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VideoAnalyzer"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._update_initial(
+            raw_result = self._cancel_initial(
                 resource_group_name=resource_group_name,
                 account_name=account_name,
-                parameters=parameters,
+                pipeline_job_name=pipeline_job_name,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -469,21 +517,14 @@ class VideoAnalyzersOperations(object):
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
-            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-            response_headers['Azure-AsyncOperation']=self._deserialize('str', response.headers.get('Azure-AsyncOperation'))
-            deserialized = self._deserialize('VideoAnalyzer', pipeline_response)
-
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)
-            return deserialized
+                return cls(pipeline_response, None, {})
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'pipelineJobName': self._serialize.url("pipeline_job_name", pipeline_job_name, 'str'),
         }
 
         if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -498,58 +539,4 @@ class VideoAnalyzersOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}'}  # type: ignore
-
-    def list_by_subscription(
-        self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.VideoAnalyzerCollection"
-        """List Video Analyzer accounts.
-
-        List all Video Analyzer accounts in the specified subscription.
-
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: VideoAnalyzerCollection, or the result of cls(response)
-        :rtype: ~video_analyzer.models.VideoAnalyzerCollection
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VideoAnalyzerCollection"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-11-01-preview"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.list_by_subscription.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('VideoAnalyzerCollection', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Media/videoAnalyzers'}  # type: ignore
+    begin_cancel.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}/pipelineJobs/{pipelineJobName}/cancel'}  # type: ignore
