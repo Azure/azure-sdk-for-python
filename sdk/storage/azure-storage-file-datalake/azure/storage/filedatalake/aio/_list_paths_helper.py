@@ -8,7 +8,8 @@
 from azure.core.exceptions import HttpResponseError
 from azure.core.async_paging import AsyncPageIterator
 
-from .._deserialize import process_storage_error, get_deleted_path_properties_from_generated_code, return_headers_and_deserialized_path_list
+from .._deserialize import process_storage_error, get_deleted_path_properties_from_generated_code, \
+    return_headers_and_deserialized_path_list
 from .._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix
 
 from .._shared.models import DictMixin
@@ -174,4 +175,3 @@ class PathPropertiesPaged(AsyncPageIterator):
             path = PathProperties._from_generated(item)  # pylint: disable=protected-access
             return path
         return item
-
