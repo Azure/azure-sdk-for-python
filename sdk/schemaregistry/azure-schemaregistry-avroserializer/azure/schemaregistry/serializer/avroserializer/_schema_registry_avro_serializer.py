@@ -146,27 +146,19 @@ class AvroSerializer(object):
 
         try:
             cached_schema = self._avro_serializer.parse_schema(raw_input_schema)
-        except:
-            traceback = sys.exc_info()[2]
-            six.reraise(
-                SchemaParseError,
-                "Cannot parse schema: {}".format(raw_input_schema),
-                traceback,
-            )
+            schema_fullname = cached_schema.fullname
+        except Exception as e:
+            raise SchemaParseError("Cannot parse schema: {}".format(raw_input_schema), error=e)
 
         schema_id = self._get_schema_id(
-            cached_schema.fullname, str(cached_schema), **kwargs
+            schema_fullname, str(cached_schema), **kwargs
         )
         try:
             data_bytes = self._avro_serializer.serialize(value, cached_schema)
-        except:
-            traceback = sys.exc_info()[2]
-            six.reraise(
-                SchemaSerializationError,
-                "Cannot serialize value '{}' for schema: {}".format(
-                    value, str(cached_schema)
-                ),
-                traceback,
+        except Exception as e:
+            raise SchemaSerializationError(
+                "Cannot serialize value '{}' for schema: {}".format(value, str(cached_schema)),
+                error=e
             )
 
         stream = BytesIO()
@@ -198,13 +190,10 @@ class AvroSerializer(object):
             dict_value = self._avro_serializer.deserialize(
                 value[DATA_START_INDEX:], schema_definition
             )
-        except:
-            traceback = sys.exc_info()[2]
-            six.reraise(
-                SchemaSerializationError,
-                "Cannot deserialize value '{}' for schema: {}".format(
-                    value[DATA_START_INDEX:], schema_definition
-                ),
-                traceback,
+        except Exception as e:
+            raise SchemaDeserializationError(
+                "Cannot deserialize value '{}' for schema: {}".format(value[DATA_START_INDEX], schema_definition),
+                error=e
             )
+                
         return dict_value
