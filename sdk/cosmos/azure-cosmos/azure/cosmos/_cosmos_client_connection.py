@@ -2480,7 +2480,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     def __ValidateResource(resource):
-        print(resource)
         id_ = resource.get("id")
         if id_:
             try:
