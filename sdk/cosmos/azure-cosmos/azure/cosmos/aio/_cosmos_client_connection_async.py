@@ -204,6 +204,31 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         # Routing map provider
         self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
 
+    @property
+    def Session(self):
+        """Gets the session object from the client. """
+        return self.session
+
+    @Session.setter
+    def Session(self, session):
+        """Sets a session object on the document client.
+
+        This will override the existing session
+        """
+        self.session = session
+
+    @property
+    def WriteEndpoint(self):
+        """Gets the curent write endpoint for a geo-replicated database account.
+        """
+        return self._global_endpoint_manager.get_write_endpoint()
+
+    @property
+    def ReadEndpoint(self):
+        """Gets the curent read endpoint for a geo-replicated database account.
+        """
+        return self._global_endpoint_manager.get_read_endpoint()
+
     async def _setup(self):
         if not 'database_account' in self._setup_kwargs:
             self._setup_kwargs['database_account'] = await self._global_endpoint_manager._GetDatabaseAccount(**self._setup_kwargs)
@@ -1274,7 +1299,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         path = base.GetPathFromLink(collection_link)
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         return await self.DeleteResource(path, "colls", collection_id, None, options, **kwargs)
-
 
     async def DeleteItem(self, document_link, options=None, **kwargs):
         """Deletes a document.
