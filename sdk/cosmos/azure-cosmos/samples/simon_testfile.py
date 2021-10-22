@@ -2,7 +2,6 @@ import sys
 from time import time
 sys.path.append(r"C:\Users\simonmoreno\Repos\azure-sdk-for-python\sdk\cosmos\azure-cosmos")
 
-
 import asyncio
 import time
 from azure.cosmos.aio.cosmos_client import CosmosClient as AsyncClient
@@ -251,7 +250,7 @@ async def qta():
         print("attempting query")
 
         query = "SELECT * FROM c"
-        items = cont.query_items(
+        items = await cont.query_items(
             query=query,
             parameters=[{"name":"@id", "value": itemId}],
             enable_cross_partition_query=True)

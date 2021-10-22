@@ -58,10 +58,11 @@ async def read_items(container):
     #       result in a 429 (throttled request)
     read_all_items_response = container.read_all_items(max_item_count=10)
 
-    # Because the asynchronous client returns an asynchronous iterator object for methods that use
-    # return several items using queries, we do not need to await the function. However, attempting
-    # to cast this object into a list directly will throw an error; instead, iterate over the items
-    # using an async for loop like shown here and in the query_items() method below
+    # The asynchronous client returns an asynchronous iterator object for methods that
+    # return several items, so attempting to cast this object into a list directly will
+    # throw an error; instead, iterate over the items using an async for loop like shown
+    # here and in the query_items() method below. We also do not await read_all() because
+    # it doesn't deal with partition key logic the way query_items() does
     item_list = [item async for item in read_all_items_response]
 
     print('Found {0} items'.format(item_list.__len__()))
@@ -79,7 +80,10 @@ async def query_items(container, doc_id):
     print('\n1.4 Querying for an  Item by Id\n')
 
     # enable_cross_partition_query should be set to True as the container is partitioned
-    query_items_response = container.query_items(
+    # In this case, we do have to await the asynchronous iterator object since logic
+    # within the query_items() method makes network calls to verify the partition key
+    # deifnition in the container
+    query_items_response = await container.query_items(
         query="SELECT * FROM r WHERE r.id=@id",
         parameters=[
             { "name":"@id", "value": doc_id }

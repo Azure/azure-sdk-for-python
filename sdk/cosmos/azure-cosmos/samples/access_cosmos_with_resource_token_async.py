@@ -101,7 +101,7 @@ async def token_client_delete(container, username, item_id):
 
 async def token_client_query(container, username):
     try:
-        async for item in container.query_items(
+        async for item in await container.query_items(
             query="SELECT * FROM my_container c WHERE c.username=@username",
             parameters=[{"name": "@username", "value": username}],
             partition_key=username,
