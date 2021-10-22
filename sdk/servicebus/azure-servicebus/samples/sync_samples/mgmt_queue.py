@@ -79,8 +79,7 @@ def get_queue_runtime_properties(servicebus_mgmt_client):
     print("")
 
 
-from azure.servicebus.management import ApiVersion
-with ServiceBusAdministrationClient.from_connection_string(CONNECTION_STR, api_version=ApiVersion.V2017_04) as servicebus_mgmt_client:
+with ServiceBusAdministrationClient.from_connection_string(CONNECTION_STR) as servicebus_mgmt_client:
     create_queue(servicebus_mgmt_client)
     list_queues(servicebus_mgmt_client)
     get_and_update_queue(servicebus_mgmt_client)
