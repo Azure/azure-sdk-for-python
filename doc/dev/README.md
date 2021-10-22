@@ -7,7 +7,7 @@ Overview of the documents:
 - [Release](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/release.md) : How to release a package when ready
 - [Packaging](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/packaging.md) : How to organize packaging information for packages under `azure`
 - [Testing](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md): How to write unit and functional tests for a library
-- [Docstrings and Type hints](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/docstring_typehint.md): How to document an SDK for compatability with internal tools (API View) and our documentation at [MS Docs][ms_docs] and the [azure.github.io][azure_github_io] site.
+- [Docstrings and Type hints](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/docstring_typehint.md): How to document an SDK for compatibility with internal tools (API View) and our documentation at [MS Docs][ms_docs] and the [azure.github.io][azure_github_io] site.
 
 The [mgmt](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt) folder contains information specific to management packages (i.e. packages prefixed by `azure-mgmt`)
 

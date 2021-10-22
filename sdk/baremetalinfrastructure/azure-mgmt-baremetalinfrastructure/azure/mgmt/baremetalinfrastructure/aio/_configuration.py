@@ -45,7 +45,7 @@ class BareMetalInfrastructureClientConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2020-08-06-preview"
+        self.api_version = "2021-08-09"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-baremetalinfrastructure/{}'.format(VERSION))
         self._configure(**kwargs)

@@ -23,5 +23,5 @@ class PurviewCatalogTest(AzureTestCase):
 PurviewCatalogPowerShellPreparer = functools.partial(
     PowerShellPreparer,
     "purviewcatalog",
-    purviewcatalog_endpoint="https://fake_account.catalog.purview.azure.com"
+    purviewcatalog_endpoint="https://fake_account.purview.azure.com"
 )

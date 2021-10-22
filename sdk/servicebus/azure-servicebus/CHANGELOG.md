@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Fixed bug that `ServiceBusReceiver` can not connect to sessionful entity with session id being empty string.
+- Fixed bug that `ServiceBusMessage.partition_key` can not parse empty string properly.
+
 ### Other Changes
 
 ## 7.3.4 (2021-10-06)

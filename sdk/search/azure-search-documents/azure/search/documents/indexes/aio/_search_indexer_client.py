@@ -162,6 +162,10 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         # type: (**Any) -> Sequence[SearchIndexer]
         """Lists all indexers available for a search service.
 
+        :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
+         list of JSON property names, or '*' for all properties. The default is all
+         properties.
+        :paramtype select: list[str]
         :return: List of all the SearchIndexers.
         :rtype: `list[~azure.search.documents.indexes.models.SearchIndexer]`
 
@@ -175,6 +179,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
                 :caption: List all the SearchIndexers
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        if kwargs.get('select', None):
+            kwargs['select'] = ','.join(kwargs['select'])
         result = await self._client.indexers.list(**kwargs)
         return result.indexers
 
@@ -393,6 +399,10 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         # type: (str, **Any) -> SearchIndexerDataSourceConnection
         """Retrieves a data source connection definition.
 
+        :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
+         list of JSON property names, or '*' for all properties. The default is all
+         properties.
+        :paramtype select: list[str]
         :param name: The name of the data source connection to retrieve.
         :type name: str
         :return: The SearchIndexerDataSourceConnection that is fetched.
@@ -406,6 +416,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
                 :caption: Retrieve a SearchIndexerDataSourceConnection
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        if kwargs.get('select', None):
+            kwargs['select'] = ','.join(kwargs['select'])
         result = await self._client.data_sources.get(name, **kwargs)
         # pylint:disable=protected-access
         return SearchIndexerDataSourceConnection._from_generated(result)
@@ -453,6 +465,10 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         # type: (**Any) -> List[SearchIndexerSkillset]
         """List the SearchIndexerSkillsets in an Azure Search service.
 
+        :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
+         list of JSON property names, or '*' for all properties. The default is all
+         properties.
+        :paramtype select: list[str]
         :return: List of SearchIndexerSkillsets
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexerSkillset]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -468,6 +484,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        if kwargs.get('select', None):
+            kwargs['select'] = ','.join(kwargs['select'])
         result = await self._client.skillsets.list(**kwargs)
         return [SearchIndexerSkillset._from_generated(skillset) for skillset in result.skillsets] # pylint:disable=protected-access
 

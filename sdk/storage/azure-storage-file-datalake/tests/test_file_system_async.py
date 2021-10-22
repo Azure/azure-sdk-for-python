@@ -23,12 +23,12 @@ from azure.storage.filedatalake import generate_account_sas, ResourceTypes, Acco
 from azure.storage.filedatalake import AccessPolicy, DirectorySasPermissions, generate_file_system_sas
 from azure.storage.filedatalake.aio import DataLakeServiceClient, DataLakeDirectoryClient, FileSystemClient
 from azure.storage.filedatalake import PublicAccess
-from asynctestcase import (
-    StorageTestCase)
+from azure.storage.filedatalake import FileSystemSasPermissions
+
+from devtools_testutils.storage.aio import AsyncStorageTestCase as StorageTestCase
+from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
-from azure.storage.filedatalake import FileSystemSasPermissions
-from testcase import DataLakePreparer
 
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 
@@ -49,7 +49,7 @@ class AiohttpTestTransport(AioHttpTransport):
 
 class FileSystemTest(StorageTestCase):
     def _setUp(self, account_name, account_key):
-        url = self._get_account_url(account_name)
+        url = self.account_url(account_name, 'dfs')
         self.dsc = DataLakeServiceClient(url, credential=account_key,
                                          transport=AiohttpTestTransport(), logging_enable=True)
         self.config = self.dsc._config
@@ -76,6 +76,11 @@ class FileSystemTest(StorageTestCase):
     async def _create_file_system(self, file_system_prefix=TEST_FILE_SYSTEM_PREFIX):
         return await self.dsc.create_file_system(self._get_file_system_reference(prefix=file_system_prefix))
 
+    async def _to_list(self, async_iterator):
+        result = []
+        async for item in async_iterator:
+            result.append(item)
+        return result
     # --Helpers-----------------------------------------------------------------
 
     @DataLakePreparer()
@@ -639,7 +644,7 @@ class FileSystemTest(StorageTestCase):
             self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
 
-        url = self._get_account_url(datalake_storage_account_name)
+        url = self.account_url(datalake_storage_account_name, 'dfs')
         token_credential = self.generate_oauth_token()
         dsc = DataLakeServiceClient(url, token_credential, logging_enable=True)
         file_system_name = self._get_file_system_reference()
@@ -675,7 +680,7 @@ class FileSystemTest(StorageTestCase):
     async def test_list_paths_using_file_sys_delegation_sas_async(
             self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        url = self._get_account_url(datalake_storage_account_name)
+        url = self.account_url(datalake_storage_account_name, 'dfs')
         token_credential = self.generate_oauth_token()
         dsc = DataLakeServiceClient(url, token_credential)
         file_system_name = self._get_file_system_reference()
@@ -751,6 +756,100 @@ class FileSystemTest(StorageTestCase):
         restored_file_client = await file_system_client._undelete_path(file_path, resp['deletion_id'])
         resp = await restored_file_client.get_file_properties()
         self.assertIsNotNone(resp)
+
+    @DataLakePreparer()
+    async def test_delete_files_simple_no_raise(self, datalake_storage_account_name, datalake_storage_account_key):
+        # Arrange
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        filesystem = await self._create_file_system("fs2")
+        data = b'hello world'
+
+        try:
+            # create file1
+            await filesystem.get_file_client('file1').upload_data(data, overwrite=True)
+
+            # create file2, then pass file properties in batch delete later
+            file2 = filesystem.get_file_client('file2')
+            await file2.upload_data(data, overwrite=True)
+            file2_properties = await file2.get_file_properties()
+
+            # create file3 and batch delete it later only etag matches this file3 etag
+            file3 = filesystem.get_file_client('file3')
+            await file3.upload_data(data, overwrite=True)
+            file3_props = await file3.get_file_properties()
+            file3_etag = file3_props.etag
+
+            # create dir1
+            # empty directory can be deleted using delete_files
+            await filesystem.get_directory_client('dir1').create_directory(),
+
+            # create dir2, then pass directory properties in batch delete later
+            dir2 = filesystem.get_directory_client('dir2')
+            await dir2.create_directory()
+            dir2_properties = await dir2.get_directory_properties()
+
+        except:
+            pass
+
+        # Act
+        response = await self._to_list(await filesystem.delete_files(
+            'file1',
+            file2_properties,
+            {'name': 'file3', 'etag': file3_etag},
+            'dir1',
+            dir2_properties,
+            raise_on_any_failure=False
+        ))
+        assert len(response) == 5
+        assert response[0].status_code == 202
+        assert response[1].status_code == 202
+        assert response[2].status_code == 202
+        assert response[3].status_code == 202
+        assert response[4].status_code == 202
+
+    @DataLakePreparer()
+    async def test_delete_files_with_failed_subrequest(self, datalake_storage_account_name, datalake_storage_account_key):
+        # Arrange
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        filesystem = await self._create_file_system("fs1")
+        data = b'hello world'
+
+        try:
+            # create file1
+            await filesystem.get_file_client('file1').upload_data(data, overwrite=True)
+
+            # create file2
+            file2 = filesystem.get_file_client('file2')
+            await file2.upload_data(data, overwrite=True)
+            file2_properties = await file2.get_file_properties()
+
+            # create file3
+            file3 = filesystem.get_file_client('file3')
+            await file3.upload_data(data, overwrite=True)
+            file3_props = await file3.get_file_properties()
+            file3_etag = file3_props.etag
+
+            # create dir1
+            dir1 = filesystem.get_directory_client('dir1')
+            await dir1.create_file("file4")
+        except:
+            pass
+
+        # Act
+        response = await self._to_list(await filesystem.delete_files(
+            'file1',
+            file2_properties,
+            {'name': 'file3', 'etag': file3_etag},
+            'dir1',  # dir1 is not empty
+            'dir8',  # dir 8 doesn't exist
+            raise_on_any_failure=False
+        ))
+        assert len(response) == 5
+        assert response[0].status_code == 202
+        assert response[1].status_code == 202
+        assert response[2].status_code == 202
+        assert response[3].status_code == 409
+        assert response[4].status_code == 404
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
