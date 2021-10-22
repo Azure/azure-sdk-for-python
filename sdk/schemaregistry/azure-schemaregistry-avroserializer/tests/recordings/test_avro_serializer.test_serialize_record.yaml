@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 22 Oct 2021 03:57:09 GMT
+      - Fri, 22 Oct 2021 17:07:12 GMT
       location:
       - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/example.avro.populatedrecord.User/versions/1?api-version=2020-09-01-preview
       schema-id:
@@ -70,7 +70,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 22 Oct 2021 03:57:09 GMT
+      - Fri, 22 Oct 2021 17:07:12 GMT
       location:
       - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/example.avro.populatedrecord.User/versions/1?api-version=2020-09-01-preview
       schema-id:

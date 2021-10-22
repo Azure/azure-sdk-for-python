@@ -23,14 +23,10 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import sys
-import six
-
 try:
     from functools import lru_cache
 except ImportError:
     from backports.functools_lru_cache import lru_cache
-import avro
 from ._apache_avro_serializer import ApacheAvroObjectSerializer as AvroObjectSerializer
 from io import BytesIO
 from typing import Any, Dict, Mapping
@@ -41,7 +37,6 @@ from .exceptions import (
     SchemaDeserializationError,
 )
 from ._constants import SCHEMA_ID_START_INDEX, SCHEMA_ID_LENGTH, DATA_START_INDEX
-from ._utils import parse_schema
 
 
 class AvroSerializer(object):
@@ -195,5 +190,4 @@ class AvroSerializer(object):
                 "Cannot deserialize value '{}' for schema: {}".format(value[DATA_START_INDEX], schema_definition),
                 error=e
             )
-                
         return dict_value

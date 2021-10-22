@@ -26,7 +26,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 22 Oct 2021 03:57:03 GMT
+      - Fri, 22 Oct 2021 17:07:07 GMT
       location:
       - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/User.avro/versions/1?api-version=2020-09-01-preview
       schema-id:
@@ -68,7 +68,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 22 Oct 2021 03:57:04 GMT
+      - Fri, 22 Oct 2021 17:07:07 GMT
       location:
       - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/User.avro/versions/1?api-version=2020-09-01-preview
       schema-id:
@@ -117,7 +117,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 22 Oct 2021 03:57:04 GMT
+      - Fri, 22 Oct 2021 17:07:07 GMT
       location:
       - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/User/versions/1?api-version=2020-09-01-preview
       schema-id:
@@ -159,7 +159,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 22 Oct 2021 03:57:05 GMT
+      - Fri, 22 Oct 2021 17:07:08 GMT
       location:
       - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/User/versions/1?api-version=2020-09-01-preview
       schema-id:

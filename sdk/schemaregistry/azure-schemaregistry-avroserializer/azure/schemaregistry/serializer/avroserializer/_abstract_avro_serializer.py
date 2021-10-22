@@ -3,9 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from typing import Dict, Mapping, Any
+from typing import BinaryIO, Dict, Mapping, Any, TypeVar, Union
 from abc import abstractmethod
+import avro
 
+ObjectType = TypeVar("ObjectType")
 
 class AbstractAvroObjectSerializer(object):
     """

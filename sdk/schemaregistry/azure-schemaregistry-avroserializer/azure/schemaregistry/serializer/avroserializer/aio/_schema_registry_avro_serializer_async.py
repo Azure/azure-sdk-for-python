@@ -27,8 +27,12 @@ from io import BytesIO
 from typing import Any, Dict, Mapping
 from ._async_lru import alru_cache
 from .._constants import SCHEMA_ID_START_INDEX, SCHEMA_ID_LENGTH, DATA_START_INDEX
-from .._avro_serializer import AvroObjectSerializer
-from .._utils import parse_schema
+from .._apache_avro_serializer import ApacheAvroObjectSerializer as AvroObjectSerializer
+from ..exceptions import (
+    SchemaParseError,
+    SchemaSerializationError,
+    SchemaDeserializationError,
+)
 
 
 class AvroSerializer(object):
@@ -126,11 +130,22 @@ class AvroSerializer(object):
             raw_input_schema = kwargs.pop("schema")
         except KeyError as e:
             raise TypeError("'{}' is a required keyword.".format(e.args[0]))
-
-        cached_schema = parse_schema(raw_input_schema)
         record_format_identifier = b"\0\0\0\0"
-        schema_id = await self._get_schema_id(cached_schema.fullname, str(cached_schema), **kwargs)
-        data_bytes = self._avro_serializer.serialize(value, cached_schema)
+
+        try:
+            cached_schema = self._avro_serializer.parse_schema(raw_input_schema)
+            schema_fullname = cached_schema.fullname
+        except Exception as e:
+            raise SchemaParseError("Cannot parse schema: {}".format(raw_input_schema), error=e)
+
+        schema_id = await self._get_schema_id(schema_fullname, str(cached_schema), **kwargs)
+        try:
+            data_bytes = self._avro_serializer.serialize(value, cached_schema)
+        except Exception as e:
+            raise SchemaSerializationError(
+                "Cannot serialize value '{}' for schema: {}".format(value, str(cached_schema)),
+                error=e
+            )
 
         stream = BytesIO()
 
@@ -157,7 +172,13 @@ class AvroSerializer(object):
         ].decode("utf-8")
         schema_definition = await self._get_schema(schema_id, **kwargs)
 
-        dict_value = self._avro_serializer.deserialize(
-            value[DATA_START_INDEX:], schema_definition
-        )
+        try:
+            dict_value = self._avro_serializer.deserialize(
+                value[DATA_START_INDEX:], schema_definition
+            )
+        except Exception as e:
+            raise SchemaDeserializationError(
+                "Cannot deserialize value '{}' for schema: {}".format(value[DATA_START_INDEX], schema_definition),
+                error=e
+            )
         return dict_value
