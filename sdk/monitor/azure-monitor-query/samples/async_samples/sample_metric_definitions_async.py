@@ -7,13 +7,9 @@ DESCRIPTION:
 USAGE:
     python sample_metric_definitions_async.py
     Set the environment variables with your own values before running the sample:
-    1) METRICS_RESOURCE_URI - The resource uri of the resource for which the metrics are being queried.
-    In this example, an eventgrid account resource URI is taken.
+    1) METRICS_RESOURCE_URI - The resource URI of the resource for which the metrics are being queried.
 
-    In order to use the DefaultAzureCredential, the following environment variables must be set:
-    1) AZURE_CLIENT_ID - The client ID of a user-assigned managed identity.
-    2) AZURE_TENANT_ID - Tenant ID to use when authenticating a user.
-    3) AZURE_CLIENT_ID - The client secret to be used for authentication.
+    In this example, an Event Grid account resource URI is taken.
 """
 import os
 import asyncio
