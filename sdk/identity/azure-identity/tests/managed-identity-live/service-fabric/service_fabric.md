@@ -27,8 +27,9 @@ cd azure-sdk-for-python/sdk/identity/azure-identity/tests/managed-identity-live/
 - [Resource setup](#set-up-resources)
 - [Application deployment](#set-up-and-deploy-the-applications)
 - [Test validation](#run-the-tests)
+- [Troubleshooting](#troubleshooting)
 
-## Set Up Resources
+## Set up resources
 
 You can skip to [Set Up and Deploy the Applications](#set-up-and-deploy-the-applications) if you have an existing Service Fabric cluster, key vault, storage account, container registry, and managed identity named "AdminUser".
 
@@ -68,6 +69,9 @@ From your command prompt window, run:
 az acr create -g $RESOURCE_GROUP -n $ACR_NAME --admin-enabled --sku basic
 ```
 
+> **NOTE:** Don't use upper-case letters in the name of the container registry. A registry can be created with a name
+> that includes upper-case letters, but you may be unable to authenticate to it.
+
 ### Deploy a managed identity-enabled cluster
 
 At the time of writing, Service Fabric clusters must be deployed using the Azure Resource Manager in order to enable managed identity. Provided is a cluster ARM template that can be used to create a managed identity-enabled cluster once some required fields are completed. The template uses the cluster certificate provided by your key vault, creates a system-assigned identity, and enables the managed identity token service so deployed applications can access their identities.
@@ -83,7 +87,7 @@ az deployment group create --resource-group $RESOURCE_GROUP --template-file arm-
 
 This will begin to deploy a Service Fabric cluster as well as other necessary resources: a load balancer, public IP address, virtual machine scale set, virtual network, and two storage accounts.
 
-## Set Up and Deploy the Applications
+## Set up and deploy the applications
 
 ### Build and publish a Docker image for each application
 
@@ -180,13 +184,67 @@ az identity show -g $RESOURCE_GROUP -n AdminUser
 az keyvault set-policy -n $KEY_VAULT_NAME --secret-permissions list --object-id $PRINCIPAL_ID
 ```
 
-## Run the Tests
+## Run the tests
+
+### Connect to your cluster on Service Fabric Explorer
+
+Instructions on connecting to the Explorer can be found
+[here](https://docs.microsoft.com/azure/service-fabric/service-fabric-connect-to-secure-cluster#connect-to-a-secure-cluster-using-service-fabric-explorer).
+Adding a certificate to your local machine's browser is the recommended method of easily connecting to the Explorer;
+instructions are below.
+
+#### Add your self-signed certificate to your certificate store
+
+First, go to the Key Vault you created earlier in the Azure Portal. Go to the "Certificates" page in the sidebar and
+click on the certificate that you created earlier. Click on the current version of the certificate, and then click
+"Download in PFX/PEM format" at the top of the following page.
+
+After the certificate finishes downloading, open your browser's settings and find the option to manage HTTPS/SSL
+certificates. On Windows, you should see a window open with a list of certificates in your Personal store -- click
+"Import..." to open the Certificate Import Wizard. Browse your files to find the PFX certificate you downloaded from
+Key Vault -- you may need to change the file extension filter to "Personal Information Exchange (\*.pfx;\*.p12)".
+Import the certificate into your Personal store.
+
+#### Troubleshooting: gain access to the Explorer endpoint
+
+If you're using a corporate VPN and your browser can't connect to the Explorer endpoint because your request times out,
+you may have to add a security rule to the network security group resource in your resource group (its name should
+begin with "NRMS"). Be sure to first comply with
+[security rules for ARM subnets](https://strikecommunity.azurewebsites.net/articles/3427/faq-simply-secure-network-security-rules-for-new-a.html).
+[Here](https://strikecommunity.azurewebsites.net/articles/4889/can-not-access-my-non-production-resources-from-so-1.html)
+is a page that discusses the known issue with VPN access to some resources.
+
+To add a security rule, open the resource in the Azure Portal, and then go to the "Inbound security rules" page in the
+sidebar. Click "Add" to add a new rule, and fill in the following settings:
+
+- **Source:** IP Addresses
+- **Source IP addresses/CIDR ranges:** [Your IP address]
+- **Source port ranges:** *
+- **Destination:** Any
+- **Service:** Custom
+- **Destination port ranges:** *
+- **Protocol:** Any
+- **Action:** Allow
+- **Priority:** [Lower number than the priority of other rules -- most likely 100]
+- **Name:** Allow-My-Machine
+
+#### Connect to Service Fabric Explorer
+
+After adding the certificate to your Personal store (and possibly adding a security rule), going to the Explorer
+endpoint in your browser should present you with a page saying that the website is unsafe. This is because the Service
+Fabric cluster is providing the self-signed certificate you created with your Key Vault, so this isn't an issue.
+Proceed to the website (you may have to expand "Advanced" settings to do this).
+
+You should be prompted for a certificate. Provide the certificate from your Key Vault that you imported to your
+machine's certificate store.
+
+### Verify test output
 
 Once running on your cluster, the applications should each perform the same task: using a `ManagedIdentityCredential` to list your key vault's secret properties. One uses a system-assigned managed identity to do so, while the other uses a user-assigned managed identity. To verify that they have each done their job correctly, you can access the application logs in your cluster's Service Fabric Explorer page.
 
 Verify in a browser:
 
-1. [Connect to your cluster on Service Fabric Explorer](https://docs.microsoft.com/azure/service-fabric/service-fabric-connect-to-secure-cluster#connect-to-a-secure-cluster-using-service-fabric-explorer).
+1. Connect to your cluster on Service Fabric Explorer.
 2. In the Explorer, you should see the applications running under the Applications tab. Otherwise, you may need to double check your deployment process.
 3. Under the Nodes tab, expand each node tab to see if it hosts an application ("fabric:/sfmitestsystem" or "fabric:/sfmitestuser").
 4. When you find an application entry, click the "+" sign by the name to expand it. There should be a "code" entry -- click on that to bring up a page that has a "Container Logs" tab.
@@ -212,3 +270,32 @@ az deployment group create --resource-group $RESOURCE_GROUP --template-file arm-
 az deployment group create --resource-group $RESOURCE_GROUP --template-file arm-templates\sfmitestuser.template.json --parameters arm-templates\sfmitestuser.parameters.json
 ```
 6. Verify the test output again, as you did above. You should now also see that `test_managed_identity_live_async` shows `PASSED`.
+
+## Troubleshooting
+
+**Applications and/or nodes are in an error state**
+
+This usually means that the applications are crashing or the Docker image is broken.
+- Validate that you can run the tests locally and only see expected failures/errors for your environment.
+- Validate that your Dockerfile has installed all necessary packages for the commands it attempts to run and that it
+builds properly. Ensure any endpoints that are referenced by the Dockerfile are available (i.e. make sure URLs
+are correct and that install commands will succeed locally). Double-check that commands are formatted correctly.
+
+To push updates to the applications, deployed applications will first need to be deleted.
+- In the Explorer, navigate down the "Applications" tab on the sidebar and expand "sfmitestsystemType". Click on
+"fabric:/sfmitestsystem". In the top right of the following page, click on "Actions" and then "Delete
+Application".
+- After the application is deleted, click on "sfmitestsystemType" and in the top right of the following page, click
+on "Actions" and then "Unprovision Type".
+- Repeat the above steps for `sfmitestuser`.
+- Re-deploy the applications after making any changes to your test and/or Docker images, using the deployment
+commands in [Deploy the applications](#deploy-the-applications).
+
+**The container logs page is showing an Error 404 upon refresh**
+
+This is normal behavior, and just means that logs aren't available at that time. After refreshing for a while, logs
+should appear.
+
+**The Explorer page won't connect or the browser is blocking the endpoint**
+
+Refer to [Connect to your cluster on Service Fabric Explorer](#connect-to-your-cluster-on-service-fabric-explorer).
