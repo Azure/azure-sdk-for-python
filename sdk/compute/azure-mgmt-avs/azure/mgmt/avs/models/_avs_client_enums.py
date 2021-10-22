@@ -45,6 +45,20 @@ class AddonType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     VR = "VR"
     HCX = "HCX"
 
+class AffinityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Placement policy affinity type
+    """
+
+    AFFINITY = "Affinity"
+    ANTI_AFFINITY = "AntiAffinity"
+
+class AvailabilityStrategy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The availability strategy for the private cloud
+    """
+
+    SINGLE_ZONE = "SingleZone"
+    DUAL_ZONE = "DualZone"
+
 class CloudLinkStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The state of the cloud link.
     """
@@ -77,6 +91,18 @@ class DatastoreProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     UPDATING = "Updating"
     DELETING = "Deleting"
 
+class DatastoreStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The operational status of the datastore
+    """
+
+    UNKNOWN = "Unknown"
+    ACCESSIBLE = "Accessible"
+    INACCESSIBLE = "Inaccessible"
+    ATTACHED = "Attached"
+    DETACHED = "Detached"
+    LOST_COMMUNICATION = "LostCommunication"
+    DEAD_OR_ERROR = "DeadOrError"
+
 class DhcpTypeEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Type of DHCP: SERVER or RELAY.
     """
@@ -100,6 +126,27 @@ class DnsServiceStatusEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     SUCCESS = "SUCCESS"
     FAILURE = "FAILURE"
+
+class EncryptionKeyStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The state of key provided
+    """
+
+    CONNECTED = "Connected"
+    ACCESS_DENIED = "AccessDenied"
+
+class EncryptionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Status of customer managed encryption key
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+class EncryptionVersionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Property of the key if user provided or auto detected
+    """
+
+    FIXED = "Fixed"
+    AUTO_DETECTED = "AutoDetected"
 
 class ExpressRouteAuthorizationProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The state of the  ExpressRoute Circuit Authorization provisioning
@@ -155,17 +202,44 @@ class OptionalParamEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     OPTIONAL = "Optional"
     REQUIRED = "Required"
 
+class PlacementPolicyProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The provisioning state
+    """
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    BUILDING = "Building"
+    DELETING = "Deleting"
+    UPDATING = "Updating"
+
+class PlacementPolicyState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Whether the placement policy is enabled or disabled
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+class PlacementPolicyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """placement policy type
+    """
+
+    VM_VM = "VmVm"
+    VM_HOST = "VmHost"
+
 class PortMirroringDirectionEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Direction of port mirroring profile.
     """
 
-    INGRESS_EGRESS_BIDIRECTIONAL = "INGRESS, EGRESS, BIDIRECTIONAL"
+    INGRESS = "INGRESS"
+    EGRESS = "EGRESS"
+    BIDIRECTIONAL = "BIDIRECTIONAL"
 
 class PortMirroringStatusEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Port Mirroring Status.
     """
 
-    SUCCESS_FAILURE = "SUCCESS, FAILURE"
+    SUCCESS = "SUCCESS"
+    FAILURE = "FAILURE"
 
 class PrivateCloudProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The provisioning state
@@ -185,6 +259,14 @@ class QuotaEnabled(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+
+class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity used for the private cloud. The type 'SystemAssigned' refers to an
+    implicitly created identity. The type 'None' will remove any identities from the Private Cloud.
+    """
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    NONE = "None"
 
 class ScriptExecutionParameterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of execution parameter
@@ -228,7 +310,8 @@ class SegmentStatusEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Segment status.
     """
 
-    SUCCESS_FAILURE = "SUCCESS, FAILURE"
+    SUCCESS = "SUCCESS"
+    FAILURE = "FAILURE"
 
 class SslEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Protect LDAP communication using SSL certificate (LDAPS)
@@ -245,6 +328,13 @@ class TrialStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     TRIAL_USED = "TrialUsed"
     TRIAL_DISABLED = "TrialDisabled"
 
+class VirtualMachineRestrictMovementState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Whether VM DRS-driven movement is restricted (enabled) or not (disabled)
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
 class VisibilityParameterEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Should this parameter be visible to arm and passed in the parameters argument when executing
     """
@@ -256,13 +346,16 @@ class VMGroupStatusEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """VM Group status.
     """
 
-    SUCCESS_FAILURE = "SUCCESS, FAILURE"
+    SUCCESS = "SUCCESS"
+    FAILURE = "FAILURE"
 
 class VMTypeEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Virtual machine type.
     """
 
-    REGULAR_EDGE_SERVICE = "REGULAR, EDGE, SERVICE"
+    REGULAR = "REGULAR"
+    EDGE = "EDGE"
+    SERVICE = "SERVICE"
 
 class WorkloadNetworkDhcpProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The provisioning state
