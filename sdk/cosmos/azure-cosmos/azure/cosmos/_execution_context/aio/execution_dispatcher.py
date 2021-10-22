@@ -29,7 +29,7 @@ from azure.cosmos._execution_context.execution_dispatcher import _is_partitioned
 from azure.cosmos._execution_context.aio import multi_execution_aggregator
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase, _DefaultQueryExecutionContext
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
-from azure.cosmos._execution_context import endpoint_component
+from azure.cosmos._execution_context.aio import endpoint_component
 from azure.cosmos.documents import _DistinctType
 from azure.cosmos.http_constants import StatusCodes
 
@@ -92,13 +92,13 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                 query_to_use = self._query if self._query is not None else "Select * from root r"
                 query_execution_info = _PartitionedQueryExecutionInfo(await self._client._GetQueryPlanThroughGateway
                                                                       (query_to_use, self._resource_link))
-                self._execution_context = self._create_pipelined_execution_context(query_execution_info)
+                self._execution_context = await self._create_pipelined_execution_context(query_execution_info)
             else:
                 raise e
 
         return await self._execution_context.fetch_next_block()
 
-    def _create_pipelined_execution_context(self, query_execution_info):
+    async def _create_pipelined_execution_context(self, query_execution_info):
 
         assert self._resource_link, "code bug, resource_link is required."
         if query_execution_info.has_aggregates() and not query_execution_info.has_select_value():
@@ -112,6 +112,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                                                                                    self._query,
                                                                                                    self._options,
                                                                                                    query_execution_info)
+        await execution_context_aggregator._configure_partition_ranges()
         return _PipelineExecutionContext(self._client, self._options, execution_context_aggregator,
                                          query_execution_info)
 
@@ -184,8 +185,8 @@ class _PipelineExecutionContext(_QueryExecutionContextBase):  # pylint: disable=
         results = []
         for _ in xrange(self._page_size):
             try:
-                results.append(await self.__anext__)
-            except StopIteration:
+                results.append(await self.__anext__())
+            except StopAsyncIteration:
                 # no more results
                 break
         return results

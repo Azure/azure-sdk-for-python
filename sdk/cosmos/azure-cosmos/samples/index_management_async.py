@@ -1,6 +1,3 @@
-import sys
-sys.path.append(r"C:\Users\simonmoreno\Repos\azure-sdk-for-python\sdk\cosmos\azure-cosmos")
-
 import azure.cosmos.documents as documents
 import azure.cosmos.aio.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
@@ -248,7 +245,7 @@ async def use_manual_indexing(db):
         await query_documents_with_custom_query(created_Container, query)
 
         # Cleanup
-        db.delete_container(created_Container)
+        await db.delete_container(created_Container)
         print("\n")
     except exceptions.CosmosResourceExistsError:
         print("Entity already exists")
@@ -579,8 +576,8 @@ async def perform_multi_orderby_query(db):
             indexing_policy=indexing_policy,
             partition_key=PARTITION_KEY
         )
-        properties = await created_container.read()
         print(created_container)
+        properties = await created_container.read()
 
         print("\n" + "-" * 25 + "\n8. Container created with index policy")
         print_dictionary_items(properties["indexingPolicy"])
@@ -657,6 +654,7 @@ async def run_sample():
         # 8. Perform Multi Orderby queries using composite indexes
         await perform_multi_orderby_query(created_db)
 
+        await client.delete_database(DATABASE_ID)
         await client.close()
 
     except exceptions.AzureError as e:

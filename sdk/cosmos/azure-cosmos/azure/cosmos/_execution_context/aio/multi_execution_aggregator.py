@@ -24,7 +24,7 @@
 
 import heapq
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
-from azure.cosmos._execution_context import document_producer
+from azure.cosmos._execution_context.aio import document_producer
 from azure.cosmos._routing import routing_range
 
 # pylint: disable=protected-access
@@ -78,30 +78,6 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         else:
             self._document_producer_comparator = document_producer._PartitionKeyRangeDocumentProduerComparator()
 
-        # will be a list of (partition_min, partition_max) tuples
-        targetPartitionRanges = self._get_target_partition_key_range()
-
-        targetPartitionQueryExecutionContextList = []
-        for partitionTargetRange in targetPartitionRanges:
-            # create and add the child execution context for the target range
-            targetPartitionQueryExecutionContextList.append(
-                self._createTargetPartitionQueryExecutionContext(partitionTargetRange)
-            )
-
-        self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
-
-        for targetQueryExContext in targetPartitionQueryExecutionContextList:
-
-            try:
-                # TODO: we can also use more_itertools.peekable to be more python friendly
-                targetQueryExContext.peek()
-                # if there are matching results in the target ex range add it to the priority queue
-
-                self._orderByPQ.push(targetQueryExContext)
-
-            except StopIteration:
-                continue
-
     async def __anext__(self):
         """Returns the next result
 
@@ -112,14 +88,14 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         if self._orderByPQ.size() > 0:
 
             targetRangeExContext = self._orderByPQ.pop()
-            res = next(targetRangeExContext)
+            res = await targetRangeExContext.__anext__()
 
             try:
                 # TODO: we can also use more_itertools.peekable to be more python friendly
-                targetRangeExContext.peek()
+                await targetRangeExContext.peek()
                 self._orderByPQ.push(targetRangeExContext)
 
-            except StopIteration:
+            except StopAsyncIteration:
                 pass
 
             return res
@@ -157,3 +133,28 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         return await self._routing_provider.get_overlapping_ranges(
             self._resource_link, [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges]
         )
+
+    async def _configure_partition_ranges(self):
+        # will be a list of (partition_min, partition_max) tuples
+        targetPartitionRanges = await self._get_target_partition_key_range()
+
+        targetPartitionQueryExecutionContextList = []
+        for partitionTargetRange in targetPartitionRanges:
+            # create and add the child execution context for the target range
+            targetPartitionQueryExecutionContextList.append(
+                self._createTargetPartitionQueryExecutionContext(partitionTargetRange)
+            )
+
+        self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
+
+        for targetQueryExContext in targetPartitionQueryExecutionContextList:
+
+            try:
+                # TODO: we can also use more_itertools.peekable to be more python friendly
+                await targetQueryExContext.peek()
+                # if there are matching results in the target ex range add it to the priority queue
+
+                self._orderByPQ.push(targetQueryExContext)
+
+            except StopAsyncIteration:
+                continue

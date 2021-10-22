@@ -10,11 +10,8 @@ from azure.cosmos.cosmos_client import CosmosClient as SyncClient
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
 
-endpoint = 'https://simonmoreno-sql3.documents.azure.com:443/'
-key = 'Bl5eNK9aXEtvqrrPJPLs2gvCdllIZr2Dvm7dmsiVfgrznrlO2CHxSVODgy1ROxr33heMMTEVMp1eEuBFW6jHgw=='
-
-emulator_link = 'https://localhost:8081'
-emulator_key = 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=='
+endpoint = ''
+key = ''
 
 import uuid
 

@@ -41,14 +41,12 @@ class _QueryExecutionEndpointComponent(object):
     def __init__(self, execution_context):
         self._execution_context = execution_context
 
-    def __iter__(self):
+    async def __aiter__(self):
         return self
 
-    def __next__(self):
+    async def __anext__(self):
         # supports python 3 iterator
-        return next(self._execution_context)
-
-    next = __next__  # Python 2 compatibility.
+        return await self._execution_context.__anext__()
 
 
 class _QueryExecutionOrderByEndpointComponent(_QueryExecutionEndpointComponent):
@@ -56,10 +54,9 @@ class _QueryExecutionOrderByEndpointComponent(_QueryExecutionEndpointComponent):
 
     For each processed orderby result it returns 'payload' item of the result.
     """
-    def __next__(self):
-        return next(self._execution_context)["payload"]
-
-    next = __next__  # Python 2 compatibility.
+    async def __anext__(self):
+        payload = await self._execution_context.__anext__()
+        return payload["payload"]
 
 
 class _QueryExecutionTopEndpointComponent(_QueryExecutionEndpointComponent):
@@ -72,14 +69,12 @@ class _QueryExecutionTopEndpointComponent(_QueryExecutionEndpointComponent):
         super(_QueryExecutionTopEndpointComponent, self).__init__(execution_context)
         self._top_count = top_count
 
-    def __next__(self):
+    async def __anext__(self):
         if self._top_count > 0:
-            res = next(self._execution_context)
+            res = await self._execution_context.__anext__()
             self._top_count -= 1
             return res
-        raise StopIteration
-
-    next = __next__  # Python 2 compatibility.
+        raise StopAsyncIteration
 
 
 class _QueryExecutionDistinctOrderedEndpointComponent(_QueryExecutionEndpointComponent):
@@ -91,14 +86,12 @@ class _QueryExecutionDistinctOrderedEndpointComponent(_QueryExecutionEndpointCom
         super(_QueryExecutionDistinctOrderedEndpointComponent, self).__init__(execution_context)
         self.last_result = None
 
-    def __next__(self):
-        res = next(self._execution_context)
+    async def __anext__(self):
+        res = await self._execution_context.__anext__()
         while self.last_result == res:
-            res = next(self._execution_context)
+            res = await self._execution_context.__anext__()
         self.last_result = res
         return res
-
-    next = __next__  # Python 2 compatibility.
 
 
 class _QueryExecutionDistinctUnorderedEndpointComponent(_QueryExecutionEndpointComponent):
@@ -123,8 +116,8 @@ class _QueryExecutionDistinctUnorderedEndpointComponent(_QueryExecutionEndpointC
 
         return tuple(frozenset(sorted(new_value.items())))
 
-    def __next__(self):
-        res = next(self._execution_context)
+    async def __anext__(self):
+        res = await self._execution_context.__anext__()
 
         json_repr = json.dumps(self.make_hash(res))
         if six.PY3:
@@ -134,7 +127,7 @@ class _QueryExecutionDistinctUnorderedEndpointComponent(_QueryExecutionEndpointC
         hashed_result = hash_object.hexdigest()
 
         while hashed_result in self.last_result:
-            res = next(self._execution_context)
+            res = await self._execution_context.__anext__()
             json_repr = json.dumps(self.make_hash(res))
             if six.PY3:
                 json_repr = json_repr.encode("utf-8")
@@ -143,8 +136,6 @@ class _QueryExecutionDistinctUnorderedEndpointComponent(_QueryExecutionEndpointC
             hashed_result = hash_object.hexdigest()
         self.last_result.add(hashed_result)
         return res
-
-    next = __next__  # Python 2 compatibility.
 
 
 class _QueryExecutionOffsetEndpointComponent(_QueryExecutionEndpointComponent):
@@ -156,16 +147,14 @@ class _QueryExecutionOffsetEndpointComponent(_QueryExecutionEndpointComponent):
         super(_QueryExecutionOffsetEndpointComponent, self).__init__(execution_context)
         self._offset_count = offset_count
 
-    def __next__(self):
+    async def __anext__(self):
         while self._offset_count > 0:
-            res = next(self._execution_context)
+            res = await self._execution_context.__anext__()
             if res is not None:
                 self._offset_count -= 1
             else:
-                raise StopIteration
-        return next(self._execution_context)
-
-    next = __next__  # Python 2 compatibility.
+                raise StopAsyncIteration
+        return await self._execution_context.__anext__()
 
 
 class _QueryExecutionAggregateEndpointComponent(_QueryExecutionEndpointComponent):
@@ -191,9 +180,9 @@ class _QueryExecutionAggregateEndpointComponent(_QueryExecutionEndpointComponent
             elif operator == "Sum":
                 self._local_aggregators.append(_SumAggregator())
 
-    def __next__(self):
-        for res in self._execution_context:
-            for item in res:
+    async def __anext__(self):
+        async for res in self._execution_context:
+            for item in res: #TODO check on this being an async loop
                 for operator in self._local_aggregators:
                     if isinstance(item, dict) and item:
                         operator.aggregate(item["item"])
@@ -207,6 +196,4 @@ class _QueryExecutionAggregateEndpointComponent(_QueryExecutionEndpointComponent
             res = self._results[self._result_index]
             self._result_index += 1
             return res
-        raise StopIteration
-
-    next = __next__  # Python 2 compatibility.
+        raise StopAsyncIteration

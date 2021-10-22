@@ -2106,6 +2106,37 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
         )
 
+    async def QueryFeed(self, path, collection_id, query, options, partition_key_range_id=None, **kwargs):
+        """Query Feed for Document Collection resource.
+
+        :param str path:
+            Path to the document collection.
+        :param str collection_id:
+            Id of the document collection.
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
+        :param str partition_key_range_id:
+            Partition key range id.
+        :rtype:
+            tuple
+
+        """
+        return (
+            await self.__QueryFeed(
+                path,
+                "docs",
+                collection_id,
+                lambda r: r["Documents"],
+                lambda _, b: b,
+                query,
+                options,
+                partition_key_range_id,
+                **kwargs
+            ),
+            self.last_response_headers,
+        )
+
     async def __QueryFeed(
         self,
         path,
