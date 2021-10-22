@@ -7,7 +7,7 @@ DESCRIPTION:
 USAGE:
     python sample_metric_namespaces.py
     Set the environment variables with your own values before running the sample:
-    1) METRICS_RESOURCE_URI - The resource uri of the resource for which the metrics are being queried.
+    1) METRICS_RESOURCE_URI - The resource URI of the resource for which the metrics are being queried.
     
     In this example, a Storage account resource URI is taken.
 """
