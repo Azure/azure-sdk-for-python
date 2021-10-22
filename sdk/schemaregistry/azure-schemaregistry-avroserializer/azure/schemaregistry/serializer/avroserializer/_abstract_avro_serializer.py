@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from typing import BinaryIO, Dict, Mapping, Any, TypeVar, Union
+from typing import BinaryIO, TypeVar, Union
 from abc import abstractmethod
 import avro
 

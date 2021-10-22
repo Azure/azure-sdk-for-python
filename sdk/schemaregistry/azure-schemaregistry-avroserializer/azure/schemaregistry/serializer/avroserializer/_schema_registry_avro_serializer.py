@@ -27,7 +27,6 @@ try:
     from functools import lru_cache
 except ImportError:
     from backports.functools_lru_cache import lru_cache
-from ._apache_avro_serializer import ApacheAvroObjectSerializer as AvroObjectSerializer
 from io import BytesIO
 from typing import Any, Dict, Mapping
 
@@ -36,6 +35,7 @@ from .exceptions import (
     SchemaSerializationError,
     SchemaDeserializationError,
 )
+from ._apache_avro_serializer import ApacheAvroObjectSerializer as AvroObjectSerializer
 from ._constants import SCHEMA_ID_START_INDEX, SCHEMA_ID_LENGTH, DATA_START_INDEX
 
 
@@ -143,7 +143,10 @@ class AvroSerializer(object):
             cached_schema = self._avro_serializer.parse_schema(raw_input_schema)
             schema_fullname = cached_schema.fullname
         except Exception as e:
-            raise SchemaParseError("Cannot parse schema: {}".format(raw_input_schema), error=e)
+            raise SchemaParseError(
+                "Cannot parse schema: {}".format(raw_input_schema),
+                error=e
+            )
 
         schema_id = self._get_schema_id(
             schema_fullname, str(cached_schema), **kwargs
