@@ -13,7 +13,6 @@ from ._shared.models import DictMixin
 from ._shared.response_handlers import return_context_and_deserialized
 from ._models import PathProperties
 from ._generated.models import Path
-from ._shared.response_handlers import process_storage_error
 
 
 class DeletedPathPropertiesPaged(PageIterator):

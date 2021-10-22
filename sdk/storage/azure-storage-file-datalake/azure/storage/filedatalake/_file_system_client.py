@@ -28,7 +28,7 @@ from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._data_lake_lease import DataLakeLeaseClient
 from ._generated import AzureDataLakeStorageRESTAPI
 from ._generated.models import ListBlobsIncludeItem
-from ._deserialize import deserialize_path_properties, process_storage_error, is_file_path
+from ._deserialize import process_storage_error, is_file_path
 
 
 ClassType = TypeVar("ClassType")
