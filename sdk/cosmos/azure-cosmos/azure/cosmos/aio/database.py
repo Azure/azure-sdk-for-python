@@ -1,5 +1,5 @@
 # The MIT License (MIT)
-# Copyright (c) 2014 Microsoft Corporation
+# Copyright (c) 2021 Microsoft Corporation
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -308,6 +308,7 @@ class DatabaseProxy(object):
 
         :param container: The ID (name) of the container, a :class:`ContainerProxy` instance,
             or a dict representing the properties of the container to be retrieved.
+        :returns: A `ContainerProxy` instance representing the container.
         :rtype: ~azure.cosmos.ContainerProxy
 
         .. admonition:: Example:
@@ -560,7 +561,6 @@ class DatabaseProxy(object):
         :param user: The ID (name), dict representing the properties or :class:`UserProxy`
             instance of the user to be retrieved.
         :returns: A `UserProxy` instance representing the retrieved user.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user couldn't be retrieved.
         :rtype: ~azure.cosmos.UserProxy
         """
         if isinstance(user, UserProxy):
