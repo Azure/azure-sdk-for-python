@@ -28,7 +28,7 @@ class ExperimentsOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~microsoft_azure_chaos.models
+    :type models: ~chaos_management_client.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -58,7 +58,7 @@ class ExperimentsOperations:
         :type continuation_token_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ExperimentListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~microsoft_azure_chaos.models.ExperimentListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~chaos_management_client.models.ExperimentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExperimentListResult"]
@@ -139,7 +139,7 @@ class ExperimentsOperations:
         :type continuation_token_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ExperimentListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~microsoft_azure_chaos.models.ExperimentListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~chaos_management_client.models.ExperimentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExperimentListResult"]
@@ -273,7 +273,7 @@ class ExperimentsOperations:
         :type experiment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Experiment, or the result of cls(response)
-        :rtype: ~microsoft_azure_chaos.models.Experiment
+        :rtype: ~chaos_management_client.models.Experiment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Experiment"]
@@ -386,7 +386,7 @@ class ExperimentsOperations:
         :param experiment_name: String that represents a Experiment resource name.
         :type experiment_name: str
         :param experiment: Experiment resource to be created or updated.
-        :type experiment: ~microsoft_azure_chaos.models.Experiment
+        :type experiment: ~chaos_management_client.models.Experiment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling.
@@ -394,7 +394,7 @@ class ExperimentsOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Experiment or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~microsoft_azure_chaos.models.Experiment]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~chaos_management_client.models.Experiment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -510,7 +510,7 @@ class ExperimentsOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ExperimentCancelOperationResult or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~microsoft_azure_chaos.models.ExperimentCancelOperationResult]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~chaos_management_client.models.ExperimentCancelOperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -572,7 +572,7 @@ class ExperimentsOperations:
         :type experiment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExperimentStartOperationResult, or the result of cls(response)
-        :rtype: ~microsoft_azure_chaos.models.ExperimentStartOperationResult
+        :rtype: ~chaos_management_client.models.ExperimentStartOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExperimentStartOperationResult"]
@@ -631,7 +631,7 @@ class ExperimentsOperations:
         :type experiment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ExperimentStatusListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~microsoft_azure_chaos.models.ExperimentStatusListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~chaos_management_client.models.ExperimentStatusListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExperimentStatusListResult"]
@@ -709,7 +709,7 @@ class ExperimentsOperations:
         :type status_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExperimentStatus, or the result of cls(response)
-        :rtype: ~microsoft_azure_chaos.models.ExperimentStatus
+        :rtype: ~chaos_management_client.models.ExperimentStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExperimentStatus"]
@@ -769,7 +769,7 @@ class ExperimentsOperations:
         :type experiment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ExperimentExecutionDetailsListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~microsoft_azure_chaos.models.ExperimentExecutionDetailsListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~chaos_management_client.models.ExperimentExecutionDetailsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExperimentExecutionDetailsListResult"]
@@ -847,7 +847,7 @@ class ExperimentsOperations:
         :type execution_details_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExperimentExecutionDetails, or the result of cls(response)
-        :rtype: ~microsoft_azure_chaos.models.ExperimentExecutionDetails
+        :rtype: ~chaos_management_client.models.ExperimentExecutionDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExperimentExecutionDetails"]
