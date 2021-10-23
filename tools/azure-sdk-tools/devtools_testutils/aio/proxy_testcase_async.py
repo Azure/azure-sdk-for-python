@@ -14,10 +14,10 @@ from ..proxy_testcase import (
 )
 
 
-def RecordedByProxyAsync(func):
+def recorded_by_proxy_async(test_func):
     async def record_wrap(*args, **kwargs):
         test_id = get_test_id()
-        recording_id = start_record_or_playback(test_id)
+        recording_id, variables = start_record_or_playback(test_id)
 
         def transform_args(*args, **kwargs):
             copied_positional_args = list(args)
@@ -28,23 +28,25 @@ def RecordedByProxyAsync(func):
             return tuple(copied_positional_args), kwargs
 
         trimmed_kwargs = {k: v for k, v in kwargs.items()}
-        trim_kwargs_from_test_function(func, trimmed_kwargs)
+        trim_kwargs_from_test_function(test_func, trimmed_kwargs)
 
-        original_func = AioHttpTransport.send
+        original_transport_func = AioHttpTransport.send
 
         async def combined_call(*args, **kwargs):
             adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
-            return await original_func(*adjusted_args, **adjusted_kwargs)
+            return await original_transport_func(*adjusted_args, **adjusted_kwargs)
 
         AioHttpTransport.send = combined_call
 
-        # call the modified function.
+        # call the modified function
+        # we define test_output before invoking the test so the variable is defined in case of an exception
+        test_output = None
         try:
-            value = await func(*args, **trimmed_kwargs)
+            test_output = await test_func(*args, **trimmed_kwargs, variables=variables)
         finally:
-            AioHttpTransport.send = original_func
-            stop_record_or_playback(test_id, recording_id)
+            AioHttpTransport.send = original_transport_func
+            stop_record_or_playback(test_id, recording_id, test_output)
 
-        return value
+        return test_output
 
     return record_wrap
