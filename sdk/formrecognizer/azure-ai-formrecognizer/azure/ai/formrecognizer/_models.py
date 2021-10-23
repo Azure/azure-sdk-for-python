@@ -6,6 +6,7 @@
 
 # pylint: disable=protected-access, too-many-lines
 
+from typing import Union, Any
 from enum import Enum
 from collections import namedtuple
 from ._generated.v2021_09_30_preview.models import ModelInfo, Error
@@ -96,7 +97,7 @@ def get_field_value(
     return None
 
 
-def get_field_value_v3(value):  # pylint: disable=too-many-return-statements
+def get_field_value_v3(value, parent):  # pylint: disable=too-many-return-statements
     if value is None:
         return value
     if value.type == "string":
@@ -115,14 +116,14 @@ def get_field_value_v3(value):  # pylint: disable=too-many-return-statements
         return value.value_signature
     if value.type == "array":
         return (
-            [DocumentField._from_generated(value) for value in value.value_array]
+            [DocumentField._from_generated(value, parent) for value in value.value_array]
             if value.value_array
             else []
         )
     if value.type == "object":
         return (
             {
-                key: DocumentField._from_generated(value)
+                key: DocumentField._from_generated(value, parent)
                 for key, value in value.value_object.items()
             }
             if value.value_object
@@ -2132,6 +2133,11 @@ class DocumentContentElement(object):
     :vartype content: str
     :ivar bounding_box: Bounding box of the word.
     :vartype bounding_box: list[Point]
+    :ivar span: Location of the element in the reading order concatenated
+        content.
+    :vartype span: ~azure.ai.formrecognizer.DocumentSpan
+    :ivar confidence: Confidence of correctly extracting the selection mark.
+    :vartype confidence: float
     :ivar str kind: The kind of document element. Possible kinds are "word" or "selectionMark" which
         correspond to a :class:`~azure.ai.formrecognizer.DocumentWord` or
         :class:`~azure.ai.formrecognizer.DocumentSelectionMark`, respectively.
@@ -2140,11 +2146,13 @@ class DocumentContentElement(object):
     def __init__(self, **kwargs):
         self.content = kwargs.get("content", None)
         self.bounding_box = kwargs.get("bounding_box", None)
+        self.span = kwargs.get("span", None)
+        self.confidence = kwargs.get("confidence", None)
         self.kind = kwargs.get("kind", None)
 
     def __repr__(self):
-        return "DocumentContentElement(content={}, bounding_box={}, kind={})".format(
-            self.content, self.bounding_box, self.kind
+        return "DocumentContentElement(content={}, bounding_box={}, span={}, confidence={}, kind={})".format(
+            self.content, self.bounding_box, self.span, self.confidence, self.kind
         )
 
     def to_dict(self):
@@ -2159,6 +2167,8 @@ class DocumentContentElement(object):
             "bounding_box": [f.to_dict() for f in self.bounding_box]
             if self.bounding_box
             else [],
+            "span": self.span.to_dict() if self.span else None,
+            "confidence": self.confidence,
             "kind": self.kind,
         }
 
@@ -2176,6 +2186,8 @@ class DocumentContentElement(object):
             bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
             if len(data.get("bounding_box", [])) > 0
             else [],
+            span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,
+            confidence=data.get("confidence", None),
             kind=data.get("kind", None),
         )
 
@@ -2196,6 +2208,7 @@ class AnalyzedDocument(object):
     """
 
     def __init__(self, **kwargs):
+        self._parent = kwargs.get("_parent", None)
         self.doc_type = kwargs.get("doc_type", None)
         self.bounding_regions = kwargs.get("bounding_regions", None)
         self.spans = kwargs.get("spans", None)
@@ -2203,13 +2216,14 @@ class AnalyzedDocument(object):
         self.confidence = kwargs.get("confidence", None)
 
     @classmethod
-    def _from_generated(cls, document):
+    def _from_generated(cls, document, parent):
         return cls(
+            _parent=parent,
             doc_type=document.doc_type,
             bounding_regions=prepare_bounding_regions(document.bounding_regions),
             spans=prepare_document_spans(document.spans),
             fields={
-                key: DocumentField._from_generated(field)
+                key: DocumentField._from_generated(field, parent)
                 for key, field in document.fields.items()
             }
             if document.fields
@@ -2270,6 +2284,29 @@ class AnalyzedDocument(object):
             confidence=data.get("confidence", None),
         )
 
+    def get_children(
+        self, element_types
+    ):  # pylint: disable=unused-argument,no-self-use
+        # type: (list[str]) -> dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        """Get the child elements found in the span of this AnalyzedDocument.
+        :param list[str] element_types: Required. List of the child elements to retreive from the span of this item.
+        :return: dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        :rtype: dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        """
+        result = {}
+        for elem in element_types:
+            result[elem] = _find_elements(
+                self._parent,
+                elem,
+                self.spans,
+                allowed_elements=[
+                    "line",
+                    "word",
+                    "selection_mark",
+                ],
+            )
+        return result
+
 
 class DocumentEntity(object):
     """An object representing various categories of entities.
@@ -2289,6 +2326,7 @@ class DocumentEntity(object):
     """
 
     def __init__(self, **kwargs):
+        self._parent = kwargs.get("_parent", None)
         self.category = kwargs.get("category", None)
         self.sub_category = kwargs.get("sub_category", None)
         self.content = kwargs.get("content", None)
@@ -2297,8 +2335,9 @@ class DocumentEntity(object):
         self.confidence = kwargs.get("confidence", None)
 
     @classmethod
-    def _from_generated(cls, entity):
+    def _from_generated(cls, entity, parent):
         return cls(
+            _parent=parent,
             category=entity.category,
             sub_category=entity.sub_category,
             content=entity.content,
@@ -2378,6 +2417,29 @@ class DocumentEntity(object):
             confidence=data.get("confidence", None),
         )
 
+    def get_children(
+        self, element_types
+    ):  # pylint: disable=unused-argument,no-self-use
+        # type: (list[str]) -> dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        """Get the child elements found in the span of this DocumentEntity.
+        :param list[str] element_types: Required. List of the child elements to retreive from the span of this item.
+        :return: dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        :rtype: dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        """
+        result = {}
+        for elem in element_types:
+            result[elem] = _find_elements(
+                self._parent,
+                elem,
+                self.spans,
+                allowed_elements=[
+                    "line",
+                    "word",
+                    "selection_mark",
+                ],
+            )
+        return result
+
 
 class DocumentField(object):
     """An object representing the content and location of a document field value.
@@ -2403,6 +2465,7 @@ class DocumentField(object):
     """
 
     def __init__(self, **kwargs):
+        self._parent = kwargs.get("_parent", None)
         self.value_type = kwargs.get("value_type", None)
         self.value = kwargs.get("value", None)
         self.content = kwargs.get("content", None)
@@ -2411,11 +2474,12 @@ class DocumentField(object):
         self.confidence = kwargs.get("confidence", None)
 
     @classmethod
-    def _from_generated(cls, field):
+    def _from_generated(cls, field, parent):
         if field is None:
             return None
         return cls(
-            value=get_field_value_v3(field),
+            _parent=parent,
+            value=get_field_value_v3(field, parent),
             value_type=adjust_value_type(field.type) if field.type else None,
             content=field.content if field.content else None,
             bounding_regions=[
@@ -2494,6 +2558,29 @@ class DocumentField(object):
             confidence=data.get("confidence", None),
         )
 
+    def get_children(
+        self, element_types
+    ):  # pylint: disable=unused-argument,no-self-use
+        # type: (list[str]) -> dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        """Get the child elements found in the span of this DocumentField.
+        :param list[str] element_types: Required. List of the child elements to retreive from the span of this item.
+        :return: dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        :rtype: dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        """
+        result = {}
+        for elem in element_types:
+            result[elem] = _find_elements(
+                self._parent,
+                elem,
+                self.spans,
+                allowed_elements=[
+                    "line",
+                    "word",
+                    "selection_mark",
+                ],
+            )
+        return result
+
 
 class DocumentKeyValueElement(object):
     """An object representing the field key or value in a key-value pair.
@@ -2508,13 +2595,15 @@ class DocumentKeyValueElement(object):
     """
 
     def __init__(self, **kwargs):
+        self._parent = kwargs.get("_parent", None)
         self.content = kwargs.get("content", None)
         self.bounding_regions = kwargs.get("bounding_regions", None)
         self.spans = kwargs.get("spans", None)
 
     @classmethod
-    def _from_generated(cls, element):
+    def _from_generated(cls, element, parent):
         return cls(
+            _parent=parent,
             content=element.content,
             bounding_regions=[
                 BoundingRegion._from_generated(region)
@@ -2590,12 +2679,12 @@ class DocumentKeyValuePair(object):
         self.confidence = kwargs.get("confidence", None)
 
     @classmethod
-    def _from_generated(cls, key_value_pair):
+    def _from_generated(cls, key_value_pair, parent):
         return cls(
-            key=DocumentKeyValueElement._from_generated(key_value_pair.key)
+            key=DocumentKeyValueElement._from_generated(key_value_pair.key, parent)
             if key_value_pair.key
             else None,
-            value=DocumentKeyValueElement._from_generated(key_value_pair.value)
+            value=DocumentKeyValueElement._from_generated(key_value_pair.value, parent)
             if key_value_pair.value
             else None,
             confidence=key_value_pair.confidence,
@@ -2640,6 +2729,29 @@ class DocumentKeyValuePair(object):
             confidence=data.get("confidence", None),
         )
 
+    def get_children(
+        self, element_types
+    ):  # pylint: disable=unused-argument,no-self-use
+        # type: (list[str]) -> dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        """Get the child elements found in the span of this DocumentKeyValueElement.
+        :param list[str] element_types: Required. List of the child elements to retreive from the span of this item.
+        :return: dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        :rtype: dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        """
+        result = {}
+        for elem in element_types:
+            result[elem] = _find_elements(
+                self._parent,
+                elem,
+                self.spans,
+                allowed_elements=[
+                    "line",
+                    "word",
+                    "selection_mark",
+                ],
+            )
+        return result
+
 
 class DocumentLine(object):
     """A content line object representing the content found on a single line of the document.
@@ -2653,13 +2765,15 @@ class DocumentLine(object):
     """
 
     def __init__(self, **kwargs):
+        self._parent = kwargs.get("_parent", None)
         self.content = kwargs.get("content", None)
         self.bounding_box = kwargs.get("bounding_box", None)
         self.spans = kwargs.get("spans", None)
 
     @classmethod
-    def _from_generated(cls, line):
+    def _from_generated(cls, line, parent):
         return cls(
+            _parent=parent,
             content=line.content,
             bounding_box=get_bounding_box(line),
             spans=prepare_document_spans(line.spans),
@@ -2707,6 +2821,46 @@ class DocumentLine(object):
             if len(data.get("spans", [])) > 0
             else [],
         )
+
+    def get_words(
+        self, mode
+    ):  # pylint: disable=unused-argument,no-self-use
+        # type: (str) -> list[DocumentWord]
+        """Get the child elements found in the span of this DocumentLine.
+        :param str mode: Required. Mode used to search for words. Can be either "overlap" (default) or "contains".
+        :return: list[DocumentWord]
+        :rtype: list[DocumentWord]
+        """
+        return  _find_elements(
+            self._parent,
+            "word",
+            self.spans,
+            allowed_elements=[
+                "word",
+            ],
+        )
+
+    def get_children(
+        self, element_types
+    ):  # pylint: disable=unused-argument,no-self-use
+        # type: (list[str]) -> dict[Union[DocumentContentElement, DocumentWord, DocumentSelectionMark]]
+        """Get the child elements found in the span of this DocumentLine.
+        :param list[str] element_types: Required. List of the child elements to retreive from the span of the line.
+        :return: dict[Union[DocumentContentElement, DocumentWord, DocumentSelectionMark]]
+        :rtype: dict[Union[DocumentContentElement, DocumentWord, DocumentSelectionMark]]
+        """
+        result = {}
+        for elem in element_types:
+            result[elem] = _find_elements(
+                self._parent,
+                elem,
+                self.spans,
+                allowed_elements=[
+                    "word",
+                    "selection_mark",
+                ],
+            )
+        return result
 
 
 class DocumentPage(object):
@@ -2756,7 +2910,7 @@ class DocumentPage(object):
             width=page.width,
             height=page.height,
             unit=page.unit,
-            lines=[DocumentLine._from_generated(line) for line in page.lines]
+            lines=[DocumentLine._from_generated(line, page) for line in page.lines]
             if page.lines
             else [],
             words=[DocumentWord._from_generated(word) for word in page.words]
@@ -2865,8 +3019,6 @@ class DocumentSelectionMark(DocumentContentElement):
     def __init__(self, **kwargs):
         super(DocumentSelectionMark, self).__init__(kind="selectionMark", **kwargs)
         self.state = kwargs.get("state", None)
-        self.span = kwargs.get("span", None)
-        self.confidence = kwargs.get("confidence", None)
 
     @classmethod
     def _from_generated(cls, mark):
@@ -3010,6 +3162,7 @@ class DocumentTable(object):
     """
 
     def __init__(self, **kwargs):
+        self._parent = kwargs.get("_parent", None)
         self.row_count = kwargs.get("row_count", None)
         self.column_count = kwargs.get("column_count", None)
         self.cells = kwargs.get("cells", None)
@@ -3017,11 +3170,12 @@ class DocumentTable(object):
         self.spans = kwargs.get("spans", None)
 
     @classmethod
-    def _from_generated(cls, table):
+    def _from_generated(cls, table, parent):
         return cls(
+            _parent=parent,
             row_count=table.row_count,
             column_count=table.column_count,
-            cells=[DocumentTableCell._from_generated(cell) for cell in table.cells]
+            cells=[DocumentTableCell._from_generated(cell, parent) for cell in table.cells]
             if table.cells
             else [],
             bounding_regions=prepare_bounding_regions(table.bounding_regions),
@@ -3084,6 +3238,29 @@ class DocumentTable(object):
             else [],
         )
 
+    def get_children(
+        self, element_types
+    ):  # pylint: disable=unused-argument,no-self-use
+        # type: (list[str]) -> dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        """Get the child elements found in the span of this DocumentTable.
+        :param list[str] element_types: Required. List of the child elements to retreive from the span of this item.
+        :return: dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        :rtype: dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        """
+        result = {}
+        for elem in element_types:
+            result[elem] = _find_elements(
+                self._parent,
+                elem,
+                self.spans,
+                allowed_elements=[
+                    "line",
+                    "word",
+                    "selection_mark",
+                ],
+            )
+        return result
+
 
 class DocumentTableCell(object):
     """An object representing the location and content of a table cell.
@@ -3108,6 +3285,7 @@ class DocumentTableCell(object):
     """
 
     def __init__(self, **kwargs):
+        self._parent = kwargs.get("_parent", None)
         self.kind = kwargs.get("kind", "content")
         self.row_index = kwargs.get("row_index", None)
         self.column_index = kwargs.get("column_index", None)
@@ -3118,8 +3296,9 @@ class DocumentTableCell(object):
         self.spans = kwargs.get("spans", None)
 
     @classmethod
-    def _from_generated(cls, cell):
+    def _from_generated(cls, cell, parent):
         return cls(
+            _parent=parent,
             kind=cell.kind if cell.kind else "content",
             row_index=cell.row_index,
             column_index=cell.column_index,
@@ -3197,6 +3376,29 @@ class DocumentTableCell(object):
             if len(data.get("spans", [])) > 0
             else [],
         )
+
+    def get_children(
+        self, element_types
+    ):  # pylint: disable=unused-argument,no-self-use
+        # type: (list[str]) -> dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        """Get the child elements found in the span of this DocumentTableCellElement.
+        :param list[str] element_types: Required. List of the child elements to retreive from the span of this item.
+        :return: dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        :rtype: dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        """
+        result = {}
+        for elem in element_types:
+            result[elem] = _find_elements(
+                self._parent,
+                elem,
+                self.spans,
+                allowed_elements=[
+                    "line",
+                    "word",
+                    "selection_mark",
+                ],
+            )
+        return result
 
 
 class ModelOperationInfo(object):
@@ -3425,8 +3627,6 @@ class DocumentWord(DocumentContentElement):
 
     def __init__(self, **kwargs):
         super(DocumentWord, self).__init__(kind="word", **kwargs)
-        self.span = kwargs.get("span", None)
-        self.confidence = kwargs.get("confidence", None)
 
     @classmethod
     def _from_generated(cls, word):
@@ -3530,17 +3730,17 @@ class AnalyzeResult(object):
             pages=[DocumentPage._from_generated(page) for page in response.pages]
             if response.pages
             else [],
-            tables=[DocumentTable._from_generated(table) for table in response.tables]
+            tables=[DocumentTable._from_generated(table, response) for table in response.tables]
             if response.tables
             else [],
             key_value_pairs=[
-                DocumentKeyValuePair._from_generated(kv)
+                DocumentKeyValuePair._from_generated(kv, response)
                 for kv in response.key_value_pairs
             ]
             if response.key_value_pairs
             else [],
             entities=[
-                DocumentEntity._from_generated(entity) for entity in response.entities
+                DocumentEntity._from_generated(entity, response) for entity in response.entities
             ]
             if response.entities
             else [],
@@ -3548,7 +3748,7 @@ class AnalyzeResult(object):
             if response.styles
             else [],
             documents=[
-                AnalyzedDocument._from_generated(document)
+                AnalyzedDocument._from_generated(document, response)
                 for document in response.documents
             ]
             if response.documents
@@ -4039,3 +4239,36 @@ class DocumentAnalysisInnerError(object):
             innererror=DocumentAnalysisInnerError.from_dict(data.get("innererror"))  # type: ignore
             if data.get("innererror") else None
         )
+
+
+def _find_elements(parent, element, spans, **kwargs):
+    # type: (AnalyzeResult, str, list[DocumentSpan], Any) -> list[Any]
+    allowed = kwargs.get("allowed_elements", None)
+    if element not in allowed:
+        raise ValueError("received an unsupported child element")
+    result = []
+    for elem in _get_element_list(parent, element):
+        if in_span(elem, spans):
+            result.append(elem)
+    return result
+
+
+def _get_element_list(parent, element):
+    # type: (AnalyzeResult, str) -> list[Any]
+    if element == "word":
+        return parent.words
+    elif element == "selectionMark":
+        return parent.selection_marks
+    else:
+        raise ValueError("Unsupported element requested.")
+
+
+def in_span(element, spans):
+    # type: (Any, list[Point]) -> bool
+    if hasattr(element, "span"):
+        for span in spans:
+            if element.span.offset >= span.offset and (
+                element.span.offset + element.span.length
+            ) <= (span.offset + span.length):
+                return True
+    return False
