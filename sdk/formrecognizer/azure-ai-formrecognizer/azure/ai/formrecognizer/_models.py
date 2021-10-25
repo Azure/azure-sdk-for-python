@@ -4238,7 +4238,6 @@ def _find_elements(parent, element, spans, **kwargs):
 
 
 def _find_cross_page_elements(source, element, **kwargs):
-    # type: (Union[AnalyzedDocument, DocumentEntity, DocumentField, DocumentKeyValueElement, DocumentTable, DocumentTableCell], str, Any) -> List[Any]
     allowed = kwargs.get("allowed_elements", None)
     if element not in allowed:
         raise ValueError("received an unsupported child element")
