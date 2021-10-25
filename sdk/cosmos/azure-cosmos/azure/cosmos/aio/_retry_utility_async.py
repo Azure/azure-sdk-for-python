@@ -1,5 +1,5 @@
 # The MIT License (MIT)
-# Copyright (c) 2014 Microsoft Corporation
+# Copyright (c) 2021 Microsoft Corporation
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -23,21 +23,24 @@
 """
 
 import time
+import asyncio
 
 from azure.core.exceptions import AzureError, ClientAuthenticationError
-from azure.core.pipeline.policies import RetryPolicy
+from azure.core.pipeline.policies import AsyncRetryPolicy
 
-from . import exceptions
-from . import _endpoint_discovery_retry_policy
-from . import _resource_throttle_retry_policy
-from . import _default_retry_policy
-from . import _session_retry_policy
-from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes
+from .. import exceptions
+from ..http_constants import HttpHeaders, StatusCodes, SubStatusCodes
+from .._retry_utility import _configure_timeout
+from .. import _endpoint_discovery_retry_policy
+from .. import _resource_throttle_retry_policy
+from .. import _default_retry_policy
+from .. import _session_retry_policy
+
 
 # pylint: disable=protected-access
 
 
-def Execute(client, global_endpoint_manager, function, *args, **kwargs):
+async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwargs):
     """Executes the function with passed parameters applying all retry policies
 
     :param object client:
@@ -70,9 +73,9 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             client_timeout = kwargs.get('timeout')
             start_time = time.time()
             if args:
-                result = ExecuteFunction(function, global_endpoint_manager, *args, **kwargs)
+                result = await ExecuteFunctionAsync(function, global_endpoint_manager, *args, **kwargs)
             else:
-                result = ExecuteFunction(function, *args, **kwargs)
+                result = await ExecuteFunctionAsync(function, *args, **kwargs)
             if not client.last_response_headers:
                 client.last_response_headers = {}
 
@@ -117,42 +120,26 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 raise
 
             # Wait for retry_after_in_milliseconds time before the next retry
-            time.sleep(retry_policy.retry_after_in_milliseconds / 1000.0)
+            await asyncio.sleep(retry_policy.retry_after_in_milliseconds / 1000.0)
             if client_timeout:
                 kwargs['timeout'] = client_timeout - (time.time() - start_time)
                 if kwargs['timeout'] <= 0:
                     raise exceptions.CosmosClientTimeoutError()
 
 
-def ExecuteFunction(function, *args, **kwargs):
+async def ExecuteFunctionAsync(function, *args, **kwargs):
     """Stub method so that it can be used for mocking purposes as well.
     """
-    return function(*args, **kwargs)
+    return await function(*args, **kwargs)
 
 
-def _configure_timeout(request, absolute, per_request):
-    # type: (azure.core.pipeline.PipelineRequest, Optional[int], int) -> Optional[AzureError]
-    if absolute is not None:
-        if absolute <= 0:
-            raise exceptions.CosmosClientTimeoutError()
-        if per_request:
-            # Both socket timeout and client timeout have been provided - use the shortest value.
-            request.context.options['connection_timeout'] = min(per_request, absolute)
-        else:
-            # Only client timeout provided.
-            request.context.options['connection_timeout'] = absolute
-    elif per_request:
-        # Only socket timeout provided.
-        request.context.options['connection_timeout'] = per_request
-
-
-class ConnectionRetryPolicy(RetryPolicy):
+class ConnectionRetryPolicy(AsyncRetryPolicy):
 
     def __init__(self, **kwargs):
         clean_kwargs = {k: v for k, v in kwargs.items() if v is not None}
         super(ConnectionRetryPolicy, self).__init__(**clean_kwargs)
 
-    def send(self, request):
+    async def send(self, request):
         """Sends the PipelineRequest object to the next policy. Uses retry settings if necessary.
         Also enforces an absolute client-side timeout that spans multiple retry attempts.
 
@@ -176,11 +163,11 @@ class ConnectionRetryPolicy(RetryPolicy):
                 start_time = time.time()
                 _configure_timeout(request, absolute_timeout, per_request_timeout)
 
-                response = self.next.send(request)
+                response = await self.next.send(request)
                 if self.is_retry(retry_settings, response):
                     retry_active = self.increment(retry_settings, response=response)
                     if retry_active:
-                        self.sleep(retry_settings, request.context.transport, response=response)
+                        await self.sleep(retry_settings, request.context.transport, response=response)
                         continue
                 break
             except ClientAuthenticationError:  # pylint:disable=try-except-raise
@@ -197,7 +184,7 @@ class ConnectionRetryPolicy(RetryPolicy):
                 if self._is_method_retryable(retry_settings, request.http_request):
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
-                        self.sleep(retry_settings, request.context.transport)
+                        await self.sleep(retry_settings, request.context.transport)
                         continue
                 raise err
             finally:

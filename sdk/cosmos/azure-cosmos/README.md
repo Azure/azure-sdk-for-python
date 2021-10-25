@@ -97,7 +97,6 @@ Currently the features below are **not supported**. For alternatives options, ch
 ### Data Plane Limitations:
 
 * Group By queries
-* Language Native async i/o
 * Queries with COUNT from a DISTINCT subquery: SELECT COUNT (1) FROM (SELECT DISTINCT C.ID FROM C)
 * Bulk/Transactional batch processing
 * Direct TCP Mode access

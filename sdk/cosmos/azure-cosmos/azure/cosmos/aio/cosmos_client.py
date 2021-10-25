@@ -1,5 +1,5 @@
-﻿# The MIT License (MIT)
-# Copyright (c) 2014 Microsoft Corporation
+# The MIT License (MIT)
+# Copyright (c) 2021 Microsoft Corporation
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,50 +22,21 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Optional, Union, cast, Iterable, List  # pylint: disable=unused-import
+from typing import Any, Dict, Optional, Union, cast, Iterable, List
 
 import six
-from azure.core.tracing.decorator import distributed_trace  # type: ignore
+from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.tracing.decorator import distributed_trace
 
-from ._cosmos_client_connection import CosmosClientConnection
-from ._base import build_options
-from ._retry_utility import ConnectionRetryPolicy
+from ..cosmos_client import _parse_connection_str, _build_auth
+from ._cosmos_client_connection_async import CosmosClientConnection
+from .._base import build_options
+from ._retry_utility_async import ConnectionRetryPolicy
 from .database import DatabaseProxy
-from .documents import ConnectionPolicy, DatabaseAccount
-from .exceptions import CosmosResourceNotFoundError
+from ..documents import ConnectionPolicy, DatabaseAccount
+from ..exceptions import CosmosResourceNotFoundError
 
 __all__ = ("CosmosClient",)
-
-
-def _parse_connection_str(conn_str, credential):
-    # type: (str, Optional[Any]) -> Dict[str, str]
-    conn_str = conn_str.rstrip(";")
-    conn_settings = dict(  # type: ignore  # pylint: disable=consider-using-dict-comprehension
-        s.split("=", 1) for s in conn_str.split(";")
-    )
-    if 'AccountEndpoint' not in conn_settings:
-        raise ValueError("Connection string missing setting 'AccountEndpoint'.")
-    if not credential and 'AccountKey' not in conn_settings:
-        raise ValueError("Connection string missing setting 'AccountKey'.")
-    return conn_settings
-
-
-def _build_auth(credential):
-    # type: (Any) -> Dict[str, Any]
-    auth = {}
-    if isinstance(credential, six.string_types):
-        auth['masterKey'] = credential
-    elif isinstance(credential, dict):
-        if any(k for k in credential.keys() if k in ['masterKey', 'resourceTokens', 'permissionFeed']):
-            return credential  # Backwards compatible
-        auth['resourceTokens'] = credential  # type: ignore
-    elif hasattr(credential, '__iter__'):
-        auth['permissionFeed'] = credential
-    else:
-        raise TypeError(
-            "Unrecognized credential type. Please supply the master key as str, "
-            "or a dictionary or resource tokens, or a list of permissions.")
-    return auth
 
 
 def _build_connection_policy(kwargs):
@@ -117,7 +88,6 @@ def _build_connection_policy(kwargs):
 
     return policy
 
-
 class CosmosClient(object):
     """A client-side logical representation of an Azure Cosmos DB account.
 
@@ -127,26 +97,6 @@ class CosmosClient(object):
     :param credential: Can be the account key, or a dictionary of resource tokens.
     :type credential: str or dict[str, str]
     :param str consistency_level: Consistency level to use for the session. The default value is "Session".
-    :keyword int timeout: An absolute timeout in seconds, for the combined HTTP request and response processing.
-    :keyword int request_timeout: The HTTP request timeout in milliseconds.
-    :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
-    :keyword proxy_config: Connection proxy configuration.
-    :paramtype proxy_config: ~azure.cosmos.ProxyConfiguration
-    :keyword ssl_config: Connection SSL configuration.
-    :paramtype ssl_config: ~azure.cosmos.SSLConfiguration
-    :keyword bool connection_verify: Whether to verify the connection, default value is True.
-    :keyword str connection_cert: An alternative certificate to verify the connection.
-    :keyword int retry_total: Maximum retry attempts.
-    :keyword int retry_backoff_max: Maximum retry wait time in seconds.
-    :keyword int retry_fixed_interval: Fixed retry interval in milliseconds.
-    :keyword int retry_read: Maximum number of socket read retry attempts.
-    :keyword int retry_connect: Maximum number of connection error retry attempts.
-    :keyword int retry_status: Maximum number of retry attempts on error status codes.
-    :keyword list[int] retry_on_status_codes: A list of specific status codes to retry on.
-    :keyword float retry_backoff_factor: Factor to calculate wait time between retry attempts.
-    :keyword bool enable_endpoint_discovery: Enable endpoint discovery for
-        geo-replicated database accounts. (Default: True)
-    :keyword list[str] preferred_locations: The preferred locations for geo-replicated database accounts.
 
     .. admonition:: Example:
 
@@ -159,28 +109,34 @@ class CosmosClient(object):
             :name: create_client
     """
 
-    def __init__(self, url, credential, consistency_level="Session", **kwargs):
+    def __init__(self, url, credential, **kwargs):
         # type: (str, Any, str, Any) -> None
         """Instantiate a new CosmosClient."""
         auth = _build_auth(credential)
+        consistency_level = kwargs.get('consistency_level', 'Session')
         connection_policy = _build_connection_policy(kwargs)
         self.client_connection = CosmosClientConnection(
-            url, auth=auth, consistency_level=consistency_level, connection_policy=connection_policy, **kwargs
+            url,
+            auth=auth,
+            consistency_level=consistency_level,
+            connection_policy=connection_policy,
+            **kwargs
         )
 
-    def __repr__(self):  # pylint:disable=client-method-name-no-double-underscore
+    def __repr__(self):
         # type () -> str
         return "<CosmosClient [{}]>".format(self.client_connection.url_connection)[:1024]
 
-    def __enter__(self):
-        self.client_connection.pipeline_client.__enter__()
+    async def __aenter__(self):
+        await self.client_connection.pipeline_client.__aenter__()
+        await self.client_connection._setup()
         return self
 
-    def __exit__(self, *args):
-        return self.client_connection.pipeline_client.__exit__(*args)
+    async def __aexit__(self, *args):
+        return await self.client_connection.pipeline_client.__aexit__(*args)
 
-    def close(self):
-        self.__exit__()
+    async def close(self):
+        await self.__aexit__()
 
     @classmethod
     def from_connection_string(cls, conn_str, credential=None, consistency_level="Session", **kwargs):
@@ -217,8 +173,8 @@ class CosmosClient(object):
         database_id = cast("Dict[str, str]", database_or_id)["id"]
         return "dbs/{}".format(database_id)
 
-    @distributed_trace
-    def create_database(  # pylint: disable=redefined-builtin
+    @distributed_trace_async
+    async def create_database(  # pylint: disable=redefined-builtin
         self,
         id,  # type: str
         populate_query_metrics=None,  # type: Optional[bool]
@@ -260,13 +216,13 @@ class CosmosClient(object):
         if offer_throughput is not None:
             request_options["offerThroughput"] = offer_throughput
 
-        result = self.client_connection.CreateDatabase(database=dict(id=id), options=request_options, **kwargs)
+        result = await self.client_connection.CreateDatabase(database=dict(id=id), options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
-        return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
+        return DatabaseProxy(self.client_connection, id=result["id"], properties=result)        
 
-    @distributed_trace
-    def create_database_if_not_exists(  # pylint: disable=redefined-builtin
+    @distributed_trace_async
+    async def create_database_if_not_exists(  # pylint: disable=redefined-builtin
         self,
         id,  # type: str
         populate_query_metrics=None,  # type: Optional[bool]
@@ -298,13 +254,13 @@ class CosmosClient(object):
         """
         try:
             database_proxy = self.get_database_client(id)
-            database_proxy.read(
+            await database_proxy.read(
                 populate_query_metrics=populate_query_metrics,
                 **kwargs
             )
             return database_proxy
         except CosmosResourceNotFoundError:
-            return self.create_database(
+            return await self.create_database(
                 id,
                 populate_query_metrics=populate_query_metrics,
                 offer_throughput=offer_throughput,
@@ -395,22 +351,16 @@ class CosmosClient(object):
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
 
-        if query:
-            # This is currently eagerly evaluated in order to capture the headers
-            # from the call.
-            # (just returning a generator did not initiate the first network call, so
-            # the headers were misleading)
-            # This needs to change for "real" implementation
-            query = query if parameters is None else dict(query=query, parameters=parameters)  # type: ignore
-            result = self.client_connection.QueryDatabases(query=query, options=feed_options, **kwargs)
-        else:
-            result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
+        result = self.client_connection.QueryDatabases(
+            query=query if parameters is None else dict(query=query, parameters=parameters),
+            options=feed_options,
+            **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
         return result
 
-    @distributed_trace
-    def delete_database(
+    @distributed_trace_async
+    async def delete_database(
         self,
         database,  # type: Union[str, DatabaseProxy, Dict[str, Any]]
         populate_query_metrics=None,  # type: Optional[bool]
@@ -438,12 +388,12 @@ class CosmosClient(object):
             request_options["populateQueryMetrics"] = populate_query_metrics
 
         database_link = self._get_database_link(database)
-        self.client_connection.DeleteDatabase(database_link, options=request_options, **kwargs)
+        await self.client_connection.DeleteDatabase(database_link, options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
 
-    @distributed_trace
-    def get_database_account(self, **kwargs):
+    @distributed_trace_async
+    async def get_database_account(self, **kwargs):
         # type: (Any) -> DatabaseAccount
         """Retrieve the database account information.
 
@@ -452,7 +402,7 @@ class CosmosClient(object):
         :rtype: ~azure.cosmos.DatabaseAccount
         """
         response_hook = kwargs.pop('response_hook', None)
-        result = self.client_connection.GetDatabaseAccount(**kwargs)
+        result = await self.client_connection.GetDatabaseAccount(**kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
         return result

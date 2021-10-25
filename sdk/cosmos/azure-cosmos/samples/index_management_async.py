@@ -1,18 +1,17 @@
 import azure.cosmos.documents as documents
-import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.aio.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
-import requests
-import traceback
 import urllib3
 from requests.utils import DEFAULT_CA_BUNDLE_PATH as CaCertPath
 
+import asyncio
 import config
 
 HOST = config.settings['host']
 MASTER_KEY = config.settings['master_key']
 DATABASE_ID = config.settings['database_id']
-CONTAINER_ID = config.settings['container_id']
+CONTAINER_ID = "index-samples"
 PARTITION_KEY = PartitionKey(path='/id', kind='Hash')
 
 # A typical container has the following properties within it's indexingPolicy property
@@ -33,20 +32,23 @@ PARTITION_KEY = PartitionKey(path='/id', kind='Hash')
 # Setup the certificate file in .pem format.
 # If you still get an SSLError, try disabling certificate verification and suppress warnings
 
+find_entity_by_id_query = {
+        "query": "SELECT * FROM r WHERE r.id=@id",
+        "parameters": [
+            { "name":"@id", "value": id }
+        ]
+    }
+
 def obtain_client():
-    connection_policy = documents.ConnectionPolicy()
-    connection_policy.SSLConfiguration = documents.SSLConfiguration()
     # Try to setup the cacert.pem
     # connection_policy.SSLConfiguration.SSLCaCerts = CaCertPath
     # Else, disable verification
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-    connection_policy.SSLConfiguration.SSLCaCerts = False
-
-    return cosmos_client.CosmosClient(HOST, MASTER_KEY, "Session", connection_policy=connection_policy)
+    return cosmos_client.CosmosClient(HOST, MASTER_KEY)
 
 
 # Query for Entity / Entities
-def query_entities(parent, entity_type, id = None):
+async def query_entities(parent, entity_type, id = None):
     find_entity_by_id_query = {
             "query": "SELECT * FROM r WHERE r.id=@id",
             "parameters": [
@@ -57,21 +59,21 @@ def query_entities(parent, entity_type, id = None):
     try:
         if entity_type == 'database':
             if id == None:
-                entities = list(parent.list_databases())
+                entities = [entity async for entity in parent.list_databases()]
             else:
-                entities = list(parent.query_databases(find_entity_by_id_query))
+                entities = [entity async for entity in parent.query_databases(find_entity_by_id_query)]
 
         elif entity_type == 'container':
             if id == None:
-                entities = list(parent.list_containers())
+                entities = [entity async for entity in parent.list_containers()]
             else:
-                entities = list(parent.query_containers(find_entity_by_id_query))
+                entities = [entity async for entity in parent.query_containers(find_entity_by_id_query)]
 
         elif entity_type == 'document':
             if id == None:
-                entities = list(parent.read_all_items())
+                entities = [entity async for entity in parent.read_all_items()]
             else:
-                entities = list(parent.query_items(find_entity_by_id_query))
+                entities = [entity async for entity in await parent.query_items(find_entity_by_id_query)]
     except exceptions.AzureError as e:
         print("The following error occured while querying for the entity / entities ", entity_type, id if id != None else "")
         print(e)
@@ -83,20 +85,9 @@ def query_entities(parent, entity_type, id = None):
     return None
 
 
-def create_database_if_not_exists(client, database_id):
+async def delete_container_if_exists(db, container_id):
     try:
-        database = query_entities(client, 'database', id = database_id)
-        if database == None:
-            return client.create_database(id=database_id)
-        else:
-            return client.get_database_client(database_id)
-    except exceptions.CosmosResourceExistsError:
-        pass
-
-
-def delete_container_if_exists(db, container_id):
-    try:
-        db.delete_container(container_id)
+        await db.delete_container(container_id)
         print('Container with id \'{0}\' was deleted'.format(container_id))
     except exceptions.CosmosResourceNotFoundError:
         pass
@@ -112,8 +103,8 @@ def print_dictionary_items(dict):
     print()
 
 
-def fetch_all_databases(client):
-    databases = query_entities(client, 'database')
+async def fetch_all_databases(client):
+    databases = await query_entities(client, 'database')
     print("-" * 41)
     print("-" * 41)
     for db in databases:
@@ -121,11 +112,11 @@ def fetch_all_databases(client):
         print("-" * 41)
 
 
-def query_documents_with_custom_query(container, query_with_optional_parameters, message = "Document(s) found by query: "):
+async def query_documents_with_custom_query(container, query_with_optional_parameters, message = "Document(s) found by query: "):
     try:
-        results = list(container.query_items(query_with_optional_parameters, enable_cross_partition_query=True))
+        results = await container.query_items(query_with_optional_parameters, enable_cross_partition_query=True)
         print(message)
-        for doc in results:
+        async for doc in results:
             print(doc)
         return results
     except exceptions.CosmosResourceNotFoundError:
@@ -141,7 +132,7 @@ def query_documents_with_custom_query(container, query_with_optional_parameters,
         print()
 
 
-def explicitly_exclude_from_index(db):
+async def explicitly_exclude_from_index(db):
     """ The default index policy on a DocumentContainer will AUTOMATICALLY index ALL documents added.
         There may be scenarios where you want to exclude a specific doc from the index even though all other
         documents are being indexed automatically.
@@ -149,19 +140,19 @@ def explicitly_exclude_from_index(db):
 
     """
     try:
-        delete_container_if_exists(db, CONTAINER_ID)
+        await delete_container_if_exists(db, CONTAINER_ID)
 
         # Create a container with default index policy (i.e. automatic = true)
-        created_Container = db.create_container(id=CONTAINER_ID, partition_key=PARTITION_KEY)
+        created_Container = await db.create_container(id=CONTAINER_ID, partition_key=PARTITION_KEY)
         print(created_Container)
 
         print("\n" + "-" * 25 + "\n1. Container created with index policy")
-        properties = created_Container.read()
+        properties = await created_Container.read()
         print_dictionary_items(properties["indexingPolicy"])
 
         # Create a document and query on it immediately.
         # Will work as automatic indexing is still True
-        doc = created_Container.create_item(body={ "id" : "doc1", "orderId" : "order1" })
+        doc = await created_Container.create_item(body={ "id" : "doc1", "orderId" : "order1" })
         print("\n" + "-" * 25 + "Document doc1 created with order1" +  "-" * 25)
         print(doc)
 
@@ -169,13 +160,13 @@ def explicitly_exclude_from_index(db):
                 "query": "SELECT * FROM r WHERE r.orderId=@orderNo",
                 "parameters": [ { "name":"@orderNo", "value": "order1" } ]
             }
-        query_documents_with_custom_query(created_Container, query)
+        await query_documents_with_custom_query(created_Container, query)
 
         # Now, create a document but this time explictly exclude it from the container using IndexingDirective
         # Then query for that document
         # Shoud NOT find it, because we excluded it from the index
         # BUT, the document is there and doing a ReadDocument by Id will prove it
-        doc2 = created_Container.create_item(
+        doc2 = await created_Container.create_item(
             body={ "id" : "doc2", "orderId" : "order2" },
             indexing_directive=documents.IndexingDirective.Exclude
         )
@@ -186,13 +177,13 @@ def explicitly_exclude_from_index(db):
                 "query": "SELECT * FROM r WHERE r.orderId=@orderNo",
                 "parameters": [ { "name":"@orderNo", "value": "order2" } ]
                 }
-        query_documents_with_custom_query(created_Container, query)
+        await query_documents_with_custom_query(created_Container, query)
 
-        docRead = created_Container.read_item(item="doc2", partition_key="doc2")
+        docRead = await created_Container.read_item(item="doc2", partition_key="doc2")
         print("Document read by ID: \n", docRead["id"])
 
         # Cleanup
-        db.delete_container(created_Container)
+        await db.delete_container(created_Container)
         print("\n")
     except exceptions.CosmosResourceExistsError:
         print("Entity already exists")
@@ -200,22 +191,22 @@ def explicitly_exclude_from_index(db):
         print("Entity doesn't exist")
 
 
-def use_manual_indexing(db):
+async def use_manual_indexing(db):
     """The default index policy on a DocumentContainer will AUTOMATICALLY index ALL documents added.
        There may be cases where you can want to turn-off automatic indexing and only selectively add only specific documents to the index.
        This method demonstrates how to control this by setting the value of automatic within indexingPolicy to False
 
     """
     try:
-        delete_container_if_exists(db, CONTAINER_ID)
+        await delete_container_if_exists(db, CONTAINER_ID)
 
         # Create a container with manual (instead of automatic) indexing
-        created_Container = db.create_container(
+        created_Container = await db.create_container(
             id=CONTAINER_ID,
             indexing_policy={"automatic" : False},
             partition_key=PARTITION_KEY
         )
-        properties = created_Container.read()
+        properties = await created_Container.read()
         print(created_Container)
 
         print("\n" + "-" * 25 + "\n2. Container created with index policy")
@@ -225,7 +216,7 @@ def use_manual_indexing(db):
         # Then query for that document
         # We should find nothing, because automatic indexing on the container level is False
         # BUT, the document is there and doing a ReadDocument by Id will prove it
-        doc = created_Container.create_item(body={ "id" : "doc1", "orderId" : "order1" })
+        doc = await created_Container.create_item(body={ "id" : "doc1", "orderId" : "order1" })
         print("\n" + "-" * 25 + "Document doc1 created with order1" +  "-" * 25)
         print(doc)
 
@@ -233,14 +224,14 @@ def use_manual_indexing(db):
                 "query": "SELECT * FROM r WHERE r.orderId=@orderNo",
                 "parameters": [ { "name":"@orderNo", "value": "order1" } ]
             }
-        query_documents_with_custom_query(created_Container, query)
+        await query_documents_with_custom_query(created_Container, query)
 
-        docRead = created_Container.read_item(item="doc1", partition_key="doc1")
+        docRead = await created_Container.read_item(item="doc1", partition_key="doc1")
         print("Document read by ID: \n", docRead["id"])
 
         # Now create a document, passing in an IndexingDirective saying we want to specifically index this document
         # Query for the document again and this time we should find it because we manually included the document in the index
-        doc2 = created_Container.create_item(
+        doc2 = await created_Container.create_item(
             body={ "id" : "doc2", "orderId" : "order2" },
             indexing_directive=documents.IndexingDirective.Include
         )
@@ -251,10 +242,10 @@ def use_manual_indexing(db):
                 "query": "SELECT * FROM r WHERE r.orderId=@orderNo",
                 "parameters": [ { "name":"@orderNo", "value": "order2" } ]
             }
-        query_documents_with_custom_query(created_Container, query)
+        await query_documents_with_custom_query(created_Container, query)
 
         # Cleanup
-        db.delete_container(created_Container)
+        await db.delete_container(created_Container)
         print("\n")
     except exceptions.CosmosResourceExistsError:
         print("Entity already exists")
@@ -262,7 +253,7 @@ def use_manual_indexing(db):
         print("Entity doesn't exist")
 
 
-def exclude_paths_from_index(db):
+async def exclude_paths_from_index(db):
     """The default behavior is for Cosmos to index every attribute in every document automatically.
        There are times when a document contains large amounts of information, in deeply nested structures
        that you know you will never search on. In extreme cases like this, you can exclude paths from the
@@ -271,7 +262,7 @@ def exclude_paths_from_index(db):
        This method demonstrates how to set excludedPaths within indexingPolicy
     """
     try:
-        delete_container_if_exists(db, CONTAINER_ID)
+        await delete_container_if_exists(db, CONTAINER_ID)
 
         doc_with_nested_structures = {
             "id" : "doc1",
@@ -294,40 +285,40 @@ def exclude_paths_from_index(db):
         print(doc_with_nested_structures)
         # Create a container with the defined properties
         # The effect of the above IndexingPolicy is that only id, foo, and the subDoc/searchable are indexed
-        created_Container = db.create_container(
+        created_Container = await db.create_container(
             id=container_to_create['id'],
             indexing_policy=container_to_create['indexingPolicy'],
             partition_key=PARTITION_KEY
         )
-        properties = created_Container.read()
+        properties = await created_Container.read()
         print(created_Container)
         print("\n" + "-" * 25 + "\n4. Container created with index policy")
         print_dictionary_items(properties["indexingPolicy"])
 
         # The effect of the above IndexingPolicy is that only id, foo, and the subDoc/searchable are indexed
-        doc = created_Container.create_item(body=doc_with_nested_structures)
+        doc = await created_Container.create_item(body=doc_with_nested_structures)
         print("\n" + "-" * 25 + "Document doc1 created with nested structures" +  "-" * 25)
         print(doc)
 
         # Querying for a document on either metaData or /subDoc/subSubDoc/someProperty > fail because these paths were excluded and they raise a BadRequest(400) Exception
         query = {"query": "SELECT * FROM r WHERE r.metaData=@desiredValue", "parameters" : [{ "name":"@desiredValue", "value": "meta" }]}
-        query_documents_with_custom_query(created_Container, query)
+        await query_documents_with_custom_query(created_Container, query)
 
         query = {"query": "SELECT * FROM r WHERE r.subDoc.nonSearchable=@desiredValue", "parameters" : [{ "name":"@desiredValue", "value": "value" }]}
-        query_documents_with_custom_query(created_Container, query)
+        await query_documents_with_custom_query(created_Container, query)
 
         query = {"query": "SELECT * FROM r WHERE r.excludedNode.subExcludedNode.someProperty=@desiredValue", "parameters" : [{ "name":"@desiredValue", "value": "value" }]}
-        query_documents_with_custom_query(created_Container, query)
+        await query_documents_with_custom_query(created_Container, query)
 
         # Querying for a document using foo, or even subDoc/searchable > succeed because they were not excluded
         query = {"query": "SELECT * FROM r WHERE r.foo=@desiredValue", "parameters" : [{ "name":"@desiredValue", "value": "bar" }]}
-        query_documents_with_custom_query(created_Container, query)
+        await query_documents_with_custom_query(created_Container, query)
 
         query = {"query": "SELECT * FROM r WHERE r.subDoc.searchable=@desiredValue", "parameters" : [{ "name":"@desiredValue", "value": "searchable" }]}
-        query_documents_with_custom_query(created_Container, query)
+        await query_documents_with_custom_query(created_Container, query)
 
         # Cleanup
-        db.delete_container(created_Container)
+        await db.delete_container(created_Container)
         print("\n")
     except exceptions.CosmosResourceExistsError:
         print("Entity already exists")
@@ -335,7 +326,7 @@ def exclude_paths_from_index(db):
         print("Entity doesn't exist")
 
 
-def range_scan_on_hash_index(db):
+async def range_scan_on_hash_index(db):
     """When a range index is not available (i.e. Only hash or no index found on the path), comparisons queries can still
        be performed as scans using Allow scan request headers passed through options
 
@@ -347,7 +338,7 @@ def range_scan_on_hash_index(db):
        on RequstUnits charged for an operation and will likely result in queries being throttled sooner.
     """
     try:
-        delete_container_if_exists(db, CONTAINER_ID)
+        await delete_container_if_exists(db, CONTAINER_ID)
 
         # Force a range scan operation on a hash indexed path
         container_to_create = { "id" : CONTAINER_ID ,
@@ -357,39 +348,38 @@ def range_scan_on_hash_index(db):
                                     "excludedPaths" : [ {'path' : "/length/*"} ] # exclude length
                                     }
                                 }
-        created_Container = db.create_container(
+        created_Container = await db.create_container(
             id=container_to_create['id'],
             indexing_policy=container_to_create['indexingPolicy'],
             partition_key=PARTITION_KEY
         )
-        properties = created_Container.read()
+        properties = await created_Container.read()
         print(created_Container)
         print("\n" + "-" * 25 + "\n5. Container created with index policy")
         print_dictionary_items(properties["indexingPolicy"])
 
-        doc1 = created_Container.create_item(body={ "id" : "dyn1", "length" : 10, "width" : 5, "height" : 15 })
-        doc2 = created_Container.create_item(body={ "id" : "dyn2", "length" : 7, "width" : 15 })
-        doc3 = created_Container.create_item(body={ "id" : "dyn3", "length" : 2 })
+        doc1 = await created_Container.create_item(body={ "id" : "dyn1", "length" : 10, "width" : 5, "height" : 15 })
+        doc2 = await created_Container.create_item(body={ "id" : "dyn2", "length" : 7, "width" : 15 })
+        doc3 = await created_Container.create_item(body={ "id" : "dyn3", "length" : 2 })
         print("Three docs created with ids : ", doc1["id"], doc2["id"], doc3["id"])
 
         # Query for length > 5 - fail, this is a range based query on a Hash index only document
         query = { "query": "SELECT * FROM r WHERE r.length > 5" }
-        query_documents_with_custom_query(created_Container, query)
+        await query_documents_with_custom_query(created_Container, query)
 
         # Now add IndexingDirective and repeat query
         # expect 200 OK because now we are explicitly allowing scans in a query
         # using the enableScanInQuery directive
-        query_documents_with_custom_query(created_Container, query)
-        results = list(created_Container.query_items(
+        results = await created_Container.query_items(
             query,
             enable_scan_in_query=True,
             enable_cross_partition_query=True
-        ))
+        )
         print("Printing documents queried by range by providing enableScanInQuery = True")
-        for doc in results: print(doc["id"])
+        async for doc in results: print(doc["id"])
 
         # Cleanup
-        db.delete_container(created_Container)
+        await db.delete_container(created_Container)
         print("\n")
     except exceptions.CosmosResourceExistsError:
         print("Entity already exists")
@@ -397,12 +387,12 @@ def range_scan_on_hash_index(db):
         print("Entity doesn't exist")
 
 
-def use_range_indexes_on_strings(db):
+async def use_range_indexes_on_strings(db):
     """Showing how range queries can be performed even on strings.
 
     """
     try:
-        delete_container_if_exists(db, CONTAINER_ID)
+        await delete_container_if_exists(db, CONTAINER_ID)
         # containers = query_entities(client, 'container', parent_link = database_link)
         # print(containers)
 
@@ -449,34 +439,34 @@ def use_range_indexes_on_strings(db):
             }
         }
 
-        created_Container = db.create_container(
+        created_Container = await db.create_container(
             id=container_definition['id'],
             indexing_policy=container_definition['indexingPolicy'],
             partition_key=PARTITION_KEY
         )
-        properties = created_Container.read()
+        properties = await created_Container.read()
         print(created_Container)
         print("\n" + "-" * 25 + "\n6. Container created with index policy")
         print_dictionary_items(properties["indexingPolicy"])
 
-        created_Container.create_item(body={ "id" : "doc1", "region" : "USA" })
-        created_Container.create_item(body={ "id" : "doc2", "region" : "UK" })
-        created_Container.create_item(body={ "id" : "doc3", "region" : "Armenia" })
-        created_Container.create_item(body={ "id" : "doc4", "region" : "Egypt" })
+        await created_Container.create_item(body={ "id" : "doc1", "region" : "USA" })
+        await created_Container.create_item(body={ "id" : "doc2", "region" : "UK" })
+        await created_Container.create_item(body={ "id" : "doc3", "region" : "Armenia" })
+        await created_Container.create_item(body={ "id" : "doc4", "region" : "Egypt" })
 
         # Now ordering against region is allowed. You can run the following query
         query = { "query" : "SELECT * FROM r ORDER BY r.region" }
         message = "Documents ordered by region"
-        query_documents_with_custom_query(created_Container, query, message)
+        await query_documents_with_custom_query(created_Container, query, message)
 
         # You can also perform filters against string comparison like >= 'UK'. Note that you can perform a prefix query,
         # the equivalent of LIKE 'U%' (is >= 'U' AND < 'U')
         query = { "query" : "SELECT * FROM r WHERE r.region >= 'U'" }
         message = "Documents with region begining with U"
-        query_documents_with_custom_query(created_Container, query, message)
+        await query_documents_with_custom_query(created_Container, query, message)
 
         # Cleanup
-        db.delete_container(created_Container)
+        await db.delete_container(created_Container)
         print("\n")
     except exceptions.CosmosResourceExistsError:
         print("Entity already exists")
@@ -484,22 +474,22 @@ def use_range_indexes_on_strings(db):
         print("Entity doesn't exist")
 
 
-def perform_index_transformations(db):
+async def perform_index_transformations(db):
     try:
-        delete_container_if_exists(db, CONTAINER_ID)
+        await delete_container_if_exists(db, CONTAINER_ID)
 
         # Create a container with default indexing policy
-        created_Container = db.create_container(id=CONTAINER_ID, partition_key=PARTITION_KEY)
-        properties = created_Container.read()
+        created_Container = await db.create_container(id=CONTAINER_ID, partition_key=PARTITION_KEY)
+        properties = await created_Container.read()
         print(created_Container)
 
         print("\n" + "-" * 25 + "\n7. Container created with index policy")
         print_dictionary_items(properties["indexingPolicy"])
 
         # Insert some documents
-        doc1 = created_Container.create_item(body={ "id" : "dyn1", "length" : 10, "width" : 5, "height" : 15 })
-        doc2 = created_Container.create_item(body={ "id" : "dyn2", "length" : 7, "width" : 15 })
-        doc3 = created_Container.create_item(body={ "id" : "dyn3", "length" : 2 })
+        doc1 = await created_Container.create_item(body={ "id" : "dyn1", "length" : 10, "width" : 5, "height" : 15 })
+        doc2 = await created_Container.create_item(body={ "id" : "dyn2", "length" : 7, "width" : 15 })
+        doc3 = await created_Container.create_item(body={ "id" : "dyn3", "length" : 2 })
         print("Three docs created with ids : ", doc1["id"], doc2["id"], doc3["id"], " with indexing mode", properties['indexingPolicy']['indexingMode'])
 
         # Switch to use string & number range indexing with maximum precision.
@@ -511,12 +501,12 @@ def perform_index_transformations(db):
             'precision': -1
         }]
 
-        created_Container = db.replace_container(
+        created_Container = await db.replace_container(
             container=created_Container.id,
             partition_key=PARTITION_KEY,
             indexing_policy=properties['indexingPolicy']
         )
-        properties = created_Container.read()
+        properties = await created_Container.read()
 
         # Check progress and wait for completion - should be instantaneous since we have only a few documents, but larger
         # containers will take time.
@@ -526,16 +516,16 @@ def perform_index_transformations(db):
         print("Now excluding the path /length/ to save on storage space")
         properties['indexingPolicy']['excludedPaths'] = [{"path" : "/length/*"}]
 
-        created_Container = db.replace_container(
+        created_Container = await db.replace_container(
             container=created_Container.id,
             partition_key=PARTITION_KEY,
             indexing_policy=properties['indexingPolicy']
         )
-        properties = created_Container.read()
+        properties = await created_Container.read()
         print_dictionary_items(properties["indexingPolicy"])
 
         # Cleanup
-        db.delete_container(created_Container)
+        await db.delete_container(created_Container)
         print("\n")
     except exceptions.CosmosResourceExistsError:
         print("Entity already exists")
@@ -543,9 +533,9 @@ def perform_index_transformations(db):
         print("Entity doesn't exist")
 
 
-def perform_multi_orderby_query(db):
+async def perform_multi_orderby_query(db):
     try:
-        delete_container_if_exists(db, CONTAINER_ID)
+        await delete_container_if_exists(db, CONTAINER_ID)
 
         # Create a container with composite indexes
         indexing_policy = {
@@ -581,41 +571,41 @@ def perform_multi_orderby_query(db):
             ]
         }
 
-        created_container = db.create_container(
+        created_container = await db.create_container(
             id=CONTAINER_ID,
             indexing_policy=indexing_policy,
             partition_key=PARTITION_KEY
         )
-        properties = created_container.read()
         print(created_container)
+        properties = await created_container.read()
 
         print("\n" + "-" * 25 + "\n8. Container created with index policy")
         print_dictionary_items(properties["indexingPolicy"])
 
         # Insert some documents
-        doc1 = created_container.create_item(body={"id": "doc1", "numberField": 1, "stringField": "1", "numberField2": 1, "stringField2": "1"})
-        doc2 = created_container.create_item(body={"id": "doc2", "numberField": 1, "stringField": "1", "numberField2": 1, "stringField2": "2"})
-        doc3 = created_container.create_item(body={"id": "doc3", "numberField": 1, "stringField": "1", "numberField2": 2, "stringField2": "1"})
-        doc4 = created_container.create_item(body={"id": "doc4", "numberField": 1, "stringField": "1", "numberField2": 2, "stringField2": "2"})
-        doc5 = created_container.create_item(body={"id": "doc5", "numberField": 1, "stringField": "2", "numberField2": 1, "stringField2": "1"})
-        doc6 = created_container.create_item(body={"id": "doc6", "numberField": 1, "stringField": "2", "numberField2": 1, "stringField2": "2"})
-        doc7 = created_container.create_item(body={"id": "doc7", "numberField": 1, "stringField": "2", "numberField2": 2, "stringField2": "1"})
-        doc8 = created_container.create_item(body={"id": "doc8", "numberField": 1, "stringField": "2", "numberField2": 2, "stringField2": "2"})
-        doc9 = created_container.create_item(body={"id": "doc9", "numberField": 2, "stringField": "1", "numberField2": 1, "stringField2": "1"})
-        doc10 = created_container.create_item(body={"id": "doc10", "numberField": 2, "stringField": "1", "numberField2": 1, "stringField2": "2"})
-        doc11 = created_container.create_item(body={"id": "doc11", "numberField": 2, "stringField": "1", "numberField2": 2, "stringField2": "1"})
-        doc12 = created_container.create_item(body={"id": "doc12", "numberField": 2, "stringField": "1", "numberField2": 2, "stringField2": "2"})
-        doc13 = created_container.create_item(body={"id": "doc13", "numberField": 2, "stringField": "2", "numberField2": 1, "stringField2": "1"})
-        doc14 = created_container.create_item(body={"id": "doc14", "numberField": 2, "stringField": "2", "numberField2": 1, "stringField2": "2"})
-        doc15 = created_container.create_item(body={"id": "doc15", "numberField": 2, "stringField": "2", "numberField2": 2, "stringField2": "1"})
-        doc16 = created_container.create_item(body={"id": "doc16", "numberField": 2, "stringField": "2", "numberField2": 2, "stringField2": "2"})
+        await created_container.create_item(body={"id": "doc1", "numberField": 1, "stringField": "1", "numberField2": 1, "stringField2": "1"})
+        await created_container.create_item(body={"id": "doc2", "numberField": 1, "stringField": "1", "numberField2": 1, "stringField2": "2"})
+        await created_container.create_item(body={"id": "doc3", "numberField": 1, "stringField": "1", "numberField2": 2, "stringField2": "1"})
+        await created_container.create_item(body={"id": "doc4", "numberField": 1, "stringField": "1", "numberField2": 2, "stringField2": "2"})
+        await created_container.create_item(body={"id": "doc5", "numberField": 1, "stringField": "2", "numberField2": 1, "stringField2": "1"})
+        await created_container.create_item(body={"id": "doc6", "numberField": 1, "stringField": "2", "numberField2": 1, "stringField2": "2"})
+        await created_container.create_item(body={"id": "doc7", "numberField": 1, "stringField": "2", "numberField2": 2, "stringField2": "1"})
+        await created_container.create_item(body={"id": "doc8", "numberField": 1, "stringField": "2", "numberField2": 2, "stringField2": "2"})
+        await created_container.create_item(body={"id": "doc9", "numberField": 2, "stringField": "1", "numberField2": 1, "stringField2": "1"})
+        await created_container.create_item(body={"id": "doc10", "numberField": 2, "stringField": "1", "numberField2": 1, "stringField2": "2"})
+        await created_container.create_item(body={"id": "doc11", "numberField": 2, "stringField": "1", "numberField2": 2, "stringField2": "1"})
+        await created_container.create_item(body={"id": "doc12", "numberField": 2, "stringField": "1", "numberField2": 2, "stringField2": "2"})
+        await created_container.create_item(body={"id": "doc13", "numberField": 2, "stringField": "2", "numberField2": 1, "stringField2": "1"})
+        await created_container.create_item(body={"id": "doc14", "numberField": 2, "stringField": "2", "numberField2": 1, "stringField2": "2"})
+        await created_container.create_item(body={"id": "doc15", "numberField": 2, "stringField": "2", "numberField2": 2, "stringField2": "1"})
+        await created_container.create_item(body={"id": "doc16", "numberField": 2, "stringField": "2", "numberField2": 2, "stringField2": "2"})
 
         print("Query documents and Order by 1st composite index: Ascending numberField and Descending stringField:")
 
         query = {
                 "query": "SELECT * FROM r ORDER BY r.numberField ASC, r.stringField DESC",
                 }
-        query_documents_with_custom_query(created_container, query)
+        await query_documents_with_custom_query(created_container, query)
 
         print("Query documents and Order by inverted 2nd composite index -")
         print("Ascending numberField, Descending stringField, Ascending numberField2, Descending stringField2")
@@ -623,10 +613,10 @@ def perform_multi_orderby_query(db):
         query = {
                 "query": "SELECT * FROM r ORDER BY r.numberField ASC, r.stringField DESC, r.numberField2 ASC, r.stringField2 DESC",
                 }
-        query_documents_with_custom_query(created_container, query)
+        await query_documents_with_custom_query(created_container, query)
 
         # Cleanup
-        db.delete_container(created_container)
+        await db.delete_container(created_container)
         print("\n")
     except exceptions.CosmosResourceExistsError:
         print("Entity already exists")
@@ -634,38 +624,42 @@ def perform_multi_orderby_query(db):
         print("Entity doesn't exist")
 
 
-def run_sample():
+async def run_sample():
     try:
         client = obtain_client()
-        fetch_all_databases(client)
+        await fetch_all_databases(client)
 
         # Create database if doesn't exist already.
-        created_db = create_database_if_not_exists(client, DATABASE_ID)
+        created_db = await client.create_database_if_not_exists(DATABASE_ID)
         print(created_db)
 
         # 1. Exclude a document from the index
-        explicitly_exclude_from_index(created_db)
+        await explicitly_exclude_from_index(created_db)
 
         # 2. Use manual (instead of automatic) indexing
-        use_manual_indexing(created_db)
+        await use_manual_indexing(created_db)
 
         # 4. Exclude specified document paths from the index
-        exclude_paths_from_index(created_db)
+        await exclude_paths_from_index(created_db)
 
         # 5. Force a range scan operation on a hash indexed path
-        range_scan_on_hash_index(created_db)
+        await range_scan_on_hash_index(created_db)
 
         # 6. Use range indexes on strings
-        use_range_indexes_on_strings(created_db)
+        await use_range_indexes_on_strings(created_db)
 
         # 7. Perform an index transform
-        perform_index_transformations(created_db)
+        await perform_index_transformations(created_db)
 
         # 8. Perform Multi Orderby queries using composite indexes
-        perform_multi_orderby_query(created_db)
+        await perform_multi_orderby_query(created_db)
+
+        await client.delete_database(DATABASE_ID)
+        await client.close()
 
     except exceptions.AzureError as e:
         raise e
 
 if __name__ == '__main__':
-    run_sample()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(run_sample())
