@@ -179,9 +179,6 @@ class CosmosClient(object):
     def __exit__(self, *args):
         return self.client_connection.pipeline_client.__exit__(*args)
 
-    def close(self):
-        self.__exit__()
-
     @classmethod
     def from_connection_string(cls, conn_str, credential=None, consistency_level="Session", **kwargs):
         # type: (str, Optional[Any], str, Any) -> CosmosClient
