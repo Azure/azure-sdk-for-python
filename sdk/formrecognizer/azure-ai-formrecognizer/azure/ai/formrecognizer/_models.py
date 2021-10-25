@@ -2285,26 +2285,27 @@ class AnalyzedDocument(object):
         )
 
     def get_children(
-        self, element_types
+        self, **kwargs
     ):  # pylint: disable=unused-argument,no-self-use
-        # type: (list[str]) -> dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        # type: (Any) -> list[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
         """Get the child elements found in the span of this AnalyzedDocument.
-        :param list[str] element_types: Required. List of the child elements to retreive from the span of this item.
-        :return: dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
-        :rtype: dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        :ivar str element_types: List of the child elements to retreive from the span of this item.
+        :return: list[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        :rtype: list[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
         """
-        result = {}
+        element_types = kwargs.get("element_types", ["word", "line"])
+
+        result = []
         for elem in element_types:
-            result[elem] = _find_elements(
-                self._parent,
+            result.extend(_find_cross_page_elements(
+                self,
                 elem,
-                self.spans,
                 allowed_elements=[
                     "line",
                     "word",
                     "selection_mark",
                 ],
-            )
+            ))
         return result
 
 
@@ -2418,26 +2419,27 @@ class DocumentEntity(object):
         )
 
     def get_children(
-        self, element_types
+        self, **kwargs
     ):  # pylint: disable=unused-argument,no-self-use
-        # type: (list[str]) -> dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        # type: (Any) -> list[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
         """Get the child elements found in the span of this DocumentEntity.
-        :param list[str] element_types: Required. List of the child elements to retreive from the span of this item.
-        :return: dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
-        :rtype: dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        :ivar str element_types: List of the child elements to retreive from the span of this item.
+        :return: list[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        :rtype: list[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
         """
-        result = {}
+        element_types = kwargs.get("element_types", ["word", "line"])
+
+        result = []
         for elem in element_types:
-            result[elem] = _find_elements(
-                self._parent,
+            result.extend(_find_cross_page_elements(
+                self,
                 elem,
-                self.spans,
                 allowed_elements=[
                     "line",
                     "word",
                     "selection_mark",
                 ],
-            )
+            ))
         return result
 
 
@@ -2559,26 +2561,27 @@ class DocumentField(object):
         )
 
     def get_children(
-        self, element_types
+        self, **kwargs
     ):  # pylint: disable=unused-argument,no-self-use
-        # type: (list[str]) -> dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        # type: (Any) -> list[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
         """Get the child elements found in the span of this DocumentField.
-        :param list[str] element_types: Required. List of the child elements to retreive from the span of this item.
-        :return: dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
-        :rtype: dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        :ivar str element_types: List of the child elements to retreive from the span of this item.
+        :return: list[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        :rtype: list[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
         """
-        result = {}
+        element_types = kwargs.get("element_types", ["word", "line"])
+
+        result = []
         for elem in element_types:
-            result[elem] = _find_elements(
-                self._parent,
+            result.extend(_find_cross_page_elements(
+                self,
                 elem,
-                self.spans,
                 allowed_elements=[
                     "line",
                     "word",
                     "selection_mark",
                 ],
-            )
+            ))
         return result
 
 
@@ -2674,6 +2677,7 @@ class DocumentKeyValuePair(object):
     """
 
     def __init__(self, **kwargs):
+        self._parent = kwargs.get("_parent", None)
         self.key = kwargs.get("key", None)
         self.value = kwargs.get("value", None)
         self.confidence = kwargs.get("confidence", None)
@@ -2681,6 +2685,7 @@ class DocumentKeyValuePair(object):
     @classmethod
     def _from_generated(cls, key_value_pair, parent):
         return cls(
+            _parent=parent,
             key=DocumentKeyValueElement._from_generated(key_value_pair.key, parent)
             if key_value_pair.key
             else None,
@@ -2730,26 +2735,36 @@ class DocumentKeyValuePair(object):
         )
 
     def get_children(
-        self, element_types
+        self, **kwargs
     ):  # pylint: disable=unused-argument,no-self-use
-        # type: (list[str]) -> dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
-        """Get the child elements found in the span of this DocumentKeyValueElement.
-        :param list[str] element_types: Required. List of the child elements to retreive from the span of this item.
-        :return: dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
-        :rtype: dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        # type: (Any) -> list[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        """Get the child elements found in the span of this DocumentKeyValuePair.
+        :ivar str element_types: List of the child elements to retreive from the span of this item.
+        :return: list[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        :rtype: list[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
         """
-        result = {}
+        element_types = kwargs.get("element_types", ["word", "line"])
+
+        result = []
         for elem in element_types:
-            result[elem] = _find_elements(
-                self._parent,
+            result.extend(_find_cross_page_elements(
+                self.key,
                 elem,
-                self.spans,
                 allowed_elements=[
                     "line",
                     "word",
                     "selection_mark",
                 ],
-            )
+            ))
+            result.extend(_find_cross_page_elements(
+                self.key,
+                elem,
+                allowed_elements=[
+                    "line",
+                    "word",
+                    "selection_mark",
+                ],
+            ))
         return result
 
 
@@ -2822,44 +2837,28 @@ class DocumentLine(object):
             else [],
         )
 
-    def get_words(
-        self, mode
-    ):  # pylint: disable=unused-argument,no-self-use
-        # type: (str) -> list[DocumentWord]
-        """Get the child elements found in the span of this DocumentLine.
-        :param str mode: Required. Mode used to search for words. Can be either "overlap" (default) or "contains".
-        :return: list[DocumentWord]
-        :rtype: list[DocumentWord]
-        """
-        return  _find_elements(
-            self._parent,
-            "word",
-            self.spans,
-            allowed_elements=[
-                "word",
-            ],
-        )
 
     def get_children(
-        self, element_types
+        self, **kwargs
     ):  # pylint: disable=unused-argument,no-self-use
-        # type: (list[str]) -> dict[Union[DocumentContentElement, DocumentWord, DocumentSelectionMark]]
+        # type: (Any) -> list[Union[DocumentContentElement, DocumentWord, DocumentSelectionMark]]
         """Get the child elements found in the span of this DocumentLine.
-        :param list[str] element_types: Required. List of the child elements to retreive from the span of the line.
-        :return: dict[Union[DocumentContentElement, DocumentWord, DocumentSelectionMark]]
-        :rtype: dict[Union[DocumentContentElement, DocumentWord, DocumentSelectionMark]]
+        :ivar list[str] element_types: List of the child elements to retreive from the span of the line.
+        :return: list[Union[DocumentContentElement, DocumentWord, DocumentSelectionMark]]
+        :rtype: list[Union[DocumentContentElement, DocumentWord, DocumentSelectionMark]]
         """
-        result = {}
+        element_types = kwargs.get("element_types", ["word"])
+
+        result = []
         for elem in element_types:
-            result[elem] = _find_elements(
+            result.extend(_find_elements(
                 self._parent,
                 elem,
                 self.spans,
                 allowed_elements=[
-                    "word",
-                    "selection_mark",
+                    "word", # TODO add selection marks once they're ready. The spans on selection marks dont match up with the spans of the line
                 ],
-            )
+            ))
         return result
 
 
@@ -3239,26 +3238,27 @@ class DocumentTable(object):
         )
 
     def get_children(
-        self, element_types
+        self, **kwargs
     ):  # pylint: disable=unused-argument,no-self-use
-        # type: (list[str]) -> dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        # type: (Any) -> list[Union[DocumentLine, DocumentContentElement, DocumentWord, DocumentSelectionMark]]
         """Get the child elements found in the span of this DocumentTable.
-        :param list[str] element_types: Required. List of the child elements to retreive from the span of this item.
-        :return: dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
-        :rtype: dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        :ivar str element_types: List of the child elements to retreive from the span of this item.
+        :return: list[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        :rtype: list[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
         """
-        result = {}
+        element_types = kwargs.get("element_types", ["word", "line"])
+
+        result = []
         for elem in element_types:
-            result[elem] = _find_elements(
-                self._parent,
+            result.extend(_find_cross_page_elements(
+                self,
                 elem,
-                self.spans,
                 allowed_elements=[
                     "line",
                     "word",
                     "selection_mark",
                 ],
-            )
+            ))
         return result
 
 
@@ -3378,26 +3378,27 @@ class DocumentTableCell(object):
         )
 
     def get_children(
-        self, element_types
+        self, **kwargs
     ):  # pylint: disable=unused-argument,no-self-use
-        # type: (list[str]) -> dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        # type: (Any) -> list[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
         """Get the child elements found in the span of this DocumentTableCellElement.
-        :param list[str] element_types: Required. List of the child elements to retreive from the span of this item.
-        :return: dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
-        :rtype: dict[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        :ivar str element_types: List of the child elements to retreive from the span of this item.
+        :return: list[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
+        :rtype: list[Union[DocumentContentElement, DocumentLine, DocumentWord, DocumentSelectionMark]]
         """
-        result = {}
+        element_types = kwargs.get("element_types", ["word"])
+
+        result = []
         for elem in element_types:
-            result[elem] = _find_elements(
-                self._parent,
+            result.extend(_find_cross_page_elements(
+                self,
                 elem,
-                self.spans,
                 allowed_elements=[
                     "line",
                     "word",
                     "selection_mark",
                 ],
-            )
+            ))
         return result
 
 
@@ -4253,12 +4254,32 @@ def _find_elements(parent, element, spans, **kwargs):
     return result
 
 
+def _find_cross_page_elements(source, element, **kwargs):
+    # type: (Union[DocumentTable, DocumentField], str, Any) -> list[Any]
+    allowed = kwargs.get("allowed_elements", None)
+    if element not in allowed:
+        raise ValueError("received an unsupported child element")
+    result = []
+    for region in source.bounding_regions:
+        for elem in _get_element_list(_get_page(source._parent.pages, region.page_number), element):
+            if in_span(elem, source.spans):
+                result.append(elem)
+    return result
+
+def _get_page(pages, page_number):
+    for page in pages:
+        if page.page_number == page_number:
+            return page
+    raise "could not find page"
+
 def _get_element_list(parent, element):
-    # type: (AnalyzeResult, str) -> list[Any]
+    # type: (DocumentPage, str) -> list[Any]
     if element == "word":
         return parent.words
-    elif element == "selectionMark":
+    elif element == "selection_mark":
         return parent.selection_marks
+    elif element == "line":
+        return parent.lines
     else:
         raise ValueError("Unsupported element requested.")
 
@@ -4271,4 +4292,11 @@ def in_span(element, spans):
                 element.span.offset + element.span.length
             ) <= (span.offset + span.length):
                 return True
+    elif hasattr(element, "spans"):
+        for span in spans:
+            for element_span in element.spans:
+                if element_span.offset >= span.offset and (
+                    element_span.offset + element_span.length
+                ) <= (span.offset + span.length):
+                    return True
     return False
