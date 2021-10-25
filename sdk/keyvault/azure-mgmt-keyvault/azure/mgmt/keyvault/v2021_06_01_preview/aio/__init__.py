@@ -6,4 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "9.2.0"
+from ._key_vault_management_client import KeyVaultManagementClient
+__all__ = ['KeyVaultManagementClient']
