@@ -10,7 +10,7 @@ autorest --use=D:\Projects\autorest.python --low-level-client --modelerfour.leni
 ```
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/1e23d91e875e4464e57667639e06408cef99868d/specification/schemaregistry/data-plane/Microsoft.EventHub/preview/2020-09-01-preview/schemaregistry.json
+input-file: https://raw.githubusercontent.com/nickghardwick/azure-rest-api-specs/dev-schemaregistry-Microsoft.EventHub-2021-11-01/specification/schemaregistry/data-plane/Microsoft.EventHub/preview/2021-11-01-preview/schemaregistry.json
 output-folder: ../azure/schemaregistry/_generated
 namespace: azure.schemaregistry._generated
 no-namespace-folders: true
