@@ -35,7 +35,11 @@ from .exceptions import (
     SchemaSerializationError,
     SchemaDeserializationError,
 )
-from ._apache_avro_serializer import ApacheAvroObjectSerializer as AvroObjectSerializer
+try:
+    import fastavro
+    from ._fast_avro_serializer import FastAvroObjectSerializer as AvroObjectSerializer
+except (ImportError, NameError):
+    from ._apache_avro_serializer import ApacheAvroObjectSerializer as AvroObjectSerializer
 from ._constants import SCHEMA_ID_START_INDEX, SCHEMA_ID_LENGTH, DATA_START_INDEX
 
 
@@ -141,8 +145,7 @@ class AvroSerializer(object):
         record_format_identifier = b"\0\0\0\0"
 
         try:
-            cached_schema = self._avro_serializer.parse_schema(raw_input_schema)
-            schema_fullname = cached_schema.fullname
+            schema_fullname = self._avro_serializer.get_schema_fullname(raw_input_schema)
         except Exception as e:
             raise SchemaParseError(
                 "Cannot parse schema: {}".format(raw_input_schema),
@@ -150,13 +153,13 @@ class AvroSerializer(object):
             )
 
         schema_id = self._get_schema_id(
-            schema_fullname, str(cached_schema), **kwargs
+            schema_fullname, raw_input_schema, **kwargs
         )
         try:
-            data_bytes = self._avro_serializer.serialize(value, str(cached_schema))
+            data_bytes = self._avro_serializer.serialize(value, raw_input_schema)
         except Exception as e:
             raise SchemaSerializationError(
-                "Cannot serialize value '{}' for schema: {}".format(value, str(cached_schema)),
+                "Cannot serialize value '{}' for schema: {}".format(value, raw_input_schema),
                 error=e
             )
 

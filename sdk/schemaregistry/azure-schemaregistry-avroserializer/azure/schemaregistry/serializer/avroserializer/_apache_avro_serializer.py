@@ -29,6 +29,10 @@ class ApacheAvroObjectSerializer(AbstractAvroObjectSerializer):
     def parse_schema(self, schema):   # pylint: disable=no-self-use
         return avro.schema.parse(schema)
 
+    def get_schema_fullname(self, schema):
+        parsed_schema = self.parse_schema(schema)
+        return parsed_schema.fullname
+
     @lru_cache(maxsize=128)
     def get_schema_writer(self, schema):   # pylint: disable=no-self-use
         schema = self.parse_schema(schema)
