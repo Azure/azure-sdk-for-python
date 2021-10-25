@@ -605,8 +605,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             "string_index_type", self._string_index_type_default
         )
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs is not None:
-            kwargs["logging_opt_out"] = disable_service_logs
 
         if continuation_token:
             def get_result_from_cont_token(initial_response, pipeline_response):
@@ -641,6 +639,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 docs,
                 model_version=model_version,
                 string_index_type=string_index_type,
+                logging_opt_out=disable_service_logs,
                 cls=my_cls,
                 polling=AnalyzeHealthcareEntitiesLROPollingMethod(
                     text_analytics_client=self._client,

@@ -476,7 +476,6 @@ class TestHealth(AsyncTextAnalyticsTest):
             raw_response_hook=callback,
         )).result()
 
-    @pytest.mark.live_test_only
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_healthcare_continuation_token(self, client):
@@ -504,14 +503,14 @@ class TestHealth(AsyncTextAnalyticsTest):
             async for result in response:
                 results.append(result)
 
-        document_order = ["1", "2", "3", "4"]
-        for doc_idx, result in enumerate(results):
-            if doc_idx == 2:
-                assert result.id == document_order[doc_idx]
-                assert result.is_error
-            else:
-                assert result.id == document_order[doc_idx]
-                assert result.statistics
-                assert result.entities
+            document_order = ["1", "2", "3", "4"]
+            for doc_idx, result in enumerate(results):
+                if doc_idx == 2:
+                    assert result.id == document_order[doc_idx]
+                    assert result.is_error
+                else:
+                    assert result.id == document_order[doc_idx]
+                    assert result.statistics
+                    assert result.entities
 
-        await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+            await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

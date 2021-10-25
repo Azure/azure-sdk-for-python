@@ -431,7 +431,6 @@ class TestHealth(TextAnalyticsTest):
             raw_response_hook=callback,
         ).result()
 
-    @pytest.mark.live_test_only
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_healthcare_continuation_token(self, client):

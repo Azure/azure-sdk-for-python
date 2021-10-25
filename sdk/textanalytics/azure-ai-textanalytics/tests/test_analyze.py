@@ -1145,6 +1145,7 @@ class TestAnalyze(TextAnalyticsTest):
                     assert entity.length is not None
                     assert entity.confidence_score is not None
 
+    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/12409536 and https://github.com/Azure/azure-sdk-for-python/issues/21369")
     @TextAnalyticsPreparer()
     def test_custom_partial_error(
             self,
@@ -1192,7 +1193,6 @@ class TestAnalyze(TextAnalyticsTest):
         assert document_results[1][1].is_error
         assert document_results[1][2].is_error
 
-    @pytest.mark.live_test_only
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_analyze_continuation_token(self, client):

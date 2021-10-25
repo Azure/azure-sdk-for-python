@@ -1209,6 +1209,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     assert entity.length is not None
                     assert entity.confidence_score is not None
 
+    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/12409536 and https://github.com/Azure/azure-sdk-for-python/issues/21369")
     @TextAnalyticsPreparer()
     async def test_custom_partial_error(
             self,
@@ -1259,7 +1260,6 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         assert document_results[1][1].is_error
         assert document_results[1][2].is_error
 
-    @pytest.mark.live_test_only
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_analyze_continuation_token(self, client):
@@ -1298,23 +1298,23 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             async for action_result in response:
                 action_results.append(action_result)
 
-        assert len(action_results) == len(docs)
-        action_order = [
-            _AnalyzeActionsType.RECOGNIZE_ENTITIES,
-            _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
-            _AnalyzeActionsType.ANALYZE_SENTIMENT,
-            _AnalyzeActionsType.EXTRACT_KEY_PHRASES,
-        ]
-        document_order = ["1", "2", "3", "4"]
-        for doc_idx, document_results in enumerate(action_results):
-            assert len(document_results) == 4
-            for action_idx, document_result in enumerate(document_results):
-                if doc_idx == 2:
-                    assert document_result.id == document_order[doc_idx]
-                    assert document_result.is_error
-                else:
-                    assert document_result.id == document_order[doc_idx]
-                    assert document_result.statistics
-                    assert self.document_result_to_action_type(document_result) == action_order[action_idx]
+            assert len(action_results) == len(docs)
+            action_order = [
+                _AnalyzeActionsType.RECOGNIZE_ENTITIES,
+                _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
+                _AnalyzeActionsType.ANALYZE_SENTIMENT,
+                _AnalyzeActionsType.EXTRACT_KEY_PHRASES,
+            ]
+            document_order = ["1", "2", "3", "4"]
+            for doc_idx, document_results in enumerate(action_results):
+                assert len(document_results) == 4
+                for action_idx, document_result in enumerate(document_results):
+                    if doc_idx == 2:
+                        assert document_result.id == document_order[doc_idx]
+                        assert document_result.is_error
+                    else:
+                        assert document_result.id == document_order[doc_idx]
+                        assert document_result.statistics
+                        assert self.document_result_to_action_type(document_result) == action_order[action_idx]
 
-        await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+            await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
