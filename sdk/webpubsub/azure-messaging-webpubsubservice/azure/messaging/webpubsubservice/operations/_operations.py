@@ -968,9 +968,9 @@ class WebPubSubServiceClientOperationsMixin(object):
         request = build_send_to_all_request(
             hub=hub,
             content_type=content_type,
-            excluded=excluded,
             json=json,
             content=content,
+            excluded=excluded,
             template_url=self.send_to_all.metadata['url'],
         )
         path_format_arguments = {
@@ -998,7 +998,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         connection_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> None
+        # type: (...) -> bool
         """Check if the connection with the given connectionId exists.
 
         Check if the connection with the given connectionId exists.
@@ -1008,8 +1008,8 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type hub: str
         :param connection_id: The connection Id.
         :type connection_id: str
-        :return: None
-        :rtype: None
+        :return: bool
+        :rtype: bool
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -1038,6 +1038,7 @@ class WebPubSubServiceClientOperationsMixin(object):
 
         if cls:
             return cls(pipeline_response, None, {})
+        return 200 <= response.status_code <= 299
 
     connection_exists.metadata = {'url': '/api/hubs/{hub}/connections/{connectionId}'}  # type: ignore
 
@@ -1178,7 +1179,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         group,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> None
+        # type: (...) -> bool
         """Check if there are any client connections inside the given group.
 
         Check if there are any client connections inside the given group.
@@ -1188,8 +1189,8 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type hub: str
         :param group: Target group name, which length should be greater than 0 and less than 1025.
         :type group: str
-        :return: None
-        :rtype: None
+        :return: bool
+        :rtype: bool
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -1218,6 +1219,7 @@ class WebPubSubServiceClientOperationsMixin(object):
 
         if cls:
             return cls(pipeline_response, None, {})
+        return 200 <= response.status_code <= 299
 
     group_exists.metadata = {'url': '/api/hubs/{hub}/groups/{group}'}  # type: ignore
 
@@ -1336,9 +1338,9 @@ class WebPubSubServiceClientOperationsMixin(object):
             hub=hub,
             group=group,
             content_type=content_type,
-            excluded=excluded,
             json=json,
             content=content,
+            excluded=excluded,
             template_url=self.send_to_group.metadata['url'],
         )
         path_format_arguments = {
@@ -1404,7 +1406,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1476,7 +1478,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         user_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> None
+        # type: (...) -> bool
         """Check if there are any client connections connected for the given user.
 
         Check if there are any client connections connected for the given user.
@@ -1486,8 +1488,8 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type hub: str
         :param user_id: Target user Id.
         :type user_id: str
-        :return: None
-        :rtype: None
+        :return: bool
+        :rtype: bool
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -1516,6 +1518,7 @@ class WebPubSubServiceClientOperationsMixin(object):
 
         if cls:
             return cls(pipeline_response, None, {})
+        return 200 <= response.status_code <= 299
 
     user_exists.metadata = {'url': '/api/hubs/{hub}/users/{userId}'}  # type: ignore
 
@@ -1698,7 +1701,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1946,7 +1949,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         connection_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> None
+        # type: (...) -> bool
         """Check if a connection has permission to the specified action.
 
         Check if a connection has permission to the specified action.
@@ -1962,8 +1965,8 @@ class WebPubSubServiceClientOperationsMixin(object):
         :keyword target_name: The meaning of the target depends on the specific permission. For
          joinLeaveGroup and sendToGroup, targetName is a required parameter standing for the group name.
         :paramtype target_name: str
-        :return: None
-        :rtype: None
+        :return: bool
+        :rtype: bool
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -1996,6 +1999,7 @@ class WebPubSubServiceClientOperationsMixin(object):
 
         if cls:
             return cls(pipeline_response, None, {})
+        return 200 <= response.status_code <= 299
 
     check_permission.metadata = {'url': '/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}'}  # type: ignore
 

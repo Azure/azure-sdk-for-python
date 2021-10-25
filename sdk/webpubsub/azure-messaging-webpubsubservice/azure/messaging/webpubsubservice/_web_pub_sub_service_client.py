@@ -39,7 +39,7 @@ class WebPubSubServiceClient(WebPubSubServiceClientOperationsMixin):
     ):
         # type: (...) -> None
         _endpoint = '{Endpoint}'
-        self._config = WebPubSubServiceClientConfiguration(endpoint, credential, **kwargs)
+        self._config = WebPubSubServiceClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
