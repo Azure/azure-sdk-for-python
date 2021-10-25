@@ -39,8 +39,8 @@ def sample_classify_document_single_category():
 
     endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
     key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
-    project_name = os.environ["AZURE_TEXT_ANALYTICS_PROJECT_NAME"]
-    deployed_model_name = os.environ["AZURE_TEXT_ANALYTICS_DEPLOYMENT_NAME"]
+    project_name = os.environ["SINGLE_CATEGORY_CLASSIFY_PROJECT_NAME"]
+    deployed_model_name = os.environ["SINGLE_CATEGORY_CLASSIFY_DEPLOYMENT_NAME"]
 
     text_analytics_client = TextAnalyticsClient(
         endpoint=endpoint,

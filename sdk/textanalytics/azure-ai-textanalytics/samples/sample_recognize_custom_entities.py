@@ -38,8 +38,8 @@ def sample_recognize_custom_entities():
 
     endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
     key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
-    project_name = os.environ["AZURE_TEXT_ANALYTICS_PROJECT_NAME"]
-    deployed_model_name = os.environ["AZURE_TEXT_ANALYTICS_DEPLOYMENT_NAME"]
+    project_name = os.environ["CUSTOM_ENTITIES_PROJECT_NAME"]
+    deployed_model_name = os.environ["CUSTOM_ENTITIES_DEPLOYMENT_NAME"]
 
     text_analytics_client = TextAnalyticsClient(
         endpoint=endpoint,
