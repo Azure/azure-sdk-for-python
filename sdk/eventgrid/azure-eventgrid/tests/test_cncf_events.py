@@ -1,6 +1,6 @@
 
 import json
-from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
+from devtools_testutils import AzureTestCase, CachedResourceGroupPreparer
 
 from azure_devtools.scenario_tests import ReplayableTest
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
@@ -11,7 +11,7 @@ from eventgrid_preparer import (
     CachedEventGridTopicPreparer,
 )
 
-class EventGridPublisherClientTests(AzureMgmtTestCase):
+class EventGridPublisherClientTests(AzureTestCase):
     FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['aeg-sas-key', 'aeg-sas-token']
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
@@ -31,7 +31,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
             assert req[0].get("type") == "com.example.sampletype1"
             assert req[0].get("source") == "https://example.com/event-producer"
     
-        client.send(cloud_event, raw_response_hook=callback)
+        client.send(cloud_event, raw_request_hook=callback)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
@@ -49,7 +49,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
             assert req[0].get("data_base64") is not None
             assert req[0].get("data") is None
     
-        client.send(cloud_event, raw_response_hook=callback)
+        client.send(cloud_event, raw_request_hook=callback)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
@@ -74,8 +74,12 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
             "source": "https://example.com/event-producer",
         }
         data = "hello world"
+        def callback(request):
+            req = json.loads(request.http_request.body)
+            assert req[0].get("data_base64") is None
+            assert req[0].get("data") is not None
         cloud_event = CloudEvent(attributes, data)
-        client.send(cloud_event)
+        client.send(cloud_event, raw_request_hook=callback)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
