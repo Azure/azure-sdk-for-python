@@ -22,19 +22,19 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - c74ee61a-8c2a-4488-92ab-72453037f7ad
+      - 768e76b3-a51c-4dbc-bdd5-54fb90e0d7cf
       content-length:
       - '0'
       date:
-      - Mon, 25 Oct 2021 17:43:15 GMT
+      - Mon, 25 Oct 2021 22:55:14 GMT
       operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/c74ee61a-8c2a-4488-92ab-72453037f7ad?api-version=2021-09-30-preview
+      - https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/768e76b3-a51c-4dbc-bdd5-54fb90e0d7cf?api-version=2021-09-30-preview
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '543'
+      - '470'
     status:
       code: 202
       message: Accepted
@@ -50,11 +50,11 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/3.2.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/c74ee61a-8c2a-4488-92ab-72453037f7ad?api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/768e76b3-a51c-4dbc-bdd5-54fb90e0d7cf?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-10-25T17:43:15Z",
-        "lastUpdatedDateTime": "2021-10-25T17:43:20Z", "analyzeResult": {"apiVersion":
+      string: '{"status": "succeeded", "createdDateTime": "2021-10-25T22:55:14Z",
+        "lastUpdatedDateTime": "2021-10-25T22:55:18Z", "analyzeResult": {"apiVersion":
         "2021-09-30-preview", "modelId": "prebuilt-document", "stringIndexType": "unicodeCodePoint",
         "content": "Purchase Order\nHero Limited\nCompany Phone: 555-348-6512\nWebsite:
         www.herolimited.com\nEmail:\nPurchase Order\nDated As: 12/20/2020\nPurchase
@@ -684,11 +684,11 @@ interactions:
         0.9, "spans": [{"offset": 606, "length": 14}]}]}}'
     headers:
       apim-request-id:
-      - 2fcbaf34-eacf-418c-82b8-ebb63fac09db
+      - 6cf91e39-98b2-4a03-8d6a-0cca10d9da5a
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 25 Oct 2021 17:43:20 GMT
+      - Mon, 25 Oct 2021 22:55:19 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -696,7 +696,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '336'
+      - '408'
     status:
       code: 200
       message: OK

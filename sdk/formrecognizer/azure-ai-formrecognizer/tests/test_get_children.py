@@ -108,15 +108,15 @@ class TestDocumentFromStream(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
-    def test_document_key_value_pair_get_children(self, client):
+    def test_document_key_value_element_get_children(self, client):
         with open(self.form_jpg, "rb") as fd:
             document = fd.read()
 
         poller = client.begin_analyze_document("prebuilt-document", document)
         result = poller.result()
         
-        elements = result.key_value_pairs[0].get_children()
-        assert len(elements) == 4
+        elements = result.key_value_pairs[0].key.get_children()
+        assert len(elements) == 2
 
-        elements = result.key_value_pairs[0].get_children(element_types=["line"])
+        elements = result.key_value_pairs[0].key.get_children(element_types=["line"])
         assert len(elements) == 0

@@ -2702,7 +2702,7 @@ class DocumentKeyValuePair(object):
         self.confidence = kwargs.get("confidence", None)
 
     @classmethod
-    def _from_generated(cls, key_value_pair):
+    def _from_generated(cls, key_value_pair, parent):
         return cls(
             key=DocumentKeyValueElement._from_generated(key_value_pair.key, parent)
             if key_value_pair.key
