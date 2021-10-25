@@ -28,9 +28,9 @@ pip install azure-media-videoanalyzer-edge
 
     | SDK  | Video Analyzer edge module  |
     |---|---|
-    | 1.0.0b1  | 1.0  |
-    | 1.0.0b2  | 1.0  |
     | 1.0.0b3  | 1.1  |
+    | 1.0.0b2  | 1.0  |
+    | 1.0.0b1  | 1.0  |
 
 ### Creating a pipeline topology and making requests
 
