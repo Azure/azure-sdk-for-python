@@ -30,6 +30,7 @@ no-namespace-folders: true
 python: true
 title: WebPubSubServiceClient
 version-tolerant: true
+head-as-boolean: true
 package-version: 1.0.0b2
 add-credential: true
 credential-scopes: https://webpubsub.azure.com/.default
