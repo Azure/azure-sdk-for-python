@@ -9,6 +9,9 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) LOGS_WORKSPACE_ID - The first (primary) workspace ID.
 
+This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
+For more information on DefaultAzureCredential, see https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
+
 **Note** - Although this example uses pandas to print the response, it's optional and
 isn't a required package for querying. Alternatively, native Python can be used as well.
 """

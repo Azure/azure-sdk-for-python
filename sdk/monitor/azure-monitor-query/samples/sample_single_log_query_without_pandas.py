@@ -9,6 +9,9 @@ USAGE:
     python sample_single_log_query_without_pandas.py
     Set the environment variables with your own values before running the sample:
     1) LOGS_WORKSPACE_ID - The first (primary) workspace ID.
+
+This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
+For more information on DefaultAzureCredential, see https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.   
 """
 import os
 from datetime import timedelta

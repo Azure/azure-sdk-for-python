@@ -9,6 +9,9 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) METRICS_RESOURCE_URI - The resource URI of the resource for which the metrics are being queried.
     
+    This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
+    For more information on DefaultAzureCredential, see https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
+
     In this example, a Storage account resource URI is taken.
 """
 import os
