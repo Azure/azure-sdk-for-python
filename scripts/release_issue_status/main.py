@@ -18,6 +18,7 @@ _NULL = ' '
 _FILE_OUT = 'release_issue_status.csv'
 _FILE_OUT_PYTHON = 'release_python_status.md'
 _PYTHON_SDK_ADMINISTRATORS = ['msyyc', 'RAY-316', 'BigCat20196']
+_ASSIGNER_DICT = {'RAY-316': os.getenv('ZED_TOKEN'), 'BigCat20196': os.getenv('JF_TOKEN')}
 logging.basicConfig(level=logging.INFO,
                     format='[auto-reply  log] - %(funcName)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 
@@ -171,10 +172,9 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python
 def main():
     # get latest issue status
     g = Github(os.getenv('TOKEN'))  # please fill user_token
-    rest_repo_jf = Github(os.getenv('JF_TOKEN')).get_repo('Azure/sdk-release-request')  # please fill user_token
-    rest_repo_ray = Github(os.getenv('ZED_TOKEN')).get_repo('Azure/sdk-release-request')  # please fill user_token
-    assigner_repoes = {_PYTHON_SDK_ADMINISTRATORS[2]: rest_repo_jf,
-                       _PYTHON_SDK_ADMINISTRATORS[1]: rest_repo_ray}
+    assigner_repoes = {}
+    for k, v in _ASSIGNER_DICT.items():
+        assigner_repoes[k] = Github(v).get_repo('Azure/sdk-release-request')
     request_repo = g.get_repo('Azure/sdk-release-request')
     rest_repo = g.get_repo('Azure/azure-rest-api-specs')
     sdk_repo = g.get_repo('Azure/azure-sdk-for-python')
@@ -231,10 +231,10 @@ def main():
             item.bot_advice = 'new issue and better to confirm quickly.'
             if 'assigned' not in item.labels:
                 time.sleep(0.1)
-                assign_count = int(str(time.time())[-1]) % 2
+                assign_count = int(str(time.time())[-1]) % (len(_PYTHON_SDK_ADMINISTRATORS)-1)
                 if assign_count == 1:
-                    item.issue_object.remove_from_assignees(*['RAY-316'])
-                    item.issue_object.add_to_assignees(*['BigCat20196'])
+                    item.issue_object.remove_from_assignees(item.assignee)
+                    item.issue_object.add_to_assignees(_PYTHON_SDK_ADMINISTRATORS[2])
                     item.assignee=item.issue_object.assignee.login
                 item.issue_object.add_to_labels('assigned')
             try:
