@@ -336,7 +336,7 @@ class AvroSerializerTests(AzureTestCase):
             "fields":[{"name":"name","type":"string"}]
         }"""
         with pytest.raises(SchemaParseError):
-            sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_invalid_name_in_fullname) 
+            sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_invalid_name_reserved_type)
 
         schema_wrong_type_name = """{
             "name":1,
