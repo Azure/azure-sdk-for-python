@@ -5,7 +5,6 @@
 # ------------------------------------
 # pylint: disable=too-many-lines
 
-import copy
 from typing import Union, Any, List, Dict, TYPE_CHECKING
 from functools import partial
 from azure.core.async_paging import AsyncItemPaged
@@ -751,7 +750,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             For additional information see https://aka.ms/text-analytics-offsets
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword str continuation_token:
+            Call `continuation_token()` on the poller object to save the long-running operation (LRO)
+            state into an opaque token. Pass the value as the `continuation_token` keyword argument
+            to restart the LRO from a saved state.
         :keyword bool disable_service_logs: Defaults to true, meaning that Text Analytics will not log your
             input text on the service side for troubleshooting. If set to False, Text Analytics logs your
             input text for 48 hours, solely to allow for troubleshooting issues in providing you with
@@ -782,13 +784,33 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         polling_interval = kwargs.pop("polling_interval", 5)
         continuation_token = kwargs.pop("continuation_token", None)
         string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
+
+        if continuation_token:
+            def get_result_from_cont_token(initial_response, pipeline_response):
+                doc_id_order = initial_response.context.options["doc_id_order"]
+                show_stats = initial_response.context.options["show_stats"]
+                return self._healthcare_result_callback(
+                    doc_id_order, pipeline_response, None, {}, show_stats=show_stats
+                )
+
+            return AsyncAnalyzeHealthcareEntitiesLROPoller.from_continuation_token(
+                polling_method=AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
+                    text_analytics_client=self._client,
+                    timeout=polling_interval,
+                    **kwargs
+                ),
+                client=self._client._client,  # pylint: disable=protected-access
+                deserialization_callback=get_result_from_cont_token,
+                continuation_token=continuation_token
+            )
+
+        docs = _validate_input(documents, "language", language)
         doc_id_order = [doc.get("id") for doc in docs]
         my_cls = kwargs.pop(
             "cls",
@@ -796,27 +818,28 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 self._healthcare_result_callback, doc_id_order, show_stats=show_stats
             ),
         )
-        polling_kwargs = kwargs
-        operation_kwargs = copy.copy(kwargs)
-        if disable_service_logs is not None:
-            operation_kwargs["logging_opt_out"] = disable_service_logs
 
         try:
             return await self._client.begin_health(
                 docs,
                 model_version=model_version,
                 string_index_type=string_index_type,
+                logging_opt_out=disable_service_logs,
                 cls=my_cls,
                 polling=AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
                     text_analytics_client=self._client,
+                    doc_id_order=doc_id_order,
+                    show_stats=show_stats,
                     timeout=polling_interval,
                     lro_algorithms=[
-                        TextAnalyticsOperationResourcePolling(show_stats=show_stats)
+                        TextAnalyticsOperationResourcePolling(
+                            show_stats=show_stats,
+                        )
                     ],
-                    **polling_kwargs,
+                    **kwargs,
                 ),
                 continuation_token=continuation_token,
-                **operation_kwargs,
+                **kwargs,
             )
 
         except ValueError as error:
@@ -916,6 +939,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token:
+            Call `continuation_token()` on the poller object to save the long-running operation (LRO)
+            state into an opaque token. Pass the value as the `continuation_token` keyword argument
+            to restart the LRO from a saved state.
         :return: An instance of an AsyncAnalyzeActionsLROPoller. Call `result()` on the poller
             object to return a pageable heterogeneous list of lists. This list of lists is first ordered
             by the documents you input, then ordered by the actions you input. For example,
@@ -956,15 +983,35 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         display_name = kwargs.pop("display_name", None)
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
+
+        show_stats = kwargs.pop("show_stats", False)
+        polling_interval = kwargs.pop("polling_interval", 5)
+        continuation_token = kwargs.pop("continuation_token", None)
+
+        if continuation_token:
+            def get_result_from_cont_token(initial_response, pipeline_response):
+                doc_id_order = initial_response.context.options["doc_id_order"]
+                task_id_order = initial_response.context.options["task_id_order"]
+                show_stats = initial_response.context.options["show_stats"]
+                return self._analyze_result_callback(
+                    doc_id_order, task_id_order, pipeline_response, None, {}, show_stats=show_stats
+                )
+
+            return AsyncAnalyzeActionsLROPoller.from_continuation_token(
+                polling_method=AsyncAnalyzeActionsLROPollingMethod(
+                    timeout=polling_interval,
+                    **kwargs
+                ),
+                client=self._client._client,  # pylint: disable=protected-access
+                deserialization_callback=get_result_from_cont_token,
+                continuation_token=continuation_token
+            )
+
         docs = self._client.models(
             api_version=self._api_version
         ).MultiLanguageBatchInput(
             documents=_validate_input(documents, "language", language)
         )
-        show_stats = kwargs.pop("show_stats", False)
-        polling_interval = kwargs.pop("polling_interval", 5)
-        continuation_token = kwargs.pop("continuation_token", None)
-
         doc_id_order = [doc.get("id") for doc in docs.documents]
         try:
             generated_tasks = [
@@ -1034,8 +1081,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 ),
                 polling=AsyncAnalyzeActionsLROPollingMethod(
                     timeout=polling_interval,
+                    show_stats=show_stats,
+                    doc_id_order=doc_id_order,
+                    task_id_order=task_order,
                     lro_algorithms=[
-                        TextAnalyticsOperationResourcePolling(show_stats=show_stats)
+                        TextAnalyticsOperationResourcePolling(
+                            show_stats=show_stats,
+                        )
                     ],
                     **kwargs,
                 ),
