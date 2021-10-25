@@ -142,6 +142,11 @@ def _cloud_event_to_generated(cloud_event, **kwargs):
     )
 
 def _from_cncf_events(event):
+    """This takes in a CNCF cloudevent and returns a dictionary.
+
+    :raises: AttributeError when a dictionary is passed/ when data attribute is not
+     present in the event.
+    """
     res = {item: event[item] for item in event}
     if isinstance(event.data, six.binary_type):
         res['data_base64'] = event.data
