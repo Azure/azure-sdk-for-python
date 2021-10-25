@@ -18,34 +18,43 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from ._configuration import MicrosoftAzureChaosConfiguration
-from .operations import CapabilitiesOperations
-from .operations import ExperimentsOperations
+from ._configuration import KeyVaultManagementClientConfiguration
+from .operations import KeysOperations
+from .operations import VaultsOperations
+from .operations import PrivateEndpointConnectionsOperations
+from .operations import PrivateLinkResourcesOperations
+from .operations import ManagedHsmsOperations
+from .operations import MHSMPrivateEndpointConnectionsOperations
+from .operations import MHSMPrivateLinkResourcesOperations
 from .operations import Operations
-from .operations import TargetsOperations
-from .operations import TargetTypesOperations
-from .operations import CapabilityTypesOperations
+from .operations import SecretsOperations
 from . import models
 
 
-class MicrosoftAzureChaos(object):
-    """Azure Chaos Resource Provider REST API.
+class KeyVaultManagementClient(object):
+    """The Azure management API provides a RESTful set of web services that interact with Azure Key Vault.
 
-    :ivar capabilities: CapabilitiesOperations operations
-    :vartype capabilities: microsoft_azure_chaos.operations.CapabilitiesOperations
-    :ivar experiments: ExperimentsOperations operations
-    :vartype experiments: microsoft_azure_chaos.operations.ExperimentsOperations
+    :ivar keys: KeysOperations operations
+    :vartype keys: azure.mgmt.keyvault.v2021_06_01_preview.operations.KeysOperations
+    :ivar vaults: VaultsOperations operations
+    :vartype vaults: azure.mgmt.keyvault.v2021_06_01_preview.operations.VaultsOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
+    :vartype private_endpoint_connections: azure.mgmt.keyvault.v2021_06_01_preview.operations.PrivateEndpointConnectionsOperations
+    :ivar private_link_resources: PrivateLinkResourcesOperations operations
+    :vartype private_link_resources: azure.mgmt.keyvault.v2021_06_01_preview.operations.PrivateLinkResourcesOperations
+    :ivar managed_hsms: ManagedHsmsOperations operations
+    :vartype managed_hsms: azure.mgmt.keyvault.v2021_06_01_preview.operations.ManagedHsmsOperations
+    :ivar mhsm_private_endpoint_connections: MHSMPrivateEndpointConnectionsOperations operations
+    :vartype mhsm_private_endpoint_connections: azure.mgmt.keyvault.v2021_06_01_preview.operations.MHSMPrivateEndpointConnectionsOperations
+    :ivar mhsm_private_link_resources: MHSMPrivateLinkResourcesOperations operations
+    :vartype mhsm_private_link_resources: azure.mgmt.keyvault.v2021_06_01_preview.operations.MHSMPrivateLinkResourcesOperations
     :ivar operations: Operations operations
-    :vartype operations: microsoft_azure_chaos.operations.Operations
-    :ivar targets: TargetsOperations operations
-    :vartype targets: microsoft_azure_chaos.operations.TargetsOperations
-    :ivar target_types: TargetTypesOperations operations
-    :vartype target_types: microsoft_azure_chaos.operations.TargetTypesOperations
-    :ivar capability_types: CapabilityTypesOperations operations
-    :vartype capability_types: microsoft_azure_chaos.operations.CapabilityTypesOperations
+    :vartype operations: azure.mgmt.keyvault.v2021_06_01_preview.operations.Operations
+    :ivar secrets: SecretsOperations operations
+    :vartype secrets: azure.mgmt.keyvault.v2021_06_01_preview.operations.SecretsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: GUID that represents an Azure subscription ID.
+    :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
     :type subscription_id: str
     :param str base_url: Service URL
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
@@ -61,7 +70,7 @@ class MicrosoftAzureChaos(object):
         # type: (...) -> None
         if not base_url:
             base_url = 'https://management.azure.com'
-        self._config = MicrosoftAzureChaosConfiguration(credential, subscription_id, **kwargs)
+        self._config = KeyVaultManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -69,17 +78,23 @@ class MicrosoftAzureChaos(object):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.capabilities = CapabilitiesOperations(
+        self.keys = KeysOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.experiments = ExperimentsOperations(
+        self.vaults = VaultsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.managed_hsms = ManagedHsmsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.mhsm_private_endpoint_connections = MHSMPrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.mhsm_private_link_resources = MHSMPrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.targets = TargetsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.target_types = TargetTypesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.capability_types = CapabilityTypesOperations(
+        self.secrets = SecretsOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, http_request, **kwargs):
@@ -93,7 +108,7 @@ class MicrosoftAzureChaos(object):
         :rtype: ~azure.core.pipeline.transport.HttpResponse
         """
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
         stream = kwargs.pop("stream", True)
@@ -105,7 +120,7 @@ class MicrosoftAzureChaos(object):
         self._client.close()
 
     def __enter__(self):
-        # type: () -> MicrosoftAzureChaos
+        # type: () -> KeyVaultManagementClient
         self._client.__enter__()
         return self
 

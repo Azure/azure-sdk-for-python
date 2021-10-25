@@ -2125,8 +2125,8 @@ class BoundingRegion(object):
         )
 
 
-class DocumentElement(object):
-    """A DocumentElement.
+class DocumentContentElement(object):
+    """A DocumentContentElement.
 
     :ivar content: Text content of the word.
     :vartype content: str
@@ -2143,13 +2143,13 @@ class DocumentElement(object):
         self.kind = kwargs.get("kind", None)
 
     def __repr__(self):
-        return "DocumentElement(content={}, bounding_box={}, kind={})".format(
+        return "DocumentContentElement(content={}, bounding_box={}, kind={})".format(
             self.content, self.bounding_box, self.kind
         )
 
     def to_dict(self):
         # type: () -> dict
-        """Returns a dict representation of DocumentElement.
+        """Returns a dict representation of DocumentContentElement.
 
         :return: dict
         :rtype: dict
@@ -2164,12 +2164,12 @@ class DocumentElement(object):
 
     @classmethod
     def from_dict(cls, data):
-        # type: (dict) -> DocumentElement
-        """Converts a dict in the shape of a DocumentElement to the model itself.
+        # type: (dict) -> DocumentContentElement
+        """Converts a dict in the shape of a DocumentContentElement to the model itself.
 
-        :param dict data: A dictionary in the shape of DocumentElement.
-        :return: DocumentElement
-        :rtype: DocumentElement
+        :param dict data: A dictionary in the shape of DocumentContentElement.
+        :return: DocumentContentElement
+        :rtype: DocumentContentElement
         """
         return cls(
             content=data.get("content", None),
@@ -2844,7 +2844,7 @@ class DocumentPage(object):
         )
 
 
-class DocumentSelectionMark(DocumentElement):
+class DocumentSelectionMark(DocumentContentElement):
     """A selection mark object representing check boxes, radio buttons, and other elements indicating a selection.
 
     :ivar state: State of the selection mark. Possible values include: "selected",
@@ -3408,7 +3408,7 @@ class ModelOperation(ModelOperationInfo):
         )
 
 
-class DocumentWord(DocumentElement):
+class DocumentWord(DocumentContentElement):
     """A word object consisting of a contiguous sequence of characters.  For non-space delimited languages,
     such as Chinese, Japanese, and Korean, each character is represented as its own word.
 

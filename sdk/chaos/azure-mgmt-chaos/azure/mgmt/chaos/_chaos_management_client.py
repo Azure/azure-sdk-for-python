@@ -6,43 +6,45 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.mgmt.core import AsyncARMPipelineClient
+from azure.mgmt.core import ARMPipelineClient
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials_async import AsyncTokenCredential
+    from typing import Any, Optional
 
-from ._configuration import MicrosoftAzureChaosConfiguration
+    from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+
+from ._configuration import ChaosManagementClientConfiguration
 from .operations import CapabilitiesOperations
 from .operations import ExperimentsOperations
 from .operations import Operations
 from .operations import TargetsOperations
 from .operations import TargetTypesOperations
 from .operations import CapabilityTypesOperations
-from .. import models
+from . import models
 
 
-class MicrosoftAzureChaos(object):
-    """Azure Chaos Resource Provider REST API.
+class ChaosManagementClient(object):
+    """Chaos Management Client.
 
     :ivar capabilities: CapabilitiesOperations operations
-    :vartype capabilities: microsoft_azure_chaos.aio.operations.CapabilitiesOperations
+    :vartype capabilities: chaos_management_client.operations.CapabilitiesOperations
     :ivar experiments: ExperimentsOperations operations
-    :vartype experiments: microsoft_azure_chaos.aio.operations.ExperimentsOperations
+    :vartype experiments: chaos_management_client.operations.ExperimentsOperations
     :ivar operations: Operations operations
-    :vartype operations: microsoft_azure_chaos.aio.operations.Operations
+    :vartype operations: chaos_management_client.operations.Operations
     :ivar targets: TargetsOperations operations
-    :vartype targets: microsoft_azure_chaos.aio.operations.TargetsOperations
+    :vartype targets: chaos_management_client.operations.TargetsOperations
     :ivar target_types: TargetTypesOperations operations
-    :vartype target_types: microsoft_azure_chaos.aio.operations.TargetTypesOperations
+    :vartype target_types: chaos_management_client.operations.TargetTypesOperations
     :ivar capability_types: CapabilityTypesOperations operations
-    :vartype capability_types: microsoft_azure_chaos.aio.operations.CapabilityTypesOperations
+    :vartype capability_types: chaos_management_client.operations.CapabilityTypesOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: GUID that represents an Azure subscription ID.
     :type subscription_id: str
     :param str base_url: Service URL
@@ -51,15 +53,16 @@ class MicrosoftAzureChaos(object):
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
-        subscription_id: str,
-        base_url: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
+        credential,  # type: "TokenCredential"
+        subscription_id,  # type: str
+        base_url=None,  # type: Optional[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         if not base_url:
             base_url = 'https://management.azure.com'
-        self._config = MicrosoftAzureChaosConfiguration(credential, subscription_id, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._config = ChaosManagementClientConfiguration(credential, subscription_id, **kwargs)
+        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -79,29 +82,33 @@ class MicrosoftAzureChaos(object):
         self.capability_types = CapabilityTypesOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
-    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+    def _send_request(self, http_request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
         """Runs the network request through the client's chained policies.
 
         :param http_request: The network request you want to make. Required.
         :type http_request: ~azure.core.pipeline.transport.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
         """
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'),
         }
         http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
         stream = kwargs.pop("stream", True)
-        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
         return pipeline_response.http_response
 
-    async def close(self) -> None:
-        await self._client.close()
+    def close(self):
+        # type: () -> None
+        self._client.close()
 
-    async def __aenter__(self) -> "MicrosoftAzureChaos":
-        await self._client.__aenter__()
+    def __enter__(self):
+        # type: () -> ChaosManagementClient
+        self._client.__enter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
-        await self._client.__aexit__(*exc_details)
+    def __exit__(self, *exc_details):
+        # type: (Any) -> None
+        self._client.__exit__(*exc_details)

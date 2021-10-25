@@ -26,7 +26,7 @@ class CapabilitiesOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~microsoft_azure_chaos.models
+    :type models: ~chaos_management_client.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -67,7 +67,7 @@ class CapabilitiesOperations:
         :type continuation_token_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either CapabilityListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~microsoft_azure_chaos.models.CapabilityListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~chaos_management_client.models.CapabilityListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CapabilityListResult"]
@@ -159,7 +159,7 @@ class CapabilitiesOperations:
         :type capability_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Capability, or the result of cls(response)
-        :rtype: ~microsoft_azure_chaos.models.Capability
+        :rtype: ~chaos_management_client.models.Capability
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Capability"]
@@ -306,10 +306,10 @@ class CapabilitiesOperations:
         :param capability_name: String that represents a Capability resource name.
         :type capability_name: str
         :param capability: Capability resource to be created or updated.
-        :type capability: ~microsoft_azure_chaos.models.Capability
+        :type capability: ~chaos_management_client.models.Capability
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Capability, or the result of cls(response)
-        :rtype: ~microsoft_azure_chaos.models.Capability
+        :rtype: ~chaos_management_client.models.Capability
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Capability"]
