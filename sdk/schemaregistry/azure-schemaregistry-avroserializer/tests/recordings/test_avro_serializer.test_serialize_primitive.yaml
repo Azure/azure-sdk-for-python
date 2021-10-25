@@ -25,7 +25,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 22 Oct 2021 17:07:11 GMT
+      - Mon, 25 Oct 2021 19:45:07 GMT
       location:
       - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/null/versions/1?api-version=2020-09-01-preview
       schema-id:

@@ -54,18 +54,18 @@ class AvroSerializerTests(AzureTestCase):
         raw_avro_object_serializer = AvroObjectSerializer()
 
         # encoding part
-        encoded_payload = raw_avro_object_serializer.serialize(dict_data, schema)
+        encoded_payload = raw_avro_object_serializer.serialize(dict_data, schema_str)
 
         # decoding part
-        decoded_data = raw_avro_object_serializer.deserialize(encoded_payload, schema)
+        decoded_data = raw_avro_object_serializer.deserialize(encoded_payload, schema_str)
 
         assert decoded_data["name"] == u"Ben"
         assert decoded_data["favorite_number"] == 7
         assert decoded_data["favorite_color"] == u"red"
 
         dict_data_missing_optional_fields = {"name": u"Alice"}
-        encoded_payload = raw_avro_object_serializer.serialize(dict_data_missing_optional_fields, schema)
-        decoded_data = raw_avro_object_serializer.deserialize(encoded_payload, schema)
+        encoded_payload = raw_avro_object_serializer.serialize(dict_data_missing_optional_fields, schema_str)
+        decoded_data = raw_avro_object_serializer.deserialize(encoded_payload, schema_str)
 
         assert decoded_data["name"] == u"Alice"
         assert not decoded_data["favorite_number"]
@@ -78,11 +78,11 @@ class AvroSerializerTests(AzureTestCase):
         raw_avro_object_serializer = AvroObjectSerializer()
         dict_data_wrong_type = {"name": u"Ben", "favorite_number": u"something", "favorite_color": u"red"}
         with pytest.raises(AvroTypeException): # avro.io.AvroTypeException
-            raw_avro_object_serializer.serialize(dict_data_wrong_type, schema)
+            raw_avro_object_serializer.serialize(dict_data_wrong_type, schema_str)
 
         dict_data_missing_required_field = {"favorite_number": 7, "favorite_color": u"red"}
         with pytest.raises(AvroTypeException): # avro.io.AvroTypeException
-            raw_avro_object_serializer.serialize(dict_data_missing_required_field, schema)
+            raw_avro_object_serializer.serialize(dict_data_missing_required_field, schema_str)
 
     @SchemaRegistryPowerShellPreparer()
     def test_basic_sr_avro_serializer_with_auto_register_schemas(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):

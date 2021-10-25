@@ -19,7 +19,7 @@ interactions:
       string: '{"id":"6c1fad987afd4feaa090857e67058be6"}'
     headers:
       content-type: application/json
-      date: Fri, 22 Oct 2021 17:07:21 GMT
+      date: Mon, 25 Oct 2021 19:17:59 GMT
       location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/Suit/versions/1?api-version=2020-09-01-preview
       schema-id: 6c1fad987afd4feaa090857e67058be6
       schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/6c1fad987afd4feaa090857e67058be6?api-version=2020-09-01-preview
@@ -33,32 +33,4 @@ interactions:
       code: 200
       message: OK
     url: https://swathip-test-eventhubs.servicebus.windows.net/$schemagroups/swathip-test-schema/schemas/Suit?api-version=2020-09-01-preview
-- request:
-    body: null
-    headers:
-      Accept:
-      - text/plain; charset=utf-8
-      User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/6c1fad987afd4feaa090857e67058be6?api-version=2020-09-01-preview
-  response:
-    body:
-      string: '{"type":"enum","name":"Suit","symbols":["SPADES","HEARTS"]}'
-    headers:
-      content-type: application/json
-      date: Fri, 22 Oct 2021 17:07:21 GMT
-      location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/Suit/versions/1?api-version=2020-09-01-preview
-      schema-id: 6c1fad987afd4feaa090857e67058be6
-      schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/6c1fad987afd4feaa090857e67058be6?api-version=2020-09-01-preview
-      schema-version: '1'
-      schema-versions-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/Suit/versions?api-version=2020-09-01-preview
-      serialization-type: Avro
-      server: Microsoft-HTTPAPI/2.0
-      strict-transport-security: max-age=31536000
-      transfer-encoding: chunked
-    status:
-      code: 200
-      message: OK
-    url: https://swathip-test-eventhubs.servicebus.windows.net/$schemagroups/getSchemaById/6c1fad987afd4feaa090857e67058be6?api-version=2020-09-01-preview
 version: 1
