@@ -52,7 +52,7 @@ class ApacheAvroObjectSerializer(AbstractAvroObjectSerializer):
         :param data: An object to serialize
         :type data: ObjectType
         :param schema: An Avro RecordSchema
-        :type schema: Union[str, bytes, avro.schema.Schema]
+        :type schema: str
         :returns: Encoded bytes
         :rtype: bytes
         """
@@ -79,7 +79,7 @@ class ApacheAvroObjectSerializer(AbstractAvroObjectSerializer):
         :param data: A stream of bytes or bytes directly
         :type data: BinaryIO or bytes
         :param schema: An Avro RecordSchema
-        :type schema: Union[str, bytes, avro.schema.Schema]
+        :type schema: str
         :returns: An instantiated object
         :rtype: ObjectType
         """
