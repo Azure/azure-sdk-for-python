@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 from json.decoder import JSONDecodeError
 import os
+import logging
 import requests
 from typing import TYPE_CHECKING
 
@@ -158,6 +159,13 @@ def recorded_by_proxy(test_func):
         test_output = None
         try:
             test_output = test_func(*args, **trimmed_kwargs, variables=variables)
+        except TypeError:
+            logger = logging.getLogger()
+            logger.info(
+                "This test can't accept variables as input. The test method should accept `**kwargs` and/or a "
+                "`variables` parameter to make use of recorded test variables."
+            )
+            test_output = test_func(*args, **trimmed_kwargs)
         finally:
             RequestsTransport.send = original_transport_func
             stop_record_or_playback(test_id, recording_id, test_output)
