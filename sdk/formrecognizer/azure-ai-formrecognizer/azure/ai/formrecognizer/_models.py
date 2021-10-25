@@ -2125,8 +2125,8 @@ class BoundingRegion(object):
         )
 
 
-class DocumentElement(object):
-    """A DocumentElement.
+class DocumentContentElement(object):
+    """A DocumentContentElement.
 
     :ivar content: Text content of the word.
     :vartype content: str
@@ -2143,13 +2143,13 @@ class DocumentElement(object):
         self.kind = kwargs.get("kind", None)
 
     def __repr__(self):
-        return "DocumentElement(content={}, bounding_box={}, kind={})".format(
+        return "DocumentContentElement(content={}, bounding_box={}, kind={})".format(
             self.content, self.bounding_box, self.kind
         )
 
     def to_dict(self):
         # type: () -> dict
-        """Returns a dict representation of DocumentElement.
+        """Returns a dict representation of DocumentContentElement.
 
         :return: dict
         :rtype: dict
@@ -2164,12 +2164,12 @@ class DocumentElement(object):
 
     @classmethod
     def from_dict(cls, data):
-        # type: (dict) -> DocumentElement
-        """Converts a dict in the shape of a DocumentElement to the model itself.
+        # type: (dict) -> DocumentContentElement
+        """Converts a dict in the shape of a DocumentContentElement to the model itself.
 
-        :param dict data: A dictionary in the shape of DocumentElement.
-        :return: DocumentElement
-        :rtype: DocumentElement
+        :param dict data: A dictionary in the shape of DocumentContentElement.
+        :return: DocumentContentElement
+        :rtype: DocumentContentElement
         """
         return cls(
             content=data.get("content", None),
@@ -2844,7 +2844,7 @@ class DocumentPage(object):
         )
 
 
-class DocumentSelectionMark(DocumentElement):
+class DocumentSelectionMark(DocumentContentElement):
     """A selection mark object representing check boxes, radio buttons, and other elements indicating a selection.
 
     :ivar state: State of the selection mark. Possible values include: "selected",
@@ -3120,11 +3120,11 @@ class DocumentTableCell(object):
     @classmethod
     def _from_generated(cls, cell):
         return cls(
-            kind=cell.kind,
+            kind=cell.kind if cell.kind else "content",
             row_index=cell.row_index,
             column_index=cell.column_index,
-            row_span=cell.row_span,
-            column_span=cell.column_span,
+            row_span=cell.row_span if cell.row_span else 1,
+            column_span=cell.column_span if cell.column_span else 1,
             content=cell.content,
             bounding_regions=[
                 BoundingRegion._from_generated(region)
@@ -3184,11 +3184,11 @@ class DocumentTableCell(object):
         :rtype: DocumentTableCell
         """
         return cls(
-            kind=data.get("kind", None),
+            kind=data.get("kind", "content"),
             row_index=data.get("row_index", None),
             column_index=data.get("column_index", None),
-            row_span=data.get("row_span", None),
-            column_span=data.get("column_span", None),
+            row_span=data.get("row_span", 1),
+            column_span=data.get("column_span", 1),
             content=data.get("content", None),
             bounding_regions=[BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
             if len(data.get("bounding_regions", [])) > 0
@@ -3408,7 +3408,7 @@ class ModelOperation(ModelOperationInfo):
         )
 
 
-class DocumentWord(DocumentElement):
+class DocumentWord(DocumentContentElement):
     """A word object consisting of a contiguous sequence of characters.  For non-space delimited languages,
     such as Chinese, Japanese, and Korean, each character is represented as its own word.
 

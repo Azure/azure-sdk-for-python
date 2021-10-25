@@ -17,17 +17,14 @@ def modify_args(init):
 
 class BasicResource(Model):
 
-    @property
     @mark(original_name="platformUpdateDomainCount")
     def platform_update_domain_count(self):
         """How many times the platform update domain has been counted"""
 
-    @property
     @mark(original_name="platformFaultDomainCount")
     def platform_fault_domain_count(self):
         """How many times the platform fault domain has been counted"""
 
-    @property
     @mark(original_name="virtualMachines")
     def virtual_machines(self):
         """Number of virtual machines"""
@@ -60,6 +57,27 @@ def test_model_and_dict_equal():
         dict_response['virtualMachines'] ==
         []
     )
+
+def test_model_initialization():
+    dict_response = {
+        "platformUpdateDomainCount": 5,
+        "platformFaultDomainCount": 3,
+        "virtualMachines": []
+    }
+    a = BasicResource(platformUpdateDomainCount=5, platformFaultDomainCount=3, virtualMachines=[])
+    b = BasicResource(zip(['platformUpdateDomainCount', 'platformFaultDomainCount', 'virtualMachines'], [5, 3, []]))
+    c = BasicResource([('platformFaultDomainCount', 3), ('platformUpdateDomainCount', 5), ('virtualMachines', [])])
+    d = BasicResource({'virtualMachines': [], 'platformFaultDomainCount': 3, 'platformUpdateDomainCount': 5})
+    e = BasicResource({'platformFaultDomainCount': 3, 'virtualMachines': []}, platformUpdateDomainCount=5)
+    f = BasicResource(dict_response)
+    g = BasicResource(**dict_response)
+    assert a == b == c == d == e == f == g
+    dicts = [a, b, c, d, e, f, g]
+    for d in dicts:
+        assert len(d) == 3
+        assert d['platformUpdateDomainCount'] == d.platform_update_domain_count == 5
+        assert d['platformFaultDomainCount'] == d.platform_fault_domain_count == 3
+        assert d['virtualMachines'] == d.virtual_machines == []
 
 def test_json_roundtrip():
     dict_response = {

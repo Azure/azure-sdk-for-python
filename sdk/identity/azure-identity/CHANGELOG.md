@@ -1,6 +1,16 @@
 # Release History
 
-## 1.7.0b5 (Unreleased)
+## 1.7.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.7.0 (2021-10-14)
 
 ### Breaking Changes
 > These changes do not impact the API of stable versions such as 1.6.0.
@@ -10,7 +20,10 @@
   The multitenant authentication feature can be totally disabled by setting the environment variable 
   `AZURE_IDENTITY_DISABLE_MULTITENANTAUTH` to `True`.
 - `azure.identity.RegionalAuthority` is removed.
-- `regional_authority` argument is removed for `CertificateCredential` and `ClientSecretCredential`
+- `regional_authority` argument is removed for `CertificateCredential` and `ClientSecretCredential`.
+- `AzureApplicationCredential` is removed.
+- `client_credential` in the ctor of `OnBehalfOfCredential` is removed. Please use `client_secret` or `client_certificate` instead.
+- Make `user_assertion` in the ctor of `OnBehalfOfCredential` a keyword only argument.
 
 ## 1.7.0b4 (2021-09-09)
 

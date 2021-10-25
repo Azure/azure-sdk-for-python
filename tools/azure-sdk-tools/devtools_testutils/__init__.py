@@ -28,7 +28,7 @@ from .sanitizers import (
     add_uri_regex_sanitizer,
 )
 from .helpers import ResponseCallback, RetryCounter
-from .fake_credential import FakeTokenCredential
+from .fake_credential import FakeTokenCredential, ACCOUNT_FAKE_KEY
 
 __all__ = [
     "add_body_key_sanitizer",
@@ -60,4 +60,5 @@ __all__ = [
     "ResponseCallback",
     "RetryCounter",
     "FakeTokenCredential",
+    "ACCOUNT_FAKE_KEY"
 ]

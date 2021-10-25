@@ -1194,12 +1194,3 @@ def test_conflict_timeout(caplog, port, http_request):
     with pytest.raises(ValueError):
         with Pipeline(transport) as pipeline:
             pipeline.run(request, connection_timeout=(100, 100), read_timeout = 100)
-
-
-@pytest.mark.skipif(sys.version_info < (3, 10), reason="Loop parameter is deprecated since Python 3.10")
-def test_aiohttp_loop():
-    import asyncio
-    from azure.core.pipeline.transport import AioHttpTransport
-    loop = asyncio._get_running_loop()
-    with pytest.raises(ValueError):
-        transport = AioHttpTransport(loop=loop)

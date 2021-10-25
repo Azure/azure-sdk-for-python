@@ -41,7 +41,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
     composing models from a collection of existing models trained with labels.
 
     .. note:: FormTrainingClient should be used with API versions <=v2.1.
-        To use API versions v2021-09-30-preview and up, instantiate a DocumentModelAdministrationClient.
+        To use API versions 2021-09-30-preview and up, instantiate a DocumentModelAdministrationClient.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).

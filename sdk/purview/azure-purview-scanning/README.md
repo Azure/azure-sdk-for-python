@@ -10,6 +10,10 @@ Azure Purview Scanning is a fully managed cloud service whose users can scan you
 
 [Source code][source_code] | [Package (PyPI)][scanning_pypi] | [API reference documentation][scanning_ref_docs]| [Product documentation][scanning_product_documentation]
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 ## Getting started
 
 ### Prerequisites

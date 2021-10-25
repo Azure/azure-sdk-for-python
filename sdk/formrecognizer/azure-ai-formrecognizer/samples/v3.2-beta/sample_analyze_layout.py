@@ -43,7 +43,7 @@ def analyze_layout():
             "./sample_forms/forms/form_selection_mark.png",
         )
     )
-    # [START analyze_layout]
+
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer import DocumentAnalysisClient
 
@@ -130,8 +130,6 @@ def analyze_layout():
                 )
 
     print("----------------------------------------")
-
-    # [END analyze_layout]
 
 
 if __name__ == "__main__":

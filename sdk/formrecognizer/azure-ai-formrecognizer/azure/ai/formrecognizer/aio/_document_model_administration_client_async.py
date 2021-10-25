@@ -47,7 +47,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
     to another Form Recognizer resource, and composing a new model from a collection of existing models.
 
     .. note:: DocumentModelAdministrationClient should be used with API versions
-        v2021-09-30-preview and up. To use API versions <=v2.1, instantiate a FormTrainingClient.
+        2021-09-30-preview and up. To use API versions <=v2.1, instantiate a FormTrainingClient.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
@@ -62,7 +62,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         <=v2.1, instantiate a FormTrainingClient.
     :paramtype api_version: str or ~azure.ai.formrecognizer.DocumentAnalysisApiVersion
 
-    .. versionadded:: v2021-09-30-preview
+    .. versionadded:: 2021-09-30-preview
         The *DocumentModelAdministrationClient* and its client methods.
 
     .. admonition:: Example:
@@ -127,8 +127,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_build_model_async.py
-                :start-after: [START build_model]
-                :end-before: [END build_model]
+                :start-after: [START build_model_async]
+                :end-before: [END build_model_async]
                 :language: python
                 :dedent: 4
                 :caption: Building a model from training files.
@@ -195,8 +195,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_create_composed_model_async.py
-                :start-after: [START composed_model]
-                :end-before: [END composed_model]
+                :start-after: [START composed_model_async]
+                :end-before: [END composed_model_async]
                 :language: python
                 :dedent: 4
                 :caption: Creating a composed model with existing models.
@@ -298,8 +298,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_copy_model_async.py
-                :start-after: [START begin_copy_model]
-                :end-before: [END begin_copy_model]
+                :start-after: [START begin_copy_model_async]
+                :end-before: [END begin_copy_model_async]
                 :language: python
                 :dedent: 4
                 :caption: Copy a model from the source resource to the target resource
@@ -356,8 +356,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_manage_models_async.py
-                :start-after: [START delete_model]
-                :end-before: [END delete_model]
+                :start-after: [START delete_model_async]
+                :end-before: [END delete_model_async]
                 :language: python
                 :dedent: 8
                 :caption: Delete a model.
@@ -380,8 +380,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_manage_models_async.py
-                :start-after: [START list_models]
-                :end-before: [END list_models]
+                :start-after: [START list_models_async]
+                :end-before: [END list_models_async]
                 :language: python
                 :dedent: 8
                 :caption: List all models that were built successfully under the Form Recognizer resource.
@@ -406,8 +406,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_manage_models_async.py
-                :start-after: [START get_account_info]
-                :end-before: [END get_account_info]
+                :start-after: [START get_account_info_async]
+                :end-before: [END get_account_info_async]
                 :language: python
                 :dedent: 4
                 :caption: Get model counts and limits under the Form Recognizer resource.
@@ -428,8 +428,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_manage_models_async.py
-                :start-after: [START get_model]
-                :end-before: [END get_model]
+                :start-after: [START get_model_async]
+                :end-before: [END get_model_async]
                 :language: python
                 :dedent: 8
                 :caption: Get a model by its ID.
@@ -456,8 +456,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_get_operations_async.py
-                :start-after: [START list_operations]
-                :end-before: [END list_operations]
+                :start-after: [START list_operations_async]
+                :end-before: [END list_operations_async]
                 :language: python
                 :dedent: 4
                 :caption: List all document model operations in the past 24 hours.
@@ -487,8 +487,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_get_operations_async.py
-                :start-after: [START get_operation]
-                :end-before: [END get_operation]
+                :start-after: [START get_operation_async]
+                :end-before: [END get_operation_async]
                 :language: python
                 :dedent: 8
                 :caption: Get a document model operation by its ID.

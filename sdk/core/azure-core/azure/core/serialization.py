@@ -6,13 +6,10 @@
 # --------------------------------------------------------------------------
 import base64
 from json import JSONEncoder
-from typing import TYPE_CHECKING
-
+from typing import Union, cast
+from datetime import datetime, date, time, timedelta
 from .utils._utils import _FixedOffset
 
-if TYPE_CHECKING:
-    from typing import Optional
-    from datetime import timedelta
 
 
 __all__ = ["NULL", "AzureJSONEncoder"]
@@ -35,7 +32,7 @@ with no data. This gets serialized to `null` on the wire.
 """
 
 
-def _timedelta_as_isostr(value):
+def _timedelta_as_isostr(td):
     # type: (timedelta) -> str
     """Converts a datetime.timedelta object into an ISO 8601 formatted string, e.g. 'P4DT12H30M05S'
 
@@ -43,7 +40,7 @@ def _timedelta_as_isostr(value):
     """
 
     # Split seconds to larger units
-    seconds = value.total_seconds()
+    seconds = td.total_seconds()
     minutes, seconds = divmod(seconds, 60)
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
@@ -52,22 +49,22 @@ def _timedelta_as_isostr(value):
     seconds = round(seconds, 6)
 
     # Build date
-    date = ""
+    date_str = ""
     if days:
-        date = "%sD" % days
+        date_str = "%sD" % days
 
     # Build time
-    time = "T"
+    time_str = "T"
 
     # Hours
-    bigger_exists = date or hours
+    bigger_exists = date_str or hours
     if bigger_exists:
-        time += "{:02}H".format(hours)
+        time_str += "{:02}H".format(hours)
 
     # Minutes
     bigger_exists = bigger_exists or minutes
     if bigger_exists:
-        time += "{:02}M".format(minutes)
+        time_str += "{:02}M".format(minutes)
 
     # Seconds
     try:
@@ -81,9 +78,32 @@ def _timedelta_as_isostr(value):
     except AttributeError:  # int.is_integer() raises
         seconds_string = "{:02}".format(seconds)
 
-    time += "{}S".format(seconds_string)
+    time_str += "{}S".format(seconds_string)
 
-    return "P" + date + time
+    return "P" + date_str + time_str
+
+
+def _datetime_as_isostr(dt):
+    # type: (Union[datetime, date, time, timedelta]) -> str
+    """Converts a datetime.(datetime|date|time|timedelta) object into an ISO 8601 formatted string"""
+    # First try datetime.datetime
+    if hasattr(dt, "year") and hasattr(dt, "hour"):
+        dt = cast(datetime, dt)
+        # astimezone() fails for naive times in Python 2.7, so make make sure dt is aware (tzinfo is set)
+        if not dt.tzinfo:
+            iso_formatted = dt.replace(tzinfo=TZ_UTC).isoformat()
+        else:
+            iso_formatted = dt.astimezone(TZ_UTC).isoformat()
+        # Replace the trailing "+00:00" UTC offset with "Z" (RFC 3339: https://www.ietf.org/rfc/rfc3339.txt)
+        return iso_formatted.replace("+00:00", "Z")
+    # Next try datetime.date or datetime.time
+    try:
+        dt = cast(Union[date, time], dt)
+        return dt.isoformat()
+    # Last, try datetime.timedelta
+    except AttributeError:
+        dt = cast(timedelta, dt)
+        return _timedelta_as_isostr(dt)
 
 
 try:
@@ -98,7 +118,10 @@ class AzureJSONEncoder(JSONEncoder):
     """A JSON encoder that's capable of serializing datetime objects and bytes."""
 
     def default(self, o):  # pylint: disable=too-many-return-statements
+        if isinstance(o, (bytes, bytearray)):
+            return base64.b64encode(o).decode()
         try:
+<<<<<<< HEAD
             return super(AzureJSONEncoder, self).default(o)
         except TypeError:
             if isinstance(o, (bytes, bytearray)):
@@ -199,3 +222,9 @@ class Model(dict):
 
     def copy(self):
         return Model(self.__dict__)
+=======
+            return _datetime_as_isostr(o)
+        except AttributeError:
+            pass
+        return super(AzureJSONEncoder, self).default(o)
+>>>>>>> edbbcf929a02ab1998384a073da2e5cdec6a6510

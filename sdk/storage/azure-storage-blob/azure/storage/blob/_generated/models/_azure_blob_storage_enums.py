@@ -99,9 +99,9 @@ class BlobExpiryOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
 class BlobImmutabilityPolicyMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
+    MUTABLE = "Mutable"
     UNLOCKED = "Unlocked"
     LOCKED = "Locked"
-    MUTABLE = "Mutable"
 
 class BlobType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -175,11 +175,6 @@ class ListContainersIncludeType(with_metaclass(_CaseInsensitiveEnumMeta, str, En
 
     METADATA = "metadata"
     DELETED = "deleted"
-
-class PathRenameMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    LEGACY = "legacy"
-    POSIX = "posix"
 
 class PremiumPageBlobAccessTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -334,7 +329,7 @@ class StorageErrorCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SEQUENCE_NUMBER_CONDITION_NOT_MET = "SequenceNumberConditionNotMet"
     SEQUENCE_NUMBER_INCREMENT_TOO_LARGE = "SequenceNumberIncrementTooLarge"
     SNAPSHOT_COUNT_EXCEEDED = "SnapshotCountExceeded"
-    SNAPHOT_OPERATION_RATE_EXCEEDED = "SnaphotOperationRateExceeded"
+    SNAPSHOT_OPERATION_RATE_EXCEEDED = "SnapshotOperationRateExceeded"
     SNAPSHOTS_PRESENT = "SnapshotsPresent"
     SOURCE_CONDITION_NOT_MET = "SourceConditionNotMet"
     SYSTEM_IN_USE = "SystemInUse"
