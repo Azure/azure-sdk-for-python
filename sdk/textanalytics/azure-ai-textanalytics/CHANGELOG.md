@@ -13,6 +13,7 @@ This version of the SDK defaults to the latest supported API version, which curr
 ### Breaking Changes
 
 ### Bugs Fixed
+- Restarting a long-running operation from a saved state is now supported for the `begin_analyze_actions` and `begin_recognize_healthcare_entities` methods.
 
 ### Other Changes
 - Package requires [azure-core](https://pypi.org/project/azure-core/) version 1.16.0 or greater

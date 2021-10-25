@@ -563,7 +563,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             see https://aka.ms/text-analytics-offsets
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword str continuation_token:
+            Call `continuation_token()` on the poller object to save the long-running operation (LRO)
+            state into an opaque token. Pass the value as the `continuation_token` keyword argument
+            to restart the LRO from a saved state.
         :keyword bool disable_service_logs: Defaults to true, meaning that Text Analytics will not log your
             input text on the service side for troubleshooting. If set to False, Text Analytics logs your
             input text for 48 hours, solely to allow for troubleshooting issues in providing you with
@@ -914,6 +917,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token:
+            Call `continuation_token()` on the poller object to save the long-running operation (LRO)
+            state into an opaque token. Pass the value as the `continuation_token` keyword argument
+            to restart the LRO from a saved state.
         :return: An instance of an AnalyzeActionsLROPoller. Call `result()` on the poller
             object to return a pageable heterogeneous list of lists. This list of lists is first ordered
             by the documents you input, then ordered by the actions you input. For example,
