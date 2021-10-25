@@ -6,7 +6,7 @@
 
 ### Breaking Changes
 
-- Do not honor `policy.on_exception` returning `True` to stop raising any longer.
+- SansIOHTTPPolicy.on_exception returns None instead of bool.
 
 ### Bugs Fixed
 
