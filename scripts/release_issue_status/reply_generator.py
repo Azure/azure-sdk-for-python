@@ -54,8 +54,7 @@ def get_latest_pr_from_readme(rest_repo, link_dict):
 
 def reply_owner(assigner_issue, reply_content):
     assigner_issue.create_comment(reply_content)
-    user_tips = 'Tips: If you agree to this updated package, we will release it ASAP. '\
-                'If you have special release needs, please kindly let us know.'
+    user_tips = 'Tips: If you have special needs for release date or other things, please let us know. Otherwise We will release it ASAP after your check.'
     assigner_issue.create_comment(user_tips)
 
 
