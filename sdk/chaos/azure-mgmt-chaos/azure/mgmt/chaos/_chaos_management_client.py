@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from ._configuration import MicrosoftAzureChaosConfiguration
+from ._configuration import ChaosManagementClientConfiguration
 from .operations import CapabilitiesOperations
 from .operations import ExperimentsOperations
 from .operations import Operations
@@ -28,21 +28,21 @@ from .operations import CapabilityTypesOperations
 from . import models
 
 
-class MicrosoftAzureChaos(object):
-    """Azure Chaos Resource Provider REST API.
+class ChaosManagementClient(object):
+    """Chaos Management Client.
 
     :ivar capabilities: CapabilitiesOperations operations
-    :vartype capabilities: microsoft_azure_chaos.operations.CapabilitiesOperations
+    :vartype capabilities: chaos_management_client.operations.CapabilitiesOperations
     :ivar experiments: ExperimentsOperations operations
-    :vartype experiments: microsoft_azure_chaos.operations.ExperimentsOperations
+    :vartype experiments: chaos_management_client.operations.ExperimentsOperations
     :ivar operations: Operations operations
-    :vartype operations: microsoft_azure_chaos.operations.Operations
+    :vartype operations: chaos_management_client.operations.Operations
     :ivar targets: TargetsOperations operations
-    :vartype targets: microsoft_azure_chaos.operations.TargetsOperations
+    :vartype targets: chaos_management_client.operations.TargetsOperations
     :ivar target_types: TargetTypesOperations operations
-    :vartype target_types: microsoft_azure_chaos.operations.TargetTypesOperations
+    :vartype target_types: chaos_management_client.operations.TargetTypesOperations
     :ivar capability_types: CapabilityTypesOperations operations
-    :vartype capability_types: microsoft_azure_chaos.operations.CapabilityTypesOperations
+    :vartype capability_types: chaos_management_client.operations.CapabilityTypesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: GUID that represents an Azure subscription ID.
@@ -61,7 +61,7 @@ class MicrosoftAzureChaos(object):
         # type: (...) -> None
         if not base_url:
             base_url = 'https://management.azure.com'
-        self._config = MicrosoftAzureChaosConfiguration(credential, subscription_id, **kwargs)
+        self._config = ChaosManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -105,7 +105,7 @@ class MicrosoftAzureChaos(object):
         self._client.close()
 
     def __enter__(self):
-        # type: () -> MicrosoftAzureChaos
+        # type: () -> ChaosManagementClient
         self._client.__enter__()
         return self
 

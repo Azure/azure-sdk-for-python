@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration import MicrosoftAzureChaosConfiguration
+from ._configuration import ChaosManagementClientConfiguration
 from .operations import CapabilitiesOperations
 from .operations import ExperimentsOperations
 from .operations import Operations
@@ -26,21 +26,21 @@ from .operations import CapabilityTypesOperations
 from .. import models
 
 
-class MicrosoftAzureChaos(object):
-    """Azure Chaos Resource Provider REST API.
+class ChaosManagementClient(object):
+    """Chaos Management Client.
 
     :ivar capabilities: CapabilitiesOperations operations
-    :vartype capabilities: microsoft_azure_chaos.aio.operations.CapabilitiesOperations
+    :vartype capabilities: chaos_management_client.aio.operations.CapabilitiesOperations
     :ivar experiments: ExperimentsOperations operations
-    :vartype experiments: microsoft_azure_chaos.aio.operations.ExperimentsOperations
+    :vartype experiments: chaos_management_client.aio.operations.ExperimentsOperations
     :ivar operations: Operations operations
-    :vartype operations: microsoft_azure_chaos.aio.operations.Operations
+    :vartype operations: chaos_management_client.aio.operations.Operations
     :ivar targets: TargetsOperations operations
-    :vartype targets: microsoft_azure_chaos.aio.operations.TargetsOperations
+    :vartype targets: chaos_management_client.aio.operations.TargetsOperations
     :ivar target_types: TargetTypesOperations operations
-    :vartype target_types: microsoft_azure_chaos.aio.operations.TargetTypesOperations
+    :vartype target_types: chaos_management_client.aio.operations.TargetTypesOperations
     :ivar capability_types: CapabilityTypesOperations operations
-    :vartype capability_types: microsoft_azure_chaos.aio.operations.CapabilityTypesOperations
+    :vartype capability_types: chaos_management_client.aio.operations.CapabilityTypesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: GUID that represents an Azure subscription ID.
@@ -58,7 +58,7 @@ class MicrosoftAzureChaos(object):
     ) -> None:
         if not base_url:
             base_url = 'https://management.azure.com'
-        self._config = MicrosoftAzureChaosConfiguration(credential, subscription_id, **kwargs)
+        self._config = ChaosManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -99,7 +99,7 @@ class MicrosoftAzureChaos(object):
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "MicrosoftAzureChaos":
+    async def __aenter__(self) -> "ChaosManagementClient":
         await self._client.__aenter__()
         return self
 
