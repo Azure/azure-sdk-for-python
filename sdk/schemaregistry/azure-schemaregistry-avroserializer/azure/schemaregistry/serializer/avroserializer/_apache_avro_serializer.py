@@ -59,7 +59,7 @@ class ApacheAvroObjectSerializer(AbstractAvroObjectSerializer):
         if not schema:
             raise ValueError("Schema is required in Avro serializer.")
 
-        writer = self.get_schema_writer(str(schema))
+        writer = self.get_schema_writer(schema)
 
         stream = BytesIO()
         with stream:
@@ -86,7 +86,7 @@ class ApacheAvroObjectSerializer(AbstractAvroObjectSerializer):
         if not hasattr(data, 'read'):
             data = BytesIO(data)
 
-        reader = self.get_schema_reader(str(schema))
+        reader = self.get_schema_reader(schema)
 
         with data:
             bin_decoder = BinaryDecoder(data)

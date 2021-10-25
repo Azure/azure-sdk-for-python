@@ -113,6 +113,7 @@ class AvroSerializer(object):
 
         :param str schema_id: Schema id
         :return: Schema content
+        :rtype: str
         """
         schema_str = self._schema_registry_client.get_schema(
             schema_id, **kwargs
@@ -152,7 +153,7 @@ class AvroSerializer(object):
             schema_fullname, str(cached_schema), **kwargs
         )
         try:
-            data_bytes = self._avro_serializer.serialize(value, cached_schema)
+            data_bytes = self._avro_serializer.serialize(value, str(cached_schema))
         except Exception as e:
             raise SchemaSerializationError(
                 "Cannot serialize value '{}' for schema: {}".format(value, str(cached_schema)),
