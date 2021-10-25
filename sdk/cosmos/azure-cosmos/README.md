@@ -176,6 +176,7 @@ The following sections provide several code snippets covering some of the most c
 * [Get database properties](#get-database-properties "Get database properties")
 * [Get database and container throughputs](#get-database-and-container-throughputs "Get database and container throughputs")
 * [Modify container properties](#modify-container-properties "Modify container properties")
+* [Using the asynchronous client](#using-the-asynchronous-client "Using the asynchronous client")
 
 ### Create a database
 
@@ -427,6 +428,84 @@ print(json.dumps(container_props['defaultTtl']))
 
 For more information on TTL, see [Time to Live for Azure Cosmos DB data][cosmos_ttl].
 
+### Using the asynchronous client
+
+The asynchronous cosmos client looks and works in a very similar fashion to the already existing client, with the exception of its package within the sdk and the need of using async/await keywords in order to interact with it.
+
+```Python
+from azure.cosmos.aio import CosmosClient
+import os
+
+url = os.environ['ACCOUNT_URI']
+key = os.environ['ACCOUNT_KEY']
+client = CosmosClient(url, credential=key)
+database_name = 'testDatabase'
+database = client.get_database_client(database_name)
+container_name = 'products'
+container = database.get_container_client(container_name)
+
+async def create_items():
+    for i in range(1, 10):
+        await container.upsert_item({
+                'id': 'item{0}'.format(i),
+                'productName': 'Widget',
+                'productModel': 'Model {0}'.format(i)
+            }
+        )
+    await client.close()
+```
+
+It is also worth pointing out that the asynchronous client has to be closed manually after its use, either by initializing it using async with or calling the close() method directly like shown above.
+
+```Python
+from azure.cosmos.aio import CosmosClient
+import os
+
+url = os.environ['ACCOUNT_URI']
+key = os.environ['ACCOUNT_KEY']
+database_name = 'testDatabase'
+container_name = 'products'
+
+async with CosmosClient(url, credential=key) as client:
+    database = client.get_database_client(database_name)
+    container = database.get_container_client(container_name)
+    for i in range(1, 10):
+        await container.upsert_item({
+                'id': 'item{0}'.format(i),
+                'productName': 'Widget',
+                'productModel': 'Model {0}'.format(i)
+            }
+        )
+```
+
+### Queries with the asynchronous client
+
+Queries work the same way for the most part, and results can be directly iterated on, but because queries made by the asynchronous client return AsyncIterable objects, results can't be cast into lists directly; instead, if you need to create lists from your results, use Python's list comprehension to populate a list:
+
+```Python
+from azure.cosmos.aio import CosmosClient
+import os
+
+url = os.environ['ACCOUNT_URI']
+key = os.environ['ACCOUNT_KEY']
+client = CosmosClient(url, credential=key)
+database_name = 'testDatabase'
+database = client.get_database_client(database_name)
+container_name = 'products'
+container = database.get_container_client(container_name)
+
+async def create_lists():
+    results = await container.query_items(
+            query='SELECT * FROM products p WHERE p.productModel = "Model 2"',
+            enable_cross_partition_query=True)
+
+    # Iterating directly on results
+    async for item in results:
+        print(item)
+
+    # Making a list from the results
+    item_list = [item async for item in results]
+```
 
 ## Troubleshooting
 
