@@ -35,11 +35,7 @@ from .exceptions import (
     SchemaSerializationError,
     SchemaDeserializationError,
 )
-try:
-    import fastavro
-    from ._fast_avro_serializer import FastAvroObjectSerializer as AvroObjectSerializer
-except (ImportError, NameError):
-    from ._apache_avro_serializer import ApacheAvroObjectSerializer as AvroObjectSerializer
+from ._apache_avro_serializer import ApacheAvroObjectSerializer as AvroObjectSerializer
 from ._constants import SCHEMA_ID_START_INDEX, SCHEMA_ID_LENGTH, DATA_START_INDEX
 
 
