@@ -1,8 +1,8 @@
 interactions:
 - request:
     body: '[{"type": "com.example.sampletype1", "source": "https://example.com/event-producer",
-      "specversion": "1.0", "id": "702e037e-a35d-49ab-b0c5-6d668c2c9472", "time":
-      "2021-10-13T07:10:31.560047+00:00", "data_base64": "b''hello world''"}]'
+      "specversion": "1.0", "id": "630d2dfe-6a48-455b-bd59-7c08cd070226", "time":
+      "2021-10-25T03:07:58.780277+00:00", "data_base64": "b''hello world''"}]'
     headers:
       Accept:
       - '*/*'
@@ -15,7 +15,7 @@ interactions:
       Content-Type:
       - application/cloudevents-batch+json; charset=utf-8
       User-Agent:
-      - azsdk-python-eventgrid/4.6.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-eventgrid/4.7.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
     uri: https://cloudeventgridtestegtopic.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01
   response:
@@ -27,7 +27,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 13 Oct 2021 07:10:29 GMT
+      - Mon, 25 Oct 2021 03:07:58 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

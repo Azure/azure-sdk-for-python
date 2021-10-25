@@ -30,6 +30,7 @@ class EventGridPublisherClientTests(AzureTestCase):
         def callback(request):
             req = json.loads(request.http_request.body)
             assert req[0].get("data") is not None
+            assert isinstance(req[0], dict)
             assert req[0].get("type") == "com.example.sampletype1"
             assert req[0].get("source") == "https://example.com/event-producer"
     
