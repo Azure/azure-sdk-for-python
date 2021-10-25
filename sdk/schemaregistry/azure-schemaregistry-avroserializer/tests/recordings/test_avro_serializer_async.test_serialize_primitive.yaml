@@ -19,7 +19,7 @@ interactions:
       string: '{"id":"03172fa34ef247a0922d9eeae7457906"}'
     headers:
       content-type: application/json
-      date: Mon, 25 Oct 2021 19:18:01 GMT
+      date: Mon, 25 Oct 2021 19:48:37 GMT
       location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/null/versions/1?api-version=2020-09-01-preview
       schema-id: 03172fa34ef247a0922d9eeae7457906
       schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/03172fa34ef247a0922d9eeae7457906?api-version=2020-09-01-preview

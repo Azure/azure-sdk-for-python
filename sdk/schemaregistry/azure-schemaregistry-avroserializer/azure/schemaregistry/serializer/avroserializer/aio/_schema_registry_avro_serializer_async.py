@@ -140,7 +140,7 @@ class AvroSerializer(object):
 
         schema_id = await self._get_schema_id(schema_fullname, str(cached_schema), **kwargs)
         try:
-            data_bytes = self._avro_serializer.serialize(value, cached_schema)
+            data_bytes = self._avro_serializer.serialize(value, str(cached_schema))
         except Exception as e:
             raise SchemaSerializationError(
                 "Cannot serialize value '{}' for schema: {}".format(value, str(cached_schema)),
