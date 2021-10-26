@@ -127,7 +127,7 @@ class AvroSerializer(object):
         denoting record format identifier. The following 32 bytes denoting schema id returned by schema registry
         service. The remaining bytes are the real data payload.
 
-        Schema must be a Avro RecordSchema:
+        Schema must be an Avro RecordSchema:
         https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
 
         :param value: The data to be encoded.
@@ -135,7 +135,6 @@ class AvroSerializer(object):
         :keyword schema: Required. The schema used to encode the data.
         :paramtype schema: str
         :rtype: bytes
-
         :raises ~azure.schemaregistry.serializer.avroserializer.exceptions.SchemaParseError:
             Indicates an issue with parsing schema.
         :raises ~azure.schemaregistry.serializer.avroserializer.exceptions.SchemaSerializationError:
@@ -153,7 +152,7 @@ class AvroSerializer(object):
                 raw_input_schema
             )
         except Exception as e:
-            raise SchemaParseError(
+            SchemaParseError(
                 "Cannot parse schema: {}".format(raw_input_schema), error=e
             ).raise_with_traceback()
 
@@ -161,7 +160,7 @@ class AvroSerializer(object):
         try:
             data_bytes = self._avro_serializer.serialize(value, raw_input_schema)
         except Exception as e:
-            raise SchemaSerializationError(
+            SchemaSerializationError(
                 "Cannot serialize value '{}' for schema: {}".format(
                     value, raw_input_schema
                 ),
@@ -189,7 +188,6 @@ class AvroSerializer(object):
 
         :param bytes value: The bytes data needs to be decoded.
         :rtype: Dict[str, Any]
-
         :raises ~azure.schemaregistry.serializer.avroserializer.exceptions.SchemaDeserializationError:
             Indicates an issue with deserializing value.
         """
@@ -204,7 +202,7 @@ class AvroSerializer(object):
                 value[DATA_START_INDEX:], schema_definition
             )
         except Exception as e:
-            raise SchemaDeserializationError(
+            SchemaDeserializationError(
                 "Cannot deserialize value '{}' for schema: {}".format(
                     value[DATA_START_INDEX], schema_definition
                 ),
