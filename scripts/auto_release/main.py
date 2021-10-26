@@ -14,6 +14,7 @@ VERSION_LAST_RELEASE = '1.0.0b1'
 BRANCH_BASE = ''
 OUT_PATH = ''
 NEW_BRANCH = ''
+NORMAL_GENERATION = True
 
 _LOG = logging.getLogger()
 
@@ -166,6 +167,8 @@ def edit_changelog(add_content):
     list_out = [list_in[0], '\n']
     date = time.localtime(time.time())
     list_out.append('## {} ({}-{:02d}-{:02d})\n\n'.format(VERSION_NEW, date.tm_year, date.tm_mon, date.tm_mday))
+    if '0.0.0' in VERSION_NEW:
+        NORMAL_GENERATION = False
     for line in add_content:
         list_out.append(line + '\n')
     list_out.extend(list_in[1:])
@@ -459,4 +462,4 @@ if __name__ == '__main__':
         my_print(e)
     else:
         with open(f'{OUT_PATH}/output.txt', 'w') as file_out:
-            file_out.writelines([f'{NEW_BRANCH}\n', "main" if TRACK == '2' else 'release/v3'])
+            file_out.writelines([f'{NEW_BRANCH}\n', "main\n" if TRACK == '2' else 'release/v3\n', str(NORMAL_GENERATION)])
