@@ -18,6 +18,7 @@ _NULL = ' '
 _FILE_OUT = 'release_issue_status.csv'
 _FILE_OUT_PYTHON = 'release_python_status.md'
 _PYTHON_SDK_ADMINISTRATORS = ['msyyc', 'RAY-316', 'BigCat20196']
+_PYTHON_SDK_ASSIGNEES = ['RAY-316', 'BigCat20196']
 _ASSIGNER_DICT = {'RAY-316': os.getenv('ZED_TOKEN'), 'BigCat20196': os.getenv('JF_TOKEN')}
 logging.basicConfig(level=logging.INFO,
                     format='[auto-reply  log] - %(funcName)s[line:%(lineno)d] - %(levelname)s: %(message)s')
@@ -231,11 +232,10 @@ def main():
             item.bot_advice = 'new issue and better to confirm quickly.'
             if 'assigned' not in item.labels:
                 time.sleep(0.1)
-                assign_count = int(str(time.time())[-1]) % (len(_PYTHON_SDK_ADMINISTRATORS)-1)
-                if assign_count == 1:
-                    item.issue_object.remove_from_assignees(item.assignee)
-                    item.issue_object.add_to_assignees(_PYTHON_SDK_ADMINISTRATORS[2])
-                    item.assignee=item.issue_object.assignee.login
+                assign_count = int(str(time.time())[-1]) % len(_PYTHON_SDK_ASSIGNEES)
+                item.issue_object.remove_from_assignees(item.assignee)
+                item.issue_object.add_to_assignees(_PYTHON_SDK_ASSIGNEES[assign_count])
+                item.assignee=item.issue_object.assignee.login
                 item.issue_object.add_to_labels('assigned')
             try:
                 auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python_piplines, assigner_repoes)
