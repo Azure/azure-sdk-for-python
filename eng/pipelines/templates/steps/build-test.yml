@@ -16,10 +16,6 @@ parameters:
   InjectedPackages: ''
   DevFeedName: 'public/azure-sdk-for-python'
 
-variables:
-  - name: BuildTargetingStringValue
-    value: $[ coalesce(variables['BuildTargetingString'], '${{ parameters.BuildTargetingString }}') ]
-
 steps:
   - pwsh: |
       gci -r $(Build.ArtifactStagingDirectory)
@@ -47,7 +43,7 @@ steps:
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
-        "$(BuildTargetingStringValue)"
+        "${{ parameters.BuildTargetingString }}"
         ${{ parameters.AdditionalTestArgs }}
         ${{ parameters.CoverageArg }}
         --mark_arg="${{ parameters.TestMarkArgument }}"
@@ -98,7 +94,7 @@ steps:
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
-        "$(BuildTargetingStringValue)"
+        "${{ parameters.BuildTargetingString }}"
         --service="${{ parameters.ServiceDirectory }}"
         --toxenv="samples"
     env: ${{ parameters.EnvVars }}

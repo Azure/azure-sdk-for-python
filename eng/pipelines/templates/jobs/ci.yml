@@ -64,8 +64,6 @@ jobs:
     timeoutInMinutes: 90
     variables:
     - template: ../variables/globals.yml
-    - name: BuildTargetingStringValue
-      value: $[ coalesce(variables['BuildTargetingString'], '${{ parameters.BuildTargetingString }}') ]
 
     pool:
       name: azsdk-pool-mms-ubuntu-2004-general
@@ -75,7 +73,7 @@ jobs:
     - template: ../steps/build-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: $(BuildTargetingStringValue)
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         BuildDocs: ${{ parameters.BuildDocs }}
         TestPipeline: ${{ parameters.TestPipeline }}
@@ -114,7 +112,7 @@ jobs:
     - template: ../steps/analyze.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: $(BuildTargetingStringValue)
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
         TestPipeline: ${{ parameters.TestPipeline }}
@@ -138,7 +136,7 @@ jobs:
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
         AfterTestSteps: ${{ parameters.AfterTestSteps }}
-        BuildTargetingString: $(BuildTargetingStringValue)
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
         TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: ${{ parameters.InjectedPackages }}
@@ -185,4 +183,4 @@ jobs:
     - template: ../steps/test_regression.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: $(BuildTargetingStringValue)
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}

@@ -70,8 +70,6 @@ jobs:
     - template: ../variables/globals.yml
     - name: InjectedPackages
       value: ${{ parameters.InjectedPackages }}
-    - name: BuildTargetingStringValue
-      value: $[ coalesce(variables['BuildTargetingString'], '${{ parameters.BuildTargetingString }}') ]
 
     steps:
     - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
@@ -101,7 +99,7 @@ jobs:
         OSVmImage: $(OSVmImage)
         CoverageArg: $(CoverageArg)
         PythonVersion: $(PythonVersion)
-        BuildTargetingString: $(BuildTargetingStringValue)
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ToxTestEnv: $(toxenv)
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: $(InjectedPackages)
@@ -114,7 +112,7 @@ jobs:
           - template: ../steps/set-dev-build.yml
             parameters:
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
-              BuildTargetingString: $(BuildTargetingStringValue)
+              BuildTargetingString: ${{ parameters.BuildTargetingString }}
           
           - ${{ each step in parameters.BeforeTestSteps }}:
             -  ${{ step }}
