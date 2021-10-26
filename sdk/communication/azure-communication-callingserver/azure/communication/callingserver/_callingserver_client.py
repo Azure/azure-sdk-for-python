@@ -642,9 +642,6 @@ class CallingServerClient(object):
         **kwargs  # type: Any
     ):  # type: (...) -> HttpResponse
 
-        if not recording_id:
-            raise ValueError("recording_id cannot be None")
-
         return self._server_call_client.pause_recording(
             recording_id=recording_id,
             **kwargs
@@ -656,9 +653,6 @@ class CallingServerClient(object):
         recording_id,  # type: str
         **kwargs  # type: Any
     ):  # type: (...) -> HttpResponse
-
-        if not recording_id:
-            raise ValueError("recording_id cannot be None")
 
         return self._server_call_client.resume_recording(
             recording_id=recording_id,
@@ -672,9 +666,6 @@ class CallingServerClient(object):
         **kwargs  # type: Any
     ):  # type: (...) -> HttpResponse
 
-        if not recording_id:
-            raise ValueError("recording_id cannot be None")
-
         return self._server_call_client.stop_recording(
             recording_id=recording_id,
             **kwargs
@@ -686,9 +677,6 @@ class CallingServerClient(object):
         recording_id,  # type: str
         **kwargs  # type: Any
     ):  # type: (...) -> CallRecordingProperties
-
-        if not recording_id:
-            raise ValueError("recording_id cannot be None")
 
         return self._server_call_client.get_recording_properties(
             recording_id=recording_id,
