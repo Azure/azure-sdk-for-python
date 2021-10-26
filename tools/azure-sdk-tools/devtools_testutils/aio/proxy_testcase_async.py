@@ -17,6 +17,12 @@ from ..proxy_testcase import (
 
 
 def recorded_by_proxy_async(test_func):
+    """Decorator that redirects network requests to target the azure-sdk-tools test proxy. Use with recorded tests.
+
+    For more details and usage examples, refer to
+    https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
+    """
+
     async def record_wrap(*args, **kwargs):
         test_id = get_test_id()
         recording_id, variables = start_record_or_playback(test_id)
@@ -44,7 +50,7 @@ def recorded_by_proxy_async(test_func):
         # we define test_output before invoking the test so the variable is defined in case of an exception
         test_output = None
         try:
-            test_output = await test_func(*args, **trimmed_kwargs, variables=variables)
+            test_output = await test_func(*args, variables=variables, **trimmed_kwargs)
         except TypeError:
             logger = logging.getLogger()
             logger.info(

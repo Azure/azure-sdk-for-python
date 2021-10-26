@@ -3,10 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from json.decoder import JSONDecodeError
 import os
 import logging
 import requests
+import six
 from typing import TYPE_CHECKING
 
 try:
@@ -86,8 +86,10 @@ def start_record_or_playback(test_id):
         recording_id = result.headers["x-recording-id"]
         try:
             variables = result.json()
-        except JSONDecodeError:
-            pass
+        except ValueError as ex:  # would be a JSONDecodeError on Python 3, which subclasses ValueError
+            six.raise_from(
+                ValueError("The response body returned from starting playback did not contain valid JSON"), ex
+            )
 
     return (recording_id, variables)
 
@@ -131,6 +133,12 @@ def transform_request(request, recording_id):
 
 
 def recorded_by_proxy(test_func):
+    """Decorator that redirects network requests to target the azure-sdk-tools test proxy. Use with recorded tests.
+
+    For more details and usage examples, refer to
+    https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
+    """
+
     def record_wrap(*args, **kwargs):
         test_id = get_test_id()
         recording_id, variables = start_record_or_playback(test_id)
@@ -158,7 +166,7 @@ def recorded_by_proxy(test_func):
         # we define test_output before invoking the test so the variable is defined in case of an exception
         test_output = None
         try:
-            test_output = test_func(*args, **trimmed_kwargs, variables=variables)
+            test_output = test_func(*args, variables=variables, **trimmed_kwargs)
         except TypeError:
             logger = logging.getLogger()
             logger.info(
