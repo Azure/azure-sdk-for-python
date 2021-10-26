@@ -115,22 +115,6 @@ class AvroSerializerAsyncTests(AzureTestCase):
         with pytest.raises(SchemaParseError):    # caught avro SchemaParseError
             await sr_avro_serializer.serialize({"name": u"Ben"}, schema=invalid_schema_string) 
 
-    ######################### UNION SCHEMA #########################
-
-    @SchemaRegistryPowerShellPreparer()
-    async def test_parse_invalid_union_item(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
-        sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
-        sr_avro_serializer = AvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
-
-        schema_invalid_union_item = ["""
-            "name":"User",
-            "namespace":"example.avro",
-            "type":"record",
-            "fields":[{"name":"name","type":"string"}]
-        """]
-        with pytest.raises(SchemaParseError) as e:
-            await sr_avro_serializer.serialize({}, schema=schema_invalid_union_item) 
-
     ######################### PRIMITIVES #########################
 
     @SchemaRegistryPowerShellPreparer()
@@ -142,12 +126,6 @@ class AvroSerializerAsyncTests(AzureTestCase):
         with pytest.raises(SchemaParseError) as e:
             await sr_avro_serializer.serialize("hello", schema=primitive_string) 
 
-        int_type = """{"type": "int", "fake_prop": "string"}"""
-        # Strange schema, valid for parsing but not for serializing. Catch early by checking for primitive
-        # before a bad schema gets registered. Otherwise, will be caught when writing data.
-        with pytest.raises(SchemaSerializationError) as e:
-            await sr_avro_serializer.serialize({"fake_prop": "hello"}, schema=int_type) 
-
     ######################### type fixed #########################
 
     @SchemaRegistryPowerShellPreparer()
@@ -155,7 +133,7 @@ class AvroSerializerAsyncTests(AzureTestCase):
         sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_serializer = AvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
 
-        # should give warning from IgnoredLogicalType error since precision < 0
+        # avro bug: should give warning from IgnoredLogicalType error since precision < 0
         #fixed_type_ignore_logical_type_error = """{"type": "fixed", "size": 4, "namespace":"example.avro", "name":"User", "precision": -1}"""
         #await sr_avro_serializer.serialize({}, schema=fixed_type_ignore_logical_type_error) 
 
@@ -174,51 +152,6 @@ class AvroSerializerAsyncTests(AzureTestCase):
         schema_wrong_namespace = """{"type": "fixed", "name": "User", "size": 3, "namespace": 1}"""
         with pytest.raises(SchemaParseError):    # caught SchemaParseError
             await sr_avro_serializer.serialize({}, schema=schema_wrong_namespace) 
-
-    ######################### type enum #########################
-
-    @SchemaRegistryPowerShellPreparer()
-    async def test_parse_enum_types(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
-        sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
-        sr_avro_serializer = AvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
-
-        # THE FOLLOWING SHOULD RAISE AVRO SCHEMAPARSEEXCEPTION ERRORS
-        # IT HAS BEEN FIXED IN AVRO GITHUB REPO, BUT HAS NOT BEEN RELEASED YET
-        #schema_enum_wrong_no_symbols_type = """{
-        #    "type": "enum",
-        #    "name": "Suit"
-        #}"""
-        #with pytest.raises(SchemaParseError):    # caught SchemaParseError
-        #    await sr_avro_serializer.serialize({}, schema=schema_enum_wrong_no_symbols_type) 
-
-        #schema_enum_wrong_symbol_item_types = """{
-        #    "type": "enum",
-        #    "name": "Suit",
-        #    "symbols": [1]
-        #}"""
-        #with pytest.raises(SchemaParseError):    # caught SchemaParseError
-        #    await sr_avro_serializer.serialize({}, schema=schema_enum_wrong_symbol_item_types)
-
-        schema_enum_invalid_symbol_item_names = """{
-            "type": "enum",
-            "name": "Suit",
-            "symbols": ["9abc"]
-        }"""
-        with pytest.raises(SchemaParseError):    # caught SchemaParseError
-            await sr_avro_serializer.serialize({}, schema=schema_enum_invalid_symbol_item_names)
-
-        schema_enum_duplicate_symbols = """{
-            "type": "enum",
-            "name": "Suit",
-            "symbols": ["abc", "abc"]
-        }"""
-        with pytest.raises(SchemaParseError):    # caught SchemaParseError
-            await sr_avro_serializer.serialize({}, schema=schema_enum_duplicate_symbols)
-
-    ###################################################################
-
-    ## MAP, ARRAY, ERRORUNION schema except types that are already accounted for.
-    ## Test in the future when these are implemented
 
     ######################### type unspecified #########################
 
@@ -262,10 +195,8 @@ class AvroSerializerAsyncTests(AzureTestCase):
         registered_schema = await sr_client.get_schema(schema_id)
         decoded_registered_schema = json.loads(registered_schema.schema_definition)
 
-        # ensure that namespace is saved as part of name before . in registered schema
-        # result, but might be bug in avro?
         assert decoded_registered_schema["name"] == "User.avro"
-        assert decoded_registered_schema["namespace"] == "User"
+        assert decoded_registered_schema["namespace"] == "thrownaway"
 
         schema_name_no_namespace = """{
             "name":"User",
@@ -277,7 +208,6 @@ class AvroSerializerAsyncTests(AzureTestCase):
         registered_schema = await sr_client.get_schema(schema_id)
         decoded_registered_schema = json.loads(registered_schema.schema_definition)
 
-        # ensure that namespace is saved as part of name before . in registered schema
         assert decoded_registered_schema["name"] == "User"
         assert "namespace" not in decoded_registered_schema
 
@@ -416,22 +346,6 @@ class AvroSerializerAsyncTests(AzureTestCase):
         with pytest.raises(SchemaParseError):
             await sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_field_type_invalid) 
 
-    #@SchemaRegistryPowerShellPreparer()
-    #async def test_parse_invalid_aliases(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
-    #    sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
-    #    sr_avro_serializer = AvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
-
-        # NOT FAILING
-    #    schema_wrong_type_aliases = """{
-    #        "name":"User_aliases",
-    #        "type":"record",
-    #        "namespace":"example.avro",
-    #        "aliases":["Resu"],
-    #        "fields":[{"name":"name","type":"string"}]
-    #    }"""
-    #    with pytest.raises(SchemaParseError):
-    #        await sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_wrong_type_aliases) 
-
     ################################################################# 
     #################### SERIALIZE AND DESERIALIZE ##################
     ################################################################# 
@@ -446,47 +360,16 @@ class AvroSerializerAsyncTests(AzureTestCase):
         assert len(encoded_data) == 36  # assert no data encoded
 
     @SchemaRegistryPowerShellPreparer()
-    async def test_serialize_fixed(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
-        sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
-        sr_avro_serializer = AvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
-
-        schema_fixed = """{"type": "fixed", "name":"User", "size": 39}"""
-        # WHAT KIND OF VALUE SHOULD GO BELOW TO MAKE THIS WORK?
-        #await sr_avro_serializer.serialize(b"\u00ff", schema=schema_fixed) 
-
-    @SchemaRegistryPowerShellPreparer()
-    async def test_serialize_enum(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
-        sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
-        sr_avro_serializer = AvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
-
-        schema_enum = """{
-            "type": "enum",
-            "name": "Suit",
-            "symbols": ["SPADES", "HEARTS"]
-        }"""
-        data = "SPADES"
-        encoded_data = await sr_avro_serializer.serialize(data, schema=schema_enum)
-        decoded_data = await sr_avro_serializer.deserialize(encoded_data)
-        assert decoded_data == data
-
-    @SchemaRegistryPowerShellPreparer()
-    async def test_serialize_array(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
-        sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
-        sr_avro_serializer = AvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
-
-        # mapping behaves similarly
-        schema_array = """{
-            "type": "array",
-            "items": "string"
-        }"""
-        with pytest.raises(SchemaParseError):    # no fullname
-            await sr_avro_serializer.serialize(["hi"], schema=schema_array)
-
-    @SchemaRegistryPowerShellPreparer()
     async def test_serialize_record(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
         sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_serializer = AvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
 
+        # add below to schema later if possible
+        # {"name":"example.innerrec","type":"record","fields":[{"name":"a","type":"int"}]},
+        # {"name":"innerenum","type":"enum","symbols":["FOO", "BAR"]},
+        # {"name":"innerarray","type":"array","items":"int"},
+        # {"name":"innermap","type":"map","values":"int"},
+        # {"name":"innerfixed","type":"fixed","size":74}
         schema_record = """{
             "name":"User",
             "namespace":"example.avro.populatedrecord",
@@ -499,54 +382,14 @@ class AvroSerializerAsyncTests(AzureTestCase):
                 {"name":"randb","type":"bytes"}
             ]
         }"""
-        # add below to schema later if possible
-        # {"name":"example.innerrec","type":"record","fields":[{"name":"a","type":"int"}]},
-        # {"name":"innerenum","type":"enum","symbols":["FOO", "BAR"]},
-        # {"name":"innerarray","type":"array","items":"int"},
-        # {"name":"innermap","type":"map","values":"int"},
-        # {"name":"innerfixed","type":"fixed","size":74}
         data = {
             "name": u"Ben",
             "age": 3,
             "married": False,
             "height": 13.5,
             "randb": b"\u00FF"
-        #    "innerrec": {"a":1},
-        #    "innerenum": "FOO",
-        #    "innerarray": [1],
-        #    "innermap": {"a":1},
-        #    "innerfixed": "\u00ff"
         }
 
         encoded_data = await sr_avro_serializer.serialize(data, schema=schema_record)
         decoded_data = await sr_avro_serializer.deserialize(encoded_data)
         assert decoded_data == data
-
-
-        # testing that "default" property in field does deserialize with default if field not in data
-        # below doesn't work, so what does "default" do?
-        #schema_record_without_default = """{
-        #    "name":"User",
-        #    "namespace":"example.avro.withoutdefault",
-        #    "type":"record",
-        #    "fields":[
-        #        {"name":"name","type":"string"}
-        #    ]
-        #}"""
-        #data = {"name":u"Ben"}
-        #encoded_data_with_envelope = await sr_avro_serializer.serialize(data, schema=schema_record_without_default)
-        #encoded_data = encoded_data_with_envelope[36:]
-
-        #schema_record_with_default = """{
-        #    "name":"User",
-        #    "namespace":"example.avro.default",
-        #    "type":"record",
-        #    "fields":[
-        #        {"name":"name","type":"string"},
-        #        {"name":"age","type":"int","default":1}
-        #    ]
-        #}"""
-
-        #raw_avro_object_serializer = AvroObjectSerializer()
-        #decoded_data = raw_avro_object_serializer.deserialize(encoded_data, schema_record_with_default)
-        #assert decoded_data["age"] == 1

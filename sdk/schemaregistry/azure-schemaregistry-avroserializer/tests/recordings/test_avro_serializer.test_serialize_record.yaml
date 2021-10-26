@@ -1,9 +1,10 @@
 interactions:
 - request:
-    body: '{"type": "record", "name": "User", "namespace": "example.avro.populatedrecord",
-      "fields": [{"type": "string", "name": "name"}, {"type": "int", "name": "age"},
-      {"type": "boolean", "name": "married"}, {"type": "float", "name": "height"},
-      {"type": "bytes", "name": "randb"}]}'
+    body: "{\n            \"name\":\"User\",\n            \"namespace\":\"example.avro.populatedrecord\",\n
+      \           \"type\":\"record\",\n            \"fields\":[\n                {\"name\":\"name\",\"type\":\"string\"},\n
+      \               {\"name\":\"age\",\"type\":\"int\"},\n                {\"name\":\"married\",\"type\":\"boolean\"},\n
+      \               {\"name\":\"height\",\"type\":\"float\"},\n                {\"name\":\"randb\",\"type\":\"bytes\"}\n
+      \           ]\n        }"
     headers:
       Accept:
       - application/json
@@ -12,7 +13,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '272'
+      - '405'
       Content-Type:
       - application/json
       Serialization-Type:
@@ -23,18 +24,18 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/example.avro.populatedrecord.User?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"05f8ab3afc1d4facac54bc090d723e57"}'
+      string: '{"id":"fee73b56d1e64c1595c97e2573b3c1ac"}'
     headers:
       content-type:
       - application/json
       date:
-      - Mon, 25 Oct 2021 19:48:26 GMT
+      - Tue, 26 Oct 2021 00:20:10 GMT
       location:
       - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/example.avro.populatedrecord.User/versions/1?api-version=2020-09-01-preview
       schema-id:
-      - 05f8ab3afc1d4facac54bc090d723e57
+      - fee73b56d1e64c1595c97e2573b3c1ac
       schema-id-location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/05f8ab3afc1d4facac54bc090d723e57?api-version=2020-09-01-preview
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/fee73b56d1e64c1595c97e2573b3c1ac?api-version=2020-09-01-preview
       schema-version:
       - '1'
       schema-versions-location:
@@ -62,21 +63,21 @@ interactions:
       User-Agent:
       - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/05f8ab3afc1d4facac54bc090d723e57?api-version=2020-09-01-preview
+    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/fee73b56d1e64c1595c97e2573b3c1ac?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"type":"record","name":"User","namespace":"example.avro.populatedrecord","fields":[{"type":"string","name":"name"},{"type":"int","name":"age"},{"type":"boolean","name":"married"},{"type":"float","name":"height"},{"type":"bytes","name":"randb"}]}'
+      string: '{"name":"User","namespace":"example.avro.populatedrecord","type":"record","fields":[{"name":"name","type":"string"},{"name":"age","type":"int"},{"name":"married","type":"boolean"},{"name":"height","type":"float"},{"name":"randb","type":"bytes"}]}'
     headers:
       content-type:
       - application/json
       date:
-      - Mon, 25 Oct 2021 19:48:26 GMT
+      - Tue, 26 Oct 2021 00:20:11 GMT
       location:
       - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/example.avro.populatedrecord.User/versions/1?api-version=2020-09-01-preview
       schema-id:
-      - 05f8ab3afc1d4facac54bc090d723e57
+      - fee73b56d1e64c1595c97e2573b3c1ac
       schema-id-location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/05f8ab3afc1d4facac54bc090d723e57?api-version=2020-09-01-preview
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/fee73b56d1e64c1595c97e2573b3c1ac?api-version=2020-09-01-preview
       schema-version:
       - '1'
       schema-versions-location:

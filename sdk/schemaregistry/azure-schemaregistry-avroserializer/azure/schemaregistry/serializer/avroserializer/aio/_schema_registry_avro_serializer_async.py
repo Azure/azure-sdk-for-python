@@ -133,19 +133,18 @@ class AvroSerializer(object):
         record_format_identifier = b"\0\0\0\0"
 
         try:
-            cached_schema = self._avro_serializer.parse_schema(raw_input_schema)
-            schema_fullname = cached_schema.fullname
+            schema_fullname = self._avro_serializer.get_schema_fullname(raw_input_schema)
         except Exception as e:
-            raise SchemaParseError("Cannot parse schema: {}".format(raw_input_schema), error=e)
+            raise SchemaParseError("Cannot parse schema: {}".format(raw_input_schema), error=e).raise_with_traceback()
 
-        schema_id = await self._get_schema_id(schema_fullname, str(cached_schema), **kwargs)
+        schema_id = await self._get_schema_id(schema_fullname, raw_input_schema, **kwargs)
         try:
-            data_bytes = self._avro_serializer.serialize(value, str(cached_schema))
+            data_bytes = self._avro_serializer.serialize(value, raw_input_schema)
         except Exception as e:
             raise SchemaSerializationError(
-                "Cannot serialize value '{}' for schema: {}".format(value, str(cached_schema)),
+                "Cannot serialize value '{}' for schema: {}".format(value, raw_input_schema),
                 error=e
-            )
+            ).raise_with_traceback()
 
         stream = BytesIO()
 
@@ -180,5 +179,5 @@ class AvroSerializer(object):
             raise SchemaDeserializationError(
                 "Cannot deserialize value '{}' for schema: {}".format(value[DATA_START_INDEX], schema_definition),
                 error=e
-            )
+            ).raise_with_traceback()
         return dict_value

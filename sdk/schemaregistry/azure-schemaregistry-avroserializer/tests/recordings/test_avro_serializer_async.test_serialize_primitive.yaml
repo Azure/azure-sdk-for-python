@@ -1,11 +1,11 @@
 interactions:
 - request:
-    body: '"null"'
+    body: '{"type": "null"}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '6'
+      - '16'
       Content-Type:
       - application/json
       Serialization-Type:
@@ -16,13 +16,13 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/null?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"03172fa34ef247a0922d9eeae7457906"}'
+      string: '{"id":"587b7a7ad9304f659e8434c2edfcf08b"}'
     headers:
       content-type: application/json
-      date: Mon, 25 Oct 2021 19:48:37 GMT
+      date: Tue, 26 Oct 2021 00:20:20 GMT
       location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/null/versions/1?api-version=2020-09-01-preview
-      schema-id: 03172fa34ef247a0922d9eeae7457906
-      schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/03172fa34ef247a0922d9eeae7457906?api-version=2020-09-01-preview
+      schema-id: 587b7a7ad9304f659e8434c2edfcf08b
+      schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/587b7a7ad9304f659e8434c2edfcf08b?api-version=2020-09-01-preview
       schema-version: '1'
       schema-versions-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/null/versions?api-version=2020-09-01-preview
       serialization-type: Avro

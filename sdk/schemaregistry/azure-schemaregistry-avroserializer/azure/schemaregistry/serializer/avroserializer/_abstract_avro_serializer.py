@@ -14,6 +14,22 @@ class AbstractAvroObjectSerializer(object):
     """
 
     @abstractmethod
+    def get_schema_fullname(
+        self,
+        schema,  # type: str 
+    ):
+        # type: (str) -> str
+        """
+        Returns the namespace-qualified name of the provided schema.
+        Schema must be a Avro RecordSchema:
+        https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
+        :param schema: An Avro RecordSchema
+        :type schema: str
+        :rtype: str
+        """
+
+
+    @abstractmethod
     def serialize(
         self,
         data,  # type: ObjectType

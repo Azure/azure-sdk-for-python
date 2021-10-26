@@ -127,11 +127,17 @@ class AvroSerializer(object):
         denoting record format identifier. The following 32 bytes denoting schema id returned by schema registry
         service. The remaining bytes are the real data payload.
 
+        Schema must be a Avro RecordSchema:
+        https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
+
         :param value: The data to be encoded.
         :type value: Mapping[str, Any]
         :keyword schema: Required. The schema used to encode the data.
         :paramtype schema: str
         :rtype: bytes
+
+        :raises ~azure.schemaregistry.serializer.avroserializer.exceptions.SchemaParseError: Indicates an issue with parsing schema.
+        :raises ~azure.schemaregistry.serializer.avroserializer.exceptions.SchemaSerializationError: Indicates an issue with serializing data for provided schema.
         """
         try:
             raw_input_schema = kwargs.pop("schema")
@@ -146,7 +152,7 @@ class AvroSerializer(object):
             raise SchemaParseError(
                 "Cannot parse schema: {}".format(raw_input_schema),
                 error=e
-            )
+            ).raise_with_traceback()
 
         schema_id = self._get_schema_id(
             schema_fullname, raw_input_schema, **kwargs
@@ -157,7 +163,7 @@ class AvroSerializer(object):
             raise SchemaSerializationError(
                 "Cannot serialize value '{}' for schema: {}".format(value, raw_input_schema),
                 error=e
-            )
+            ).raise_with_traceback()
 
         stream = BytesIO()
 
@@ -175,8 +181,13 @@ class AvroSerializer(object):
         """
         Decode bytes data.
 
+        Data must follow format of associated Avro RecordSchema:
+        https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
+
         :param bytes value: The bytes data needs to be decoded.
         :rtype: Dict[str, Any]
+
+        :raises ~azure.schemaregistry.serializer.avroserializer.exceptions.SchemaDeserializationError: Indicates an issue with deserializing value.
         """
         # record_format_identifier = data[0:4]  # The first 4 bytes are retained for future record format identifier.
         schema_id = value[
@@ -192,5 +203,5 @@ class AvroSerializer(object):
             raise SchemaDeserializationError(
                 "Cannot deserialize value '{}' for schema: {}".format(value[DATA_START_INDEX], schema_definition),
                 error=e
-            )
+            ).raise_with_traceback
         return dict_value
