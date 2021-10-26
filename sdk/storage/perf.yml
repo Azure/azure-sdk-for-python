@@ -1,6 +1,7 @@
 variables:
   NugetSecurityAnalysisWarningLevel: 'none'
   skipComponentGovernanceDetection: 'true'
+  PythonVersion: '3.7'
 
 pool:
   name: "azsdk-pool-mms-ubuntu-2004-general"
@@ -17,6 +18,11 @@ resources:
 steps:
   - checkout: self
   - checkout: azure-sdk-tools
+
+  - task: UsePythonVersion@0
+    displayName: "Use Python $(PythonVersion)"
+    inputs:
+      versionSpec: $(PythonVersion)
 
   - pwsh: |
       set-content -path config.yml -value "WorkingDirectories:"
