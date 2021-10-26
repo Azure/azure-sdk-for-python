@@ -16,7 +16,7 @@ class AbstractAvroObjectSerializer(object):
     @abstractmethod
     def get_schema_fullname(
         self,
-        schema,  # type: str 
+        schema,  # type: str
     ):
         # type: (str) -> str
         """

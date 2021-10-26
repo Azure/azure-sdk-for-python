@@ -125,6 +125,11 @@ class AvroSerializer(object):
         :keyword schema: Required. The schema used to encode the data.
         :paramtype schema: str
         :rtype: bytes
+
+        :raises ~azure.schemaregistry.serializer.avroserializer.exceptions.SchemaParseError:
+            Indicates an issue with parsing schema.
+        :raises ~azure.schemaregistry.serializer.avroserializer.exceptions.SchemaSerializationError:
+            Indicates an issue with serializing data for provided schema.
         """
         try:
             raw_input_schema = kwargs.pop("schema")
@@ -164,6 +169,9 @@ class AvroSerializer(object):
 
         :param bytes value: The bytes data needs to be decoded.
         :rtype: Dict[str, Any]
+
+        :raises ~azure.schemaregistry.serializer.avroserializer.exceptions.SchemaDeserializationError:
+            Indicates an issue with deserializing value.
         """
         # record_format_identifier = data[0:4]  # The first 4 bytes are retained for future record format identifier.
         schema_id = value[
