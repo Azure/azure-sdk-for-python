@@ -188,6 +188,8 @@ class AvroSerializer(object):
 
         :param bytes value: The bytes data needs to be decoded.
         :rtype: Dict[str, Any]
+        :raises ~azure.schemaregistry.serializer.avroserializer.exceptions.SchemaParseError:
+            Indicates an issue with parsing schema.
         :raises ~azure.schemaregistry.serializer.avroserializer.exceptions.SchemaDeserializationError:
             Indicates an issue with deserializing value.
         """
