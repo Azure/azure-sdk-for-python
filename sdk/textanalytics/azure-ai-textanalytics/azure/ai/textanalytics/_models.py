@@ -11,7 +11,7 @@ from ._generated.models import (
 )
 
 from ._generated.v3_0 import models as _v3_0_models
-from ._generated.v3_2_preview_1 import models as _v3_2_preview_1_models
+from ._generated.v3_2_preview_2 import models as _v3_2_preview_models
 from ._version import DEFAULT_API_VERSION
 
 
@@ -1746,6 +1746,9 @@ class _AnalyzeActionsType(str, Enum):
     )
     ANALYZE_SENTIMENT = "analyze_sentiment"  #: Sentiment Analysis action.
     EXTRACT_SUMMARY = "extract_summary"
+    RECOGNIZE_CUSTOM_ENTITIES = "recognize_custom_entities"
+    SINGLE_CATEGORY_CLASSIFY = "single_category_classify"
+    MULTI_CATEGORY_CLASSIFY = "multi_category_classify"
 
 
 class RecognizeEntitiesAction(DictMixin):
@@ -1795,9 +1798,9 @@ class RecognizeEntitiesAction(DictMixin):
             :1024
         ]
 
-    def _to_generated(self, api_version):
+    def _to_generated(self, api_version, task_id):
         if api_version == DEFAULT_API_VERSION:
-            from ._generated.v3_2_preview_1 import models
+            from ._generated.v3_2_preview_2 import models
         else:
             from ._generated.v3_1 import models
         return models.EntitiesTask(
@@ -1805,7 +1808,8 @@ class RecognizeEntitiesAction(DictMixin):
                 model_version=self.model_version,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
-            )
+            ),
+            task_name=task_id
         )
 
 
@@ -1872,9 +1876,9 @@ class AnalyzeSentimentAction(DictMixin):
             )[:1024]
         )
 
-    def _to_generated(self, api_version):
+    def _to_generated(self, api_version, task_id):
         if api_version == DEFAULT_API_VERSION:
-            from ._generated.v3_2_preview_1 import models
+            from ._generated.v3_2_preview_2 import models
         else:
             from ._generated.v3_1 import models
         return models.SentimentAnalysisTask(
@@ -1883,7 +1887,8 @@ class AnalyzeSentimentAction(DictMixin):
                 opinion_mining=self.show_opinion_mining,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
-            )
+            ),
+            task_name=task_id
         )
 
 
@@ -1954,9 +1959,9 @@ class RecognizePiiEntitiesAction(DictMixin):
             )[:1024]
         )
 
-    def _to_generated(self, api_version):
+    def _to_generated(self, api_version, task_id):
         if api_version == DEFAULT_API_VERSION:
-            from ._generated.v3_2_preview_1 import models
+            from ._generated.v3_2_preview_2 import models
         else:
             from ._generated.v3_1 import models
         return models.PiiTask(
@@ -1966,7 +1971,8 @@ class RecognizePiiEntitiesAction(DictMixin):
                 pii_categories=self.categories_filter,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
-            )
+            ),
+            task_name=task_id
         )
 
 
@@ -2009,16 +2015,17 @@ class ExtractKeyPhrasesAction(DictMixin):
             )[:1024]
         )
 
-    def _to_generated(self, api_version):
+    def _to_generated(self, api_version, task_id):
         if api_version == DEFAULT_API_VERSION:
-            from ._generated.v3_2_preview_1 import models
+            from ._generated.v3_2_preview_2 import models
         else:
             from ._generated.v3_1 import models
         return models.KeyPhrasesTask(
             parameters=models.KeyPhrasesTaskParameters(
                 model_version=self.model_version,
                 logging_opt_out=self.disable_service_logs,
-            )
+            ),
+            task_name=task_id
         )
 
 
@@ -2071,9 +2078,9 @@ class RecognizeLinkedEntitiesAction(DictMixin):
             )[:1024]
         )
 
-    def _to_generated(self, api_version):
+    def _to_generated(self, api_version, task_id):
         if api_version == DEFAULT_API_VERSION:
-            from ._generated.v3_2_preview_1 import models
+            from ._generated.v3_2_preview_2 import models
         else:
             from ._generated.v3_1 import models
         return models.EntityLinkingTask(
@@ -2081,13 +2088,15 @@ class RecognizeLinkedEntitiesAction(DictMixin):
                 model_version=self.model_version,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
-            )
+            ),
+            task_name=task_id
         )
 
 
 class ExtractSummaryAction(DictMixin):
-    """ExtractSummaryAction encapsulates the parameters for starting a long-running Extractive
-    Text Summarization operation.
+    """ExtractSummaryAction encapsulates the parameters for starting a long-running Extractive Text
+    Summarization operation. For a conceptual discussion of extractive summarization, see the service documentation:
+    https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/extractive-summarization
 
     :keyword str model_version: The model version to use for the analysis.
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
@@ -2140,15 +2149,16 @@ class ExtractSummaryAction(DictMixin):
             )[:1024]
         )
 
-    def _to_generated(self, api_version):  # pylint: disable=unused-argument
-        return _v3_2_preview_1_models.ExtractiveSummarizationTask(
-            parameters=_v3_2_preview_1_models.ExtractiveSummarizationTaskParameters(
+    def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
+        return _v3_2_preview_models.ExtractiveSummarizationTask(
+            parameters=_v3_2_preview_models.ExtractiveSummarizationTaskParameters(
                 model_version=self.model_version,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
                 sentence_count=self.max_sentence_count,
                 sort_by=self.order_by,
-            )
+            ),
+            task_name=task_id
         )
 
 
@@ -2243,4 +2253,382 @@ class SummarySentence(DictMixin):
             rank_score=sentence.rank_score,
             offset=sentence.offset,
             length=sentence.length,
+        )
+
+
+class RecognizeCustomEntitiesAction(DictMixin):
+    """RecognizeCustomEntitiesAction encapsulates the parameters for starting a long-running custom entity
+     recognition operation. To train a model to recognize your custom entities, see
+     https://aka.ms/azsdk/textanalytics/customentityrecognition
+
+    :param str project_name: Required. This field indicates the project name for the model.
+    :param str deployment_name: This field indicates the deployment name for the model.
+    :keyword str string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+        the Text Analytics natural language processing functions. Setting this parameter to true,
+        disables input logging and may limit our ability to remediate issues that occur. Please see
+        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+        additional details, and Microsoft Responsible AI principles at
+        https://www.microsoft.com/ai/responsible-ai.
+    :ivar str project_name: This field indicates the project name for the model.
+    :ivar str deployment_name: This field indicates the deployment name for the model.
+    :ivar str string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
+        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+        the Text Analytics natural language processing functions. Setting this parameter to true,
+        disables input logging and may limit our ability to remediate issues that occur. Please see
+        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+        additional details, and Microsoft Responsible AI principles at
+        https://www.microsoft.com/ai/responsible-ai.
+    """
+
+    def __init__(
+        self,
+        project_name,
+        deployment_name,
+        **kwargs
+    ):
+        self.project_name = project_name
+        self.deployment_name = deployment_name
+        self.disable_service_logs = kwargs.get('disable_service_logs', None)
+        self.string_index_type = kwargs.get('string_index_type', None)
+
+    def __repr__(self):
+        return "RecognizeCustomEntitiesAction(project_name={}, deployment_name={}, disable_service_logs={}, " \
+               "string_index_type={})".format(
+            self.project_name,
+            self.deployment_name,
+            self.disable_service_logs,
+            self.string_index_type,
+        )[:1024]
+
+    def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
+        return _v3_2_preview_models.CustomEntitiesTask(
+            parameters=_v3_2_preview_models.CustomEntitiesTaskParameters(
+                project_name=self.project_name,
+                deployment_name=self.deployment_name,
+                string_index_type=self.string_index_type,
+                logging_opt_out=self.disable_service_logs,
+            ),
+            task_name=task_id
+        )
+
+
+class RecognizeCustomEntitiesResult(DictMixin):
+    """RecognizeCustomEntitiesResult is a result object which contains
+    the custom recognized entities from a particular document.
+
+    :ivar str id: Unique, non-empty document identifier that matches the
+        document id that was passed in with the request. If not specified
+        in the request, an id is assigned for the document.
+    :ivar entities: Recognized custom entities in the document.
+    :vartype entities:
+        list[~azure.ai.textanalytics.CategorizedEntity]
+    :ivar warnings: Warnings encountered while processing document.
+    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
+    :ivar statistics: If `show_stats=True` was specified in the request this
+        field will contain information about the document payload.
+    :vartype statistics: ~azure.ai.textanalytics.TextDocumentStatistics
+    :ivar bool is_error: Boolean check for error item when iterating over list of
+        results. Always False for an instance of a RecognizeCustomEntitiesResult.
+    """
+
+    def __init__(self, **kwargs):
+        self.id = kwargs.get("id", None)
+        self.entities = kwargs.get("entities", None)
+        self.warnings = kwargs.get("warnings", [])
+        self.statistics = kwargs.get("statistics", None)
+        self.is_error = False
+
+    def __repr__(self):
+        return "RecognizeCustomEntitiesResult(id={}, entities={}, warnings={}, statistics={}, is_error={})".format(
+                self.id,
+                repr(self.entities),
+                repr(self.warnings),
+                repr(self.statistics),
+                self.is_error,
+            )[
+                :1024
+            ]
+
+    @classmethod
+    def _from_generated(cls, result):
+        return cls(
+            id=result.id,
+            entities=[
+                CategorizedEntity._from_generated(e)  # pylint: disable=protected-access
+                for e in result.entities
+            ],
+            warnings=[
+                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
+                    w
+                )
+                for w in result.warnings
+            ],
+            statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
+                result.statistics
+            ),
+        )
+
+
+class MultiCategoryClassifyAction(DictMixin):
+    """MultiCategoryClassifyAction encapsulates the parameters for starting a long-running custom multi category
+    classification operation. To train a model to classify your documents, see
+    https://aka.ms/azsdk/textanalytics/customfunctionalities
+
+    :param str project_name: Required. This field indicates the project name for the model.
+    :param str deployment_name: Required. This field indicates the deployment name for the model.
+    :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+        the Text Analytics natural language processing functions. Setting this parameter to true,
+        disables input logging and may limit our ability to remediate issues that occur. Please see
+        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+        additional details, and Microsoft Responsible AI principles at
+        https://www.microsoft.com/ai/responsible-ai.
+    :ivar str project_name: This field indicates the project name for the model.
+    :ivar str deployment_name: This field indicates the deployment name for the model.
+    :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
+        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+        the Text Analytics natural language processing functions. Setting this parameter to true,
+        disables input logging and may limit our ability to remediate issues that occur. Please see
+        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+        additional details, and Microsoft Responsible AI principles at
+        https://www.microsoft.com/ai/responsible-ai.
+    """
+
+    def __init__(
+        self,
+        project_name,
+        deployment_name,
+        **kwargs
+    ):
+        self.project_name = project_name
+        self.deployment_name = deployment_name
+        self.disable_service_logs = kwargs.get('disable_service_logs', None)
+
+    def __repr__(self):
+        return "MultiCategoryClassifyAction(project_name={}, deployment_name={}, " \
+               "disable_service_logs={})".format(
+            self.project_name,
+            self.deployment_name,
+            self.disable_service_logs,
+        )[:1024]
+
+    def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
+        return _v3_2_preview_models.CustomMultiClassificationTask(
+            parameters=_v3_2_preview_models.CustomMultiClassificationTaskParameters(
+                project_name=self.project_name,
+                deployment_name=self.deployment_name,
+                logging_opt_out=self.disable_service_logs,
+            ),
+            task_name=task_id
+        )
+
+
+class MultiCategoryClassifyResult(DictMixin):
+    """MultiCategoryClassifyResult is a result object which contains
+    the classifications for a particular document.
+
+    :ivar str id: Unique, non-empty document identifier.
+    :ivar classifications: Recognized classification results in the document.
+    :vartype classifications: list[~azure.ai.textanalytics.ClassificationCategory]
+    :ivar warnings: Warnings encountered while processing document.
+    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
+    :ivar statistics: If `show_stats=True` was specified in the request this
+        field will contain information about the document payload.
+    :vartype statistics: ~azure.ai.textanalytics.TextDocumentStatistics
+    :ivar bool is_error: Boolean check for error item when iterating over list of
+        results. Always False for an instance of a MultiCategoryClassifyResult.
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        self.id = kwargs.get('id', None)
+        self.classifications = kwargs.get('classifications', None)
+        self.warnings = kwargs.get('warnings', [])
+        self.statistics = kwargs.get('statistics', None)
+        self.is_error = False
+
+    def __repr__(self):
+        return "MultiCategoryClassifyResult(id={}, classifications={}, warnings={}, statistics={}, " \
+               "is_error={})".format(
+                self.id,
+                repr(self.classifications),
+                repr(self.warnings),
+                repr(self.statistics),
+                self.is_error,
+            )[
+                :1024
+            ]
+
+    @classmethod
+    def _from_generated(cls, result):
+        return cls(
+            id=result.id,
+            classifications=[
+                ClassificationCategory._from_generated(e)  # pylint: disable=protected-access
+                for e in result.classifications
+            ],
+            warnings=[
+                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
+                    w
+                )
+                for w in result.warnings
+            ],
+            statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
+                result.statistics
+            ),
+        )
+
+
+class SingleCategoryClassifyAction(DictMixin):
+    """SingleCategoryClassifyAction encapsulates the parameters for starting a long-running custom single category
+    classification operation. To train a model to classify your documents, see
+    https://aka.ms/azsdk/textanalytics/customfunctionalities
+
+    :param str project_name: Required. This field indicates the project name for the model.
+    :param str deployment_name: Required. This field indicates the deployment name for the model.
+    :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+        the Text Analytics natural language processing functions. Setting this parameter to true,
+        disables input logging and may limit our ability to remediate issues that occur. Please see
+        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+        additional details, and Microsoft Responsible AI principles at
+        https://www.microsoft.com/ai/responsible-ai.
+    :ivar str project_name: This field indicates the project name for the model.
+    :ivar str deployment_name: This field indicates the deployment name for the model.
+    :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
+        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+        the Text Analytics natural language processing functions. Setting this parameter to true,
+        disables input logging and may limit our ability to remediate issues that occur. Please see
+        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+        additional details, and Microsoft Responsible AI principles at
+        https://www.microsoft.com/ai/responsible-ai.
+    """
+
+    def __init__(
+        self,
+        project_name,
+        deployment_name,
+        **kwargs
+    ):
+        self.project_name = project_name
+        self.deployment_name = deployment_name
+        self.disable_service_logs = kwargs.get('disable_service_logs', None)
+
+    def __repr__(self):
+        return "SingleCategoryClassifyAction(project_name={}, deployment_name={}, " \
+               "disable_service_logs={})".format(
+            self.project_name,
+            self.deployment_name,
+            self.disable_service_logs,
+        )[:1024]
+
+    def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
+        return _v3_2_preview_models.CustomSingleClassificationTask(
+            parameters=_v3_2_preview_models.CustomSingleClassificationTaskParameters(
+                project_name=self.project_name,
+                deployment_name=self.deployment_name,
+                logging_opt_out=self.disable_service_logs,
+            ),
+            task_name=task_id
+        )
+
+
+class SingleCategoryClassifyResult(DictMixin):
+    """SingleCategoryClassifyResult is a result object which contains
+    the classification for a particular document.
+
+    :ivar str id: Unique, non-empty document identifier.
+    :ivar classification: Recognized classification results in the document.
+    :vartype classification: ~azure.ai.textanalytics.ClassificationCategory
+    :ivar warnings: Warnings encountered while processing document.
+    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
+    :ivar statistics: If `show_stats=True` was specified in the request this
+        field will contain information about the document payload.
+    :vartype statistics: ~azure.ai.textanalytics.TextDocumentStatistics
+    :ivar bool is_error: Boolean check for error item when iterating over list of
+        results. Always False for an instance of a SingleCategoryClassifyResult.
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        self.id = kwargs.get('id', None)
+        self.classification = kwargs.get('classification', None)
+        self.warnings = kwargs.get('warnings', [])
+        self.statistics = kwargs.get('statistics', None)
+        self.is_error = False
+
+    def __repr__(self):
+        return "SingleCategoryClassifyResult(id={}, classification={}, warnings={}, statistics={}, " \
+               "is_error={})".format(
+                self.id,
+                repr(self.classification),
+                repr(self.warnings),
+                repr(self.statistics),
+                self.is_error,
+            )[
+                :1024
+            ]
+
+    @classmethod
+    def _from_generated(cls, result):
+        return cls(
+            id=result.id,
+            classification=
+            ClassificationCategory._from_generated(result.classification),  # pylint: disable=protected-access
+            warnings=[
+                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
+                    w
+                )
+                for w in result.warnings
+            ],
+            statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
+                result.statistics
+            ),
+        )
+
+
+class ClassificationCategory(DictMixin):
+    """ClassificationCategory represents a classification of the input document.
+
+    :ivar str category: Classification type.
+    :ivar float confidence_score: Confidence score between 0 and 1 of the recognized classification.
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        self.category = kwargs.get('category', None)
+        self.confidence_score = kwargs.get('confidence_score', None)
+
+    def __repr__(self):
+        return "ClassificationCategory(category={}, confidence_score={})".format(
+            self.category,
+            self.confidence_score,
+        )[:1024]
+
+    @classmethod
+    def _from_generated(cls, result):
+        return cls(
+            category=result.category,
+            confidence_score=result.confidence_score
         )

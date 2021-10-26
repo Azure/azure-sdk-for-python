@@ -20,17 +20,14 @@ not a required package for querying. Alternatively, native python can be used as
 import asyncio
 import os
 import pandas as pd
+from datetime import timedelta
 from azure.monitor.query.aio import LogsQueryClient
 from azure.monitor.query import LogsQueryStatus
 from azure.core.exceptions import HttpResponseError
 from azure.identity.aio import DefaultAzureCredential
 
 async def logs_query():
-    credential  = DefaultAzureCredential(
-            client_id = os.environ['AZURE_CLIENT_ID'],
-            client_secret = os.environ['AZURE_CLIENT_SECRET'],
-            tenant_id = os.environ['AZURE_TENANT_ID']
-        )
+    credential = DefaultAzureCredential()
 
     client = LogsQueryClient(credential)
 

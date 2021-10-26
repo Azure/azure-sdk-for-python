@@ -2,13 +2,21 @@
 
 ## 5.2.0b2 (Unreleased)
 
+This version of the SDK defaults to the latest supported API version, which currently is `v3.2-preview.2`.
+
 ### Features Added
+- Added support for Custom Entities Recognition through the `begin_analyze_actions` API with the `RecognizeCustomEntitiesAction` and `RecognizeCustomEntitiesResult` types.
+- Added support for Custom Single Classification through the `begin_analyze_actions` API with the `SingleCategoryClassifyAction` and `SingleCategoryClassifyActionResult` types.
+- Added support for Custom Multi Classification through the `begin_analyze_actions` API with the `MultiCategoryClassifyAction` and `MultiCategoryClassifyActionResult` types.
+- Multiple of the same action type is now supported with `begin_analyze_actions`.
 
 ### Breaking Changes
 
 ### Bugs Fixed
+- Restarting a long-running operation from a saved state is now supported for the `begin_analyze_actions` and `begin_recognize_healthcare_entities` methods.
 
 ### Other Changes
+- Package requires [azure-core](https://pypi.org/project/azure-core/) version 1.16.0 or greater
 
 ## 5.2.0b1 (2021-08-09)
 

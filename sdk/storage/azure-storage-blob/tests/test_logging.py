@@ -42,8 +42,11 @@ class StorageLoggingTest(StorageTestCase):
         source_blob = bsc.get_blob_client(self.container_name, self.source_blob_name)
 
         if self.is_live:
-            bsc.create_container(self.container_name)
-            source_blob.upload_blob(self.source_blob_data)
+            try:
+                bsc.create_container(self.container_name)
+            except:
+                pass
+            source_blob.upload_blob(self.source_blob_data, overwrite=True)
 
         # generate a SAS so that it is accessible with a URL
         sas_token = generate_blob_sas(
@@ -57,6 +60,28 @@ class StorageLoggingTest(StorageTestCase):
         )
         sas_source = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
         self.source_blob_url = sas_source.url
+        
+    @BlobPreparer()
+    def test_logging_request_and_response_body(self, storage_account_name, storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, logging_enable=True)
+        self._setup(bsc)
+        container = bsc.get_container_client(self.container_name)
+        request_body = 'testloggingbody'
+        blob_name = self.get_resource_name("testloggingblob")
+        blob_client = container.get_blob_client(blob_name)
+        blob_client.upload_blob(request_body, overwrite=True)
+        # Act
+        with LogCaptured(self) as log_captured:
+            blob_client.download_blob()
+            log_as_str = log_captured.getvalue()
+            self.assertFalse(request_body in log_as_str)
+
+        with LogCaptured(self) as log_captured:
+            blob_client.download_blob(logging_body=True)
+            log_as_str = log_captured.getvalue()
+            self.assertTrue(request_body in log_as_str)
+            self.assertEqual(log_as_str.count(request_body), 1)
 
     @BlobPreparer()
     def test_authorization_is_scrubbed_off(self, storage_account_name, storage_account_key):

@@ -35,7 +35,8 @@ from .._generated.models import (
     QueryLanguage,
     QuerySpellerType,
     QueryType,
-    SearchMode,
+    ScoringStatistics,
+    SearchMode
 )
 from .._search_client import odata
 
@@ -52,5 +53,6 @@ __all__ = (
     "QueryLanguage",
     "QuerySpellerType",
     "QueryType",
+    "ScoringStatistics",
     "SearchMode",
 )

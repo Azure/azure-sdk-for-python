@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/linking?showStats=false&stringIndexType=TextElements_v8
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/linking?showStats=false&stringIndexType=TextElements_v8
   response:
     body:
       string: '{"documents":[{"id":"0","entities":[{"bingId":"7b4d3717-77ab-39ff-d8ec-1c7fd8723bd2","name":"\"Hello,
@@ -23,13 +23,13 @@ interactions:
         World!\" program","url":"https://en.wikipedia.org/wiki/\"Hello,_World!\"_program","dataSource":"Wikipedia"}],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}'
     headers:
       apim-request-id:
-      - ac8d2001-4204-4d1c-80ad-ebe47cb01523
+      - f88dfe22-cb2a-4e81-bae1-4af46c56cb25
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1
       date:
-      - Mon, 02 Aug 2021 21:17:13 GMT
+      - Wed, 06 Oct 2021 21:05:15 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -37,7 +37,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '40'
+      - '8'
     status:
       code: 200
       message: OK
