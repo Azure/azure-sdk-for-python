@@ -33,11 +33,12 @@ from typing import Any, Dict, Mapping
 from ._constants import SCHEMA_ID_START_INDEX, SCHEMA_ID_LENGTH, DATA_START_INDEX
 from ._avro_serializer import AvroObjectSerializer
 from ._utils import parse_schema
+from ._models import MessageWithMetadata, ReadOnlyMessageWithMetadata
 
 
-class AvroSerializer(object):
+class AvroEncoder(object):
     """
-    AvroSerializer provides the ability to serialize and deserialize data according
+    AvroEncoder provides the ability to serialize and deserialize data according
     to the given avro schema. It would automatically register, get and cache the schema.
 
     :keyword client: Required. The schema registry client
@@ -56,7 +57,7 @@ class AvroSerializer(object):
             self._schema_registry_client = kwargs.pop("client") # type: "SchemaRegistryClient"
         except KeyError as e:
             raise TypeError("'{}' is a required keyword.".format(e.args[0]))
-        self._avro_serializer = AvroObjectSerializer(codec=kwargs.get("codec"))
+        self._avro_serializer = AvroEncoder(codec=kwargs.get("codec"))
         self._auto_register_schemas = kwargs.get("auto_register_schemas", False)
         self._auto_register_schema_func = (
                 self._schema_registry_client.register_schema
@@ -65,7 +66,7 @@ class AvroSerializer(object):
             )
 
     def __enter__(self):
-        # type: () -> SchemaRegistryAvroSerializer
+        # type: () -> SchemaRegistryAvroEncoder
         self._schema_registry_client.__enter__()
         return self
 
@@ -80,74 +81,7 @@ class AvroSerializer(object):
         """
         self._schema_registry_client.close()
 
-    @lru_cache(maxsize=128)
-    def _get_schema_id(self, schema_name, schema_str, **kwargs):
-        # type: (str, str, Any) -> str
-        """
-        Get schema id from local cache with the given schema.
-        If there is no item in the local cache, get schema id from the service and cache it.
-
-        :param schema_name: Name of the schema
-        :type schema_name: str
-        :param str schema_str: Schema string
-        :return: Schema Id
-        :rtype: str
-        """
-        schema_id = self._auto_register_schema_func(
-            self._schema_group, schema_name, schema_str, "Avro", **kwargs
-        ).id
-        return schema_id
-
-    @lru_cache(maxsize=128)
-    def _get_schema(self, schema_id, **kwargs):
-        # type: (str, Any) -> str
-        """
-        Get schema content from local cache with the given schema id.
-        If there is no item in the local cache, get schema from the service and cache it.
-
-        :param str schema_id: Schema id
-        :return: Schema content
-        """
-        schema_str = self._schema_registry_client.get_schema(
-            schema_id, **kwargs
-        ).schema_definition
-        return schema_str
-
-    def serialize(self, value, **kwargs):
-        # type: (Mapping[str, Any], Any) -> bytes
-        """
-        Encode data with the given schema. The returns bytes are consisted of: The first 4 bytes
-        denoting record format identifier. The following 32 bytes denoting schema id returned by schema registry
-        service. The remaining bytes are the real data payload.
-
-        :param value: The data to be encoded.
-        :type value: Mapping[str, Any]
-        :keyword schema: Required. The schema used to encode the data.
-        :paramtype schema: str
-        :rtype: bytes
-        """
-        try:
-            raw_input_schema = kwargs.pop("schema")
-        except KeyError as e:
-            raise TypeError("'{}' is a required keyword.".format(e.args[0]))
-
-        cached_schema = parse_schema(raw_input_schema)
-        record_format_identifier = b"\0\0\0\0"
-        schema_id = self._get_schema_id(cached_schema.fullname, str(cached_schema), **kwargs)
-        data_bytes = self._avro_serializer.serialize(value, cached_schema)
-
-        stream = BytesIO()
-
-        stream.write(record_format_identifier)
-        stream.write(schema_id.encode("utf-8"))
-        stream.write(data_bytes)
-        stream.flush()
-
-        payload = stream.getvalue()
-        stream.close()
-        return payload
-
-    def deserialize(self, value, **kwargs):
+    def decode_body(self, message, **kwargs):
         # type: (bytes, Any) -> Dict[str, Any]
         """
         Decode bytes data.
@@ -155,13 +89,17 @@ class AvroSerializer(object):
         :param bytes value: The bytes data needs to be decoded.
         :rtype: Dict[str, Any]
         """
-        # record_format_identifier = data[0:4]  # The first 4 bytes are retained for future record format identifier.
-        schema_id = value[
-            SCHEMA_ID_START_INDEX : (SCHEMA_ID_START_INDEX + SCHEMA_ID_LENGTH)
-        ].decode("utf-8")
-        schema_definition = self._get_schema(schema_id, **kwargs)
+        pass
 
-        dict_value = self._avro_serializer.deserialize(
-            value[DATA_START_INDEX:], schema_definition
-        )
-        return dict_value
+    def encode_body(self, message, **kwargs):
+        # type: (MessageWithMetadata, Any) -> bytes
+        """
+        Encode data with the given schema.
+
+        :param value: The data to be encoded.
+        :type value: Any
+        :keyword schema: The schema used to encode the data.
+        :paramtype schema: str
+        :rtype: bytes
+        """
+        pass

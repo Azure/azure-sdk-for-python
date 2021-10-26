@@ -35,7 +35,7 @@ from avro.io import DatumWriter, DatumReader, BinaryDecoder, BinaryEncoder
 ObjectType = TypeVar("ObjectType")
 
 
-class AvroObjectSerializer(object):
+class AvroEncoder(object):
 
     def __init__(self, codec=None):
         """A Avro serializer using avro lib from Apache.

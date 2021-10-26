@@ -28,7 +28,10 @@ from ._version import VERSION
 __version__ = VERSION
 
 from ._schema_registry_avro_serializer import AvroSerializer
+from ._models import MessageWithMetadata, ReadOnlyMessageWithMetadata
 
 __all__ = [
-    "AvroSerializer"
+    "AvroSerializer",
+    "MessageWithMetadata",
+    "ReadOnlyMessageWithMetadata"
 ]
