@@ -1,4 +1,8 @@
 # NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
+parameters:
+  - name: BuildTargetingString
+    type: string
+    default: 'azure-*'
 
 trigger:
   branches:
@@ -30,6 +34,7 @@ pr:
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
+    BuildTargetingString: ${{ parameters.BuildTargetingString }}
     ServiceDirectory: core
     Artifacts:
     - name: azure-core
