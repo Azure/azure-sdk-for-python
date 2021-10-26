@@ -14,16 +14,16 @@ from asynctestcase import AsyncConversationTest
 
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
-    AnalyzeConversationOptions,
+    AnalysisParameters,
     AnalyzeConversationResult,
-    AnalyzeConversationOptions,
+    AnalysisParameters,
     AnalyzeConversationResult,
     QuestionAnsweringParameters,
-    DeepstackParameters,
-    DeepstackCallingOptions,
+    # DeepstackParameters,
+    # DeepstackCallingOptions,
     QuestionAnsweringTargetIntentResult,
-    WorkflowPrediction,
-    DSTargetIntentResult
+    # WorkflowPrediction,
+    # DSTargetIntentResult
 )
 
 class WorkflowAppAsyncTests(AsyncConversationTest):
@@ -45,7 +45,7 @@ class WorkflowAppAsyncTests(AsyncConversationTest):
             # assert
             assert isinstance(result, AnalyzeConversationResult)
             assert result.query == query
-            assert isinstance(result.prediction, WorkflowPrediction)
+            # assert isinstance(result.prediction, WorkflowPrediction)
             assert result.prediction.project_kind == "workflow"
             assert result.prediction.top_intent == "SushiMaking"
             # assert isinstance(result.prediction.intents, QuestionAnsweringTargetIntentResult)
@@ -61,7 +61,7 @@ class WorkflowAppAsyncTests(AsyncConversationTest):
             # assert
             assert isinstance(result, AnalyzeConversationResult)
             assert result.query == query
-            assert isinstance(result.prediction, WorkflowPrediction)
+            # assert isinstance(result.prediction, WorkflowPrediction)
             assert result.prediction.project_kind == "workflow"
             # assert result.prediction.top_intent == "SushiOrder" --> wrong top intent!
             # assert isinstance(result.prediction.intents, DSTargetIntentResult)
@@ -72,7 +72,7 @@ class WorkflowAppAsyncTests(AsyncConversationTest):
 
         # prepare data
         query = "How do you make sushi rice?",
-        input = AnalyzeConversationOptions(
+        input = AnalysisParameters(
             query=query,
             parameters={
                 "SushiMaking": QuestionAnsweringParameters(
@@ -82,11 +82,11 @@ class WorkflowAppAsyncTests(AsyncConversationTest):
                         "confidenceScoreThreshold": 0.1
                     }
                 ),
-                "SushiOrder": DeepstackParameters(
-                    calling_options={
-                        "verbose": True
-                    }
-                )
+                # "SushiOrder": DeepstackParameters(
+                #     calling_options={
+                #         "verbose": True
+                #     }
+                # )
             }
         )
 
@@ -102,7 +102,7 @@ class WorkflowAppAsyncTests(AsyncConversationTest):
         # assert
         assert isinstance(result, AnalyzeConversationResult)
         # assert result.query == query --> weird behavior here!
-        assert isinstance(result.prediction, WorkflowPrediction)
+        # assert isinstance(result.prediction, WorkflowPrediction)
         assert result.prediction.project_kind == "workflow"
         assert result.prediction.top_intent == "SushiMaking"
         # assert isinstance(result.prediction.intents, QuestionAnsweringTargetIntentResult)
@@ -113,7 +113,7 @@ class WorkflowAppAsyncTests(AsyncConversationTest):
 
         # prepare data
         query = "How do you make sushi rice?"
-        input = AnalyzeConversationOptions(
+        input = AnalysisParameters(
             query=query,
             parameters={
                 "SushiMaking": QuestionAnsweringParameters(
@@ -123,11 +123,11 @@ class WorkflowAppAsyncTests(AsyncConversationTest):
                         "confidence_score_threshold":0.1
                     }
                 ),
-                "SushiOrder": DeepstackParameters(
-                    calling_options=DeepstackCallingOptions(
-                        verbose=True
-                    )
-                )
+                # "SushiOrder": DeepstackParameters(
+                #     calling_options=DeepstackCallingOptions(
+                #         verbose=True
+                #     )
+                # )
             }
         )
 
@@ -143,7 +143,7 @@ class WorkflowAppAsyncTests(AsyncConversationTest):
         # assert
         assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
-        assert isinstance(result.prediction, WorkflowPrediction)
+        # assert isinstance(result.prediction, WorkflowPrediction)
         assert result.prediction.project_kind == "workflow"
         assert result.prediction.top_intent == "SushiMaking"
         # assert isinstance(result.prediction.intents, QuestionAnsweringTargetIntentResult)

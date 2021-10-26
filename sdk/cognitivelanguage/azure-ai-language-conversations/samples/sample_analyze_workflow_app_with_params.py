@@ -30,7 +30,7 @@ def sample_analyze_workflow_app_with_params():
 
     from azure.ai.language.conversations import ConversationAnalysisClient
     from azure.ai.language.conversations.models import (
-        AnalyzeConversationOptions,
+        AnalysisParameters,
         QuestionAnsweringParameters,
         DeepstackParameters,
     )
@@ -42,7 +42,7 @@ def sample_analyze_workflow_app_with_params():
 
     # prepare data
     query = "How do you make sushi rice?",
-    input = AnalyzeConversationOptions(
+    input = AnalysisParameters(
         query=query,
         parameters={
             "SushiMaking": QuestionAnsweringParameters(

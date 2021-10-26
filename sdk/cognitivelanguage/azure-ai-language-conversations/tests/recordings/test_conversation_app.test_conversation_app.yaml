@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: !!python/unicode '{"query": "One california maki please."}'
+    body: '{}'
     headers:
       Accept:
       - application/json
@@ -9,35 +9,32 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '40'
+      - '2'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-conversations/1.0.0b1 Python/2.7.18 (Windows-10-10.0.19041)
+      - azsdk-python-ai-language-conversations/1.0.0b1 Python/3.9.7 (Windows-10-10.0.19043-SP0)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?api-version=2021-07-15-preview&projectName=test-project&deploymentName=production
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?projectName=test-project&deploymentName=production&api-version=2021-11-01-preview
   response:
     body:
-      string: !!python/unicode "{\n  \"query\": \"One california maki please.\",\n
-        \ \"prediction\": {\n    \"intents\": [\n      {\n        \"category\": \"Order\",\n
-        \       \"confidenceScore\": 1\n      }\n    ],\n    \"entities\": [\n      {\n
-        \       \"category\": \"OrderItem\",\n        \"text\": \"california maki\",\n
-        \       \"offset\": 4,\n        \"length\": 15,\n        \"confidenceScore\":
-        1\n      }\n    ],\n    \"topIntent\": \"Order\",\n    \"projectType\": \"conversation\"\n
-        \ }\n}"
+      string: "{\n  \"error\": {\n    \"code\": \"InvalidArgument\",\n    \"message\":
+        \"The input parameter is invalid.\",\n    \"innerError\": {\n      \"code\":
+        \"InvalidArgument\",\n      \"message\": \"The input parameter \\u0022Query\\u0022
+        cannot be null or empty.\"\n    }\n  }\n}"
     headers:
       apim-request-id:
-      - 02b21bc7-d52c-48f4-8ecb-5ec8b95c0822
+      - 92decd0d-700a-4f9a-b569-420809f18286
       cache-control:
       - no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type:
-      - application/json; charset=utf-8
+      - application/json
       date:
-      - Thu, 30 Sep 2021 17:41:07 GMT
+      - Tue, 26 Oct 2021 18:16:16 GMT
       pragma:
       - no-cache
       request-id:
-      - 02b21bc7-d52c-48f4-8ecb-5ec8b95c0822
+      - 92decd0d-700a-4f9a-b569-420809f18286
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -45,8 +42,8 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '126'
+      - '17'
     status:
-      code: 200
-      message: OK
+      code: 400
+      message: Bad Request
 version: 1

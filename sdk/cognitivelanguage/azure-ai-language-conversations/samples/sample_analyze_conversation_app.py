@@ -28,7 +28,7 @@ def sample_analyze_conversation_app():
     from azure.core.credentials import AzureKeyCredential
 
     from azure.ai.language.conversations import ConversationAnalysisClient
-    from azure.ai.language.conversations.models import AnalyzeConversationOptions
+    from azure.ai.language.conversations.models import AnalysisParameters
 
     # get secrets
     conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
@@ -37,7 +37,7 @@ def sample_analyze_conversation_app():
 
     # prepare data
     query = "One california maki please."
-    input = AnalyzeConversationOptions(
+    input = AnalysisParameters(
         query=query
     )
 

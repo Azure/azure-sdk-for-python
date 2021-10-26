@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: !!python/unicode '{"query": "One california maki please."}'
+    body: '{"query": "One california maki please."}'
     headers:
       Accept:
       - application/json
@@ -13,31 +13,26 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-conversations/1.0.0b1 Python/2.7.18 (Windows-10-10.0.19041)
+      - azsdk-python-ai-language-conversations/1.0.0b1 Python/3.9.7 (Windows-10-10.0.19043-SP0)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?api-version=2021-07-15-preview&projectName=test-project&deploymentName=production
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?projectName=test-project&deploymentName=production&api-version=2021-11-01-preview
   response:
     body:
-      string: !!python/unicode "{\n  \"query\": \"One california maki please.\",\n
-        \ \"prediction\": {\n    \"intents\": [\n      {\n        \"category\": \"Order\",\n
-        \       \"confidenceScore\": 1\n      }\n    ],\n    \"entities\": [\n      {\n
-        \       \"category\": \"OrderItem\",\n        \"text\": \"california maki\",\n
-        \       \"offset\": 4,\n        \"length\": 15,\n        \"confidenceScore\":
-        1\n      }\n    ],\n    \"topIntent\": \"Order\",\n    \"projectType\": \"conversation\"\n
-        \ }\n}"
+      string: '{"query":"One california maki please.","prediction":{"topIntent":"Order","projectKind":"conversation","intents":[{"category":"Order","confidenceScore":1}],"entities":[{"category":"OrderItem","text":"california
+        maki","offset":4,"length":15,"confidenceScore":1}]}}'
     headers:
       apim-request-id:
-      - 2c325546-f02f-43fd-afb0-e9d5c2f1b418
+      - 00c0320d-44ca-4a77-900e-899347b0b8d7
       cache-control:
       - no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 30 Sep 2021 17:41:09 GMT
+      - Tue, 26 Oct 2021 18:16:18 GMT
       pragma:
       - no-cache
       request-id:
-      - 2c325546-f02f-43fd-afb0-e9d5c2f1b418
+      - 00c0320d-44ca-4a77-900e-899347b0b8d7
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -45,7 +40,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '73'
+      - '656'
     status:
       code: 200
       message: OK

@@ -76,7 +76,7 @@ import os
 from azure.core.credentials import AzureKeyCredential
 
 from azure.ai.language.conversations import ConversationAnalysisClient
-from azure.ai.language.conversations.models import AnalyzeConversationOptions
+from azure.ai.language.conversations.models import AnalysisParameters
 
 # get secrets
 conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
@@ -85,7 +85,7 @@ conv_project = os.environ["AZURE_CONVERSATIONS_PROJECT"]
 
 # prepare data
 query = "One california maki please."
-input = AnalyzeConversationOptions(
+input = AnalysisParameters(
     query=query
 )
 
@@ -124,7 +124,7 @@ import os
 from azure.core.credentials import AzureKeyCredential
 
 from azure.ai.language.conversations import ConversationAnalysisClient
-from azure.ai.language.conversations.models import AnalyzeConversationOptions
+from azure.ai.language.conversations.models import AnalysisParameters
 
 # get secrets
 conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
@@ -133,7 +133,7 @@ workflow_project = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT")
 
 # prepare data
 query = "How do you make sushi rice?",
-input = AnalyzeConversationOptions(
+input = AnalysisParameters(
     query=query
 )
 
@@ -169,7 +169,7 @@ import os
 from azure.core.credentials import AzureKeyCredential
 
 from azure.ai.language.conversations import ConversationAnalysisClient
-from azure.ai.language.conversations.models import AnalyzeConversationOptions
+from azure.ai.language.conversations.models import AnalysisParameters
 
 # get secrets
 conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
@@ -179,7 +179,7 @@ workflow_project = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT")
 # prepare data
 query = "How do you make sushi rice?",
 target_intent = "SushiMaking"
-input = AnalyzeConversationOptions(
+input = AnalysisParameters(
     query=query,
     direct_target=target_intent,
     parameters={

@@ -32,7 +32,7 @@ async def sample_analyze_workflow_app_with_params_async():
 
     from azure.ai.language.conversations.aio import ConversationAnalysisClient
     from azure.ai.language.conversations.models import (
-        AnalyzeConversationOptions,
+        AnalysisParameters,
         QuestionAnsweringParameters,
         DeepstackParameters,
     )
@@ -44,7 +44,7 @@ async def sample_analyze_workflow_app_with_params_async():
 
     # prepare data
     query = "How do you make sushi rice?",
-    input = AnalyzeConversationOptions(
+    input = AnalysisParameters(
         query=query,
         parameters={
             "SushiMaking": QuestionAnsweringParameters(
