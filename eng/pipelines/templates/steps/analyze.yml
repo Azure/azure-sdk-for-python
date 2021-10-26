@@ -8,6 +8,10 @@ parameters:
   VerifyAutorest: false
   ValidateFormatting: false
 
+variables:
+  - name: BuildTargetingStringValue
+    value: $[ coalesce(variables['BuildTargetingString'], '${{ parameters.BuildTargetingString }}') ]
+
 steps:
   - template: /eng/pipelines/templates/steps/analyze_dependency.yml
 
@@ -83,31 +87,31 @@ steps:
     condition: and(succeededOrFailed(), ne(variables['Skip.VerifySdist'],'true'))
     inputs:
      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-     arguments: '"${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}} --toxenv=verifysdist'
+     arguments: '"$(BuildTargetingStringValue)" --service=${{parameters.ServiceDirectory}} --toxenv=verifysdist'
 
   - task: PythonScript@0
     displayName: 'Verify whl'
     condition: and(succeededOrFailed(), ne(variables['Skip.VerifyWhl'],'true'))
     inputs:
      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-     arguments: '"${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}} --toxenv=verifywhl'
+     arguments: '"$(BuildTargetingStringValue)" --service=${{parameters.ServiceDirectory}} --toxenv=verifywhl'
 
   - template: run_mypy.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+      BuildTargetingString: $(BuildTargetingStringValue)
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
 
   - template: run_pylint.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+      BuildTargetingString: $(BuildTargetingStringValue)
 
   - ${{ if parameters.ValidateFormatting }}:
     - template: run_black.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        BuildTargetingString: $(BuildTargetingStringValue)
         ValidateFormatting: ${{ parameters.ValidateFormatting }}
 
   - task: DownloadPipelineArtifact@2
@@ -119,21 +123,21 @@ steps:
   - template: ../steps/run_apistub.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+      BuildTargetingString: $(BuildTargetingStringValue)
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
       AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
 
   - template: ../steps/run_bandit.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+      BuildTargetingString: $(BuildTargetingStringValue)
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
       AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
 
   - template: ../steps/run_breaking_changes.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+      BuildTargetingString: $(BuildTargetingStringValue)
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
       AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
 
