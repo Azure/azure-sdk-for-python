@@ -31,9 +31,8 @@ from io import BytesIO
 from typing import Any, Dict, Mapping
 
 from ._constants import SCHEMA_ID_START_INDEX, SCHEMA_ID_LENGTH, DATA_START_INDEX
-from ._avro_serializer import AvroObjectSerializer
 from ._utils import parse_schema
-from ._models import MessageWithMetadata, ReadOnlyMessageWithMetadata
+from azure.core.messaging import MessageWithMetadata
 
 
 class AvroEncoder(object):
@@ -57,13 +56,7 @@ class AvroEncoder(object):
             self._schema_registry_client = kwargs.pop("client") # type: "SchemaRegistryClient"
         except KeyError as e:
             raise TypeError("'{}' is a required keyword.".format(e.args[0]))
-        self._avro_serializer = AvroEncoder(codec=kwargs.get("codec"))
         self._auto_register_schemas = kwargs.get("auto_register_schemas", False)
-        self._auto_register_schema_func = (
-                self._schema_registry_client.register_schema
-                if self._auto_register_schemas
-                else self._schema_registry_client.get_schema_properties
-            )
 
     def __enter__(self):
         # type: () -> SchemaRegistryAvroEncoder
@@ -81,18 +74,8 @@ class AvroEncoder(object):
         """
         self._schema_registry_client.close()
 
-    def decode_body(self, message, **kwargs):
-        # type: (bytes, Any) -> Dict[str, Any]
-        """
-        Decode bytes data.
-
-        :param bytes value: The bytes data needs to be decoded.
-        :rtype: Dict[str, Any]
-        """
-        pass
-
-    def encode_body(self, message, **kwargs):
-        # type: (MessageWithMetadata, Any) -> bytes
+    def encode_body(self, value, **kwargs):
+        # type: (Any, Any) -> bytes
         """
         Encode data with the given schema.
 
@@ -100,6 +83,16 @@ class AvroEncoder(object):
         :type value: Any
         :keyword schema: The schema used to encode the data.
         :paramtype schema: str
-        :rtype: bytes
+        :rtype: MessageWithMetadata
+        """
+        pass
+
+    def decode_body(self, message, **kwargs):
+        # type: (MessageWithMetadata, Any) -> Any
+        """
+        Decode bytes data.
+
+        :param bytes value: The bytes data needs to be decoded.
+        :rtype: Any
         """
         pass
