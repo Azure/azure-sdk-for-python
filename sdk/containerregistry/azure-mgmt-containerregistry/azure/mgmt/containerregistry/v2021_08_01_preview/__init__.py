@@ -6,4 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.0.0b1"
+from ._container_registry_management_client import ContainerRegistryManagementClient
+from ._version import VERSION
+
+__version__ = VERSION
+__all__ = ['ContainerRegistryManagementClient']
+
+try:
+    from ._patch import patch_sdk  # type: ignore
+    patch_sdk()
+except ImportError:
+    pass
