@@ -9,7 +9,7 @@ from ._client import ModelsRepositoryClient
 
 # Constants
 from ._common import (
-    DependencyModeType,
+    DependencyMode,
     DEFAULT_LOCATION,
     VERSION
 )
@@ -21,7 +21,7 @@ __all__ = [
     "ModelsRepositoryClient",
     "DEFAULT_LOCATION",
     "ModelError",
-    "DependencyModeType",
+    "DependencyMode",
 ]
 
 __version__ = VERSION

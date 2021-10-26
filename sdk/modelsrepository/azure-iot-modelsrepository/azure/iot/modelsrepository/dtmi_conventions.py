@@ -43,7 +43,7 @@ def get_model_uri(dtmi, repository_uri, expanded=False):
         repository_uri += "/"
 
     dtmi_path = _convert_dtmi_to_path(dtmi, expanded)
-    if dtmi_path == "":
+    if not dtmi_path:
         raise ValueError(INVALID_DTMI_FORMAT.format(dtmi))
 
     return repository_uri + dtmi_path

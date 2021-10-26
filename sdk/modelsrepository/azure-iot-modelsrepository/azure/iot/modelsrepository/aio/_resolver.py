@@ -21,7 +21,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ..dtmi_conventions import is_valid_dtmi
 from ..exceptions import ModelError
 from .._common import (
-    DependencyModeType,
+    DependencyMode,
     RemoteProtocolType,
     DISCOVERED_DEPENDENCIES,
     GENERIC_GET_MODELS_ERROR,
@@ -70,7 +70,7 @@ class DtmiResolver(object):
         await self.fetcher.__aexit__(*exc_details)
 
     @distributed_trace_async
-    async def resolve(self, dtmis, dependency_resolution=DependencyModeType.enabled.value, **kwargs):
+    async def resolve(self, dtmis, dependency_resolution=DependencyMode.enabled.value, **kwargs):
         """Resolve a DTMI from the configured endpoint and return the resulting JSON model.
 
         :param list[str] dtmis: DTMIs to resolve
@@ -86,7 +86,7 @@ class DtmiResolver(object):
         to_process_models = await _prepare_queue(dtmis)
 
         if (
-            dependency_resolution == DependencyModeType.enabled.value and
+            dependency_resolution == DependencyMode.enabled.value and
             self._metadata_scheduler.has_elapsed()
         ):
             try:
@@ -102,7 +102,7 @@ class DtmiResolver(object):
 
         # Covers case when the repository supports expanded but dependency resolution is disabled.
         try_from_expanded = (
-            dependency_resolution == DependencyModeType.enabled.value and
+            dependency_resolution == DependencyMode.enabled.value and
             self._repository_supports_expanded
         )
 
@@ -134,7 +134,7 @@ class DtmiResolver(object):
             dependencies = model_metadata.dependencies
 
             # Add dependencies to to_process_queue if manual resolution is needed
-            if dependency_resolution == DependencyModeType.enabled.value and not expanded_result:
+            if dependency_resolution == DependencyMode.enabled.value and not expanded_result:
                 if len(dependencies) > 0:
                     info_msg = DISCOVERED_DEPENDENCIES.format('", "'.join(dependencies))
                     _LOGGER.debug(info_msg)

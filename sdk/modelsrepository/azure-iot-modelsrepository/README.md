@@ -75,16 +75,16 @@ client = ModelsRepositoryClient(repository_location="c:/path/to/SampleModelsRepo
 
 #### Repository metadata
 
-Models repositories that implement Azure IoT conventions can **optionally** include a `metadata.json` file at the root of the repository. The `metadata.json` file provides key attributees of a repository including the features that it provides. A client can use the repository metadata to make decisions around how to optimally handle an operation.
+Models repositories that implement Azure IoT conventions can **optionally** include a `metadata.json` file at the root of the repository. The `metadata.json` file provides key attributes of a repository including the features that it provides. A client can use the repository metadata to make decisions around how to optimally handle an operation.
 
 The following snippet shows how to configure the time span in seconds in which the `ModelsRepositoryClient` considers metadata stale.  When the client metadata state is stale, the next service operation that can make use of metadata will first fetch and refresh the client metadata state. The operation will then continue as normal.
 ```python
-client = ModelsRepositoryClient(metadata_expiry=1800)
+client = ModelsRepositoryClient(metadata_expiration=1800)
 ```
 
 #### Override options
 
-If you need to override pipeline behavior, such as provide your own `HttpClient` instance, you can do that by specifying the corresponding kwarg.
+If you need to override pipeline behavior, such as provide your own Http Pipeline policies, you can do that by specifying the corresponding kwarg.
 It provides an opportunity to override default behavior including:
 
 - Overriding [transport][azure_core_transport]
@@ -165,7 +165,7 @@ print("{} resolved in {} interfaces".format(dtmi, len(models)))
 ```
 
 By default model dependency resolution is enabled. This can be changed by overriding the default
-value for the `dependency_resolution` parameter of the `GetModels` operation.
+value for the `dependency_resolution` parameter of the `get_models` operation.
 
 ```python
 dtmi = "dtmi:com:example:TemperatureController;1"
@@ -173,11 +173,11 @@ dtmi = "dtmi:com:example:TemperatureController;1"
 # Global endpoint client
 with ModelsRepositoryClient() as client:
     # In this example model dependency resolution is disabled by passing in
-    # DependencyModeType.disabled.value as the value for the dependency_resolution parameter
-    # for get_models(). By default the parameter has a value of DependencyModeType.enabled.value.
+    # DependencyMode.disabled.value as the value for the dependency_resolution parameter
+    # for get_models(). By default the parameter has a value of DependencyMode.enabled.value.
     # When model dependency resolution is disabled, only the input dtmi(s) will be processed
     # and model dependencies (if any) will be ignored.
-    models = client.get_models(dtmi, dependency_resolution=DependencyModeType.disabled.value)
+    models = client.get_models(dtmi, dependency_resolution=DependencyMode.disabled.value)
 
 # In this case the above dtmi has 2 model dependencies but are not returned
 # due to disabling model dependency resolution.

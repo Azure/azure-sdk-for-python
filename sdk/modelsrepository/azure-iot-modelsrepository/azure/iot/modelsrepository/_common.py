@@ -32,12 +32,13 @@ FETCHER_INIT_MSG = "Repository Location identified as {0}. Client session initia
 FETCHING_MODEL_CONTENT = "Attempting to fetch model content from \"{0}\"."
 GENERIC_GET_MODELS_ERROR = "Failure handling \"{0}\"."
 INCORRECT_DTMI_CASING = "Fetched model has incorrect DTMI casing. Expected \"{0}\", parsed \"{1}\"."
+INVALID_DEPEDENCY_MODE = "Dependency mode must be enabled or disabled."
 INVALID_DTMI_FORMAT = "Invalid DTMI format \"{0}\"."
 PROCESSING_DTMI = "Processing DTMI \"{0}\". "
 SKIPPING_PRE_PROCESSED_DTMI = "Already processed DTMI \"{0}\". Skipping."
 
 
-class DependencyModeType(Enum):
+class DependencyMode(Enum):
     """
     Dependency Mode options.
     """
@@ -60,7 +61,7 @@ class ModelProperties(Enum):
 
 class ModelType(Enum):
     """
-    Possible DTMI modely types.
+    Possible DTMI model types.
     """
 
     interface = "Interface"

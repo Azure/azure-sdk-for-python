@@ -7,7 +7,13 @@ import logging
 from six import string_types
 from azure.core.tracing.decorator import distributed_trace
 from ._resolver import DtmiResolver
-from ._common import DEFAULT_LOCATION, DEFAULT_API_VERSION, CLIENT_INIT_MSG, DependencyModeType
+from ._common import (
+    DEFAULT_LOCATION,
+    DEFAULT_API_VERSION,
+    CLIENT_INIT_MSG,
+    INVALID_DEPEDENCY_MODE,
+    DependencyMode
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -65,7 +71,7 @@ class ModelsRepositoryClient(object):
         self.__exit__()
 
     @distributed_trace
-    def get_models(self, dtmis, dependency_resolution=DependencyModeType.enabled.value, **kwargs):
+    def get_models(self, dtmis, dependency_resolution=DependencyMode.enabled.value, **kwargs):
         # type: (Union[List[str], str], str, Any) -> Dict[str, Any]
         """Retrieve a model from the Models Repository.
 
@@ -90,5 +96,8 @@ class ModelsRepositoryClient(object):
         """
         if isinstance(dtmis, string_types):
             dtmis = [dtmis]
+
+        if dependency_resolution not in [DependencyMode.enabled.value, DependencyMode.disabled.value]:
+            raise ValueError(INVALID_DEPEDENCY_MODE)
 
         return self.resolver.resolve(dtmis, dependency_resolution=dependency_resolution, **kwargs)

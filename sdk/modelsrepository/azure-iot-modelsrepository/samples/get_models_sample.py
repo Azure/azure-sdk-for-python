@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from azure.iot.modelsrepository import (
     ModelsRepositoryClient,
-    DependencyModeType,
+    DependencyMode,
 )
 from azure.core.exceptions import (
     ResourceNotFoundError,
@@ -40,8 +40,8 @@ def get_model_from_global_repo():
         model_dict = client.get_models(dtmi)
 
         # This call is the same as the previous call because the default parameter for dependency
-        # resolution is DependencyModeType.enabled.value.
-        # model_dict = client.get_models(dtmi, dependency_resolution=DependencyModeType.enabled.value)
+        # resolution is DependencyMode.enabled.value.
+        # model_dict = client.get_models(dtmi, dependency_resolution=DependencyMode.enabled.value)
 
         # In this case the above dtmi has 2 model dependencies.
         # dtmi:com:example:Thermostat;1 and dtmi:azure:DeviceManagement:DeviceInformation;1
@@ -58,11 +58,11 @@ def get_model_disabled_dependency_resolution():
 
     with ModelsRepositoryClient() as client:
         # In this example model dependency resolution is disabled by passing in
-        # DependencyModeType.disabled.value as the value for the dependency_resolution parameter
-        # for get_models(). By default the parameter has a value of DependencyModeType.enabled.value.
+        # DependencyMode.disabled.value as the value for the dependency_resolution parameter
+        # for get_models(). By default the parameter has a value of DependencyMode.enabled.value.
         # When model dependency resolution is disabled, only the input dtmi(s) will be processed
         # and model dependencies (if any) will be ignored.
-        model_dict = client.get_models(dtmi, dependency_resolution=DependencyModeType.disabled.value)
+        model_dict = client.get_models(dtmi, dependency_resolution=DependencyMode.disabled.value)
 
         # In this case the above dtmi has 2 model dependencies but are not returned
         # due to disabling model dependency resolution.

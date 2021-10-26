@@ -7,7 +7,7 @@ from parameterized import parameterized
 from devtools_testutils import AzureTestCase
 from azure.core.exceptions import ResourceNotFoundError
 from azure.iot.modelsrepository import (
-    DependencyModeType,
+    DependencyMode,
     ModelError,
     ModelsRepositoryClient
 )
@@ -300,7 +300,7 @@ class TestIntegrationGetModels(AzureTestCase):
         client = ModelsRepositoryClient(repository_location=repo)
 
         with client:
-            model_map = client.get_models(dtmi, dependency_resolution=DependencyModeType.disabled.value)
+            model_map = client.get_models(dtmi, dependency_resolution=DependencyMode.disabled.value)
 
         self.assertTrue(len(model_map) == 1)
         self.assertTrue(dtmi in model_map.keys())
@@ -319,7 +319,7 @@ class TestIntegrationGetModels(AzureTestCase):
         client = ModelsRepositoryClient(repository_location=repo)
 
         with client:
-            model_map = client.get_models(dtmi, dependency_resolution=DependencyModeType.enabled.value)
+            model_map = client.get_models(dtmi, dependency_resolution=DependencyMode.enabled.value)
 
         self.assertTrue(len(model_map) == len(expected_dtmis))
         for dtmi in expected_dtmis:
@@ -391,7 +391,7 @@ class TestIntegrationGetModels(AzureTestCase):
                     model = model_map_with_deps[dtmi]
                     self.assertTrue(model["@id"] == dtmi)
 
-                model_map_no_deps = client.get_models(root_dtmi, dependency_resolution=DependencyModeType.disabled.value)
+                model_map_no_deps = client.get_models(root_dtmi, dependency_resolution=DependencyMode.disabled.value)
                 self.assertTrue(len(model_map_no_deps) == 1)
                 self.assertTrue(root_dtmi in model_map_no_deps.keys())
                 model = model_map_no_deps[root_dtmi]

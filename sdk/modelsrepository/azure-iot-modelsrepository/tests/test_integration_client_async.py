@@ -9,7 +9,7 @@ from parameterized import parameterized
 from devtools_testutils import AzureTestCase
 from azure.core.exceptions import ResourceNotFoundError
 from azure.iot.modelsrepository import (
-    DependencyModeType,
+    DependencyMode,
     ModelError,
 )
 from azure.iot.modelsrepository.aio import (
@@ -305,7 +305,7 @@ class TestIntegrationGetModels(AzureTestCase):
         repo = determine_repo(client_type=client_type)
         client = ModelsRepositoryClient(repository_location=repo)
         async with client:
-            model_map = await client.get_models(dtmi, dependency_resolution=DependencyModeType.disabled.value)
+            model_map = await client.get_models(dtmi, dependency_resolution=DependencyMode.disabled.value)
 
         self.assertTrue(len(model_map) == 1)
         self.assertTrue(dtmi in model_map.keys())
@@ -324,7 +324,7 @@ class TestIntegrationGetModels(AzureTestCase):
         repo = determine_repo(client_type=ClientType.local.value, has_metadata=True)
         client = ModelsRepositoryClient(repository_location=repo)
         async with client:
-            model_map = await client.get_models(dtmi, dependency_resolution=DependencyModeType.enabled.value)
+            model_map = await client.get_models(dtmi, dependency_resolution=DependencyMode.enabled.value)
 
         self.assertTrue(len(model_map) == len(expected_dtmis))
         for dtmi in expected_dtmis:
@@ -398,7 +398,7 @@ class TestIntegrationGetModels(AzureTestCase):
                     self.assertTrue(model["@id"] == dtmi)
 
                 model_map_no_deps = await client.get_models(
-                    root_dtmi, dependency_resolution=DependencyModeType.disabled.value
+                    root_dtmi, dependency_resolution=DependencyMode.disabled.value
                 )
                 self.assertTrue(len(model_map_no_deps) == 1)
                 self.assertTrue(root_dtmi in model_map_no_deps.keys())

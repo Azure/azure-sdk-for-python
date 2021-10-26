@@ -6,7 +6,7 @@
 import logging
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._resolver import DtmiResolver
-from .._common import DEFAULT_LOCATION, DEFAULT_API_VERSION, CLIENT_INIT_MSG, DependencyModeType
+from .._common import DEFAULT_LOCATION, DEFAULT_API_VERSION, CLIENT_INIT_MSG, DependencyMode
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -64,7 +64,7 @@ class ModelsRepositoryClient(object):
         await self.__aexit__()
 
     @distributed_trace_async
-    async def get_models(self, dtmis, dependency_resolution=DependencyModeType.enabled.value, **kwargs):
+    async def get_models(self, dtmis, dependency_resolution=DependencyMode.enabled.value, **kwargs):
         # type: (Union[List[str], str], str, Any) -> Dict[str, Any]
         """Retrieve a model from the Models Repository.
 
