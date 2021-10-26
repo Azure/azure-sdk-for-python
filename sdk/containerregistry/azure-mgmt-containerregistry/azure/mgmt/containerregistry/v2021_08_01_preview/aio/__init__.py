@@ -6,4 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "8.2.0"
+from ._container_registry_management_client import ContainerRegistryManagementClient
+__all__ = ['ContainerRegistryManagementClient']
