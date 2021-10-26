@@ -51,5 +51,5 @@ These options are available for all perf tests:
 
 ## Example command
 ```cmd
-(env) ~/azure-containerregistry/tests> perfstress ListArtifactsTest
+(env) ~/azure-containerregistry/tests> perfstress ListArtifactsTest --parallel=50 --duration=15
 ```
