@@ -16,6 +16,7 @@ import six
 import uamqp.errors
 import uamqp.message
 
+from azure.core.messaging import MessageWithMetadata, ReadOnlyMessageWithMetdata
 from .constants import (
     _BATCH_MESSAGE_OVERHEAD_COST,
     ServiceBusReceiveMode,
@@ -61,7 +62,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class ServiceBusMessage(
-    object
+    MessageWithMetadata
 ):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     """A Service Bus Message.
 
@@ -737,7 +738,7 @@ class ServiceBusMessageBatch(object):
         return self._add(message)
 
 
-class ServiceBusReceivedMessage(ServiceBusMessage):
+class ServiceBusReceivedMessage(ServiceBusMessage, ReadOnlyMessageWithMetdata):
     """
     A Service Bus Message received from service side.
 

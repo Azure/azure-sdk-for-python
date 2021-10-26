@@ -22,6 +22,7 @@ import six
 
 from uamqp import BatchMessage, Message, constants
 
+from azure.core.messaging import MessageWithMetadata
 from ._utils import (
     set_message_partition_key,
     trace_message,
@@ -81,7 +82,7 @@ _SYS_PROP_KEYS_TO_MSG_PROPERTIES = (
 )
 
 
-class EventData(object):
+class EventData(MessageWithMetadata):
     """The EventData class is a container for event content.
 
     :param body: The data to send in a single message. body can be type of str or bytes.
