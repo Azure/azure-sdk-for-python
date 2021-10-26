@@ -456,50 +456,51 @@ interactions:
       Accept:
       - application/json
       Content-Type:
-      - application/pdf
+      - application/octet-stream
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 4b7bf116-4092-467d-8ef1-a31ed991bc1d
+      apim-request-id: f54a0297-ef3f-4c60-a624-17b642c0f9c2
       content-length: '0'
-      date: Tue, 11 May 2021 03:07:28 GMT
-      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/receipt/analyzeResults/4b7bf116-4092-467d-8ef1-a31ed991bc1d
+      date: Tue, 14 Sep 2021 22:17:49 GMT
+      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/f54a0297-ef3f-4c60-a624-17b642c0f9c2?api-version=2021-09-30-preview
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '77'
+      x-envoy-upstream-service-time: '245'
     status:
       code: 202
       message: Accepted
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/receipt/analyze?includeTextDetails=false
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/receipt/analyzeResults/4b7bf116-4092-467d-8ef1-a31ed991bc1d
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/f54a0297-ef3f-4c60-a624-17b642c0f9c2?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-05-11T03:07:28Z",
-        "lastUpdatedDateTime": "2021-05-11T03:07:30Z", "analyzeResult": {"version":
-        "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
-        "unit": "inch"}], "documentResults": [{"docType": "prebuilt:receipt", "pageRange":
-        [1, 1], "fields": {}}]}}'
+      string: '{"status": "succeeded", "createdDateTime": "2021-09-14T22:17:49Z",
+        "lastUpdatedDateTime": "2021-09-14T22:17:52Z", "analyzeResult": {"apiVersion":
+        "2021-09-30-preview", "modelId": "prebuilt-receipt", "stringIndexType": "unicodeCodePoint",
+        "content": "", "pages": [{"pageNumber": 1, "angle": 0, "width": 8.5, "height":
+        11, "unit": "inch", "words": [], "lines": [], "spans": [{"offset": 0, "length":
+        0}]}], "documents": []}}'
     headers:
-      apim-request-id: 9a7ee0b4-bb1e-4561-83a4-044002bcfd70
-      content-length: '300'
+      apim-request-id: 3e0c4eb8-be8e-4dea-b547-30beaf6a53f4
       content-type: application/json; charset=utf-8
-      date: Tue, 11 May 2021 03:07:33 GMT
+      date: Tue, 14 Sep 2021 22:17:54 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '63'
+      x-envoy-upstream-service-time: '140'
     status:
       code: 200
       message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/receipt/analyzeResults/4b7bf116-4092-467d-8ef1-a31ed991bc1d
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/f54a0297-ef3f-4c60-a624-17b642c0f9c2?api-version=2021-09-30-preview
 version: 1

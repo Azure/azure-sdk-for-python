@@ -132,7 +132,7 @@ class SearchClient(HeadersMixin):
 
         :param key: The primary key value for the document to retrieve
         :type key: str
-        :param selected_fields: a whitelist of fields to include in the results
+        :param selected_fields: a allowlist of fields to include in the results
         :type selected_fields: List[str]
         :rtype:  dict
 
@@ -152,7 +152,7 @@ class SearchClient(HeadersMixin):
         return cast(dict, result)
 
     @distributed_trace
-    def search(self, search_text, **kwargs):
+    def search(self, search_text, **kwargs): # pylint:disable=too-many-locals
         # type: (str, **Any) -> SearchItemPaged[dict]
         """Search the Azure search index for documents.
 
@@ -200,12 +200,23 @@ class SearchClient(HeadersMixin):
         :keyword query_language: A value that specifies the language of the search query. Possible values
          include: "none", "en-us".
         :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
-        :keyword speller: A value that specified the type of the speller to use to spell-correct
+        :keyword query_speller: A value that specified the type of the speller to use to spell-correct
          individual search query terms. Possible values include: "none", "lexicon".
-        :paramtype speller: str or ~azure.search.documents.models.Speller
-        :keyword answers: A value that specifies whether answers should be returned as part of the search
-         response. Possible values include: "none", "extractive".
-        :paramtype answers: str or ~azure.search.documents.models.Answers
+        :paramtype query_speller: str or ~azure.search.documents.models.QuerySpellerType
+        :keyword query_answer: This parameter is only valid if the query type is 'semantic'. If set,
+         the query returns answers extracted from key passages in the highest ranked documents.
+         Possible values include: "none", "extractive".
+        :paramtype query_answer: str or ~azure.search.documents.models.QueryAnswerType
+        :keyword int query_answer_count: This parameter is only valid if the query type is 'semantic' and
+         query answer is 'extractive'. Configures the number of answers returned. Default count is 1.
+        :keyword query_caption: This parameter is only valid if the query type is 'semantic'. If set, the
+         query returns captions extracted from key passages in the highest ranked documents.
+         Defaults to 'None'. Possible values include: "none", "extractive".
+        :paramtype query_caption: str or ~azure.search.documents.models.QueryCaptionType
+        :keyword bool query_caption_highlight: This parameter is only valid if the query type is 'semantic' when
+         query caption is set to 'extractive'. Determines whether highlighting is enabled.
+         Defaults to 'true'.
+        :keyword list[str] semantic_fields: The list of field names used for semantic search.
         :keyword list[str] select: The list of fields to retrieve. If unspecified, all fields marked as retrievable
          in the schema are included.
         :keyword int skip: The number of search results to skip. This value cannot be greater than 100,000.
@@ -215,6 +226,18 @@ class SearchClient(HeadersMixin):
          $skip to implement client-side paging of search results. If results are truncated due to
          server-side paging, the response will include a continuation token that can be used to issue
          another Search request for the next page of results.
+        :keyword scoring_statistics: A value that specifies whether we want to calculate scoring
+         statistics (such as document frequency) globally for more consistent scoring, or locally, for
+         lower latency. The default is 'local'. Use 'global' to aggregate scoring statistics globally
+         before scoring. Using global scoring statistics can increase latency of search queries.
+         Possible values include: "local", "global".
+        :paramtype scoring_statistics: str or ~azure.search.documents.models.ScoringStatistics
+        :keyword str session_id: A value to be used to create a sticky session, which can help getting more
+         consistent results. As long as the same sessionId is used, a best-effort attempt will be made
+         to target the same replica set. Be wary that reusing the same sessionID values repeatedly can
+         interfere with the load balancing of the requests across replicas and adversely affect the
+         performance of the search service. The value used as sessionId cannot start with a '_'
+         character.
         :rtype:  SearchItemPaged[dict]
 
         .. admonition:: Example:
@@ -259,11 +282,27 @@ class SearchClient(HeadersMixin):
         search_fields_str = ",".join(search_fields) if search_fields else None
         search_mode = kwargs.pop("search_mode", None)
         query_language = kwargs.pop("query_language", None)
-        speller = kwargs.pop("speller", None)
-        answers = kwargs.pop("answers", None)
+        query_speller = kwargs.pop("query_speller", None)
         select = kwargs.pop("select", None)
         skip = kwargs.pop("skip", None)
         top = kwargs.pop("top", None)
+        session_id = kwargs.pop("session_id", None)
+        scoring_statistics = kwargs.pop("scoring_statistics", None)
+
+        query_answer = kwargs.pop("query_answer", None)
+        query_answer_count = kwargs.pop("query_answer_count", None)
+        answers = query_answer if not query_answer_count else '{}|count-{}'.format(
+            query_answer, query_answer_count
+        )
+
+        query_caption = kwargs.pop("query_caption", None)
+        query_caption_highlight = kwargs.pop("query_caption_highlight", None)
+        captions = query_caption if not query_caption_highlight else '{}|highlight-{}'.format(
+            query_caption, query_caption_highlight
+        )
+
+        semantic_fields = kwargs.pop("semantic_fields", None)
+
         query = SearchQuery(
             search_text=search_text,
             include_total_result_count=include_total_result_count,
@@ -280,11 +319,15 @@ class SearchClient(HeadersMixin):
             search_fields=search_fields_str,
             search_mode=search_mode,
             query_language=query_language,
-            speller=speller,
+            speller=query_speller,
             answers=answers,
+            captions=captions,
+            semantic_fields=",".join(semantic_fields) if semantic_fields else None,
             select=select if isinstance(select, six.string_types) else None,
             skip=skip,
             top=top,
+            session_id=session_id,
+            scoring_statistics=scoring_statistics
         )
         if isinstance(select, list):
             query.select(select)

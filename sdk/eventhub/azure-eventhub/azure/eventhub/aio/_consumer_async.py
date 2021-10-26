@@ -14,6 +14,7 @@ from uamqp import errors, types, utils
 from uamqp import ReceiveClientAsync, Source
 
 from ._client_base_async import ConsumerProducerMixin
+from ._async_utils import get_dict_with_loop_if_needed
 from .._common import EventData
 from ..exceptions import _error_handler
 from .._utils import create_properties, event_position_selector
@@ -61,7 +62,6 @@ class EventHubConsumer(
         network bandwidth consumption that is generally a favorable trade-off when considered against periodically
         making requests for partition properties using the Event Hub client.
         It is set to `False` by default.
-    :keyword ~asyncio.AbstractEventLoop loop: An event loop.
     """
 
     def __init__(self, client: "EventHubConsumerClient", source: str, **kwargs) -> None:
@@ -82,7 +82,7 @@ class EventHubConsumer(
         self._on_event_received = kwargs[
             "on_event_received"
         ]  # type: Callable[[Union[Optional[EventData], List[EventData]]], Awaitable[None]]
-        self._loop = kwargs.get("loop", None)
+        self._internal_kwargs = get_dict_with_loop_if_needed(kwargs.get("loop", None))
         self._client = client
         self._source = source
         self._offset = event_position
@@ -147,7 +147,7 @@ class EventHubConsumer(
             auto_complete=False,
             properties=properties,
             desired_capabilities=desired_capabilities,
-            loop=self._loop,
+            **self._internal_kwargs
         )
 
         self._handler._streaming_receive = True  # pylint:disable=protected-access

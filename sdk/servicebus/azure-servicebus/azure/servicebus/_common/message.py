@@ -293,9 +293,15 @@ class ServiceBusMessage(
         """
         p_key = None
         try:
-            p_key = self._raw_amqp_message.annotations.get(  # type: ignore
-                _X_OPT_PARTITION_KEY  # type: ignore
-            ) or self._raw_amqp_message.annotations.get(ANNOTATION_SYMBOL_PARTITION_KEY)  # type: ignore
+            # opt_p_key is used on the incoming message
+            opt_p_key = self._raw_amqp_message.annotations.get(_X_OPT_PARTITION_KEY)  # type: ignore
+            if opt_p_key is not None:
+                p_key = opt_p_key
+            # symbol_p_key is used on the outgoing message
+            symbol_p_key = self._raw_amqp_message.annotations.get(ANNOTATION_SYMBOL_PARTITION_KEY)  # type: ignore
+            if symbol_p_key is not None:
+                p_key = symbol_p_key
+
             return p_key.decode("UTF-8")  # type: ignore
         except (AttributeError, UnicodeDecodeError):
             return p_key
@@ -310,7 +316,7 @@ class ServiceBusMessage(
                 )
             )
 
-        if value and self.session_id and value != self.session_id:
+        if value and self.session_id is not None and value != self.session_id:
             raise ValueError(
                 "partition_key:{} cannot be set to a different value than session_id:{}".format(
                     value, self.session_id

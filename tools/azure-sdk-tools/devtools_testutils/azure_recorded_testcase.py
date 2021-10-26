@@ -7,7 +7,6 @@ import functools
 import logging
 import os
 import os.path
-import requests
 import six
 import sys
 import time
@@ -21,8 +20,6 @@ from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_functi
 
 from . import mgmt_settings_fake as fake_settings
 from .azure_testcase import _is_autorest_v3, get_resource_name, get_qualified_method_name
-from .config import PROXY_URL
-from .enums import ProxyRecordingSanitizer
 
 try:
     # Try to import the AsyncFakeCredential, if we cannot assume it is Python 2
@@ -31,7 +28,7 @@ except SyntaxError:
     pass
 
 if TYPE_CHECKING:
-    from typing import Optional
+    from typing import Any
 
 
 load_dotenv(find_dotenv())
@@ -80,18 +77,6 @@ class AzureRecordedTestCase(object):
     @property
     def recording_processors(self):
         return []
-
-    def add_sanitizer(self, sanitizer, regex=None, value=None):
-        # type: (ProxyRecordingSanitizer, Optional[str], Optional[str]) -> None
-        if sanitizer == ProxyRecordingSanitizer.URI:
-            requests.post(
-                "{}/Admin/AddSanitizer".format(PROXY_URL),
-                headers={"x-abstraction-identifier": ProxyRecordingSanitizer.URI.value},
-                json={
-                    "regex": regex or "[a-z]+(?=(?:-secondary)\\.(?:table|blob|queue)\\.core\\.windows\\.net)",
-                    "value": value or "fakevalue"
-                },
-            )
 
     def is_playback(self):
         return not self.is_live

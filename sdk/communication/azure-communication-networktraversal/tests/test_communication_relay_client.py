@@ -60,4 +60,29 @@ class CommunicationRelayClientTest(CommunicationTestCase):
                 print('Url: ' + url)
 
         assert config is not None
+
+    @CommunicationPreparer()
+    def test_get_relay_configuration_without_identity(self, communication_livetest_dynamic_connection_string):
+        
+        relay_client = CommunicationRelayClient.from_connection_string(
+            communication_livetest_dynamic_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
+
+        print('Getting relay config:\n')
+        config = relay_client.get_relay_configuration()
+        
+        print('Ice Servers: \n')
+        for iceServer in config.ice_servers:
+            assert iceServer.username is not None
+            print('Username: ' + iceServer.username)
+
+            assert iceServer.credential is not None
+            print('Credential: ' + iceServer.credential)
+            
+            assert iceServer.urls is not None
+            for url in iceServer.urls:
+                print('Url: ' + url)
+
+        assert config is not None
         

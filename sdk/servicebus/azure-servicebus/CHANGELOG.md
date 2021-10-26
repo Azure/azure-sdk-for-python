@@ -1,5 +1,27 @@
 # Release History
 
+## 7.3.5 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed bug that `ServiceBusReceiver` can not connect to sessionful entity with session id being empty string.
+- Fixed bug that `ServiceBusMessage.partition_key` can not parse empty string properly.
+
+### Other Changes
+
+## 7.3.4 (2021-10-06)
+
+### Other Changes
+
+- Updated uAMQP dependency to 1.4.3.
+  - Added support for Python 3.10.
+  - Fixed memory leak in win32 socketio and tlsio (issue #19777).
+  - Fixed memory leak in the process of converting AMQPValue into string (issue #19777).
+
 ## 7.3.3 (2021-09-08)
 
 ### Bugs Fixed

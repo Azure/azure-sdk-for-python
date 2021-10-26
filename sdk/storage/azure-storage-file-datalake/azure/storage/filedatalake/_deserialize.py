@@ -49,6 +49,10 @@ def deserialize_path_properties(path_list):
     return [PathProperties._from_generated(path) for path in path_list] # pylint: disable=protected-access
 
 
+def return_headers_and_deserialized_path_list(response, deserialized, response_headers):  # pylint: disable=unused-argument
+    return deserialized.paths if deserialized.paths else {}, normalize_headers(response_headers)
+
+
 def get_deleted_path_properties_from_generated_code(generated):
     deleted_path = DeletedPathProperties()
     deleted_path.name = generated.name

@@ -1,0 +1,26 @@
+interactions:
+- request:
+    body: '{"hello": "test_webpubsub_send_to_all_apim_proxy"}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Content-Length:
+      - '50'
+      Content-Type:
+      - text/plain
+      User-Agent:
+      - azsdk-python-messaging-webpubsubservice/1.0.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://myservice.azure-api.net/api/hubs/Hub/:send?api-version=2021-10-01
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Wed, 13 Oct 2021 06:08:34 GMT
+      strict-transport-security: max-age=15724800; includeSubDomains
+    status:
+      code: 202
+      message: Accepted
+    url: https://apimanagement-yyc.azure-api.net/api/hubs/Hub/:send?api-version=2021-10-01
+version: 1

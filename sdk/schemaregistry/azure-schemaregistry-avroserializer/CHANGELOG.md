@@ -1,16 +1,36 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b4 (Unreleased)
 
 ### Features Added
 
-- `auto_register_schemas` keyword argument has been added to `SchemaRegistryAvroSerializer`, which will allow for automatically registering schemas passed in to the `serialize`.
+- Async version of `AvroSerializer` has been added under `azure.schemaregistry.serializer.avroserializer.aio`.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.0.0b3 (2021-10-06)
+
+### Features Added
+
+- `auto_register_schemas` keyword argument has been added to `AvroSerializer`, which will allow for automatically registering schemas passed in to the `serialize`, when set to `True`, otherwise `False` by default.
+- `value` parameter in `serialize` on `AvroSerializer` takes type `Mapping` rather than `Dict`.
+- Depends on `azure-schemaregistry==1.0.0b3`.
+
+### Breaking Changes
+
+- `SchemaRegistryAvroSerializer` has been renamed `AvroSerializer`.
+- `schema_registry` parameter in the `AvroSerializer` constructor has been renamed `client`.
+- `schema_group` parameter in the `AvroSerializer` constructor has been renamed `group_name`.
+- `data` parameter in the `serialize` and `deserialize` methods on `AvroSerializer` has been renamed `value`.
+- `schema` parameter in the `serialize` method on `AvroSerializer` no longer accepts argument of type `bytes`.
+- `AvroSerializer` constructor no longer takes in the `codec` keyword argument.
+- The following positional arguments are now required keyword arguments:
+  - `client` and `group_name` in `AvroSerializer` constructor
+  - `schema` in `serialize` on `AvroSerializer`
 
 ## 1.0.0b2 (2021-08-18)
 

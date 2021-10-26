@@ -9,29 +9,30 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-queue/12.1.6 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 30 Oct 2019 19:52:24 GMT
+      - Thu, 07 Oct 2021 23:07:54 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2020-08-04'
     method: GET
-    uri: https://pyacrstoragestorname-secondary.queue.core.windows.net/?restype=service&comp=stats
+    uri: https://storagename-secondary.queue.core.windows.net/?restype=service&comp=stats
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceStats><GeoReplication><Status>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication></StorageServiceStats>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceStats><GeoReplication><Status>live</Status><LastSyncTime>Thu,
+        07 Oct 2021 23:05:07 GMT</LastSyncTime></GeoReplication></StorageServiceStats>"
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/xml
       date:
-      - Wed, 30 Oct 2019 19:52:24 GMT
+      - Thu, 07 Oct 2021 23:07:53 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
       - chunked
       x-ms-version:
-      - '2018-03-28'
+      - '2020-08-04'
     status:
       code: 200
       message: OK

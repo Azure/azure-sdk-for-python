@@ -7,6 +7,7 @@
 from devtools_testutils import AzureTestCase
 from azure.purview.scanning.aio import PurviewScanningClient as AsyncPurviewScanningClient
 
+
 class PurviewScanningTestAsync(AzureTestCase):
 
     def create_async_client(self, endpoint):

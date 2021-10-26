@@ -12,7 +12,6 @@ from time import time
 from io import SEEK_SET, UnsupportedOperation
 import logging
 import uuid
-import types
 from typing import Any, TYPE_CHECKING
 from wsgiref.handlers import format_date_time
 try:
@@ -75,7 +74,7 @@ def retry_hook(settings, **kwargs):
 
 
 def is_retry(response, mode):
-    """Is this method/status code retryable? (Based on whitelists and control
+    """Is this method/status code retryable? (Based on allowlists and control
     variables such as the number of total retries to allow, whether to
     respect the Retry-After header, whether this header is present, and
     whether the returned status code is on the list of status codes to
@@ -183,11 +182,15 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
 
     This accepts both global configuration, and per-request level with "enable_http_logger"
     """
+    def __init__(self, logging_enable=False, **kwargs):
+        self.logging_body = kwargs.pop("logging_body", False)
+        super(StorageLoggingPolicy, self).__init__(logging_enable=logging_enable, **kwargs)
 
     def on_request(self, request):
         # type: (PipelineRequest, Any) -> None
         http_request = request.http_request
         options = request.context.options
+        self.logging_body = self.logging_body or options.pop("logging_body", False)
         if options.pop("logging_enable", self.enable_http_logger):
             request.context["logging_enable"] = True
             if not _LOGGER.isEnabledFor(logging.DEBUG):
@@ -216,11 +219,11 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
                     _LOGGER.debug("    %r: %r", header, value)
                 _LOGGER.debug("Request body:")
 
-                # We don't want to log the binary data of a file upload.
-                if isinstance(http_request.body, types.GeneratorType):
-                    _LOGGER.debug("File upload")
-                else:
+                if self.logging_body:
                     _LOGGER.debug(str(http_request.body))
+                else:
+                    # We don't want to log the binary data of a file upload.
+                    _LOGGER.debug("Hidden body, please use logging_body to show body")
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log request: %r", err)
 
@@ -240,19 +243,24 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
                 _LOGGER.debug("Response content:")
                 pattern = re.compile(r'attachment; ?filename=["\w.]+', re.IGNORECASE)
                 header = response.http_response.headers.get('content-disposition')
+                resp_content_type = response.http_response.headers.get("content-type", "")
 
                 if header and pattern.match(header):
                     filename = header.partition('=')[2]
                     _LOGGER.debug("File attachments: %s", filename)
-                elif response.http_response.headers.get("content-type", "").endswith("octet-stream"):
+                elif resp_content_type.endswith("octet-stream"):
                     _LOGGER.debug("Body contains binary data.")
-                elif response.http_response.headers.get("content-type", "").startswith("image"):
+                elif resp_content_type.startswith("image"):
                     _LOGGER.debug("Body contains image data.")
-                else:
-                    if response.context.options.get('stream', False):
+
+                if self.logging_body and resp_content_type.startswith("text"):
+                    _LOGGER.debug(response.http_response.text())
+                elif self.logging_body:
+                    try:
+                        _LOGGER.debug(response.http_response.body())
+                    except ValueError:
                         _LOGGER.debug("Body is streamable")
-                    else:
-                        _LOGGER.debug(response.http_response.text())
+
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log response: %s", repr(err))
 
@@ -456,7 +464,7 @@ class StorageRetryPolicy(HTTPPolicy):
 
         else:
             # Incrementing because of a server error like a 500 in
-            # status_forcelist and a the given method is in the whitelist
+            # status_forcelist and a the given method is in the allowlist
             if response:
                 settings['status'] -= 1
                 settings['history'].append(RequestHistory(request, http_response=response))

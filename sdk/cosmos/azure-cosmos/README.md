@@ -15,6 +15,10 @@ Use the Azure Cosmos DB SQL API SDK for Python to manage databases and the JSON 
 
 ## Getting started
 
+### Important update on Python 2.x Support
+
+New releases of this SDK won't support Python 2.x starting January 1st, 2022. Please check the [CHANGELOG](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/CHANGELOG.md) for more information.
+
 ### Prerequisites
 
 * Azure subscription - [Create a free account][azure_sub]
@@ -81,39 +85,44 @@ Once you've initialized a [CosmosClient][ref_cosmosclient], you can interact wit
 
 For more information about these resources, see [Working with Azure Cosmos databases, containers and items][cosmos_resources].
 
+
+## How to use `enable_cross_partition_query`
+
+The keyword-argument `enable_cross_partition_query` accepts 2 options: `None` (default) or `True`.
+
 ## Limitations
 
 Currently the features below are **not supported**. For alternatives options, check the **Workarounds** section below.
 
 ### Data Plane Limitations:
 
-* Group By queries (in roadmap for 2021).
-* Language Native async i/o (in roadmap for 2021).
-* Queries with COUNT from a DISTINCT subquery: SELECT COUNT (1) FROM (SELECT DISTINCT C.ID FROM C).
-* Bulk/Transactional batch processing.
-* Direct TCP Mode access.
-* Continuation token for cross partitions queries.
-* Change Feed: Processor.
-* Change Feed: Read multiple partitions key values.
-* Change Feed: Read specific time.
-* Change Feed: Read from the beggining.
-* Change Feed: Pull model.
-* Cross-partition ORDER BY for mixed types.
+* Group By queries
+* Language Native async i/o
+* Queries with COUNT from a DISTINCT subquery: SELECT COUNT (1) FROM (SELECT DISTINCT C.ID FROM C)
+* Bulk/Transactional batch processing
+* Direct TCP Mode access
+* Continuation token for cross partitions queries
+* Change Feed: Processor
+* Change Feed: Read multiple partitions key values
+* Change Feed: Read specific time
+* Change Feed: Read from the beggining
+* Change Feed: Pull model
+* Cross-partition ORDER BY for mixed types
 * Integrated Cache using the default consistency level, that is "Session". To take advantage of the new [Cosmos DB Integrated Cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache), it is required to explicitly set CosmosClient consistency level to "Eventual": `consistency_level= Eventual`.
 
 ### Control Plane Limitations:
 
-* Get CollectionSizeUsage, DatabaseUsage, and DocumentUsage metrics.
-* Create Geospatial Index.
-* Provision Autoscale DBs or containers.
-* Update Autoscale throughput.
-* Update analytical store ttl (time to live).
-* Get the connection string.
-* Get the minimum RU/s of a container.
+* Get CollectionSizeUsage, DatabaseUsage, and DocumentUsage metrics
+* Create Geospatial Index
+* Provision Autoscale DBs or containers
+* Update Autoscale throughput
+* Update analytical store ttl (time to live)
+* Get the connection string
+* Get the minimum RU/s of a container
 
 ### Security Limitations:
 
-* AAD support.
+* AAD support
 
 ## Workarounds
 
@@ -123,7 +132,7 @@ If you want to use Python SDK to perform bulk inserts to Cosmos DB, the best alt
 
 ### Control Plane Limitations Workaround
 
-Typically you can use [Azure Portal](https://portal.azure.com/), [Azure Cosmos DB Resource Provider REST API](https://docs.microsoft.com/rest/api/cosmos-db-resource-provider), [Azure CLI](https://docs.microsoft.com/azure/cosmos-db/manage-with-cli) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the control plane unsupported limitations.
+Typically you can use [Azure Portal](https://portal.azure.com/), [Azure Cosmos DB Resource Provider REST API](https://docs.microsoft.com/rest/api/cosmos-db-resource-provider), [Azure CLI](https://docs.microsoft.com/cli/azure/azure-cli-reference-for-cosmos-db) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the control plane unsupported limitations.
 
 ### AAD Support Workaround
 

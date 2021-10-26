@@ -1,18 +1,25 @@
 import time
 import os
 import re
-from github import Github
 from datetime import date, datetime
 import subprocess as sp
-from azure.storage.blob import BlobClient
-import reply_generator as rg
-from update_issue_body import update_issue_body, find_readme_link
 import traceback
+import logging
+
+from github import Github
+from azure.storage.blob import BlobClient
+
+import reply_generator as rg
+from utils import update_issue_body, get_readme_and_output_folder, \
+                  get_python_pipelines, get_pipeline_url, auto_close_issue
+
 
 _NULL = ' '
 _FILE_OUT = 'release_issue_status.csv'
 _FILE_OUT_PYTHON = 'release_python_status.md'
 _PYTHON_SDK_ADMINISTRATORS = {'msyyc', 'RAY-316', 'BigCat20196'}
+logging.basicConfig(level=logging.INFO,
+                    format='[auto-reply  log] - %(funcName)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 
 def my_print(cmd):
     print('==' + cmd + ' ==\n')
@@ -121,51 +128,60 @@ def _latest_comment_time(comments, delay_from_create_date):
     return delay_from_create_date if not q else int((time.time() - q[-1][0]) / 3600 / 24)
 
 
-def auto_reply(item, sdk_repo, rest_repo, duplicated_issue):
-    print("==========new issue number: {}".format(item.issue_object.number))
+def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python_piplines):
+    logging.info("new issue number: {}".format(item.issue_object.number))
+
     if 'auto-link' not in item.labels:
+        item.issue_object.add_to_labels('auto-link')
         try:
-            package_name, readme_link = update_issue_body(sdk_repo, rest_repo, item.issue_object.number)
-            print("pkname, readme", package_name, readme_link)
+            package_name, readme_link, output_folder = update_issue_body(request_repo, rest_repo, item.issue_object.number)
+            logging.info("pkname, readme", package_name, readme_link)
             item.package = package_name
             key = ('Python', item.package)
             duplicated_issue[key] = duplicated_issue.get(key, 0) + 1
         except Exception as e:
             item.bot_advice = 'failed to modify the body of the new issue. Please modify manually'
-            item.labels.append('attention')
-            print(e)
+            item.issue_object.add_to_labels('attention')
+            logging.info(e)
             raise
-        item.labels.append('auto-link')
-        item.issue_object.set_labels(*item.labels)
     else:
         try:
-            readme_link = find_readme_link(sdk_repo, item.issue_object.number)
+            readme_link, output_folder = get_readme_and_output_folder(request_repo, rest_repo, item.issue_object.number)
         except Exception as e:
-            print('Issue: {}  updates body failed'.format(item.issue_object.number))
-            item.bot_advice = 'failed to find Readme link, Please check !!'
-            item.labels.append('attention')
+            logging.info('Issue: {}  get pkname and output folder failed'.format(item.issue_object.number))
+            item.bot_advice = 'failed to find Readme link and output folder. Please check !!'
+            item.issue_object.add_to_labels('attention')
+            logging.info(e)
             raise
     try:
-        reply = rg.begin_reply_generate(item=item, rest_repo=rest_repo, readme_link=readme_link)
+        logging.info(python_piplines)
+        pipeline_url = get_pipeline_url(python_piplines, output_folder)
+        rg.begin_reply_generate(item=item, rest_repo=rest_repo, readme_link=readme_link,
+                                sdk_repo=sdk_repo, pipeline_url=pipeline_url)
+        if 'Configured' in item.labels:
+            item.issue_object.remove_from_labels('Configured')
     except Exception as e:
         item.bot_advice = 'auto reply failed, Please intervene manually !!'
-        print('Error from auto reply ========================')
-        print('Issue:{}'.format(item.issue_object.number))
-        print(traceback.format_exc())
-        print('==============================================')
+        logging.info('Error from auto reply')
+        logging.info('Issue:{}'.format(item.issue_object.number))
+        logging.info(traceback.format_exc())
 
 
 def main():
     # get latest issue status
     g = Github(os.getenv('TOKEN'))  # please fill user_token
-    sdk_repo = g.get_repo('Azure/sdk-release-request')
-    rest_repo = g.get_repo('Azure/azure-rest-api-specs')
-    label1 = sdk_repo.get_label('ManagementPlane')
-    open_issues = sdk_repo.get_issues(state='open', labels=[label1])
+    request_repo = g.get_repo('Azure/sdk-release-request')
+    rest_repo = g.get_repo('Azure/azure-rest-api-specs')   
+    sdk_repo = g.get_repo('Azure/azure-sdk-for-python')
+    label1 = request_repo.get_label('ManagementPlane')
+    open_issues = request_repo.get_issues(state='open', labels=[label1])
     issue_status = []
     issue_status_python = []
     duplicated_issue = dict()
     start_time = time.time()
+    # get pipeline definitionid
+    python_piplines = get_python_pipelines()
+
     for item in open_issues:
         if not item.number:
             continue
@@ -202,36 +218,46 @@ def main():
     # rule6: if delay from created date is over 30 days and owner never reply, close it.
     # rule7: if delay from created date is over 15 days and owner never reply, remind owner to handle it.
     for item in issue_status:
+        if item.language == 'Python':
+            issue_status_python.append(item)  
         if item.status == 'release':
             item.bot_advice = 'better to release asap.'
-        elif item.comment_num == 0 and 'Python' in item.labels:
+        elif (item.comment_num == 0 or 'Configured' in item.labels) and 'Python' in item.labels:
             item.bot_advice = 'new issue and better to confirm quickly.'
+            if 'assigned' not in item.labels:
+                time.sleep(0.1)
+                assign_count = int(str(time.time())[-1]) % 2
+                if assign_count == 1:
+                    item.issue_object.remove_from_assignees(*['RAY-316'])
+                    item.issue_object.add_to_assignees(*['BigCat20196'])
+                item.issue_object.add_to_labels('assigned')
             try:
-                auto_reply(item, sdk_repo, rest_repo, duplicated_issue)
+                auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python_piplines)
             except Exception as e:
                 continue
         elif not item.author_latest_comment in _PYTHON_SDK_ADMINISTRATORS:
             item.bot_advice = 'new comment for author.'
         elif item.delay_from_latest_update >= 7:
             item.bot_advice = 'delay for a long time and better to handle now.'
+        if item.comment_num > 1 and item.language == 'Python':
+            try:
+                auto_close_issue(request_repo, item)
+            except Exception as e:
+                item.bot_advice = 'auto-close failed, please check!'
+                logging.info(f"=====issue: {item.issue_object.number}, {e}")
 
         if item.days_from_latest_commit >= 30 and item.language == 'Python' and '30days attention' not in item.labels:
-            item.labels.append('30days attention')
-            item.issue_object.set_labels(*item.labels)
+            item.issue_object.add_to_labels('30days attention')
             item.issue_object.create_comment(f'hi @{item.author}, the issue is closed since there is no reply for a long time. Please reopen it if necessary or create new one.')
             item.issue_object.edit(state='close')
         elif item.days_from_latest_commit >= 15 and item.language == 'Python' and '15days attention' not in item.labels:
             item.issue_object.create_comment(f'hi @{item.author}, this release-request has been delayed more than 15 days,'
                                              ' please deal with it ASAP. We will close the issue if there is still no response after 15 days!')
-            item.labels.append('15days attention')
-            item.issue_object.set_labels(*item.labels)
+            item.issue_object.add_to_labels('15days attention')
 
         # judge whether there is duplicated issue for same package
         if item.package != _NULL and duplicated_issue.get((item.language, item.package)) > 1:
             item.bot_advice = f'Warning:There is duplicated issue for {item.package}. ' + item.bot_advice
-            
-        if item.language == 'Python':
-            issue_status_python.append(item)
 
     # output result
     output_python_md(issue_status_python)
@@ -243,10 +269,10 @@ def main():
     print_check('git push -f origin HEAD')
 
     # upload to storage account(it is created in advance)
-    blob = BlobClient.from_connection_string(conn_str=os.getenv('CONN_STR'), container_name=os.getenv('FILE'),
-                                             blob_name=_FILE_OUT)
-    with open(_FILE_OUT, 'rb') as data:
-        blob.upload_blob(data, overwrite=True)
+#     blob = BlobClient.from_connection_string(conn_str=os.getenv('CONN_STR'), container_name=os.getenv('FILE'),
+#                                              blob_name=_FILE_OUT)
+#     with open(_FILE_OUT, 'rb') as data:
+#         blob.upload_blob(data, overwrite=True)
         
 
 if __name__ == '__main__':

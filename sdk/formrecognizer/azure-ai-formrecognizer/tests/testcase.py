@@ -224,34 +224,17 @@ class FormRecognizerTest(AzureTestCase):
         self.logger.disabled = True
         self.logger.handlers = []
 
-    def assertModelTransformCorrect(self, model, expected, unlabeled=False):
-        self.assertEqual(model.model_id, expected.model_info.model_id)
-        self.assertEqual(model.training_started_on, expected.model_info.created_date_time)
-        self.assertEqual(model.training_completed_on, expected.model_info.last_updated_date_time)
-        self.assertEqual(model.status, expected.model_info.status)
-        self.assertEqual(model.errors, expected.train_result.errors)
-        for m, a in zip(model.training_documents, expected.train_result.training_documents):
-            self.assertEqual(m.name, a.document_name)
-            if m.errors and a.errors:
-                self.assertEqual(m.errors, a.errors)
-            self.assertEqual(m.page_count, a.pages)
-            self.assertEqual(m.status, a.status)
+    def assertModelTransformCorrect(self, model, expected):
+        assert model.model_id == expected.model_id
+        assert model.created_on == expected.created_date_time
+        assert model.description == expected.description
 
-        if unlabeled:
-            if expected.keys.clusters:
-                for cluster_id, fields in expected.keys.clusters.items():
-                    self.assertEqual(cluster_id, model.submodels[int(cluster_id)].form_type[-1])
-                    for field_idx, model_field in model.submodels[int(cluster_id)].fields.items():
-                        self.assertIn(model_field.label, fields)
-
-        else:
-            if expected.train_result:
-                if expected.train_result.fields:
-                    for a in expected.train_result.fields:
-                        self.assertEqual(model.submodels[0].fields[a.field_name].name, a.field_name)
-                        self.assertEqual(model.submodels[0].fields[a.field_name].accuracy, a.accuracy)
-                    self.assertEqual(model.submodels[0].form_type, "custom:"+model.model_id)
-                    self.assertEqual(model.submodels[0].accuracy, expected.train_result.average_model_accuracy)
+        for name, field in model.doc_types.items():
+            assert name in expected.doc_types
+            exp = expected.doc_types[name]
+            assert field.description == exp.description
+            assert field.field_confidence == exp.field_confidence
+            assert field.field_schema == {name: field.serialize() for name, field in exp.field_schema.items()}
 
     def assertFormPagesTransformCorrect(self, form_pages, read_result, page_result=None, **kwargs):
         for page, expected_page in zip(form_pages, read_result):
@@ -267,7 +250,7 @@ class FormRecognizerTest(AzureTestCase):
                 self.assertFormLineTransformCorrect(line, expected_line)
 
             for selection_mark, expected_selection_mark in zip(page.selection_marks or [], expected_page.selection_marks or []):
-                self.assertFormSelectionMarkTransformCorrect(selection_mark, expected_selection_mark)
+                self.assertDocumentSelectionMarkTransformCorrect(selection_mark, expected_selection_mark)
 
         if page_result:
             for page, expected_page in zip(form_pages, page_result):
@@ -304,12 +287,6 @@ class FormRecognizerTest(AzureTestCase):
         for word, expected_word in zip(line.words, expected.words):
             self.assertFormWordTransformCorrect(word, expected_word)
 
-    def assertFormSelectionMarkTransformCorrect(self, selection_mark, expected):
-        self.assertEqual(selection_mark.kind, "selectionMark")
-        self.assertEqual(selection_mark.confidence, adjust_confidence(expected.confidence))
-        self.assertEqual(selection_mark.state, expected.state)
-        self.assertBoundingBoxTransformCorrect(selection_mark.bounding_box, expected.bounding_box)
-
     def assertFieldElementsTransFormCorrect(self, field_elements, generated_elements, read_result):
         if field_elements is None and not generated_elements:
             return
@@ -320,7 +297,7 @@ class FormRecognizerTest(AzureTestCase):
             elif element_type == "line":
                 self.assertFormLineTransformCorrect(element, expected)
             elif element_type == "selectionMark":
-                self.assertFormSelectionMarkTransformCorrect(element, expected)
+                self.assertDocumentSelectionMarkTransformCorrect(element, expected)
 
     def assertFormFieldValueTransformCorrect(self, form_field, expected, read_results=None):
         if expected is None:
@@ -588,44 +565,44 @@ class FormRecognizerTest(AzureTestCase):
             elif element.kind == "selectionMark":
                 self.assertFormSelectionMarkHasValues(element, page_number)
 
-    def assertComposedModelHasValues(self, composed, model_1, model_2):
-        self.assertIsNotNone(composed.model_id)
-        self.assertIsNone(composed.errors)
-        self.assertTrue(composed.properties.is_composed_model)
-        self.assertIsNotNone(composed.status)
-        self.assertIsNotNone(composed.training_started_on)
-        self.assertIsNotNone(composed.training_completed_on)
+    def assertComposedModelV2HasValues(self, composed, model_1, model_2):
+        assert composed.model_id
+        assert composed.errors == []
+        assert composed.properties.is_composed_model
+        assert composed.status
+        assert composed.training_started_on
+        assert composed.training_completed_on
 
         all_training_documents = model_1.training_documents + model_2.training_documents
         for doc, composed_doc in zip(all_training_documents, composed.training_documents):
-            self.assertEqual(doc.name, composed_doc.name)
-            self.assertEqual(doc.status, composed_doc.status)
-            self.assertEqual(doc.page_count, composed_doc.page_count)
-            self.assertEqual(doc.errors, composed_doc.errors)
+            assert doc.name == composed_doc.name
+            assert doc.status == composed_doc.status
+            assert doc.page_count == composed_doc.page_count
+            assert doc.errors == composed_doc.errors
 
         for model in model_1.submodels:
             composed_model = composed.submodels[0]
             if model.model_id != composed_model.model_id:  # order not guaranteed from service
                 composed_model = composed.submodels[1]
             if model_1.model_name is None:
-                self.assertEqual(model.form_type, composed_model.form_type)
-            self.assertEqual(model.accuracy, composed_model.accuracy)
-            self.assertEqual(model.model_id, composed_model.model_id)
+                assert model.form_type == composed_model.form_type
+            assert model.accuracy == composed_model.accuracy
+            assert model.model_id == composed_model.model_id
             for field, value in model.fields.items():
-                self.assertEqual(value.name, composed_model.fields[field].name)
-                self.assertEqual(value.accuracy, composed_model.fields[field].accuracy)
+                assert value.name == composed_model.fields[field].name
+                assert value.accuracy == composed_model.fields[field].accuracy
 
         for model in model_2.submodels:
             composed_model = composed.submodels[1]
             if model.model_id != composed_model.model_id:  # order not guaranteed from service
                 composed_model = composed.submodels[0]
             if model_2.model_name is None:
-                self.assertEqual(model.form_type, composed_model.form_type)
-            self.assertEqual(model.accuracy, composed_model.accuracy)
-            self.assertEqual(model.model_id, composed_model.model_id)
+                assert model.form_type == composed_model.form_type
+            assert model.accuracy == composed_model.accuracy
+            assert model.model_id == composed_model.model_id
             for field, value in model.fields.items():
-                self.assertEqual(value.name, composed_model.fields[field].name)
-                self.assertEqual(value.accuracy, composed_model.fields[field].accuracy)
+                assert value.name == composed_model.fields[field].name
+                assert value.accuracy == composed_model.fields[field].accuracy
 
     def assertUnlabeledRecognizedFormHasValues(self, form, model):
         self.assertIsNone(form.form_type_confidence)
@@ -647,3 +624,193 @@ class FormRecognizerTest(AzureTestCase):
             self.assertIsNotNone(field.name)
             self.assertIsNotNone(field.value_data.text)
             self.assertIsNotNone(field.value_data.bounding_box)
+
+    def assertDocumentTransformCorrect(self, transformed_documents, raw_documents, **kwargs):
+        if transformed_documents == [] and not raw_documents:
+            return
+        for document, expected in zip(transformed_documents, raw_documents):
+            assert document.doc_type == expected.doc_type
+            assert document.confidence == expected.confidence
+            for span, expected_span in zip(document.spans or [], expected.spans or []):
+                self.assertSpanTransformCorrect(span, expected_span)
+
+            self.assertBoundingRegionsTransformCorrect(document.bounding_regions, expected.bounding_regions)
+
+            self.assertDocumentFieldsTransformCorrect(document.fields, expected.fields)
+
+    def assertDocumentKeyValuePairsTransformCorrect(self, transformed_key_value, raw_key_value, **kwargs):
+        if transformed_key_value == [] and not raw_key_value:
+            return
+        for key_value, expected in zip(transformed_key_value, raw_key_value):
+            self.assertDocumentKeyValueElementTransformCorrect(key_value.key, expected.key)
+            self.assertDocumentKeyValueElementTransformCorrect(key_value.value, expected.value)
+            assert key_value.confidence == expected.confidence
+
+    def assertDocumentEntitiesTransformCorrect(self, transformed_entity, raw_entity, **kwargs):
+        if transformed_entity == [] and not raw_entity:
+            return
+        
+        for entity, expected in zip(transformed_entity, raw_entity):
+            assert entity.category == expected.category
+            assert entity.sub_category == expected.sub_category
+            assert entity.content == expected.content
+            assert entity.confidence == expected.confidence
+            
+            for span, expected_span in zip(entity.spans or [], expected.spans or []):
+                    self.assertSpanTransformCorrect(span, expected_span)
+                
+            self.assertBoundingRegionsTransformCorrect(entity.bounding_regions, expected.bounding_regions)
+
+    def assertDocumentStylesTransformCorrect(self, transformed_styles, raw_styles, **kwargs):
+        if transformed_styles == [] and not raw_styles:
+            return
+        
+        for style, expected in zip(transformed_styles, raw_styles):
+            assert style.is_handwritten == expected.is_handwritten
+            assert style.confidence == expected.confidence
+            
+            for span, expected_span in zip(style.spans or [], expected.spans or []):
+                    self.assertSpanTransformCorrect(span, expected_span)
+
+    def assertDocumentKeyValueElementTransformCorrect(self, element, expected, *kwargs):
+        if not element or not expected:
+            return
+        assert element.content == expected.content
+        
+        for span, expected_span in zip(element.spans or [], expected.spans or []):
+                self.assertSpanTransformCorrect(span, expected_span)
+            
+        self.assertBoundingRegionsTransformCorrect(element.bounding_regions, expected.bounding_regions)
+
+    def assertDocumentTablesTransformCorrect(self, transformed_tables, raw_tables, **kwargs):
+        if transformed_tables == [] and not raw_tables:
+            return
+        for table, expected in zip(transformed_tables, raw_tables):
+            assert table.row_count == expected.row_count
+            assert table.column_count == expected.column_count
+
+            for cell, expected_cell in zip(table.cells, expected.cells):
+                self.assertDocumentTableCellTransformCorrect(cell, expected_cell)
+
+            for span, expected_span in zip(table.spans or [], expected.spans or []):
+                self.assertSpanTransformCorrect(span, expected_span)
+            
+            self.assertBoundingRegionsTransformCorrect(table.bounding_regions, expected.bounding_regions)
+
+    def assertDocumentTableCellTransformCorrect(self, transformed_cell, raw_cell, **kwargs):
+        if raw_cell.kind:
+            assert transformed_cell.kind == raw_cell.kind
+        else:
+            assert transformed_cell.kind == "content"
+        assert transformed_cell.row_index == raw_cell.row_index
+        assert transformed_cell.column_index == raw_cell.column_index
+        if raw_cell.row_span:
+            assert transformed_cell.row_span == raw_cell.row_span
+        else:
+            assert transformed_cell.row_span == 1
+        if raw_cell.column_span:
+            assert transformed_cell.column_span == raw_cell.column_span
+        else:
+            assert transformed_cell.column_span == 1
+        assert transformed_cell.content == raw_cell.content
+
+        for span, expected_span in zip(transformed_cell.spans or [], raw_cell.spans or []):
+                self.assertSpanTransformCorrect(span, expected_span)
+            
+        self.assertBoundingRegionsTransformCorrect(transformed_cell.bounding_regions, raw_cell.bounding_regions)
+
+    def assertDocumentPagesTransformCorrect(self, transformed_pages, raw_pages, **kwargs):
+        for page, expected_page in zip(transformed_pages, raw_pages):
+            assert page.page_number == expected_page.page_number
+            assert page.angle == adjust_text_angle(expected_page.angle)
+            assert page.width == expected_page.width
+            assert page.height == expected_page.height
+            assert page.unit == expected_page.unit
+
+            for line, expected_line in zip(page.lines or [], expected_page.lines or []):
+                self.assertDocumentLineTransformCorrect(line, expected_line)
+
+            for word, expected_word in zip(page.words or [], expected_page.words or []):
+                self.assertDocumentWordTransformCorrect(word, expected_word)
+
+            for selection_mark, expected_selection_mark in zip(page.selection_marks or [], expected_page.selection_marks or []):
+                self.assertDocumentSelectionMarkTransformCorrect(selection_mark, expected_selection_mark)
+
+            for span, expected_span in zip(page.spans or [], expected_page.spans or []):
+                self.assertSpanTransformCorrect(span, expected_span)
+
+    def assertDocumentLineTransformCorrect(self, line, expected):
+        assert line.content == expected.content
+        self.assertBoundingBoxTransformCorrect(line.bounding_box, expected.bounding_box)
+        for transformed_span, span in zip(line.spans or [], expected.spans or []):
+            self.assertSpanTransformCorrect(transformed_span, span)
+
+    def assertDocumentWordTransformCorrect(self, word, expected):
+        assert word.kind == "word"
+        assert word.content == expected.content
+        self.assertBoundingBoxTransformCorrect(word.bounding_box, expected.bounding_box)
+        self.assertSpanTransformCorrect(word.span, expected.span)
+
+    def assertSpanTransformCorrect(self, span, expected):
+        if span is None and expected is None:
+            return
+        assert span.offset == expected.offset
+        assert span.length == expected.length
+
+    def assertDocumentSelectionMarkTransformCorrect(self, selection_mark, expected):
+        assert selection_mark.kind == "selectionMark"
+        assert selection_mark.confidence == adjust_confidence(expected.confidence)
+        assert selection_mark.state == expected.state
+        self.assertBoundingBoxTransformCorrect(selection_mark.bounding_box, expected.bounding_box)
+
+    def assertDocumentFieldsTransformCorrect(self, document_fields, generated_fields):
+        if generated_fields is None:
+            return
+
+        for label, expected in generated_fields.items():
+            if expected is None:  # None value occurs with labeled tables and empty cells
+                continue
+            field_type = expected.type
+            assert adjust_value_type(field_type) == document_fields[label].value_type
+            assert expected.confidence == document_fields[label].confidence
+            assert expected.content == document_fields[label].content
+            self.assertDocumentFieldValueTransformCorrect(document_fields[label], expected)
+
+            for span, expected_span in zip(document_fields[label].spans or [], expected.spans or []):
+                self.assertSpanTransformCorrect(span, expected_span)
+
+            self.assertBoundingRegionsTransformCorrect(document_fields[label].bounding_regions, expected.bounding_regions)
+
+    def assertBoundingRegionsTransformCorrect(self, bounding_regions, expected):
+        if bounding_regions == [] and not expected:
+            return
+        for region, expected_region in zip(bounding_regions, expected):
+            assert region.page_number == expected_region.page_number
+            self.assertBoundingBoxTransformCorrect(region.bounding_box, expected_region.bounding_box)
+            
+
+    def assertDocumentFieldValueTransformCorrect(self, document_field, expected):
+        if expected is None:
+            return
+        field_type = expected.type
+        if field_type == "string":
+            assert document_field.value == expected.value_string
+        if field_type == "number":
+            assert document_field.value == expected.value_number
+        if field_type == "integer":
+            assert document_field.value == expected.value_integer
+        if field_type == "date":
+            assert document_field.value == expected.value_date
+        if field_type == "phoneNumber":
+            assert document_field.value == expected.value_phone_number
+        if field_type == "time":
+            assert document_field.value == expected.value_time
+        if field_type == "selectionMark":
+            assert document_field.value == expected.value_selection_mark
+        if field_type == "countryRegion":
+            assert document_field.value == expected.value_country_region
+        if field_type == "array":
+            for i in range(len(expected.value_array)):
+                self.assertDocumentFieldValueTransformCorrect(document_field.value[i], expected.value_array[i])
+        if field_type == "object":
+            self.assertDocumentFieldsTransformCorrect(document_field.value, expected.value_object)
