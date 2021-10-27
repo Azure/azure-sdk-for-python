@@ -74,6 +74,7 @@ jobs:
         # create PR
         export NEW_BRANCH=`sed -n '1p' $output_path/output.txt`
         export TARGET_BRANCH=`sed -n '2p' $output_path/output.txt`
+        export NORMAL_GENERATION=`sed -n '3p' $output_path/output.txt`
         export ISSUE_LINK=$(ISSUE_LINK)
         export PIPELINE_LINK=$(PIPELINE_LINK)
         export USR_NAME=$(USR_NAME)

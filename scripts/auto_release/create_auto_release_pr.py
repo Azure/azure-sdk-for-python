@@ -15,6 +15,14 @@ def main():
     # Add issue link on PR
     api = GhApi(owner='Azure', repo='azure-sdk-for-python', token=os.getenv('UPDATE_TOKEN'))
     api.issues.create_comment(issue_number=pr_number, body='issue link:{}'.format(os.getenv('ISSUE_LINK')))
+    
+    # Check whether generate normally
+    if 'False' in os.getenv('NORMAL_GENERATION'):
+        api_request = GhApi(owner='Azure', repo='sdk-release-request', token=os.getenv('USR_TOKEN'))
+        link = os.getenv('ISSUE_LINK')
+        issue_number = link.split('/')[-1]
+        api_request.issues.add_labels(issue_number=int(issue_number), labels=['base-branch-attention'])
 
+    
 if __name__ == '__main__':
     main()
