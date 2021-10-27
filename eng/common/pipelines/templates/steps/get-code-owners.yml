@@ -18,7 +18,7 @@ steps:
       retrieve-codeowners `
         --target-directory "/sdk/${{ parameters.ServiceDirectory }}/" `
         --root-directory "$(Build.SourcesDirectory)" `
-        --vso-owning-users "${{ parameters.TargetUserVariable) }}" `
+        --vso-owning-users "${{ parameters.TargetUserVariable }}" `
         --vso-owning-teams "${{ parameters.TargetTeamVariable }}" `
         --vso-owning-labels "${{ parameters.TargetLabelVariable }}"
     displayName: 'Add CodeOwners if Present'
