@@ -2129,14 +2129,13 @@ class BoundingRegion(object):
 class DocumentContentElement(object):
     """A DocumentContentElement.
 
-    :ivar content: Text content of the word.
+    :ivar content: Text content of the document content element.
     :vartype content: str
-    :ivar bounding_box: Bounding box of the word.
+    :ivar bounding_box: Bounding box of the document content element.
     :vartype bounding_box: list[Point]
-    :ivar span: Location of the element in the reading order concatenated
-        content.
+    :ivar span: Location of the element in the full document content.
     :vartype span: ~azure.ai.formrecognizer.DocumentSpan
-    :ivar confidence: Confidence of accurately extracting the selection mark.
+    :ivar confidence: Confidence of accurately extracting the document content element.
     :vartype confidence: float
     :ivar str kind: The kind of document element. Possible kinds are "word" or "selectionMark" which
         correspond to a :class:`~azure.ai.formrecognizer.DocumentWord` or
