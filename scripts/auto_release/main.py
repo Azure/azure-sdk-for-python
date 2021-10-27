@@ -158,6 +158,12 @@ def edit_version(add_content):
     if TRACK == '1' and VERSION_LAST_RELEASE[0] == '0':
         num = VERSION_LAST_RELEASE.split('.')
         VERSION_NEW = f'{num[0]}.{int(num[1]) + 1}.0'
+    # '0.0.0' means there must be abnormal situation
+    if VERSION_NEW == '0.0.0':
+        api_request = GhApi(owner='Azure', repo='sdk-release-request', token=os.getenv('UPDATE_TOKEN'))
+        link = os.getenv('ISSUE_LINK')
+        issue_number = link.split('/')[-1]
+        api_request.issues.add_labels(issue_number=int(issue_number), labels=['base-branch-attention'])
 
 
 def edit_changelog(add_content):
@@ -167,11 +173,6 @@ def edit_changelog(add_content):
     list_out = [list_in[0], '\n']
     date = time.localtime(time.time())
     list_out.append('## {} ({}-{:02d}-{:02d})\n\n'.format(VERSION_NEW, date.tm_year, date.tm_mon, date.tm_mday))
-    if '0.0.0' == VERSION_NEW:
-        api_request = GhApi(owner='Azure', repo='sdk-release-request', token=os.getenv('UPDATE_TOKEN'))
-        link = os.getenv('ISSUE_LINK')
-        issue_number = link.split('/')[-1]
-        api_request.issues.add_labels(issue_number=int(issue_number), labels=['base-branch-attention'])
     for line in add_content:
         list_out.append(line + '\n')
     list_out.extend(list_in[1:])
