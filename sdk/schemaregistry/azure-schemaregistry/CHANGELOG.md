@@ -1,8 +1,10 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
+## 1.0.0 (Unreleased)
 
 ### Features Added
+
+- GA release.
 
 ### Breaking Changes
 
