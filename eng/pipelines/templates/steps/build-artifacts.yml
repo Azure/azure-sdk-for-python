@@ -35,6 +35,12 @@ steps:
     inputs:
       versionSpec: '2.7'
 
+  - pwsh: |
+      Write-Host "${{ parameters.BuildTargetingString }}"
+      Write-Host "$(BuildTargetingString)"
+      Write-Host "$[ coalesce(variables['BuildTargetingString'], '${{ parameters.BuildTargetingString }}') ]"
+    displayName: "Parameter and Variable Values"
+
   - script: |
       pip install -r eng/ci_tools.txt
     displayName: 'Prep Py2 Environment'

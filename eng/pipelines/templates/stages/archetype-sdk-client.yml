@@ -72,9 +72,6 @@ parameters:
 
 stages:
   - stage: Build
-    variables:
-      - name: BuildTargetingStringValue
-        value: $[ coalesce(variables['BuildTargetingString'], '${{ parameters.BuildTargetingString }}') ]
     jobs:
     - template: /eng/pipelines/templates/jobs/ci.yml
       parameters:
@@ -87,7 +84,7 @@ stages:
         AfterTestSteps: ${{ parameters.AfterTestSteps }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        BuildTargetingString: $(BuildTargetingStringValue)
+        BuildTargetingString: $[ coalesce(variables['BuildTargetingString'], '${{ parameters.BuildTargetingString }}') ]
         TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: ${{ parameters.InjectedPackages }}

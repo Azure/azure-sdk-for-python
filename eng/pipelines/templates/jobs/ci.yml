@@ -73,7 +73,7 @@ jobs:
     - template: ../steps/build-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        BuildTargetingString: $[ coalesce(variables['BuildTargetingString'], '${{ parameters.BuildTargetingString }}') ]
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         BuildDocs: ${{ parameters.BuildDocs }}
         TestPipeline: ${{ parameters.TestPipeline }}
@@ -85,102 +85,102 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         CondaArtifacts: ${{ parameters.CondaArtifacts }}
 
-  - job: 'Analyze'
-    condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
-    variables:
-    - template: ../variables/globals.yml
+  # - job: 'Analyze'
+  #   condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
+  #   variables:
+  #   - template: ../variables/globals.yml
 
-    dependsOn:
-      - 'Build'
+  #   dependsOn:
+  #     - 'Build'
 
-    pool:
-      name: azsdk-pool-mms-ubuntu-2004-general
-      vmImage: MMSUbuntu20.04
+  #   pool:
+  #     name: azsdk-pool-mms-ubuntu-2004-general
+  #     vmImage: MMSUbuntu20.04
 
-    steps:
-    - template: /eng/common/pipelines/templates/steps/check-spelling.yml
+  #   steps:
+  #   - template: /eng/common/pipelines/templates/steps/check-spelling.yml
 
-    - template: /eng/common/pipelines/templates/steps/verify-links.yml
-      parameters:
-        ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-          Directory: ''
-          Urls: (eng/common/scripts/get-markdown-files-from-changed-files.ps1)
-        ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
-          Directory: sdk/${{ parameters.ServiceDirectory }}
-        CheckLinkGuidance: $true
+  #   - template: /eng/common/pipelines/templates/steps/verify-links.yml
+  #     parameters:
+  #       ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+  #         Directory: ''
+  #         Urls: (eng/common/scripts/get-markdown-files-from-changed-files.ps1)
+  #       ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+  #         Directory: sdk/${{ parameters.ServiceDirectory }}
+  #       CheckLinkGuidance: $true
 
-    - template: ../steps/analyze.yml
-      parameters:
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
-        TestPipeline: ${{ parameters.TestPipeline }}
-        Artifacts: ${{ parameters.Artifacts }}
-        VerifyAutorest: ${{ parameters.VerifyAutorest }}
-        ValidateFormatting: ${{ parameters.ValidateFormatting }}
+  #   - template: ../steps/analyze.yml
+  #     parameters:
+  #       ServiceDirectory: ${{ parameters.ServiceDirectory }}
+  #       BuildTargetingString: ${{ parameters.BuildTargetingString }}
+  #       TestMarkArgument: ${{ parameters.TestMarkArgument }}
+  #       AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+  #       TestPipeline: ${{ parameters.TestPipeline }}
+  #       Artifacts: ${{ parameters.Artifacts }}
+  #       VerifyAutorest: ${{ parameters.VerifyAutorest }}
+  #       ValidateFormatting: ${{ parameters.ValidateFormatting }}
 
-  - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
-    parameters:
-      JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
-      DependsOn:
-        - 'Build'
-      MatrixConfigs: ${{ parameters.MatrixConfigs }}
-      MatrixFilters: ${{ parameters.MatrixFilters }}
-      MatrixReplace: ${{ parameters.MatrixReplace }}
-      CloudConfig:
-        Cloud: Public
-      AdditionalParameters:
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        TestPipeline: ${{ parameters.TestPipeline }}
-        TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
-        AfterTestSteps: ${{ parameters.AfterTestSteps }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
-        InjectedPackages: ${{ parameters.InjectedPackages }}
-        UnsupportedToxEnvironments: ${{ parameters.UnsupportedToxEnvironments }}
+  # - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+  #   parameters:
+  #     JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
+  #     DependsOn:
+  #       - 'Build'
+  #     MatrixConfigs: ${{ parameters.MatrixConfigs }}
+  #     MatrixFilters: ${{ parameters.MatrixFilters }}
+  #     MatrixReplace: ${{ parameters.MatrixReplace }}
+  #     CloudConfig:
+  #       Cloud: Public
+  #     AdditionalParameters:
+  #       ServiceDirectory: ${{ parameters.ServiceDirectory }}
+  #       TestPipeline: ${{ parameters.TestPipeline }}
+  #       TestMarkArgument: ${{ parameters.TestMarkArgument }}
+  #       BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
+  #       AfterTestSteps: ${{ parameters.AfterTestSteps }}
+  #       BuildTargetingString: ${{ parameters.BuildTargetingString }}
+  #       TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+  #       ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
+  #       InjectedPackages: ${{ parameters.InjectedPackages }}
+  #       UnsupportedToxEnvironments: ${{ parameters.UnsupportedToxEnvironments }}
 
-  - ${{ if gt(length(parameters.CondaArtifacts), 0) }}:
-    - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
-      parameters:
-        JobTemplatePath: /eng/pipelines/templates/jobs/ci.conda.tests.yml
-        GenerateJobName: generate_conda_matrix
-        DependsOn:
-          - 'Build'
-        MatrixConfigs:
-            - Name: Python_ci_conda_envs
-              Path: eng/pipelines/templates/stages/platform-matrix-conda-support.json
-              Selection: sparse
-              GenerateVMJobs: true
-        MatrixFilters: ${{ parameters.MatrixFilters }}
-        MatrixReplace: ${{ parameters.MatrixReplace }}
-        CloudConfig:
-          Cloud: Public
-        AdditionalParameters:
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          TestPipeline: ${{ parameters.TestPipeline }}
-          TestMarkArgument: ${{ parameters.TestMarkArgument }}
-          TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-          CondaArtifacts: ${{ parameters.CondaArtifacts}}
+  # - ${{ if gt(length(parameters.CondaArtifacts), 0) }}:
+  #   - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+  #     parameters:
+  #       JobTemplatePath: /eng/pipelines/templates/jobs/ci.conda.tests.yml
+  #       GenerateJobName: generate_conda_matrix
+  #       DependsOn:
+  #         - 'Build'
+  #       MatrixConfigs:
+  #           - Name: Python_ci_conda_envs
+  #             Path: eng/pipelines/templates/stages/platform-matrix-conda-support.json
+  #             Selection: sparse
+  #             GenerateVMJobs: true
+  #       MatrixFilters: ${{ parameters.MatrixFilters }}
+  #       MatrixReplace: ${{ parameters.MatrixReplace }}
+  #       CloudConfig:
+  #         Cloud: Public
+  #       AdditionalParameters:
+  #         ServiceDirectory: ${{ parameters.ServiceDirectory }}
+  #         TestPipeline: ${{ parameters.TestPipeline }}
+  #         TestMarkArgument: ${{ parameters.TestMarkArgument }}
+  #         TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+  #         CondaArtifacts: ${{ parameters.CondaArtifacts}}
 
-  - job: 'RunRegression'
-    condition: and(succeededOrFailed(), or(eq(variables['Run.Regression'], 'true'), and(eq(variables['Build.Reason'], 'Schedule'), eq(variables['System.TeamProject'],'internal'))))
-    displayName: 'Run Regression'
-    timeoutInMinutes: 180
-    variables:
-    - template: ../variables/globals.yml
+  # - job: 'RunRegression'
+  #   condition: and(succeededOrFailed(), or(eq(variables['Run.Regression'], 'true'), and(eq(variables['Build.Reason'], 'Schedule'), eq(variables['System.TeamProject'],'internal'))))
+  #   displayName: 'Run Regression'
+  #   timeoutInMinutes: 180
+  #   variables:
+  #   - template: ../variables/globals.yml
 
-    dependsOn:
-      - 'Build'
+  #   dependsOn:
+  #     - 'Build'
 
-    pool:
-      name: azsdk-pool-mms-ubuntu-2004-general
-      vmImage: MMSUbuntu20.04
+  #   pool:
+  #     name: azsdk-pool-mms-ubuntu-2004-general
+  #     vmImage: MMSUbuntu20.04
 
-    steps:
-    - template: ../steps/test_regression.yml
-      parameters:
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+  #   steps:
+  #   - template: ../steps/test_regression.yml
+  #     parameters:
+  #       ServiceDirectory: ${{ parameters.ServiceDirectory }}
+  #       BuildTargetingString: ${{ parameters.BuildTargetingString }}
