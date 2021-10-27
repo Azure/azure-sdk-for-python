@@ -14,8 +14,8 @@ from typing import (  # pylint: disable=unused-import
 from datetime import datetime
 import calendar
 from msrest.serialization import TZ_UTC
-from azure.core.credentials import AccessToken
 from msal import PublicClientApplication
+from azure.core.credentials import AccessToken
 
 def _convert_datetime_to_utc_int(expires_on):
     return int(calendar.timegm(expires_on.utctimetuple()))
@@ -151,14 +151,14 @@ def generate_teams_user_aad_token(
     :type msal_password: str
     :param m365_scope: the scope of M365 application
     :type m365_scope: str
-    :return: an AAD access token of a Teams User 
+    :return: an AAD access token of a Teams User
     :rtype: str
     """
     msal_app = PublicClientApplication(
         client_id=m365_app_id,
         authority="{}/{}".format(m365_aad_authority, m365_aad_tenant))
     result = msal_app.acquire_token_by_username_password(
-        username= msal_username, 
-        password= msal_password, 
+        username=msal_username,
+        password=msal_password,
         scopes=[m365_scope])
     return result["access_token"]
