@@ -17,6 +17,8 @@ def main():
     api.issues.create_comment(issue_number=pr_number, body='issue link:{}'.format(os.getenv('ISSUE_LINK')))
     
     # Check whether generate normally
+    print('#'*10,os.getenv('NORMAL_GENERATION'))
+    print('#'*10,os.getenv('ISSUE_LINK'))
     if 'False' in os.getenv('NORMAL_GENERATION'):
         api_request = GhApi(owner='Azure', repo='sdk-release-request', token=os.getenv('USR_TOKEN'))
         link = os.getenv('ISSUE_LINK')
