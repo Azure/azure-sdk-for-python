@@ -3,10 +3,14 @@ interactions:
     body: '{"question": "Battery life", "top": 3, "filters": {"metadataFilter": {"metadata":
       [{"key": "explicitlytaggedheading", "value": "check the battery level"}, {"key":
       "explicitlytaggedheading", "value": "make your battery last"}], "logicalOperation":
-      "OR"}}}'
+      "or"}}}'
     headers:
       Accept:
       - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       Content-Length:
       - '254'
       Content-Type:
@@ -34,16 +38,23 @@ interactions:
         \     \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
         []\n      }\n    }\n  ]\n}"
     headers:
-      apim-request-id: 90846135-6109-45b9-843e-307da0a9f967
-      content-length: '1143'
-      content-type: application/json; charset=utf-8
-      csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
-      date: Wed, 27 Oct 2021 16:40:39 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '1045'
+      apim-request-id:
+      - 8f48f294-2767-4589-8dfd-4c93163a23be
+      content-length:
+      - '1143'
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
+      date:
+      - Wed, 27 Oct 2021 16:40:37 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '196'
     status:
       code: 200
       message: OK
-    url: https://wuppe.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=190a9e13-8ede-4e4b-a8fd-c4d7f2aeab6c&deploymentName=test&api-version=2021-07-15-preview
 version: 1
