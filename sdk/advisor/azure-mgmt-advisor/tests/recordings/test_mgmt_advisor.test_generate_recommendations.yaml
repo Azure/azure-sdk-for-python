@@ -3,7 +3,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -11,7 +11,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-advisor/9.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-advisor/9.1.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/generateRecommendations?api-version=2020-01-01
   response:
@@ -23,11 +24,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 22 Dec 2020 02:49:41 GMT
+      - Wed, 27 Oct 2021 07:45:11 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/generateRecommendations/6364424e-6d7a-438c-9825-7243edf47aa4?api-version=2020-01-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/generateRecommendations/41f3831c-4cba-43c2-819e-778a2314fee8?api-version=2020-01-01
       pragma:
       - no-cache
       server:
@@ -45,13 +46,14 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-advisor/9.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-advisor/9.1.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/generateRecommendations/00000000-0000-0000-0000-000000000000?api-version=2020-01-01
   response:
@@ -61,7 +63,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Tue, 22 Dec 2020 02:49:42 GMT
+      - Wed, 27 Oct 2021 07:45:11 GMT
       expires:
       - '-1'
       pragma:
