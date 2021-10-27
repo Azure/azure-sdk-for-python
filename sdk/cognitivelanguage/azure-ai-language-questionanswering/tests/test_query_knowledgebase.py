@@ -318,7 +318,7 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
                 deployment_name='test'
             )
 
-            assert len(output.answers) == 2
+            assert output.answers
             confident_answers = [a for a in output.answers if a.confidence_score > 0.5]
             assert len(confident_answers) == 1
             assert confident_answers[0].answer_span.text == " two to four hours"
