@@ -198,47 +198,31 @@ The HttpRequest and HttpResponse objects represent a generic concept of HTTP req
 The HttpRequest has the following API. It does not vary between transports:
 
 ```python
-class HttpRequest(object):
+class HttpRequest:
 
-    def __init__(self, method, url, headers=None, files=None, data=None):
-        self.method = method
+    def __init__(
+        self,
+        method: str,
+        url: str,
+        *,
+        params: Optional[ParamsType] = None,
+        headers: Optional[MutableMapping[str, str]] = None,
+        json: Any = None,
+        content: Optional[ContentType] = None,
+        data: Optional[dict] = None,
+        files: Optional[FilesType] = None,
+        **kwargs
+    ):
         self.url = url
-        self.headers = CaseInsensitiveDict(headers)
-        self.files = files
-        self.data = data
+        self.method = method
+        self.headers = CaseInsensitiveDict(default_headers)
 
     @property
-    def body(self):
-        return self.data
+    def content(self) -> Any:
+        """Get's the request's content
 
-    @body.setter
-    def body(self, value):
-        self.data = value
-
-    def format_parameters(self, params):
-        """Format parameters into a valid query string.
-        It's assumed all parameters have already been quoted as
-        valid URL strings."""
-
-    def set_xml_body(self, data):
-        """Set an XML element tree as the body of the request."""
-
-    def set_json_body(self, data):
-        """Set a JSON-friendly object as the body of the request."""
-
-    def set_multipart_body(self, data=None):
-        """Set form-encoded data as the body of the request.
-        Supported content-types are:
-            - application/x-www-form-urlencoded
-            - multipart/form-data
-        """
-
-    def set_bytes_body(self, data):
-        """Set generic bytes as the body of the request."""
-
-    def set_multipart_mixed(self, *requests, **kwargs):
-        """Set requests for a multipart/mixed body.
-        Optionally apply "policies" in kwargs to each request.
+        :return: The request's content
+        :rtype: any
         """
 ```
 
