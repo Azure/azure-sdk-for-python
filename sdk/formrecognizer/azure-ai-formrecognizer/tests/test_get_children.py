@@ -5,9 +5,7 @@
 # ------------------------------------
 
 import functools
-from azure.ai.formrecognizer._generated.models import AnalyzeResultOperation
 from azure.ai.formrecognizer import DocumentAnalysisClient
-from azure.ai.formrecognizer import AnalyzeResult
 from preparers import FormRecognizerPreparer
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -16,7 +14,7 @@ from preparers import GlobalClientPreparer as _GlobalClientPreparer
 DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
 
 
-class TestDocumentFromStream(FormRecognizerTest):
+class TestGetChildren(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
