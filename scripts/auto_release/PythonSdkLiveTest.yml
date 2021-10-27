@@ -55,6 +55,9 @@ jobs:
         export AZURE_CLIENT_ID=$(ENV_CLIENT_ID)
         export AZURE_CLIENT_SECRET=$(ENV_CLIENT_SECRET)
         export AZURE_SUBSCRIPTION_ID=$(ENV_SUBSCRIPTION_ID)
+        export ISSUE_LINK=$(ISSUE_LINK)
+        export UPDATE_TOKEN=$(UPDATE_TOKEN)
+        export USR_TOKEN=$(USR_TOKEN)
 
         # run
         cd azure-sdk-for-python
@@ -74,13 +77,9 @@ jobs:
         # create PR
         export NEW_BRANCH=`sed -n '1p' $output_path/output.txt`
         export TARGET_BRANCH=`sed -n '2p' $output_path/output.txt`
-        export NORMAL_GENERATION=`sed -n '3p' $output_path/output.txt`
-        export ISSUE_LINK=$(ISSUE_LINK)
         export PIPELINE_LINK=$(PIPELINE_LINK)
         export USR_NAME=$(USR_NAME)
-        export USR_TOKEN=$(USR_TOKEN)
         export TEST_RESULT=$test_result
-        export UPDATE_TOKEN=$(UPDATE_TOKEN)
 
         python $script_path/create_auto_release_pr.py
         echo "\'[AutoRelease] $new_branch \' has been created!!!"
