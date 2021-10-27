@@ -463,3 +463,4 @@ if __name__ == '__main__':
     else:
         with open(f'{OUT_PATH}/output.txt', 'w') as file_out:
             file_out.writelines([f'{NEW_BRANCH}\n', "main\n" if TRACK == '2' else 'release/v3\n', str(NORMAL_GENERATION)])
+            print('*'*10,str(NORMAL_GENERATION))
