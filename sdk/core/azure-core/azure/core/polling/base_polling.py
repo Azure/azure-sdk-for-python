@@ -588,8 +588,6 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
             )
         # if I am a azure.core.pipeline.transport.HttpResponse
         request = self._client.get(status_link)
-
-        # can't use send_request in this case, because send_request is still provisional
         return self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **self._operation_config
         )

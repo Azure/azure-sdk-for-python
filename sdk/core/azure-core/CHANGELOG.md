@@ -1,8 +1,14 @@
 # Release History
 
-## 1.19.1 (Unreleased)
+## 1.20.0 (Unreleased)
 
 ### Features Added
+
+- GA `send_request` onto the `azure.core.PipelineClient` and `azure.core.AsyncPipelineClient`. This method takes in
+requests and sends them through our pipelines.
+- GA `azure.core.rest`. `azure.core.rest` is our new public simple HTTP library in `azure.core` that users will use to create requests, and consume responses.
+- GA errors `StreamConsumedError`, `StreamClosedError`, and `ResponseNotReadError` to `azure.core.exceptions`. These errors
+are thrown if you mishandle streamed responses from the `azure.core.rest` module
 
 ### Breaking Changes
 

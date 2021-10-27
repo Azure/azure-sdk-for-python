@@ -438,10 +438,9 @@ class ODataV4Error(HttpResponseError):
         return super(ODataV4Error, self).__str__()
 
 class StreamConsumedError(AzureError):
-    """**Provisional** error thrown if you try to access the stream of a response once consumed.
+    """Error thrown if you try to access the stream of a response once consumed.
 
-    This error is marked as **provisional**, meaning it may be changed in a future release. It is
-    thrown if you try to read / stream an ~azure.core.rest.HttpResponse or
+    It is thrown if you try to read / stream an ~azure.core.rest.HttpResponse or
     ~azure.core.rest.AsyncHttpResponse once the response's stream has been consumed.
     """
     def __init__(self, response):
@@ -454,10 +453,9 @@ class StreamConsumedError(AzureError):
         super(StreamConsumedError, self).__init__(message)
 
 class StreamClosedError(AzureError):
-    """**Provisional** error thrown if you try to access the stream of a response once closed.
+    """Error thrown if you try to access the stream of a response once closed.
 
-    This error is marked as **provisional**, meaning it may be changed in a future release. It is
-    thrown if you try to read / stream an ~azure.core.rest.HttpResponse or
+    It is thrown if you try to read / stream an ~azure.core.rest.HttpResponse or
     ~azure.core.rest.AsyncHttpResponse once the response's stream has been closed.
     """
     def __init__(self, response):
@@ -468,10 +466,9 @@ class StreamClosedError(AzureError):
         super(StreamClosedError, self).__init__(message)
 
 class ResponseNotReadError(AzureError):
-    """**Provisional** error thrown if you try to access a response's content without reading first.
+    """Error thrown if you try to access a response's content without reading first.
 
-    This error is marked as **provisional**, meaning it may be changed in a future release. It is
-    thrown if you try to access an ~azure.core.rest.HttpResponse or
+    It is thrown if you try to access an ~azure.core.rest.HttpResponse or
     ~azure.core.rest.AsyncHttpResponse's content without first reading the response's bytes in first.
     """
 
