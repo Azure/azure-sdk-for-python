@@ -90,7 +90,7 @@ with schema_registry_client:
 
 ### Get the schema by id
 
-Get the schema content and its properties by schema id.
+Get the schema definition and its properties by schema id.
 
 ```python
 import os
@@ -110,7 +110,7 @@ with schema_registry_client:
 
 ### Get the id of a schema
 
-Get the schema id of a schema by schema content and its properties.
+Get the schema id of a schema by schema definition and its properties.
 
 ```python
 import os
