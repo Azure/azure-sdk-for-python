@@ -87,6 +87,7 @@ class CommunicationTestCase(AzureTestCase):
             self.msal_username = "sanitized" 
             self.msal_password = "sanitized"
             self.expired_teams_token = "sanitized"
+            self.skip_get_token_for_teams_user_tests = "false"
         else:
             self.connection_str = os.getenv('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING')
             self.m365_app_id = os.getenv('COMMUNICATION_M365_APP_ID') 
@@ -99,6 +100,7 @@ class CommunicationTestCase(AzureTestCase):
             endpoint, _ = parse_connection_str(self.connection_str)
             self._resource_name = endpoint.split(".")[0]
             self.scrubber.register_name_pair(self._resource_name, "sanitized")
+            self.skip_get_token_for_teams_user_tests = os.getenv('SKIP_INT_IDENTITY_EXCHANGE_TOKEN_TEST') 
 
     def generate_teams_user_aad_token(self):
         if self.is_playback():
@@ -106,3 +108,6 @@ class CommunicationTestCase(AzureTestCase):
         else:
             teams_user_aad_token = generate_teams_user_aad_token(m365_app_id=self.m365_app_id, m365_aad_authority=self.m365_aad_authority, m365_aad_tenant=self.m365_aad_tenant, msal_username=self.msal_username, msal_password=self.msal_password, m365_scope=self.m365_scope)
         return teams_user_aad_token
+
+    def skip_get_token_for_teams_user_test(self):
+        return self.skip_get_token_for_teams_user_tests.lower() == 'true'

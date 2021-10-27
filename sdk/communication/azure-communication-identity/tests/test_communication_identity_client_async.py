@@ -230,6 +230,8 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
 
     @CommunicationPreparer()
     async def test_get_token_for_teams_user_from_managed_identity(self, communication_livetest_dynamic_connection_string):
+        if(self.skip_get_token_for_teams_user_test()):
+            return
         endpoint, access_key = parse_connection_str(communication_livetest_dynamic_connection_string)
         from devtools_testutils import is_live
         if not is_live():
@@ -249,6 +251,8 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
 
     @CommunicationPreparer()
     async def test_get_token_for_teams_user_with_valid_token(self, communication_livetest_dynamic_connection_string):
+        if(self.skip_get_token_for_teams_user_test()):
+            return
         identity_client = CommunicationIdentityClient.from_connection_string(
             communication_livetest_dynamic_connection_string,
             http_logging_policy=get_http_logging_policy()
@@ -261,6 +265,8 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
 
     @CommunicationPreparer()
     async def test_get_token_for_teams_user_with_empty_token(self, communication_livetest_dynamic_connection_string):
+        if(self.skip_get_token_for_teams_user_test()):
+            return
         identity_client = CommunicationIdentityClient.from_connection_string(
             communication_livetest_dynamic_connection_string,
             http_logging_policy=get_http_logging_policy()
@@ -275,6 +281,8 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
 
     @CommunicationPreparer()
     async def test_get_token_for_teams_user_with_invalid_token(self, communication_livetest_dynamic_connection_string):
+        if(self.skip_get_token_for_teams_user_test()):
+            return
         identity_client = CommunicationIdentityClient.from_connection_string(
             communication_livetest_dynamic_connection_string,
             http_logging_policy=get_http_logging_policy()
@@ -288,6 +296,8 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
 
     @CommunicationPreparer()
     async def test_get_token_for_teams_user_with_expired_token(self, communication_livetest_dynamic_connection_string):
+        if(self.skip_get_token_for_teams_user_test()):
+            return
         identity_client = CommunicationIdentityClient.from_connection_string(
             communication_livetest_dynamic_connection_string,
             http_logging_policy=get_http_logging_policy()
