@@ -35,10 +35,17 @@ steps:
     inputs:
       versionSpec: '2.7'
 
+  - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
+  
+  - template: /eng/common/pipelines/templates/steps/targeting-string-resolve.yml
+    parameters:
+      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
   - pwsh: |
       Write-Host "Parameter: ${{ parameters.BuildTargetingString }}"
       Write-Host "Variable: $(BuildTargetingString)"
       Write-Host "Coalesced: $[coalesce(variables.BuildTargetingString, parameters.BuildTargetingString)]"
+      Write-Host "New Resolution Method: $(TargetingString)"
     displayName: "Parameter and Variable Values"
 
   - script: |
@@ -49,7 +56,7 @@ steps:
     displayName: 'Generate Python2 Applicable Namespace Packages'
     inputs:
       scriptPath: 'scripts/devops_tasks/build_packages.py'
-      arguments: '-d "$(Build.ArtifactStagingDirectory)" "${{ parameters.BuildTargetingString }}" --pkgfilter="nspkg" --service=${{parameters.ServiceDirectory}}'
+      arguments: '-d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --pkgfilter="nspkg" --service=${{parameters.ServiceDirectory}}'
 
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
@@ -63,7 +70,7 @@ steps:
   - template: ../steps/set-dev-build.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+      BuildTargetingString: $(TargetingString)
   - task: Powershell@2
     inputs:
       filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
@@ -79,7 +86,7 @@ steps:
     displayName: 'Generate Packages'
     inputs:
       scriptPath: 'scripts/devops_tasks/build_packages.py'
-      arguments: '-d "$(Build.ArtifactStagingDirectory)" "${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}} --devbuild="$(SetDevVersion)"'
+      arguments: '-d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --devbuild="$(SetDevVersion)"'
 
   - script: |
       twine check $(Build.ArtifactStagingDirectory)/**/*.whl
@@ -92,7 +99,7 @@ steps:
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
-        "${{ parameters.BuildTargetingString }}" 
+        "$(TargetingString)" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv=sphinx
 
