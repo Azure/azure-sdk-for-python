@@ -169,9 +169,10 @@ class CommunicationIdentityClient:
     @distributed_trace_async
     async def get_token_for_teams_user(
             self,
-            add_token,
+            add_token,  # type: str
             **kwargs
         ) -> AccessToken:
+        # type: (...) -> AccessToken
         """Exchanges an AAD access token of a Teams User for a new Communication Identity access token.
 
         :param add_token: an AAD access token of a Teams User
