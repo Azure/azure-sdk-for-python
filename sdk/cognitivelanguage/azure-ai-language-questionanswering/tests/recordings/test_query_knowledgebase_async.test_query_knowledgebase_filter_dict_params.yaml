@@ -3,7 +3,7 @@ interactions:
     body: '{"question": "Battery life", "top": 3, "filters": {"metadataFilter": {"metadata":
       [{"key": "explicitlytaggedheading", "value": "check the battery level"}, {"key":
       "explicitlytaggedheading", "value": "make your battery last"}]}, "logicalOperation":
-      "OR"}}'
+      "or"}}'
     headers:
       Accept:
       - application/json
@@ -21,14 +21,14 @@ interactions:
         \"No good match found in KB\",\n      \"confidenceScore\": 0.0,\n      \"id\":
         -1,\n      \"metadata\": {}\n    }\n  ]\n}"
     headers:
-      apim-request-id: 62d0c8a3-aacb-4d63-95d4-cf9eca6ed62e
+      apim-request-id: 49748731-de23-476a-8138-5d8ddc751e26
       content-length: '169'
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
       date: Wed, 27 Oct 2021 00:34:28 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '810'
+      x-envoy-upstream-service-time: '152'
     status:
       code: 200
       message: OK
