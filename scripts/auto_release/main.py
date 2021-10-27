@@ -131,6 +131,7 @@ def stable_version_plus(add_content):
     elif flag[2]:
         return f'{num[0]}.{num[1]}.{int(num[2]) + 1}'
     else:
+        NORMAL_GENERATION = False
         return '0.0.0'
 
 
@@ -167,8 +168,6 @@ def edit_changelog(add_content):
     list_out = [list_in[0], '\n']
     date = time.localtime(time.time())
     list_out.append('## {} ({}-{:02d}-{:02d})\n\n'.format(VERSION_NEW, date.tm_year, date.tm_mon, date.tm_mday))
-    if '0.0.0' == VERSION_NEW:
-        NORMAL_GENERATION = False
     for line in add_content:
         list_out.append(line + '\n')
     list_out.extend(list_in[1:])
