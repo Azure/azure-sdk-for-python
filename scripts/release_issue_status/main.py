@@ -253,7 +253,7 @@ def main():
                 logging.info(f"=====issue: {item.issue_object.number}, {e}")
                 
         if 'base-branch-attention' in item.labels:
-            item.bot_advice = 'base branch attention!  '+item.bot_advice
+            item.bot_advice = 'new version is 0.0.0, please check base branch! ' + item.bot_advice
           
         if item.days_from_latest_commit >= 30 and item.language == 'Python' and '30days attention' not in item.labels:
             item.issue_object.add_to_labels('30days attention')
