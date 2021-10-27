@@ -2,13 +2,9 @@
 
 ## 1.0.0b3 (Unreleased)
 
-### Features Added
+### Breaking changes
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- rename `build_authentication_token` to `get_client_access_token`
 
 ## 1.0.0b2 (2021-10-14)
 

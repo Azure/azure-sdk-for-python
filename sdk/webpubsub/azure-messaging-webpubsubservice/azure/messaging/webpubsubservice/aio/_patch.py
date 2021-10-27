@@ -136,6 +136,3 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         credential = AzureKeyCredential(kwargs.pop("accesskey"))
         return cls(credential=credential, **kwargs)
 
-
-def patch_sdk():
-    pass

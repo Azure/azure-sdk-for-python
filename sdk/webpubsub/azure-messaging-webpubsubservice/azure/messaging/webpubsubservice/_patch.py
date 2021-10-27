@@ -89,7 +89,7 @@ def _parse_connection_string(connection_string, **kwargs):
     return kwargs
 
 
-def build_authentication_token(endpoint, hub, **kwargs):
+def get_client_access_token(endpoint, hub, **kwargs):
     # type: (str, str, Any) -> Dict[Any]
     """Build an authentication token for the given endpoint, hub using the provided key.
 
@@ -110,7 +110,7 @@ def build_authentication_token(endpoint, hub, **kwargs):
 
 
     Example:
-    >>> build_authentication_token(endpoint='https://contoso.com/api/webpubsub', hub='theHub', key='123')
+    >>> get_client_access_token(endpoint='https://contoso.com/api/webpubsub', hub='theHub', key='123')
     {
         'baseUrl': 'wss://contoso.com/api/webpubsub/client/hubs/theHub',
         'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...',
@@ -351,7 +351,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
 
         return six.ensure_str(jwt.encode(payload, key, algorithm="HS256"))
 
-    def build_authentication_token(self, hub, **kwargs):
+    def get_client_access_token(self, hub, **kwargs):
         # type: (str, Any) -> Dict[Any]
         """Build an authentication token.
 
@@ -367,7 +367,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         :rtype: ~dict
 
         Example:
-        >>> build_authentication_token(hub='theHub')
+        >>> get_client_access_token(hub='theHub')
         {
             'baseUrl': 'wss://contoso.com/api/webpubsub/client/hubs/theHub',
             'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...',
@@ -398,7 +398,3 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
             "token": token,
             "url": "{}?access_token={}".format(client_url, token),
         }
-
-
-def patch_sdk():
-    pass

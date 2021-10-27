@@ -46,12 +46,12 @@ except KeyError:
 client_aad = WebPubSubServiceClient(credential=DefaultAzureCredential(), endpoint=endpoint)
 
 # Build authentication token
-token_aad = client_aad.build_authentication_token(hub='hub')
+token_aad = client_aad.get_client_access_token(hub='hub')
 print('token by AAD: {}'.format(token_aad))
 
 # Build a client through connection string
 client_key = WebPubSubServiceClient.from_connection_string(connection_string)
 
 # Build authentication token
-token_key = client_key.build_authentication_token(hub='hub')
+token_key = client_key.get_client_access_token(hub='hub')
 print('token by access key: {}'.format(token_key))
