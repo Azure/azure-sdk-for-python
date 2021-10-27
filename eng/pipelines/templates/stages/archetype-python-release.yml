@@ -274,7 +274,10 @@ stages:
         - pwsh: |
             Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/
           displayName: Show visible artifacts
-
+        - template: /eng/common/pipelines/templates/steps/get-code-owners.yml
+          parameters:
+            TargetUserVariable: "CodeOwners"
+            ServiceDirectory: ${{parameters.ServiceDirectory}}
         - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
           parameters:
             PackageInfoLocations:
@@ -286,6 +289,7 @@ stages:
             TargetDocRepoName: ${{parameters.TargetDocRepoName}}
             Language: 'python'
             DailyDocsBuild: true
+            TargetUserVariable: 'CodeOwners'
             SparseCheckoutPaths:
               - docs-ref-services/
               - metadata/
