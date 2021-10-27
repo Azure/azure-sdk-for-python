@@ -83,7 +83,7 @@ steps:
       -DocRepoLocation "$(DocRepoLocation)" `
       -Language '${{parameters.Language}}' `
       -RepoId '${{ parameters.RepoId }}'
-      -CodeOwners '${{paramerters.TargetCodeOwners}}'
+      -CodeOwners '${{parameters.TargetCodeOwners}}'
   displayName: Apply Documentation Updates
 
 - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
