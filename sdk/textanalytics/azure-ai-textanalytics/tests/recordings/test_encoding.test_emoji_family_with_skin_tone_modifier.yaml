@@ -14,9 +14,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: "{\"documents\":[{\"redactedText\":\"\U0001F469\U0001F3FB\u200D\U0001F469\
@@ -26,13 +26,13 @@ interactions:
         errors\":[],\"modelVersion\":\"2021-01-15\"}"
     headers:
       apim-request-id:
-      - 1f9abe25-8be5-4f74-8982-445c8fd7724e
+      - 7f243014-b76c-4c9c-858a-14fa2e52e174
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1
       date:
-      - Mon, 02 Aug 2021 20:47:50 GMT
+      - Wed, 06 Oct 2021 21:04:23 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -40,7 +40,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '502'
+      - '26'
     status:
       code: 200
       message: OK
