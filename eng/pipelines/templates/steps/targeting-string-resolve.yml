@@ -14,4 +14,4 @@ steps:
 
       Write-Host "##vso[task.setvariable variable=TargetingString]$setting"
     displayName: Check override of targeting string
-    condition: and(succeededOrFailed(), ne(variables.TargetingString,''))
+    condition: and(succeededOrFailed(), eq(variables['TargetingString'],''))
