@@ -13,6 +13,7 @@ from subprocess import check_call
 import logging
 from packaging.specifiers import SpecifierSet
 from pkg_resources import Requirement, parse_version
+import re
 
 from pypi_tools.pypi import PyPIClient
 
@@ -121,6 +122,17 @@ def process_requirement(req, dependency_type):
     return ""
 
 
+def check_req_against_exclusion(req, req_to_exclude):
+    req_id = ''
+    for c in req:
+        if re.match(r"[A-Za-z0-9_-]", c):
+            req_id += c
+        else:
+            break
+
+    return req_id == req_to_exclude
+    
+
 def filter_dev_requirements(setup_py_path, released_packages, temp_dir):
     # This method returns list of requirements from dev_requirements by filtering out packages in given list
     dev_req_path = os.path.join(os.path.dirname(setup_py_path), DEV_REQ_FILE)
@@ -140,7 +152,7 @@ def filter_dev_requirements(setup_py_path, released_packages, temp_dir):
     filtered_req = [
         req
         for req in requirements
-        if os.path.basename(req.replace('\n', '')) not in req_to_exclude and not any([req.startswith(i) for i in req_to_exclude])
+        if os.path.basename(req.replace('\n', '')) not in req_to_exclude and not any([check_req_against_exclusion(req, i) for i in req_to_exclude])
     ]
 
     logging.info("Filtered dev requirements: %s", filtered_req)
