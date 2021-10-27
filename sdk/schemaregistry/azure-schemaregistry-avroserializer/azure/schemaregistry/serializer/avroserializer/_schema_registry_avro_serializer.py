@@ -151,7 +151,7 @@ class AvroSerializer(object):
             schema_fullname = self._avro_serializer.get_schema_fullname(
                 raw_input_schema
             )
-        except Exception as e:
+        except Exception as e:  # pylint:disable=broad-except
             SchemaParseError(
                 "Cannot parse schema: {}".format(raw_input_schema), error=e
             ).raise_with_traceback()
@@ -159,7 +159,7 @@ class AvroSerializer(object):
         schema_id = self._get_schema_id(schema_fullname, raw_input_schema, **kwargs)
         try:
             data_bytes = self._avro_serializer.serialize(value, raw_input_schema)
-        except Exception as e:
+        except Exception as e:  # pylint:disable=broad-except
             SchemaSerializationError(
                 "Cannot serialize value '{}' for schema: {}".format(
                     value, raw_input_schema
@@ -203,7 +203,7 @@ class AvroSerializer(object):
             dict_value = self._avro_serializer.deserialize(
                 value[DATA_START_INDEX:], schema_definition
             )
-        except Exception as e:
+        except Exception as e:  # pylint:disable=broad-except
             SchemaDeserializationError(
                 "Cannot deserialize value '{}' for schema: {}".format(
                     value[DATA_START_INDEX], schema_definition
