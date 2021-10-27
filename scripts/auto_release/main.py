@@ -131,7 +131,6 @@ def stable_version_plus(add_content):
     elif flag[2]:
         return f'{num[0]}.{num[1]}.{int(num[2]) + 1}'
     else:
-        NORMAL_GENERATION = False
         return '0.0.0'
 
 
@@ -162,12 +161,15 @@ def edit_version(add_content):
 
 
 def edit_changelog(add_content):
+    global NORMAL_GENERATION
     path = f'sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}'
     with open(f'{path}/CHANGELOG.md', 'r') as file_in:
         list_in = file_in.readlines()
     list_out = [list_in[0], '\n']
     date = time.localtime(time.time())
     list_out.append('## {} ({}-{:02d}-{:02d})\n\n'.format(VERSION_NEW, date.tm_year, date.tm_mon, date.tm_mday))
+    if '0.0.0' == VERSION_NEW:
+        NORMAL_GENERATION = False
     for line in add_content:
         list_out.append(line + '\n')
     list_out.extend(list_in[1:])
@@ -462,4 +464,4 @@ if __name__ == '__main__':
     else:
         with open(f'{OUT_PATH}/output.txt', 'w') as file_out:
             file_out.writelines([f'{NEW_BRANCH}\n', "main\n" if TRACK == '2' else 'release/v3\n', str(NORMAL_GENERATION)])
-            print('*'*10,str(NORMAL_GENERATION))
+
