@@ -4,7 +4,7 @@
 # ------------------------------------
 import json
 import pytest
-from azure.core.serialization import Model, mark
+from azure.core.serialization import Model, rest_property
 
 def modify_args(init):
     def _wrapper(self, **kwargs):
@@ -16,16 +16,17 @@ def modify_args(init):
 
 
 class BasicResource(Model):
+    # check docs
 
-    @mark(original_name="platformUpdateDomainCount")
+    @rest_property(name="platformUpdateDomainCount", type="str")
     def platform_update_domain_count(self):
         """How many times the platform update domain has been counted"""
 
-    @mark(original_name="platformFaultDomainCount")
+    @rest_property(original_name="platformFaultDomainCount")
     def platform_fault_domain_count(self):
         """How many times the platform fault domain has been counted"""
 
-    @mark(original_name="virtualMachines")
+    @rest_property(original_name="virtualMachines")
     def virtual_machines(self):
         """Number of virtual machines"""
 
@@ -114,7 +115,7 @@ def test_has_no_property():
     class BasicResourceWithProperty(BasicResource):
 
         @property
-        @mark(original_name="noprop")
+        @rest_property(original_name="noprop")
         def no_prop(self):
             """Added prop"""
 
@@ -131,7 +132,7 @@ def test_original_and_attr_name_same():
 
     class MyModel(Model):
         @property
-        @mark(original_name="hello")
+        @rest_property(original_name="hello")
         def hello(self):
             """Prop with the same attr and dict name"""
 

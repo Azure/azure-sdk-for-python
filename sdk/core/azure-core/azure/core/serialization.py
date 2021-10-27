@@ -121,7 +121,6 @@ class AzureJSONEncoder(JSONEncoder):
         if isinstance(o, (bytes, bytearray)):
             return base64.b64encode(o).decode()
         try:
-<<<<<<< HEAD
             return super(AzureJSONEncoder, self).default(o)
         except TypeError:
             if isinstance(o, (bytes, bytearray)):
@@ -153,22 +152,22 @@ def _deserialize(item):
 
 _SENTINEL = object()
 
-class mark:
-    def __init__(self, original_name):
-        self._original_name = original_name
+class rest_property:
+    def __init__(self, name):
+        self._name = name
 
     def __call__(self, func):
-        original_name = self._original_name
+        rest_name = self._name
         def wrapper(self, *args, **kwargs):
-            if self._get_original_name(func.__name__) == _SENTINEL:
-                self._set_original_name(attr_name=func.__name__, original_name=original_name)
+            if self._get_rest_name(func.__name__) == _SENTINEL:
+                self._set_rest_name(attr_name=func.__name__, rest_name=rest_name)
             return self.__getattr__(func.__name__)
         return wrapper
 
 _MY_MODEL_PROPERTIES = [
-    "_attr_name_to_original_name",
-    "_get_original_name",
-    "_set_original_name",
+    "_attr_name_to_rest_name",
+    "_get_rest_name",
+    "_set_rest_name",
 ]
 
 
@@ -191,40 +190,34 @@ class Model(dict):
                 )
             )
 
-        return self.__getitem__(self._get_original_name(attr))
+        return self.__getitem__(self._get_rest_name(attr))
 
-    def _get_original_name(self, attr_name):
-        if not hasattr(self, "_attr_name_to_original_name"):
-            self._attr_name_to_original_name = {}
-        return self._attr_name_to_original_name.get(attr_name, _SENTINEL)
+    def _get_rest_name(self, attr_name):
+        if not hasattr(self, "_attr_name_to_rest_name"):
+            self._attr_name_to_rest_name = {}
+        return self._attr_name_to_rest_name.get(attr_name, _SENTINEL)
 
-    def _set_original_name(self, attr_name, original_name):
-        if not hasattr(self, "_attr_name_to_original_name"):
-            self._attr_name_to_original_name = {}
-        self._attr_name_to_original_name[attr_name] = original_name
+    def _set_rest_name(self, attr_name, rest_name):
+        if not hasattr(self, "_attr_name_to_rest_name"):
+            self._attr_name_to_rest_name = {}
+        self._attr_name_to_rest_name[attr_name] = rest_name
 
     def __setattr__(self, name, value):
         # the properties on the base class
         if name in _MY_MODEL_PROPERTIES:
             super().__setattr__(name, value)
         else:
-            self.__setitem__(self._get_original_name(name), value)
+            self.__setitem__(self._get_rest_name(name), value)
 
     def __delattr__(self, attr):
         if attr in _MY_MODEL_PROPERTIES:
             return super().__delattr__(attr)
-        return self.__delitem__(self._get_original_name(attr))
+        return self.__delitem__(self._get_rest_name(attr))
 
     def __hasattr__(self, attr):
         if attr in _MY_MODEL_PROPERTIES:
             return True
-        return self._get_original_name(attr) != _SENTINEL
+        return self._get_rest_name(attr) != _SENTINEL
 
     def copy(self):
         return Model(self.__dict__)
-=======
-            return _datetime_as_isostr(o)
-        except AttributeError:
-            pass
-        return super(AzureJSONEncoder, self).default(o)
->>>>>>> edbbcf929a02ab1998384a073da2e5cdec6a6510
