@@ -38,7 +38,7 @@ steps:
   - pwsh: |
       Write-Host "Parameter: ${{ parameters.BuildTargetingString }}"
       Write-Host "Variable: $(BuildTargetingString)"
-      Write-Host "Coalesced: ${{ coalesce(variables.BuildTargetingString, parameters.BuildTargetingString) }}"
+      Write-Host "Coalesced: $[coalesce(variables.BuildTargetingString, parameters.BuildTargetingString)]"
     displayName: "Parameter and Variable Values"
 
   - script: |
