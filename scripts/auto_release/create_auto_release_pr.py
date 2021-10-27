@@ -21,7 +21,7 @@ def main():
         api_request = GhApi(owner='Azure', repo='sdk-release-request', token=os.getenv('USR_TOKEN'))
         link = os.getenv('ISSUE_LINK')
         issue_number = link.split('/')[-1]
-        api_request.issues.add_labels(issue_number=int(issue_number), labels=['swagger-exception'])
+        api_request.issues.add_labels(issue_number=int(issue_number), labels=['base-branch-attention'])
 
     
 if __name__ == '__main__':
