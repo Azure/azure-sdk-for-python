@@ -59,7 +59,7 @@ class AvroEncoder(object):
         self._auto_register_schemas = kwargs.get("auto_register_schemas", False)
 
     def __enter__(self):
-        # type: () -> SchemaRegistryAvroEncoder
+        # type: () -> AvroEncoder
         self._schema_registry_client.__enter__()
         return self
 

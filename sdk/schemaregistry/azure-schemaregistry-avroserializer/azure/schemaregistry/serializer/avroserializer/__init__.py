@@ -27,8 +27,8 @@ from ._version import VERSION
 
 __version__ = VERSION
 
-from ._schema_registry_avro_serializer import AvroSerializer
+from ._schema_registry_avro_serializer import AvroEncoder
 
 __all__ = [
-    "AvroSerializer",
+    "AvroEncoder"
 ]
