@@ -2287,14 +2287,15 @@ class AnalyzedDocument(object):
         # type: (Any) -> Iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
         """Get the child elements found in the span of this AnalyzedDocument.
 
-        :keyword list[str] element_types: List of the child elements to retrieve from the span of this item.
-         Please note that by default all values are included. To get a subset of the childre elements please
-         specify the elements to retrieve in the list. Acceptable values: "word", "line".
-        :return: list[Union[DocumentContentElement, DocumentLine, DocumentWord]]
-        :rtype: list[Union[DocumentContentElement, DocumentLine, DocumentWord]]
+        :keyword list[str] element_types: List of the child elements to retrieve from the spans of this element.
+         Please note that by default all child elements are included. To get a subset of the child elements
+         please specify the elements to retrieve by passing the in a custom list.
+         Acceptable values: "word", "line".
+        :return: iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
+        :rtype: iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
         """
         element_types = kwargs.get("element_types", ["word", "line"])
-        allowed_elements=["line", "word"]
+        allowed_elements = ["line", "word"]
 
         return _get_children(self, element_types, allowed_elements, True)
 
@@ -2412,14 +2413,15 @@ class DocumentEntity(object):
         # type: (Any) -> Iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
         """Get the child elements found in the span of this DocumentEntity.
 
-        :keyword list[str] element_types: List of the child elements to retrieve from the span of this item.
-         Please note that by default all values are included. To get a subset of the childre elements please
-         specify the elements to retrieve in the list. Acceptable values: "word", "line".
-        :return: list[Union[DocumentContentElement, DocumentLine, DocumentWord]]
-        :rtype: list[Union[DocumentContentElement, DocumentLine, DocumentWord]]
+        :keyword list[str] element_types: List of the child elements to retrieve from the spans of this element.
+         Please note that by default all child elements are included. To get a subset of the child elements
+         please specify the elements to retrieve by passing the in a custom list.
+         Acceptable values: "word", "line".
+        :return: iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
+        :rtype: iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
         """
         element_types = kwargs.get("element_types", ["word", "line"])
-        allowed_elements=["line", "word"]
+        allowed_elements = ["line", "word"]
 
         return _get_children(self, element_types, allowed_elements, True)
 
@@ -2545,14 +2547,15 @@ class DocumentField(object):
         # type: (Any) -> Iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
         """Get the child elements found in the span of this DocumentField.
 
-        :keyword list[str] element_types: List of the child elements to retrieve from the span of this item.
-         Please note that by default all values are included. To get a subset of the childre elements please
-         specify the elements to retrieve in the list. Acceptable values: "word", "line".
-        :return: list[Union[DocumentContentElement, DocumentLine, DocumentWord]]
-        :rtype: list[Union[DocumentContentElement, DocumentLine, DocumentWord]]
+        :keyword list[str] element_types: List of the child elements to retrieve from the spans of this element.
+         Please note that by default all child elements are included. To get a subset of the child elements
+         please specify the elements to retrieve by passing the in a custom list.
+         Acceptable values: "word", "line".
+        :return: iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
+        :rtype: iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
         """
         element_types = kwargs.get("element_types", ["word", "line"])
-        allowed_elements=["line", "word"]
+        allowed_elements = ["line", "word"]
 
         return _get_children(self, element_types, allowed_elements, True)
 
@@ -2640,14 +2643,15 @@ class DocumentKeyValueElement(object):
         # type: (Any) -> Iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
         """Get the child elements found in the span of this DocumentKeyValueElement.
 
-        :keyword list[str] element_types: List of the child elements to retrieve from the span of this item.
-         Please note that by default all values are included. To get a subset of the childre elements please
-         specify the elements to retrieve in the list. Acceptable values: "word", "line".
-        :return: list[Union[DocumentContentElement, DocumentLine, DocumentWord]]
-        :rtype: list[Union[DocumentContentElement, DocumentLine, DocumentWord]]
+        :keyword list[str] element_types: List of the child elements to retrieve from the spans of this element.
+         Please note that by default all child elements are included. To get a subset of the child elements
+         please specify the elements to retrieve by passing the in a custom list.
+         Acceptable values: "word", "line".
+        :return: iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
+        :rtype: iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
         """
         element_types = kwargs.get("element_types", ["word", "line"])
-        allowed_elements=["line", "word"]
+        allowed_elements = ["line", "word"]
 
         return _get_children(self, element_types, allowed_elements, True)
 
@@ -2794,14 +2798,15 @@ class DocumentLine(object):
         # type: (Any) -> Iterable[Union[DocumentContentElement, DocumentWord]]
         """Get the child elements found in the span of this DocumentLine.
 
-        :ivar list[str] element_types: List of the child elements to retrieve from the span of the line.
-         Please note that by default all values are included. To get a subset of the childre elements please
-         specify the elements to retrieve in the list. Acceptable values: "word".
-        :return: list[Union[DocumentContentElement, DocumentWord]]
-        :rtype: list[Union[DocumentContentElement, DocumentWord]]
+        :ivar list[str] element_types: List of the child elements to retrieve from the spans of this element.
+         Please note that by default all child elements are included. To get a subset of the child elements
+         please specify the elements to retrieve by passing the in a custom list.
+         Acceptable values: "word".
+        :return: iterable[Union[DocumentContentElement, DocumentWord]]
+        :rtype: iterable[Union[DocumentContentElement, DocumentWord]]
         """
         element_types = kwargs.get("element_types", ["word"])
-        allowed_elements=["word"]
+        allowed_elements = ["word"]
 
         return _get_children(self, element_types, allowed_elements, False)
 
@@ -3185,14 +3190,15 @@ class DocumentTable(object):
         # type: (Any) -> Iterable[Union[DocumentLine, DocumentContentElement, DocumentWord]]
         """Get the child elements found in the span of this DocumentTable.
 
-        :keyword list[str] element_types: List of the child elements to retrieve from the span of this item.
-         Please note that by default all values are included. To get a subset of the childre elements please
-         specify the elements to retrieve in the list. Acceptable values: "word", "line".
-        :return: list[Union[DocumentContentElement, DocumentLine, DocumentWord]]
-        :rtype: list[Union[DocumentContentElement, DocumentLine, DocumentWord]]
+        :keyword list[str] element_types: List of the child elements to retrieve from the spans of this element.
+         Please note that by default all child elements are included. To get a subset of the child elements
+         please specify the elements to retrieve by passing the in a custom list.
+         Acceptable values: "word", "line".
+        :return: iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
+        :rtype: iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
         """
         element_types = kwargs.get("element_types", ["word", "line"])
-        allowed_elements=["line", "word"]
+        allowed_elements = ["line", "word"]
 
         return _get_children(self, element_types, allowed_elements, True)
 
@@ -3316,14 +3322,15 @@ class DocumentTableCell(object):
         # type: (Any) -> Iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
         """Get the child elements found in the span of this DocumentTableCellElement.
 
-        :keyword list[str] element_types: List of the child elements to retrieve from the span of this item.
-         Please note that by default all values are included. To get a subset of the childre elements please
-         specify the elements to retrieve in the list. Acceptable values: "word", "line".
-        :return: list[Union[DocumentContentElement, DocumentLine, DocumentWord]]
-        :rtype: list[Union[DocumentContentElement, DocumentLine, DocumentWord]]
+        :keyword list[str] element_types: List of the child elements to retrieve from the spans of this element.
+         Please note that by default all child elements are included. To get a subset of the child elements
+         please specify the elements to retrieve by passing the in a custom list.
+         Acceptable values: "word", "line".
+        :return: iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
+        :rtype: iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
         """
         element_types = kwargs.get("element_types", ["word", "line"])
-        allowed_elements=["line", "word"]
+        allowed_elements = ["line", "word"]
 
         return _get_children(self, element_types, allowed_elements, True)
 
@@ -4167,7 +4174,7 @@ class DocumentAnalysisInnerError(object):
             if data.get("innererror") else None
         )
 
-def _get_children(source_element, search_elements, allowed_elements, cross_page=False, **kwargs):
+def _get_children(source_element, search_elements, allowed_elements, cross_page=False):
     # Check if the element types that are passed in are allowed,
     # fail fast if an incorrect element is requested.
     for elem in search_elements:
