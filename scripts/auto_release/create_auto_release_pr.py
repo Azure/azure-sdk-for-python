@@ -16,6 +16,5 @@ def main():
     api = GhApi(owner='Azure', repo='azure-sdk-for-python', token=os.getenv('UPDATE_TOKEN'))
     api.issues.create_comment(issue_number=pr_number, body='issue link:{}'.format(os.getenv('ISSUE_LINK')))
     
-    
 if __name__ == '__main__':
     main()
