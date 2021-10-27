@@ -4,6 +4,7 @@ import subprocess as sp
 import time
 import argparse
 import logging
+from ghapi.all import GhApi
 
 
 SERVICE_NAME = 'servicename'
@@ -157,6 +158,12 @@ def edit_version(add_content):
     if TRACK == '1' and VERSION_LAST_RELEASE[0] == '0':
         num = VERSION_LAST_RELEASE.split('.')
         VERSION_NEW = f'{num[0]}.{int(num[1]) + 1}.0'
+    # '0.0.0' means there must be abnormal situation
+    if VERSION_NEW == '0.0.0':
+        api_request = GhApi(owner='Azure', repo='sdk-release-request', token=os.getenv('UPDATE_TOKEN'))
+        link = os.getenv('ISSUE_LINK')
+        issue_number = link.split('/')[-1]
+        api_request.issues.add_labels(issue_number=int(issue_number), labels=['base-branch-attention'])
 
 
 def edit_changelog(add_content):
@@ -459,4 +466,5 @@ if __name__ == '__main__':
         my_print(e)
     else:
         with open(f'{OUT_PATH}/output.txt', 'w') as file_out:
-            file_out.writelines([f'{NEW_BRANCH}\n', "main" if TRACK == '2' else 'release/v3'])
+            file_out.writelines([f'{NEW_BRANCH}\n', "main\n" if TRACK == '2' else 'release/v3\n'])
+
