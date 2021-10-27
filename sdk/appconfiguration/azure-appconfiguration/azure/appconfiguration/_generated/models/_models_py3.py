@@ -16,16 +16,16 @@ import msrest.serialization
 class Error(msrest.serialization.Model):
     """Azure App Configuration error object.
 
-    :param type: The type of the error.
-    :type type: str
-    :param title: A brief summary of the error.
-    :type title: str
-    :param name: The name of the parameter that resulted in the error.
-    :type name: str
-    :param detail: A detailed description of the error.
-    :type detail: str
-    :param status: The HTTP status code that the error maps to.
-    :type status: int
+    :ivar type: The type of the error.
+    :vartype type: str
+    :ivar title: A brief summary of the error.
+    :vartype title: str
+    :ivar name: The name of the parameter that resulted in the error.
+    :vartype name: str
+    :ivar detail: A detailed description of the error.
+    :vartype detail: str
+    :ivar status: The HTTP status code that the error maps to.
+    :vartype status: int
     """
 
     _attribute_map = {
@@ -46,6 +46,18 @@ class Error(msrest.serialization.Model):
         status: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword type: The type of the error.
+        :paramtype type: str
+        :keyword title: A brief summary of the error.
+        :paramtype title: str
+        :keyword name: The name of the parameter that resulted in the error.
+        :paramtype name: str
+        :keyword detail: A detailed description of the error.
+        :paramtype detail: str
+        :keyword status: The HTTP status code that the error maps to.
+        :paramtype status: int
+        """
         super(Error, self).__init__(**kwargs)
         self.type = type
         self.title = title
@@ -75,6 +87,8 @@ class Key(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Key, self).__init__(**kwargs)
         self.name = None
 
@@ -82,10 +96,10 @@ class Key(msrest.serialization.Model):
 class KeyListResult(msrest.serialization.Model):
     """The result of a list request.
 
-    :param items: The collection value.
-    :type items: list[~azure.appconfiguration.models.Key]
-    :param next_link: The URI that can be used to request the next set of paged results.
-    :type next_link: str
+    :ivar items: The collection value.
+    :vartype items: list[~azure.appconfiguration.models.Key]
+    :ivar next_link: The URI that can be used to request the next set of paged results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -100,6 +114,12 @@ class KeyListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword items: The collection value.
+        :paramtype items: list[~azure.appconfiguration.models.Key]
+        :keyword next_link: The URI that can be used to request the next set of paged results.
+        :paramtype next_link: str
+        """
         super(KeyListResult, self).__init__(**kwargs)
         self.items = items
         self.next_link = next_link
@@ -108,22 +128,22 @@ class KeyListResult(msrest.serialization.Model):
 class KeyValue(msrest.serialization.Model):
     """KeyValue.
 
-    :param key:
-    :type key: str
-    :param label:
-    :type label: str
-    :param content_type:
-    :type content_type: str
-    :param value:
-    :type value: str
-    :param last_modified:
-    :type last_modified: ~datetime.datetime
-    :param tags: A set of tags. Dictionary of :code:`<string>`.
-    :type tags: dict[str, str]
-    :param locked:
-    :type locked: bool
-    :param etag:
-    :type etag: str
+    :ivar key:
+    :vartype key: str
+    :ivar label:
+    :vartype label: str
+    :ivar content_type:
+    :vartype content_type: str
+    :ivar value:
+    :vartype value: str
+    :ivar last_modified:
+    :vartype last_modified: ~datetime.datetime
+    :ivar tags: A set of tags. Dictionary of :code:`<string>`.
+    :vartype tags: dict[str, str]
+    :ivar locked:
+    :vartype locked: bool
+    :ivar etag:
+    :vartype etag: str
     """
 
     _attribute_map = {
@@ -150,6 +170,24 @@ class KeyValue(msrest.serialization.Model):
         etag: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword key:
+        :paramtype key: str
+        :keyword label:
+        :paramtype label: str
+        :keyword content_type:
+        :paramtype content_type: str
+        :keyword value:
+        :paramtype value: str
+        :keyword last_modified:
+        :paramtype last_modified: ~datetime.datetime
+        :keyword tags: A set of tags. Dictionary of :code:`<string>`.
+        :paramtype tags: dict[str, str]
+        :keyword locked:
+        :paramtype locked: bool
+        :keyword etag:
+        :paramtype etag: str
+        """
         super(KeyValue, self).__init__(**kwargs)
         self.key = key
         self.label = label
@@ -164,10 +202,10 @@ class KeyValue(msrest.serialization.Model):
 class KeyValueListResult(msrest.serialization.Model):
     """The result of a list request.
 
-    :param items: The collection value.
-    :type items: list[~azure.appconfiguration.models.KeyValue]
-    :param next_link: The URI that can be used to request the next set of paged results.
-    :type next_link: str
+    :ivar items: The collection value.
+    :vartype items: list[~azure.appconfiguration.models.KeyValue]
+    :ivar next_link: The URI that can be used to request the next set of paged results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -182,6 +220,12 @@ class KeyValueListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword items: The collection value.
+        :paramtype items: list[~azure.appconfiguration.models.KeyValue]
+        :keyword next_link: The URI that can be used to request the next set of paged results.
+        :paramtype next_link: str
+        """
         super(KeyValueListResult, self).__init__(**kwargs)
         self.items = items
         self.next_link = next_link
@@ -208,6 +252,8 @@ class Label(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Label, self).__init__(**kwargs)
         self.name = None
 
@@ -215,10 +261,10 @@ class Label(msrest.serialization.Model):
 class LabelListResult(msrest.serialization.Model):
     """The result of a list request.
 
-    :param items: The collection value.
-    :type items: list[~azure.appconfiguration.models.Label]
-    :param next_link: The URI that can be used to request the next set of paged results.
-    :type next_link: str
+    :ivar items: The collection value.
+    :vartype items: list[~azure.appconfiguration.models.Label]
+    :ivar next_link: The URI that can be used to request the next set of paged results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -233,6 +279,12 @@ class LabelListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword items: The collection value.
+        :paramtype items: list[~azure.appconfiguration.models.Label]
+        :keyword next_link: The URI that can be used to request the next set of paged results.
+        :paramtype next_link: str
+        """
         super(LabelListResult, self).__init__(**kwargs)
         self.items = items
         self.next_link = next_link
