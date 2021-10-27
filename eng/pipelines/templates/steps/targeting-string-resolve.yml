@@ -14,4 +14,4 @@ steps:
 
       Write-Host "##vso[task.setvariable variable=TargetingString]$setting"
     displayName: Coalesce 
-    condition: and(succeededOrFailed(), ne($(TargetingString),''))
+    condition: and(succeededOrFailed(), ne(variables.TargetingString,''))
