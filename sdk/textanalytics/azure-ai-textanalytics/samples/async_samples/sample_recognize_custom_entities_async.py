@@ -43,6 +43,7 @@ async def sample_recognize_custom_entities_async():
         os.path.join(
             os.path.abspath(__file__),
             "..",
+            "..",
             "./text_samples/custom_entities_sample.txt",
         )
     )
@@ -53,11 +54,11 @@ async def sample_recognize_custom_entities_async():
     )
 
     with open(path_to_sample_document, "r") as fd:
-        document = fd.read()
+        document = [fd.read()]
 
     async with text_analytics_client:
         poller = await text_analytics_client.begin_analyze_actions(
-            [document],
+            document,
             actions=[
                 RecognizeCustomEntitiesAction(
                     project_name=project_name,

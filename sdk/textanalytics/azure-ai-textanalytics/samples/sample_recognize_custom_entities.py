@@ -43,6 +43,7 @@ def sample_recognize_custom_entities():
     path_to_sample_document = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
+            "..",
             "./text_samples/custom_entities_sample.txt",
         )
     )
@@ -53,10 +54,10 @@ def sample_recognize_custom_entities():
     )
 
     with open(path_to_sample_document, "r") as fd:
-        document = fd.read()
+        document = [fd.read()]
 
     poller = text_analytics_client.begin_analyze_actions(
-        [document],
+        document,
         actions=[
             RecognizeCustomEntitiesAction(
                 project_name=project_name, deployment_name=deployed_model_name
