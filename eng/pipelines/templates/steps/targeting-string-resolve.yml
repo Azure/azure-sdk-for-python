@@ -12,6 +12,7 @@ steps:
           $setting = "$(BuildTargetingString)"
       }
 
+      Write-Host "Setting TargetingString to $setting"
       Write-Host "##vso[task.setvariable variable=TargetingString]$setting"
     displayName: Check override of targeting string
     condition: and(succeededOrFailed(), eq(variables['TargetingString'],''))

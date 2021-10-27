@@ -43,7 +43,6 @@ steps:
 
   - pwsh: |
       Write-Host "Parameter: ${{ parameters.BuildTargetingString }}"
-      Write-Host "Variable: $(BuildTargetingString)"
       Write-Host "Coalesced: $[coalesce(variables.BuildTargetingString, parameters.BuildTargetingString)]"
       Write-Host "New Resolution Method: $(TargetingString)"
     displayName: "Parameter and Variable Values"
