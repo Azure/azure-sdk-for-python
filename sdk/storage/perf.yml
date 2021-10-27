@@ -24,6 +24,11 @@ steps:
     inputs:
       versionSpec: $(PythonVersion)
 
+  - script: |
+      echo $(Agent.BuildDirectory)
+      ls $(Agent.BuildDirectory)
+      ls $(Agent.BuildDirectory)/azure-sdk-for-python
+
   - pwsh: |
       set-content -path config.yml -value "WorkingDirectories:"
       add-content -path config.yml -value "  Python: $(Agent.BuildDirectory)/azure-sdk-for-python"
