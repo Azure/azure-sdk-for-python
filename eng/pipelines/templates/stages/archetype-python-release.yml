@@ -289,7 +289,7 @@ stages:
             TargetDocRepoName: ${{parameters.TargetDocRepoName}}
             Language: 'python'
             DailyDocsBuild: true
-            TargetUserVariable: 'CodeOwners'
+            TargetCodeOwners: '$(CodeOwners)'
             SparseCheckoutPaths:
               - docs-ref-services/
               - metadata/
