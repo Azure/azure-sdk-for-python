@@ -2136,7 +2136,7 @@ class DocumentContentElement(object):
     :ivar span: Location of the element in the reading order concatenated
         content.
     :vartype span: ~azure.ai.formrecognizer.DocumentSpan
-    :ivar confidence: Confidence of correctly extracting the selection mark.
+    :ivar confidence: Confidence of accurately extracting the selection mark.
     :vartype confidence: float
     :ivar str kind: The kind of document element. Possible kinds are "word" or "selectionMark" which
         correspond to a :class:`~azure.ai.formrecognizer.DocumentWord` or
