@@ -38,9 +38,6 @@ parameters:
   - name: JobName
     type: string
     default: 'Test'
-  - name: AllocateResourceGroup
-    type: boolean
-    default: true
   - name: DeployArmTemplate
     type: boolean
     default: false
@@ -123,7 +120,6 @@ stages:
               TestMarkArgument: ${{ parameters.TestMarkArgument }}
               InjectedPackages: ${{ parameters.InjectedPackages }}
               BuildDocs: ${{ parameters.BuildDocs }}
-              AllocateResourceGroup: ${{ parameters.AllocateResourceGroup }}
               DeployArmTemplate: ${{ parameters.DeployArmTemplate }}
               TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
             MatrixConfigs:
