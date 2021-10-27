@@ -84,7 +84,7 @@ stages:
         AfterTestSteps: ${{ parameters.AfterTestSteps }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        BuildTargetingString: $[ coalesce(variables['BuildTargetingString'], '${{ parameters.BuildTargetingString }}') ]
+        BuildTargetingString: '${{ coalesce(variables.BuildTargetingString, parameters.BuildTargetingString) }}'
         TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: ${{ parameters.InjectedPackages }}

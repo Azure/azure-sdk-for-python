@@ -73,7 +73,7 @@ jobs:
     - template: ../steps/build-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: $[ coalesce(variables['BuildTargetingString'], '${{ parameters.BuildTargetingString }}') ]
+        BuildTargetingString: '${{ coalesce(variables.BuildTargetingString, parameters.BuildTargetingString) }}'
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         BuildDocs: ${{ parameters.BuildDocs }}
         TestPipeline: ${{ parameters.TestPipeline }}
