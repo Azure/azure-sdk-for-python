@@ -129,7 +129,7 @@ from azure.ai.language.conversations.models import AnalysisParameters
 # get secrets
 conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
 conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-workflow_project = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT")
+orchestration_project = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT")
 
 # prepare data
 query = "How do you make sushi rice?",
@@ -142,7 +142,7 @@ client = ConversationAnalysisClient(conv_endpoint, AzureKeyCredential(conv_key))
 with client:
     result = client.analyze_conversations(
         input,
-        project_name=workflow_project,
+        project_name=orchestration_project,
         deployment_name='production',
     )
 
@@ -174,7 +174,7 @@ from azure.ai.language.conversations.models import AnalysisParameters
 # get secrets
 conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
 conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-workflow_project = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT")
+orchestration_project = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT")
 
 # prepare data
 query = "How do you make sushi rice?",
@@ -198,7 +198,7 @@ client = ConversationAnalysisClient(conv_endpoint, AzureKeyCredential(conv_key))
 with client:
     result = client.analyze_conversations(
         input,
-        project_name=workflow_project,
+        project_name=orchestration_project,
         deployment_name='production',
     )
 

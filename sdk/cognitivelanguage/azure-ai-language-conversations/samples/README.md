@@ -23,7 +23,7 @@ These sample programs show common scenarios for the Conversational Language Unde
 | **File Name**                                                                                                                                               | **Description**                                                                                                                                                                     |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [sample_analyze_conversation_app.py][sample_analyze_conversation_app] and [sample_analyze_conversation_app_async.py][sample_analyze_conversation_app_async] | Analyze intents and entities in your utterance using a deepstack (conversation) project                                                                                             |
-| [sample_analyze_workflow_app.py][sample_analyze_workflow_app] and [sample_analyze_workflow_app_async.py][sample_analyze_workflow_app_async]                 | Analyze user utterance using an orchestrator (workflow) project, which uses the best candidate from one of your different apps to analyze user query (ex: Qna, DeepStack, and Luis) |
+| [sample_analyze_orchestration_app.py][sample_analyze_orchestration_app] and [sample_analyze_orchestration_app_async.py][sample_analyze_orchestration_app_async]                 | Analyze user utterance using an orchestrator (workflow) project, which uses the best candidate from one of your different apps to analyze user query (ex: Qna, DeepStack, and Luis) |
 
 ## Prerequisites
 
@@ -57,7 +57,7 @@ what you can do with the Azure Conversational Language Understanding client libr
 
 | **Advanced Sample File Name**                                                                                                                                                               | **Description**                                                                                  |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| [sample_analyze_workflow_app_with_params.py][sample_analyze_workflow_app_with_params] and [sample_analyze_workflow_app_with_params_async.py][sample_analyze_workflow_app_with_params_async] | Same as workflow sample, but with ability to customize call with parameters                      |
+| [sample_analyze_orchestration_app_with_params.py][sample_analyze_orchestration_app_with_params] and [sample_analyze_orchestration_app_with_params_async.py][sample_analyze_orchestration_app_with_params_async] | Same as workflow sample, but with ability to customize call with parameters                      |
 
 [azure_subscription]: https://azure.microsoft.com/free/
 [azure_clu_account]: https://language.azure.com/clu/projects
@@ -66,9 +66,9 @@ what you can do with the Azure Conversational Language Understanding client libr
 [sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_authentication_async.py
 [sample_analyze_conversation_app]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_analyze_conversation_app.py
 [sample_analyze_conversation_app_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_analyze_conversation_app_async.py
-[sample_analyze_workflow_app]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_analyze_workflow_app.py
-[sample_analyze_workflow_app_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_analyze_workflow_app_async.py
-[sample_analyze_workflow_app_with_params]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_analyze_workflow_app_with_params.py
-[sample_analyze_workflow_app_with_params_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_analyze_workflow_app_with_params_async.py
+[sample_analyze_orchestration_app]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_analyze_orchestration_app.py
+[sample_analyze_orchestration_app_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_analyze_orchestration_app_async.py
+[sample_analyze_orchestration_app_with_params]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_analyze_orchestration_app_with_params.py
+[sample_analyze_orchestration_app_with_params_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_analyze_orchestration_app_with_params_async.py
 [api_reference_documentation]: https://language.azure.com/clu/projects
 [versioning_story_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations#install-the-package

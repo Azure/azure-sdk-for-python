@@ -24,11 +24,11 @@ from azure.ai.language.conversations.models import (
     # LUISTargetIntentResult
 )
 
-class WorkflowAppDirectAsyncTests(AsyncConversationTest):
+class OrchestrationAppDirectAsyncTests(AsyncConversationTest):
 
     @pytest.mark.skip(reason="internal server error!")
     @GlobalConversationAccountPreparer()
-    async def test_direct_kb_intent(self, conv_account, conv_key, workflow_project):
+    async def test_direct_kb_intent(self, conv_account, conv_key, orchestration_project):
 
         # prepare data
         query = "How do you make sushi rice?"
@@ -52,7 +52,7 @@ class WorkflowAppDirectAsyncTests(AsyncConversationTest):
         async with client:
             result = await client.analyze_conversations(
                 input,
-                project_name=workflow_project,
+                project_name=orchestration_project,
                 deployment_name='production',
             )
         
@@ -66,7 +66,7 @@ class WorkflowAppDirectAsyncTests(AsyncConversationTest):
 
     @pytest.mark.skip(reason="internal server error!")
     @GlobalConversationAccountPreparer()
-    async def test_kb_intent_with_model(self, conv_account, conv_key, workflow_project):
+    async def test_kb_intent_with_model(self, conv_account, conv_key, orchestration_project):
 
         # prepare data
         query = "How do you make sushi rice?"
@@ -90,7 +90,7 @@ class WorkflowAppDirectAsyncTests(AsyncConversationTest):
         async with client:
             result = await client.analyze_conversations(
                 input,
-                project_name=workflow_project,
+                project_name=orchestration_project,
                 deployment_name='production',
             )
         
@@ -104,7 +104,7 @@ class WorkflowAppDirectAsyncTests(AsyncConversationTest):
 
     @pytest.mark.skip(reason="internal server error!")
     @GlobalConversationAccountPreparer()
-    async def test_deepstack_intent(self, conv_account, conv_key, workflow_project):
+    async def test_deepstack_intent(self, conv_account, conv_key, orchestration_project):
 
         # prepare data
         query = "I will have the oyako donburi please."
@@ -126,7 +126,7 @@ class WorkflowAppDirectAsyncTests(AsyncConversationTest):
         async with client:
             result = await client.analyze_conversations(
                 input,
-                project_name=workflow_project,
+                project_name=orchestration_project,
                 deployment_name='production',
             )
         
@@ -140,7 +140,7 @@ class WorkflowAppDirectAsyncTests(AsyncConversationTest):
 
     @pytest.mark.skip(reason="internal server error!")
     @GlobalConversationAccountPreparer()
-    async def test_luis_intent(self, conv_account, conv_key, workflow_project):
+    async def test_luis_intent(self, conv_account, conv_key, orchestration_project):
 
         # prepare data
         query = "I will have the oyako donburi please."
@@ -162,7 +162,7 @@ class WorkflowAppDirectAsyncTests(AsyncConversationTest):
         async with client:
             result = await client.analyze_conversations(
                 input,
-                project_name=workflow_project,
+                project_name=orchestration_project,
                 deployment_name='production',
             )
         

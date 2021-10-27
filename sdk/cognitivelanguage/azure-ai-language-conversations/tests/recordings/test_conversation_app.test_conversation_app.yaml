@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{}'
+    body: '{"query": "One california maki please."}'
     headers:
       Accept:
       - application/json
@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '2'
+      - '40'
       Content-Type:
       - application/json
       User-Agent:
@@ -18,23 +18,21 @@ interactions:
     uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?projectName=test-project&deploymentName=production&api-version=2021-11-01-preview
   response:
     body:
-      string: "{\n  \"error\": {\n    \"code\": \"InvalidArgument\",\n    \"message\":
-        \"The input parameter is invalid.\",\n    \"innerError\": {\n      \"code\":
-        \"InvalidArgument\",\n      \"message\": \"The input parameter \\u0022Query\\u0022
-        cannot be null or empty.\"\n    }\n  }\n}"
+      string: '{"query":"One california maki please.","prediction":{"topIntent":"Order","projectKind":"conversation","intents":[{"category":"Order","confidenceScore":1}],"entities":[{"category":"OrderItem","text":"california
+        maki","offset":4,"length":15,"confidenceScore":1}]}}'
     headers:
       apim-request-id:
-      - 92decd0d-700a-4f9a-b569-420809f18286
+      - 2ad4fafa-0d8e-4fa4-9bf1-8e0d23d483d6
       cache-control:
       - no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type:
-      - application/json
+      - application/json; charset=utf-8
       date:
-      - Tue, 26 Oct 2021 18:16:16 GMT
+      - Wed, 27 Oct 2021 22:44:51 GMT
       pragma:
       - no-cache
       request-id:
-      - 92decd0d-700a-4f9a-b569-420809f18286
+      - 2ad4fafa-0d8e-4fa4-9bf1-8e0d23d483d6
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -42,8 +40,8 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '17'
+      - '41'
     status:
-      code: 400
-      message: Bad Request
+      code: 200
+      message: OK
 version: 1

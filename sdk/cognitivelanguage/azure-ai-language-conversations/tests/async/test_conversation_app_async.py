@@ -14,7 +14,7 @@ from asynctestcase import AsyncConversationTest
 
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
-    AnalysisParameters,
+    ConversationAnalysisOptions,
     AnalyzeConversationResult,
     ConversationPrediction
 )
@@ -27,7 +27,7 @@ class ConversationAppAsyncTests(AsyncConversationTest):
 
         # prepare data
         query = "One california maki please."
-        input = AnalysisParameters(
+        input = ConversationAnalysisOptions(
             query=query,
         )
 

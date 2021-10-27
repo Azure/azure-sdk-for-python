@@ -16,7 +16,7 @@ from testcase import (
 
 from azure.ai.language.conversations import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
-    AnalysisParameters,
+    ConversationAnalysisOptions,
     AnalyzeConversationResult,
     ConversationPrediction
 )
@@ -29,9 +29,8 @@ class ConversationAppTests(ConversationTest):
 
         # prepare data
         query = "One california maki please."
-        input = AnalysisParameters(
+        input = ConversationAnalysisOptions(
             query=query,
-            api_version="2021-11-01-preview"
         )
 
         # analyze quey

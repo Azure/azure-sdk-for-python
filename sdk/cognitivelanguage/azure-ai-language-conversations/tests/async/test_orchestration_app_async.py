@@ -14,7 +14,6 @@ from asynctestcase import AsyncConversationTest
 
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
-    AnalysisParameters,
     AnalyzeConversationResult,
     AnalysisParameters,
     AnalyzeConversationResult,
@@ -23,13 +22,13 @@ from azure.ai.language.conversations.models import (
     ConversationCallingOptions,
     QuestionAnsweringTargetIntentResult,
     OrchestratorPrediction,
-    ConversationTargetIntentResult
+    ConversationAnalysisOptions
 )
 
-class WorkflowAppAsyncTests(AsyncConversationTest):
+class OrchestrationAppAsyncTests(AsyncConversationTest):
 
     @GlobalConversationAccountPreparer()
-    async def test_workflow_app(self, conv_account, conv_key, workflow_project):
+    async def test_orchestration_app(self, conv_account, conv_key, orchestration_project):
 
         client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
         async with client:
@@ -38,23 +37,24 @@ class WorkflowAppAsyncTests(AsyncConversationTest):
             query = "How do you make sushi rice?"
             result = await client.analyze_conversations(
                 {"query": query},
-                project_name=workflow_project,
+                project_name=orchestration_project,
                 deployment_name='production',
             )
         
             # assert
+            top_intent = "SushiMaking"
             assert isinstance(result, AnalyzeConversationResult)
             assert result.query == query
             assert isinstance(result.prediction, OrchestratorPrediction)
             assert result.prediction.project_kind == "workflow"
-            assert result.prediction.top_intent == "SushiMaking"
-            assert isinstance(result.prediction.intents, QuestionAnsweringTargetIntentResult)
+            assert result.prediction.top_intent == top_intent
+            assert isinstance(result.prediction.intents[top_intent], QuestionAnsweringTargetIntentResult)
 
             # analyze query
             query = "I will have sashimi"
             result = await client.analyze_conversations(
                 {"query": query},
-                project_name=workflow_project,
+                project_name=orchestration_project,
                 deployment_name='production',
             )
         
@@ -64,15 +64,15 @@ class WorkflowAppAsyncTests(AsyncConversationTest):
             assert isinstance(result.prediction, OrchestratorPrediction)
             assert result.prediction.project_kind == "workflow"
             # assert result.prediction.top_intent == "SushiOrder" --> wrong top intent!
-            assert isinstance(result.prediction.intents, ConversationTargetIntentResult)
+            # assert isinstance(result.prediction.intents, ConversationTargetIntentResult)
 
 
     @GlobalConversationAccountPreparer()
-    async def test_workflow_app_with_parameters(self, conv_account, conv_key, workflow_project):
+    async def test_orchestration_app_with_parameters(self, conv_account, conv_key, orchestration_project):
 
         # prepare data
         query = "How do you make sushi rice?",
-        input = AnalysisParameters(
+        input = ConversationAnalysisOptions(
             query=query,
             parameters={
                 "SushiMaking": QuestionAnsweringParameters(
@@ -95,25 +95,26 @@ class WorkflowAppAsyncTests(AsyncConversationTest):
         async with client:
             result = await client.analyze_conversations(
                 input,
-                project_name=workflow_project,
+                project_name=orchestration_project,
                 deployment_name='production',
             )
         
         # assert
+        top_intent = "SushiMaking"
         assert isinstance(result, AnalyzeConversationResult)
         # assert result.query == query --> weird behavior here!
         assert isinstance(result.prediction, OrchestratorPrediction)
         assert result.prediction.project_kind == "workflow"
-        assert result.prediction.top_intent == "SushiMaking"
-        assert isinstance(result.prediction.intents, QuestionAnsweringTargetIntentResult)
+        assert result.prediction.top_intent == top_intent
+        assert isinstance(result.prediction.intents[top_intent], QuestionAnsweringTargetIntentResult)
 
 
     @GlobalConversationAccountPreparer()
-    async def test_workflow_app_with_model(self, conv_account, conv_key, workflow_project):
+    async def test_orchestration_app_with_model(self, conv_account, conv_key, orchestration_project):
 
         # prepare data
         query = "How do you make sushi rice?"
-        input = AnalysisParameters(
+        input = ConversationAnalysisOptions(
             query=query,
             parameters={
                 "SushiMaking": QuestionAnsweringParameters(
@@ -136,14 +137,15 @@ class WorkflowAppAsyncTests(AsyncConversationTest):
         async with client:
             result = await client.analyze_conversations(
                 input,
-                project_name=workflow_project,
+                project_name=orchestration_project,
                 deployment_name='production',
             )
         
         # assert
+        top_intent = "SushiMaking"
         assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
         assert isinstance(result.prediction, OrchestratorPrediction)
         assert result.prediction.project_kind == "workflow"
-        assert result.prediction.top_intent == "SushiMaking"
-        assert isinstance(result.prediction.intents, QuestionAnsweringTargetIntentResult)
+        assert result.prediction.top_intent == top_intent
+        assert isinstance(result.prediction.intents[top_intent], QuestionAnsweringTargetIntentResult)
