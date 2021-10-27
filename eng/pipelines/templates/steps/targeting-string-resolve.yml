@@ -13,5 +13,5 @@ steps:
       }
 
       Write-Host "##vso[task.setvariable variable=TargetingString]$setting"
-    displayName: Coalesce 
+    displayName: Check override of targeting string
     condition: and(succeededOrFailed(), ne(variables.TargetingString,''))
