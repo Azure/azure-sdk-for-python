@@ -56,7 +56,7 @@ class TestGetChildren(FormRecognizerTest):
         result = poller.result()
         
         elements = result.tables[0].cells[0].get_children()
-        assert len(elements) == 1
+        assert len(elements) == 2
 
 
     @FormRecognizerPreparer()

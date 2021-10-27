@@ -2295,18 +2295,9 @@ class AnalyzedDocument(object):
         :rtype: list[Union[DocumentContentElement, DocumentLine, DocumentWord]]
         """
         element_types = kwargs.get("element_types", ["word", "line"])
+        allowed_elements=["line", "word"]
 
-        result = []
-        for elem in element_types:
-            result.extend(_find_cross_page_elements(
-                self,
-                elem,
-                allowed_elements=[
-                    "line",
-                    "word",
-                ],
-            ))
-        return result
+        return _get_children(self, element_types, allowed_elements, True)
 
 
 class DocumentEntity(object):
@@ -2429,18 +2420,9 @@ class DocumentEntity(object):
         :rtype: list[Union[DocumentContentElement, DocumentLine, DocumentWord]]
         """
         element_types = kwargs.get("element_types", ["word", "line"])
+        allowed_elements=["line", "word"]
 
-        result = []
-        for elem in element_types:
-            result.extend(_find_cross_page_elements(
-                self,
-                elem,
-                allowed_elements=[
-                    "line",
-                    "word",
-                ],
-            ))
-        return result
+        return _get_children(self, element_types, allowed_elements, True)
 
 
 class DocumentField(object):
@@ -2571,18 +2553,9 @@ class DocumentField(object):
         :rtype: list[Union[DocumentContentElement, DocumentLine, DocumentWord]]
         """
         element_types = kwargs.get("element_types", ["word", "line"])
+        allowed_elements=["line", "word"]
 
-        result = []
-        for elem in element_types:
-            result.extend(_find_cross_page_elements(
-                self,
-                elem,
-                allowed_elements=[
-                    "line",
-                    "word",
-                ],
-            ))
-        return result
+        return _get_children(self, element_types, allowed_elements, True)
 
 
 class DocumentKeyValueElement(object):
@@ -2675,18 +2648,9 @@ class DocumentKeyValueElement(object):
         :rtype: list[Union[DocumentContentElement, DocumentLine, DocumentWord]]
         """
         element_types = kwargs.get("element_types", ["word", "line"])
+        allowed_elements=["line", "word"]
 
-        result = []
-        for elem in element_types:
-            result.extend(_find_cross_page_elements(
-                self,
-                elem,
-                allowed_elements=[
-                    "line",
-                    "word",
-                ],
-            ))
-        return result
+        return _get_children(self, element_types, allowed_elements, True)
 
 
 class DocumentKeyValuePair(object):
@@ -2838,18 +2802,9 @@ class DocumentLine(object):
         :rtype: list[Union[DocumentContentElement, DocumentWord]]
         """
         element_types = kwargs.get("element_types", ["word"])
+        allowed_elements=["word"]
 
-        result = []
-        for elem in element_types:
-            result.extend(_find_elements(
-                self._parent,
-                elem,
-                self.spans,
-                allowed_elements=[
-                    "word",
-                ],
-            ))
-        return result
+        return _get_children(self, element_types, allowed_elements, False)
 
 
 class DocumentPage(object):
@@ -3238,18 +3193,9 @@ class DocumentTable(object):
         :rtype: list[Union[DocumentContentElement, DocumentLine, DocumentWord]]
         """
         element_types = kwargs.get("element_types", ["word", "line"])
+        allowed_elements=["line", "word"]
 
-        result = []
-        for elem in element_types:
-            result.extend(_find_cross_page_elements(
-                self,
-                elem,
-                allowed_elements=[
-                    "line",
-                    "word",
-                ],
-            ))
-        return result
+        return _get_children(self, element_types, allowed_elements, True)
 
 
 class DocumentTableCell(object):
@@ -3377,19 +3323,10 @@ class DocumentTableCell(object):
         :return: list[Union[DocumentContentElement, DocumentLine, DocumentWord]]
         :rtype: list[Union[DocumentContentElement, DocumentLine, DocumentWord]]
         """
-        element_types = kwargs.get("element_types", ["word"])
+        element_types = kwargs.get("element_types", ["word", "line"])
+        allowed_elements=["line", "word"]
 
-        result = []
-        for elem in element_types:
-            result.extend(_find_cross_page_elements(
-                self,
-                elem,
-                allowed_elements=[
-                    "line",
-                    "word",
-                ],
-            ))
-        return result
+        return _get_children(self, element_types, allowed_elements, True)
 
 
 class ModelOperationInfo(object):
@@ -4231,35 +4168,35 @@ class DocumentAnalysisInnerError(object):
             if data.get("innererror") else None
         )
 
-
-def _find_elements(parent, element, spans, **kwargs):
-    # type: (DocumentPage, str, List[DocumentSpan], Any) -> Iterable[Any]
-    allowed = kwargs.get("allowed_elements", None)
-    if element not in allowed:
-        raise ValueError("received an unsupported child element")
+def _get_children(source_element, search_elements, allowed_elements, cross_page=False, **kwargs):
+    # Check if the element types that are passed in are allowed,
+    # fail fast if an incorrect element is requested.
+    for elem in search_elements:
+        if elem not in allowed_elements:
+            raise ValueError("Received an unsupported value in element_types")
     result = []
-    for elem in _get_element_list(parent, element):
-        if _in_span(elem, spans):
-            result.append(elem)
-    return result
 
+    # search for elements across pages if cross_page is set to True
+    if cross_page:
+        for elem in search_elements:
+            for region in source_element.bounding_regions:
+                for element in _get_element_list(_get_page(source_element._parent.pages, region.page_number), elem):
+                    if _in_span(element, source_element.spans):
+                        result.append(element)
+        return result
 
-def _find_cross_page_elements(source, element, **kwargs):
-    allowed = kwargs.get("allowed_elements", None)
-    if element not in allowed:
-        raise ValueError("received an unsupported child element")
-    result = []
-    for region in source.bounding_regions:
-        for elem in _get_element_list(_get_page(source._parent.pages, region.page_number), element):
-            if _in_span(elem, source.spans):
-                result.append(elem)
+    # look for elements on a specific page
+    for elem in search_elements:
+        for element in _get_element_list(source_element._parent, elem):
+            if _in_span(element, source_element.spans):
+                result.append(element)
     return result
 
 def _get_page(pages, page_number):
     for page in pages:
         if page.page_number == page_number:
             return page
-    raise "could not find page"
+    raise ValueError("Could not find page to search for elements")
 
 def _get_element_list(parent, element):
     # type: (DocumentPage, str) -> List[Any]
