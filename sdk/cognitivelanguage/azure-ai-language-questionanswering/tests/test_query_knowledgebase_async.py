@@ -385,8 +385,8 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
                     ("explicitlytaggedheading", "check the battery level"),
                     ("explicitlytaggedheading", "make your battery last")
                 ],
-            ),
-            logical_operation=LogicalOperationKind.OR_ENUM
+                logical_operation=LogicalOperationKind.OR_ENUM
+            )
         )
         async with QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key)) as client:
             response = await client.query_knowledge_base(
@@ -396,14 +396,13 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
                 filters=filters,
                 top=3,
             )
-            assert response.answers
-            # assert len(response.answers) == 3
-            # assert any(
-            #     [a for a in response.answers if a.metadata.get('explicitlytaggedheading') == "check the battery level"]
-            # )
-            # assert any(
-            #     [a for a in response.answers if a.metadata.get('explicitlytaggedheading') == "make your battery last"]
-            # )
+            assert len(response.answers) == 2
+            assert any(
+                [a for a in response.answers if a.metadata.get('explicitlytaggedheading') == "check the battery level"]
+            )
+            assert any(
+                [a for a in response.answers if a.metadata.get('explicitlytaggedheading') == "make your battery last"]
+            )
 
     @GlobalQuestionAnsweringAccountPreparer()
     async def test_query_knowledgebase_filter_dict_params(self, qna_account, qna_key, qna_project):
@@ -412,9 +411,10 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
                 "metadata": [
                     ("explicitlytaggedheading", "check the battery level"),
                     ("explicitlytaggedheading", "make your battery last")
-                ]
+                ],
+                "logicalOperation": "or"
             },
-            "logicalOperation": "or"
+
         }
         async with QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key)) as client:
             response = await client.query_knowledge_base(
@@ -424,12 +424,11 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
                 filters=filters,
                 top=3,
             )
-            assert response.answers
-            # assert len(response.answers) == 3
-            # assert any(
-            #     [a for a in response.answers if a.metadata.get('explicitlytaggedheading') == "check the battery level"]
-            # )
-            # assert any(
-            #     [a for a in response.answers if a.metadata.get('explicitlytaggedheading') == "make your battery last"]
-            # )
+            assert len(response.answers) == 2
+            assert any(
+                [a for a in response.answers if a.metadata.get('explicitlytaggedheading') == "check the battery level"]
+            )
+            assert any(
+                [a for a in response.answers if a.metadata.get('explicitlytaggedheading') == "make your battery last"]
+            )
 

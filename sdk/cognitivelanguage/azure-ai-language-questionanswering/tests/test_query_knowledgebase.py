@@ -387,8 +387,8 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
                     ("explicitlytaggedheading", "check the battery level"),
                     ("explicitlytaggedheading", "make your battery last")
                 ],
+                logical_operation=LogicalOperationKind.OR_ENUM
             ),
-            logical_operation=LogicalOperationKind.OR_ENUM
         )
         with QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key)) as client:
             response = client.query_knowledge_base(
@@ -398,14 +398,13 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
                 filters=filters,
                 top=3,
             )
-            assert response.answers
-            # assert len(response.answers) == 3
-            # assert any(
-            #     [a for a in response.answers if a.metadata.get('explicitlytaggedheading') == "check the battery level"]
-            # )
-            # assert any(
-            #     [a for a in response.answers if a.metadata.get('explicitlytaggedheading') == "make your battery last"]
-            # )
+            assert len(response.answers) == 2
+            assert any(
+                [a for a in response.answers if a.metadata.get('explicitlytaggedheading') == "check the battery level"]
+            )
+            assert any(
+                [a for a in response.answers if a.metadata.get('explicitlytaggedheading') == "make your battery last"]
+            )
 
     @GlobalQuestionAnsweringAccountPreparer()
     def test_query_knowledgebase_filter_dict_params(self, qna_account, qna_key, qna_project):
@@ -414,9 +413,9 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
                 "metadata": [
                     ("explicitlytaggedheading", "check the battery level"),
                     ("explicitlytaggedheading", "make your battery last")
-                ]
+                ],
+                "logicalOperation": "or"
             },
-            "logicalOperation": "or"
         }
         with QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key)) as client:
             response = client.query_knowledge_base(
@@ -426,11 +425,10 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
                 filters=filters,
                 top=3,
             )
-            assert response.answers
-            # assert len(response.answers) == 3
-            # assert any(
-            #     [a for a in response.answers if a.metadata.get('explicitlytaggedheading') == "check the battery level"]
-            # )
-            # assert any(
-            #     [a for a in response.answers if a.metadata.get('explicitlytaggedheading') == "make your battery last"]
-            # )
+            assert len(response.answers) == 2
+            assert any(
+                [a for a in response.answers if a.metadata.get('explicitlytaggedheading') == "check the battery level"]
+            )
+            assert any(
+                [a for a in response.answers if a.metadata.get('explicitlytaggedheading') == "make your battery last"]
+            )
