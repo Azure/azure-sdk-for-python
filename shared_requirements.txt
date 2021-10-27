@@ -150,7 +150,7 @@ backports.functools-lru-cache >= 1.6.4; python_version == "2.7"
 #override azure-keyvault-keys azure-core<2.0.0,>=1.7.0
 #override azure-keyvault-secrets azure-core<2.0.0,>=1.7.0
 #override azure-ai-textanalytics msrest>=0.6.21
-#override azure-ai-textanalytics azure-core<2.0.0,>=1.14.0
+#override azure-ai-textanalytics azure-core<2.0.0,>=1.16.0
 #override azure-ai-language-questionanswering azure-core<2.0.0,>=1.19.0
 #override azure-ai-language-questionanswering msrest>=0.6.21
 #override azure-search-documents azure-core<2.0.0,>=1.19.0
@@ -356,3 +356,5 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-ai-language-conversations azure-core<2.0.0,>=1.19.0
 #override azure-ai-language-conversations msrest>=0.6.21
 #override azure-mgmt-advisor msrest>=0.6.21
+#override azure-mgmt-dataprotection msrest>=0.6.21
+#override azure-mgmt-chaos msrest>=0.6.21

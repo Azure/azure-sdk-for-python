@@ -82,13 +82,13 @@ ContentTypeBase = Union[str, bytes, Iterable[bytes]]
 ########################### HELPER SECTION #################################
 
 def _verify_data_object(name, value):
-    if not isinstance(name, str):
+    if not isinstance(name, six.string_types):
         raise TypeError(
             "Invalid type for data name. Expected str, got {}: {}".format(
                 type(name), name
             )
         )
-    if value is not None and not isinstance(value, (str, bytes, int, float)):
+    if value is not None and not isinstance(value, (six.string_types, bytes, int, float)):
         raise TypeError(
             "Invalid type for data value. Expected primitive type, got {}: {}".format(
                 type(name), name

@@ -17,7 +17,9 @@ from utils import update_issue_body, get_readme_and_output_folder, \
 _NULL = ' '
 _FILE_OUT = 'release_issue_status.csv'
 _FILE_OUT_PYTHON = 'release_python_status.md'
-_PYTHON_SDK_ADMINISTRATORS = {'msyyc', 'RAY-316', 'BigCat20196'}
+_PYTHON_SDK_ADMINISTRATORS = ['msyyc', 'RAY-316', 'BigCat20196']
+_PYTHON_SDK_ASSIGNEES = ['RAY-316', 'BigCat20196']
+_ASSIGNER_DICT = {'RAY-316': os.getenv('ZED_TOKEN'), 'BigCat20196': os.getenv('JF_TOKEN')}
 logging.basicConfig(level=logging.INFO,
                     format='[auto-reply  log] - %(funcName)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 
@@ -128,7 +130,7 @@ def _latest_comment_time(comments, delay_from_create_date):
     return delay_from_create_date if not q else int((time.time() - q[-1][0]) / 3600 / 24)
 
 
-def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python_piplines):
+def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python_piplines, assigner_repoes):
     logging.info("new issue number: {}".format(item.issue_object.number))
 
     if 'auto-link' not in item.labels:
@@ -156,8 +158,9 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python
     try:
         logging.info(python_piplines)
         pipeline_url = get_pipeline_url(python_piplines, output_folder)
+        assigner_repo = assigner_repoes[item.assignee]
         rg.begin_reply_generate(item=item, rest_repo=rest_repo, readme_link=readme_link,
-                                sdk_repo=sdk_repo, pipeline_url=pipeline_url)
+                                sdk_repo=sdk_repo, pipeline_url=pipeline_url, assigner_repo=assigner_repo)
         if 'Configured' in item.labels:
             item.issue_object.remove_from_labels('Configured')
     except Exception as e:
@@ -170,8 +173,11 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python
 def main():
     # get latest issue status
     g = Github(os.getenv('TOKEN'))  # please fill user_token
+    assigner_repoes = {}
+    for k, v in _ASSIGNER_DICT.items():
+        assigner_repoes[k] = Github(v).get_repo('Azure/sdk-release-request')
     request_repo = g.get_repo('Azure/sdk-release-request')
-    rest_repo = g.get_repo('Azure/azure-rest-api-specs')   
+    rest_repo = g.get_repo('Azure/azure-rest-api-specs')
     sdk_repo = g.get_repo('Azure/azure-sdk-for-python')
     label1 = request_repo.get_label('ManagementPlane')
     open_issues = request_repo.get_issues(state='open', labels=[label1])
@@ -226,13 +232,13 @@ def main():
             item.bot_advice = 'new issue and better to confirm quickly.'
             if 'assigned' not in item.labels:
                 time.sleep(0.1)
-                assign_count = int(str(time.time())[-1]) % 2
-                if assign_count == 1:
-                    item.issue_object.remove_from_assignees(*['RAY-316'])
-                    item.issue_object.add_to_assignees(*['BigCat20196'])
+                assign_count = int(str(time.time())[-1]) % len(_PYTHON_SDK_ASSIGNEES)
+                item.issue_object.remove_from_assignees(item.assignee)
+                item.issue_object.add_to_assignees(_PYTHON_SDK_ASSIGNEES[assign_count])
+                item.assignee=item.issue_object.assignee.login
                 item.issue_object.add_to_labels('assigned')
             try:
-                auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python_piplines)
+                auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python_piplines, assigner_repoes)
             except Exception as e:
                 continue
         elif not item.author_latest_comment in _PYTHON_SDK_ADMINISTRATORS:
@@ -245,7 +251,10 @@ def main():
             except Exception as e:
                 item.bot_advice = 'auto-close failed, please check!'
                 logging.info(f"=====issue: {item.issue_object.number}, {e}")
-
+                
+        if 'base-branch-attention' in item.labels:
+            item.bot_advice = 'new version is 0.0.0, please check base branch! ' + item.bot_advice
+          
         if item.days_from_latest_commit >= 30 and item.language == 'Python' and '30days attention' not in item.labels:
             item.issue_object.add_to_labels('30days attention')
             item.issue_object.create_comment(f'hi @{item.author}, the issue is closed since there is no reply for a long time. Please reopen it if necessary or create new one.')
