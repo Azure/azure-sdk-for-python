@@ -27,8 +27,8 @@ parameters:
     default:
       - '**'
   - name: TargetCodeOwners
-    type: object
-    default: []
+    type: string
+    default: ''
 steps:
 - template: /eng/common/pipelines/templates/steps/enable-long-path-support.yml
 
