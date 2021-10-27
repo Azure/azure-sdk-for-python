@@ -6,11 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._microsoft_azure_chaos import MicrosoftAzureChaos
+from ._chaos_management_client import ChaosManagementClient
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['MicrosoftAzureChaos']
+__all__ = ['ChaosManagementClient']
 
 try:
     from ._patch import patch_sdk  # type: ignore

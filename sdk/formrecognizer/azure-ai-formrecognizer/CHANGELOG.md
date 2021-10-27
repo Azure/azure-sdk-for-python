@@ -5,6 +5,7 @@
 ### Features Added
 
 ### Breaking Changes
+- Renamed `DocumentElement` to `DocumentContentElement`.
 
 ### Bugs Fixed
 

@@ -14,19 +14,19 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 43864fac-5bae-44be-9916-d3bdd3c0eaf7
+      - d2c81693-2192-4594-9dcf-cbaae82b4a84
       date:
-      - Tue, 03 Aug 2021 17:31:32 GMT
+      - Wed, 06 Oct 2021 21:01:23 GMT
       operation-location:
-      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs/feb8a48f-b493-48c8-9df9-9a1a54aefbfa
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs/354ce5c3-e260-4205-ba98-cd7942b210d7
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -34,7 +34,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '95'
+      - '210'
     status:
       code: 202
       message: Accepted
@@ -48,23 +48,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs/feb8a48f-b493-48c8-9df9-9a1a54aefbfa
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs/354ce5c3-e260-4205-ba98-cd7942b210d7
   response:
     body:
-      string: '{"jobId":"feb8a48f-b493-48c8-9df9-9a1a54aefbfa","lastUpdateDateTime":"2021-08-03T17:31:37Z","createdDateTime":"2021-08-03T17:31:32Z","expirationDateTime":"2021-08-04T17:31:32Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"0","entities":[{"offset":31,"length":18,"text":"Parkinsons
+      string: '{"jobId":"354ce5c3-e260-4205-ba98-cd7942b210d7","lastUpdateDateTime":"2021-10-06T21:01:24Z","createdDateTime":"2021-10-06T21:01:24Z","expirationDateTime":"2021-10-07T21:01:24Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"0","entities":[{"offset":31,"length":18,"text":"Parkinsons
         Disease","category":"Diagnosis","confidenceScore":1.0,"name":"Parkinson Disease","links":[{"dataSource":"UMLS","id":"C0030567"},{"dataSource":"AOD","id":"0000006203"},{"dataSource":"BI","id":"BI00554"},{"dataSource":"CCPSS","id":"1018057"},{"dataSource":"CCS","id":"6.2.1"},{"dataSource":"CCSR_10","id":"NVS004"},{"dataSource":"CHV","id":"0000009319"},{"dataSource":"COSTAR","id":"559"},{"dataSource":"CSP","id":"2057-3689"},{"dataSource":"CST","id":"EXTRAPYR
         SYND"},{"dataSource":"ICD10","id":"G20"},{"dataSource":"ICD10AM","id":"G20"},{"dataSource":"ICD10CM","id":"G20"},{"dataSource":"ICD9CM","id":"332.0"},{"dataSource":"ICPC2ICD10ENG","id":"MTHU004748"},{"dataSource":"ICPC2P","id":"N87001"},{"dataSource":"LCH_NW","id":"sh85098115"},{"dataSource":"LNC","id":"MTHU020807"},{"dataSource":"MDR","id":"10061536"},{"dataSource":"MEDCIN","id":"32004"},{"dataSource":"MEDLINEPLUS","id":"85"},{"dataSource":"MSH","id":"D010300"},{"dataSource":"NANDA-I","id":"03003"},{"dataSource":"NCI","id":"C26845"},{"dataSource":"NCI_CELLOSAURUS","id":"C26845"},{"dataSource":"NCI_CPTAC","id":"C26845"},{"dataSource":"NCI_NCI-GLOSS","id":"CDR0000044140"},{"dataSource":"OMIM","id":"516000"},{"dataSource":"PSY","id":"36720"},{"dataSource":"QMR","id":"R0121461"},{"dataSource":"RAM","id":"DX353"},{"dataSource":"RCD","id":"F12.."},{"dataSource":"SNM","id":"D-8450"},{"dataSource":"SNMI","id":"DA-21012"},{"dataSource":"SNOMEDCT_US","id":"49049000"},{"dataSource":"WHO","id":"0106"}]},{"offset":51,"length":2,"text":"PD","category":"Diagnosis","confidenceScore":1.0,"name":"Parkinson
         Disease","links":[{"dataSource":"UMLS","id":"C0030567"},{"dataSource":"AOD","id":"0000006203"},{"dataSource":"BI","id":"BI00554"},{"dataSource":"CCPSS","id":"1018057"},{"dataSource":"CCS","id":"6.2.1"},{"dataSource":"CCSR_10","id":"NVS004"},{"dataSource":"CHV","id":"0000009319"},{"dataSource":"COSTAR","id":"559"},{"dataSource":"CSP","id":"2057-3689"},{"dataSource":"CST","id":"EXTRAPYR
         SYND"},{"dataSource":"ICD10","id":"G20"},{"dataSource":"ICD10AM","id":"G20"},{"dataSource":"ICD10CM","id":"G20"},{"dataSource":"ICD9CM","id":"332.0"},{"dataSource":"ICPC2ICD10ENG","id":"MTHU004748"},{"dataSource":"ICPC2P","id":"N87001"},{"dataSource":"LCH_NW","id":"sh85098115"},{"dataSource":"LNC","id":"MTHU020807"},{"dataSource":"MDR","id":"10061536"},{"dataSource":"MEDCIN","id":"32004"},{"dataSource":"MEDLINEPLUS","id":"85"},{"dataSource":"MSH","id":"D010300"},{"dataSource":"NANDA-I","id":"03003"},{"dataSource":"NCI","id":"C26845"},{"dataSource":"NCI_CELLOSAURUS","id":"C26845"},{"dataSource":"NCI_CPTAC","id":"C26845"},{"dataSource":"NCI_NCI-GLOSS","id":"CDR0000044140"},{"dataSource":"OMIM","id":"516000"},{"dataSource":"PSY","id":"36720"},{"dataSource":"QMR","id":"R0121461"},{"dataSource":"RAM","id":"DX353"},{"dataSource":"RCD","id":"F12.."},{"dataSource":"SNM","id":"D-8450"},{"dataSource":"SNMI","id":"DA-21012"},{"dataSource":"SNOMEDCT_US","id":"49049000"},{"dataSource":"WHO","id":"0106"}]}],"relations":[{"relationType":"Abbreviation","entities":[{"ref":"#/results/documents/0/entities/0","role":"FullTerm"},{"ref":"#/results/documents/0/entities/1","role":"AbbreviatedTerm"}]}],"warnings":[]}],"errors":[],"modelVersion":"2021-05-15"}}'
     headers:
       apim-request-id:
-      - 0fa5086c-a8e6-4869-a06f-06751fa84bb8
+      - 17aeea63-8f19-4435-9d70-3ad34fd876b6
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Aug 2021 17:31:37 GMT
+      - Wed, 06 Oct 2021 21:01:29 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -72,7 +72,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '43'
+      - '88'
     status:
       code: 200
       message: OK

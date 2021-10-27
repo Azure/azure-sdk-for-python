@@ -1,23 +1,25 @@
 interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
-      "latest", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}}],
-      "entityRecognitionPiiTasks": [{"parameters": {"model-version": "latest", "loggingOptOut":
-      true, "stringIndexType": "UnicodeCodePoint"}}], "keyPhraseExtractionTasks":
-      [{"parameters": {"model-version": "latest", "loggingOptOut": false}}], "entityLinkingTasks":
+      "latest", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}, "taskName":
+      "0"}], "entityRecognitionPiiTasks": [{"parameters": {"model-version": "latest",
+      "loggingOptOut": true, "stringIndexType": "UnicodeCodePoint"}, "taskName": "2"}],
+      "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest", "loggingOptOut":
+      false}, "taskName": "1"}], "entityLinkingTasks": [{"parameters": {"model-version":
+      "latest", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}, "taskName":
+      "3"}], "sentimentAnalysisTasks": [{"parameters": {"model-version": "latest",
+      "loggingOptOut": false, "opinionMining": false}, "taskName": "4"}], "extractiveSummarizationTasks":
       [{"parameters": {"model-version": "latest", "loggingOptOut": false, "stringIndexType":
-      "UnicodeCodePoint"}}], "sentimentAnalysisTasks": [{"parameters": {"model-version":
-      "latest", "loggingOptOut": false, "opinionMining": false}}], "extractiveSummarizationTasks":
-      [{"parameters": {"model-version": "latest", "loggingOptOut": false, "stringIndexType":
-      "UnicodeCodePoint", "sentenceCount": 3, "sortBy": "Offset"}}]}, "analysisInput":
-      {"documents": [{"id": "0", "text": "input document", "language": "en"}, {"id":
-      "1", "text": "input document", "language": "en"}, {"id": "2", "text": "input
-      document", "language": "en"}, {"id": "3", "text": "input document", "language":
-      "en"}, {"id": "4", "text": "input document", "language": "en"}, {"id": "5",
-      "text": "input document", "language": "en"}, {"id": "6", "text": "input document",
-      "language": "en"}, {"id": "7", "text": "input document", "language": "en"},
-      {"id": "8", "text": "input document", "language": "en"}, {"id": "9", "text":
-      "input document", "language": "en"}, {"id": "10", "text": "input document",
+      "UnicodeCodePoint", "sentenceCount": 3, "sortBy": "Offset"}, "taskName": "5"}],
+      "customEntityRecognitionTasks": [], "customSingleClassificationTasks": [], "customMultiClassificationTasks":
+      []}, "analysisInput": {"documents": [{"id": "0", "text": "input document", "language":
+      "en"}, {"id": "1", "text": "input document", "language": "en"}, {"id": "2",
+      "text": "input document", "language": "en"}, {"id": "3", "text": "input document",
+      "language": "en"}, {"id": "4", "text": "input document", "language": "en"},
+      {"id": "5", "text": "input document", "language": "en"}, {"id": "6", "text":
+      "input document", "language": "en"}, {"id": "7", "text": "input document", "language":
+      "en"}, {"id": "8", "text": "input document", "language": "en"}, {"id": "9",
+      "text": "input document", "language": "en"}, {"id": "10", "text": "input document",
       "language": "en"}, {"id": "11", "text": "input document", "language": "en"},
       {"id": "12", "text": "input document", "language": "en"}, {"id": "13", "text":
       "input document", "language": "en"}, {"id": "14", "text": "input document",
@@ -38,24 +40,24 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '2351'
+      - '2566'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/analyze
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze
   response:
     body:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocumentBatch","message":"Batch
         request contains too many records. Max 25 records are permitted."}}}'
     headers:
       apim-request-id:
-      - 218fcde0-d8de-46c1-ad67-89cae1d96ca2
+      - 6d3e7500-71f7-401c-a5c1-41f1d2b03a6e
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 02 Aug 2021 21:33:29 GMT
+      - Thu, 07 Oct 2021 23:45:19 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
