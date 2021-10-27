@@ -20,13 +20,8 @@ def _validate_text_records(records):
         raise TypeError("Input records cannot be a dict")
 
     if not all(isinstance(x, six.string_types) for x in records):
-        if not all(
-            isinstance(x, (dict, TextRecord))
-            for x in records
-        ):
-            raise TypeError(
-                "Mixing string and dictionary/object record input unsupported."
-            )
+        if not all(isinstance(x, (dict, TextRecord)) for x in records):
+            raise TypeError("Mixing string and dictionary/object record input unsupported.")
 
     request_batch = []
     for idx, doc in enumerate(records):
@@ -36,6 +31,7 @@ def _validate_text_records(records):
         else:
             request_batch.append(doc)
     return request_batch
+
 
 def _get_positional_body(*args, **kwargs):
     """Verify args and kwargs are valid, and then return the positional body, if users passed it in."""
@@ -48,6 +44,7 @@ def _get_positional_body(*args, **kwargs):
         )
     return args[0] if args else None
 
+
 def _verify_qna_id_and_question(query_knowledgebase_options):
     """For query_knowledge_base we require either `question` or `qna_id`."""
     try:
@@ -57,21 +54,16 @@ def _verify_qna_id_and_question(query_knowledgebase_options):
         qna_id = query_knowledgebase_options.get("qna_id") or query_knowledgebase_options.get("qnaId")
         question = query_knowledgebase_options.get("question")
     if not (qna_id or question):
-        raise TypeError(
-            "You need to pass in either `qna_id` or `question`."
-        )
+        raise TypeError("You need to pass in either `qna_id` or `question`.")
     if qna_id and question:
         raise TypeError("You can not specify both `qna_id` and `question`.")
+
 
 def _handle_metadata_filter_conversion(options_input):
     options = copy.deepcopy(options_input)
     filters = options.filters if hasattr(options, "filters") else options.get("filters", {})
     try:
-        if (
-            filters and
-            filters.metadata_filter and
-            filters.metadata_filter.metadata
-        ):
+        if filters and filters.metadata_filter and filters.metadata_filter.metadata:
             metadata_input = filters.metadata_filter.metadata
         else:
             metadata_input = None
@@ -87,13 +79,9 @@ def _handle_metadata_filter_conversion(options_input):
     except TypeError:
         raise ValueError("'metadata' must be a sequence of key-value tuples.")
 
-    metadata_modified = [
-        {"key": m[0], "value": m[1]}
-        for m in metadata_input
-    ]
+    metadata_modified = [{"key": m[0], "value": m[1]} for m in metadata_input]
     if in_class:
         filters.metadata_filter.metadata = metadata_modified
     else:
         filters["metadataFilter"]["metadata"] = metadata_modified
     return options
-
