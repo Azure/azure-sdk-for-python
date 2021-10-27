@@ -286,6 +286,25 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         self._client.indexers.reset(name, **kwargs)
 
     @distributed_trace
+    def reset_documents(self, name, overwrite, keys_or_ids, **kwargs):
+        """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
+
+        :param name: The name of the indexer to reset documents for.
+        :type name: str
+        :param overwrite: If false, keys or ids will be appended to existing ones. If true, only the
+         keys or ids in this payload will be queued to be re-ingested.
+        :type overwrite: bool
+        :param keys_or_ids:
+        :type keys_or_ids: ~azure.search.documents.indexes.models.DocumentKeysOrIds
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        # TODO: Complete implementation
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        return self._client.indexers.reset_docs(name, overwrite, keys_or_ids, **kwargs)
+
+    @distributed_trace
     def get_indexer_status(self, name, **kwargs):
         # type: (str, **Any) -> SearchIndexerStatus
         """Get the status of the indexer.
@@ -541,7 +560,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
 
     @distributed_trace
-    def delete_skillset(self, skillset, **kwargs):
+    def delete_skillset(self, name, **kwargs):
         # type: (Union[str, SearchIndexerSkillset], **Any) -> None
         """Delete a named SearchIndexerSkillset in an Azure Search service. To use access conditions,
         the SearchIndexerSkillset model must be provided instead of the name. It is enough to provide
@@ -634,6 +653,22 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             **kwargs
         )
         return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
+
+    @distributed_trace
+    def reset_skills(self, name, skill_names, **kwargs):
+        """Reset an existing skillset in a search service.
+
+        :param name: The name of the skillset to reset.
+        :type name: str
+        :param skill_names: the names of skills to be reset.
+        :type skill_names: list[str]
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        # TODO: Complete implementation. ResetSkillsOptions???
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        return self._client.skillsets.reset_skills(name, skill_names, **kwargs)
 
 def _validate_skillset(skillset):
     """Validates any multi-version skills in the skillset to verify that unsupported
