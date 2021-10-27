@@ -52,8 +52,10 @@ def get_latest_pr_from_readme(rest_repo, link_dict):
     return latest_pr_number_int[-1]
 
 
-def reply_owner(reply_content):
-    issue_object_rg.create_comment(reply_content)
+def reply_owner(assigner_issue, reply_content):
+    assigner_issue.create_comment(reply_content)
+    user_tips = 'Tips: If you have special needs for release date or other things, please let us know. Otherwise we will release it ASAP after your check.'
+    assigner_issue.create_comment(user_tips)
 
 
 
@@ -74,7 +76,7 @@ def get_reply_and_sdk_number_from_readme(rest_repo, link_dict):
     return info_model, sdk_link_number
 
 
-def begin_reply_generate(item, rest_repo, readme_link, sdk_repo, pipeline_url):
+def begin_reply_generate(item, rest_repo, readme_link, sdk_repo, pipeline_url, assigner_repo):
     global issue_object_rg
     issue_object_rg = item.issue_object
     link_dict = get_links(readme_link)
@@ -91,7 +93,8 @@ def begin_reply_generate(item, rest_repo, readme_link, sdk_repo, pipeline_url):
             logging.info(f'{issue_object_rg.number} run pipeline successfully')
         else:
             logging.info(f'{issue_object_rg.number} run pipeline fail')
-        reply_owner(reply_content)
+        assigner_issue = assigner_repo.get_issue(number=issue_object_rg.number)
+        reply_owner(assigner_issue, reply_content)
         issue_object_rg.add_to_labels('auto-ask-check')
     else:
         logging.info('issue {} need config readme'.format(issue_object_rg.number))

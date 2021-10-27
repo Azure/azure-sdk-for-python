@@ -1,5 +1,30 @@
 # Release History
 
+## 9.0.0 (2021-10-08)
+
+**Features**
+
+  - Model Cluster has a new parameter zones
+  - Model Cluster has a new parameter system_data
+  - Model ClusterGetProperties has a new parameter private_link_configurations
+  - Model ClusterGetProperties has a new parameter private_endpoint_connections
+  - Model ClusterCreateParametersExtended has a new parameter zones
+  - Model ApplicationProperties has a new parameter private_link_configurations
+  - Model ClusterCreateProperties has a new parameter private_link_configurations
+  - Model VmSizeCompatibilityFilterV2 has a new parameter esp_applied
+  - Model VmSizeCompatibilityFilterV2 has a new parameter compute_isolation_supported
+  - Model Application has a new parameter system_data
+  - Model ClusterCreateRequestValidationParameters has a new parameter zones
+  - Added operation group PrivateLinkResourcesOperations
+  - Added operation group PrivateEndpointConnectionsOperations
+
+**Breaking changes**
+
+  - Parameter location of model Cluster is now required
+  - Parameter location of model TrackedResource is now required
+  - Model CapabilitiesResult no longer has parameter vmsize_filters
+  - Model CapabilitiesResult no longer has parameter vmsizes
+
 ## 8.0.0 (2021-06-03)
 
 **Features**

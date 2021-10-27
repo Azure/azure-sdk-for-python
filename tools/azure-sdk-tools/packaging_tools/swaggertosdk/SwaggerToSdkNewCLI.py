@@ -202,7 +202,7 @@ def generate_sdk_from_git_object(
     sdk_git_id,
     base_branch_names,
     *,
-    fallback_base_branch_name="master",
+    fallback_base_branch_name="main",
     sdk_tag=None,
 ):
     """Generate SDK from a commit or a PR object.

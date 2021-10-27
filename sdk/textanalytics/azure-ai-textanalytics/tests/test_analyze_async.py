@@ -34,7 +34,13 @@ from azure.ai.textanalytics import (
     ExtractKeyPhrasesResult,
     PiiEntityCategory,
     ExtractSummaryAction,
-    ExtractSummaryResult
+    ExtractSummaryResult,
+    SingleCategoryClassifyAction,
+    MultiCategoryClassifyAction,
+    RecognizeCustomEntitiesAction,
+    SingleCategoryClassifyResult,
+    MultiCategoryClassifyResult,
+    RecognizeCustomEntitiesResult
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -455,7 +461,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             response = await poller.result()
 
             assert isinstance(poller.created_on, datetime.datetime)
-            assert poller.display_name
+            assert not poller.display_name
             assert isinstance(poller.expires_on, datetime.datetime)
             assert poller.actions_failed_count == 0
             assert poller.actions_in_progress_count == 0
@@ -710,8 +716,18 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         assert excinfo.value.status_code == 400
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
-    async def test_disable_service_logs(self, client):
+    async def test_disable_service_logs(
+            self,
+            textanalytics_custom_text_endpoint,
+            textanalytics_custom_text_key,
+            textanalytics_single_category_classify_project_name,
+            textanalytics_single_category_classify_deployment_name,
+            textanalytics_multi_category_classify_project_name,
+            textanalytics_multi_category_classify_deployment_name,
+            textanalytics_custom_entities_project_name,
+            textanalytics_custom_entities_deployment_name
+    ):
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
         actions = [
             RecognizeEntitiesAction(disable_service_logs=True),
             ExtractKeyPhrasesAction(disable_service_logs=True),
@@ -719,6 +735,21 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             RecognizeLinkedEntitiesAction(disable_service_logs=True),
             AnalyzeSentimentAction(disable_service_logs=True),
             ExtractSummaryAction(disable_service_logs=True),
+            SingleCategoryClassifyAction(
+                project_name=textanalytics_single_category_classify_project_name,
+                deployment_name=textanalytics_single_category_classify_deployment_name,
+                disable_service_logs=True
+            ),
+            MultiCategoryClassifyAction(
+                project_name=textanalytics_multi_category_classify_project_name,
+                deployment_name=textanalytics_multi_category_classify_deployment_name,
+                disable_service_logs=True
+            ),
+            RecognizeCustomEntitiesAction(
+                project_name=textanalytics_custom_entities_project_name,
+                deployment_name=textanalytics_custom_entities_deployment_name,
+                disable_service_logs=True
+            )
         ]
 
         for action in actions:
@@ -803,20 +834,135 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
-    async def test_multiple_of_same_action_fail(self, client):
-        docs = [{"id": "1", "language": "en", "text": "I did not like the hotel we stayed at."},
-                {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at."}]
+    async def test_multiple_of_same_action(self, client):
+        docs = [
+            {"id": "28", "text": "My SSN is 859-98-0987. Here is another sentence."},
+            {"id": "3", "text": "Is 998.214.865-68 your Brazilian CPF number? Here is another sentence."},
+            {"id": "5", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+        ]
 
-        with pytest.raises(ValueError) as e:
-            await client.begin_analyze_actions(
+        actions = [
+            AnalyzeSentimentAction(),
+            RecognizePiiEntitiesAction(),
+            RecognizeEntitiesAction(),
+            RecognizeLinkedEntitiesAction(),
+            ExtractSummaryAction(order_by="Rank"),
+            RecognizePiiEntitiesAction(categories_filter=[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER]),
+            ExtractKeyPhrasesAction(),
+            RecognizeEntitiesAction(),
+            AnalyzeSentimentAction(show_opinion_mining=True),
+            RecognizeLinkedEntitiesAction(),
+            ExtractSummaryAction(max_sentence_count=1),
+            ExtractKeyPhrasesAction(),
+        ]
+        async with client:
+            response = await (await client.begin_analyze_actions(
                 docs,
-                actions=[
-                    RecognizePiiEntitiesAction(domain_filter="phi"),
-                    RecognizePiiEntitiesAction(),
-                ],
+                actions=actions,
                 polling_interval=self._interval(),
-            )
-        assert "Multiple of the same action is not currently supported." in str(e.value)
+            )).result()
+
+            action_results = []
+            async for p in response:
+                action_results.append(p)
+        assert len(action_results) == len(docs)
+        assert len(action_results[0]) == len(actions)
+        assert len(action_results[1]) == len(actions)
+        assert len(action_results[2]) == len(actions)
+
+        for idx, action_result in enumerate(action_results):
+            if idx == 0:
+                doc_id = "28"
+            elif idx == 1:
+                doc_id = "3"
+            else:
+                doc_id = "5"
+
+            assert isinstance(action_result[0], AnalyzeSentimentResult)
+            assert not all([sentence.mined_opinions for sentence in action_result[0].sentences])
+            assert action_result[0].id == doc_id
+
+            assert isinstance(action_result[1], RecognizePiiEntitiesResult)
+            assert action_result[1].id == doc_id
+
+            assert isinstance(action_result[2], RecognizeEntitiesResult)
+            assert action_result[2].id == doc_id
+
+            assert isinstance(action_result[3], RecognizeLinkedEntitiesResult)
+            assert action_result[3].id == doc_id
+
+            assert isinstance(action_result[4], ExtractSummaryResult)
+            previous_score = 1.0
+            for sentence in action_result[4].sentences:
+                assert sentence.rank_score <= previous_score
+                previous_score = sentence.rank_score
+            assert action_result[4].id == doc_id
+
+            assert isinstance(action_result[5], RecognizePiiEntitiesResult)
+            assert action_result[5].id == doc_id
+            if doc_id == "28":
+                assert action_result[5].entities
+            else:
+                assert not action_result[5].entities
+
+            assert isinstance(action_result[6], ExtractKeyPhrasesResult)
+            assert action_result[6].id == doc_id
+
+            assert isinstance(action_result[7], RecognizeEntitiesResult)
+            assert action_result[7].id == doc_id
+
+            assert isinstance(action_result[8], AnalyzeSentimentResult)
+            assert [sentence.mined_opinions for sentence in action_result[0].sentences]
+            assert action_result[8].id == doc_id
+
+            assert isinstance(action_result[9], RecognizeLinkedEntitiesResult)
+            assert action_result[9].id == doc_id
+
+            assert isinstance(action_result[10], ExtractSummaryResult)
+            assert len(action_result[10].sentences) == 1
+
+            assert isinstance(action_result[11], ExtractKeyPhrasesResult)
+            assert action_result[11].id == doc_id
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_multiple_of_same_action_with_partial_results(self, client):
+        docs = [{"id": "5", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+                {"id": "2", "text": ""}]
+
+        actions = [
+            ExtractSummaryAction(max_sentence_count=3),
+            RecognizePiiEntitiesAction(),
+            ExtractSummaryAction(max_sentence_count=5)
+        ]
+
+        async with client:
+            response = await (await client.begin_analyze_actions(
+                docs,
+                actions=actions,
+                polling_interval=self._interval(),
+            )).result()
+
+            action_results = []
+            async for p in response:
+                action_results.append(p)
+
+        assert len(action_results) == len(docs)
+        assert len(action_results[0]) == len(actions)
+        assert len(action_results[1]) == len(actions)
+
+        # first doc
+        assert isinstance(action_results[0][0], ExtractSummaryResult)
+        assert action_results[0][0].id == "5"
+        assert isinstance(action_results[0][1], RecognizePiiEntitiesResult)
+        assert action_results[0][1].id == "5"
+        assert isinstance(action_results[0][2], ExtractSummaryResult)
+        assert action_results[0][2].id == "5"
+
+        # second doc
+        assert action_results[1][0].is_error
+        assert action_results[1][1].is_error
+        assert action_results[1][2].is_error
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -935,3 +1081,240 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
             assert not document_results[1][0].is_error
             assert isinstance(document_results[1][0], ExtractSummaryResult)
+
+    @TextAnalyticsPreparer()
+    async def test_single_category_classify(
+            self,
+            textanalytics_custom_text_endpoint,
+            textanalytics_custom_text_key,
+            textanalytics_single_category_classify_project_name,
+            textanalytics_single_category_classify_deployment_name
+    ):
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        docs = [
+            {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+            {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
+            {"id": "3", "language": "en", "text": "I need a reservation for an indoor restaurant in China. Please don't stop the music. Play music and add it to my playlist"},
+        ]
+
+        async with client:
+            response = await (await client.begin_analyze_actions(
+                docs,
+                actions=[
+                    SingleCategoryClassifyAction(
+                        project_name=textanalytics_single_category_classify_project_name,
+                        deployment_name=textanalytics_single_category_classify_deployment_name
+                    ),
+                ],
+                show_stats=True,
+                polling_interval=self._interval(),
+            )).result()
+
+            document_results = []
+            async for doc in response:
+                document_results.append(doc)
+        for doc_result in document_results:
+            for result in doc_result:
+                assert result.id
+                assert not result.is_error
+                assert not result.warnings
+                assert result.statistics
+                assert result.classification.category
+                assert result.classification.confidence_score
+
+    @TextAnalyticsPreparer()
+    async def test_multi_category_classify(
+            self,
+            textanalytics_custom_text_endpoint,
+            textanalytics_custom_text_key,
+            textanalytics_multi_category_classify_project_name,
+            textanalytics_multi_category_classify_deployment_name
+    ):
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        docs = [
+            {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+            {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
+            {"id": "3", "language": "en", "text": "I need a reservation for an indoor restaurant in China. Please don't stop the music. Play music and add it to my playlist"},
+        ]
+
+        async with client:
+            response = await (await client.begin_analyze_actions(
+                docs,
+                actions=[
+                    MultiCategoryClassifyAction(
+                        project_name=textanalytics_multi_category_classify_project_name,
+                        deployment_name=textanalytics_multi_category_classify_deployment_name
+                    ),
+                ],
+                show_stats=True,
+                polling_interval=self._interval(),
+            )).result()
+
+            document_results = []
+            async for doc in response:
+                document_results.append(doc)
+
+        for doc_result in document_results:
+            for result in doc_result:
+                assert result.id
+                assert not result.is_error
+                assert not result.warnings
+                assert result.statistics
+                for classification in result.classifications:
+                    assert classification.category
+                    assert classification.confidence_score
+
+    @TextAnalyticsPreparer()
+    async def test_recognize_custom_entities(
+            self,
+            textanalytics_custom_text_endpoint,
+            textanalytics_custom_text_key,
+            textanalytics_custom_entities_project_name,
+            textanalytics_custom_entities_deployment_name
+    ):
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        docs = [
+            {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+            {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
+            {"id": "3", "language": "en", "text": "I need a reservation for an indoor restaurant in China. Please don't stop the music. Play music and add it to my playlist"},
+        ]
+
+        async with client:
+            response = await (await client.begin_analyze_actions(
+                docs,
+                actions=[
+                    RecognizeCustomEntitiesAction(
+                        project_name=textanalytics_custom_entities_project_name,
+                        deployment_name=textanalytics_custom_entities_deployment_name
+                    )
+                ],
+                show_stats=True,
+                polling_interval=self._interval(),
+            )).result()
+
+            document_results = []
+            async for doc in response:
+                document_results.append(doc)
+
+        for doc_result in document_results:
+            for result in doc_result:
+                assert result.id
+                assert not result.is_error
+                assert not result.warnings
+                assert result.statistics
+                for entity in result.entities:
+                    assert entity.text
+                    assert entity.category
+                    assert entity.offset is not None
+                    assert entity.length is not None
+                    assert entity.confidence_score is not None
+
+    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/12409536 and https://github.com/Azure/azure-sdk-for-python/issues/21369")
+    @TextAnalyticsPreparer()
+    async def test_custom_partial_error(
+            self,
+            textanalytics_custom_text_endpoint,
+            textanalytics_custom_text_key,
+            textanalytics_single_category_classify_project_name,
+            textanalytics_single_category_classify_deployment_name,
+            textanalytics_multi_category_classify_project_name,
+            textanalytics_multi_category_classify_deployment_name,
+            textanalytics_custom_entities_project_name,
+            textanalytics_custom_entities_deployment_name
+    ):
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        docs = [
+            {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+            {"id": "2", "language": "en", "text": ""},
+        ]
+        async with client:
+            response = await (await client.begin_analyze_actions(
+                docs,
+                actions=[
+                    SingleCategoryClassifyAction(
+                        project_name=textanalytics_single_category_classify_project_name,
+                        deployment_name=textanalytics_single_category_classify_deployment_name
+                    ),
+                    MultiCategoryClassifyAction(
+                        project_name=textanalytics_multi_category_classify_project_name,
+                        deployment_name=textanalytics_multi_category_classify_deployment_name
+                    ),
+                    RecognizeCustomEntitiesAction(
+                        project_name=textanalytics_custom_entities_project_name,
+                        deployment_name=textanalytics_custom_entities_deployment_name
+                    )
+                ],
+                show_stats=True,
+                polling_interval=self._interval(),
+            )).result()
+
+            document_results = []
+            async for doc in response:
+                document_results.append(doc)
+
+        assert len(document_results) == 2
+        assert isinstance(document_results[0][0], SingleCategoryClassifyResult)
+        assert isinstance(document_results[0][1], MultiCategoryClassifyResult)
+        assert isinstance(document_results[0][2], RecognizeCustomEntitiesResult)
+        assert document_results[1][0].is_error
+        assert document_results[1][1].is_error
+        assert document_results[1][2].is_error
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_analyze_continuation_token(self, client):
+        docs = [
+            {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+            {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
+            {"id": "3", "text": ""},
+            {"id": "4", "language": "en", "text": "I need a reservation for an indoor restaurant in China. Please don't stop the music. Play music and add it to my playlist"},
+        ]
+
+        actions = [
+            RecognizeEntitiesAction(),
+            RecognizePiiEntitiesAction(),
+            AnalyzeSentimentAction(),
+            ExtractKeyPhrasesAction(),
+        ]
+        async with client:
+            initial_poller = await client.begin_analyze_actions(
+                docs,
+                actions=actions,
+                show_stats=True,
+                polling_interval=self._interval(),
+            )
+
+            cont_token = initial_poller.continuation_token()
+
+            poller = await client.begin_analyze_actions(
+                None,
+                None,
+                continuation_token=cont_token,
+                polling_interval=self._interval(),
+            )
+            response = await poller.result()
+
+            action_results = []
+            async for action_result in response:
+                action_results.append(action_result)
+
+            assert len(action_results) == len(docs)
+            action_order = [
+                _AnalyzeActionsType.RECOGNIZE_ENTITIES,
+                _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
+                _AnalyzeActionsType.ANALYZE_SENTIMENT,
+                _AnalyzeActionsType.EXTRACT_KEY_PHRASES,
+            ]
+            document_order = ["1", "2", "3", "4"]
+            for doc_idx, document_results in enumerate(action_results):
+                assert len(document_results) == 4
+                for action_idx, document_result in enumerate(document_results):
+                    if doc_idx == 2:
+                        assert document_result.id == document_order[doc_idx]
+                        assert document_result.is_error
+                    else:
+                        assert document_result.id == document_order[doc_idx]
+                        assert document_result.statistics
+                        assert self.document_result_to_action_type(document_result) == action_order[action_idx]
+
+            await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

@@ -45,7 +45,7 @@ class NetworkInterfaceIPConfigurationsOperations:
         self,
         resource_group_name: str,
         network_interface_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NetworkInterfaceIPConfigurationListResult"]:
         """Get all ip configurations in a network interface.
 
@@ -120,7 +120,7 @@ class NetworkInterfaceIPConfigurationsOperations:
         resource_group_name: str,
         network_interface_name: str,
         ip_configuration_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NetworkInterfaceIPConfiguration":
         """Gets the specified network interface ip configuration.
 

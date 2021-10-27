@@ -47,7 +47,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:
         self,
         resource_group_name: str,
         cross_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ExpressRouteCrossConnectionPeeringList"]:
         """Gets all peerings in a specified ExpressRouteCrossConnection.
 
@@ -122,7 +122,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:
         resource_group_name: str,
         cross_connection_name: str,
         peering_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -166,7 +166,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:
         resource_group_name: str,
         cross_connection_name: str,
         peering_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified peering from the ExpressRouteCrossConnection.
 
@@ -178,8 +178,8 @@ class ExpressRouteCrossConnectionPeeringsOperations:
         :type peering_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -235,7 +235,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:
         resource_group_name: str,
         cross_connection_name: str,
         peering_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExpressRouteCrossConnectionPeering":
         """Gets the specified peering for the ExpressRouteCrossConnection.
 
@@ -298,7 +298,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:
         cross_connection_name: str,
         peering_name: str,
         peering_parameters: "_models.ExpressRouteCrossConnectionPeering",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExpressRouteCrossConnectionPeering":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteCrossConnectionPeering"]
         error_map = {
@@ -357,7 +357,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:
         cross_connection_name: str,
         peering_name: str,
         peering_parameters: "_models.ExpressRouteCrossConnectionPeering",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ExpressRouteCrossConnectionPeering"]:
         """Creates or updates a peering in the specified ExpressRouteCrossConnection.
 
@@ -372,8 +372,8 @@ class ExpressRouteCrossConnectionPeeringsOperations:
         :type peering_parameters: ~azure.mgmt.network.v2019_04_01.models.ExpressRouteCrossConnectionPeering
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ExpressRouteCrossConnectionPeering or the result of cls(response)

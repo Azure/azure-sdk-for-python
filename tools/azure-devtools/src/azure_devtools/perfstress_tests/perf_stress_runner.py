@@ -97,7 +97,8 @@ class PerfStressRunner:
             "--profile", action="store_true", help="Run tests with profiler.  Default is False.", default=False
         )
         per_test_arg_parser.add_argument(
-            "-x", "--test-proxy", help="URI of TestProxy Server"
+            "-x", "--test-proxies", help="URIs of TestProxy Servers (separated by ';')",
+            type=lambda s: s.split(';')
         )
 
         # Per-test args
@@ -142,7 +143,7 @@ class PerfStressRunner:
                     await asyncio.gather(*[test.setup() for test in tests])
                     self.logger.info("")
 
-                    if self.per_test_args.test_proxy:
+                    if self.per_test_args.test_proxies:
                         self.logger.info("=== Record and Start Playback ===")
                         await asyncio.gather(*[test.record_and_start_playback() for test in tests])
                         self.logger.info("")
@@ -162,7 +163,7 @@ class PerfStressRunner:
                 except Exception as e:
                     print("Exception: " + str(e))
                 finally:
-                    if self.per_test_args.test_proxy:
+                    if self.per_test_args.test_proxies:
                         self.logger.info("=== Stop Playback ===")
                         await asyncio.gather(*[test.stop_playback() for test in tests])
                         self.logger.info("")
