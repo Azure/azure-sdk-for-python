@@ -3,7 +3,7 @@
 ## 3.2.0b2 (Unreleased)
 
 ### Features Added
-- Added `get_children` methods on `AnalyzedDocument`, `DocumentEntity`, `DocumentField`, `DocumentLine`, `DocumentKeyValueElement`, `DocumentTable`, `DocumentTableCellElement`.
+- Added `get_children` methods on `AnalyzedDocument`, `DocumentEntity`, `DocumentField`, `DocumentLine`, `DocumentKeyValueElement`, `DocumentTable`, `DocumentTableCell`.
 
 ### Breaking Changes
 - Renamed `DocumentElement` to `DocumentContentElement`.
