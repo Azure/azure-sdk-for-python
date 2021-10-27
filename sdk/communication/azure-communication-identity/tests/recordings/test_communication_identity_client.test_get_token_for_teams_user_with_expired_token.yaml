@@ -9,13 +9,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '13'
+      - '2015'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
       x-ms-date:
-      - Thu, 21 Oct 2021 12:49:12 GMT
+      - Wed, 27 Oct 2021 07:24:26 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -28,9 +28,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Thu, 21 Oct 2021 12:49:12 GMT
+      - Wed, 27 Oct 2021 07:24:26 GMT
       ms-cv:
-      - X6KVyEiq4UqBCPvOM6HbsQ.0
+      - wtS9vfJEq0ClAwVwsIRO/A.0
       request-context:
       - appId=
       strict-transport-security:
@@ -40,7 +40,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 19ms
+      - 27ms
     status:
       code: 401
       message: Unauthorized

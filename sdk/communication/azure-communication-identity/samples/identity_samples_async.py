@@ -125,7 +125,7 @@ class CommunicationIdentityClientSamples(object):
             await identity_client.delete_user(user)
             print(user.properties.get('id') + " deleted")
 
-    async def exchange_teams_user_aad_token(self):
+    async def get_token_for_teams_user(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
             from azure.identity.aio import DefaultAzureCredential
@@ -135,9 +135,9 @@ class CommunicationIdentityClientSamples(object):
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
 
         async with identity_client:    
-            teams_user_aad_token = generate_teams_user_aad_token(m365_app_id=self.m365_app_id, m365_aad_authority=self.m365_aad_authority, m365_aad_tenant=self.m365_aad_tenant, msal_username=self.msal_username, msal_password=self.msal_password, m365_scope=self.m365_scope) 
-            print("AAD access token of a Teams User: " + teams_user_aad_token)
-            tokenresponse = await identity_client.exchange_teams_user_aad_token(teams_user_aad_token)
+            add_token = generate_teams_user_aad_token(m365_app_id=self.m365_app_id, m365_aad_authority=self.m365_aad_authority, m365_aad_tenant=self.m365_aad_tenant, msal_username=self.msal_username, msal_password=self.msal_password, m365_scope=self.m365_scope) 
+            print("AAD access token of a Teams User: " + add_token)
+            tokenresponse = await identity_client.get_token_for_teams_user(add_token)
             print("Token issued with value: " + tokenresponse.token)
 
 async def main():
@@ -147,7 +147,7 @@ async def main():
     await sample.get_token()
     await sample.revoke_tokens()
     await sample.delete_user()
-    await sample.exchange_teams_user_aad_token()
+    await sample.get_token_for_teams_user()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

@@ -28,9 +28,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 21 Oct 2021 12:50:00 GMT
+      - Wed, 27 Oct 2021 07:24:33 GMT
       ms-cv:
-      - sZwG5GfdEEGRbNf7kNhWLA.0
+      - 3z/ZBr0W/UmAFajv2suE1A.0
       request-context:
       - appId=
       strict-transport-security:
@@ -38,7 +38,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 91ms
+      - 86ms
     status:
       code: 201
       message: Created
@@ -61,19 +61,19 @@ interactions:
     uri: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-10-31-preview
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-10-22T12:50:01.0740147+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2021-10-28T07:24:35.199191+00:00"}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
         2021-10-31-preview
       content-length:
-      - '804'
+      - '803'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 21 Oct 2021 12:50:00 GMT
+      - Wed, 27 Oct 2021 07:24:35 GMT
       ms-cv:
-      - KSdOAZlaYkmA+LqjU2z87Q.0
+      - aK27s57Bxk2yy328YGirew.0
       request-context:
       - appId=
       strict-transport-security:
@@ -81,7 +81,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 104ms
+      - 89ms
     status:
       code: 200
       message: OK
@@ -108,9 +108,9 @@ interactions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
         2021-10-31-preview
       date:
-      - Thu, 21 Oct 2021 12:50:01 GMT
+      - Wed, 27 Oct 2021 07:24:35 GMT
       ms-cv:
-      - Twy/W28CPUyc+BBhtNcVnw.0
+      - HszvmpP9sUyW1NKKsfxnYw.0
       request-context:
       - appId=
       strict-transport-security:
@@ -118,7 +118,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 171ms
+      - 161ms
     status:
       code: 204
       message: No Content

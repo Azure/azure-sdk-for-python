@@ -174,21 +174,21 @@ class CommunicationIdentityClient(object):
             **kwargs)
 
     @distributed_trace
-    def exchange_teams_user_aad_token(
+    def get_token_for_teams_user(
             self,
-            teams_user_aad_token, # type: str
+            add_token, # type: str
             **kwargs
         ):
         # type: (...) -> AccessToken
         """Exchanges an AAD access token of a Teams User for a new Communication Identity access token.
 
-        :param teams_user_aad_token: an AAD access token of a Teams User
-        :type teams_user_aad_token: str
+        :param add_token: an AAD access token of a Teams User
+        :type add_token: str
         :return: AccessToken
         :rtype: ~azure.core.credentials.AccessToken
         """
         return self._identity_service_client.communication_identity.exchange_teams_user_access_token(
-            token=teams_user_aad_token,
+            token=add_token,
             cls=lambda pr, u, e: AccessToken(u.token, u.expires_on),
             **kwargs)
     
