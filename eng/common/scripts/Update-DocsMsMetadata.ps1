@@ -28,6 +28,8 @@ Programming language to supply to metadata
 .PARAMETER RepoId
 GitHub repository ID of the SDK. Typically of the form: 'Azure/azure-sdk-for-js'
 
+.PARAMETER CodeOwners
+GitHub identities of the code owners. 
 #>
 
 param(
@@ -41,7 +43,10 @@ param(
   [string]$Language,
 
   [Parameter(Mandatory = $true)]
-  [string]$RepoId
+  [string]$RepoId,
+
+  [Parameter(Mandatory = $true)]
+  [string]$codeOwners
 )
 
 . (Join-Path $PSScriptRoot common.ps1)
@@ -78,11 +83,18 @@ function GetAdjustedReadmeContent($ReadmeContent, $PackageInfo, $PackageMetadata
     $ReadmeContent = $ReadmeContent -replace $releaseReplaceRegex, $replacementPattern
   }
   
+  $author = ""
+  if ($codeOwners) {
+    $author = $codeOwners[0]
+  }
+  elseif (Test-Path '$PSScriptRoot/default-code-owner.txt') {
+    $author = Get-Content '$PSScriptRoot/default-code-owner.txt' -Raw
+  }
   $header = @"
 ---
 title: $foundTitle
 keywords: Azure, $Language, SDK, API, $($PackageInfo.Name), $service
-author: maggiepint
+author: $author
 ms.author: magpint
 ms.date: $date
 ms.topic: reference

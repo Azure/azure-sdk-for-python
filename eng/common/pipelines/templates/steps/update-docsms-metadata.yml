@@ -26,7 +26,10 @@ parameters:
     type: object
     default:
       - '**'
-
+  - name: TargetCodeOwners
+    type: string
+    default:
+      - ''
 steps:
 - template: /eng/common/pipelines/templates/steps/enable-long-path-support.yml
 
@@ -73,7 +76,10 @@ steps:
     parameters:
       WorkingDirectory: $(DocRepoLocation)
       DefaultBranchVariableName: TargetBranchName
-
+- template: /eng/common/pipelines/templates/steps/get-code-owners.yml
+  parameters:
+    TargetUserVariable: "CodeOwners"
+    ServiceDirectory: ${{parameters.ServiceDirectory}}
 - pwsh: |
     $packageInfoJson = '${{ convertToJson(parameters.PackageInfoLocations) }}'.Trim('"').Replace("\\", "/")
     $packageInfoLocations = ConvertFrom-Json $packageInfoJson
@@ -82,6 +88,7 @@ steps:
       -DocRepoLocation "$(DocRepoLocation)" `
       -Language '${{parameters.Language}}' `
       -RepoId '${{ parameters.RepoId }}'
+      -CodeOwners '$(CodeOwners)'
   displayName: Apply Documentation Updates
 
 - template: /eng/common/pipelines/templates/steps/git-push-changes.yml

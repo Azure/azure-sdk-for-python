@@ -1,0 +1,24 @@
+parameters: 
+  TargetUserVariable: 'notspecified'
+  TargetTeamVariable: 'notspecified'
+  TargetLabelVariable: 'notspecified'
+  ServiceDirectory: ''
+  DevOpsFeed: "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
+
+steps:
+  - task: DotNetCoreCLI@2
+    displayName: 'Install CodeOwners Retriever'
+    inputs:
+      command: custom
+      custom: 'tool'
+      arguments: 'install --global --add-source "${{ parameters.DevOpsFeed }}" --version "1.0.0-dev.20211019.1" "Azure.Sdk.Tools.RetrieveCodeOwners"'
+      workingDirectory: '$(Agent.BuildDirectory)'
+
+  - pwsh: |
+      retrieve-codeowners `
+        --target-directory "/sdk/${{ parameters.ServiceDirectory }}/" `
+        --root-directory "$(Build.SourcesDirectory)" `
+        --vso-owning-users "${{ parameters.TargetUserVariable) }}" `
+        --vso-owning-teams "${{ parameters.TargetTeamVariable }}" `
+        --vso-owning-labels "${{ parameters.TargetLabelVariable }}"
+    displayName: 'Add CodeOwners if Present'
