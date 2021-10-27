@@ -924,7 +924,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :param actions: A heterogeneous list of actions to perform on the input documents.
             Each action object encapsulates the parameters used for the particular action type.
             The action results will be in the same order of the input actions.
-            Duplicate actions in list not supported.
         :type actions:
             list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or
             RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or ExtractSummaryAction or
