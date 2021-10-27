@@ -34,7 +34,7 @@ async def sample_analyze_workflow_app_with_params_async():
     from azure.ai.language.conversations.models import (
         AnalysisParameters,
         QuestionAnsweringParameters,
-        DeepstackParameters,
+        ConversationParameters,
     )
 
     # get secrets
@@ -54,7 +54,7 @@ async def sample_analyze_workflow_app_with_params_async():
                     "confidenceScoreThreshold": 0.1
                 }
             ),
-            "SushiOrder": DeepstackParameters(
+            "SushiOrder": ConversationParameters(
                 calling_options={
                     "verbose": True
                 }

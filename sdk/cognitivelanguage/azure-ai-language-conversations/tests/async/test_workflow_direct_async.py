@@ -17,10 +17,10 @@ from azure.ai.language.conversations.models import (
     AnalysisParameters,
     AnalyzeConversationResult,
     QuestionAnsweringParameters,
-    # DeepstackParameters,
-    # WorkflowPrediction,
+    # ConversationParameters,
+    # OrchestratorPrediction,
     # QuestionAnsweringTargetIntentResult,
-    # DSTargetIntentResult,
+    # ConversationTargetIntentResult,
     # LUISTargetIntentResult
 )
 
@@ -59,7 +59,7 @@ class WorkflowAppDirectAsyncTests(AsyncConversationTest):
         # assert
         assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
-        # assert isinstance(result.prediction, WorkflowPrediction)
+        # assert isinstance(result.prediction, OrchestratorPrediction)
         assert result.prediction.project_kind == "workflow"
         assert result.prediction.top_intent == target_intent
         # assert isinstance(result.prediction.intents, QuestionAnsweringTargetIntentResult)
@@ -97,7 +97,7 @@ class WorkflowAppDirectAsyncTests(AsyncConversationTest):
         # assert
         assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
-        # assert isinstance(result.prediction, WorkflowPrediction)
+        # assert isinstance(result.prediction, OrchestratorPrediction)
         assert result.prediction.project_kind == "workflow"
         assert result.prediction.top_intent == target_intent
         # assert isinstance(result.prediction.intents, QuestionAnsweringTargetIntentResult)
@@ -114,7 +114,7 @@ class WorkflowAppDirectAsyncTests(AsyncConversationTest):
             query=query,
             direct_target=target_intent,
             parameters={
-                # "SushiOrder": DeepstackParameters(
+                # "SushiOrder": ConversationParameters(
                 #     calling_options={
                 #        "verbose": True,
                 #     }
@@ -133,10 +133,10 @@ class WorkflowAppDirectAsyncTests(AsyncConversationTest):
         # assert
         assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
-        # assert isinstance(result.prediction, WorkflowPrediction)
+        # assert isinstance(result.prediction, OrchestratorPrediction)
         assert result.prediction.project_kind == "workflow"
         assert result.prediction.top_intent == target_intent
-        # assert isinstance(result.prediction.intents, DSTargetIntentResult)
+        # assert isinstance(result.prediction.intents, ConversationTargetIntentResult)
 
     @pytest.mark.skip(reason="internal server error!")
     @GlobalConversationAccountPreparer()
@@ -150,7 +150,7 @@ class WorkflowAppDirectAsyncTests(AsyncConversationTest):
             query=query,
             direct_target=target_intent,
             parameters={
-                # "SushiOrder": DeepstackParameters(
+                # "SushiOrder": ConversationParameters(
                 #     calling_options={
                 #        "verbose": True,
                 #     }
@@ -169,7 +169,7 @@ class WorkflowAppDirectAsyncTests(AsyncConversationTest):
         # assert
         assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
-        # assert isinstance(result.prediction, WorkflowPrediction)
+        # assert isinstance(result.prediction, OrchestratorPrediction)
         assert result.prediction.project_kind == "workflow"
         assert result.prediction.top_intent == target_intent
         # assert isinstance(result.prediction.intents, LUISTargetIntentResult)

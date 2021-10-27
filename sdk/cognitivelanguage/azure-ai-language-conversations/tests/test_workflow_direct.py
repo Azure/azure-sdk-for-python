@@ -19,11 +19,11 @@ from azure.ai.language.conversations.models import (
     AnalysisParameters,
     AnalyzeConversationResult,
     QuestionAnsweringParameters,
-    # DeepstackParameters,
-    # WorkflowPrediction,
-    # QuestionAnsweringTargetIntentResult,
-    # DSTargetIntentResult,
-    # LUISTargetIntentResult
+    ConversationParameters,
+    OrchestratorPrediction,
+    QuestionAnsweringTargetIntentResult,
+    ConversationTargetIntentResult,
+    LUISTargetIntentResult
 )
 
 
@@ -62,10 +62,10 @@ class WorkflowAppDirectTests(ConversationTest):
         # assert
         assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
-        # assert isinstance(result.prediction, WorkflowPrediction)
+        assert isinstance(result.prediction, OrchestratorPrediction)
         assert result.prediction.project_kind == "workflow"
         assert result.prediction.top_intent == target_intent
-        # assert isinstance(result.prediction.intents, QuestionAnsweringTargetIntentResult)
+        assert isinstance(result.prediction.intents, QuestionAnsweringTargetIntentResult)
 
     @pytest.mark.skip(reason="internal server error!")
     @GlobalConversationAccountPreparer()
@@ -100,10 +100,10 @@ class WorkflowAppDirectTests(ConversationTest):
         # assert
         assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
-        # assert isinstance(result.prediction, WorkflowPrediction)
+        assert isinstance(result.prediction, OrchestratorPrediction)
         assert result.prediction.project_kind == "workflow"
         assert result.prediction.top_intent == target_intent
-        # assert isinstance(result.prediction.intents, QuestionAnsweringTargetIntentResult)
+        assert isinstance(result.prediction.intents, QuestionAnsweringTargetIntentResult)
 
     @pytest.mark.skip(reason="internal server error!")
     @GlobalConversationAccountPreparer()
@@ -117,11 +117,11 @@ class WorkflowAppDirectTests(ConversationTest):
             query=query,
             direct_target=target_intent,
             parameters={
-                # "SushiOrder": DeepstackParameters(
-                #     calling_options={
-                #        "verbose": True,
-                #     }
-                # )
+                "SushiOrder": ConversationParameters(
+                    calling_options={
+                       "verbose": True,
+                    }
+                )
             }
         )
 
@@ -136,10 +136,10 @@ class WorkflowAppDirectTests(ConversationTest):
         # assert
         assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
-        # assert isinstance(result.prediction, WorkflowPrediction)
+        assert isinstance(result.prediction, OrchestratorPrediction)
         assert result.prediction.project_kind == "workflow"
         assert result.prediction.top_intent == target_intent
-        # assert isinstance(result.prediction.intents, DSTargetIntentResult)
+        assert isinstance(result.prediction.intents, ConversationTargetIntentResult)
 
 
     @pytest.mark.skip(reason="internal server error!")
@@ -154,11 +154,11 @@ class WorkflowAppDirectTests(ConversationTest):
             query=query,
             direct_target=target_intent,
             parameters={
-                # "SushiOrder": DeepstackParameters(
-                #     calling_options={
-                #        "verbose": True,
-                #     }
-                # )
+                "SushiOrder": ConversationParameters(
+                    calling_options={
+                       "verbose": True,
+                    }
+                )
             }
         )
 
@@ -173,7 +173,7 @@ class WorkflowAppDirectTests(ConversationTest):
         # assert
         assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
-        # assert isinstance(result.prediction, WorkflowPrediction)
+        assert isinstance(result.prediction, OrchestratorPrediction)
         assert result.prediction.project_kind == "workflow"
         assert result.prediction.top_intent == target_intent
-        # assert isinstance(result.prediction.intents, LUISTargetIntentResult)
+        assert isinstance(result.prediction.intents, LUISTargetIntentResult)

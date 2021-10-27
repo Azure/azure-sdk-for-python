@@ -31,6 +31,7 @@ class ConversationAppTests(ConversationTest):
         query = "One california maki please."
         input = AnalysisParameters(
             query=query,
+            api_version="2021-11-01-preview"
         )
 
         # analyze quey
@@ -64,6 +65,7 @@ class ConversationAppTests(ConversationTest):
         query = "One california maki please."
         params = {
             "query": query,
+            "api_version": "2021-11-01-preview"
         }
 
         # analyze quey

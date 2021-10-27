@@ -19,11 +19,11 @@ from azure.ai.language.conversations.models import (
     AnalysisParameters,
     AnalyzeConversationResult,
     QuestionAnsweringParameters,
-    # DeepstackParameters,
-    # DeepstackCallingOptions,
-    # QuestionAnsweringTargetIntentResult,
-    # WorkflowPrediction,
-    # DSTargetIntentResult
+    ConversationParameters,
+    ConversationCallingOptions,
+    QuestionAnsweringTargetIntentResult,
+    OrchestratorPrediction,
+    ConversationTargetIntentResult
 )
 
 class WorkflowAppTests(ConversationTest):
@@ -45,10 +45,10 @@ class WorkflowAppTests(ConversationTest):
             # assert
             assert isinstance(result, AnalyzeConversationResult)
             assert result.query == query
-            # assert isinstance(result.prediction, WorkflowPrediction)
+            assert isinstance(result.prediction, OrchestratorPrediction)
             assert result.prediction.project_kind == "workflow"
             assert result.prediction.top_intent == "SushiMaking"
-            # assert isinstance(result.prediction.intents, QuestionAnsweringTargetIntentResult)
+            assert isinstance(result.prediction.intents, QuestionAnsweringTargetIntentResult)
 
             # analyze query
             query = "I will have sashimi"
@@ -61,10 +61,10 @@ class WorkflowAppTests(ConversationTest):
             # assert
             assert isinstance(result, AnalyzeConversationResult)
             assert result.query == query
-            # assert isinstance(result.prediction, WorkflowPrediction)
+            assert isinstance(result.prediction, OrchestratorPrediction)
             assert result.prediction.project_kind == "workflow"
             # assert result.prediction.top_intent == "SushiOrder" --> wrong top intent!
-            # assert isinstance(result.prediction.intents, DSTargetIntentResult)
+            assert isinstance(result.prediction.intents, ConversationTargetIntentResult)
 
 
     @GlobalConversationAccountPreparer()
@@ -82,11 +82,11 @@ class WorkflowAppTests(ConversationTest):
                         "confidenceScoreThreshold": 0.1
                     }
                 ),
-                # "SushiOrder": DeepstackParameters(
-                #     calling_options={
-                #         "verbose": True
-                #     }
-                # )
+                "SushiOrder": ConversationParameters(
+                    calling_options={
+                        "verbose": True
+                    }
+                )
             }
         )
 
@@ -102,10 +102,10 @@ class WorkflowAppTests(ConversationTest):
         # assert
         assert isinstance(result, AnalyzeConversationResult)
         # assert result.query == query --> weird behavior here!
-        # assert isinstance(result.prediction, WorkflowPrediction)
+        assert isinstance(result.prediction, OrchestratorPrediction)
         assert result.prediction.project_kind == "workflow"
         assert result.prediction.top_intent == "SushiMaking"
-        # assert isinstance(result.prediction.intents, QuestionAnsweringTargetIntentResult)
+        assert isinstance(result.prediction.intents, QuestionAnsweringTargetIntentResult)
 
 
     @GlobalConversationAccountPreparer()
@@ -123,11 +123,11 @@ class WorkflowAppTests(ConversationTest):
                         "confidence_score_threshold":0.1
                     }
                 ),
-                # "SushiOrder": DeepstackParameters(
-                #     calling_options=DeepstackCallingOptions(
-                #         verbose=True
-                #     )
-                # )
+                "SushiOrder": ConversationParameters(
+                    calling_options=ConversationCallingOptions(
+                        verbose=True
+                    )
+                )
             }
         )
 
@@ -143,7 +143,7 @@ class WorkflowAppTests(ConversationTest):
         # assert
         assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
-        # assert isinstance(result.prediction, WorkflowPrediction)
+        assert isinstance(result.prediction, OrchestratorPrediction)
         assert result.prediction.project_kind == "workflow"
         assert result.prediction.top_intent == "SushiMaking"
-        # assert isinstance(result.prediction.intents, QuestionAnsweringTargetIntentResult)
+        assert isinstance(result.prediction.intents, QuestionAnsweringTargetIntentResult)

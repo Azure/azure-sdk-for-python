@@ -16,6 +16,7 @@ from azure.ai.language.conversations.aio import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
     AnalysisParameters,
     AnalyzeConversationResult,
+    ConversationPrediction
 )
 
 
@@ -42,7 +43,7 @@ class ConversationAppAsyncTests(AsyncConversationTest):
         # assert
         assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
-        # assert isinstance(result.prediction, DeepstackPrediction)
+        assert isinstance(result.prediction, ConversationPrediction)
         assert result.prediction.project_kind == 'conversation'
         assert result.prediction.top_intent == 'Order'
         assert len(result.prediction.entities) > 0
@@ -74,7 +75,7 @@ class ConversationAppAsyncTests(AsyncConversationTest):
         # assert
         assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
-        # assert isinstance(result.prediction, DeepstackPrediction)
+        assert isinstance(result.prediction, ConversationPrediction)
         assert result.prediction.project_kind == 'conversation'
         assert result.prediction.top_intent == 'Order'
         assert len(result.prediction.entities) > 0
