@@ -2,6 +2,7 @@ variables:
   NugetSecurityAnalysisWarningLevel: 'none'
   skipComponentGovernanceDetection: 'true'
   PythonVersion: '3.7'
+  System.Debug: 'true'
 
 pool:
   name: "azsdk-pool-mms-ubuntu-2004-general"
@@ -40,4 +41,7 @@ steps:
       STORAGE_CONNECTION_STRING: $(storage-connection-string)
     displayName: Run perf tests
 
-  # TODO: Add results.json to build artifacts
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: azure-sdk-tools/tools/perf-automation/Azure.Sdk.Tools.PerfAutomation/results
+      artifactName: results
