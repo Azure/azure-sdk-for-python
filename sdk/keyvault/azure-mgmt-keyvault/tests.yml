@@ -5,7 +5,7 @@ stages:
     parameters:
       ServiceDirectory: keyvault
       BuildTargetingString: azure-mgmt-keyvault
-      AllocateResourceGroup: true
+      AllocateResourceGroup: false
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
