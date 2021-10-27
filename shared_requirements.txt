@@ -169,7 +169,7 @@ backports.functools-lru-cache >= 1.6.4; python_version == "2.7"
 #override azure-security-attestation msrest>=0.6.21
 #override azure-security-attestation azure-core<2.0.0,>=1.8.2
 #override azure-data-tables msrest>=0.6.19
-#override azure-schemaregistry azure-core<2.0.0,>=1.19.0
+#override azure-schemaregistry azure-core<2.0.0,>=1.20.0
 opencensus>=0.6.0
 opencensus-ext-threading
 opencensus-ext-azure>=0.3.1
