@@ -37,7 +37,7 @@ steps:
 
   - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
   
-  - template: /eng/common/pipelines/templates/steps/targeting-string-resolve.yml
+  - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
     parameters:
       BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
