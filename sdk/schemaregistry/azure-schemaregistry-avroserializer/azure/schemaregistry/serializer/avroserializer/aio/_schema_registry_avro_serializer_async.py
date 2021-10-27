@@ -65,7 +65,7 @@ class AvroSerializer(object):
             )
 
     async def __aenter__(self):
-        # type: () -> SchemaRegistryAvroSerializer
+        # type: () -> AvroSerializer
         await self._schema_registry_client.__aenter__()
         return self
 

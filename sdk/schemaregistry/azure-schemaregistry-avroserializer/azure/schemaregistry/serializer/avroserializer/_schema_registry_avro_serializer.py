@@ -71,7 +71,7 @@ class AvroSerializer(object):
         )
 
     def __enter__(self):
-        # type: () -> SchemaRegistryAvroSerializer
+        # type: () -> AvroSerializer
         self._schema_registry_client.__enter__()
         return self
 
