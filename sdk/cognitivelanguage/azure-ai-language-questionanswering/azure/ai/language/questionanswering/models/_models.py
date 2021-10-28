@@ -421,7 +421,7 @@ class MetadataFilter(msrest.serialization.Model):
     """Find QnAs that are associated with the given list of metadata.
 
     :ivar metadata:
-    :vartype metadata: list[tuple[str]]
+    :vartype metadata: list[tuple[str, str]]
     :ivar logical_operation: Operation used to join metadata filters. Possible values include:
      "AND", "OR".
     :vartype logical_operation: str or
@@ -429,14 +429,14 @@ class MetadataFilter(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "metadata": {"key": "metadata", "type": "[[str]]"},
+        "metadata": {"key": "metadata", "type": "[object]"},
         "logical_operation": {"key": "logicalOperation", "type": "str"},
     }
 
     def __init__(self, **kwargs):
         """
         :keyword metadata:
-        :paramtype metadata: list[tuple[str]]
+        :paramtype metadata: list[tuple[str, str]]
         :keyword logical_operation: Operation used to join metadata filters. Possible values include:
          "AND", "OR".
         :paramtype logical_operation: str or
