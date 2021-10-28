@@ -22,7 +22,7 @@ from azure.core.rest import HttpRequest
 
 from ... import models as _models
 from ...operations._operations import build_query_knowledge_base_request, build_query_text_request
-from ..._patch import _validate_text_records, _get_positional_body, _verify_qna_id_and_question
+from ..._patch import _validate_text_records, _get_positional_body, _verify_qna_id_and_question, _handle_metadata_filter_conversion
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -159,6 +159,7 @@ class QuestionAnsweringClientOperationsMixin:
             include_unstructured_sources=kwargs.pop("include_unstructured_sources", None)
         )
         _verify_qna_id_and_question(options)
+        options = _handle_metadata_filter_conversion(options)
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.KnowledgeBaseAnswers"]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))

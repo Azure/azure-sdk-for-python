@@ -1,0 +1,60 @@
+interactions:
+- request:
+    body: '{"question": "Battery life", "top": 3, "filters": {"metadataFilter": {"metadata":
+      [{"key": "explicitlytaggedheading", "value": "check the battery level"}, {"key":
+      "explicitlytaggedheading", "value": "make your battery last"}], "logicalOperation":
+      "or"}}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '254'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/1.0.0b3 Python/3.9.5 (macOS-11.6-x86_64-i386-64bit)
+    method: POST
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-07-15-preview
+  response:
+    body:
+      string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Check
+        the battery level\"\n      ],\n      \"answer\": \"**Check the battery level**\\n\\nYou
+        can check the battery level from the lock screen or the desktop:\",\n      \"confidenceScore\":
+        0.6544,\n      \"id\": 133,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
+        \     \"metadata\": {\n        \"explicitlytaggedheading\": \"check the battery
+        level\"\n      },\n      \"dialog\": {\n        \"isContextOnly\": false,\n
+        \       \"prompts\": []\n      }\n    },\n    {\n      \"questions\": [\n
+        \       \"Make your battery last\"\n      ],\n      \"answer\": \"**Make your
+        battery last**\\n\\nFor info on how to care for your battery and power supply,
+        conserve power, and make your Surface battery last longer, see [Surface battery
+        and power](http://www.microsoft.com/surface/support/hardware-and-drivers/battery-and-power)
+        on Surface.com.\",\n      \"confidenceScore\": 0.42950000000000005,\n      \"id\":
+        136,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
+        {\n        \"explicitlytaggedheading\": \"make your battery last\"\n      },\n
+        \     \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
+        []\n      }\n    }\n  ]\n}"
+    headers:
+      apim-request-id:
+      - 8f48f294-2767-4589-8dfd-4c93163a23be
+      content-length:
+      - '1143'
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
+      date:
+      - Wed, 27 Oct 2021 16:40:37 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '196'
+    status:
+      code: 200
+      message: OK
+version: 1
