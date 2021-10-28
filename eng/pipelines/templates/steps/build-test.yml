@@ -17,8 +17,13 @@ parameters:
   DevFeedName: 'public/azure-sdk-for-python'
 
 steps:
+  - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+    parameters:
+      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
   - pwsh: |
       gci -r $(Build.ArtifactStagingDirectory)
+    displayName: Dump Artifact Directory
 
   - template: /eng/pipelines/templates/steps/use-python-version.yml
     parameters:
@@ -43,7 +48,7 @@ steps:
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
-        "${{ parameters.BuildTargetingString }}"
+        "$(TargetingString)"
         ${{ parameters.AdditionalTestArgs }}
         ${{ parameters.CoverageArg }}
         --mark_arg="${{ parameters.TestMarkArgument }}"
@@ -94,7 +99,7 @@ steps:
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
-        "${{ parameters.BuildTargetingString }}"
+        "$(TargetingString)"
         --service="${{ parameters.ServiceDirectory }}"
         --toxenv="samples"
     env: ${{ parameters.EnvVars }}

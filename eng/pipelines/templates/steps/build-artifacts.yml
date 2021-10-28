@@ -19,12 +19,18 @@ parameters:
     default: []
 
 steps:
+  - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+    parameters:
+      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
     parameters:
       PackageName: "azure-template"
       ServiceDirectory: "template"
       TestPipeline: ${{ parameters.TestPipeline }}
+
   - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
+
   - script: |
       echo "##vso[build.addbuildtag]Scheduled"
     displayName: 'Tag scheduled builds'
@@ -36,16 +42,6 @@ steps:
       versionSpec: '2.7'
 
   - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
-  
-  - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-    parameters:
-      BuildTargetingString: ${{ parameters.BuildTargetingString }}
-
-  - pwsh: |
-      Write-Host "Parameter: ${{ parameters.BuildTargetingString }}"
-      Write-Host "Coalesced: $[coalesce(variables.BuildTargetingString, parameters.BuildTargetingString)]"
-      Write-Host "New Resolution Method: $(TargetingString)"
-    displayName: "Parameter and Variable Values"
 
   - script: |
       pip install -r eng/ci_tools.txt
@@ -70,6 +66,7 @@ steps:
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       BuildTargetingString: $(TargetingString)
+
   - task: Powershell@2
     inputs:
       filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1

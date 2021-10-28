@@ -9,6 +9,10 @@ parameters:
   ValidateFormatting: false
 
 steps:
+  - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+    parameters:
+      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
   - template: /eng/pipelines/templates/steps/analyze_dependency.yml
 
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
@@ -83,14 +87,14 @@ steps:
     condition: and(succeededOrFailed(), ne(variables['Skip.VerifySdist'],'true'))
     inputs:
      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-     arguments: '"${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}} --toxenv=verifysdist'
+     arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verifysdist'
 
   - task: PythonScript@0
     displayName: 'Verify whl'
     condition: and(succeededOrFailed(), ne(variables['Skip.VerifyWhl'],'true'))
     inputs:
      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-     arguments: '"${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}} --toxenv=verifywhl'
+     arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verifywhl'
 
   - template: run_mypy.yml
     parameters:
@@ -107,7 +111,6 @@ steps:
     - template: run_black.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ValidateFormatting: ${{ parameters.ValidateFormatting }}
 
   - task: DownloadPipelineArtifact@2

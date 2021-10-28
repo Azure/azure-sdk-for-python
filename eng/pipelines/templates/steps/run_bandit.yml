@@ -5,12 +5,16 @@ parameters:
   EnvVars: {}
 
 steps:
+  - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+    parameters:
+      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
   - task: PythonScript@0
     displayName: 'Run Bandit'
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
-        "${{ parameters.BuildTargetingString }}" 
+        "$(TargetingString)" 
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv="bandit"

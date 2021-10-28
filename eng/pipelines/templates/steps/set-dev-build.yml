@@ -3,6 +3,10 @@ parameters:
   ServiceDirectory: ''
 
 steps:
+  - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+    parameters:
+      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
   - template: /eng/common/pipelines/templates/steps/daily-dev-build-variable.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -12,4 +16,4 @@ steps:
     displayName: "Update package versions for dev build"
     inputs:
       scriptPath: 'eng/versioning/version_set_dev.py'
-      arguments: '"${{ parameters.BuildTargetingString }}" --service="${{parameters.ServiceDirectory}}" --build-id="$(Build.BuildNumber)"'
+      arguments: '"$(TargetingString)" --service="${{parameters.ServiceDirectory}}" --build-id="$(Build.BuildNumber)"'

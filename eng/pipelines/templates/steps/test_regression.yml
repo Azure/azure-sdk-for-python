@@ -5,6 +5,10 @@ parameters:
   DevFeedName: 'public/azure-sdk-for-python'
   
 steps:
+  - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+    parameters:
+      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
   - task: UsePythonVersion@0
     displayName: 'Use Python 3.7'
     inputs:
@@ -34,7 +38,7 @@ steps:
     inputs:
       scriptPath: 'scripts/devops_tasks/test_regression.py'
       arguments: >-
-        "${{ parameters.BuildTargetingString }}"
+        "$(TargetingString)"
         --service="${{ parameters.ServiceDirectory }}"
         --whl-dir="${{ parameters.BuildStagingDirectory }}"
         --mark-arg="not cosmosEmulator"
@@ -44,7 +48,7 @@ steps:
     inputs:
       scriptPath: 'scripts/devops_tasks/test_regression.py'
       arguments: >-
-        "${{ parameters.BuildTargetingString }}"
+        "$(TargetingString)"
         --service="${{ parameters.ServiceDirectory }}"
         --whl-dir="${{ parameters.BuildStagingDirectory }}"
         --verify-latest=False
