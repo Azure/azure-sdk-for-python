@@ -8,7 +8,8 @@
 FILE: sample_analyze_conversation_app_language_parm.py
 
 DESCRIPTION:
-    This sample demonstrates how to analyze user query for intents and entities using a conversation project.
+    This sample demonstrates how to analyze user query for intents and entities using
+    a conversation project with a language parameter.
 
     For more info about how to setup a CLU conversation project, see the README.
 
