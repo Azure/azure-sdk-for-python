@@ -1377,48 +1377,17 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             status_code=200,
             headers={"Content-Type": "application/json", "operation-location": "https://fakeurl.com"}
         )
-        response.text = lambda encoding=None: json.dumps(
-            {
-                "jobId": "59678d1c-109e-4d93-a42f-05eb5e063525",
-                "lastUpdateDateTime": "2021-10-21T23:02:34Z",
-                "createdDateTime": "2021-10-21T23:02:27Z",
-                "expirationDateTime": "2021-10-22T23:02:27Z",
-                "status": "partiallyCompleted",
-                "errors": [
-                    {
-                        "code": "InternalServerError",
-                        "message": "1 out of 3 job tasks failed. Failed job tasks : v3.2-preview.2/custom/entities/general."
-                    }
-                ],
-                "tasks": {
-                    "completed": 2,
-                    "failed": 1,
-                    "inProgress": 0,
-                    "total": 3,
-                    "customEntityRecognitionTasks": [
-                        {
-                            "lastUpdateDateTime": "2021-10-21T23:02:34.3218701Z",
-                            "taskName": "2",
-                            "state": "failed"
-                        }
-                    ],
-                    "customSingleClassificationTasks": [
-                        {
-                            "lastUpdateDateTime": "2021-10-21T23:02:29.3641823Z",
-                            "taskName": "0",
-                            "state": "succeeded",
-                        }
-                    ],
-                    "customMultiClassificationTasks": [
-                        {
-                            "lastUpdateDateTime": "2021-10-21T23:02:28.7184297Z",
-                            "taskName": "1",
-                            "state": "succeeded",
-                        }
-                    ]
-                }
-            }
+        path_to_mock_json_response = os.path.abspath(
+            os.path.join(
+                os.path.abspath(__file__),
+                "..",
+                "./mock_test_responses/action_error_no_target.json",
+            )
         )
+        with open(path_to_mock_json_response, "r") as fd:
+            mock_json_response = json.loads(fd.read())
+
+        response.text = lambda encoding=None: json.dumps(mock_json_response)
         response.content_type = "application/json"
         transport = AsyncMockTransport(send=wrap_in_future(lambda request, **kwargs: response))
 
@@ -1473,183 +1442,17 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         )
 
         # a mix of action errors to translate to doc errors, regular doc errors, and a successful response
-        response.text = lambda encoding=None: json.dumps(
-            {
-                "jobId": "59678d1c-109e-4d93-a42f-05eb5e063525",
-                "lastUpdateDateTime": "2021-10-21T23:02:34Z",
-                "createdDateTime": "2021-10-21T23:02:27Z",
-                "expirationDateTime": "2021-10-22T23:02:27Z",
-                "status": "partiallyCompleted",
-                "errors": [
-                    {
-                        "code": "InvalidRequest",
-                        "message": "Some error2",
-                        "target": "#/tasks/entityRecognitionPiiTasks/0"
-                    },
-                    {
-                        "code": "InvalidRequest",
-                        "message": "Some error6",
-                        "target": "#/tasks/entityRecognitionPiiTasks/1"
-                    },
-                    {
-                        "code": "InvalidRequest",
-                        "message": "Some error0",
-                        "target": "#/tasks/entityRecognitionTasks/0"
-                    },
-                    {
-                        "code": "InvalidRequest",
-                        "message": "Some error1",
-                        "target": "#/tasks/keyPhraseExtractionTasks/0"
-                    },
-                    {
-                        "code": "InvalidRequest",
-                        "message": "Some error3",
-                        "target": "#/tasks/entityLinkingTasks/0"
-                    },
-                    {
-                        "code": "InvalidRequest",
-                        "message": "Some error4",
-                        "target": "#/tasks/sentimentAnalysisTasks/0"
-                    },
-                    {
-                        "code": "InvalidRequest",
-                        "message": "Some error5",
-                        "target": "#/tasks/extractiveSummarizationTasks/0"
-                    },
-                    {
-                        "code": "InvalidRequest",
-                        "message": "Some error9",
-                        "target": "#/tasks/customEntityRecognitionTasks/0"
-                    },
-                    {
-                        "code": "InvalidRequest",
-                        "message": "Some error7",
-                        "target": "#/tasks/customSingleClassificationTasks/0"
-                    },
-                    {
-                        "code": "InvalidRequest",
-                        "message": "Some error8",
-                        "target": "#/tasks/customMultiClassificationTasks/0"
-                    }
-                ],
-                "tasks": {
-                    "completed": 1,
-                    "failed": 10,
-                    "inProgress": 0,
-                    "total": 11,
-                    "entityRecognitionTasks": [
-                        {
-                            "lastUpdateDateTime": "2021-03-03T22:39:37.1716697Z",
-                            "taskName": "0",
-                            "state": "failed"
-                        }
-                    ],
-                    "entityRecognitionPiiTasks": [
-                        {
-                            "lastUpdateDateTime": "2021-03-03T22:39:37.1716697Z",
-                            "taskName": "2",
-                            "state": "failed"
-                        },
-                        {
-                            "lastUpdateDateTime": "2021-03-03T22:39:37.1716697Z",
-                            "taskName": "6",
-                            "state": "failed"
-                        }
-                    ],
-                    "keyPhraseExtractionTasks": [
-                        {
-                            "lastUpdateDateTime": "2021-03-03T22:39:37.1716697Z",
-                            "taskName": "1",
-                            "state": "failed"
-                        }
-                    ],
-                    "entityLinkingTasks": [
-                        {
-                            "lastUpdateDateTime": "2021-03-03T22:39:37.1716697Z",
-                            "taskName": "3",
-                            "state": "failed"
-                        }
-                    ],
-                    "sentimentAnalysisTasks": [
-                        {
-                            "lastUpdateDateTime": "2021-03-03T22:39:37.1716697Z",
-                            "taskName": "4",
-                            "state": "failed"
-                        }
-                    ],
-                    "extractiveSummarizationTasks": [
-                        {
-                            "lastUpdateDateTime": "2021-03-03T22:39:37.1716697Z",
-                            "taskName": "5",
-                            "state": "failed"
-                        }
-                    ],
-                    "customEntityRecognitionTasks": [
-                        {
-                            "lastUpdateDateTime": "2021-10-21T23:02:34.3218701Z",
-                            "taskName": "9",
-                            "state": "failed"
-                        }
-                    ],
-                    "customSingleClassificationTasks": [
-                        {
-                            "lastUpdateDateTime": "2021-10-21T23:02:34.3218701Z",
-                            "taskName": "7",
-                            "state": "failed"
-                        },
-                        {
-                            "lastUpdateDateTime": "2021-10-21T23:02:29.3641823Z",
-                            "taskName": "10",
-                            "state": "succeeded",
-                            "results": {
-                                "statistics": {
-                                    "documentsCount": 2,
-                                    "validDocumentsCount": 1,
-                                    "erroneousDocumentsCount": 1,
-                                    "transactionsCount": 1
-                                },
-                                "documents": [
-                                    {
-                                        "id": "1",
-                                        "classification": {
-                                            "category": "RateBook",
-                                            "confidenceScore": 0.76
-                                        },
-                                        "statistics": {
-                                            "charactersCount": 295,
-                                            "transactionsCount": 1
-                                        },
-                                        "warnings": []
-                                    }
-                                ],
-                                "errors": [
-                                    {
-                                        "id": "2",
-                                        "error": {
-                                            "code": "InvalidArgument",
-                                            "message": "Invalid document in request.",
-                                            "innererror": {
-                                                "code": "InvalidDocument",
-                                                "message": "Document text is empty."
-                                            }
-                                        }
-                                    }
-                                ],
-                                "projectName": "single_category_classify_project_name",
-                                "deploymentName": "single_category_classify_project_name"
-                            }
-                        }
-                    ],
-                    "customMultiClassificationTasks": [
-                        {
-                            "lastUpdateDateTime": "2021-10-21T23:02:34.3218701Z",
-                            "taskName": "8",
-                            "state": "failed"
-                        }
-                    ]
-                }
-            }
+        path_to_mock_json_response = os.path.abspath(
+            os.path.join(
+                os.path.abspath(__file__),
+                "..",
+                "./mock_test_responses/action_error_with_targets.json",
+            )
         )
+        with open(path_to_mock_json_response, "r") as fd:
+            mock_json_response = json.loads(fd.read())
+
+        response.text = lambda encoding=None: json.dumps(mock_json_response)
         response.content_type = "application/json"
         transport = AsyncMockTransport(send=wrap_in_future(lambda request, **kwargs: response))
 

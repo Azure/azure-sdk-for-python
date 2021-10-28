@@ -37,6 +37,7 @@ from ._models import (
     RecognizeCustomEntitiesResult,
     SingleCategoryClassifyResult,
     MultiCategoryClassifyResult,
+    ActionPointerKind
 )
 
 
@@ -341,28 +342,29 @@ def _get_property_name_from_task_type(task_type):  # pylint: disable=too-many-re
 
 
 def get_task_from_pointer(task_type):  # pylint: disable=too-many-return-statements
-    if task_type == "entityRecognitionTasks":
+    if task_type == ActionPointerKind.RECOGNIZE_ENTITIES:
         return "entity_recognition_tasks"
-    if task_type == "entityRecognitionPiiTasks":
+    if task_type == ActionPointerKind.RECOGNIZE_PII_ENTITIES:
         return "entity_recognition_pii_tasks"
-    if task_type == "entityLinkingTasks":
+    if task_type == ActionPointerKind.RECOGNIZE_LINKED_ENTITIES:
         return "entity_linking_tasks"
-    if task_type == "sentimentAnalysisTasks":
+    if task_type == ActionPointerKind.ANALYZE_SENTIMENT:
         return "sentiment_analysis_tasks"
-    if task_type == "extractiveSummarizationTasks":
+    if task_type == ActionPointerKind.EXTRACT_SUMMARY:
         return "extractive_summarization_tasks"
-    if task_type == "customEntityRecognitionTasks":
+    if task_type == ActionPointerKind.RECOGNIZE_CUSTOM_ENTITIES:
         return "custom_entity_recognition_tasks"
-    if task_type == "customSingleClassificationTasks":
+    if task_type == ActionPointerKind.SINGLE_CATEGORY_CLASSIFY:
         return "custom_single_classification_tasks"
-    if task_type == "customMultiClassificationTasks":
+    if task_type == ActionPointerKind.MULTI_CATEGORY_CLASSIFY:
         return "custom_multi_classification_tasks"
     return "key_phrase_extraction_tasks"
 
 
 def resolve_action_pointer(pointer):
     import re
-    found = re.search(r"#/tasks/(keyPhraseExtractionTasks|entityRecognitionPiiTasks|entityRecognitionTasks|entityLinkingTasks|sentimentAnalysisTasks|extractiveSummarizationTasks|customEntityRecognitionTasks|customSingleClassificationTasks|customMultiClassificationTasks)/\d+", pointer)  # pylint:disable=line-too-long
+    pointer_union = "|".join(value for value in ActionPointerKind)
+    found = re.search(r"#/tasks/({})/\d+".format(pointer_union), pointer)
     if found:
         index = int(pointer[-1])
         task = pointer.split("#/tasks/")[1].split("/")[0]
