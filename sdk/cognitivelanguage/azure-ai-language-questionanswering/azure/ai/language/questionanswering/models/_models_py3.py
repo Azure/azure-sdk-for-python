@@ -22,7 +22,7 @@ class AnswersFromTextOptions(msrest.serialization.Model):
     :ivar question: Required. User question to query against the given text records.
     :vartype question: str
     :ivar text_documents: Required. Text records to be searched for given question.
-    :vartype text_documents: list[~azure.ai.language.questionanswering.models.TextDocument]
+    :vartype text_documents: list[str or ~azure.ai.language.questionanswering.models.TextDocument]
     :ivar language: Language of the text records. This is BCP-47 representation of a language. For
      example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
      default.
@@ -41,13 +41,18 @@ class AnswersFromTextOptions(msrest.serialization.Model):
     }
 
     def __init__(
-        self, *, question: str, text_documents: List["TextDocument"], language: Optional[str] = None, **kwargs
+        self,
+        *,
+        question: str,
+        text_documents: List[Union[str, "TextDocument"]],
+        language: Optional[str] = None,
+        **kwargs
     ):
         """
         :keyword question: Required. User question to query against the given text records.
         :paramtype question: str
         :keyword text_documents: Required. Text records to be searched for given question.
-        :paramtype text_documents: list[~azure.ai.language.questionanswering.models.TextDocument]
+        :paramtype text_documents: list[str or ~azure.ai.language.questionanswering.models.TextDocument]
         :keyword language: Language of the text records. This is BCP-47 representation of a language.
          For example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
          default.
@@ -612,7 +617,9 @@ class MetadataFilter(msrest.serialization.Model):
         "logical_operation": {"key": "logicalOperation", "type": "str"},
     }
 
-    def __init__(self, *, metadata: Optional[List[Tuple[str, str]]] = None, logical_operation: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, metadata: Optional[List[Tuple[str, str]]] = None, logical_operation: Optional[str] = None, **kwargs
+    ):
         """
         :keyword metadata:
         :paramtype metadata: list[tuple[str, str]]
@@ -633,7 +640,7 @@ class QueryFilters(msrest.serialization.Model):
     :ivar source_filter: Find QnAs that are associated with any of the given list of sources in
      knowledge base.
     :vartype source_filter: list[str]
-    :ivar logical_operation: Logical operation used to join metadata filter with source filter. 
+    :ivar logical_operation: Logical operation used to join metadata filter with source filter.
      Possible values include: "AND", "OR".
     :vartype logical_operation: str
     """

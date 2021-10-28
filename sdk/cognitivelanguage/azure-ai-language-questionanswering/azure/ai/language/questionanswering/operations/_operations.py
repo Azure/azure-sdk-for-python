@@ -23,7 +23,12 @@ from azure.core.tracing.decorator import distributed_trace
 from msrest import Serializer
 
 from .. import models as _models
-from .._patch import _validate_text_records, _get_positional_body, _verify_qna_id_and_question, _handle_metadata_filter_conversion
+from .._patch import (
+    _validate_text_records,
+    _get_positional_body,
+    _verify_qna_id_and_question,
+    _handle_metadata_filter_conversion,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -111,8 +116,7 @@ class QuestionAnsweringClientOperationsMixin(object):
 
     @overload
     def get_answers(
-        self,
-        **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> "_models.AnswersResult"
         pass
@@ -170,7 +174,7 @@ class QuestionAnsweringClientOperationsMixin(object):
             ranker_kind=kwargs.pop("ranker_kind", None),
             filters=kwargs.pop("filters", None),
             short_answer_options=kwargs.pop("short_answer_options", None),
-            include_unstructured_sources=kwargs.pop("include_unstructured_sources", None)
+            include_unstructured_sources=kwargs.pop("include_unstructured_sources", None),
         )
         _verify_qna_id_and_question(options)
         options = _handle_metadata_filter_conversion(options)
@@ -223,8 +227,7 @@ class QuestionAnsweringClientOperationsMixin(object):
 
     @overload
     def get_answers_from_text(
-        self,
-        **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> "_models.AnswersFromTextResult"
         pass
@@ -244,7 +247,7 @@ class QuestionAnsweringClientOperationsMixin(object):
         :keyword question: User question to query against the given text records.
         :paramtype question: str
         :keyword text_documents: Text records to be searched for given question.
-        :paramtype text_documents: list[~azure.ai.language.questionanswering.models.TextDocument]
+        :paramtype text_documents: list[str or ~azure.ai.language.questionanswering.models.TextDocument]
         :keyword language: Language of the text records. This is BCP-47 representation of a language.
          For example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
          default.
@@ -259,7 +262,7 @@ class QuestionAnsweringClientOperationsMixin(object):
             language=kwargs.pop("language", self._default_language),
         )
         try:
-            options['records'] = _validate_text_records(options['records'])
+            options["records"] = _validate_text_records(options["records"])
         except TypeError:
             options.text_documents = _validate_text_records(options.text_documents)
 
