@@ -66,16 +66,16 @@ async def sample_analyze_orchestration_app_conversation_response_async():
 
         print("view conversation result:\n")
 
-        print("view intents:")
-        for intent in top_intent_object.result.prediction.intents:
-            print("\tcategory: {}".format(intent.category))
-            print("\tconfidence score: {}".format(intent.confidence_score))
+        # print("view intents:")
+        # for intent in top_intent_object.result.prediction.intents:
+        #     print("\tcategory: {}".format(intent.category))
+        #     print("\tconfidence score: {}".format(intent.confidence_score))
 
-        print("view entities:")
-        for entity in top_intent_object.result.prediction.entities:
-            print("\tcategory: {}".format(entity.category))
-            print("\ttext: {}".format(entity.text))
-            print("\tconfidence score: {}".format(entity.confidence_score))
+        # print("view entities:")
+        # for entity in top_intent_object.result.prediction.entities:
+        #     print("\tcategory: {}".format(entity.category))
+        #     print("\ttext: {}".format(entity.text))
+        #     print("\tconfidence score: {}".format(entity.confidence_score))
     # [END analyze_orchestration_app_conversation_response_async]
 
 async def main():
