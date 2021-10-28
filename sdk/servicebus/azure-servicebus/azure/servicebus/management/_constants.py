@@ -5,7 +5,6 @@
 
 # Generated API parameters
 API_VERSION_PARAM_NAME = "api-version"
-API_VERSION = "2017-04"
 ENTITY_TYPE_QUEUES = "queues"
 ENTITY_TYPE_TOPICS = "topics"
 LIST_OP_SKIP = "$skip"
