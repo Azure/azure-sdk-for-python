@@ -100,7 +100,7 @@ from azure.ai.language.questionanswering import models as qna
 
 output = client.get_answers(
     question="How long should charging take?",
-    context=qna.models.KnowledgeBaseAnswerRequestContext(
+    context=qna.models.KnowledgeBaseAnswerContext(
         previous_qna_id=previous_answer.qna_id
     ),
     project_name="FAQ",
