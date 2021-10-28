@@ -10,10 +10,6 @@
 - Added `select` property to the following `SearchIndexersClient` operations: `get_data_source_connections`, `get_indexers`, `get_skillsets`.
 - Added operations to `SearchIndexerClient`: `reset_skills`, `reset_documents`.
 
-### Breaking Changes
-
-- `SearchIndexerSkillset.delete_skillset` positional argument `skillset` renamed to `name`.
-
 ### Other Changes
 
 ## 11.3.0b4 (2021-10-05)

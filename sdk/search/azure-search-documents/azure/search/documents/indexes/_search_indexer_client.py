@@ -286,11 +286,12 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         self._client.indexers.reset(name, **kwargs)
 
     @distributed_trace
-    def reset_documents(self, name, keys_or_ids, **kwargs):
+    def reset_documents(self, indexer, keys_or_ids, **kwargs):
+        # type: (Union[str, SearchIndexer], List[str], **Any) -> None
         """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
 
-        :param name: The name of the indexer to reset documents for.
-        :type name: str
+        :param indexer: The indexer to reset documents for.
+        :type indexer: str or ~azure.search.documents.indexes.models.SearchIndexer
         :param keys_or_ids:
         :type keys_or_ids: ~azure.search.documents.indexes.models.DocumentKeysOrIds
         :return: None, or the result of cls(response)
@@ -302,6 +303,10 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         kwargs["keys_or_ids"] = keys_or_ids
+        try:
+            name = indexer.name
+        except AttributeError:
+            name = indexer
         return self._client.indexers.reset_docs(name, **kwargs)
 
     @distributed_trace
@@ -560,14 +565,14 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
 
     @distributed_trace
-    def delete_skillset(self, name, **kwargs):
+    def delete_skillset(self, skillset, **kwargs):
         # type: (Union[str, SearchIndexerSkillset], **Any) -> None
         """Delete a named SearchIndexerSkillset in an Azure Search service. To use access conditions,
         the SearchIndexerSkillset model must be provided instead of the name. It is enough to provide
         the name of the skillset to delete unconditionally
 
-        :param name: The SearchIndexerSkillset to delete
-        :type name: str or ~azure.search.documents.indexes.models.SearchIndexerSkillset
+        :param skillset: The SearchIndexerSkillset to delete
+        :type skillset: str or ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
 
@@ -655,11 +660,12 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
 
     @distributed_trace
-    def reset_skills(self, name, skill_names, **kwargs):
+    def reset_skills(self, skillset, skill_names, **kwargs):
+        # type: (Union[str, SearchIndexerSkillset], List[str], **Any) -> None
         """Reset an existing skillset in a search service.
 
-        :param name: The name of the skillset to reset.
-        :type name: str
+        :param skillset: The SearchIndexerSkillset to reset
+        :type skillset: str or ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :param skill_names: the names of skills to be reset.
         :type skill_names: list[str]
         :return: None, or the result of cls(response)
@@ -667,6 +673,10 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        try:
+            name = skillset.name
+        except AttributeError:
+            name = skillset
         return self._client.skillsets.reset_skills(name, skill_names, **kwargs)
 
 def _validate_skillset(skillset):
