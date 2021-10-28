@@ -13,7 +13,7 @@ interactions:
       Serialization-Type:
       - Avro
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: PUT
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/User.avro?api-version=2020-09-01-preview
   response:
@@ -21,7 +21,7 @@ interactions:
       string: '{"id":"ef6ab31106cc477f8b6d238d83c90f39"}'
     headers:
       content-type: application/json
-      date: Tue, 26 Oct 2021 00:20:17 GMT
+      date: Thu, 28 Oct 2021 23:03:52 GMT
       location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/User.avro/versions/1?api-version=2020-09-01-preview
       schema-id: ef6ab31106cc477f8b6d238d83c90f39
       schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/ef6ab31106cc477f8b6d238d83c90f39?api-version=2020-09-01-preview
@@ -41,7 +41,7 @@ interactions:
       Accept:
       - text/plain; charset=utf-8
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/ef6ab31106cc477f8b6d238d83c90f39?api-version=2020-09-01-preview
   response:
@@ -49,7 +49,7 @@ interactions:
       string: '{"namespace":"thrownaway","name":"User.avro","type":"record","fields":[{"name":"name","type":"string"}]}'
     headers:
       content-type: application/json
-      date: Tue, 26 Oct 2021 00:20:18 GMT
+      date: Thu, 28 Oct 2021 23:03:52 GMT
       location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/User.avro/versions/1?api-version=2020-09-01-preview
       schema-id: ef6ab31106cc477f8b6d238d83c90f39
       schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/ef6ab31106cc477f8b6d238d83c90f39?api-version=2020-09-01-preview
@@ -76,7 +76,7 @@ interactions:
       Serialization-Type:
       - Avro
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: PUT
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/User?api-version=2020-09-01-preview
   response:
@@ -84,7 +84,7 @@ interactions:
       string: '{"id":"3f9fda41a60e4196ab1a6150976ca223"}'
     headers:
       content-type: application/json
-      date: Tue, 26 Oct 2021 00:20:18 GMT
+      date: Thu, 28 Oct 2021 23:03:53 GMT
       location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/User/versions/1?api-version=2020-09-01-preview
       schema-id: 3f9fda41a60e4196ab1a6150976ca223
       schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/3f9fda41a60e4196ab1a6150976ca223?api-version=2020-09-01-preview
@@ -104,7 +104,7 @@ interactions:
       Accept:
       - text/plain; charset=utf-8
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/3f9fda41a60e4196ab1a6150976ca223?api-version=2020-09-01-preview
   response:
@@ -112,7 +112,7 @@ interactions:
       string: '{"name":"User","type":"record","fields":[{"name":"name","type":"string"}]}'
     headers:
       content-type: application/json
-      date: Tue, 26 Oct 2021 00:20:19 GMT
+      date: Thu, 28 Oct 2021 23:03:53 GMT
       location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/User/versions/1?api-version=2020-09-01-preview
       schema-id: 3f9fda41a60e4196ab1a6150976ca223
       schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/3f9fda41a60e4196ab1a6150976ca223?api-version=2020-09-01-preview
