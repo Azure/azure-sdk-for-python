@@ -3,16 +3,20 @@
 Text Analytics is a cloud-based service that provides advanced natural language processing over raw text, and includes the following main features:
 
 - Sentiment Analysis
-- Named Entity Recognition
-- Linked Entity Recognition
-- Personally Identifiable Information (PII) Entity Recognition
+- Entity Recognition (Named, Linked, and Personally Identifiable Information (PII) entities)
 - Language Detection
 - Key Phrase Extraction
 - Multiple Analysis
 - Healthcare Entities Analysis
 - Extractive Text Summarization
+- Custom Entity Recognition
+- Custom Single and Multi Category Classification
 
 [Source code][source_code] | [Package (PyPI)][ta_pypi] | [API reference documentation][ta_ref_docs] | [Product documentation][ta_product_documentation] | [Samples][ta_samples]
+
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 
@@ -75,13 +79,13 @@ Install the Azure Text Analytics client library for Python with [pip][pip]:
 pip install azure-ai-textanalytics --pre
 ```
 
-> Note: This version of the client library defaults to the v3.2-preview.1 version of the service
+> Note: This version of the client library defaults to the v3.2-preview.2 version of the service
 
 This table shows the relationship between SDK versions and supported API versions of the service
 
 | SDK version  | Supported API version of service  |
 | ------------ | --------------------------------- |
-| 5.2.0b1 - Latest beta release | 3.0, 3.1, 3.2-preview.1 (default) |
+| 5.2.0b2 - Latest beta release | 3.0, 3.1, 3.2-preview.2 (default) |
 | 5.1.0 - Latest GA release | 3.0, 3.1 (default) |
 | 5.0.0  | 3.0 |
 
@@ -229,6 +233,10 @@ The following section provides several code snippets covering some of the most c
 - [Detect Language](#detect-language "Detect language")
 - [Healthcare Entities Analysis](#healthcare-entities-analysis "Healthcare Entities Analysis")
 - [Multiple Analysis](#multiple-analysis "Multiple analysis")
+- [Extractive Summarization][extract_summary_sample]
+- [Custom Entity Recognition][recognize_custom_entities_sample]
+- [Custom Single Category Classification][single_category_classify_sample]
+- [Custom Multi Category Classification][multi_category_classify_sample]
 
 ### Analyze sentiment
 
@@ -506,6 +514,9 @@ Note: The Healthcare Entities Analysis service is available in API version v3.1 
 - Key Phrase Extraction
 - Sentiment Analysis
 - Extractive Summarization (see sample [here][extract_summary_sample])
+- Custom Entity Recognition (see sample [here][recognize_custom_entities_sample])
+- Custom Single Category Classification (see sample [here][single_category_classify_sample])
+- Custom Multi Category Classification (see sample [here][multi_category_classify_sample])
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -641,6 +652,9 @@ Common scenarios
 - Healthcare Entities Analysis: [sample_analyze_healthcare_entities.py][analyze_healthcare_entities_sample] ([async version][analyze_healthcare_entities_sample_async])
 - Multiple Analysis: [sample_analyze_actions.py][analyze_sample] ([async version][analyze_sample_async])
 - Extractive text summarization: [sample_extract_summary.py][extract_summary_sample] ([async version][extract_summary_sample_async])
+- Custom Entity Recognition: [sample_recognize_custom_entities.py][recognize_custom_entities_sample] ([async_version][recognize_custom_entities_sample_async])
+- Custom Single Classification: [sample_single_category_classify.py][single_category_classify_sample] ([async_version][single_category_classify_sample_async])
+- Custom Multi Classification: [sample_multi_category_classify.py][multi_category_classify_sample] ([async_version][multi_category_classify_sample_async])
 
 Advanced scenarios
 
@@ -738,6 +752,12 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [opinion_mining_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_sentiment_with_opinion_mining_async.py
 [extract_summary_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_extract_summary.py
 [extract_summary_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_extract_summary_async.py
+[recognize_custom_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_custom_entities.py
+[recognize_custom_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_custom_entities_async.py
+[single_category_classify_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_single_category_classify.py
+[single_category_classify_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_single_category_classify_async.py
+[multi_category_classify_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_multi_category_classify.py
+[multi_category_classify_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_multi_category_classify_async.py
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/

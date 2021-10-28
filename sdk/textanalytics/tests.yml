@@ -13,6 +13,24 @@ stages:
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
+        # temporary env vars for custom text features
+        TEXTANALYTICS_CUSTOM_TEXT_ENDPOINT: $(js-textanalytics-test-service-endpoint)
+        TEXTANALYTICS_CUSTOM_TEXT_KEY: $(js-textanalytics-api-key-new)
+        TEXTANALYTICS_SINGLE_CATEGORY_CLASSIFY_PROJECT_NAME: $(js-single-category-classify-project-name)
+        TEXTANALYTICS_SINGLE_CATEGORY_CLASSIFY_DEPLOYMENT_NAME: $(js-single-category-classify-deployment-name)
+        TEXTANALYTICS_MULTI_CATEGORY_CLASSIFY_PROJECT_NAME: $(js-multi-category-classify-project-name)
+        TEXTANALYTICS_MULTI_CATEGORY_CLASSIFY_DEPLOYMENT_NAME: $(js-multi-category-classify-deployment-name)
+        TEXTANALYTICS_CUSTOM_ENTITIES_PROJECT_NAME: $(js-recognize-custom-entities-project-name)
+        TEXTANALYTICS_CUSTOM_ENTITIES_DEPLOYMENT_NAME: $(js-recognize-custom-entities-deployment-name)
+        # temporary env vars for custom text samples
+        AZURE_TEXT_ANALYTICS_ENDPOINT: $(js-textanalytics-test-service-endpoint)
+        AZURE_TEXT_ANALYTICS_KEY: $(js-textanalytics-api-key-new)
+        SINGLE_CATEGORY_CLASSIFY_PROJECT_NAME: $(js-single-category-classify-project-name)
+        SINGLE_CATEGORY_CLASSIFY_DEPLOYMENT_NAME: $(js-single-category-classify-deployment-name)
+        MULTI_CATEGORY_CLASSIFY_PROJECT_NAME: $(js-multi-category-classify-project-name)
+        MULTI_CATEGORY_CLASSIFY_DEPLOYMENT_NAME: $(js-multi-category-classify-deployment-name)
+        CUSTOM_ENTITIES_PROJECT_NAME: $(js-recognize-custom-entities-project-name)
+        CUSTOM_ENTITIES_DEPLOYMENT_NAME: $(js-recognize-custom-entities-deployment-name)
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
