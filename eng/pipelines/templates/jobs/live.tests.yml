@@ -92,7 +92,7 @@ jobs:
           SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
           SubscriptionConfigurations: ${{ parameters.CloudConfig.SubscriptionConfigurations }}
 
-      - template: ../../../common/TestResources/deploy-test-resources.yml
+      - template: /eng/common/TestResources/deploy-test-resources.yml
         parameters:
           Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
           ServiceDirectory: '${{ parameters.ServiceDirectory }}'
