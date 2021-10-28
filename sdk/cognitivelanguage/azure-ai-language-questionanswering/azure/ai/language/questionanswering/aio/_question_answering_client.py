@@ -16,7 +16,7 @@ from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import QuestionAnsweringClientConfiguration
-from .operations import QuestionAnsweringClientOperationsMixin
+from ._operations import QuestionAnsweringClientOperationsMixin
 
 
 class QuestionAnsweringClient(QuestionAnsweringClientOperationsMixin):

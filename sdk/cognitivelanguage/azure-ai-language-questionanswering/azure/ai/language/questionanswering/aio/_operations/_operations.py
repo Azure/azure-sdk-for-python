@@ -22,7 +22,7 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models as _models
-from ...operations._operations import build_get_answers_from_text_request, build_get_answers_request
+from ..._operations._operations import build_get_answers_from_text_request, build_get_answers_request
 from ..._patch import (
     _validate_text_records,
     _get_positional_body,
