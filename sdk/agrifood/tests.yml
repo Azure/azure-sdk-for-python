@@ -5,7 +5,6 @@ stages:
     parameters:
       Location: westcentralus
       ServiceDirectory: agrifood
-      DeployArmTemplate: true
       Clouds: Public_FarmBeats
       CloudConfig:
         Public_Farmbeats:

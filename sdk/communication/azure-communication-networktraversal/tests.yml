@@ -6,7 +6,6 @@ stages:
       BuildTargetingString: 'azure-communication-networktraversal'
       JobName: networktraversal
       ServiceDirectory: communication
-      DeployArmTemplate: true
       MatrixReplace:
         - TestSamples=.*/true
       CloudConfig:

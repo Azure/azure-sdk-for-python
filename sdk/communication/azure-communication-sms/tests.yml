@@ -6,7 +6,6 @@ stages:
       BuildTargetingString: 'azure-communication-sms'
       JobName: sms
       ServiceDirectory: communication
-      DeployArmTemplate: true
       CloudConfig:
         Public:
           SubscriptionConfigurations:

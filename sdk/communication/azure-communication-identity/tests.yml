@@ -6,7 +6,6 @@ stages:
       BuildTargetingString: 'azure-communication-identity'
       JobName: identity
       ServiceDirectory: communication
-      DeployArmTemplate: true
       MatrixReplace:
         - TestSamples=.*/true
       CloudConfig:

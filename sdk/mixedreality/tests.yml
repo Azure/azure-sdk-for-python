@@ -4,7 +4,6 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: mixedreality
-      DeployArmTemplate: true
       Location: eastus2
       EnvVars:
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)

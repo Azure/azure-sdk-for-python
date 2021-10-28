@@ -16,7 +16,6 @@ stages:
       parameters:
         JobName: ${{ replace(service, '-', '_') }}
         BuildTargetingString: ${{ service }}
-        DeployArmTemplate: true
         Location: 'canadacentral'
 
           # All 5 service stages run in parallel, and with no parallel limits the tests may get throttled.

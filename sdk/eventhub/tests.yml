@@ -5,7 +5,6 @@ stages:
     parameters:
       ServiceDirectory: eventhub
       BuildTargetingString: azure-eventhub*
-      DeployArmTemplate: true
       MatrixReplace:
         - TestSamples=.*/true
       MatrixFilters:

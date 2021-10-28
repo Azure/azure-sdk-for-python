@@ -6,7 +6,6 @@ stages:
       BuildTargetingString: 'azure-communication-chat'
       JobName: chat
       ServiceDirectory: communication
-      DeployArmTemplate: true
       MatrixReplace:
         - TestSamples=.*/true
       CloudConfig:

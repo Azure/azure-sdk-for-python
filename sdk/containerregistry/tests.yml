@@ -5,7 +5,6 @@ stages:
     parameters:
       BuildTargetingString: azure-containerregistry
       ServiceDirectory: containerregistry
-      DeployArmTemplate: true
       SupportedClouds: 'Public,UsGov,China'
       EnvVars:
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)

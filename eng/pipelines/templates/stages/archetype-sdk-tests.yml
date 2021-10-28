@@ -38,9 +38,6 @@ parameters:
   - name: JobName
     type: string
     default: 'Test'
-  - name: DeployArmTemplate
-    type: boolean
-    default: false
   - name: TestTimeoutInMinutes
     type: number
     default: 120
@@ -120,7 +117,6 @@ stages:
               TestMarkArgument: ${{ parameters.TestMarkArgument }}
               InjectedPackages: ${{ parameters.InjectedPackages }}
               BuildDocs: ${{ parameters.BuildDocs }}
-              DeployArmTemplate: ${{ parameters.DeployArmTemplate }}
               TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
             MatrixConfigs:
               # Enumerate platforms and additional platforms based on supported clouds (sparse platform<-->cloud matrix).
