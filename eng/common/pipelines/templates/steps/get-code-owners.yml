@@ -15,7 +15,7 @@ steps:
       workingDirectory: '$(Agent.BuildDirectory)'
 
   - pwsh: |
-      retrieve-codeowners `
+      .\retrieve-codeowners `
         --target-directory "/sdk/${{ parameters.ServiceDirectory }}/" `
         --root-directory "$(Build.SourcesDirectory)" `
         --vso-owning-users "${{ parameters.TargetUserVariable }}" `
