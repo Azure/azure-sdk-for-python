@@ -24,12 +24,10 @@
 """Create, read, update and delete users in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, List, Dict, Union, cast, Iterable, Optional
+from typing import Any, AnyStr, List, Dict, Union, cast, Iterable, Optional
 
-import six
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
-
 
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options
@@ -56,7 +54,7 @@ class UserProxy(object):
 
     def _get_permission_link(self, permission_or_id):
         # type: (Union[Permission, str, Dict[str, Any]]) -> str
-        if isinstance(permission_or_id, six.string_types):
+        if isinstance(permission_or_id, AnyStr):
             return u"{}/permissions/{}".format(self.user_link, permission_or_id)
         try:
             return cast("Permission", permission_or_id).permission_link

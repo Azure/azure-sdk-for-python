@@ -22,9 +22,8 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, List, Optional, Union, Iterable, cast
+from typing import Any, AnyStr, Dict, List, Optional, Union, Iterable, cast
 
-import six
 from azure.core.tracing.decorator import distributed_trace  # pylint: disable=unused-import
 from azure.core.tracing.decorator_async import distributed_trace_async  # type: ignore
 from typing import Any, Dict, List, Optional, Union, Iterable, cast  # pylint: disable=unused-import
@@ -95,13 +94,13 @@ class ContainerProxy(object):
 
     def _get_document_link(self, item_or_link):
         # type: (Union[Dict[str, Any], str]) -> str
-        if isinstance(item_or_link, six.string_types):
+        if isinstance(item_or_link, AnyStr):
             return u"{}/docs/{}".format(self.container_link, item_or_link)
         return item_or_link["_self"]
 
     def _get_conflict_link(self, conflict_or_link):
         # type: (Union[Dict[str, Any], str]) -> str
-        if isinstance(conflict_or_link, six.string_types):
+        if isinstance(conflict_or_link, AnyStr):
             return u"{}/conflicts/{}".format(self.container_link, conflict_or_link)
         return conflict_or_link["_self"]
 

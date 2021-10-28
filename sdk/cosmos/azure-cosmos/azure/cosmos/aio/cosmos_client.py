@@ -22,9 +22,8 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Optional, Union, cast, Iterable, List
+from typing import Any, AnyStr, Dict, Optional, Union, cast, Iterable, List
 
-import six
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 
@@ -164,7 +163,7 @@ class CosmosClient(object):
     @staticmethod
     def _get_database_link(database_or_id):
         # type: (Union[DatabaseProxy, str, Dict[str, str]]) -> str
-        if isinstance(database_or_id, six.string_types):
+        if isinstance(database_or_id, AnyStr):
             return "dbs/{}".format(database_or_id)
         try:
             return cast("DatabaseProxy", database_or_id).database_link

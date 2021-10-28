@@ -26,7 +26,7 @@ import json
 import time
 
 from six.moves.urllib.parse import urlparse
-import six
+from typing import AnyStr
 from azure.core.exceptions import DecodeError  # type: ignore
 
 from .. import exceptions
@@ -111,8 +111,7 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     headers = dict(response.headers)
 
     data = response.body()
-    if data and not six.PY2:
-        # python 3 compatible: convert data from byte to unicode string
+    if data:
         data = data.decode("utf-8")
 
     if response.status_code == 404:
@@ -168,7 +167,7 @@ async def AsynchronousRequest(
     :rtype: tuple of (dict dict)
     """
     request.data = _request_body_from_data(request_data)
-    if request.data and isinstance(request.data, six.string_types):
+    if request.data and isinstance(request.data, AnyStr):
         request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data)
     elif request.data is None:
         request.headers[http_constants.HttpHeaders.ContentLength] = 0

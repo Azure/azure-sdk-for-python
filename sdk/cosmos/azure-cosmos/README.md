@@ -90,6 +90,10 @@ For more information about these resources, see [Working with Azure Cosmos datab
 
 The keyword-argument `enable_cross_partition_query` accepts 2 options: `None` (default) or `True`.
 
+## Note on using queries by id
+
+When using queries that try to find items based on an **id** value, always make sure you are passing in a string type variable. Azure Cosmos DB only allows string id values and if you use any other datatype, this SDK will return no results and no error messages.
+
 ## Limitations
 
 Currently the features below are **not supported**. For alternatives options, check the **Workarounds** section below.

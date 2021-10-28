@@ -22,9 +22,7 @@
 """Create, read, update and delete and execute scripts in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, List, Dict, Union, Iterable, Optional
-
-import six
+from typing import Any, AnyStr, List, Dict, Union, Iterable, Optional
 
 from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options
@@ -55,7 +53,7 @@ class ScriptsProxy(object):
 
     def _get_resource_link(self, script_or_id, typ):
         # type: (Union[Dict[str, Any], str], str) -> str
-        if isinstance(script_or_id, six.string_types):
+        if isinstance(script_or_id, AnyStr):
             return u"{}/{}/{}".format(self.container_link, typ, script_or_id)
         return script_or_id["_self"]
 

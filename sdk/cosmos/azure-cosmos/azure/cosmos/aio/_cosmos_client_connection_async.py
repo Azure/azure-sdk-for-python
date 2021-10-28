@@ -26,8 +26,8 @@
 """
 # https://github.com/PyCQA/pylint/issues/3112
 # Currently pylint is locked to 2.3.3 and this is fixed in 2.4.4
-from typing import Dict, Any, Optional # pylint: disable=unused-import
-import six
+from typing import AnyStr, Dict, Any, Optional # pylint: disable=unused-import
+from six.moves.urllib.parse import urlparse
 from urllib3.util.retry import Retry
 from azure.core.async_paging import AsyncItemPaged
 from azure.core import AsyncPipelineClient
@@ -176,7 +176,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         proxies = kwargs.pop('proxies', {})
         if self.connection_policy.ProxyConfiguration and self.connection_policy.ProxyConfiguration.Host:
             host = self.connection_policy.ProxyConfiguration.Host
-            url = six.moves.urllib.parse.urlparse(host)
+            url = urlparse(host)
             proxy = host if url.port else host + ":" + str(self.connection_policy.ProxyConfiguration.Port)
             proxies.update({url.scheme : proxy})
 
@@ -2267,15 +2267,15 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Default
             or self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Query
         ):
-            if not isinstance(query_body, dict) and not isinstance(query_body, six.string_types):
+            if not isinstance(query_body, dict) and not isinstance(query_body, AnyStr):
                 raise TypeError("query body must be a dict or string.")
             if isinstance(query_body, dict) and not query_body.get("query"):
                 raise ValueError('query body must have valid query text with key "query".')
-            if isinstance(query_body, six.string_types):
+            if isinstance(query_body, AnyStr):
                 return {"query": query_body}
         elif (
             self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.SqlQuery
-            and not isinstance(query_body, six.string_types)
+            and not isinstance(query_body, AnyStr)
         ):
             raise TypeError("query body must be a string.")
         else:
