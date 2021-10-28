@@ -4205,7 +4205,7 @@ def _get_page(pages, page_number):
     raise ValueError("Could not find page to search for elements")
 
 def _get_element_list(parent, element):
-    # type: (DocumentPage, str) -> List[DocumentContentElement, DocumentWord, DocumentLine]
+    # type: (DocumentPage, str) -> List[Union[DocumentContentElement, DocumentWord, DocumentLine]]
     if element == "word":
         return parent.words
     # TODO uncomment once selection marks issue is fixed
