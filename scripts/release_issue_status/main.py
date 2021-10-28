@@ -81,7 +81,7 @@ class IssueStatus:
         self.create_date = str(date.fromtimestamp(self.create_date).strftime('%m-%d'))
         self.target_date = str(datetime.strptime(self.target_date, "%Y-%m-%d").strftime('%m-%d'))
         self.days_from_target = str(self.days_from_target)
-        return '| [#{}]({}) | {} | {} | {} | {} | {} | {} |\n'.format(self.link.split('/')[-1], self.link, self.author,
+        return '| [#{}]({}) | {} | {} | {} | {} | {} | {} | {} | {} |\n'.format(self.link.split('/')[-1], self.link, self.author,
                                                                       self.package, self.assignee, self.bot_advice,
                                                                       self.create_date,
                                                                       self.delay_from_create_date,
