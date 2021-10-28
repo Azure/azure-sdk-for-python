@@ -1,6 +1,9 @@
 interactions:
 - request:
-    body: '{"query": "How do you make sushi rice?"}'
+    body: '{"query": "How do you make sushi rice?", "parameters": {"SushiMaking":
+      {"targetKind": "question_answering", "callingOptions": {"question": "How do
+      you make sushi rice?", "top": 1, "confidence_score_threshold": 0.1}}, "SushiOrder":
+      {"targetKind": "conversation", "callingOptions": {"verbose": true}}}}'
     headers:
       Accept:
       - application/json
@@ -9,7 +12,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '40'
+      - '300'
       Content-Type:
       - application/json
       User-Agent:
@@ -29,17 +32,17 @@ interactions:
         cups\",\"confidenceScore\":0.25120000000000003,\"offset\":77,\"length\":7}}]}},\"SushiOrder\":{\"confidenceScore\":0.7317708,\"targetKind\":\"conversation\"},\"None\":{\"confidenceScore\":0,\"targetKind\":\"non_linked\"}}}}"
     headers:
       apim-request-id:
-      - 6acc2a19-8918-4225-b66e-ce998e501ca7
+      - a7ac4b5e-88d8-4654-91df-71366845c8c5
       cache-control:
       - no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 Oct 2021 20:10:09 GMT
+      - Thu, 28 Oct 2021 15:00:07 GMT
       pragma:
       - no-cache
       request-id:
-      - 6acc2a19-8918-4225-b66e-ce998e501ca7
+      - a7ac4b5e-88d8-4654-91df-71366845c8c5
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -47,7 +50,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '1210'
+      - '641'
     status:
       code: 200
       message: OK
