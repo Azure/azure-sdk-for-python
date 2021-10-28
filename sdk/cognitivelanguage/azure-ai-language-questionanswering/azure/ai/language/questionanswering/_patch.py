@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import six
-
+import copy
 from .models import TextRecord
 
 
@@ -62,3 +62,38 @@ def _verify_qna_id_and_question(query_knowledgebase_options):
         )
     if qna_id and question:
         raise TypeError("You can not specify both `qna_id` and `question`.")
+
+def _handle_metadata_filter_conversion(options_input):
+    options = copy.deepcopy(options_input)
+    filters = options.filters if hasattr(options, "filters") else options.get("filters", {})
+    try:
+        if (
+            filters and
+            filters.metadata_filter and
+            filters.metadata_filter.metadata
+        ):
+            metadata_input = filters.metadata_filter.metadata
+        else:
+            metadata_input = None
+        in_class = True
+    except AttributeError:
+        metadata_input = filters.get("metadataFilter", {}).get("metadata")
+        in_class = False
+    if not metadata_input:
+        return options
+    try:
+        if any(t for t in metadata_input if len(t) != 2):
+            raise ValueError("'metadata' must be a sequence of key-value tuples.")
+    except TypeError:
+        raise ValueError("'metadata' must be a sequence of key-value tuples.")
+
+    metadata_modified = [
+        {"key": m[0], "value": m[1]}
+        for m in metadata_input
+    ]
+    if in_class:
+        filters.metadata_filter.metadata = metadata_modified
+    else:
+        filters["metadataFilter"]["metadata"] = metadata_modified
+    return options
+

@@ -11,8 +11,9 @@ try:
     from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse
-    from ._models_py3 import EventHandlerSettings
-    from ._models_py3 import EventHandlerTemplate
+    from ._models_py3 import EventHandler
+    from ._models_py3 import LiveTraceCategory
+    from ._models_py3 import LiveTraceConfiguration
     from ._models_py3 import LogSpecification
     from ._models_py3 import ManagedIdentity
     from ._models_py3 import ManagedIdentitySettings
@@ -34,6 +35,8 @@ try:
     from ._models_py3 import ProxyResource
     from ._models_py3 import RegenerateKeyParameters
     from ._models_py3 import Resource
+    from ._models_py3 import ResourceLogCategory
+    from ._models_py3 import ResourceLogConfiguration
     from ._models_py3 import ResourceSku
     from ._models_py3 import ServiceSpecification
     from ._models_py3 import ShareablePrivateLinkResourceProperties
@@ -43,11 +46,16 @@ try:
     from ._models_py3 import SignalRServiceUsage
     from ._models_py3 import SignalRServiceUsageList
     from ._models_py3 import SignalRServiceUsageName
+    from ._models_py3 import Sku
+    from ._models_py3 import SkuCapacity
+    from ._models_py3 import SkuList
     from ._models_py3 import SystemData
     from ._models_py3 import TrackedResource
     from ._models_py3 import UpstreamAuthSettings
     from ._models_py3 import UserAssignedIdentityProperty
-    from ._models_py3 import WebPubSubFeature
+    from ._models_py3 import WebPubSubHub
+    from ._models_py3 import WebPubSubHubList
+    from ._models_py3 import WebPubSubHubProperties
     from ._models_py3 import WebPubSubKeys
     from ._models_py3 import WebPubSubNetworkACLs
     from ._models_py3 import WebPubSubResource
@@ -58,8 +66,9 @@ except (SyntaxError, ImportError):
     from ._models import ErrorAdditionalInfo  # type: ignore
     from ._models import ErrorDetail  # type: ignore
     from ._models import ErrorResponse  # type: ignore
-    from ._models import EventHandlerSettings  # type: ignore
-    from ._models import EventHandlerTemplate  # type: ignore
+    from ._models import EventHandler  # type: ignore
+    from ._models import LiveTraceCategory  # type: ignore
+    from ._models import LiveTraceConfiguration  # type: ignore
     from ._models import LogSpecification  # type: ignore
     from ._models import ManagedIdentity  # type: ignore
     from ._models import ManagedIdentitySettings  # type: ignore
@@ -81,6 +90,8 @@ except (SyntaxError, ImportError):
     from ._models import ProxyResource  # type: ignore
     from ._models import RegenerateKeyParameters  # type: ignore
     from ._models import Resource  # type: ignore
+    from ._models import ResourceLogCategory  # type: ignore
+    from ._models import ResourceLogConfiguration  # type: ignore
     from ._models import ResourceSku  # type: ignore
     from ._models import ServiceSpecification  # type: ignore
     from ._models import ShareablePrivateLinkResourceProperties  # type: ignore
@@ -90,11 +101,16 @@ except (SyntaxError, ImportError):
     from ._models import SignalRServiceUsage  # type: ignore
     from ._models import SignalRServiceUsageList  # type: ignore
     from ._models import SignalRServiceUsageName  # type: ignore
+    from ._models import Sku  # type: ignore
+    from ._models import SkuCapacity  # type: ignore
+    from ._models import SkuList  # type: ignore
     from ._models import SystemData  # type: ignore
     from ._models import TrackedResource  # type: ignore
     from ._models import UpstreamAuthSettings  # type: ignore
     from ._models import UserAssignedIdentityProperty  # type: ignore
-    from ._models import WebPubSubFeature  # type: ignore
+    from ._models import WebPubSubHub  # type: ignore
+    from ._models import WebPubSubHubList  # type: ignore
+    from ._models import WebPubSubHubProperties  # type: ignore
     from ._models import WebPubSubKeys  # type: ignore
     from ._models import WebPubSubNetworkACLs  # type: ignore
     from ._models import WebPubSubResource  # type: ignore
@@ -104,11 +120,11 @@ except (SyntaxError, ImportError):
 from ._web_pub_sub_management_client_enums import (
     ACLAction,
     CreatedByType,
-    FeatureFlags,
     KeyType,
     ManagedIdentityType,
     PrivateLinkServiceConnectionStatus,
     ProvisioningState,
+    ScaleType,
     SharedPrivateLinkResourceStatus,
     UpstreamAuthType,
     WebPubSubRequestType,
@@ -120,8 +136,9 @@ __all__ = [
     'ErrorAdditionalInfo',
     'ErrorDetail',
     'ErrorResponse',
-    'EventHandlerSettings',
-    'EventHandlerTemplate',
+    'EventHandler',
+    'LiveTraceCategory',
+    'LiveTraceConfiguration',
     'LogSpecification',
     'ManagedIdentity',
     'ManagedIdentitySettings',
@@ -143,6 +160,8 @@ __all__ = [
     'ProxyResource',
     'RegenerateKeyParameters',
     'Resource',
+    'ResourceLogCategory',
+    'ResourceLogConfiguration',
     'ResourceSku',
     'ServiceSpecification',
     'ShareablePrivateLinkResourceProperties',
@@ -152,11 +171,16 @@ __all__ = [
     'SignalRServiceUsage',
     'SignalRServiceUsageList',
     'SignalRServiceUsageName',
+    'Sku',
+    'SkuCapacity',
+    'SkuList',
     'SystemData',
     'TrackedResource',
     'UpstreamAuthSettings',
     'UserAssignedIdentityProperty',
-    'WebPubSubFeature',
+    'WebPubSubHub',
+    'WebPubSubHubList',
+    'WebPubSubHubProperties',
     'WebPubSubKeys',
     'WebPubSubNetworkACLs',
     'WebPubSubResource',
@@ -164,11 +188,11 @@ __all__ = [
     'WebPubSubTlsSettings',
     'ACLAction',
     'CreatedByType',
-    'FeatureFlags',
     'KeyType',
     'ManagedIdentityType',
     'PrivateLinkServiceConnectionStatus',
     'ProvisioningState',
+    'ScaleType',
     'SharedPrivateLinkResourceStatus',
     'UpstreamAuthType',
     'WebPubSubRequestType',

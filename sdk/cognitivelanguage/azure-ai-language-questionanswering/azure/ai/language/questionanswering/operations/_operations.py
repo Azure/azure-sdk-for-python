@@ -22,7 +22,7 @@ from azure.core.rest import HttpRequest
 from msrest import Serializer
 
 from .. import models as _models
-from .._patch import _validate_text_records, _get_positional_body, _verify_qna_id_and_question
+from .._patch import _validate_text_records, _get_positional_body, _verify_qna_id_and_question, _handle_metadata_filter_conversion
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -217,6 +217,7 @@ class QuestionAnsweringClientOperationsMixin(object):
             include_unstructured_sources=kwargs.pop("include_unstructured_sources", None)
         )
         _verify_qna_id_and_question(options)
+        options = _handle_metadata_filter_conversion(options)
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.KnowledgeBaseAnswers"]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))

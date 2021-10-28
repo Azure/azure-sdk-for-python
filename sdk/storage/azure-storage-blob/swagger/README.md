@@ -129,3 +129,14 @@ directive:
         }
     }
 ```
+
+### Change to OrMetadata
+``` yaml
+directive:
+- from: swagger-document
+  where: $.definitions.BlobItemInternal
+  transform: |
+    $.properties.OrMetadata = $.properties.ObjectReplicationMetadata;
+    $.properties.OrMetadata["x-ms-client-name"] = "ObjectReplicationMetadata";
+    delete $.properties.ObjectReplicationMetadata;
+```

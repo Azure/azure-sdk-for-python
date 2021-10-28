@@ -294,8 +294,6 @@ class NetworkManagementClientOperationsMixin(object):
             from ..v2017_03_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2017-08-01':
-            from ..v2017_08_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2017-10-01':

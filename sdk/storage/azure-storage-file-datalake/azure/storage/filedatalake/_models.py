@@ -186,7 +186,7 @@ class FileProperties(DictMixin):
         self.content_settings = ContentSettings(**kwargs)
 
 
-class PathProperties(object):
+class PathProperties(DictMixin):
     """Path properties listed by get_paths api.
 
     :ivar str name: the full path for a file or directory.
