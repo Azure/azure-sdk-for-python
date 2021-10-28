@@ -25,7 +25,7 @@ from ...aio._utils_async import get_async_authentication_policy
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from .._generated.models import SearchIndexer, SearchIndexerStatus
+    from .._generated.models import SearchIndexer, SearchIndexerStatus, DocumentKeysOrIds
     from typing import Any, Optional, Sequence
     from azure.core.credentials_async import AsyncTokenCredential
 
@@ -280,7 +280,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
     @distributed_trace_async
     async def reset_documents(self, indexer, keys_or_ids, **kwargs):
-        # type: (Union[str, SearchIndexer], List[str], **Any) -> None
+        # type: (Union[str, SearchIndexer], DocumentKeysOrIds, **Any) -> None
         """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
 
         :param indexer: The indexer to reset documents for.

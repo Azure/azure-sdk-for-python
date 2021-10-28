@@ -27,7 +27,7 @@ from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from ._generated.models import SearchIndexer, SearchIndexerStatus
+    from ._generated.models import SearchIndexer, SearchIndexerStatus, DocumentKeysOrIds
     from typing import Any, Optional, Sequence, Union
     from azure.core.credentials import TokenCredential
 
@@ -287,7 +287,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
     @distributed_trace
     def reset_documents(self, indexer, keys_or_ids, **kwargs):
-        # type: (Union[str, SearchIndexer], List[str], **Any) -> None
+        # type: (Union[str, SearchIndexer], DocumentKeysOrIds, **Any) -> None
         """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
 
         :param indexer: The indexer to reset documents for.
