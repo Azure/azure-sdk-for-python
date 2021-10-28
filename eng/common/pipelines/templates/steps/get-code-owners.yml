@@ -11,7 +11,7 @@ steps:
     inputs:
       command: custom
       custom: 'tool'
-      arguments: 'install --global --add-source "${{ parameters.DevOpsFeed }}" --version "1.0.0-dev.20211019.1" "Azure.Sdk.Tools.RetrieveCodeOwners"'
+      arguments: 'install --add-source "${{ parameters.DevOpsFeed }}" --version "1.0.0-dev.20211019.1" "Azure.Sdk.Tools.RetrieveCodeOwners"'
       workingDirectory: '$(Agent.BuildDirectory)'
 
   - pwsh: |
