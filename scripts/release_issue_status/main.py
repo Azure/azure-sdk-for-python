@@ -34,10 +34,10 @@ def print_check(cmd):
 
 def output_python_md(issue_status_python):
     with open(_FILE_OUT_PYTHON, 'w') as file_out:
-        file_out.write('| issue | author | package | assignee | bot advice | created date of issue | delay from created date |\n')
-        file_out.write('| ------ | ------ | ------ | ------ | ------ | ------ | :-----: |\n')
+        file_out.write(
+            '| issue | author | package | assignee | bot advice | created date of issue | delay from created date | target release date | date from target |\n')
+        file_out.write('| ------ | ------ | ------ | ------ | ------ | ------ | ----- | ------ | :-----: |\n')
         file_out.writelines([item.output_python() for item in sorted(issue_status_python, key=_key_select)])
-
 
 def output_csv(issue_status):
     with open(_FILE_OUT, 'w') as file_out:
@@ -63,6 +63,8 @@ class IssueStatus:
     issue_object = _NULL
     labels = _NULL
     assignee = _NULL
+    target_date = _NULL
+    days_from_target = _NULL
 
     def output(self):
         return '{},{},{},{},{},{},{},{},{},{}\n'.format(self.language, self.link, self.author,
@@ -75,10 +77,17 @@ class IssueStatus:
 
     
     def output_python(self):
-        return '| [#{}]({}) | {} | {} | {} | {} | {} | {} |\n'.format(self.link.split('/')[-1], self.link, self.author, 
-                                                                      self.package, self.assignee, self.bot_advice, 
-                                                                      str(date.fromtimestamp(self.create_date)), 
-                                                                      self.delay_from_create_date)
+        self.package = self.package.split('-')[-1]
+        self.create_date = str(date.fromtimestamp(self.create_date).strftime('%m-%d'))
+        self.target_date = str(datetime.strptime(self.target_date, "%Y-%m-%d").strftime('%m-%d'))
+        self.days_from_target = str(self.days_from_target)
+        return '| [#{}]({}) | {} | {} | {} | {} | {} | {} |\n'.format(self.link.split('/')[-1], self.link, self.author,
+                                                                      self.package, self.assignee, self.bot_advice,
+                                                                      self.create_date,
+                                                                      self.delay_from_create_date,
+                                                                      self.target_date,
+                                                                      self.days_from_target
+                                                                      )
 
 
 def _extract(str_list, key_word):
@@ -195,6 +204,8 @@ def main():
         issue.link = f'https://github.com/Azure/sdk-release-request/issues/{item.number}'
         issue.author = item.user.login
         issue.package = _extract(item.body.split('\n'), 'azure-.*')
+        issue.target_date = [x.strip() for x in item.body.split('\n') if 'Target release date' in x][0]
+        issue.days_from_target = int((time.mktime(time.strptime(issue.target_date, '%Y-%m-%d')) - time.time())/3600/24)
         issue.create_date = item.created_at.timestamp()
         issue.delay_from_create_date = int((time.time() - item.created_at.timestamp()) / 3600 / 24)
         issue.latest_update = item.updated_at.timestamp()
@@ -254,6 +265,9 @@ def main():
                 
         if 'base-branch-attention' in item.labels:
             item.bot_advice = 'new version is 0.0.0, please check base branch! ' + item.bot_advice
+
+        if item.days_from_target <= 2:
+            item.bot_advice += 'Less than two days from the release date! '
           
         if item.days_from_latest_commit >= 30 and item.language == 'Python' and '30days attention' not in item.labels:
             item.issue_object.add_to_labels('30days attention')
