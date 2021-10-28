@@ -116,7 +116,6 @@ directive:
     where: $["definitions"]
     transform: >
         delete $["MetadataFilter"]["properties"]["metadata"]["items"]["$ref"];
-        $["MetadataFilter"]["properties"]["metadata"]["items"]["type"] = "array";
-        $["MetadataFilter"]["properties"]["metadata"]["items"]["items"] = {"type": "string"};
+        $["MetadataFilter"]["properties"]["metadata"]["items"]["type"] = "object";
         delete $["MetadataRecord"];
 ```

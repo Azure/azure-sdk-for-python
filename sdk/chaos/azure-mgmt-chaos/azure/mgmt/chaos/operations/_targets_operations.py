@@ -30,7 +30,7 @@ class TargetsOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~microsoft_azure_chaos.models
+    :type models: ~chaos_management_client.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -69,7 +69,7 @@ class TargetsOperations(object):
         :type continuation_token_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either TargetListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~microsoft_azure_chaos.models.TargetListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~chaos_management_client.models.TargetListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.TargetListResult"]
@@ -158,7 +158,7 @@ class TargetsOperations(object):
         :type target_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Target, or the result of cls(response)
-        :rtype: ~microsoft_azure_chaos.models.Target
+        :rtype: ~chaos_management_client.models.Target
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Target"]
@@ -299,10 +299,10 @@ class TargetsOperations(object):
         :param target_name: String that represents a Target resource name.
         :type target_name: str
         :param target: Target resource to be created or updated.
-        :type target: ~microsoft_azure_chaos.models.Target
+        :type target: ~chaos_management_client.models.Target
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Target, or the result of cls(response)
-        :rtype: ~microsoft_azure_chaos.models.Target
+        :rtype: ~chaos_management_client.models.Target
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Target"]
