@@ -27,16 +27,19 @@ To use this package, you must have:
 * Python 2.7, 3.6 or later - [Install Python][python]
 
 ### Authenticate the client
-Interaction with Schema Registry starts with an instance of SchemaRegistryClient class. The client constructor takes the fully qualified namespace and an Azure Active Directory credential.
-- The fully qualified namespace of the Schema Registry instance should follow the format: `<yournamespace>.servicebus.windows.net`.
-- An AAD credential that implements the [TokenCredential][token_credential_interface] protocol is needed. There are implementations of the `TokenCredential` protocol available in the
+
+Interaction with Schema Registry starts with an instance of SchemaRegistryClient class. The client constructor takes the fully qualified namespace and an Azure Active Directory credential:
+
+* The fully qualified namespace of the Schema Registry instance should follow the format: `<yournamespace>.servicebus.windows.net`.
+
+* An AAD credential that implements the [TokenCredential][token_credential_interface] protocol should be passed to the constructor. There are implementations of the `TokenCredential` protocol available in the
 [azure-identity package][pypi_azure_identity]. To use the credential types provided by `azure-identity`, please install the Azure Identity client library for Python with [pip][pip]:
 
 ```Bash
 pip install azure-identity
 ```
 
-- Additionally, to use the async API supported on Python 3.6+, you must first install an async transport, such as [`aiohttp`](https://pypi.org/project/aiohttp/):
+* Additionally, to use the async API supported on Python 3.6+, you must first install an async transport, such as [`aiohttp`](https://pypi.org/project/aiohttp/):
 
 ```Bash
 pip install aiohttp
@@ -56,7 +59,9 @@ schema_registry_client = SchemaRegistryClient(fully_qualified_namespace, credent
 
 ## Key concepts
 
-- Schema: Schema is the organization or structure for data.
+- Schema: Schema is the organization or structure for data. More detailed information can be found [here][schemas].
+
+- Schema Group: A logical group of similar schemas based on business criteria, which can hold multiple versions of a schema. More detailed information can be found [here][schema_groups].
 
 - SchemaRegistryClient: `SchemaRegistryClient` provides the API for storing and retrieving schemas in schema registry.
 
@@ -221,9 +226,11 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [azure_sub]: https://azure.microsoft.com/free/
 [python_logging]: https://docs.python.org/3/library/logging.html
 [sr_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry/samples
-[api_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-schemaregistry/latest/index.html
+[api_reference]: https://docs.microsoft.com/python/api/overview/azure/schemaregistry-readme
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry
 [change_log]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry/CHANGELOG.md
+[schemas]: https://docs.microsoft.com/en-us/azure/event-hubs/schema-registry-overview#schemas
+[schema_groups]: https://docs.microsoft.com/en-us/azure/event-hubs/schema-registry-overview#schema-groups
 [schemaregistry_service]: https://aka.ms/schemaregistry
 [schemaregistry_avroserializer_repo]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroserializer
 [schemaregistry_avroserializer_pypi]: https://pypi.org/project/azure-schemaregistry-avroserializer/

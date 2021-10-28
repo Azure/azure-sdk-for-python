@@ -31,11 +31,11 @@ class SchemaProperties(object):
     Meta properties of a schema.
 
     :ivar id: References specific schema in registry namespace.
-    :type id: str
+    :vartype id: str
     :ivar format: Format for the schema being stored.
-    :type format: str
+    :vartype format: str
     :ivar version: Version of the returned schema.
-    :type version: int
+    :vartype version: int
     """
 
     def __init__(
@@ -53,9 +53,9 @@ class Schema(object):
     The schema content of a schema, along with id and meta properties.
 
     :ivar schema_definition: The content of the schema.
-    :type schema_definition: str
+    :vartype schema_definition: str
     :ivar properties: The properties of the schema.
-    :type properties: SchemaProperties
+    :vartype properties: SchemaProperties
     """
 
     def __init__(

@@ -76,11 +76,11 @@ def get_schema(schema_registry_client, id):
 
 
 def get_schema_id(schema_registry_client):
+    # [START get_schema_id_sync]
     group_name = os.environ['SCHEMAREGISTRY_GROUP']
     name = 'your-schema-name'
     format = SchemaFormat.AVRO
     schema_definition = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
-    # [START get_schema_id_sync]
     schema_properties = schema_registry_client.get_schema_properties(group_name, name, schema_definition, format)
     schema_id = schema_properties.id
     # [END get_schema_id_sync]
