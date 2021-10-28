@@ -36,16 +36,6 @@ class SchemaProperties(object):
     :type format: str
     :ivar version: Version of the returned schema.
     :type version: int
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/sync_samples/sample_code_schemaregistry.py
-            :start-after: [START print_schema_properties]
-            :end-before: [END print_schema_properties]
-            :language: python
-            :dedent: 4
-            :caption: SchemaProperties object.
-
     """
 
     def __init__(
@@ -66,16 +56,6 @@ class Schema(object):
     :type schema_definition: str
     :ivar properties: The properties of the schema.
     :type properties: SchemaProperties
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/sync_samples/sample_code_schemaregistry.py
-            :start-after: [START print_schema]
-            :end-before: [END print_schema]
-            :language: python
-            :dedent: 4
-            :caption: Schema object.
-
     """
 
     def __init__(

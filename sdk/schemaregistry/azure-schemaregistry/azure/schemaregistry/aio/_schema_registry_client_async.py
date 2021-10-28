@@ -41,12 +41,11 @@ if TYPE_CHECKING:
 
 class SchemaRegistryClient(object):
     """
-    SchemaRegistryClient is as a central schema repository for enterprise-level data infrastructure,
-    complete with support for versioning and management.
+    SchemaRegistryClient is a client for registering and retrieving schemas from the Azure Schema Registry service.
 
-    :param str fully_qualified_namespace: The Schema Registry service fully qualified host name,
-     for example my-namespace.servicebus.windows.net.
-    :param credential: To authenticate to manage the entities of the SchemaRegistry namespace.
+    :param str fully_qualified_namespace: The Schema Registry service fully qualified host name.
+     For example: my-namespace.servicebus.windows.net.
+    :param credential: To authenticate managing the entities of the SchemaRegistry namespace.
     :type credential: AsyncTokenCredential
 
     .. admonition:: Example:
@@ -165,7 +164,7 @@ class SchemaRegistryClient(object):
         **kwargs: Any
     ) -> SchemaProperties:
         """
-        Gets the ID referencing an existing schema within the specified schema group,
+        Gets the schema properties corresponding to an existing schema within the specified schema group,
         as matched by schema defintion comparison.
 
         :param str group_name: Schema group under which schema should be registered.
