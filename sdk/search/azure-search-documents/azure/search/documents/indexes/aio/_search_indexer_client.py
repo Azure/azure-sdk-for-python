@@ -289,7 +289,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :type keys_or_ids: ~azure.search.documents.indexes.models.DocumentKeysOrIds
         :return: None, or the result of cls(response)
         :keyword overwrite: If false, keys or ids will be appended to existing ones. If true, only the
-         keys or ids in this payload will be queued to be re-ingested.
+         keys or ids in this payload will be queued to be re-ingested. The default is false.
         :paramtype overwrite: bool
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -301,7 +301,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         except AttributeError:
             name = indexer
         result = await self._client.indexers.reset_docs(name, **kwargs)
-        return result
+        return
 
     @distributed_trace_async
     async def get_indexer_status(self, name, **kwargs):
