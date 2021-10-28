@@ -206,7 +206,10 @@ def test_multitenant_authentication():
     second_tenant = "second-tenant"
     second_token = first_token * 2
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        with pytest.raises(KeyError):
+            kwargs["tenant_id"]
+
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
         assert tenant in (first_tenant, second_tenant, "common"), 'unexpected tenant "{}"'.format(tenant)

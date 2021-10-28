@@ -256,10 +256,14 @@ async def test_multitenant_authentication():
     second_tenant = "second-tenant"
     second_token = first_token * 2
 
-    async def send(request, **_):
+    async def send(request, **kwargs):
+        with pytest.raises(KeyError):
+            kwargs["tenant_id"]
+
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
         assert tenant in (first_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
+
         token = first_token if tenant == first_tenant else second_token
         return mock_response(json_payload=build_aad_response(access_token=token))
 

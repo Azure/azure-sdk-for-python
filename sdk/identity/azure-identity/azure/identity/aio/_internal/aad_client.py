@@ -45,31 +45,31 @@ class AadClient(AadClientBase):
         request = self._get_auth_code_request(
             scopes=scopes, code=code, redirect_uri=redirect_uri, client_secret=client_secret, **kwargs
         )
-        return await self._run_pipeline(request, retry_on_methods=self._POST, **kwargs)
+        return await self._run_pipeline(request, **kwargs)
 
     async def obtain_token_by_client_certificate(
         self, scopes: "Iterable[str]", certificate: "AadClientCertificate", **kwargs: "Any"
     ) -> "AccessToken":
         request = self._get_client_certificate_request(scopes, certificate, **kwargs)
-        return await self._run_pipeline(request, stream=False, retry_on_methods=self._POST, **kwargs)
+        return await self._run_pipeline(request, stream=False, **kwargs)
 
     async def obtain_token_by_client_secret(
         self, scopes: "Iterable[str]", secret: str, **kwargs: "Any"
     ) -> "AccessToken":
         request = self._get_client_secret_request(scopes, secret, **kwargs)
-        return await self._run_pipeline(request, retry_on_methods=self._POST, **kwargs)
+        return await self._run_pipeline(request, **kwargs)
 
     async def obtain_token_by_jwt_assertion(
         self, scopes: "Iterable[str]", assertion: str, **kwargs: "Any"
     ) -> "AccessToken":
         request = self._get_jwt_assertion_request(scopes, assertion)
-        return await self._run_pipeline(request, stream=False, retry_on_methods=self._POST, **kwargs)
+        return await self._run_pipeline(request, stream=False, **kwargs)
 
     async def obtain_token_by_refresh_token(
         self, scopes: "Iterable[str]", refresh_token: str, **kwargs: "Any"
     ) -> "AccessToken":
         request = self._get_refresh_token_request(scopes, refresh_token, **kwargs)
-        return await self._run_pipeline(request, retry_on_methods=self._POST, **kwargs)
+        return await self._run_pipeline(request, **kwargs)
 
     async def obtain_token_on_behalf_of(
         self,
@@ -81,15 +81,16 @@ class AadClient(AadClientBase):
         request = self._get_on_behalf_of_request(
             scopes=scopes, client_credential=client_credential, user_assertion=user_assertion, **kwargs
         )
-        return await self._run_pipeline(request, retry_on_methods=self._POST, **kwargs)
+        return await self._run_pipeline(request, **kwargs)
 
     # pylint:disable=no-self-use
     def _build_pipeline(self, **kwargs: "Any") -> "AsyncPipeline":
         return build_async_pipeline(**kwargs)
 
     async def _run_pipeline(self, request: "HttpRequest", **kwargs: "Any") -> "AccessToken":
-        # remove tenant_id that could have been passed from credential's get_token method
+        # remove tenant_id kwarg that could have been passed from credential's get_token method
+        # tenant_id is already part of `request` at this point
         kwargs.pop("tenant_id", None)
         now = int(time.time())
-        response = await self._pipeline.run(request, **kwargs)
+        response = await self._pipeline.run(request, retry_on_methods=self._POST, **kwargs)
         return self._process_response(response, now)
