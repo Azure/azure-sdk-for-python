@@ -14,10 +14,10 @@ _Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For
 
 ### Install the package
 
-Install the Azure Schema Registry client library and Azure Identity client library for Python with [pip][pip]:
+Install the Azure Schema Registry client library for Python with [pip][pip]:
 
 ```Bash
-pip install azure-schemaregistry azure-identity
+pip install azure-schemaregistry
 ```
 
 ### Prerequisites:
@@ -27,7 +27,20 @@ To use this package, you must have:
 * Python 2.7, 3.6 or later - [Install Python][python]
 
 ### Authenticate the client
-Interaction with Schema Registry starts with an instance of SchemaRegistryClient class. You need the fully qualified namespace and AAD credential to instantiate the client object.
+Interaction with Schema Registry starts with an instance of SchemaRegistryClient class. The client constructor takes the fully qualified namespace and an Azure Active Directory credential.
+- The fully qualified namespace of the Schema Registry instance should follow the format: `<yournamespace>.servicebus.windows.net`.
+- An AAD credential that implements the [TokenCredential][token_credential_interface] protocol is needed. There are implementations of the `TokenCredential` protocol available in the
+[azure-identity package][pypi_azure_identity]. To use the credential types provided by `azure-identity`, please install the Azure Identity client library for Python with [pip][pip]:
+
+```Bash
+pip install azure-identity
+```
+
+- Additionally, to use the async API supported on Python 3.6+, you must first install an async transport, such as [`aiohttp`](https://pypi.org/project/aiohttp/):
+
+```Bash
+pip install aiohttp
+```
 
 **Create client using the azure-identity library:**
 
@@ -215,3 +228,5 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [schemaregistry_avroserializer_repo]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroserializer
 [schemaregistry_avroserializer_pypi]: https://pypi.org/project/azure-schemaregistry-avroserializer/
 [eventhubs_repo]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub
+[token_credential_interface]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core/azure/core/credentials.py
+[pypi_azure_identity]: https://pypi.org/project/azure-identity/
