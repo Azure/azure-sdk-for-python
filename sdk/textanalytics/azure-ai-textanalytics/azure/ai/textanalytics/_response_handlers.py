@@ -362,7 +362,7 @@ def get_task_from_pointer(task_type):  # pylint: disable=too-many-return-stateme
 
 def resolve_action_pointer(pointer):
     import re
-    found = re.search(r"#/tasks/keyPhraseExtractionTasks|entityRecognitionPiiTasks|entityRecognitionTasks|entityLinkingTasks|sentimentAnalysisTasks|extractiveSummarizationTasks|customEntityRecognitionTasks|customSingleClassificationTasks|customMultiClassificationTasks/\d+", pointer)
+    found = re.search(r"#/tasks/(keyPhraseExtractionTasks|entityRecognitionPiiTasks|entityRecognitionTasks|entityLinkingTasks|sentimentAnalysisTasks|extractiveSummarizationTasks|customEntityRecognitionTasks|customSingleClassificationTasks|customMultiClassificationTasks)/\d+", pointer)  # pylint:disable=line-too-long
     if found:
         index = int(pointer[-1])
         task = pointer.split("#/tasks/")[1].split("/")[0]
@@ -374,11 +374,13 @@ def resolve_action_pointer(pointer):
 
 
 def get_ordered_errors(tasks_obj, task_name, doc_id_order):
+    # throw exception if error missing a target
     missing_target = any([error for error in tasks_obj.errors if error.target is None])
     if missing_target:
-        message = "".join(["\n({}) {}".format(err.code, err.message) for err in tasks_obj.errors])
+        message = "".join(["({}) {}".format(err.code, err.message) for err in tasks_obj.errors])
         raise HttpResponseError(message=message)
 
+    # create a DocumentError per input doc with the action error details
     for err in tasks_obj.errors:
         property_name, index = resolve_action_pointer(err.target)
         actions = getattr(tasks_obj.tasks, property_name)
@@ -407,6 +409,7 @@ def _get_doc_results(task, doc_id_order, response_headers, returned_tasks_object
     except StopIteration:
         raise ValueError("Unexpected response from service - unable to deserialize result.")
 
+    # if no results present, check for action errors
     if response_task_to_deserialize.results is None:
         return get_ordered_errors(returned_tasks_object, task_name, doc_id_order)
     return deserialization_callback(

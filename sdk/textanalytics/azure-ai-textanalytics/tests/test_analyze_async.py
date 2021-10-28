@@ -12,6 +12,9 @@ import functools
 import itertools
 import json
 import time
+import sys
+import asyncio
+from unittest import mock
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
@@ -45,6 +48,40 @@ from azure.ai.textanalytics import (
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
 TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
+
+def get_completed_future(result=None):
+    future = asyncio.Future()
+    future.set_result(result)
+    return future
+
+
+def wrap_in_future(fn):
+    """Return a completed Future whose result is the return of fn.
+    Added to simplify using unittest.Mock in async code. Python 3.8's AsyncMock would be preferable.
+    """
+
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        result = fn(*args, **kwargs)
+        return get_completed_future(result)
+    return wrapper
+
+
+class AsyncMockTransport(mock.MagicMock):
+    """Mock with do-nothing aenter/exit for mocking async transport.
+
+    This is unnecessary on 3.8+, where MagicMocks implement aenter/exit.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if sys.version_info < (3, 8):
+            self.__aenter__ = mock.Mock(return_value=get_completed_future())
+            self.__aexit__ = mock.Mock(return_value=get_completed_future())
+
+    async def sleep(self, duration):
+        await asyncio.sleep(duration)
 
 
 class TestAnalyzeAsync(AsyncTextAnalyticsTest):
@@ -1318,3 +1355,358 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                         assert self.document_result_to_action_type(document_result) == action_order[action_idx]
 
             await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+
+    @TextAnalyticsPreparer()
+    async def test_generic_action_error_no_target(
+        self,
+        textanalytics_custom_text_endpoint,
+        textanalytics_custom_text_key,
+        textanalytics_single_category_classify_project_name,
+        textanalytics_single_category_classify_deployment_name,
+        textanalytics_multi_category_classify_project_name,
+        textanalytics_multi_category_classify_deployment_name,
+        textanalytics_custom_entities_project_name,
+        textanalytics_custom_entities_deployment_name
+    ):
+        docs = [
+            {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+            {"id": "2", "language": "en", "text": ""},
+        ]
+
+        response = mock.MagicMock(
+            status_code=200,
+            headers={"Content-Type": "application/json", "operation-location": "https://fakeurl.com"}
+        )
+        response.text = lambda encoding=None: json.dumps(
+            {
+                "jobId": "59678d1c-109e-4d93-a42f-05eb5e063525",
+                "lastUpdateDateTime": "2021-10-21T23:02:34Z",
+                "createdDateTime": "2021-10-21T23:02:27Z",
+                "expirationDateTime": "2021-10-22T23:02:27Z",
+                "status": "partiallyCompleted",
+                "errors": [
+                    {
+                        "code": "InternalServerError",
+                        "message": "1 out of 3 job tasks failed. Failed job tasks : v3.2-preview.2/custom/entities/general."
+                    }
+                ],
+                "tasks": {
+                    "completed": 2,
+                    "failed": 1,
+                    "inProgress": 0,
+                    "total": 3,
+                    "customEntityRecognitionTasks": [
+                        {
+                            "lastUpdateDateTime": "2021-10-21T23:02:34.3218701Z",
+                            "taskName": "2",
+                            "state": "failed"
+                        }
+                    ],
+                    "customSingleClassificationTasks": [
+                        {
+                            "lastUpdateDateTime": "2021-10-21T23:02:29.3641823Z",
+                            "taskName": "0",
+                            "state": "succeeded",
+                        }
+                    ],
+                    "customMultiClassificationTasks": [
+                        {
+                            "lastUpdateDateTime": "2021-10-21T23:02:28.7184297Z",
+                            "taskName": "1",
+                            "state": "succeeded",
+                        }
+                    ]
+                }
+            }
+        )
+        response.content_type = "application/json"
+        transport = AsyncMockTransport(send=wrap_in_future(lambda request, **kwargs: response))
+
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key), transport=transport)
+
+        with pytest.raises(HttpResponseError) as e:
+            async with client:
+                response = await (await client.begin_analyze_actions(
+                    docs,
+                    actions=[
+                        SingleCategoryClassifyAction(
+                            project_name=textanalytics_single_category_classify_project_name,
+                            deployment_name=textanalytics_single_category_classify_deployment_name
+                        ),
+                        MultiCategoryClassifyAction(
+                            project_name=textanalytics_multi_category_classify_project_name,
+                            deployment_name=textanalytics_multi_category_classify_deployment_name
+                        ),
+                        RecognizeCustomEntitiesAction(
+                            project_name=textanalytics_custom_entities_project_name,
+                            deployment_name=textanalytics_custom_entities_deployment_name
+                        )
+                    ],
+                    show_stats=True,
+                    polling_interval=self._interval(),
+                )).result()
+                results = []
+                async for resp in response:
+                    results.append(resp)
+            assert e.value.message == "(InternalServerError) 1 out of 3 job tasks failed. Failed job tasks : v3.2-preview.2/custom/entities/general."
+
+    @TextAnalyticsPreparer()
+    async def test_action_errors_with_targets(
+        self,
+        textanalytics_custom_text_endpoint,
+        textanalytics_custom_text_key,
+        textanalytics_single_category_classify_project_name,
+        textanalytics_single_category_classify_deployment_name,
+        textanalytics_multi_category_classify_project_name,
+        textanalytics_multi_category_classify_deployment_name,
+        textanalytics_custom_entities_project_name,
+        textanalytics_custom_entities_deployment_name
+    ):
+        docs = [
+            {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+            {"id": "2", "language": "en", "text": ""},
+        ]
+
+        response = mock.MagicMock(
+            status_code=200,
+            headers={"Content-Type": "application/json", "operation-location": "https://fakeurl.com"}
+        )
+
+        # a mix of action errors to translate to doc errors, regular doc errors, and a successful response
+        response.text = lambda encoding=None: json.dumps(
+            {
+                "jobId": "59678d1c-109e-4d93-a42f-05eb5e063525",
+                "lastUpdateDateTime": "2021-10-21T23:02:34Z",
+                "createdDateTime": "2021-10-21T23:02:27Z",
+                "expirationDateTime": "2021-10-22T23:02:27Z",
+                "status": "partiallyCompleted",
+                "errors": [
+                    {
+                        "code": "InvalidRequest",
+                        "message": "Some error2",
+                        "target": "#/tasks/entityRecognitionPiiTasks/0"
+                    },
+                    {
+                        "code": "InvalidRequest",
+                        "message": "Some error6",
+                        "target": "#/tasks/entityRecognitionPiiTasks/1"
+                    },
+                    {
+                        "code": "InvalidRequest",
+                        "message": "Some error0",
+                        "target": "#/tasks/entityRecognitionTasks/0"
+                    },
+                    {
+                        "code": "InvalidRequest",
+                        "message": "Some error1",
+                        "target": "#/tasks/keyPhraseExtractionTasks/0"
+                    },
+                    {
+                        "code": "InvalidRequest",
+                        "message": "Some error3",
+                        "target": "#/tasks/entityLinkingTasks/0"
+                    },
+                    {
+                        "code": "InvalidRequest",
+                        "message": "Some error4",
+                        "target": "#/tasks/sentimentAnalysisTasks/0"
+                    },
+                    {
+                        "code": "InvalidRequest",
+                        "message": "Some error5",
+                        "target": "#/tasks/extractiveSummarizationTasks/0"
+                    },
+                    {
+                        "code": "InvalidRequest",
+                        "message": "Some error9",
+                        "target": "#/tasks/customEntityRecognitionTasks/0"
+                    },
+                    {
+                        "code": "InvalidRequest",
+                        "message": "Some error7",
+                        "target": "#/tasks/customSingleClassificationTasks/0"
+                    },
+                    {
+                        "code": "InvalidRequest",
+                        "message": "Some error8",
+                        "target": "#/tasks/customMultiClassificationTasks/0"
+                    }
+                ],
+                "tasks": {
+                    "completed": 1,
+                    "failed": 10,
+                    "inProgress": 0,
+                    "total": 11,
+                    "entityRecognitionTasks": [
+                        {
+                            "lastUpdateDateTime": "2021-03-03T22:39:37.1716697Z",
+                            "taskName": "0",
+                            "state": "failed"
+                        }
+                    ],
+                    "entityRecognitionPiiTasks": [
+                        {
+                            "lastUpdateDateTime": "2021-03-03T22:39:37.1716697Z",
+                            "taskName": "2",
+                            "state": "failed"
+                        },
+                        {
+                            "lastUpdateDateTime": "2021-03-03T22:39:37.1716697Z",
+                            "taskName": "6",
+                            "state": "failed"
+                        }
+                    ],
+                    "keyPhraseExtractionTasks": [
+                        {
+                            "lastUpdateDateTime": "2021-03-03T22:39:37.1716697Z",
+                            "taskName": "1",
+                            "state": "failed"
+                        }
+                    ],
+                    "entityLinkingTasks": [
+                        {
+                            "lastUpdateDateTime": "2021-03-03T22:39:37.1716697Z",
+                            "taskName": "3",
+                            "state": "failed"
+                        }
+                    ],
+                    "sentimentAnalysisTasks": [
+                        {
+                            "lastUpdateDateTime": "2021-03-03T22:39:37.1716697Z",
+                            "taskName": "4",
+                            "state": "failed"
+                        }
+                    ],
+                    "extractiveSummarizationTasks": [
+                        {
+                            "lastUpdateDateTime": "2021-03-03T22:39:37.1716697Z",
+                            "taskName": "5",
+                            "state": "failed"
+                        }
+                    ],
+                    "customEntityRecognitionTasks": [
+                        {
+                            "lastUpdateDateTime": "2021-10-21T23:02:34.3218701Z",
+                            "taskName": "9",
+                            "state": "failed"
+                        }
+                    ],
+                    "customSingleClassificationTasks": [
+                        {
+                            "lastUpdateDateTime": "2021-10-21T23:02:34.3218701Z",
+                            "taskName": "7",
+                            "state": "failed"
+                        },
+                        {
+                            "lastUpdateDateTime": "2021-10-21T23:02:29.3641823Z",
+                            "taskName": "10",
+                            "state": "succeeded",
+                            "results": {
+                                "statistics": {
+                                    "documentsCount": 2,
+                                    "validDocumentsCount": 1,
+                                    "erroneousDocumentsCount": 1,
+                                    "transactionsCount": 1
+                                },
+                                "documents": [
+                                    {
+                                        "id": "1",
+                                        "classification": {
+                                            "category": "RateBook",
+                                            "confidenceScore": 0.76
+                                        },
+                                        "statistics": {
+                                            "charactersCount": 295,
+                                            "transactionsCount": 1
+                                        },
+                                        "warnings": []
+                                    }
+                                ],
+                                "errors": [
+                                    {
+                                        "id": "2",
+                                        "error": {
+                                            "code": "InvalidArgument",
+                                            "message": "Invalid document in request.",
+                                            "innererror": {
+                                                "code": "InvalidDocument",
+                                                "message": "Document text is empty."
+                                            }
+                                        }
+                                    }
+                                ],
+                                "projectName": "single_category_classify_project_name",
+                                "deploymentName": "single_category_classify_project_name"
+                            }
+                        }
+                    ],
+                    "customMultiClassificationTasks": [
+                        {
+                            "lastUpdateDateTime": "2021-10-21T23:02:34.3218701Z",
+                            "taskName": "8",
+                            "state": "failed"
+                        }
+                    ]
+                }
+            }
+        )
+        response.content_type = "application/json"
+        transport = AsyncMockTransport(send=wrap_in_future(lambda request, **kwargs: response))
+
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key), transport=transport)
+
+        async with client:
+            response = await (await client.begin_analyze_actions(
+                docs,
+                actions=[
+                    RecognizeEntitiesAction(),
+                    ExtractKeyPhrasesAction(),
+                    RecognizePiiEntitiesAction(),
+                    RecognizeLinkedEntitiesAction(),
+                    AnalyzeSentimentAction(),
+                    ExtractSummaryAction(),
+                    RecognizePiiEntitiesAction(domain_filter="phi"),
+                    SingleCategoryClassifyAction(
+                        project_name=textanalytics_single_category_classify_project_name,
+                        deployment_name=textanalytics_single_category_classify_deployment_name
+                    ),
+                    MultiCategoryClassifyAction(
+                        project_name=textanalytics_multi_category_classify_project_name,
+                        deployment_name=textanalytics_multi_category_classify_deployment_name
+                    ),
+                    RecognizeCustomEntitiesAction(
+                        project_name=textanalytics_custom_entities_project_name,
+                        deployment_name=textanalytics_custom_entities_deployment_name
+                    ),
+                    SingleCategoryClassifyAction(
+                        project_name=textanalytics_single_category_classify_project_name,
+                        deployment_name=textanalytics_single_category_classify_deployment_name
+                    ),
+                ],
+                show_stats=True,
+                polling_interval=self._interval(),
+            )).result()
+            results = []
+            async for resp in response:
+                results.append(resp)
+
+        assert len(results) == len(docs)
+        for idx, result in enumerate(results[0]):
+            assert result.id == "1"
+            if idx == 10:
+                assert not result.is_error
+                assert isinstance(result, SingleCategoryClassifyResult)
+            else:
+                assert result.is_error
+                assert result.error.code == "InvalidRequest"
+                assert result.error.message == "Some error" + str(idx)  # confirms correct doc error order
+
+        for idx, result in enumerate(results[1]):
+            assert result.id == "2"
+            assert result.is_error
+            if idx == 10:
+                assert result.error.code == "InvalidDocument"
+                assert result.error.message == "Document text is empty."
+            else:
+                assert result.error.code == "InvalidRequest"
+                assert result.error.message == "Some error" + str(idx)  # confirms correct doc error order
