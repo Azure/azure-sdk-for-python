@@ -188,7 +188,7 @@ class QuestionAnsweringClientOperationsMixin:
             language=kwargs.pop("language", self._default_language),
         )
         try:
-            options['text_documents'] = _validate_text_records(options['text_documents'])
+            options['records'] = _validate_text_records(options['records'])
         except TypeError:
             options.text_documents = _validate_text_records(options.text_documents)
 

@@ -6,22 +6,22 @@
 
 import six
 import copy
-from .models import TextRecord
+from .models import TextDocument
 
 
 def _validate_text_records(records):
     if not records:
-        raise ValueError("Input records can not be empty or None")
+        raise ValueError("Input documents can not be empty or None")
 
     if isinstance(records, six.string_types):
-        raise TypeError("Input records cannot be a string.")
+        raise TypeError("Input documents cannot be a string.")
 
     if isinstance(records, dict):
-        raise TypeError("Input records cannot be a dict")
+        raise TypeError("Input documents cannot be a dict")
 
     if not all(isinstance(x, six.string_types) for x in records):
-        if not all(isinstance(x, (dict, TextRecord)) for x in records):
-            raise TypeError("Mixing string and dictionary/object record input unsupported.")
+        if not all(isinstance(x, (dict, TextDocument)) for x in records):
+            raise TypeError("Mixing string and dictionary/object document input unsupported.")
 
     request_batch = []
     for idx, doc in enumerate(records):

@@ -93,7 +93,7 @@ interactions:
       USB 3.1 Always-On, USB 3.1, Headphone/Mic, microSD RAM16GB RAM Upgradable to16GB
       Size12.1 x 8.3 x .57 inches Touchpad Size4.3 x 2.2 inches USB Ports3 Video Memory2GB
       Warranty/Supportone-year warranty. Weight2.8 pounds Wi-Fi802.11ac Wi-Fi ModelIntel
-      Wireless-AC 9560 "}], "language": "en", "stringIndexType": "UnicodeCodePoint"}'
+      Wireless-AC 9560 "}], "language": "en"}'
     headers:
       Accept:
       - application/json
@@ -102,13 +102,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '7448'
+      - '7409'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0b2 Python/3.9.5 (macOS-11.5.2-x86_64-i386-64bit)
+      - azsdk-python-ai-language-questionanswering/1.0.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-text?api-version=2021-07-15-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-text?api-version=2021-10-01
   response:
     body:
       string: "{\n  \"answers\": [\n    {\n      \"answer\": \"Battery Life  Get an
@@ -119,44 +119,44 @@ interactions:
         Battery Life - Longest Lasting Laptop Batteries  Competing laptops like the
         ZenBook S UX391UA (7:05), Surface Laptop 2 (9:22) and Notebook 9 Pro (8:53)
         outstayed the 4K Envy 13 but powered down long before the 1080p version.\",\n
-        \     \"confidenceScore\": 0.01745828054845333,\n      \"id\": \"doc3\",\n
+        \     \"confidenceScore\": 0.017458291724324226,\n      \"id\": \"doc3\",\n
         \     \"answerSpan\": {\n        \"text\": \"Battery Life\",\n        \"confidenceScore\":
-        0.26247412,\n        \"offset\": 0,\n        \"length\": 12\n      },\n      \"offset\":
+        0.26247388,\n        \"offset\": 0,\n        \"length\": 12\n      },\n      \"offset\":
         1779,\n      \"length\": 555\n    },\n    {\n      \"answer\": \"Along with
         11-plus hours of battery life (on the FHD model), the Envy 13 has a sleek,
         ultraportable chassis, fast performance, and powerful speakers. Best of all,
         the Envy 13 starts at a reasonable $799, which is hundreds less than the competition.
         In many ways, the Envy 13 is what we wanted the new MacBook Air to be.\",\n
-        \     \"confidenceScore\": 0.00940172653645277,\n      \"id\": \"doc3\",\n
+        \     \"confidenceScore\": 0.009401722811162472,\n      \"id\": \"doc3\",\n
         \     \"answerSpan\": {\n        \"text\": \"battery life\",\n        \"confidenceScore\":
-        0.35305238,\n        \"offset\": 27,\n        \"length\": 13\n      },\n      \"offset\":
+        0.3530523,\n        \"offset\": 27,\n        \"length\": 13\n      },\n      \"offset\":
         4508,\n      \"length\": 319\n    },\n    {\n      \"answer\": \"We also recommend
         the Samsung Notebook 9 Pro, which has a similarly premium design but much
         better battery life than the 4K Envy. The Microsoft Surface Laptop 2 is another
         recommended alternative, though you might want to wait a few months for the
         rumored Surface Laptop 3.   Overall, the HP Envy 13 is a fantastic laptop
         that checks all the right boxes --- as long as you buy the 1080p model.\",\n
-        \     \"confidenceScore\": 0.007057250943034887,\n      \"id\": \"doc3\",\n
+        \     \"confidenceScore\": 0.0070572528056800365,\n      \"id\": \"doc3\",\n
         \     \"answerSpan\": {\n        \"text\": \"battery life\",\n        \"confidenceScore\":
         0.59143245,\n        \"offset\": 98,\n        \"length\": 13\n      },\n      \"offset\":
         5391,\n      \"length\": 393\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - abf593a7-19a1-45a9-b94c-e590f8f3bf5a
+      - 888507f3-3fba-4bfe-8013-f007a5e24c1c
       content-length:
-      - '2146'
+      - '2148'
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=9
       date:
-      - Thu, 30 Sep 2021 15:52:33 GMT
+      - Thu, 28 Oct 2021 03:30:31 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '323'
+      - '341'
     status:
       code: 200
       message: OK

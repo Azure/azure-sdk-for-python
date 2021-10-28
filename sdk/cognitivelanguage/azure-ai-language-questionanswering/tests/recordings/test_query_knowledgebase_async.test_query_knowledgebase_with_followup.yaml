@@ -12,9 +12,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0b3 Python/3.9.5 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-ai-language-questionanswering/1.0.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-07-15-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-10-01
   response:
     body:
       string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Make
@@ -33,18 +33,18 @@ interactions:
         level\"\n      },\n      \"dialog\": {\n        \"isContextOnly\": false,\n
         \       \"prompts\": []\n      }\n    }\n  ]\n}"
     headers:
-      apim-request-id: 6187c0d0-4bd8-496c-91cd-7dde5702a7b3
+      apim-request-id: 363ebd94-3a69-4c77-8850-6dccbe406498
       content-length: '1143'
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
-      date: Wed, 27 Oct 2021 16:43:51 GMT
+      date: Thu, 28 Oct 2021 03:30:29 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '573'
+      x-envoy-upstream-service-time: '544'
     status:
       code: 200
       message: OK
-    url: https://wuppe.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=190a9e13-8ede-4e4b-a8fd-c4d7f2aeab6c&deploymentName=test&api-version=2021-07-15-preview
+    url: https://wuppe.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=190a9e13-8ede-4e4b-a8fd-c4d7f2aeab6c&deploymentName=test&api-version=2021-10-01
 - request:
     body: '{"question": "How long it takes to charge Surface?", "top": 3, "userId":
       "sd53lsY=", "confidenceScoreThreshold": 0.2, "context": {"previousQnaId": 136,
@@ -59,9 +59,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0b3 Python/3.9.5 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-ai-language-questionanswering/1.0.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-07-15-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-10-01
   response:
     body:
       string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Power
@@ -87,16 +87,16 @@ interactions:
         four hours\",\n        \"confidenceScore\": 0.3795,\n        \"offset\": 32,\n
         \       \"length\": 19\n      }\n    }\n  ]\n}"
     headers:
-      apim-request-id: f212d9e9-69c3-4e8b-94cd-d1d78097320c
+      apim-request-id: 535319e1-aef0-4d6a-9487-459f65599282
       content-length: '1594'
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
-      date: Wed, 27 Oct 2021 16:43:52 GMT
+      date: Thu, 28 Oct 2021 03:30:29 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '576'
+      x-envoy-upstream-service-time: '605'
     status:
       code: 200
       message: OK
-    url: https://wuppe.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=190a9e13-8ede-4e4b-a8fd-c4d7f2aeab6c&deploymentName=test&api-version=2021-07-15-preview
+    url: https://wuppe.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=190a9e13-8ede-4e4b-a8fd-c4d7f2aeab6c&deploymentName=test&api-version=2021-10-01
 version: 1
