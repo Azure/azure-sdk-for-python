@@ -104,7 +104,7 @@ class OrchestrationAppDirectAsyncTests(AsyncConversationTest):
 
     @pytest.mark.skip(reason="internal server error!")
     @GlobalConversationAccountPreparer()
-    async def test_deepstack_intent(self, conv_account, conv_key, orchestration_project):
+    async def test_conversation_intent(self, conv_account, conv_key, orchestration_project):
 
         # prepare data
         query = "I will have the oyako donburi please."

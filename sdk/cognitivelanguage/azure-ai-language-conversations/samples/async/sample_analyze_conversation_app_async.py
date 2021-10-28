@@ -8,9 +8,9 @@
 FILE: sample_analyze_conversation_app_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to analyze user query for intents and entities using a deepstack project.
+    This sample demonstrates how to analyze user query for intents and entities using a conversation project.
 
-    For more info about how to setup a CLU deepstack project, see the README.
+    For more info about how to setup a CLU conversation project, see the README.
 
 USAGE:
     python sample_analyze_conversation_app_async.py
@@ -30,7 +30,7 @@ async def sample_analyze_conversation_app_async():
     from azure.core.credentials import AzureKeyCredential
 
     from azure.ai.language.conversations.aio import ConversationAnalysisClient
-    from azure.ai.language.conversations.models import AnalysisParameters
+    from azure.ai.language.conversations.models import ConversationAnalysisOptions
 
     # get secrets
     conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
@@ -39,7 +39,7 @@ async def sample_analyze_conversation_app_async():
 
     # prepare data
     query = "One california maki please."
-    input = AnalysisParameters(
+    input = ConversationAnalysisOptions(
         query=query
     )
 
@@ -57,7 +57,7 @@ async def sample_analyze_conversation_app_async():
         print("project kind: {}\n".format(result.prediction.project_kind))
 
         print("view top intent:")
-        print("top intent: {}".format(result.prediction.top_intent))
+        print("\ttop intent: {}".format(result.prediction.top_intent))
         print("\tcategory: {}".format(result.prediction.intents[0].category))
         print("\tconfidence score: {}\n".format(result.prediction.intents[0].confidence_score))
 
