@@ -8,7 +8,7 @@ interactions:
       your Surface Pro 4 power supply to charge other devices, like a phone, while
       your Surface charges. The USB port on the power supply is only for charging,
       not for data transfer. If you want to use a USB device, plug it into the USB
-      port on your Surface."}], "language": "en"}'
+      port on your Surface."}], "language": "en", "stringIndexType": "UnicodeCodePoint"}'
     headers:
       Accept:
       - application/json
@@ -17,7 +17,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '668'
+      - '707'
       Content-Type:
       - application/json
       User-Agent:
@@ -30,14 +30,14 @@ interactions:
         It takes two to four hours to charge the Surface Pro 4 battery fully from
         an empty state. It can take longer if you\u2019re using your Surface for power-intensive
         activities like gaming or video streaming while you\u2019re charging it.\",\n
-        \     \"confidenceScore\": 0.9298818707466125,\n      \"id\": \"0\",\n      \"answerSpan\":
+        \     \"confidenceScore\": 0.9298818111419678,\n      \"id\": \"0\",\n      \"answerSpan\":
         {\n        \"text\": \"two to four hours\",\n        \"confidenceScore\":
         0.98579097,\n        \"offset\": 28,\n        \"length\": 18\n      },\n      \"offset\":
         0,\n      \"length\": 245\n    },\n    {\n      \"answer\": \"It takes two
         to four hours to charge the Surface Pro 4 battery fully from an empty state.
         It can take longer if you\u2019re using your Surface for power-intensive activities
         like gaming or video streaming while you\u2019re charging it.\",\n      \"confidenceScore\":
-        0.9254359602928162,\n      \"id\": \"0\",\n      \"answerSpan\": {\n        \"text\":
+        0.9254359006881714,\n      \"id\": \"0\",\n      \"answerSpan\": {\n        \"text\":
         \"two to four hours\",\n        \"confidenceScore\": 0.9856282,\n        \"offset\":
         8,\n        \"length\": 18\n      },\n      \"offset\": 20,\n      \"length\":
         225\n    },\n    {\n      \"answer\": \"It can take longer if you\u2019re
@@ -48,7 +48,7 @@ interactions:
         7\n      },\n      \"offset\": 110,\n      \"length\": 135\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - 5f11c3c3-b3fa-4c5c-9cd0-efd30bd29c28
+      - c037b02f-0d0e-4d9b-99a9-91ace9bdf6c9
       content-length:
       - '1481'
       content-type:
@@ -56,13 +56,13 @@ interactions:
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=2
       date:
-      - Thu, 28 Oct 2021 03:30:33 GMT
+      - Thu, 28 Oct 2021 17:25:09 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '231'
+      - '256'
     status:
       code: 200
       message: OK

@@ -133,7 +133,7 @@ class QuestionAnsweringClientOperationsMixin(object):
         :param options: Positional only. POST body of the request. Provide either `options`, OR
          individual keyword arguments. If both are provided, only the options object will be used.
         :type options: ~azure.ai.language.questionanswering.models.AnswersOptions
-        :keyword project_name: The name of the project to use.
+        :keyword project_name: The name of the knowledge base project to use.
         :paramtype project_name: str
         :keyword deployment_name: The name of the specific deployment of the project to use.
         :paramtype deployment_name: str

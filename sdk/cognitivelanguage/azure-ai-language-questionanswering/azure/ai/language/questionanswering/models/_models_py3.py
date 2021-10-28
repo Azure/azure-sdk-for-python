@@ -38,6 +38,7 @@ class AnswersFromTextOptions(msrest.serialization.Model):
         "question": {"key": "question", "type": "str"},
         "text_documents": {"key": "records", "type": "[TextDocument]"},
         "language": {"key": "language", "type": "str"},
+        "string_index_type": {"key": "stringIndexType", "type": "str"},
     }
 
     def __init__(
@@ -62,6 +63,7 @@ class AnswersFromTextOptions(msrest.serialization.Model):
         self.question = question
         self.text_documents = text_documents
         self.language = language
+        self.string_index_type = "UnicodeCodePoint"
 
 
 class AnswersFromTextResult(msrest.serialization.Model):
