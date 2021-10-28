@@ -57,7 +57,7 @@ def sample_chit_chat():
             question=followup_question,
             top=3,
             confidence_threshold=0.2,
-            context=qna.KnowledgeBaseAnswerContext(
+            answer_context=qna.KnowledgeBaseAnswerContext(
                 previous_question=first_question,
                 previous_qna_id=best_candidate.qna_id
             ),

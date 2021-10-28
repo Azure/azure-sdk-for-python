@@ -12,6 +12,7 @@
 * Method kwarg and model property `QueryKnowledgeBaseOptions.confidence_score_threshold` has been renamed to  `AnswersOptions.confidence_threshold`
 * Method kwarg and model property `QueryKnowledgeBaseOptions.answer_span_request` has been renamed to  `AnswersOptions.short_answer_options`
 * Method kwarg and model property `QueryKnowledgeBaseOptions.ranker_type` has been renamed to  `AnswersOptions.ranker_kind`
+* Method kwarg and model property `QueryKnowledgeBaseOptions.context` has been renamed to  `AnswersOptions.answer_context`
 * Model `QueryTextOptions` has been renamed to `AnswersFromTextOptions`
 * Method kwarg and model property `QueryTextOptions.records` has been renamed to `AnswersFromTextOptions.text_documents`
 * Model `AnswerSpanRequest` has been renamed to `ShortAnswerOptions`

@@ -132,7 +132,7 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
         query_params = AnswersOptions(
             question="Ports and connectors",
             top=3,
-            context=KnowledgeBaseAnswerContext(
+            answer_context=KnowledgeBaseAnswerContext(
                 previous_questiony="Meet Surface Pro 4",
                 previous_qna_id=4
             )
@@ -173,7 +173,7 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
         query_params = AnswersOptions(
             question="Ports and connectors",
             top=3,
-            context=KnowledgeBaseAnswerContext(
+            answer_context=KnowledgeBaseAnswerContext(
                 previous_user_query="Meet Surface Pro 4",
                 previous_qna_id=4
             ),
@@ -298,7 +298,7 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
                 top=3,
                 user_id="sd53lsY=",
                 confidence_threshold=0.2,
-                context=KnowledgeBaseAnswerContext(
+                answer_context=KnowledgeBaseAnswerContext(
                     previous_question="How long should my Surface battery last?",
                     previous_qna_id=confident_answers[0].qna_id
                 ),

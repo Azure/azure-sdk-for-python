@@ -100,8 +100,8 @@ class AnswersOptions(msrest.serialization.Model):
     :vartype user_id: str
     :ivar confidence_threshold: Minimum threshold score for answers, value ranges from 0 to 1.
     :vartype confidence_threshold: float
-    :ivar context: Context object with previous QnA's information.
-    :vartype context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerContext
+    :ivar answer_context: Context object with previous QnA's information.
+    :vartype answer_context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerContext
     :ivar ranker_kind: Type of ranker to be used. Possible
      values include: "Default", "QuestionOnly".
     :vartype ranker_kind: str
@@ -123,7 +123,7 @@ class AnswersOptions(msrest.serialization.Model):
         "top": {"key": "top", "type": "int"},
         "user_id": {"key": "userId", "type": "str"},
         "confidence_threshold": {"key": "confidenceScoreThreshold", "type": "float"},
-        "context": {"key": "context", "type": "KnowledgeBaseAnswerContext"},
+        "answer_context": {"key": "context", "type": "KnowledgeBaseAnswerContext"},
         "ranker_kind": {"key": "rankerType", "type": "str"},
         "filters": {"key": "filters", "type": "QueryFilters"},
         "short_answer_options": {"key": "answerSpanRequest", "type": "ShortAnswerOptions"},
@@ -138,7 +138,7 @@ class AnswersOptions(msrest.serialization.Model):
         top: Optional[int] = None,
         user_id: Optional[str] = None,
         confidence_threshold: Optional[float] = None,
-        context: Optional["KnowledgeBaseAnswerContext"] = None,
+        answer_context: Optional["KnowledgeBaseAnswerContext"] = None,
         ranker_kind: Optional[str] = None,
         filters: Optional["QueryFilters"] = None,
         short_answer_options: Optional["ShortAnswerOptions"] = None,
@@ -157,8 +157,8 @@ class AnswersOptions(msrest.serialization.Model):
         :paramtype user_id: str
         :keyword confidence_threshold: Minimum threshold score for answers, value ranges from 0 to 1.
         :paramtype confidence_threshold: float
-        :keyword context: Context object with previous QnA's information.
-        :paramtype context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerContext
+        :keyword answer_context: Context object with previous QnA's information.
+        :paramtype answer_context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerContext
         :keyword ranker_kind: Type of ranker to be used. Possible
          values include: "Default", "QuestionOnly".
         :paramtype ranker_kind: str
@@ -176,7 +176,7 @@ class AnswersOptions(msrest.serialization.Model):
         self.top = top
         self.user_id = user_id
         self.confidence_threshold = confidence_threshold
-        self.context = context
+        self.answer_context = answer_context
         self.ranker_kind = ranker_kind
         self.filters = filters
         self.short_answer_options = short_answer_options

@@ -89,8 +89,8 @@ class AnswersOptions(msrest.serialization.Model):
     :vartype user_id: str
     :ivar confidence_threshold: Minimum threshold score for answers, value ranges from 0 to 1.
     :vartype confidence_threshold: float
-    :ivar context: Context object with previous QnA's information.
-    :vartype context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerContext
+    :ivar answer_context: Context object with previous QnA's information.
+    :vartype answer_context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerContext
     :ivar ranker_kind: Type of ranker to be used. Possible
      values include: "Default", "QuestionOnly".
     :vartype ranker_kind: str
@@ -112,7 +112,7 @@ class AnswersOptions(msrest.serialization.Model):
         "top": {"key": "top", "type": "int"},
         "user_id": {"key": "userId", "type": "str"},
         "confidence_threshold": {"key": "confidenceScoreThreshold", "type": "float"},
-        "context": {"key": "context", "type": "KnowledgeBaseAnswerContext"},
+        "answer_context": {"key": "context", "type": "KnowledgeBaseAnswerContext"},
         "ranker_kind": {"key": "rankerType", "type": "str"},
         "filters": {"key": "filters", "type": "QueryFilters"},
         "short_answer_options": {"key": "answerSpanRequest", "type": "ShortAnswerOptions"},
@@ -132,8 +132,8 @@ class AnswersOptions(msrest.serialization.Model):
         :paramtype user_id: str
         :keyword confidence_threshold: Minimum threshold score for answers, value ranges from 0 to 1.
         :paramtype confidence_threshold: float
-        :keyword context: Context object with previous QnA's information.
-        :paramtype context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerContext
+        :keyword answer_context: Context object with previous QnA's information.
+        :paramtype answer_context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerContext
         :keyword ranker_kind: Type of ranker to be used. Possible
          values include: "Default", "QuestionOnly".
         :paramtype ranker_kind: str
@@ -151,7 +151,7 @@ class AnswersOptions(msrest.serialization.Model):
         self.top = kwargs.get("top", None)
         self.user_id = kwargs.get("user_id", None)
         self.confidence_threshold = kwargs.get("confidence_threshold", None)
-        self.context = kwargs.get("context", None)
+        self.answer_context = kwargs.get("answer_context", None)
         self.ranker_kind = kwargs.get("ranker_kind", None)
         self.filters = kwargs.get("filters", None)
         self.short_answer_options = kwargs.get("short_answer_options", None)

@@ -52,7 +52,7 @@ class QuestionAnsweringClientOperationsMixin:
         top: Optional[int] = None,
         user_id: Optional[str] = None,
         confidence_threshold: Optional[float] = None,
-        context: Optional["_models.KnowledgeBaseAnswerContext"] = None,
+        answer_context: Optional["_models.KnowledgeBaseAnswerContext"] = None,
         ranker_kind: Optional[str] = None,
         filters: Optional["_models.QueryFilters"] = None,
         short_answer_options: Optional["_models.ShortAnswerOptions"] = None,
@@ -83,8 +83,8 @@ class QuestionAnsweringClientOperationsMixin:
         :paramtype user_id: str
         :keyword confidence_threshold: Minimum threshold score for answers, value ranges from 0 to 1.
         :paramtype confidence_threshold: float
-        :keyword context: Context object with previous QnA's information.
-        :paramtype context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerContext
+        :keyword answer_context: Context object with previous QnA's information.
+        :paramtype answer_context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerContext
         :keyword ranker_kind: Type of ranker to be used. Possible
          values include: "Default", "QuestionOnly".
         :paramtype ranker_kind: str
@@ -105,7 +105,7 @@ class QuestionAnsweringClientOperationsMixin:
             top=kwargs.pop("top", None),
             user_id=kwargs.pop("user_id", None),
             confidence_threshold=kwargs.pop("confidence_threshold", None),
-            context=kwargs.pop("context", None),
+            answer_context=kwargs.pop("answer_context", None),
             ranker_kind=kwargs.pop("ranker_kind", None),
             filters=kwargs.pop("filters", None),
             short_answer_options=kwargs.pop("short_answer_options", None),
