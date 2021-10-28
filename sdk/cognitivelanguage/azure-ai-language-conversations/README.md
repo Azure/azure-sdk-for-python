@@ -2,9 +2,9 @@
 
 # Azure Conversational Language Understanding client library for Python
 Conversational Language Understanding, aka **CLU** for short, is a cloud-based conversational AI service which is mainly used in bots to extract useful information from user utterance (natural language processing).
-The CLU **analyze api** encompasses two projects; deepstack, and workflow projects.
-You can use the "deepstack" project if you want to extract intents (intention behind a user utterance] and custom entities.
-You can also use the "workflow" project which orchestrates multiple language apps to get the best response (language apps like Question Answering, Luis, and Deepstack).
+The CLU **analyze api** encompasses two projects; conversation, and orchestration projects.
+You can use the "conversation" project if you want to extract intents (intention behind a user utterance) and custom entities.
+You can also use the "orchestration" project which orchestrates multiple language apps to get the best response (language apps like Question Answering, Luis, and Conversation).
 
 [Source code][conversationallanguage_client_src] | [Package (PyPI)][conversationallanguage_pypi_package] | [API reference documentation][conversationallanguage_refdocs] | [Product documentation][conversationallanguage_docs] | [Samples][conversationallanguage_samples]
 
@@ -67,8 +67,8 @@ The `azure-ai-language-conversation` client library provides both synchronous an
 
 The following examples show common scenarios using the `client` [created above](#create-conversationanalysisclient).
 
-### Analyze a conversation with a Deepstack App
-If you would like to extract custom intents and entities from a user utterance, you can call the `client.analyze_conversations()` method with your deepstack's project name as follows:
+### Analyze a conversation with a Conversation App
+If you would like to extract custom intents and entities from a user utterance, you can call the `client.analyze_conversations()` method with your conversation's project name as follows:
 
 ```python
 # import libraries
@@ -76,7 +76,7 @@ import os
 from azure.core.credentials import AzureKeyCredential
 
 from azure.ai.language.conversations import ConversationAnalysisClient
-from azure.ai.language.conversations.models import AnalysisParameters
+from azure.ai.language.conversations.models import ConversationAnalysisOptions
 
 # get secrets
 conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
@@ -85,7 +85,7 @@ conv_project = os.environ["AZURE_CONVERSATIONS_PROJECT"]
 
 # prepare data
 query = "One california maki please."
-input = AnalysisParameters(
+input = ConversationAnalysisOptions(
     query=query
 )
 
@@ -103,7 +103,7 @@ print("query: {}".format(result.query))
 print("project kind: {}\n".format(result.prediction.project_kind))
 
 print("view top intent:")
-print("top intent: {}".format(result.prediction.top_intent))
+print("\ttop intent: {}".format(result.prediction.top_intent))
 print("\tcategory: {}".format(result.prediction.intents[0].category))
 print("\tconfidence score: {}\n".format(result.prediction.intents[0].confidence_score))
 
@@ -114,9 +114,9 @@ for entity in result.prediction.entities:
     print("\tconfidence score: {}".format(entity.confidence_score))
 ```
 
-### Analyze conversation with a Workflow App
+### Analyze conversation with a Orchestration App
 
-If you would like to pass the user utterance to your orchestrator (worflow) app, you can call the `client.analyze_conversations()` method with your workflow's project name. The orchestrator project simply orchestrates the submitted user utterance between your language apps (Luis, Deepstack, and Question Answering) to get the best response according to the user intent. See the next example:
+If you would like to pass the user utterance to your orchestrator (worflow) app, you can call the `client.analyze_conversations()` method with your orchestration's project name. The orchestrator project simply orchestrates the submitted user utterance between your language apps (Luis, Conversation, and Question Answering) to get the best response according to the user intent. See the next example:
 
 ```python
 # import libraries
@@ -124,16 +124,16 @@ import os
 from azure.core.credentials import AzureKeyCredential
 
 from azure.ai.language.conversations import ConversationAnalysisClient
-from azure.ai.language.conversations.models import AnalysisParameters
+from azure.ai.language.conversations.models import ConversationAnalysisOptions
 
 # get secrets
 conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
 conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-orchestration_project = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT")
+orchestration_project = os.environ["AZURE_CONVERSATIONS_ORCHESTRATION_PROJECT")
 
 # prepare data
 query = "How do you make sushi rice?",
-input = AnalysisParameters(
+input = ConversationAnalysisOptions(
     query=query
 )
 
@@ -151,7 +151,7 @@ print("query: {}".format(result.query))
 print("project kind: {}\n".format(result.prediction.project_kind))
 
 print("view top intent:")
-print("top intent: {}".format(result.prediction.top_intent))
+print("\ttop intent: {}".format(result.prediction.top_intent))
 print("\tcategory: {}".format(result.prediction.intents[0].category))
 print("\tconfidence score: {}\n".format(result.prediction.intents[0].confidence_score))
 
@@ -159,9 +159,9 @@ print("view Question Answering result:")
 print("\tresult: {}\n".format(result.prediction.intents[0].result))
 ```
 
-### Analyze conversation with a Workflow (Direct) App
+### Analyze conversation with a Orchestration (Direct) App
 
-If you would like to use an orchestrator (workflow) app, and you want to call a specific one of your language apps directly, you can call the `client.analyze_conversations()` method with your workflow's project name and the diirect target name which corresponds to your one of you language apps as follows:
+If you would like to use an orchestrator (orchestration) app, and you want to call a specific one of your language apps directly, you can call the `client.analyze_conversations()` method with your orchestration's project name and the diirect target name which corresponds to your one of you language apps as follows:
 
 ```python
 # import libraries
@@ -169,17 +169,17 @@ import os
 from azure.core.credentials import AzureKeyCredential
 
 from azure.ai.language.conversations import ConversationAnalysisClient
-from azure.ai.language.conversations.models import AnalysisParameters
+from azure.ai.language.conversations.models import ConversationAnalysisOptions
 
 # get secrets
 conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
 conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-orchestration_project = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT")
+orchestration_project = os.environ["AZURE_CONVERSATIONS_ORCHESTRATION_PROJECT")
 
 # prepare data
 query = "How do you make sushi rice?",
 target_intent = "SushiMaking"
-input = AnalysisParameters(
+input = ConversationAnalysisOptions(
     query=query,
     direct_target=target_intent,
     parameters={
@@ -207,7 +207,7 @@ print("query: {}".format(result.query))
 print("project kind: {}\n".format(result.prediction.project_kind))
 
 print("view top intent:")
-print("top intent: {}".format(result.prediction.top_intent))
+print("\ttop intent: {}".format(result.prediction.top_intent))
 print("\tcategory: {}".format(result.prediction.intents[0].category))
 print("\tconfidence score: {}\n".format(result.prediction.intents[0].confidence_score))
 
