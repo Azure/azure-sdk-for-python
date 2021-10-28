@@ -140,7 +140,7 @@ def check_req_against_exclusion(req, req_to_exclude):
         "https://docsupport.blob.core.windows.net/repackaged/cffi-1.14.6-cp310-cp310-win_amd64.whl; sys_platform=='win32' and python_version >= '3.10'",
         "msrestazure>=0.4.11", "pytest" ]
 
-    :param req_to_exclude: A valid and complete python package name. No specificiers.
+    :param req_to_exclude: A valid and complete python package name. No specifiers.
     """
     req_id = ""
     for c in req:
