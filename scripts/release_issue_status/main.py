@@ -204,7 +204,7 @@ def main():
         issue.link = f'https://github.com/Azure/sdk-release-request/issues/{item.number}'
         issue.author = item.user.login
         issue.package = _extract(item.body.split('\n'), 'azure-.*')
-        issue.target_date = [x.strip() for x in item.body.split('\n') if 'Target release date' in x][0]
+        issue.target_date = [x.split(':')[-1].strip() for x in item.body.split('\n') if 'Target release date' in x][0]
         issue.days_from_target = int((time.mktime(time.strptime(issue.target_date, '%Y-%m-%d')) - time.time())/3600/24)
         issue.create_date = item.created_at.timestamp()
         issue.delay_from_create_date = int((time.time() - item.created_at.timestamp()) / 3600 / 24)
