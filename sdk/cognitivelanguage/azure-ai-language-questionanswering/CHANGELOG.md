@@ -29,7 +29,8 @@
 * Model property `AnswerSpan.confidence_score` has been renamed to `AnswerSpan.confidence`
 * Model property `TextAnswer.confidence_score` has been renamed to `TextAnswer.confidence`
 * Model property `TextAnswer.answer_span` has been renamed to `TextAnswer.short_answer`
-* Enums `LogicalOperationKind` and `RankerType` have been removed.
+* Enums `LogicalOperationKind` and `RankerType` have been removed
+* The `operations` and `aio.operations` namespaces are no longer public
 
 ### Bugs Fixed
 
