@@ -1,6 +1,16 @@
 # Release History
 
-## 1.7.0 (2021-10-12)
+## 1.7.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.7.0 (2021-10-14)
 
 ### Breaking Changes
 > These changes do not impact the API of stable versions such as 1.6.0.

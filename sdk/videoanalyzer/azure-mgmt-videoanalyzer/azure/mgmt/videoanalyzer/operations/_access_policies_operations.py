@@ -53,9 +53,9 @@ class AccessPoliciesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.AccessPolicyEntityCollection"]
-        """List access policy resources.
+        """List all existing access policy resources.
 
-        List all existing access policy resources for the specified account.
+        Retrieves all existing access policy resources, along with their JSON representations.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -75,7 +75,7 @@ class AccessPoliciesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01-preview"
+        api_version = "2021-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -88,7 +88,7 @@ class AccessPoliciesOperations(object):
                 url = self.list.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'accountName': self._serialize.url("account_name", account_name, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -138,15 +138,15 @@ class AccessPoliciesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.AccessPolicyEntity"
-        """Retrieves an access policy resource.
+        """Retrieves an existing access policy resource.
 
-        Retrieves an existing access policy resource from an account by name.
+        Retrieves an existing access policy resource with the given name.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param account_name: The Azure Video Analyzer account name.
         :type account_name: str
-        :param access_policy_name: The name of the access policy to retrieve.
+        :param access_policy_name: The Access Policy name.
         :type access_policy_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AccessPolicyEntity, or the result of cls(response)
@@ -158,14 +158,14 @@ class AccessPoliciesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01-preview"
+        api_version = "2021-11-01-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
             'accessPolicyName': self._serialize.url("access_policy_name", access_policy_name, 'str'),
         }
@@ -205,15 +205,15 @@ class AccessPoliciesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.AccessPolicyEntity"
-        """Creates or updates an access policy.
+        """Creates a new access policy resource or updates an existing one.
 
-        Creates a new access policy resource or updates an existing one.
+        Creates a new access policy resource or updates an existing one with the given name.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param account_name: The Azure Video Analyzer account name.
         :type account_name: str
-        :param access_policy_name: The name of the access policy to create or update.
+        :param access_policy_name: The Access Policy name.
         :type access_policy_name: str
         :param parameters: The request parameters.
         :type parameters: ~video_analyzer.models.AccessPolicyEntity
@@ -227,7 +227,7 @@ class AccessPoliciesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01-preview"
+        api_version = "2021-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -235,7 +235,7 @@ class AccessPoliciesOperations(object):
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
             'accessPolicyName': self._serialize.url("access_policy_name", access_policy_name, 'str'),
         }
@@ -282,15 +282,15 @@ class AccessPoliciesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Deletes an access policy.
+        """Deletes an existing access policy resource.
 
-        Deletes an existing access policy resource.
+        Deletes an existing access policy resource with the given name.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param account_name: The Azure Video Analyzer account name.
         :type account_name: str
-        :param access_policy_name: The name of the access policy to delete.
+        :param access_policy_name: The Access Policy name.
         :type access_policy_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -302,14 +302,14 @@ class AccessPoliciesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01-preview"
+        api_version = "2021-11-01-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
             'accessPolicyName': self._serialize.url("access_policy_name", access_policy_name, 'str'),
         }
@@ -346,15 +346,15 @@ class AccessPoliciesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.AccessPolicyEntity"
-        """Updates an existing access policy.
+        """Updates individual properties of an existing access policy resource.
 
-        Updates individual properties of an existing access policy resource.
+        Updates individual properties of an existing access policy resource with the given name.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param account_name: The Azure Video Analyzer account name.
         :type account_name: str
-        :param access_policy_name: The name of the access policy to update.
+        :param access_policy_name: The Access Policy name.
         :type access_policy_name: str
         :param parameters: The request parameters.
         :type parameters: ~video_analyzer.models.AccessPolicyEntity
@@ -368,7 +368,7 @@ class AccessPoliciesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01-preview"
+        api_version = "2021-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -376,7 +376,7 @@ class AccessPoliciesOperations(object):
         url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
             'accessPolicyName': self._serialize.url("access_policy_name", access_policy_name, 'str'),
         }

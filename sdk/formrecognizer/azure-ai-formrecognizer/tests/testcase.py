@@ -698,11 +698,20 @@ class FormRecognizerTest(AzureTestCase):
             self.assertBoundingRegionsTransformCorrect(table.bounding_regions, expected.bounding_regions)
 
     def assertDocumentTableCellTransformCorrect(self, transformed_cell, raw_cell, **kwargs):
-        assert transformed_cell.kind == raw_cell.kind
+        if raw_cell.kind:
+            assert transformed_cell.kind == raw_cell.kind
+        else:
+            assert transformed_cell.kind == "content"
         assert transformed_cell.row_index == raw_cell.row_index
         assert transformed_cell.column_index == raw_cell.column_index
-        assert transformed_cell.row_span == raw_cell.row_span
-        assert transformed_cell.column_span == raw_cell.column_span
+        if raw_cell.row_span:
+            assert transformed_cell.row_span == raw_cell.row_span
+        else:
+            assert transformed_cell.row_span == 1
+        if raw_cell.column_span:
+            assert transformed_cell.column_span == raw_cell.column_span
+        else:
+            assert transformed_cell.column_span == 1
         assert transformed_cell.content == raw_cell.content
 
         for span, expected_span in zip(transformed_cell.spans or [], raw_cell.spans or []):
@@ -764,7 +773,9 @@ class FormRecognizerTest(AzureTestCase):
             field_type = expected.type
             assert adjust_value_type(field_type) == document_fields[label].value_type
             assert expected.confidence == document_fields[label].confidence
-            assert expected.content == document_fields[label].content
+            # In the case of content for a signature type field we get '' in expected.content
+            # vs. None for document_fields[label].content
+            assert (expected.content == document_fields[label].content) or (expected.content == '' and not document_fields[label].content)
             self.assertDocumentFieldValueTransformCorrect(document_fields[label], expected)
 
             for span, expected_span in zip(document_fields[label].spans or [], expected.spans or []):
