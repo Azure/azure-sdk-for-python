@@ -41,8 +41,6 @@ steps:
     inputs:
       versionSpec: '2.7'
 
-  - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
-
   - script: |
       pip install -r eng/ci_tools.txt
     displayName: 'Prep Py2 Environment'
