@@ -62,7 +62,7 @@ def sample_analyze_orchestration_app():
     top_intent_object = result.prediction.intents[top_intent]
     print("\tconfidence score: {}\n".format(top_intent_object.confidence_score))
 
-    print("view qna result:")
+    print("view result:")
     print("\tresult: {}\n".format(top_intent_object.result))
     # [END analyze_orchestration_app]
 
