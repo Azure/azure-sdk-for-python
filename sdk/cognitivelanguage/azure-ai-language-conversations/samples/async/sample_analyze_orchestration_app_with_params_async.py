@@ -19,7 +19,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_CONVERSATIONS_ENDPOINT - the endpoint to your CLU resource.
     2) AZURE_CONVERSATIONS_KEY - your CLU API key.
-    3) AZURE_CONVERSATIONS_ORCHESTRATION_PROJECT - the name of your CLU orchestration project.
+    3) AZURE_CONVERSATIONS_WORKFLOW_PROJECT - the name of your CLU orchestration project.
 """
 
 import asyncio
@@ -40,7 +40,7 @@ async def sample_analyze_orchestration_app_with_params_async():
     # get secrets
     conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-    orchestration_project = os.environ["AZURE_CONVERSATIONS_ORCHESTRATION_PROJECT"]
+    orchestration_project = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT"]
 
     # prepare data
     query = "How do you make sushi rice?",

@@ -129,7 +129,7 @@ from azure.ai.language.conversations.models import ConversationAnalysisOptions
 # get secrets
 conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
 conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-orchestration_project = os.environ["AZURE_CONVERSATIONS_ORCHESTRATION_PROJECT")
+orchestration_project = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT")
 
 # prepare data
 query = "How do you make sushi rice?",
@@ -174,7 +174,7 @@ from azure.ai.language.conversations.models import ConversationAnalysisOptions
 # get secrets
 conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
 conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-orchestration_project = os.environ["AZURE_CONVERSATIONS_ORCHESTRATION_PROJECT")
+orchestration_project = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT")
 
 # prepare data
 query = "How do you make sushi rice?",
