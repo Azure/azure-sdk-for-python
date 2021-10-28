@@ -286,23 +286,23 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         self._client.indexers.reset(name, **kwargs)
 
     @distributed_trace
-    def reset_documents(self, name, overwrite, keys_or_ids, **kwargs):
+    def reset_documents(self, name, keys_or_ids, **kwargs):
         """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
 
         :param name: The name of the indexer to reset documents for.
         :type name: str
-        :param overwrite: If false, keys or ids will be appended to existing ones. If true, only the
-         keys or ids in this payload will be queued to be re-ingested.
-        :type overwrite: bool
         :param keys_or_ids:
         :type keys_or_ids: ~azure.search.documents.indexes.models.DocumentKeysOrIds
         :return: None, or the result of cls(response)
+        :keyword overwrite: If false, keys or ids will be appended to existing ones. If true, only the
+         keys or ids in this payload will be queued to be re-ingested.
+        :paramtype overwrite: bool
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        # TODO: Complete implementation
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        return self._client.indexers.reset_docs(name, overwrite, keys_or_ids, **kwargs)
+        kwargs["keys_or_ids"] = keys_or_ids
+        return self._client.indexers.reset_docs(name, **kwargs)
 
     @distributed_trace
     def get_indexer_status(self, name, **kwargs):
@@ -666,7 +666,6 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        # TODO: Complete implementation. ResetSkillsOptions???
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         return self._client.skillsets.reset_skills(name, skill_names, **kwargs)
 
