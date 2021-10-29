@@ -524,6 +524,8 @@ class SearchIndex(msrest.serialization.Model):
      creation time and cannot be modified on existing indexes. If null, the ClassicSimilarity
      algorithm is used.
     :paramtype similarity: ~azure.search.documents.indexes.models.SimilarityAlgorithm
+    :keyword semantic: Defines parameters for a search index that influence semantic capabilities.
+    :paramtype semantic: ~azure.search.documents.indexes.models.Semantic
     :keyword e_tag: The ETag of the index.
     :paramtype e_tag: str
     """
