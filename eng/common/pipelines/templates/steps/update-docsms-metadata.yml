@@ -22,13 +22,14 @@ parameters:
   - name: DailyDocsBuild
     type: boolean
     default: false
+  - name: CodeOwners
+    type: string[]
+    default: []
   - name: SparseCheckoutPaths
     type: object
     default:
       - '**'
-  - name: TargetCodeOwners
-    type: string
-    default: ''
+
 steps:
 - template: /eng/common/pipelines/templates/steps/enable-long-path-support.yml
 
@@ -75,6 +76,7 @@ steps:
     parameters:
       WorkingDirectory: $(DocRepoLocation)
       DefaultBranchVariableName: TargetBranchName
+
 - pwsh: |
     $packageInfoJson = '${{ convertToJson(parameters.PackageInfoLocations) }}'.Trim('"').Replace("\\", "/")
     $packageInfoLocations = ConvertFrom-Json $packageInfoJson
@@ -83,7 +85,7 @@ steps:
       -DocRepoLocation "$(DocRepoLocation)" `
       -Language '${{parameters.Language}}' `
       -RepoId '${{ parameters.RepoId }}'
-      -CodeOwners '${{parameters.TargetCodeOwners}}'
+      -CodeOwners '${{ parameters.CodeOwners }}'
   displayName: Apply Documentation Updates
 
 - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
