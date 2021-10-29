@@ -35,8 +35,8 @@ def print_check(cmd):
 def output_python_md(issue_status_python):
     with open(_FILE_OUT_PYTHON, 'w') as file_out:
         file_out.write(
-            '| issue | author | package | assignee | bot advice | created date of issue | delay from created date | target release date | date from target |\n')
-        file_out.write('| ------ | ------ | ------ | ------ | ------ | ------ | ----- | ------ | :-----: |\n')
+            '| issue | author | package | assignee | bot advice | created date of issue | target release date | date from target |\n')
+        file_out.write('| ------ | ------ | ------ | ------ | ------ | ------ | ------ | :-----: |\n')
         file_out.writelines([item.output_python() for item in sorted(issue_status_python, key=_key_select)])
 
 def output_csv(issue_status):
@@ -80,11 +80,14 @@ class IssueStatus:
         package = self.package.split('-')[-1]
         create_date = str(date.fromtimestamp(self.create_date).strftime('%m-%d'))
         target_date = str(datetime.strptime(self.target_date, "%Y-%m-%d").strftime('%m-%d'))
-        days_from_target = str(self.days_from_target)
-        return '| [#{}]({}) | {} | {} | {} | {} | {} | {} | {} | {} |\n'.format(self.link.split('/')[-1], self.link, self.author,
+        if abs(self.days_from_target) < 3:
+            days_from_target = str(self.days_from_target)
+        else:
+            days_from_target = ' '
+
+        return '| [#{}]({}) | {} | {} | {} | {} | {} | {} | {} |\n'.format(self.link.split('/')[-1], self.link, self.author,
                                                                       package, self.assignee, self.bot_advice,
                                                                       create_date,
-                                                                      self.delay_from_create_date,
                                                                       target_date,
                                                                       days_from_target
                                                                       )
@@ -266,8 +269,8 @@ def main():
         if 'base-branch-attention' in item.labels:
             item.bot_advice = 'new version is 0.0.0, please check base branch! ' + item.bot_advice
 
-        if item.days_from_target <= 2:
-            item.bot_advice += 'Less than two days from the release date! '
+        if abs(item.days_from_target) < 3:
+            item.bot_advice += ' release date < 2 ! <br>'
           
         if item.days_from_latest_commit >= 30 and item.language == 'Python' and '30days attention' not in item.labels:
             item.issue_object.add_to_labels('30days attention')
