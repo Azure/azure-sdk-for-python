@@ -13,8 +13,7 @@ __version__ = VERSION
 __all__ = ['WebPubSubServiceClient']
 
 try:
-    from ._patch import get_client_access_token
     from ._patch import WebPubSubServiceClient
-    __all__ = ['WebPubSubServiceClient', 'get_client_access_token']
+    __all__ = ['WebPubSubServiceClient']
 except ImportError:
     pass
