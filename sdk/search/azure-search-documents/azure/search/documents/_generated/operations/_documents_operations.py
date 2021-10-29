@@ -75,6 +75,7 @@ def build_search_get_request(
     query_type = kwargs.pop('query_type', None)  # type: Optional[Union[str, "_models.QueryType"]]
     scoring_parameters = kwargs.pop('scoring_parameters', None)  # type: Optional[List[str]]
     scoring_profile = kwargs.pop('scoring_profile', None)  # type: Optional[str]
+    semantic_configuration = kwargs.pop('semantic_configuration', None)  # type: Optional[str]
     search_fields = kwargs.pop('search_fields', None)  # type: Optional[List[str]]
     query_language = kwargs.pop('query_language', None)  # type: Optional[Union[str, "_models.QueryLanguage"]]
     speller = kwargs.pop('speller', None)  # type: Optional[Union[str, "_models.Speller"]]
@@ -120,6 +121,8 @@ def build_search_get_request(
         query_parameters['scoringParameter'] = [_SERIALIZER.query("scoring_parameters", q, 'str') if q is not None else '' for q in scoring_parameters]
     if scoring_profile is not None:
         query_parameters['scoringProfile'] = _SERIALIZER.query("scoring_profile", scoring_profile, 'str')
+    if semantic_configuration is not None:
+        query_parameters['semanticConfiguration'] = _SERIALIZER.query("semantic_configuration", semantic_configuration, 'str')
     if search_fields is not None:
         query_parameters['searchFields'] = _SERIALIZER.query("search_fields", search_fields, '[str]', div=',')
     if query_language is not None:
@@ -568,6 +571,7 @@ class DocumentsOperations(object):
         _query_type = None
         _scoring_parameters = None
         _scoring_profile = None
+        _semantic_configuration = None
         _search_fields = None
         _query_language = None
         _speller = None
@@ -593,6 +597,7 @@ class DocumentsOperations(object):
             _query_type = search_options.query_type
             _scoring_parameters = search_options.scoring_parameters
             _scoring_profile = search_options.scoring_profile
+            _semantic_configuration = search_options.semantic_configuration
             _search_fields = search_options.search_fields
             _query_language = search_options.query_language
             _speller = search_options.speller
@@ -621,6 +626,7 @@ class DocumentsOperations(object):
             query_type=_query_type,
             scoring_parameters=_scoring_parameters,
             scoring_profile=_scoring_profile,
+            semantic_configuration=_semantic_configuration,
             search_fields=_search_fields,
             query_language=_query_language,
             speller=_speller,

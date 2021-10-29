@@ -137,6 +137,7 @@ class DocumentsOperations:
         _query_type = None
         _scoring_parameters = None
         _scoring_profile = None
+        _semantic_configuration = None
         _search_fields = None
         _query_language = None
         _speller = None
@@ -162,6 +163,7 @@ class DocumentsOperations:
             _query_type = search_options.query_type
             _scoring_parameters = search_options.scoring_parameters
             _scoring_profile = search_options.scoring_profile
+            _semantic_configuration = search_options.semantic_configuration
             _search_fields = search_options.search_fields
             _query_language = search_options.query_language
             _speller = search_options.speller
@@ -190,6 +192,7 @@ class DocumentsOperations:
             query_type=_query_type,
             scoring_parameters=_scoring_parameters,
             scoring_profile=_scoring_profile,
+            semantic_configuration=_semantic_configuration,
             search_fields=_search_fields,
             query_language=_query_language,
             speller=_speller,

@@ -5319,6 +5319,58 @@ class PIIDetectionSkill(SearchIndexerSkill):
         self.domain = kwargs.get('domain', None)
 
 
+class PrioritizedFields(msrest.serialization.Model):
+    """Describes the title, content, and keywords fields to be used for semantic ranking, captions, highlights, and answers.
+
+    :ivar title_field: Defines the title field to be used for semantic ranking, captions,
+     highlights, and answers. If you don't have a title field in your index, leave this blank.
+    :vartype title_field: ~azure.search.documents.indexes.models.SemanticField
+    :ivar prioritized_content_fields: Defines the content fields to be used for semantic ranking,
+     captions, highlights, and answers. For the best result, the selected fields should contain text
+     in natural language form. The order of the fields in the array represent their priority. Fields
+     with lower priority may get truncated if the content is long.
+    :vartype prioritized_content_fields: list[~azure.search.documents.indexes.models.SemanticField]
+    :ivar prioritized_keywords_fields: Defines the keyword fields to be used for semantic ranking,
+     captions, highlights, and answers. For the best result, the selected fields should contain a
+     list of keywords. The order of the fields in the array represent their priority. Fields with
+     lower priority may get truncated if the content is long.
+    :vartype prioritized_keywords_fields:
+     list[~azure.search.documents.indexes.models.SemanticField]
+    """
+
+    _attribute_map = {
+        'title_field': {'key': 'titleField', 'type': 'SemanticField'},
+        'prioritized_content_fields': {'key': 'prioritizedContentFields', 'type': '[SemanticField]'},
+        'prioritized_keywords_fields': {'key': 'prioritizedKeywordsFields', 'type': '[SemanticField]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword title_field: Defines the title field to be used for semantic ranking, captions,
+         highlights, and answers. If you don't have a title field in your index, leave this blank.
+        :paramtype title_field: ~azure.search.documents.indexes.models.SemanticField
+        :keyword prioritized_content_fields: Defines the content fields to be used for semantic
+         ranking, captions, highlights, and answers. For the best result, the selected fields should
+         contain text in natural language form. The order of the fields in the array represent their
+         priority. Fields with lower priority may get truncated if the content is long.
+        :paramtype prioritized_content_fields:
+         list[~azure.search.documents.indexes.models.SemanticField]
+        :keyword prioritized_keywords_fields: Defines the keyword fields to be used for semantic
+         ranking, captions, highlights, and answers. For the best result, the selected fields should
+         contain a list of keywords. The order of the fields in the array represent their priority.
+         Fields with lower priority may get truncated if the content is long.
+        :paramtype prioritized_keywords_fields:
+         list[~azure.search.documents.indexes.models.SemanticField]
+        """
+        super(PrioritizedFields, self).__init__(**kwargs)
+        self.title_field = kwargs.get('title_field', None)
+        self.prioritized_content_fields = kwargs.get('prioritized_content_fields', None)
+        self.prioritized_keywords_fields = kwargs.get('prioritized_keywords_fields', None)
+
+
 class RequestOptions(msrest.serialization.Model):
     """Parameter group.
 
@@ -5836,6 +5888,8 @@ class SearchIndex(msrest.serialization.Model):
      creation time and cannot be modified on existing indexes. If null, the ClassicSimilarity
      algorithm is used.
     :vartype similarity: ~azure.search.documents.indexes.models.Similarity
+    :ivar semantic: Defines parameters for a search index that influence semantic capabilities.
+    :vartype semantic: ~azure.search.documents.indexes.models.Semantic
     :ivar e_tag: The ETag of the index.
     :vartype e_tag: str
     """
@@ -5859,6 +5913,7 @@ class SearchIndex(msrest.serialization.Model):
         'normalizers': {'key': 'normalizers', 'type': '[LexicalNormalizer]'},
         'encryption_key': {'key': 'encryptionKey', 'type': 'SearchResourceEncryptionKey'},
         'similarity': {'key': 'similarity', 'type': 'Similarity'},
+        'semantic': {'key': 'semantic', 'type': 'Semantic'},
         'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
     }
 
@@ -5905,6 +5960,8 @@ class SearchIndex(msrest.serialization.Model):
          creation time and cannot be modified on existing indexes. If null, the ClassicSimilarity
          algorithm is used.
         :paramtype similarity: ~azure.search.documents.indexes.models.Similarity
+        :keyword semantic: Defines parameters for a search index that influence semantic capabilities.
+        :paramtype semantic: ~azure.search.documents.indexes.models.Semantic
         :keyword e_tag: The ETag of the index.
         :paramtype e_tag: str
         """
@@ -5922,6 +5979,7 @@ class SearchIndex(msrest.serialization.Model):
         self.normalizers = kwargs.get('normalizers', None)
         self.encryption_key = kwargs.get('encryption_key', None)
         self.similarity = kwargs.get('similarity', None)
+        self.semantic = kwargs.get('semantic', None)
         self.e_tag = kwargs.get('e_tag', None)
 
 
@@ -7041,6 +7099,94 @@ class SearchResourceEncryptionKey(msrest.serialization.Model):
         self.vault_uri = kwargs['vault_uri']
         self.access_credentials = kwargs.get('access_credentials', None)
         self.identity = kwargs.get('identity', None)
+
+
+class Semantic(msrest.serialization.Model):
+    """Defines parameters for a search index that influence semantic capabilities.
+
+    :ivar semantic_configurations: The semantic configurations for the index.
+    :vartype semantic_configurations:
+     list[~azure.search.documents.indexes.models.SemanticConfiguration]
+    """
+
+    _attribute_map = {
+        'semantic_configurations': {'key': 'semanticConfigurations', 'type': '[SemanticConfiguration]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword semantic_configurations: The semantic configurations for the index.
+        :paramtype semantic_configurations:
+         list[~azure.search.documents.indexes.models.SemanticConfiguration]
+        """
+        super(Semantic, self).__init__(**kwargs)
+        self.semantic_configurations = kwargs.get('semantic_configurations', None)
+
+
+class SemanticConfiguration(msrest.serialization.Model):
+    """Defines a specific configuration to be used in the context of semantic capabilities.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: Required. The name of the semantic configuration.
+    :vartype name: str
+    :ivar prioritized_fields: Required. Describes the title, content, and keyword fields to be used
+     for semantic ranking, captions, highlights, and answers. At least one of the three sub
+     properties (titleField, prioritizedKeywordsFields and prioritizedContentFields) need to be set.
+    :vartype prioritized_fields: ~azure.search.documents.indexes.models.PrioritizedFields
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'prioritized_fields': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'prioritized_fields': {'key': 'prioritizedFields', 'type': 'PrioritizedFields'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword name: Required. The name of the semantic configuration.
+        :paramtype name: str
+        :keyword prioritized_fields: Required. Describes the title, content, and keyword fields to be
+         used for semantic ranking, captions, highlights, and answers. At least one of the three sub
+         properties (titleField, prioritizedKeywordsFields and prioritizedContentFields) need to be set.
+        :paramtype prioritized_fields: ~azure.search.documents.indexes.models.PrioritizedFields
+        """
+        super(SemanticConfiguration, self).__init__(**kwargs)
+        self.name = kwargs['name']
+        self.prioritized_fields = kwargs['prioritized_fields']
+
+
+class SemanticField(msrest.serialization.Model):
+    """A field that is used as part of the semantic configuration.
+
+    :ivar field_name:
+    :vartype field_name: str
+    """
+
+    _attribute_map = {
+        'field_name': {'key': 'fieldName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword field_name:
+        :paramtype field_name: str
+        """
+        super(SemanticField, self).__init__(**kwargs)
+        self.field_name = kwargs.get('field_name', None)
 
 
 class SentimentSkill(SearchIndexerSkill):

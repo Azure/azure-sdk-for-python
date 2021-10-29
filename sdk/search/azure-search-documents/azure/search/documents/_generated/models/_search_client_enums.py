@@ -97,8 +97,148 @@ class QueryLanguage(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     #: Query language not specified.
     NONE = "none"
-    #: English.
+    #: Query language value for en-us.
     EN_US = "en-us"
+    #: Query language value for en-gb.
+    EN_GB = "en-gb"
+    #: Query language value for en-in.
+    EN_IN = "en-in"
+    #: Query language value for en-ca.
+    EN_CA = "en-ca"
+    #: Query language value for en-au.
+    EN_AU = "en-au"
+    #: Query language value for fr-fr.
+    FR_FR = "fr-fr"
+    #: Query language value for fr-ca.
+    FR_CA = "fr-ca"
+    #: Query language value for de-de.
+    DE_DE = "de-de"
+    #: Query language value for es-es.
+    ES_ES = "es-es"
+    #: Query language value for es-mx.
+    ES_MX = "es-mx"
+    #: Query language value for zh-cn.
+    ZH_CN = "zh-cn"
+    #: Query language value for zh-tw.
+    ZH_TW = "zh-tw"
+    #: Query language value for pt-br.
+    PT_BR = "pt-br"
+    #: Query language value for pt-pt.
+    PT_PT = "pt-pt"
+    #: Query language value for it-it.
+    IT_IT = "it-it"
+    #: Query language value for ja-jp.
+    JA_JP = "ja-jp"
+    #: Query language value for ko-kr.
+    KO_KR = "ko-kr"
+    #: Query language value for ru-ru.
+    RU_RU = "ru-ru"
+    #: Query language value for cs-cz.
+    CS_CZ = "cs-cz"
+    #: Query language value for nl-be.
+    NL_BE = "nl-be"
+    #: Query language value for nl-nl.
+    NL_NL = "nl-nl"
+    #: Query language value for hu-hu.
+    HU_HU = "hu-hu"
+    #: Query language value for pl-pl.
+    PL_PL = "pl-pl"
+    #: Query language value for sv-se.
+    SV_SE = "sv-se"
+    #: Query language value for tr-tr.
+    TR_TR = "tr-tr"
+    #: Query language value for hi-in.
+    HI_IN = "hi-in"
+    #: Query language value for ar-sa.
+    AR_SA = "ar-sa"
+    #: Query language value for ar-eg.
+    AR_EG = "ar-eg"
+    #: Query language value for ar-ma.
+    AR_MA = "ar-ma"
+    #: Query language value for ar-kw.
+    AR_KW = "ar-kw"
+    #: Query language value for ar-jo.
+    AR_JO = "ar-jo"
+    #: Query language value for da-dk.
+    DA_DK = "da-dk"
+    #: Query language value for no-no.
+    NO_NO = "no-no"
+    #: Query language value for bg-bg.
+    BG_BG = "bg-bg"
+    #: Query language value for hr-hr.
+    HR_HR = "hr-hr"
+    #: Query language value for hr-ba.
+    HR_BA = "hr-ba"
+    #: Query language value for ms-my.
+    MS_MY = "ms-my"
+    #: Query language value for ms-bn.
+    MS_BN = "ms-bn"
+    #: Query language value for sl-sl.
+    SL_SL = "sl-sl"
+    #: Query language value for ta-in.
+    TA_IN = "ta-in"
+    #: Query language value for vi-vn.
+    VI_VN = "vi-vn"
+    #: Query language value for el-gr.
+    EL_GR = "el-gr"
+    #: Query language value for ro-ro.
+    RO_RO = "ro-ro"
+    #: Query language value for is-is.
+    IS_IS = "is-is"
+    #: Query language value for id-id.
+    ID_ID = "id-id"
+    #: Query language value for th-th.
+    TH_TH = "th-th"
+    #: Query language value for lt-lt.
+    LT_LT = "lt-lt"
+    #: Query language value for uk-ua.
+    UK_UA = "uk-ua"
+    #: Query language value for lv-lv.
+    LV_LV = "lv-lv"
+    #: Query language value for et-ee.
+    ET_EE = "et-ee"
+    #: Query language value for ca-es.
+    CA_ES = "ca-es"
+    #: Query language value for fi-fi.
+    FI_FI = "fi-fi"
+    #: Query language value for sr-ba.
+    SR_BA = "sr-ba"
+    #: Query language value for sr-me.
+    SR_ME = "sr-me"
+    #: Query language value for sr-rs.
+    SR_RS = "sr-rs"
+    #: Query language value for sk-sk.
+    SK_SK = "sk-sk"
+    #: Query language value for nb-no.
+    NB_NO = "nb-no"
+    #: Query language value for hy-am.
+    HY_AM = "hy-am"
+    #: Query language value for bn-in.
+    BN_IN = "bn-in"
+    #: Query language value for eu-es.
+    EU_ES = "eu-es"
+    #: Query language value for gl-es.
+    GL_ES = "gl-es"
+    #: Query language value for gu-in.
+    GU_IN = "gu-in"
+    #: Query language value for he-il.
+    HE_IL = "he-il"
+    #: Query language value for ga-ie.
+    GA_IE = "ga-ie"
+    #: Query language value for kn-in.
+    KN_IN = "kn-in"
+    #: Query language value for ml-in.
+    ML_IN = "ml-in"
+    #: Query language value for mr-in.
+    MR_IN = "mr-in"
+    #: Query language value for fa-ae.
+    FA_AE = "fa-ae"
+    #: Query language value for pa-in.
+    PA_IN = "pa-in"
+    #: Query language value for te-in.
+    TE_IN = "te-in"
+    #: Query language value for ur-pk.
+    UR_PK = "ur-pk"
 
 class QuerySpellerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Improve search recall by spell-correcting individual search query terms.
