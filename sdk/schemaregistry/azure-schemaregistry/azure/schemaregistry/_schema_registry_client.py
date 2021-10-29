@@ -114,12 +114,12 @@ class SchemaRegistryClient(object):
         except AttributeError:
             pass
 
+        format = str(format).lower()
         request = schema_rest.build_register_request(
             group_name=group_name,
             schema_name=name,
             content=schema_definition,
-            serialization_type=format,
-            content_type=kwargs.pop("content_type", "application/json"),
+            content_type=kwargs.pop("content_type", "application/json; serialization={}".format(format)),
             **kwargs
         )
 
@@ -146,7 +146,7 @@ class SchemaRegistryClient(object):
                 :caption: Get schema by id.
 
         """
-        request = schema_rest.build_get_by_id_request(schema_id=id)
+        request = schema_rest.build_get_by_id_request(id=id)
         response = self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
         return _parse_response_schema(response)
@@ -181,12 +181,12 @@ class SchemaRegistryClient(object):
         except AttributeError:
             pass
 
+        format = str(format).lower()
         request = schema_rest.build_query_id_by_content_request(
             group_name=group_name,
             schema_name=name,
             content=schema_definition,
-            serialization_type=format,
-            content_type=kwargs.pop("content_type", "application/json"),
+            content_type=kwargs.pop("content_type", "application/json; serialization={}".format(format)),
             **kwargs
         )
 

@@ -90,6 +90,23 @@ def get_schema_id(schema_registry_client):
 if __name__ == '__main__':
     client = create_client()
     with client:
-        id = register_schema(client)
-        schema = get_schema(client, id)
-        id = get_schema_id(client)
+        #try:
+        #    id = register_schema(client)
+        #except Exception as e:
+        #    print(dir(e))
+        #    print(dir(e.response))
+        #    print(e.response.content)
+        #    pass
+        #try:
+        #    schema = get_schema(client, id)
+        #except Exception as e:
+        #    print(dir(e))
+        #    print(dir(e.response))
+        #    print(e.response.content)
+        #    pass
+        #try:
+        #    id = get_schema_id(client)
+        #except Exception as e:
+        #    print(dir(e))
+        #    print(dir(e.response))
+        #    print(e.response.content)
