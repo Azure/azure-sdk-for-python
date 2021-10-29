@@ -54,7 +54,6 @@ steps:
       pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
 
-  - template: /eng/common/pipelines/templates/steps/get-code-owners.yml
   - template: ../steps/set-dev-build.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
