@@ -33,6 +33,7 @@ import pytest
 import avro
 from avro.io import AvroTypeException
 
+
 from azure.schemaregistry.aio import SchemaRegistryClient
 from azure.schemaregistry.serializer.avroserializer.aio import AvroSerializer
 from azure.schemaregistry.serializer.avroserializer.exceptions import SchemaParseError, SchemaSerializationError, SchemaDeserializationError
