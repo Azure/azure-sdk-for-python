@@ -114,6 +114,7 @@ class SchemaRegistryClient(object):
         except AttributeError:
             pass
 
+        logging_enable = kwargs.pop("logging_enable", False)
         request = schema_rest.build_register_request(
             group_name=group_name,
             schema_name=name,
@@ -123,7 +124,7 @@ class SchemaRegistryClient(object):
             **kwargs
         )
 
-        response = self._generated_client.send_request(request)
+        response = self._generated_client.send_request(request, logging_enable=logging_enable)
         response.raise_for_status()
         return _parse_response_schema_properties(response)
 
@@ -181,6 +182,7 @@ class SchemaRegistryClient(object):
         except AttributeError:
             pass
 
+        logging_enable = kwargs.pop("logging_enable", False)
         request = schema_rest.build_query_id_by_content_request(
             group_name=group_name,
             schema_name=name,
@@ -190,6 +192,6 @@ class SchemaRegistryClient(object):
             **kwargs
         )
 
-        response = self._generated_client.send_request(request, **kwargs)
+        response = self._generated_client.send_request(request, logging_enable=logging_enable, **kwargs)
         response.raise_for_status()
         return _parse_response_schema_properties(response)
