@@ -12696,7 +12696,7 @@ class DataFlow(msrest.serialization.Model):
     """Azure Data Factory nested object which contains a flow with data movements and transformations.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: MappingDataFlow, WranglingDataFlow.
+    sub-classes are: Flowlet, MappingDataFlow, WranglingDataFlow.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -12723,7 +12723,7 @@ class DataFlow(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'type': {'MappingDataFlow': 'MappingDataFlow', 'WranglingDataFlow': 'WranglingDataFlow'}
+        'type': {'Flowlet': 'Flowlet', 'MappingDataFlow': 'MappingDataFlow', 'WranglingDataFlow': 'WranglingDataFlow'}
     }
 
     def __init__(
@@ -12851,6 +12851,8 @@ class DataFlowDebugPackage(msrest.serialization.Model):
     :type session_id: str
     :param data_flow: Data flow instance.
     :type data_flow: ~azure.mgmt.datafactory.models.DataFlowDebugResource
+    :param data_flows: List of Data flows.
+    :type data_flows: list[~azure.mgmt.datafactory.models.DataFlowDebugResource]
     :param datasets: List of datasets.
     :type datasets: list[~azure.mgmt.datafactory.models.DatasetDebugResource]
     :param linked_services: List of linked services.
@@ -12865,6 +12867,7 @@ class DataFlowDebugPackage(msrest.serialization.Model):
         'additional_properties': {'key': '', 'type': '{object}'},
         'session_id': {'key': 'sessionId', 'type': 'str'},
         'data_flow': {'key': 'dataFlow', 'type': 'DataFlowDebugResource'},
+        'data_flows': {'key': 'dataFlows', 'type': '[DataFlowDebugResource]'},
         'datasets': {'key': 'datasets', 'type': '[DatasetDebugResource]'},
         'linked_services': {'key': 'linkedServices', 'type': '[LinkedServiceDebugResource]'},
         'staging': {'key': 'staging', 'type': 'DataFlowStagingInfo'},
@@ -12877,6 +12880,7 @@ class DataFlowDebugPackage(msrest.serialization.Model):
         additional_properties: Optional[Dict[str, Any]] = None,
         session_id: Optional[str] = None,
         data_flow: Optional["DataFlowDebugResource"] = None,
+        data_flows: Optional[List["DataFlowDebugResource"]] = None,
         datasets: Optional[List["DatasetDebugResource"]] = None,
         linked_services: Optional[List["LinkedServiceDebugResource"]] = None,
         staging: Optional["DataFlowStagingInfo"] = None,
@@ -12887,6 +12891,7 @@ class DataFlowDebugPackage(msrest.serialization.Model):
         self.additional_properties = additional_properties
         self.session_id = session_id
         self.data_flow = data_flow
+        self.data_flows = data_flows
         self.datasets = datasets
         self.linked_services = linked_services
         self.staging = staging
@@ -13196,6 +13201,8 @@ class Transformation(msrest.serialization.Model):
     :type name: str
     :param description: Transformation description.
     :type description: str
+    :param flowlet: Flowlet Reference.
+    :type flowlet: ~azure.mgmt.datafactory.models.DataFlowReference
     """
 
     _validation = {
@@ -13205,6 +13212,7 @@ class Transformation(msrest.serialization.Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
+        'flowlet': {'key': 'flowlet', 'type': 'DataFlowReference'},
     }
 
     def __init__(
@@ -13212,11 +13220,13 @@ class Transformation(msrest.serialization.Model):
         *,
         name: str,
         description: Optional[str] = None,
+        flowlet: Optional["DataFlowReference"] = None,
         **kwargs
     ):
         super(Transformation, self).__init__(**kwargs)
         self.name = name
         self.description = description
+        self.flowlet = flowlet
 
 
 class DataFlowSink(Transformation):
@@ -13228,6 +13238,8 @@ class DataFlowSink(Transformation):
     :type name: str
     :param description: Transformation description.
     :type description: str
+    :param flowlet: Flowlet Reference.
+    :type flowlet: ~azure.mgmt.datafactory.models.DataFlowReference
     :param dataset: Dataset reference.
     :type dataset: ~azure.mgmt.datafactory.models.DatasetReference
     :param linked_service: Linked service reference.
@@ -13243,6 +13255,7 @@ class DataFlowSink(Transformation):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
+        'flowlet': {'key': 'flowlet', 'type': 'DataFlowReference'},
         'dataset': {'key': 'dataset', 'type': 'DatasetReference'},
         'linked_service': {'key': 'linkedService', 'type': 'LinkedServiceReference'},
         'schema_linked_service': {'key': 'schemaLinkedService', 'type': 'LinkedServiceReference'},
@@ -13253,12 +13266,13 @@ class DataFlowSink(Transformation):
         *,
         name: str,
         description: Optional[str] = None,
+        flowlet: Optional["DataFlowReference"] = None,
         dataset: Optional["DatasetReference"] = None,
         linked_service: Optional["LinkedServiceReference"] = None,
         schema_linked_service: Optional["LinkedServiceReference"] = None,
         **kwargs
     ):
-        super(DataFlowSink, self).__init__(name=name, description=description, **kwargs)
+        super(DataFlowSink, self).__init__(name=name, description=description, flowlet=flowlet, **kwargs)
         self.dataset = dataset
         self.linked_service = linked_service
         self.schema_linked_service = schema_linked_service
@@ -13273,6 +13287,8 @@ class DataFlowSource(Transformation):
     :type name: str
     :param description: Transformation description.
     :type description: str
+    :param flowlet: Flowlet Reference.
+    :type flowlet: ~azure.mgmt.datafactory.models.DataFlowReference
     :param dataset: Dataset reference.
     :type dataset: ~azure.mgmt.datafactory.models.DatasetReference
     :param linked_service: Linked service reference.
@@ -13288,6 +13304,7 @@ class DataFlowSource(Transformation):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
+        'flowlet': {'key': 'flowlet', 'type': 'DataFlowReference'},
         'dataset': {'key': 'dataset', 'type': 'DatasetReference'},
         'linked_service': {'key': 'linkedService', 'type': 'LinkedServiceReference'},
         'schema_linked_service': {'key': 'schemaLinkedService', 'type': 'LinkedServiceReference'},
@@ -13298,12 +13315,13 @@ class DataFlowSource(Transformation):
         *,
         name: str,
         description: Optional[str] = None,
+        flowlet: Optional["DataFlowReference"] = None,
         dataset: Optional["DatasetReference"] = None,
         linked_service: Optional["LinkedServiceReference"] = None,
         schema_linked_service: Optional["LinkedServiceReference"] = None,
         **kwargs
     ):
-        super(DataFlowSource, self).__init__(name=name, description=description, **kwargs)
+        super(DataFlowSource, self).__init__(name=name, description=description, flowlet=flowlet, **kwargs)
         self.dataset = dataset
         self.linked_service = linked_service
         self.schema_linked_service = schema_linked_service
@@ -13470,17 +13488,17 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):
 class DatasetCompression(msrest.serialization.Model):
     """The compression method used on a dataset.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DatasetBZip2Compression, DatasetDeflateCompression, DatasetGZipCompression, DatasetTarCompression, DatasetTarGZipCompression, DatasetZipDeflateCompression.
-
     All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset compression. Type: string (or Expression with resultType
-     string).Constant filled by server.
+     string).
     :type type: any
+    :param level: The dataset compression level. Type: string (or Expression with resultType
+     string).
+    :type level: any
     """
 
     _validation = {
@@ -13490,53 +13508,21 @@ class DatasetCompression(msrest.serialization.Model):
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
         'type': {'key': 'type', 'type': 'object'},
-    }
-
-    _subtype_map = {
-        'type': {'BZip2': 'DatasetBZip2Compression', 'Deflate': 'DatasetDeflateCompression', 'GZip': 'DatasetGZipCompression', 'Tar': 'DatasetTarCompression', 'TarGZip': 'DatasetTarGZipCompression', 'ZipDeflate': 'DatasetZipDeflateCompression'}
+        'level': {'key': 'level', 'type': 'object'},
     }
 
     def __init__(
         self,
         *,
+        type: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
+        level: Optional[Any] = None,
         **kwargs
     ):
         super(DatasetCompression, self).__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = 'DatasetCompression'  # type: str
-
-
-class DatasetBZip2Compression(DatasetCompression):
-    """The BZip2 compression method used on a dataset.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :type additional_properties: dict[str, any]
-    :param type: Required. Type of dataset compression. Type: string (or Expression with resultType
-     string).Constant filled by server.
-    :type type: any
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'object'},
-    }
-
-    def __init__(
-        self,
-        *,
-        additional_properties: Optional[Dict[str, Any]] = None,
-        **kwargs
-    ):
-        super(DatasetBZip2Compression, self).__init__(additional_properties=additional_properties, **kwargs)
-        self.type = 'BZip2'  # type: str
+        self.type = type
+        self.level = level
 
 
 class DatasetDataElement(msrest.serialization.Model):
@@ -13596,43 +13582,6 @@ class DatasetDebugResource(SubResourceDebugResource):
         self.properties = properties
 
 
-class DatasetDeflateCompression(DatasetCompression):
-    """The Deflate compression method used on a dataset.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :type additional_properties: dict[str, any]
-    :param type: Required. Type of dataset compression. Type: string (or Expression with resultType
-     string).Constant filled by server.
-    :type type: any
-    :param level: The Deflate compression level.
-    :type level: any
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'object'},
-        'level': {'key': 'level', 'type': 'object'},
-    }
-
-    def __init__(
-        self,
-        *,
-        additional_properties: Optional[Dict[str, Any]] = None,
-        level: Optional[Any] = None,
-        **kwargs
-    ):
-        super(DatasetDeflateCompression, self).__init__(additional_properties=additional_properties, **kwargs)
-        self.type = 'Deflate'  # type: str
-        self.level = level
-
-
 class DatasetFolder(msrest.serialization.Model):
     """The folder that this Dataset is in. If not specified, Dataset will appear at the root level.
 
@@ -13652,43 +13601,6 @@ class DatasetFolder(msrest.serialization.Model):
     ):
         super(DatasetFolder, self).__init__(**kwargs)
         self.name = name
-
-
-class DatasetGZipCompression(DatasetCompression):
-    """The GZip compression method used on a dataset.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :type additional_properties: dict[str, any]
-    :param type: Required. Type of dataset compression. Type: string (or Expression with resultType
-     string).Constant filled by server.
-    :type type: any
-    :param level: The GZip compression level.
-    :type level: any
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'object'},
-        'level': {'key': 'level', 'type': 'object'},
-    }
-
-    def __init__(
-        self,
-        *,
-        additional_properties: Optional[Dict[str, Any]] = None,
-        level: Optional[Any] = None,
-        **kwargs
-    ):
-        super(DatasetGZipCompression, self).__init__(additional_properties=additional_properties, **kwargs)
-        self.type = 'GZip'  # type: str
-        self.level = level
 
 
 class DatasetListResponse(msrest.serialization.Model):
@@ -13838,112 +13750,6 @@ class DatasetSchemaDataElement(msrest.serialization.Model):
         self.additional_properties = additional_properties
         self.name = name
         self.type = type
-
-
-class DatasetTarCompression(DatasetCompression):
-    """The Tar archive method used on a dataset.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :type additional_properties: dict[str, any]
-    :param type: Required. Type of dataset compression. Type: string (or Expression with resultType
-     string).Constant filled by server.
-    :type type: any
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'object'},
-    }
-
-    def __init__(
-        self,
-        *,
-        additional_properties: Optional[Dict[str, Any]] = None,
-        **kwargs
-    ):
-        super(DatasetTarCompression, self).__init__(additional_properties=additional_properties, **kwargs)
-        self.type = 'Tar'  # type: str
-
-
-class DatasetTarGZipCompression(DatasetCompression):
-    """The TarGZip compression method used on a dataset.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :type additional_properties: dict[str, any]
-    :param type: Required. Type of dataset compression. Type: string (or Expression with resultType
-     string).Constant filled by server.
-    :type type: any
-    :param level: The TarGZip compression level.
-    :type level: any
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'object'},
-        'level': {'key': 'level', 'type': 'object'},
-    }
-
-    def __init__(
-        self,
-        *,
-        additional_properties: Optional[Dict[str, Any]] = None,
-        level: Optional[Any] = None,
-        **kwargs
-    ):
-        super(DatasetTarGZipCompression, self).__init__(additional_properties=additional_properties, **kwargs)
-        self.type = 'TarGZip'  # type: str
-        self.level = level
-
-
-class DatasetZipDeflateCompression(DatasetCompression):
-    """The ZipDeflate compression method used on a dataset.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :type additional_properties: dict[str, any]
-    :param type: Required. Type of dataset compression. Type: string (or Expression with resultType
-     string).Constant filled by server.
-    :type type: any
-    :param level: The ZipDeflate compression level.
-    :type level: any
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'object'},
-        'level': {'key': 'level', 'type': 'object'},
-    }
-
-    def __init__(
-        self,
-        *,
-        additional_properties: Optional[Dict[str, Any]] = None,
-        level: Optional[Any] = None,
-        **kwargs
-    ):
-        super(DatasetZipDeflateCompression, self).__init__(additional_properties=additional_properties, **kwargs)
-        self.type = 'ZipDeflate'  # type: str
-        self.level = level
 
 
 class Db2LinkedService(LinkedService):
@@ -18357,6 +18163,81 @@ class FilterActivity(ControlActivity):
         self.type = 'Filter'  # type: str
         self.items = items
         self.condition = condition
+
+
+class Flowlet(DataFlow):
+    """Data flow flowlet.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Type of data flow.Constant filled by server.
+    :type type: str
+    :param description: The description of the data flow.
+    :type description: str
+    :param annotations: List of tags that can be used for describing the data flow.
+    :type annotations: list[any]
+    :param folder: The folder that this data flow is in. If not specified, Data flow will appear at
+     the root level.
+    :type folder: ~azure.mgmt.datafactory.models.DataFlowFolder
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, any]
+    :param sources: List of sources in Flowlet.
+    :type sources: list[~azure.mgmt.datafactory.models.DataFlowSource]
+    :param sinks: List of sinks in Flowlet.
+    :type sinks: list[~azure.mgmt.datafactory.models.DataFlowSink]
+    :param transformations: List of transformations in Flowlet.
+    :type transformations: list[~azure.mgmt.datafactory.models.Transformation]
+    :param script: Flowlet script.
+    :type script: str
+    :param script_lines: Flowlet script lines.
+    :type script_lines: list[str]
+    :param additional_properties1: Any object.
+    :type additional_properties1: any
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'folder': {'key': 'folder', 'type': 'DataFlowFolder'},
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'sources': {'key': 'typeProperties.sources', 'type': '[DataFlowSource]'},
+        'sinks': {'key': 'typeProperties.sinks', 'type': '[DataFlowSink]'},
+        'transformations': {'key': 'typeProperties.transformations', 'type': '[Transformation]'},
+        'script': {'key': 'typeProperties.script', 'type': 'str'},
+        'script_lines': {'key': 'typeProperties.scriptLines', 'type': '[str]'},
+        'additional_properties1': {'key': 'typeProperties.additionalProperties', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        annotations: Optional[List[Any]] = None,
+        folder: Optional["DataFlowFolder"] = None,
+        additional_properties: Optional[Dict[str, Any]] = None,
+        sources: Optional[List["DataFlowSource"]] = None,
+        sinks: Optional[List["DataFlowSink"]] = None,
+        transformations: Optional[List["Transformation"]] = None,
+        script: Optional[str] = None,
+        script_lines: Optional[List[str]] = None,
+        additional_properties1: Optional[Any] = None,
+        **kwargs
+    ):
+        super(Flowlet, self).__init__(description=description, annotations=annotations, folder=folder, **kwargs)
+        self.type = 'Flowlet'  # type: str
+        self.additional_properties = additional_properties
+        self.sources = sources
+        self.sinks = sinks
+        self.transformations = transformations
+        self.script = script
+        self.script_lines = script_lines
+        self.additional_properties1 = additional_properties1
 
 
 class ForEachActivity(ControlActivity):
@@ -25763,6 +25644,8 @@ class MappingDataFlow(DataFlow):
     :type transformations: list[~azure.mgmt.datafactory.models.Transformation]
     :param script: DataFlow script.
     :type script: str
+    :param script_lines: Data flow script lines.
+    :type script_lines: list[str]
     """
 
     _validation = {
@@ -25778,6 +25661,7 @@ class MappingDataFlow(DataFlow):
         'sinks': {'key': 'typeProperties.sinks', 'type': '[DataFlowSink]'},
         'transformations': {'key': 'typeProperties.transformations', 'type': '[Transformation]'},
         'script': {'key': 'typeProperties.script', 'type': 'str'},
+        'script_lines': {'key': 'typeProperties.scriptLines', 'type': '[str]'},
     }
 
     def __init__(
@@ -25790,6 +25674,7 @@ class MappingDataFlow(DataFlow):
         sinks: Optional[List["DataFlowSink"]] = None,
         transformations: Optional[List["Transformation"]] = None,
         script: Optional[str] = None,
+        script_lines: Optional[List[str]] = None,
         **kwargs
     ):
         super(MappingDataFlow, self).__init__(description=description, annotations=annotations, folder=folder, **kwargs)
@@ -25798,6 +25683,7 @@ class MappingDataFlow(DataFlow):
         self.sinks = sinks
         self.transformations = transformations
         self.script = script
+        self.script_lines = script_lines
 
 
 class MariaDBLinkedService(LinkedService):
@@ -31531,6 +31417,8 @@ class PowerQuerySink(DataFlowSink):
     :type name: str
     :param description: Transformation description.
     :type description: str
+    :param flowlet: Flowlet Reference.
+    :type flowlet: ~azure.mgmt.datafactory.models.DataFlowReference
     :param dataset: Dataset reference.
     :type dataset: ~azure.mgmt.datafactory.models.DatasetReference
     :param linked_service: Linked service reference.
@@ -31548,6 +31436,7 @@ class PowerQuerySink(DataFlowSink):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
+        'flowlet': {'key': 'flowlet', 'type': 'DataFlowReference'},
         'dataset': {'key': 'dataset', 'type': 'DatasetReference'},
         'linked_service': {'key': 'linkedService', 'type': 'LinkedServiceReference'},
         'schema_linked_service': {'key': 'schemaLinkedService', 'type': 'LinkedServiceReference'},
@@ -31559,13 +31448,14 @@ class PowerQuerySink(DataFlowSink):
         *,
         name: str,
         description: Optional[str] = None,
+        flowlet: Optional["DataFlowReference"] = None,
         dataset: Optional["DatasetReference"] = None,
         linked_service: Optional["LinkedServiceReference"] = None,
         schema_linked_service: Optional["LinkedServiceReference"] = None,
         script: Optional[str] = None,
         **kwargs
     ):
-        super(PowerQuerySink, self).__init__(name=name, description=description, dataset=dataset, linked_service=linked_service, schema_linked_service=schema_linked_service, **kwargs)
+        super(PowerQuerySink, self).__init__(name=name, description=description, flowlet=flowlet, dataset=dataset, linked_service=linked_service, schema_linked_service=schema_linked_service, **kwargs)
         self.script = script
 
 
@@ -31604,6 +31494,8 @@ class PowerQuerySource(DataFlowSource):
     :type name: str
     :param description: Transformation description.
     :type description: str
+    :param flowlet: Flowlet Reference.
+    :type flowlet: ~azure.mgmt.datafactory.models.DataFlowReference
     :param dataset: Dataset reference.
     :type dataset: ~azure.mgmt.datafactory.models.DatasetReference
     :param linked_service: Linked service reference.
@@ -31621,6 +31513,7 @@ class PowerQuerySource(DataFlowSource):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
+        'flowlet': {'key': 'flowlet', 'type': 'DataFlowReference'},
         'dataset': {'key': 'dataset', 'type': 'DatasetReference'},
         'linked_service': {'key': 'linkedService', 'type': 'LinkedServiceReference'},
         'schema_linked_service': {'key': 'schemaLinkedService', 'type': 'LinkedServiceReference'},
@@ -31632,13 +31525,14 @@ class PowerQuerySource(DataFlowSource):
         *,
         name: str,
         description: Optional[str] = None,
+        flowlet: Optional["DataFlowReference"] = None,
         dataset: Optional["DatasetReference"] = None,
         linked_service: Optional["LinkedServiceReference"] = None,
         schema_linked_service: Optional["LinkedServiceReference"] = None,
         script: Optional[str] = None,
         **kwargs
     ):
-        super(PowerQuerySource, self).__init__(name=name, description=description, dataset=dataset, linked_service=linked_service, schema_linked_service=schema_linked_service, **kwargs)
+        super(PowerQuerySource, self).__init__(name=name, description=description, flowlet=flowlet, dataset=dataset, linked_service=linked_service, schema_linked_service=schema_linked_service, **kwargs)
         self.script = script
 
 
