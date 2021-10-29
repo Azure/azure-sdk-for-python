@@ -217,6 +217,9 @@ class SearchClient(HeadersMixin):
          query caption is set to 'extractive'. Determines whether highlighting is enabled.
          Defaults to 'true'.
         :keyword list[str] semantic_fields: The list of field names used for semantic search.
+        :keyword semantic_configuration_name: The name of the semantic configuration that will be used when
+         processing documents for queries of type semantic.
+        :paramtype semantic_configuration_name: str
         :keyword list[str] select: The list of fields to retrieve. If unspecified, all fields marked as retrievable
          in the schema are included.
         :keyword int skip: The number of search results to skip. This value cannot be greater than 100,000.
@@ -302,6 +305,7 @@ class SearchClient(HeadersMixin):
         )
 
         semantic_fields = kwargs.pop("semantic_fields", None)
+        semantic_configuration = kwargs.pop("semantic_configuration_name")
 
         query = SearchQuery(
             search_text=search_text,
@@ -323,6 +327,7 @@ class SearchClient(HeadersMixin):
             answers=answers,
             captions=captions,
             semantic_fields=",".join(semantic_fields) if semantic_fields else None,
+            semantic_configuration=semantic_configuration,
             select=select if isinstance(select, six.string_types) else None,
             skip=skip,
             top=top,
