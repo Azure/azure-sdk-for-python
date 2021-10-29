@@ -15,6 +15,9 @@ steps:
       workingDirectory: '$(Agent.BuildDirectory)'
 
   - pwsh: |
+      Write-Host "/sdk/${{ parameters.ServiceDirectory }}/"
+      Write-Host "$(Build.SourcesDirectory)"
+      dir $(Build.SourcesDirectory)
       .\retrieve-codeowners `
         --target-directory "/sdk/${{ parameters.ServiceDirectory }}/" `
         --root-directory "$(Build.SourcesDirectory)" `
