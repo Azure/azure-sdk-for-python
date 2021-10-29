@@ -39,7 +39,7 @@ Interaction with Schema Registry starts with an instance of SchemaRegistryClient
 pip install azure-identity
 ```
 
-* Additionally, to use the async API supported on Python 3.6+, you must first install an async transport, such as [`aiohttp`](https://pypi.org/project/aiohttp/):
+* Additionally, to use the async API supported on Python 3.6+, you must first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/):
 
 ```Bash
 pip install aiohttp
@@ -85,7 +85,7 @@ from azure.schemaregistry import SchemaRegistryClient
 
 token_credential = DefaultAzureCredential()
 fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
-group_name = "your-group-name"
+group_name = os.environ['SCHEMA_REGISTRY_GROUP']
 name = "your-schema-name"
 format = "Avro"
 schema_definition = """
@@ -138,7 +138,7 @@ from azure.schemaregistry import SchemaRegistryClient
 
 token_credential = DefaultAzureCredential()
 fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
-group_name = "your-group-name"
+group_name = os.environ['SCHEMA_REGISTRY_GROUP']
 name = "your-schema-name"
 format = "Avro"
 schema_definition = """
