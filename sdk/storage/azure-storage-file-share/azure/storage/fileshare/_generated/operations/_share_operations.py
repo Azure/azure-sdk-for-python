@@ -45,6 +45,7 @@ class ShareOperations(object):
 
     def create(
         self,
+        share_name,  # type: str
         timeout=None,  # type: Optional[int]
         metadata=None,  # type: Optional[str]
         quota=None,  # type: Optional[int]
@@ -57,6 +58,8 @@ class ShareOperations(object):
         """Creates a new share under the specified account. If the share with the same name already
         exists, the operation fails.
 
+        :param share_name: The name of the target share.
+        :type share_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -89,6 +92,7 @@ class ShareOperations(object):
         url = self.create.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -136,6 +140,7 @@ class ShareOperations(object):
 
     def get_properties(
         self,
+        share_name,  # type: str
         sharesnapshot=None,  # type: Optional[str]
         timeout=None,  # type: Optional[int]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
@@ -145,6 +150,8 @@ class ShareOperations(object):
         """Returns all user-defined metadata and system properties for the specified share or share
         snapshot. The data returned does not include the share's list of files.
 
+        :param share_name: The name of the target share.
+        :type share_name: str
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the share snapshot to query.
         :type sharesnapshot: str
@@ -176,6 +183,7 @@ class ShareOperations(object):
         url = self.get_properties.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -215,6 +223,7 @@ class ShareOperations(object):
         response_headers['x-ms-share-provisioned-ingress-mbps']=self._deserialize('int', response.headers.get('x-ms-share-provisioned-ingress-mbps'))
         response_headers['x-ms-share-provisioned-egress-mbps']=self._deserialize('int', response.headers.get('x-ms-share-provisioned-egress-mbps'))
         response_headers['x-ms-share-next-allowed-quota-downgrade-time']=self._deserialize('rfc-1123', response.headers.get('x-ms-share-next-allowed-quota-downgrade-time'))
+        response_headers['x-ms-share-provisioned-bandwidth-mibps']=self._deserialize('int', response.headers.get('x-ms-share-provisioned-bandwidth-mibps'))
         response_headers['x-ms-lease-duration']=self._deserialize('str', response.headers.get('x-ms-lease-duration'))
         response_headers['x-ms-lease-state']=self._deserialize('str', response.headers.get('x-ms-lease-state'))
         response_headers['x-ms-lease-status']=self._deserialize('str', response.headers.get('x-ms-lease-status'))
@@ -231,6 +240,7 @@ class ShareOperations(object):
 
     def delete(
         self,
+        share_name,  # type: str
         sharesnapshot=None,  # type: Optional[str]
         timeout=None,  # type: Optional[int]
         delete_snapshots=None,  # type: Optional[Union[str, "_models.DeleteSnapshotsOptionType"]]
@@ -241,6 +251,8 @@ class ShareOperations(object):
         """Operation marks the specified share or share snapshot for deletion. The share or share snapshot
         and any files contained within it are later deleted during garbage collection.
 
+        :param share_name: The name of the target share.
+        :type share_name: str
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the share snapshot to query.
         :type sharesnapshot: str
@@ -275,6 +287,7 @@ class ShareOperations(object):
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -316,6 +329,7 @@ class ShareOperations(object):
 
     def acquire_lease(
         self,
+        share_name,  # type: str
         timeout=None,  # type: Optional[int]
         duration=None,  # type: Optional[int]
         proposed_lease_id=None,  # type: Optional[str]
@@ -327,6 +341,8 @@ class ShareOperations(object):
         """The Lease Share operation establishes and manages a lock on a share, or the specified snapshot
         for set and delete share operations.
 
+        :param share_name: The name of the target share.
+        :type share_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -365,6 +381,7 @@ class ShareOperations(object):
         url = self.acquire_lease.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -414,6 +431,7 @@ class ShareOperations(object):
 
     def release_lease(
         self,
+        share_name,  # type: str
         lease_id,  # type: str
         timeout=None,  # type: Optional[int]
         sharesnapshot=None,  # type: Optional[str]
@@ -424,6 +442,8 @@ class ShareOperations(object):
         """The Lease Share operation establishes and manages a lock on a share, or the specified snapshot
         for set and delete share operations.
 
+        :param share_name: The name of the target share.
+        :type share_name: str
         :param lease_id: Specifies the current lease ID on the resource.
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -456,6 +476,7 @@ class ShareOperations(object):
         url = self.release_lease.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -501,6 +522,7 @@ class ShareOperations(object):
 
     def change_lease(
         self,
+        share_name,  # type: str
         lease_id,  # type: str
         timeout=None,  # type: Optional[int]
         proposed_lease_id=None,  # type: Optional[str]
@@ -512,6 +534,8 @@ class ShareOperations(object):
         """The Lease Share operation establishes and manages a lock on a share, or the specified snapshot
         for set and delete share operations.
 
+        :param share_name: The name of the target share.
+        :type share_name: str
         :param lease_id: Specifies the current lease ID on the resource.
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -548,6 +572,7 @@ class ShareOperations(object):
         url = self.change_lease.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -596,6 +621,7 @@ class ShareOperations(object):
 
     def renew_lease(
         self,
+        share_name,  # type: str
         lease_id,  # type: str
         timeout=None,  # type: Optional[int]
         sharesnapshot=None,  # type: Optional[str]
@@ -606,6 +632,8 @@ class ShareOperations(object):
         """The Lease Share operation establishes and manages a lock on a share, or the specified snapshot
         for set and delete share operations.
 
+        :param share_name: The name of the target share.
+        :type share_name: str
         :param lease_id: Specifies the current lease ID on the resource.
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -638,6 +666,7 @@ class ShareOperations(object):
         url = self.renew_lease.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -684,6 +713,7 @@ class ShareOperations(object):
 
     def break_lease(
         self,
+        share_name,  # type: str
         timeout=None,  # type: Optional[int]
         break_period=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
@@ -695,6 +725,8 @@ class ShareOperations(object):
         """The Lease Share operation establishes and manages a lock on a share, or the specified snapshot
         for set and delete share operations.
 
+        :param share_name: The name of the target share.
+        :type share_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -739,6 +771,7 @@ class ShareOperations(object):
         url = self.break_lease.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -789,6 +822,7 @@ class ShareOperations(object):
 
     def create_snapshot(
         self,
+        share_name,  # type: str
         timeout=None,  # type: Optional[int]
         metadata=None,  # type: Optional[str]
         **kwargs  # type: Any
@@ -796,6 +830,8 @@ class ShareOperations(object):
         # type: (...) -> None
         """Creates a read-only snapshot of a share.
 
+        :param share_name: The name of the target share.
+        :type share_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -821,6 +857,7 @@ class ShareOperations(object):
         url = self.create_snapshot.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -862,6 +899,7 @@ class ShareOperations(object):
 
     def create_permission(
         self,
+        share_name,  # type: str
         share_permission,  # type: "_models.SharePermission"
         timeout=None,  # type: Optional[int]
         **kwargs  # type: Any
@@ -869,6 +907,8 @@ class ShareOperations(object):
         # type: (...) -> None
         """Create a permission (a security descriptor).
 
+        :param share_name: The name of the target share.
+        :type share_name: str
         :param share_permission: A permission (a security descriptor) at the share level.
         :type share_permission: ~azure.storage.fileshare.models.SharePermission
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -895,6 +935,7 @@ class ShareOperations(object):
         url = self.create_permission.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -936,6 +977,7 @@ class ShareOperations(object):
 
     def get_permission(
         self,
+        share_name,  # type: str
         file_permission_key,  # type: str
         timeout=None,  # type: Optional[int]
         **kwargs  # type: Any
@@ -943,6 +985,8 @@ class ShareOperations(object):
         # type: (...) -> "_models.SharePermission"
         """Returns the permission (security descriptor) for a given key.
 
+        :param share_name: The name of the target share.
+        :type share_name: str
         :param file_permission_key: Key of the permission to be set for the directory/file.
         :type file_permission_key: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -968,6 +1012,7 @@ class ShareOperations(object):
         url = self.get_permission.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1007,6 +1052,7 @@ class ShareOperations(object):
 
     def set_properties(
         self,
+        share_name,  # type: str
         timeout=None,  # type: Optional[int]
         quota=None,  # type: Optional[int]
         access_tier=None,  # type: Optional[Union[str, "_models.ShareAccessTier"]]
@@ -1017,6 +1063,8 @@ class ShareOperations(object):
         # type: (...) -> None
         """Sets properties for the specified share.
 
+        :param share_name: The name of the target share.
+        :type share_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -1052,6 +1100,7 @@ class ShareOperations(object):
         url = self.set_properties.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1098,6 +1147,7 @@ class ShareOperations(object):
 
     def set_metadata(
         self,
+        share_name,  # type: str
         timeout=None,  # type: Optional[int]
         metadata=None,  # type: Optional[str]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
@@ -1106,6 +1156,8 @@ class ShareOperations(object):
         # type: (...) -> None
         """Sets one or more user-defined name-value pairs for the specified share.
 
+        :param share_name: The name of the target share.
+        :type share_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -1137,6 +1189,7 @@ class ShareOperations(object):
         url = self.set_metadata.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1179,6 +1232,7 @@ class ShareOperations(object):
 
     def get_access_policy(
         self,
+        share_name,  # type: str
         timeout=None,  # type: Optional[int]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
         **kwargs  # type: Any
@@ -1186,6 +1240,8 @@ class ShareOperations(object):
         # type: (...) -> List["_models.SignedIdentifier"]
         """Returns information about stored access policies specified on the share.
 
+        :param share_name: The name of the target share.
+        :type share_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -1215,6 +1271,7 @@ class ShareOperations(object):
         url = self.get_access_policy.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1257,6 +1314,7 @@ class ShareOperations(object):
 
     def set_access_policy(
         self,
+        share_name,  # type: str
         timeout=None,  # type: Optional[int]
         share_acl=None,  # type: Optional[List["_models.SignedIdentifier"]]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
@@ -1265,6 +1323,8 @@ class ShareOperations(object):
         # type: (...) -> None
         """Sets a stored access policy for use with shared access signatures.
 
+        :param share_name: The name of the target share.
+        :type share_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -1297,6 +1357,7 @@ class ShareOperations(object):
         url = self.set_access_policy.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1345,6 +1406,7 @@ class ShareOperations(object):
 
     def get_statistics(
         self,
+        share_name,  # type: str
         timeout=None,  # type: Optional[int]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
         **kwargs  # type: Any
@@ -1352,6 +1414,8 @@ class ShareOperations(object):
         # type: (...) -> "_models.ShareStats"
         """Retrieves statistics related to the share.
 
+        :param share_name: The name of the target share.
+        :type share_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -1381,6 +1445,7 @@ class ShareOperations(object):
         url = self.get_statistics.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1423,6 +1488,7 @@ class ShareOperations(object):
 
     def restore(
         self,
+        share_name,  # type: str
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
         deleted_share_name=None,  # type: Optional[str]
@@ -1432,6 +1498,8 @@ class ShareOperations(object):
         # type: (...) -> None
         """Restores a previously deleted Share.
 
+        :param share_name: The name of the target share.
+        :type share_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -1440,9 +1508,9 @@ class ShareOperations(object):
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
-        :param deleted_share_name: Specifies the name of the preivously-deleted share.
+        :param deleted_share_name: Specifies the name of the previously-deleted share.
         :type deleted_share_name: str
-        :param deleted_share_version: Specifies the version of the preivously-deleted share.
+        :param deleted_share_version: Specifies the version of the previously-deleted share.
         :type deleted_share_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -1462,6 +1530,7 @@ class ShareOperations(object):
         url = self.restore.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 

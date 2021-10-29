@@ -840,6 +840,8 @@ class SharePropertiesInternal(msrest.serialization.Model):
     :type provisioned_ingress_m_bps: int
     :param provisioned_egress_m_bps:
     :type provisioned_egress_m_bps: int
+    :param provisioned_bandwidth_mi_bps:
+    :type provisioned_bandwidth_mi_bps: int
     :param next_allowed_quota_downgrade_time:
     :type next_allowed_quota_downgrade_time: ~datetime.datetime
     :param deleted_time:
@@ -880,6 +882,7 @@ class SharePropertiesInternal(msrest.serialization.Model):
         'provisioned_iops': {'key': 'ProvisionedIops', 'type': 'int'},
         'provisioned_ingress_m_bps': {'key': 'ProvisionedIngressMBps', 'type': 'int'},
         'provisioned_egress_m_bps': {'key': 'ProvisionedEgressMBps', 'type': 'int'},
+        'provisioned_bandwidth_mi_bps': {'key': 'ProvisionedBandwidthMiBps', 'type': 'int'},
         'next_allowed_quota_downgrade_time': {'key': 'NextAllowedQuotaDowngradeTime', 'type': 'rfc-1123'},
         'deleted_time': {'key': 'DeletedTime', 'type': 'rfc-1123'},
         'remaining_retention_days': {'key': 'RemainingRetentionDays', 'type': 'int'},
@@ -904,6 +907,7 @@ class SharePropertiesInternal(msrest.serialization.Model):
         self.provisioned_iops = kwargs.get('provisioned_iops', None)
         self.provisioned_ingress_m_bps = kwargs.get('provisioned_ingress_m_bps', None)
         self.provisioned_egress_m_bps = kwargs.get('provisioned_egress_m_bps', None)
+        self.provisioned_bandwidth_mi_bps = kwargs.get('provisioned_bandwidth_mi_bps', None)
         self.next_allowed_quota_downgrade_time = kwargs.get('next_allowed_quota_downgrade_time', None)
         self.deleted_time = kwargs.get('deleted_time', None)
         self.remaining_retention_days = kwargs.get('remaining_retention_days', None)

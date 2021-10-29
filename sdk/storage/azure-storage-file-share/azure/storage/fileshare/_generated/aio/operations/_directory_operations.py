@@ -41,6 +41,8 @@ class DirectoryOperations:
 
     async def create(
         self,
+        share_name: str,
+        directory: str,
         timeout: Optional[int] = None,
         metadata: Optional[str] = None,
         file_permission: Optional[str] = "inherit",
@@ -52,6 +54,10 @@ class DirectoryOperations:
     ) -> None:
         """Creates a new directory under the specified share or parent directory.
 
+        :param share_name: The name of the target share.
+        :type share_name: str
+        :param directory: The path of the target directory.
+        :type directory: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -92,6 +98,8 @@ class DirectoryOperations:
         url = self.create.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
+            'directory': self._serialize.url("directory", directory, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -146,6 +154,8 @@ class DirectoryOperations:
 
     async def get_properties(
         self,
+        share_name: str,
+        directory: str,
         sharesnapshot: Optional[str] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
@@ -154,6 +164,10 @@ class DirectoryOperations:
         existence of a directory. The data returned does not include the files in the directory or any
         subdirectories.
 
+        :param share_name: The name of the target share.
+        :type share_name: str
+        :param directory: The path of the target directory.
+        :type directory: str
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the share snapshot to query.
         :type sharesnapshot: str
@@ -179,6 +193,8 @@ class DirectoryOperations:
         url = self.get_properties.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
+            'directory': self._serialize.url("directory", directory, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -227,12 +243,18 @@ class DirectoryOperations:
 
     async def delete(
         self,
+        share_name: str,
+        directory: str,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """Removes the specified empty directory. Note that the directory must be empty before it can be
         deleted.
 
+        :param share_name: The name of the target share.
+        :type share_name: str
+        :param directory: The path of the target directory.
+        :type directory: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -255,6 +277,8 @@ class DirectoryOperations:
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
+            'directory': self._serialize.url("directory", directory, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -290,6 +314,8 @@ class DirectoryOperations:
 
     async def set_properties(
         self,
+        share_name: str,
+        directory: str,
         timeout: Optional[int] = None,
         file_permission: Optional[str] = "inherit",
         file_permission_key: Optional[str] = None,
@@ -300,6 +326,10 @@ class DirectoryOperations:
     ) -> None:
         """Sets properties on the directory.
 
+        :param share_name: The name of the target share.
+        :type share_name: str
+        :param directory: The path of the target directory.
+        :type directory: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -339,6 +369,8 @@ class DirectoryOperations:
         url = self.set_properties.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
+            'directory': self._serialize.url("directory", directory, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -392,12 +424,18 @@ class DirectoryOperations:
 
     async def set_metadata(
         self,
+        share_name: str,
+        directory: str,
         timeout: Optional[int] = None,
         metadata: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Updates user defined metadata for the specified directory.
 
+        :param share_name: The name of the target share.
+        :type share_name: str
+        :param directory: The path of the target directory.
+        :type directory: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -423,6 +461,8 @@ class DirectoryOperations:
         url = self.set_metadata.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
+            'directory': self._serialize.url("directory", directory, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -463,6 +503,8 @@ class DirectoryOperations:
 
     async def list_files_and_directories_segment(
         self,
+        share_name: str,
+        directory: str,
         prefix: Optional[str] = None,
         sharesnapshot: Optional[str] = None,
         marker: Optional[str] = None,
@@ -475,6 +517,10 @@ class DirectoryOperations:
         """Returns a list of files or directories under the specified share or directory. It lists the
         contents only for a single level of the directory hierarchy.
 
+        :param share_name: The name of the target share.
+        :type share_name: str
+        :param directory: The path of the target directory.
+        :type directory: str
         :param prefix: Filters the results to return only entries whose name begins with the specified
          prefix.
         :type prefix: str
@@ -498,7 +544,7 @@ class DirectoryOperations:
         :param include: Include this parameter to specify one or more datasets to include in the
          response.
         :type include: list[str or ~azure.storage.fileshare.models.ListFilesIncludeType]
-        :param include_extended_info:
+        :param include_extended_info: Include extended information.
         :type include_extended_info: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListFilesAndDirectoriesSegmentResponse, or the result of cls(response)
@@ -518,6 +564,8 @@ class DirectoryOperations:
         url = self.list_files_and_directories_segment.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
+            'directory': self._serialize.url("directory", directory, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -569,6 +617,8 @@ class DirectoryOperations:
 
     async def list_handles(
         self,
+        share_name: str,
+        directory: str,
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
         timeout: Optional[int] = None,
@@ -578,6 +628,10 @@ class DirectoryOperations:
     ) -> "_models.ListHandlesResponse":
         """Lists handles for directory.
 
+        :param share_name: The name of the target share.
+        :type share_name: str
+        :param directory: The path of the target directory.
+        :type directory: str
         :param marker: A string value that identifies the portion of the list to be returned with the
          next list operation. The operation returns a marker value within the response body if the list
          returned was not complete. The marker value may then be used in a subsequent call to request
@@ -615,6 +669,8 @@ class DirectoryOperations:
         url = self.list_handles.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
+            'directory': self._serialize.url("directory", directory, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -661,6 +717,8 @@ class DirectoryOperations:
 
     async def force_close_handles(
         self,
+        share_name: str,
+        directory: str,
         handle_id: str,
         timeout: Optional[int] = None,
         marker: Optional[str] = None,
@@ -670,6 +728,10 @@ class DirectoryOperations:
     ) -> None:
         """Closes all handles open for given directory.
 
+        :param share_name: The name of the target share.
+        :type share_name: str
+        :param directory: The path of the target directory.
+        :type directory: str
         :param handle_id: Specifies handle ID opened on the file or directory to be closed. Asterisk
          (‘*’) is a wildcard that specifies all handles.
         :type handle_id: str
@@ -706,6 +768,8 @@ class DirectoryOperations:
         url = self.force_close_handles.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
+            'directory': self._serialize.url("directory", directory, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 

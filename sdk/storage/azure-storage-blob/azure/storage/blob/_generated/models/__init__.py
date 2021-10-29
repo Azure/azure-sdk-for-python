@@ -16,6 +16,7 @@ try:
     from ._models_py3 import BlobHierarchyListSegment
     from ._models_py3 import BlobItemInternal
     from ._models_py3 import BlobMetadata
+    from ._models_py3 import BlobName
     from ._models_py3 import BlobPrefix
     from ._models_py3 import BlobPropertiesInternal
     from ._models_py3 import BlobTag
@@ -67,6 +68,7 @@ except (SyntaxError, ImportError):
     from ._models import BlobHierarchyListSegment  # type: ignore
     from ._models import BlobItemInternal  # type: ignore
     from ._models import BlobMetadata  # type: ignore
+    from ._models import BlobName  # type: ignore
     from ._models import BlobPrefix  # type: ignore
     from ._models import BlobPropertiesInternal  # type: ignore
     from ._models import BlobTag  # type: ignore
@@ -147,6 +149,7 @@ __all__ = [
     'BlobHierarchyListSegment',
     'BlobItemInternal',
     'BlobMetadata',
+    'BlobName',
     'BlobPrefix',
     'BlobPropertiesInternal',
     'BlobTag',
