@@ -2284,11 +2284,21 @@ class AnalyzedDocument(object):
         )
 
     def get_words(self, **kwargs):  # pylint: disable=unused-argument
-        # type (Any) -> Iterable[DocumentWord]
+        # type: (Any) -> Iterable[DocumentWord]
+        """Get the words found in the spans of this AnalyzedDocument.
+
+        :return: iterable[DocumentWord]
+        :rtype: iterable[DocumentWord]
+        """
         return _get_children(self, ["word"], ["word"], True)
 
     def get_lines(self, **kwargs):  # pylint: disable=unused-argument
-        # type (Any) -> Iterable[DocumentLine]
+        # type: (Any) -> Iterable[DocumentLine]
+        """Get the lines found in the spans of this AnalyzedDocument.
+
+        :return: iterable[DocumentLine]
+        :rtype: iterable[DocumentLine]
+        """
         return _get_children(self, ["line"], ["line"], True)
 
 
@@ -2400,13 +2410,23 @@ class DocumentEntity(object):
             else [],
             confidence=data.get("confidence", None),
         )
-    
+
     def get_words(self, **kwargs):  # pylint: disable=unused-argument
-        # type (Any) -> Iterable[DocumentWord]
+        # type: (Any) -> Iterable[DocumentWord]
+        """Get the words found in the spans of this DocumentEntity.
+
+        :return: iterable[DocumentWord]
+        :rtype: iterable[DocumentWord]
+        """
         return _get_children(self, ["word"], ["word"], True)
 
     def get_lines(self, **kwargs):  # pylint: disable=unused-argument
-        # type (Any) -> Iterable[DocumentLine]
+        # type: (Any) -> Iterable[DocumentLine]
+        """Get the lines found in the spans of this DocumentEntity.
+
+        :return: iterable[DocumentLine]
+        :rtype: iterable[DocumentLine]
+        """
         return _get_children(self, ["line"], ["line"], True)
 
 
@@ -2528,11 +2548,21 @@ class DocumentField(object):
         )
 
     def get_words(self, **kwargs):  # pylint: disable=unused-argument
-        # type (Any) -> Iterable[DocumentWord]
+        # type: (Any) -> Iterable[DocumentWord]
+        """Get the words found in the spans of this DocumentField.
+
+        :return: iterable[DocumentWord]
+        :rtype: iterable[DocumentWord]
+        """
         return _get_children(self, ["word"], ["word"], True)
 
     def get_lines(self, **kwargs):  # pylint: disable=unused-argument
-        # type (Any) -> Iterable[DocumentLine]
+        # type: (Any) -> Iterable[DocumentLine]
+        """Get the lines found in the spans of this DocumentField.
+
+        :return: iterable[DocumentLine]
+        :rtype: iterable[DocumentLine]
+        """
         return _get_children(self, ["line"], ["line"], True)
 
 
@@ -2616,11 +2646,21 @@ class DocumentKeyValueElement(object):
         )
 
     def get_words(self, **kwargs):  # pylint: disable=unused-argument
-        # type (Any) -> Iterable[DocumentWord]
+        # type: (Any) -> Iterable[DocumentWord]
+        """Get the words found in the spans of this DocumentKeyValueElement.
+
+        :return: iterable[DocumentWord]
+        :rtype: iterable[DocumentWord]
+        """
         return _get_children(self, ["word"], ["word"], True)
 
     def get_lines(self, **kwargs):  # pylint: disable=unused-argument
-        # type (Any) -> Iterable[DocumentLine]
+        # type: (Any) -> Iterable[DocumentLine]
+        """Get the lines found in the spans of this DocumentKeyValueElement.
+
+        :return: iterable[DocumentLine]
+        :rtype: iterable[DocumentLine]
+        """
         return _get_children(self, ["line"], ["line"], True)
 
 
@@ -2762,7 +2802,12 @@ class DocumentLine(object):
         )
 
     def get_words(self, **kwargs):  # pylint: disable=unused-argument
-        # type (Any) -> Iterable[DocumentWord]
+        # type: (Any) -> Iterable[DocumentWord]
+        """Get the words found in the spans of this DocumentLine.
+
+        :return: iterable[DocumentWord]
+        :rtype: iterable[DocumentWord]
+        """
         return _get_children(self, ["word"], ["word"], False)
 
 
@@ -3142,11 +3187,21 @@ class DocumentTable(object):
         )
 
     def get_words(self, **kwargs):  # pylint: disable=unused-argument
-        # type (Any) -> Iterable[DocumentWord]
+        # type: (Any) -> Iterable[DocumentWord]
+        """Get the words found in the spans of this DocumentTable.
+
+        :return: iterable[DocumentWord]
+        :rtype: iterable[DocumentWord]
+        """
         return _get_children(self, ["word"], ["word"], True)
 
     def get_lines(self, **kwargs):  # pylint: disable=unused-argument
-        # type (Any) -> Iterable[DocumentLine]
+        # type: (Any) -> Iterable[DocumentLine]
+        """Get the lines found in the spans of this DocumentTable.
+
+        :return: iterable[DocumentLine]
+        :rtype: iterable[DocumentLine]
+        """
         return _get_children(self, ["line"], ["line"], True)
 
 
@@ -3266,11 +3321,21 @@ class DocumentTableCell(object):
         )
 
     def get_words(self, **kwargs):  # pylint: disable=unused-argument
-        # type (Any) -> Iterable[DocumentWord]
+        # type: (Any) -> Iterable[DocumentWord]
+        """Get the words found in the spans of this DocumentTableCell.
+
+        :return: iterable[DocumentWord]
+        :rtype: iterable[DocumentWord]
+        """
         return _get_children(self, ["word"], ["word"], True)
 
     def get_lines(self, **kwargs):  # pylint: disable=unused-argument
-        # type (Any) -> Iterable[DocumentLine]
+        # type: (Any) -> Iterable[DocumentLine]
+        """Get the lines found in the spans of this DocumentTableCell.
+
+        :return: iterable[DocumentLine]
+        :rtype: iterable[DocumentLine]
+        """
         return _get_children(self, ["line"], ["line"], True)
 
 
