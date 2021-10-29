@@ -4,7 +4,7 @@
 
 ### Breaking changes
 
-- rename `build_authentication_token` to `get_client_access_token`
+- rename `build_authentication_token` to `get_client_access_token` and move it to client
 
 ## 1.0.0b2 (2021-10-14)
 
