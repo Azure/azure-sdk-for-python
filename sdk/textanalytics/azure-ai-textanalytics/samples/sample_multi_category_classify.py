@@ -10,8 +10,8 @@
 FILE: sample_multi_category_classify.py
 
 DESCRIPTION:
-    This sample demonstrates how to classify documents into multiple custom categories. Here we have a few
-    movie plot summaries that must be categorized into movie genres like Sci-Fi, Horror, Comedy, Romance, etc.
+    This sample demonstrates how to classify documents into multiple custom categories. For example,
+    movie plot summaries can be categorized into multiple movie genres like Sci-Fi and Horror, or Comedy and Romance, etc.
     Classifying documents is available as an action type through the begin_analyze_actions API.
 
     To train a model to classify your documents, see https://aka.ms/azsdk/textanalytics/customfunctionalities
@@ -41,27 +41,24 @@ def sample_classify_document_multi_categories():
     key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
     project_name = os.environ["MULTI_CATEGORY_CLASSIFY_PROJECT_NAME"]
     deployed_model_name = os.environ["MULTI_CATEGORY_CLASSIFY_DEPLOYMENT_NAME"]
+    path_to_sample_document = os.path.abspath(
+        os.path.join(
+            os.path.abspath(__file__),
+            "..",
+            "./text_samples/custom_classify_sample.txt",
+        )
+    )
 
     text_analytics_client = TextAnalyticsClient(
         endpoint=endpoint,
         credential=AzureKeyCredential(key),
     )
 
-    documents = [
-        "In the not-too-distant future, Earth's dying sun spells the end for humanity. In a last-ditch effort to "
-        "save the planet, a crew of eight men and women ventures into space with a device that could revive the "
-        "star. However, an accident, a grave mistake and a distress beacon from a long-lost spaceship throw "
-        "the crew and its desperate mission into a tailspin.",
-
-        "Despite his family's generations-old ban on music, young Miguel dreams of becoming an accomplished "
-        "musician like his idol Ernesto de la Cruz. Desperate to prove his talent, Miguel finds himself "
-        "in the stunning and colorful Land of the Dead. After meeting a charming trickster named Héctor, "
-        "the two new friends embark on an extraordinary journey to unlock the real story behind Miguel's "
-        "family history"
-    ]
+    with open(path_to_sample_document, "r") as fd:
+        document = [fd.read()]
 
     poller = text_analytics_client.begin_analyze_actions(
-        documents,
+        document,
         actions=[
             MultiCategoryClassifyAction(
                 project_name=project_name,
@@ -71,11 +68,11 @@ def sample_classify_document_multi_categories():
     )
 
     document_results = poller.result()
-    for doc, classification_results in zip(documents, document_results):
+    for doc, classification_results in zip(document, document_results):
         for classification_result in classification_results:
             if not classification_result.is_error:
                 classifications = classification_result.classifications
-                print("The movie plot '{}' was classified as the following genres:\n".format(doc))
+                print("\nThe movie plot '{}' was classified as the following genres:\n".format(doc))
                 for classification in classifications:
                     print("'{}' with confidence score {}.".format(
                         classification.category, classification.confidence_score

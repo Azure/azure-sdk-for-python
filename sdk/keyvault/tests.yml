@@ -16,8 +16,6 @@ stages:
         ServiceDirectory: keyvault
         BuildTargetingString: ${{ service }}
         JobName: ${{ replace(service, '-', '_') }}
-        DeployArmTemplate: true
-        AllocateResourceGroup: true
         TestTimeoutInMinutes: 240
         ${{ if or(eq(service, 'azure-keyvault-keys'), eq(service, 'azure-keyvault-administration')) }}:
           AdditionalMatrixConfigs:

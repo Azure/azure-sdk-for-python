@@ -12,6 +12,10 @@ import functools
 import itertools
 import datetime
 import json
+try:
+    from unittest import mock
+except ImportError:  # python < 3.3
+    import mock  # type: ignore
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
@@ -1248,3 +1252,153 @@ class TestAnalyze(TextAnalyticsTest):
                     assert self.document_result_to_action_type(document_result) == action_order[action_idx]
 
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+
+    @TextAnalyticsPreparer()
+    def test_generic_action_error_no_target(
+        self,
+        textanalytics_custom_text_endpoint,
+        textanalytics_custom_text_key,
+        textanalytics_single_category_classify_project_name,
+        textanalytics_single_category_classify_deployment_name,
+        textanalytics_multi_category_classify_project_name,
+        textanalytics_multi_category_classify_deployment_name,
+        textanalytics_custom_entities_project_name,
+        textanalytics_custom_entities_deployment_name
+    ):
+        docs = [
+            {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+            {"id": "2", "language": "en", "text": ""},
+        ]
+
+        response = mock.Mock(
+            status_code=200,
+            headers={"Content-Type": "application/json", "operation-location": "https://fakeurl.com"}
+        )
+
+        path_to_mock_json_response = os.path.abspath(
+            os.path.join(
+                os.path.abspath(__file__),
+                "..",
+                "./mock_test_responses/action_error_no_target.json",
+            )
+        )
+        with open(path_to_mock_json_response, "r") as fd:
+            mock_json_response = json.loads(fd.read())
+
+        response.text = lambda encoding=None: json.dumps(mock_json_response)
+        response.content_type = "application/json"
+        transport = mock.Mock(send=lambda request, **kwargs: response)
+
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key), transport=transport)
+
+        with pytest.raises(HttpResponseError) as e:
+            response = list(client.begin_analyze_actions(
+                docs,
+                actions=[
+                    SingleCategoryClassifyAction(
+                        project_name=textanalytics_single_category_classify_project_name,
+                        deployment_name=textanalytics_single_category_classify_deployment_name
+                    ),
+                    MultiCategoryClassifyAction(
+                        project_name=textanalytics_multi_category_classify_project_name,
+                        deployment_name=textanalytics_multi_category_classify_deployment_name
+                    ),
+                    RecognizeCustomEntitiesAction(
+                        project_name=textanalytics_custom_entities_project_name,
+                        deployment_name=textanalytics_custom_entities_deployment_name
+                    )
+                ],
+                show_stats=True,
+                polling_interval=self._interval(),
+            ).result())
+        assert e.value.message == "(InternalServerError) 1 out of 3 job tasks failed. Failed job tasks : v3.2-preview.2/custom/entities/general."
+
+    @TextAnalyticsPreparer()
+    def test_action_errors_with_targets(
+        self,
+        textanalytics_custom_text_endpoint,
+        textanalytics_custom_text_key,
+        textanalytics_single_category_classify_project_name,
+        textanalytics_single_category_classify_deployment_name,
+        textanalytics_multi_category_classify_project_name,
+        textanalytics_multi_category_classify_deployment_name,
+        textanalytics_custom_entities_project_name,
+        textanalytics_custom_entities_deployment_name
+    ):
+        docs = [
+            {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+            {"id": "2", "language": "en", "text": ""},
+        ]
+
+        response = mock.Mock(
+            status_code=200,
+            headers={"Content-Type": "application/json", "operation-location": "https://fakeurl.com"}
+        )
+
+        # a mix of action errors to translate to doc errors, regular doc errors, and a successful response
+        path_to_mock_json_response = os.path.abspath(
+            os.path.join(
+                os.path.abspath(__file__),
+                "..",
+                "./mock_test_responses/action_error_with_targets.json",
+            )
+        )
+        with open(path_to_mock_json_response, "r") as fd:
+            mock_json_response = json.loads(fd.read())
+
+        response.text = lambda encoding=None: json.dumps(mock_json_response)
+        response.content_type = "application/json"
+        transport = mock.Mock(send=lambda request, **kwargs: response)
+
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key), transport=transport)
+
+        response = list(client.begin_analyze_actions(
+            docs,
+            actions=[
+                RecognizeEntitiesAction(),
+                ExtractKeyPhrasesAction(),
+                RecognizePiiEntitiesAction(),
+                RecognizeLinkedEntitiesAction(),
+                AnalyzeSentimentAction(),
+                ExtractSummaryAction(),
+                RecognizePiiEntitiesAction(domain_filter="phi"),
+                SingleCategoryClassifyAction(
+                    project_name=textanalytics_single_category_classify_project_name,
+                    deployment_name=textanalytics_single_category_classify_deployment_name
+                ),
+                MultiCategoryClassifyAction(
+                    project_name=textanalytics_multi_category_classify_project_name,
+                    deployment_name=textanalytics_multi_category_classify_deployment_name
+                ),
+                RecognizeCustomEntitiesAction(
+                    project_name=textanalytics_custom_entities_project_name,
+                    deployment_name=textanalytics_custom_entities_deployment_name
+                ),
+                SingleCategoryClassifyAction(
+                    project_name=textanalytics_single_category_classify_project_name,
+                    deployment_name=textanalytics_single_category_classify_deployment_name
+                ),
+            ],
+            show_stats=True,
+            polling_interval=self._interval(),
+        ).result())
+        assert len(response) == len(docs)
+        for idx, result in enumerate(response[0]):
+            assert result.id == "1"
+            if idx == 10:
+                assert not result.is_error
+                assert isinstance(result, SingleCategoryClassifyResult)
+            else:
+                assert result.is_error
+                assert result.error.code == "InvalidRequest"
+                assert result.error.message == "Some error" + str(idx)  # confirms correct doc error order
+
+        for idx, result in enumerate(response[1]):
+            assert result.id == "2"
+            assert result.is_error
+            if idx == 10:
+                assert result.error.code == "InvalidDocument"
+                assert result.error.message == "Document text is empty."
+            else:
+                assert result.error.code == "InvalidRequest"
+                assert result.error.message == "Some error" + str(idx)  # confirms correct doc error order

@@ -15,7 +15,7 @@ interactions:
       Serialization-Type:
       - Avro
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: PUT
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/example.avro.populatedrecord.User?api-version=2020-09-01-preview
   response:
@@ -23,7 +23,7 @@ interactions:
       string: '{"id":"fee73b56d1e64c1595c97e2573b3c1ac"}'
     headers:
       content-type: application/json
-      date: Tue, 26 Oct 2021 00:20:21 GMT
+      date: Thu, 28 Oct 2021 23:03:55 GMT
       location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/example.avro.populatedrecord.User/versions/1?api-version=2020-09-01-preview
       schema-id: fee73b56d1e64c1595c97e2573b3c1ac
       schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/fee73b56d1e64c1595c97e2573b3c1ac?api-version=2020-09-01-preview
@@ -43,7 +43,7 @@ interactions:
       Accept:
       - text/plain; charset=utf-8
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/fee73b56d1e64c1595c97e2573b3c1ac?api-version=2020-09-01-preview
   response:
@@ -51,7 +51,7 @@ interactions:
       string: '{"name":"User","namespace":"example.avro.populatedrecord","type":"record","fields":[{"name":"name","type":"string"},{"name":"age","type":"int"},{"name":"married","type":"boolean"},{"name":"height","type":"float"},{"name":"randb","type":"bytes"}]}'
     headers:
       content-type: application/json
-      date: Tue, 26 Oct 2021 00:20:21 GMT
+      date: Thu, 28 Oct 2021 23:03:56 GMT
       location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/example.avro.populatedrecord.User/versions/1?api-version=2020-09-01-preview
       schema-id: fee73b56d1e64c1595c97e2573b3c1ac
       schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/fee73b56d1e64c1595c97e2573b3c1ac?api-version=2020-09-01-preview
