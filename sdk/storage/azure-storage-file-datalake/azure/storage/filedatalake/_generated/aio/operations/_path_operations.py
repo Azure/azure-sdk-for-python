@@ -1445,13 +1445,13 @@ class PathOperations:
             _transactional_content_hash = path_http_headers.transactional_content_hash
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
-        content = body
+        json = body
 
         request = build_append_data_request(
             action=action,
             version=self._config.version,
             content_type=content_type,
-            content=content,
+            json=json,
             position=position,
             timeout=timeout,
             content_length=content_length,
