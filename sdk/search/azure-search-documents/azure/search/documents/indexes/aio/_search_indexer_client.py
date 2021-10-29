@@ -301,7 +301,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         except AttributeError:
             name = indexer
         result = await self._client.indexers.reset_docs(name, **kwargs)
-        return
+        return result
 
     @distributed_trace_async
     async def get_indexer_status(self, name, **kwargs):
