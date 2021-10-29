@@ -18,14 +18,14 @@ class TestGetChildren(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
-    def test_document_line_get_children(self, client):
+    def test_document_line_get_words(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             document = fd.read()
 
         poller = client.begin_analyze_document("prebuilt-document", document)
         result = poller.result()
         
-        elements = result.pages[0].lines[0].get_children()
+        elements = result.pages[0].lines[0].get_words()
         assert len(elements) == 1
         assert elements[0].content == "Contoso"
 
@@ -39,11 +39,11 @@ class TestGetChildren(FormRecognizerTest):
         poller = client.begin_analyze_document("prebuilt-layout", document)
         result = poller.result()
         
-        elements = result.tables[0].get_children()
-        assert len(elements) == 45
-
-        elements = result.tables[0].get_children(element_types=["word"])
+        elements = result.tables[0].get_words()
         assert len(elements) == 25
+
+        elements = result.tables[0].get_lines()
+        assert len(elements) == 20
 
 
     @FormRecognizerPreparer()
@@ -55,8 +55,11 @@ class TestGetChildren(FormRecognizerTest):
         poller = client.begin_analyze_document("prebuilt-layout", document)
         result = poller.result()
         
-        elements = result.tables[0].cells[0].get_children()
-        assert len(elements) == 2
+        elements = result.tables[0].cells[0].get_words()
+        assert len(elements) == 1
+
+        elements = result.tables[0].cells[0].get_lines()
+        assert len(elements) == 1
 
 
     @FormRecognizerPreparer()
@@ -68,8 +71,11 @@ class TestGetChildren(FormRecognizerTest):
         poller = client.begin_analyze_document("prebuilt-invoice", document)
         result = poller.result()
         
-        elements = result.documents[0].get_children()
-        assert len(elements) == 186
+        elements = result.documents[0].get_words()
+        assert len(elements) == 132
+
+        elements = result.documents[0].get_lines()
+        assert len(elements) == 54
 
 
     @FormRecognizerPreparer()
@@ -81,10 +87,10 @@ class TestGetChildren(FormRecognizerTest):
         poller = client.begin_analyze_document("prebuilt-invoice", document)
         result = poller.result()
         
-        elements = result.documents[0].fields.get("InvoiceTotal").get_children()
-        assert len(elements) == 2
+        elements = result.documents[0].fields.get("InvoiceTotal").get_words()
+        assert len(elements) == 1
 
-        elements = result.documents[0].fields.get("InvoiceTotal").get_children(element_types=["line"])
+        elements = result.documents[0].fields.get("InvoiceTotal").get_lines()
         assert len(elements) == 1
 
 
@@ -97,10 +103,10 @@ class TestGetChildren(FormRecognizerTest):
         poller = client.begin_analyze_document("prebuilt-document", document)
         result = poller.result()
         
-        elements = result.entities[0].get_children()
-        assert len(elements) == 2
+        elements = result.entities[0].get_words()
+        assert len(elements) == 1
 
-        elements = result.entities[0].get_children(element_types=["word"])
+        elements = result.entities[0].get_lines()
         assert len(elements) == 1
 
 
@@ -113,8 +119,8 @@ class TestGetChildren(FormRecognizerTest):
         poller = client.begin_analyze_document("prebuilt-document", document)
         result = poller.result()
         
-        elements = result.key_value_pairs[0].key.get_children()
+        elements = result.key_value_pairs[0].key.get_words()
         assert len(elements) == 2
 
-        elements = result.key_value_pairs[0].key.get_children(element_types=["line"])
+        elements = result.key_value_pairs[0].key.get_lines()
         assert len(elements) == 0
