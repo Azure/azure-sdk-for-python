@@ -33,11 +33,11 @@ def build_generate_client_token_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
     user_id = kwargs.pop('user_id', None)  # type: Optional[str]
     role = kwargs.pop('role', None)  # type: Optional[List[str]]
     minutes_to_expire = kwargs.pop('minutes_to_expire', 60)  # type: Optional[int]
 
-    api_version = "2021-10-01"
     accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/:generateToken')
@@ -75,10 +75,10 @@ def build_close_all_connections_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
     excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
     reason = kwargs.pop('reason', None)  # type: Optional[str]
 
-    api_version = "2021-10-01"
     accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/:closeConnections')
@@ -114,10 +114,10 @@ def build_send_to_all_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
 
-    api_version = "2021-10-01"
     accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/:send')
@@ -154,7 +154,8 @@ def build_connection_exists_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-10-01"
+    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+
     accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/connections/{connectionId}')
@@ -188,9 +189,9 @@ def build_close_connection_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
     reason = kwargs.pop('reason', None)  # type: Optional[str]
 
-    api_version = "2021-10-01"
     accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/connections/{connectionId}')
@@ -226,9 +227,9 @@ def build_send_to_connection_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-10-01"
     accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/connections/{connectionId}/:send')
@@ -264,7 +265,8 @@ def build_group_exists_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-10-01"
+    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+
     accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/groups/{group}')
@@ -298,10 +300,10 @@ def build_close_group_connections_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
     excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
     reason = kwargs.pop('reason', None)  # type: Optional[str]
 
-    api_version = "2021-10-01"
     accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/groups/{group}/:closeConnections')
@@ -339,10 +341,10 @@ def build_send_to_group_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
 
-    api_version = "2021-10-01"
     accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/groups/{group}/:send')
@@ -381,7 +383,8 @@ def build_add_connection_to_group_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-10-01"
+    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+
     accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/groups/{group}/connections/{connectionId}')
@@ -417,7 +420,8 @@ def build_remove_connection_from_group_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-10-01"
+    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+
     accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/groups/{group}/connections/{connectionId}')
@@ -452,7 +456,8 @@ def build_user_exists_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-10-01"
+    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+
     accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}')
@@ -486,10 +491,10 @@ def build_close_user_connections_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
     excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
     reason = kwargs.pop('reason', None)  # type: Optional[str]
 
-    api_version = "2021-10-01"
     accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}/:closeConnections')
@@ -527,9 +532,9 @@ def build_send_to_user_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-10-01"
     accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}/:send')
@@ -566,7 +571,8 @@ def build_add_user_to_group_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-10-01"
+    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+
     accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}/groups/{group}')
@@ -602,7 +608,8 @@ def build_remove_user_from_group_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-10-01"
+    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+
     accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}/groups/{group}')
@@ -637,7 +644,8 @@ def build_remove_user_from_all_groups_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-10-01"
+    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+
     accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}/groups')
@@ -672,9 +680,9 @@ def build_grant_permission_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
     target_name = kwargs.pop('target_name', None)  # type: Optional[str]
 
-    api_version = "2021-10-01"
     accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}')
@@ -712,9 +720,9 @@ def build_revoke_permission_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
     target_name = kwargs.pop('target_name', None)  # type: Optional[str]
 
-    api_version = "2021-10-01"
     accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}')
@@ -752,9 +760,9 @@ def build_check_permission_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
     target_name = kwargs.pop('target_name', None)  # type: Optional[str]
 
-    api_version = "2021-10-01"
     accept = "application/json, text/json"
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}')
@@ -807,6 +815,9 @@ class WebPubSubServiceClientOperationsMixin(object):
         :paramtype role: list[str]
         :keyword minutes_to_expire: The expire time of the generated token.
         :paramtype minutes_to_expire: int
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :return: JSON object
         :rtype: Any
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -825,6 +836,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         user_id = kwargs.pop('user_id', None)  # type: Optional[str]
         role = kwargs.pop('role', None)  # type: Optional[List[str]]
         minutes_to_expire = kwargs.pop('minutes_to_expire', 60)  # type: Optional[int]
@@ -832,6 +844,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         
         request = build_generate_client_token_request(
             hub=hub,
+            api_version=api_version,
             user_id=user_id,
             role=role,
             minutes_to_expire=minutes_to_expire,
@@ -880,6 +893,9 @@ class WebPubSubServiceClientOperationsMixin(object):
         :paramtype excluded: list[str]
         :keyword reason: The reason closing the client connection.
         :paramtype reason: str
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -890,12 +906,14 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
         reason = kwargs.pop('reason', None)  # type: Optional[str]
 
         
         request = build_close_all_connections_request(
             hub=hub,
+            api_version=api_version,
             excluded=excluded,
             reason=reason,
             template_url=self.close_all_connections.metadata['url'],
@@ -937,6 +955,9 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type message: IO or str
         :keyword excluded: Excluded connection Ids.
         :paramtype excluded: list[str]
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword str content_type: Media type of the body sent to the API. Default value is
          "application/json". Allowed values are: "application/json", "application/octet-stream",
          "text/plain."
@@ -950,6 +971,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         content_type = kwargs.pop('content_type', "text/plain")  # type: Optional[str]
         excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
 
@@ -967,10 +989,11 @@ class WebPubSubServiceClientOperationsMixin(object):
 
         request = build_send_to_all_request(
             hub=hub,
+            api_version=api_version,
             content_type=content_type,
-            excluded=excluded,
             json=json,
             content=content,
+            excluded=excluded,
             template_url=self.send_to_all.metadata['url'],
         )
         path_format_arguments = {
@@ -1008,6 +1031,9 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type hub: str
         :param connection_id: The connection Id.
         :type connection_id: str
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1018,10 +1044,13 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+
         
         request = build_connection_exists_request(
             hub=hub,
             connection_id=connection_id,
+            api_version=api_version,
             template_url=self.connection_exists.metadata['url'],
         )
         path_format_arguments = {
@@ -1061,6 +1090,9 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type connection_id: str
         :keyword reason: The reason closing the client connection.
         :paramtype reason: str
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1071,12 +1103,14 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         reason = kwargs.pop('reason', None)  # type: Optional[str]
 
         
         request = build_close_connection_request(
             hub=hub,
             connection_id=connection_id,
+            api_version=api_version,
             reason=reason,
             template_url=self.close_connection.metadata['url'],
         )
@@ -1118,6 +1152,9 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type connection_id: str
         :param message: The payload body.
         :type message: IO or str
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword str content_type: Media type of the body sent to the API. Default value is
          "application/json". Allowed values are: "application/json", "application/octet-stream",
          "text/plain."
@@ -1131,6 +1168,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         content_type = kwargs.pop('content_type', "text/plain")  # type: Optional[str]
 
         json = None
@@ -1148,6 +1186,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         request = build_send_to_connection_request(
             hub=hub,
             connection_id=connection_id,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             content=content,
@@ -1188,6 +1227,9 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type hub: str
         :param group: Target group name, which length should be greater than 0 and less than 1025.
         :type group: str
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1198,10 +1240,13 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+
         
         request = build_group_exists_request(
             hub=hub,
             group=group,
+            api_version=api_version,
             template_url=self.group_exists.metadata['url'],
         )
         path_format_arguments = {
@@ -1243,6 +1288,9 @@ class WebPubSubServiceClientOperationsMixin(object):
         :paramtype excluded: list[str]
         :keyword reason: The reason closing the client connection.
         :paramtype reason: str
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1253,6 +1301,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
         reason = kwargs.pop('reason', None)  # type: Optional[str]
 
@@ -1260,6 +1309,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         request = build_close_group_connections_request(
             hub=hub,
             group=group,
+            api_version=api_version,
             excluded=excluded,
             reason=reason,
             template_url=self.close_group_connections.metadata['url'],
@@ -1304,6 +1354,9 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type message: IO or str
         :keyword excluded: Excluded connection Ids.
         :paramtype excluded: list[str]
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword str content_type: Media type of the body sent to the API. Default value is
          "application/json". Allowed values are: "application/json", "application/octet-stream",
          "text/plain."
@@ -1317,6 +1370,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         content_type = kwargs.pop('content_type', "text/plain")  # type: Optional[str]
         excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
 
@@ -1335,10 +1389,11 @@ class WebPubSubServiceClientOperationsMixin(object):
         request = build_send_to_group_request(
             hub=hub,
             group=group,
+            api_version=api_version,
             content_type=content_type,
-            excluded=excluded,
             json=json,
             content=content,
+            excluded=excluded,
             template_url=self.send_to_group.metadata['url'],
         )
         path_format_arguments = {
@@ -1379,6 +1434,9 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type group: str
         :param connection_id: Target connection Id.
         :type connection_id: str
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1389,11 +1447,14 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+
         
         request = build_add_connection_to_group_request(
             hub=hub,
             group=group,
             connection_id=connection_id,
+            api_version=api_version,
             template_url=self.add_connection_to_group.metadata['url'],
         )
         path_format_arguments = {
@@ -1404,7 +1465,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1434,6 +1495,9 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type group: str
         :param connection_id: Target connection Id.
         :type connection_id: str
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1444,11 +1508,14 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+
         
         request = build_remove_connection_from_group_request(
             hub=hub,
             group=group,
             connection_id=connection_id,
+            api_version=api_version,
             template_url=self.remove_connection_from_group.metadata['url'],
         )
         path_format_arguments = {
@@ -1486,6 +1553,9 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type hub: str
         :param user_id: Target user Id.
         :type user_id: str
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1496,10 +1566,13 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+
         
         request = build_user_exists_request(
             hub=hub,
             user_id=user_id,
+            api_version=api_version,
             template_url=self.user_exists.metadata['url'],
         )
         path_format_arguments = {
@@ -1541,6 +1614,9 @@ class WebPubSubServiceClientOperationsMixin(object):
         :paramtype excluded: list[str]
         :keyword reason: The reason closing the client connection.
         :paramtype reason: str
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1551,6 +1627,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
         reason = kwargs.pop('reason', None)  # type: Optional[str]
 
@@ -1558,6 +1635,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         request = build_close_user_connections_request(
             hub=hub,
             user_id=user_id,
+            api_version=api_version,
             excluded=excluded,
             reason=reason,
             template_url=self.close_user_connections.metadata['url'],
@@ -1600,6 +1678,9 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type user_id: str
         :param message: The payload body.
         :type message: IO or str
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword str content_type: Media type of the body sent to the API. Default value is
          "application/json". Allowed values are: "application/json", "application/octet-stream",
          "text/plain."
@@ -1613,6 +1694,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         content_type = kwargs.pop('content_type', "text/plain")  # type: Optional[str]
 
         json = None
@@ -1630,6 +1712,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         request = build_send_to_user_request(
             hub=hub,
             user_id=user_id,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             content=content,
@@ -1673,6 +1756,9 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type group: str
         :param user_id: Target user Id.
         :type user_id: str
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1683,11 +1769,14 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+
         
         request = build_add_user_to_group_request(
             hub=hub,
             group=group,
             user_id=user_id,
+            api_version=api_version,
             template_url=self.add_user_to_group.metadata['url'],
         )
         path_format_arguments = {
@@ -1698,7 +1787,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1728,6 +1817,9 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type group: str
         :param user_id: Target user Id.
         :type user_id: str
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1738,11 +1830,14 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+
         
         request = build_remove_user_from_group_request(
             hub=hub,
             group=group,
             user_id=user_id,
+            api_version=api_version,
             template_url=self.remove_user_from_group.metadata['url'],
         )
         path_format_arguments = {
@@ -1780,6 +1875,9 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type hub: str
         :param user_id: Target user Id.
         :type user_id: str
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1790,10 +1888,13 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+
         
         request = build_remove_user_from_all_groups_request(
             hub=hub,
             user_id=user_id,
+            api_version=api_version,
             template_url=self.remove_user_from_all_groups.metadata['url'],
         )
         path_format_arguments = {
@@ -1838,6 +1939,9 @@ class WebPubSubServiceClientOperationsMixin(object):
         :keyword target_name: The meaning of the target depends on the specific permission. For
          joinLeaveGroup and sendToGroup, targetName is a required parameter standing for the group name.
         :paramtype target_name: str
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1848,6 +1952,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         target_name = kwargs.pop('target_name', None)  # type: Optional[str]
 
         
@@ -1855,6 +1960,7 @@ class WebPubSubServiceClientOperationsMixin(object):
             hub=hub,
             permission=permission,
             connection_id=connection_id,
+            api_version=api_version,
             target_name=target_name,
             template_url=self.grant_permission.metadata['url'],
         )
@@ -1900,6 +2006,9 @@ class WebPubSubServiceClientOperationsMixin(object):
         :keyword target_name: The meaning of the target depends on the specific permission. For
          joinLeaveGroup and sendToGroup, targetName is a required parameter standing for the group name.
         :paramtype target_name: str
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1910,6 +2019,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         target_name = kwargs.pop('target_name', None)  # type: Optional[str]
 
         
@@ -1917,6 +2027,7 @@ class WebPubSubServiceClientOperationsMixin(object):
             hub=hub,
             permission=permission,
             connection_id=connection_id,
+            api_version=api_version,
             target_name=target_name,
             template_url=self.revoke_permission.metadata['url'],
         )
@@ -1962,6 +2073,9 @@ class WebPubSubServiceClientOperationsMixin(object):
         :keyword target_name: The meaning of the target depends on the specific permission. For
          joinLeaveGroup and sendToGroup, targetName is a required parameter standing for the group name.
         :paramtype target_name: str
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1972,6 +2086,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         target_name = kwargs.pop('target_name', None)  # type: Optional[str]
 
         
@@ -1979,6 +2094,7 @@ class WebPubSubServiceClientOperationsMixin(object):
             hub=hub,
             permission=permission,
             connection_id=connection_id,
+            api_version=api_version,
             target_name=target_name,
             template_url=self.check_permission.metadata['url'],
         )

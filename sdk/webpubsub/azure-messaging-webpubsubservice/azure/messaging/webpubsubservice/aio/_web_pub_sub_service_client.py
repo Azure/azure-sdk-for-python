@@ -29,6 +29,9 @@ class WebPubSubServiceClient(WebPubSubServiceClientOperationsMixin):
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -38,7 +41,7 @@ class WebPubSubServiceClient(WebPubSubServiceClientOperationsMixin):
         **kwargs: Any
     ) -> None:
         _endpoint = '{Endpoint}'
-        self._config = WebPubSubServiceClientConfiguration(endpoint, credential, **kwargs)
+        self._config = WebPubSubServiceClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
