@@ -2283,21 +2283,13 @@ class AnalyzedDocument(object):
             confidence=data.get("confidence", None),
         )
 
-    def get_children(self, **kwargs):
-        # type: (Any) -> Iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
-        """Get the child elements found in the span of this AnalyzedDocument.
+    def get_words(self, **kwargs):  # pylint: disable=unused-argument
+        # type (Any) -> Iterable[DocumentWord]
+        return _get_children(self, ["word"], ["word"], True)
 
-        :keyword list[str] element_types: List of the child elements to retrieve from the spans of this element.
-         Please note that by default all child elements are included. To get a subset of the child elements
-         please specify the elements to retrieve by passing the in a custom list.
-         Acceptable values: "word", "line".
-        :return: iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
-        :rtype: iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
-        """
-        element_types = kwargs.get("element_types", ["word", "line"])
-        allowed_elements = ["line", "word"]
-
-        return _get_children(self, element_types, allowed_elements, True)
+    def get_lines(self, **kwargs):  # pylint: disable=unused-argument
+        # type (Any) -> Iterable[DocumentLine]
+        return _get_children(self, ["line"], ["line"], True)
 
 
 class DocumentEntity(object):
@@ -2408,22 +2400,14 @@ class DocumentEntity(object):
             else [],
             confidence=data.get("confidence", None),
         )
+    
+    def get_words(self, **kwargs):  # pylint: disable=unused-argument
+        # type (Any) -> Iterable[DocumentWord]
+        return _get_children(self, ["word"], ["word"], True)
 
-    def get_children(self, **kwargs):
-        # type: (Any) -> Iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
-        """Get the child elements found in the span of this DocumentEntity.
-
-        :keyword list[str] element_types: List of the child elements to retrieve from the spans of this element.
-         Please note that by default all child elements are included. To get a subset of the child elements
-         please specify the elements to retrieve by passing the in a custom list.
-         Acceptable values: "word", "line".
-        :return: iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
-        :rtype: iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
-        """
-        element_types = kwargs.get("element_types", ["word", "line"])
-        allowed_elements = ["line", "word"]
-
-        return _get_children(self, element_types, allowed_elements, True)
+    def get_lines(self, **kwargs):  # pylint: disable=unused-argument
+        # type (Any) -> Iterable[DocumentLine]
+        return _get_children(self, ["line"], ["line"], True)
 
 
 class DocumentField(object):
@@ -2543,21 +2527,13 @@ class DocumentField(object):
             confidence=data.get("confidence", None),
         )
 
-    def get_children(self, **kwargs):
-        # type: (Any) -> Iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
-        """Get the child elements found in the span of this DocumentField.
+    def get_words(self, **kwargs):  # pylint: disable=unused-argument
+        # type (Any) -> Iterable[DocumentWord]
+        return _get_children(self, ["word"], ["word"], True)
 
-        :keyword list[str] element_types: List of the child elements to retrieve from the spans of this element.
-         Please note that by default all child elements are included. To get a subset of the child elements
-         please specify the elements to retrieve by passing the in a custom list.
-         Acceptable values: "word", "line".
-        :return: iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
-        :rtype: iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
-        """
-        element_types = kwargs.get("element_types", ["word", "line"])
-        allowed_elements = ["line", "word"]
-
-        return _get_children(self, element_types, allowed_elements, True)
+    def get_lines(self, **kwargs):  # pylint: disable=unused-argument
+        # type (Any) -> Iterable[DocumentLine]
+        return _get_children(self, ["line"], ["line"], True)
 
 
 class DocumentKeyValueElement(object):
@@ -2639,21 +2615,13 @@ class DocumentKeyValueElement(object):
             else [],
         )
 
-    def get_children(self, **kwargs):
-        # type: (Any) -> Iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
-        """Get the child elements found in the span of this DocumentKeyValueElement.
+    def get_words(self, **kwargs):  # pylint: disable=unused-argument
+        # type (Any) -> Iterable[DocumentWord]
+        return _get_children(self, ["word"], ["word"], True)
 
-        :keyword list[str] element_types: List of the child elements to retrieve from the spans of this element.
-         Please note that by default all child elements are included. To get a subset of the child elements
-         please specify the elements to retrieve by passing the in a custom list.
-         Acceptable values: "word", "line".
-        :return: iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
-        :rtype: iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
-        """
-        element_types = kwargs.get("element_types", ["word", "line"])
-        allowed_elements = ["line", "word"]
-
-        return _get_children(self, element_types, allowed_elements, True)
+    def get_lines(self, **kwargs):  # pylint: disable=unused-argument
+        # type (Any) -> Iterable[DocumentLine]
+        return _get_children(self, ["line"], ["line"], True)
 
 
 class DocumentKeyValuePair(object):
@@ -2793,22 +2761,9 @@ class DocumentLine(object):
             else [],
         )
 
-
-    def get_children(self, **kwargs):
-        # type: (Any) -> Iterable[Union[DocumentContentElement, DocumentWord]]
-        """Get the child elements found in the span of this DocumentLine.
-
-        :ivar list[str] element_types: List of the child elements to retrieve from the spans of this element.
-         Please note that by default all child elements are included. To get a subset of the child elements
-         please specify the elements to retrieve by passing the in a custom list.
-         Acceptable values: "word".
-        :return: iterable[Union[DocumentContentElement, DocumentWord]]
-        :rtype: iterable[Union[DocumentContentElement, DocumentWord]]
-        """
-        element_types = kwargs.get("element_types", ["word"])
-        allowed_elements = ["word"]
-
-        return _get_children(self, element_types, allowed_elements, False)
+    def get_words(self, **kwargs):  # pylint: disable=unused-argument
+        # type (Any) -> Iterable[DocumentWord]
+        return _get_children(self, ["word"], ["word"], False)
 
 
 class DocumentPage(object):
@@ -3186,21 +3141,13 @@ class DocumentTable(object):
             else [],
         )
 
-    def get_children(self, **kwargs):
-        # type: (Any) -> Iterable[Union[DocumentLine, DocumentContentElement, DocumentWord]]
-        """Get the child elements found in the span of this DocumentTable.
+    def get_words(self, **kwargs):  # pylint: disable=unused-argument
+        # type (Any) -> Iterable[DocumentWord]
+        return _get_children(self, ["word"], ["word"], True)
 
-        :keyword list[str] element_types: List of the child elements to retrieve from the spans of this element.
-         Please note that by default all child elements are included. To get a subset of the child elements
-         please specify the elements to retrieve by passing the in a custom list.
-         Acceptable values: "word", "line".
-        :return: iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
-        :rtype: iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
-        """
-        element_types = kwargs.get("element_types", ["word", "line"])
-        allowed_elements = ["line", "word"]
-
-        return _get_children(self, element_types, allowed_elements, True)
+    def get_lines(self, **kwargs):  # pylint: disable=unused-argument
+        # type (Any) -> Iterable[DocumentLine]
+        return _get_children(self, ["line"], ["line"], True)
 
 
 class DocumentTableCell(object):
@@ -3318,21 +3265,13 @@ class DocumentTableCell(object):
             else [],
         )
 
-    def get_children(self, **kwargs):
-        # type: (Any) -> Iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
-        """Get the child elements found in the span of this DocumentTableCellElement.
+    def get_words(self, **kwargs):  # pylint: disable=unused-argument
+        # type (Any) -> Iterable[DocumentWord]
+        return _get_children(self, ["word"], ["word"], True)
 
-        :keyword list[str] element_types: List of the child elements to retrieve from the spans of this element.
-         Please note that by default all child elements are included. To get a subset of the child elements
-         please specify the elements to retrieve by passing the in a custom list.
-         Acceptable values: "word", "line".
-        :return: iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
-        :rtype: iterable[Union[DocumentContentElement, DocumentLine, DocumentWord]]
-        """
-        element_types = kwargs.get("element_types", ["word", "line"])
-        allowed_elements = ["line", "word"]
-
-        return _get_children(self, element_types, allowed_elements, True)
+    def get_lines(self, **kwargs):  # pylint: disable=unused-argument
+        # type (Any) -> Iterable[DocumentLine]
+        return _get_children(self, ["line"], ["line"], True)
 
 
 class ModelOperationInfo(object):
