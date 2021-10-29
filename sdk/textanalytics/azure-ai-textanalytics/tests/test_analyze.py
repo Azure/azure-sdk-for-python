@@ -679,6 +679,7 @@ class TestAnalyze(TextAnalyticsTest):
             )
         assert excinfo.value.status_code == 400
 
+    @pytest.mark.skip
     @TextAnalyticsPreparer()
     def test_disable_service_logs(
             self,

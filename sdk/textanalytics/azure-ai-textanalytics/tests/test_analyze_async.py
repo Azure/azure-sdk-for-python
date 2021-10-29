@@ -703,7 +703,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 ],
                 show_stats=True,
                 polling_interval=self._interval()
-            )).result(timeout=360)
+            )).result()
 
             pages = []
             async for p in result:
@@ -752,6 +752,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 )).result()
         assert excinfo.value.status_code == 400
 
+    @pytest.mark.skip
     @TextAnalyticsPreparer()
     async def test_disable_service_logs(
             self,
