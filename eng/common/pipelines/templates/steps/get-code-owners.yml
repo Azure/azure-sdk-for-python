@@ -18,11 +18,10 @@ steps:
       Write-Host "/sdk/${{ parameters.ServiceDirectory }}/"
       Write-Host "$(Build.SourcesDirectory)"
       dir $(Build.SourcesDirectory)
-      .\retrieve-codeowners `
+      '$(Agent.BuildDirectory)'\retrieve-codeowners `
         --target-directory "/sdk/${{ parameters.ServiceDirectory }}/" `
         --root-directory "$(Build.SourcesDirectory)" `
         --vso-owning-users "${{ parameters.TargetUserVariable }}" `
         --vso-owning-teams "${{ parameters.TargetTeamVariable }}" `
         --vso-owning-labels "${{ parameters.TargetLabelVariable }}"
     displayName: 'Add CodeOwners if Present'
-    workingDirectory: '$(Agent.BuildDirectory)'
