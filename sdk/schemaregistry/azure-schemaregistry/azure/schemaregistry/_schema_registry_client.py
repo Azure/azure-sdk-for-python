@@ -41,13 +41,12 @@ if TYPE_CHECKING:
 
 class SchemaRegistryClient(object):
     """
-    SchemaRegistryClient is as a central schema repository for enterprise-level data infrastructure,
-    complete with support for versioning and management.
+    SchemaRegistryClient is a client for registering and retrieving schemas from the Azure Schema Registry service.
 
-    :param str fully_qualified_namespace: The Schema Registry service fully qualified host name,
-     for example my-namespace.servicebus.windows.net.
-    :param credential: To authenticate to manage the entities of the SchemaRegistry namespace.
-    :type credential: TokenCredential
+    :param str fully_qualified_namespace: The Schema Registry service fully qualified host name.
+     For example: my-namespace.servicebus.windows.net.
+    :param credential: To authenticate managing the entities of the SchemaRegistry namespace.
+    :type credential: ~azure.core.credentials.TokenCredential
 
     .. admonition:: Example:
 
@@ -97,7 +96,8 @@ class SchemaRegistryClient(object):
         :param format: Format for the schema being registered.
          For now Avro is the only supported schema format by the service.
         :type format: Union[str, SchemaFormat]
-        :rtype: SchemaProperties
+        :rtype: ~azure.schemaregistry.SchemaProperties
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -134,7 +134,8 @@ class SchemaRegistryClient(object):
         Azure Schema Registry guarantees that ID is unique within a namespace.
 
         :param str id: References specific schema in registry namespace.
-        :rtype: Schema
+        :rtype: ~azure.schemaregistry.Schema
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -156,7 +157,7 @@ class SchemaRegistryClient(object):
     ):
         # type: (str, str, str, Union[str, SchemaFormat], Any) -> SchemaProperties
         """
-        Gets the ID referencing an existing schema within the specified schema group,
+        Gets the schema properties corresponding to an existing schema within the specified schema group,
         as matched by schema definition comparison.
 
         :param str group_name: Schema group under which schema should be registered.
@@ -164,7 +165,8 @@ class SchemaRegistryClient(object):
         :param str schema_definition: String representation of the schema being registered.
         :param format: Format for the schema being registered.
         :type format: Union[str, SchemaFormat]
-        :rtype: SchemaProperties
+        :rtype: ~azure.schemaregistry.SchemaProperties
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
