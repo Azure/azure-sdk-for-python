@@ -126,7 +126,6 @@ jobs:
 
       - template: ../steps/build-test.yml
         parameters:
-          BuildTargetingString: ${{ parameters.BuildTargetingString }}
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           CloudName: ${{ parameters.CloudConfig.Cloud }}
           CoverageArg: $(CoverageArg)

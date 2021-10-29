@@ -5,9 +5,6 @@ parameters:
   - name: TestPipeline
     type: boolean
     default: false
-  - name: BuildTargetingString
-    type: string
-    default: 'azure-*'
   - name: ServiceDirectory
     type: string
     default: ''
@@ -18,11 +15,13 @@ parameters:
     type: object
     default: []
 
-steps:
-  - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-    parameters:
-      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+# The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
+#     eng/pipelines/templates/jobs/ci.tests.yml
+#     eng/pipelines/templates/jobs/ci.yml
+#     eng/pipelines/templates/jobs/live.test.yml
 
+# Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
+steps:
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
     parameters:
       PackageName: "azure-template"
@@ -63,7 +62,6 @@ steps:
   - template: ../steps/set-dev-build.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      BuildTargetingString: $(TargetingString)
 
   - task: Powershell@2
     inputs:

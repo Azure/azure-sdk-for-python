@@ -4,11 +4,13 @@ parameters:
   TestMarkArgument: ''
   EnvVars: {}
 
-steps:
-  - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-    parameters:
-      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+# The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
+#     eng/pipelines/templates/jobs/ci.tests.yml
+#     eng/pipelines/templates/jobs/ci.yml
+#     eng/pipelines/templates/jobs/live.test.yml
 
+# Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
+steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python 3.7'
     inputs:

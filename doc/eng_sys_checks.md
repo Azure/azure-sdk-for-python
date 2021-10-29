@@ -31,6 +31,20 @@ In both `public` and `internal` projects, all builds allow a filter to be introd
    1. For example, setting filter string `azure-mgmt-*` will filter a build to only management packages. A value of `azure-keyvault-secrets` will result in only building THAT specific package.
 3. Once it's set, run the build!
 
+### Within Template YML
+
+In earlier versions of this repository, the targeting string was resolved at runtime, and was the result of a `coalesce` operation between the template parameter `BuildTargetingString` and the variable value of the same name. Unfortunately, this was a bit buggy, and did not function correctly. This has been adjusted to be a variable set in the initial stages of each job.
+
+The resolution logic is located in template yml [`eng/pipelines/templates/steps/targeting-string-resolve.yml`](/eng/pipelines/templates/steps/targeting-string-resolve.yml). Due to how the yaml unfolds when rendered for a build pipeline, `targeting-string-resolve.yml` is only called by the following three templates.
+
+* `eng/pipelines/templates/jobs/ci.tests.yml`
+* `eng/pipelines/templates/jobs/ci.yml`
+* `eng/pipelines/templates/jobs/live.test.yml`
+
+It only needs to be run once for each `job`, so the above are really the only places necessary to hit that target.
+
+Within the template yml, refer to the targeting string by variable name `$(TargetingString)`.
+
 ## Skipping a tox test environment at queue time
 
 All build definitions allow choice at queue time as to which `tox` environments actually run during the test phase.

@@ -1,12 +1,7 @@
 parameters:
-  BuildTargetingString: 'azure-*'
   ServiceDirectory: ''
 
 steps:
-  - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-    parameters:
-      BuildTargetingString: ${{ parameters.BuildTargetingString }}
-
   - template: /eng/common/pipelines/templates/steps/daily-dev-build-variable.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
