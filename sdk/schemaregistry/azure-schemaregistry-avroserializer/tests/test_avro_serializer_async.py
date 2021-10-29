@@ -31,7 +31,11 @@ from io import BytesIO
 import pytest
 
 import avro
-from avro.errors import AvroTypeException
+try:
+    from avro.io import AvroTypeException
+except ImportError:
+    from avro.errors import AvroTypeException
+
 
 from azure.schemaregistry.aio import SchemaRegistryClient
 from azure.schemaregistry.serializer.avroserializer.aio import AvroSerializer

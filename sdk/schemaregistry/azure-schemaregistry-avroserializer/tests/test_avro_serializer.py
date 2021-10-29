@@ -34,7 +34,10 @@ from azure.schemaregistry.serializer.avroserializer import AvroSerializer
 from azure.schemaregistry.serializer.avroserializer.exceptions import SchemaParseError, SchemaSerializationError, SchemaDeserializationError
 
 import avro
-from avro.errors import AvroTypeException
+try:
+    from avro.io import AvroTypeException
+except ImportError:
+    from avro.errors import AvroTypeException
 from azure.schemaregistry.serializer.avroserializer._apache_avro_serializer import ApacheAvroObjectSerializer as AvroObjectSerializer
 
 from azure.identity import ClientSecretCredential
