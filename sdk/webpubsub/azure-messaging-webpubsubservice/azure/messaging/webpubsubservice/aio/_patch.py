@@ -26,7 +26,7 @@
 # --------------------------------------------------------------------------
 
 from typing import Any, TYPE_CHECKING, Union
-
+import importlib
 
 from azure.core import AsyncPipelineClient
 from msrest import Deserializer, Serializer
@@ -136,3 +136,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         credential = AzureKeyCredential(kwargs.pop("accesskey"))
         return cls(credential=credential, **kwargs)
 
+
+def patch_sdk():
+    curr_package = importlib.import_module("azure.messaging.webpubsubservice.aio")
+    curr_package.WebPubSubServiceClient = WebPubSubServiceClient

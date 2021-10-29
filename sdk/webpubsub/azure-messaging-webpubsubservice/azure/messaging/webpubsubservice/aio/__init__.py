@@ -10,7 +10,7 @@ from ._web_pub_sub_service_client import WebPubSubServiceClient
 __all__ = ['WebPubSubServiceClient']
 
 try:
-    from ._patch import WebPubSubServiceClient
-    __all__ = ['WebPubSubServiceClient']
+    from ._patch import patch_sdk  # type: ignore
+    patch_sdk()
 except ImportError:
     pass

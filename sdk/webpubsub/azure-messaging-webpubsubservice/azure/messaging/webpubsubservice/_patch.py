@@ -29,6 +29,7 @@ import jwt
 import six
 from datetime import datetime, timedelta, tzinfo
 from typing import TYPE_CHECKING
+import importlib
 
 from ._version import VERSION
 from ._web_pub_sub_service_client import WebPubSubServiceClient as GeneratedWebPubSubServiceClient
@@ -328,3 +329,8 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
             "token": token,
             "url": "{}?access_token={}".format(client_url, token),
         }
+
+
+def patch_sdk():
+    curr_package = importlib.import_module("azure.messaging.webpubsubservice")
+    curr_package.WebPubSubServiceClient = WebPubSubServiceClient
