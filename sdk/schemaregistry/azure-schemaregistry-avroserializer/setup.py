@@ -38,7 +38,6 @@ exclude_packages = [
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
         'azure.schemaregistry',
-        'azure.schemaregistry.serializer'
     ]
 install_packages = [
     'azure-schemaregistry==1.0.0b3',
