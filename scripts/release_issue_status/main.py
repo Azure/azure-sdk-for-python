@@ -258,7 +258,7 @@ def main():
         elif not item.author_latest_comment in _PYTHON_SDK_ADMINISTRATORS:
             item.bot_advice = 'new comment for author.'
         elif item.delay_from_latest_update >= 7:
-            item.bot_advice = 'delay for a long time and better to handle now.'
+            item.bot_advice = 'delay for a long time  '
         if item.comment_num > 1 and item.language == 'Python':
             try:
                 auto_close_issue(request_repo, item)
@@ -283,7 +283,7 @@ def main():
 
         # judge whether there is duplicated issue for same package
         if item.package != _NULL and duplicated_issue.get((item.language, item.package)) > 1:
-            item.bot_advice = f'Warning:There is duplicated issue for {item.package}. ' + item.bot_advice
+            item.bot_advice = f'duplicated issue for {item.package}.   ' + item.bot_advice
 
     # output result
     output_python_md(issue_status_python)
