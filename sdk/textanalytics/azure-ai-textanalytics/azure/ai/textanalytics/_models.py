@@ -2271,7 +2271,7 @@ class SummarySentence(DictMixin):
 class RecognizeCustomEntitiesAction(DictMixin):
     """RecognizeCustomEntitiesAction encapsulates the parameters for starting a long-running custom entity
     recognition operation. For information on regional support of custom features and how to train a model to
-    recognize custom entities, see https://aka.ms/azsdk/textanalytics/customfunctionalities
+    recognize custom entities, see https://aka.ms/azsdk/textanalytics/customentityrecognition
 
     :param str project_name: Required. This field indicates the project name for the model.
     :param str deployment_name: This field indicates the deployment name for the model.
