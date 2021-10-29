@@ -35,7 +35,7 @@ In both `public` and `internal` projects, all builds allow a filter to be introd
 
 In earlier versions of this repository, the targeting string was resolved at runtime, and was the result of a `coalesce` operation between the template parameter `BuildTargetingString` and the variable value of the same name. Unfortunately, this was a bit buggy, and did not function correctly. This has been adjusted to be a variable set in the initial stages of each job.
 
-The resolution logic is located in template yml [`eng/pipelines/templates/steps/targeting-string-resolve.yml`](/eng/pipelines/templates/steps/targeting-string-resolve.yml). Due to how the yaml unfolds when rendered for a build pipeline, `targeting-string-resolve.yml` is only called by the following three templates.
+The resolution logic is located in template yml [`eng/pipelines/templates/steps/targeting-string-resolve.yml`](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/pipelines/templates/steps/targeting-string-resolve.yml). Due to how the yaml unfolds when rendered for a build pipeline, `targeting-string-resolve.yml` is only called by the following three templates.
 
 * `eng/pipelines/templates/jobs/ci.tests.yml`
 * `eng/pipelines/templates/jobs/ci.yml`
