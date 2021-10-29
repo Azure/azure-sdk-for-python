@@ -116,17 +116,18 @@ class SchemaRegistryClient(object):
         except AttributeError:
             pass
 
-        logging_enable = kwargs.pop("logging_enable", False)
+        http_request_keywords = ["params", "headers", "json", "data", "files"]
+        http_request_kwargs = {key: kwargs.pop(key) for key in http_request_keywords if key in kwargs}
         request = schema_rest.build_register_request(
             group_name=group_name,
             schema_name=name,
             content=schema_definition,
             serialization_type=format,
             content_type=kwargs.pop("content_type", "application/json"),
-            **kwargs
+            **http_request_kwargs
         )
 
-        response = await self._generated_client.send_request(request, logging_enable=logging_enable)
+        response = await self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
         return _parse_response_schema_properties(response)
 
@@ -152,7 +153,9 @@ class SchemaRegistryClient(object):
                 :caption: Get schema by id.
 
         """
-        request = schema_rest.build_get_by_id_request(schema_id=id)
+        http_request_keywords = ["params", "headers", "json", "data", "files"]
+        http_request_kwargs = {key: kwargs.pop(key, None) for key in http_request_keywords if key in kwargs}
+        request = schema_rest.build_get_by_id_request(schema_id=id, **http_request_kwargs)
         response = await self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
         return _parse_response_schema(response)
@@ -191,16 +194,17 @@ class SchemaRegistryClient(object):
         except AttributeError:
             pass
 
-        logging_enable = kwargs.pop("logging_enable", False)
+        http_request_keywords = ["params", "headers", "json", "data", "files"]
+        http_request_kwargs = {key: kwargs.pop(key, None) for key in http_request_keywords if key in kwargs}
         request = schema_rest.build_query_id_by_content_request(
             group_name=group_name,
             schema_name=name,
             content=schema_definition,
             serialization_type=format,
             content_type=kwargs.pop("content_type", "application/json"),
-            **kwargs
+            **http_request_kwargs
         )
 
-        response = await self._generated_client.send_request(request, logging_enable=logging_enable, **kwargs)
+        response = await self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
         return _parse_response_schema_properties(response)
