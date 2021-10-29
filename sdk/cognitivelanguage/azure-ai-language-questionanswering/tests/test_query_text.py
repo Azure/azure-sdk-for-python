@@ -187,3 +187,29 @@ class QnATests(QuestionAnsweringTest):
                 client.get_answers_from_text("positional_one", "positional_two")
             with pytest.raises(TypeError):
                 client.get_answers_from_text("positional_options_bag", options="options bag by name")
+            
+            params = AnswersFromTextOptions(
+                question="What is the meaning of life?",
+                text_documents=[
+                    TextDocument(
+                        text="foo",
+                        id="doc1"
+                    ),
+                    TextDocument(
+                        text="bar",
+                        id="doc2"
+                    )
+                ],
+                language="en"
+            )
+            with pytest.raises(TypeError):
+                client.get_answers_from_text(options=params)
+            
+            with pytest.raises(TypeError):
+                client.get_answers_from_text(
+                    question="why?",
+                    text_documents=["foo", "bar"],
+                    options=params)
+            
+            with pytest.raises(TypeError):
+                client.get_answers_from_text(params, question="Why?")
