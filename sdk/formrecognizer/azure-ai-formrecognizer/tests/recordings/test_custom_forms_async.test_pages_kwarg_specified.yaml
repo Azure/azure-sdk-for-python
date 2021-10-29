@@ -1,29 +1,29 @@
 interactions:
 - request:
-    body: 'b''{"modelId": "b6d14f57-68c6-4862-bfdf-cd07cc2ac422", "azureBlobSource":
+    body: 'b''{"modelId": "46be75e6-a46f-43f2-bc89-9dfa93b0c1a0", "azureBlobSource":
       {"containerUrl": "container_sas_url"}}'''
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '284'
+      - '300'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels:build?api-version=2021-09-30-preview
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 232c5ad2-7f1d-4477-8539-e4569fc2b13c
+      apim-request-id: 9b512669-5734-4c3f-8302-b978c2c4d155
       content-length: '0'
-      date: Sat, 25 Sep 2021 02:31:03 GMT
-      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/operations/31533830939_232c5ad2-7f1d-4477-8539-e4569fc2b13c?api-version=2021-09-30-preview
+      date: Thu, 28 Oct 2021 22:09:44 GMT
+      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/operations/31530909018_9b512669-5734-4c3f-8302-b978c2c4d155?api-version=2021-09-30-preview
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '3957'
+      x-envoy-upstream-service-time: '2952'
     status:
       code: 202
       message: Accepted
@@ -32,39 +32,40 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/operations/31533830939_232c5ad2-7f1d-4477-8539-e4569fc2b13c?api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/operations/31530909018_9b512669-5734-4c3f-8302-b978c2c4d155?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"operationId": "31533830939_232c5ad2-7f1d-4477-8539-e4569fc2b13c",
-        "kind": "documentModelBuild", "status": "succeeded", "createdDateTime": "2021-09-25T02:31:00Z",
-        "lastUpdatedDateTime": "2021-09-25T02:31:05Z", "resourceLocation": "https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/b6d14f57-68c6-4862-bfdf-cd07cc2ac422?api-version=2021-09-30-preview",
-        "percentCompleted": 100, "result": {"docTypes": {"b6d14f57-68c6-4862-bfdf-cd07cc2ac422":
+      string: '{"operationId": "31530909018_9b512669-5734-4c3f-8302-b978c2c4d155",
+        "kind": "documentModelBuild", "status": "succeeded", "createdDateTime": "2021-10-28T22:09:41Z",
+        "lastUpdatedDateTime": "2021-10-28T22:09:47Z", "resourceLocation": "https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/46be75e6-a46f-43f2-bc89-9dfa93b0c1a0?api-version=2021-09-30-preview",
+        "percentCompleted": 100, "result": {"docTypes": {"46be75e6-a46f-43f2-bc89-9dfa93b0c1a0":
         {"fieldSchema": {"Merchant": {"type": "string"}, "PhoneNumber": {"type": "string"},
         "Website": {"type": "string"}, "Email": {"type": "string"}, "PurchaseOrderNumber":
         {"type": "string"}, "DatedAs": {"type": "string"}, "VendorName": {"type":
         "string"}, "CompanyName": {"type": "string"}, "CompanyAddress": {"type": "string"},
         "CompanyPhoneNumber": {"type": "string"}, "Subtotal": {"type": "string"},
         "Tax": {"type": "string"}, "Total": {"type": "string"}, "Signature": {"type":
-        "string"}, "Quantity": {"type": "number"}}, "fieldConfidence": {"CompanyAddress":
-        0.8, "CompanyName": 0.95, "CompanyPhoneNumber": 0.95, "DatedAs": 0.95, "Email":
-        0.8, "Merchant": 0.95, "PhoneNumber": 0.95, "PurchaseOrderNumber": 0.95, "Quantity":
-        0.95, "Signature": 0.6, "Subtotal": 0.95, "Tax": 0.95, "Total": 0.95, "VendorName":
-        0.95, "Website": 0.95}}}, "modelId": "b6d14f57-68c6-4862-bfdf-cd07cc2ac422",
-        "createdDateTime": "2021-09-25T02:31:05Z"}}'
+        "string"}, "Quantity": {"type": "number"}, "FullSignature": {"type": "signature"}},
+        "fieldConfidence": {"CompanyAddress": 0.8, "CompanyName": 0.95, "CompanyPhoneNumber":
+        0.95, "DatedAs": 0.95, "Email": 0.8, "FullSignature": 0.6, "Merchant": 0.95,
+        "PhoneNumber": 0.95, "PurchaseOrderNumber": 0.95, "Quantity": 0.95, "Signature":
+        0.95, "Subtotal": 0.95, "Tax": 0.95, "Total": 0.95, "VendorName": 0.95, "Website":
+        0.95}}}, "modelId": "46be75e6-a46f-43f2-bc89-9dfa93b0c1a0", "createdDateTime":
+        "2021-10-28T22:09:47Z"}}'
     headers:
-      apim-request-id: b9078bc1-72c1-4d43-9017-c256b59ab1db
+      apim-request-id: aaf8ab74-c54a-49db-8558-83712a2f423e
       content-type: application/json; charset=utf-8
-      date: Sat, 25 Sep 2021 02:31:09 GMT
+      date: Thu, 28 Oct 2021 22:09:50 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '51'
+      x-envoy-upstream-service-time: '45'
     status:
       code: 200
       message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/operations/31533830939_232c5ad2-7f1d-4477-8539-e4569fc2b13c?api-version=2021-09-30-preview
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/operations/31530909018_9b512669-5734-4c3f-8302-b978c2c4d155?api-version=2021-09-30-preview
 - request:
     body: '!!! The request body has been omitted from the recording because its size
       479269 is larger than 128KB. !!!'
@@ -74,36 +75,36 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/b6d14f57-68c6-4862-bfdf-cd07cc2ac422:analyze?pages=1&stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/46be75e6-a46f-43f2-bc89-9dfa93b0c1a0:analyze?pages=1&stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 800ebd89-ad27-4edd-bbbc-c27008f8225a
+      apim-request-id: 0ac9e88d-f404-4842-8332-022bd025a676
       content-length: '0'
-      date: Sat, 25 Sep 2021 02:31:11 GMT
-      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/b6d14f57-68c6-4862-bfdf-cd07cc2ac422/analyzeResults/800ebd89-ad27-4edd-bbbc-c27008f8225a?api-version=2021-09-30-preview
+      date: Thu, 28 Oct 2021 22:09:51 GMT
+      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/46be75e6-a46f-43f2-bc89-9dfa93b0c1a0/analyzeResults/0ac9e88d-f404-4842-8332-022bd025a676?api-version=2021-09-30-preview
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '1010'
+      x-envoy-upstream-service-time: '1529'
     status:
       code: 202
       message: Accepted
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/b6d14f57-68c6-4862-bfdf-cd07cc2ac422:analyze?pages=1&stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/46be75e6-a46f-43f2-bc89-9dfa93b0c1a0:analyze?pages=1&stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/b6d14f57-68c6-4862-bfdf-cd07cc2ac422/analyzeResults/800ebd89-ad27-4edd-bbbc-c27008f8225a?api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/46be75e6-a46f-43f2-bc89-9dfa93b0c1a0/analyzeResults/0ac9e88d-f404-4842-8332-022bd025a676?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-09-25T02:31:10Z",
-        "lastUpdatedDateTime": "2021-09-25T02:31:13Z", "analyzeResult": {"apiVersion":
-        "2021-09-30-preview", "modelId": "b6d14f57-68c6-4862-bfdf-cd07cc2ac422", "stringIndexType":
+      string: '{"status": "succeeded", "createdDateTime": "2021-10-28T22:09:51Z",
+        "lastUpdatedDateTime": "2021-10-28T22:09:56Z", "analyzeResult": {"apiVersion":
+        "2021-09-30-preview", "modelId": "46be75e6-a46f-43f2-bc89-9dfa93b0c1a0", "stringIndexType":
         "unicodeCodePoint", "content": "Purchase Order\nHero Limited\nCompany Phone:
         555-348-6512\nWebsite: www.herolimited.com\nEmail:\nPurchase Order\nDated
         As: 12/20/2020\nPurchase Order #: 948284\naccounts@herolimited.com\nShipped
@@ -540,68 +541,68 @@ interactions:
         "length": 7}]}], "boundingRegions": [{"pageNumber": 1, "boundingBox": [1062,
         1563, 1560, 1563, 1560, 1709, 1062, 1709]}], "spans": [{"offset": 706, "length":
         40}]}], "styles": [{"isHandwritten": true, "confidence": 0.9, "spans": [{"offset":
-        606, "length": 14}]}], "documents": [{"docType": "b6d14f57-68c6-4862-bfdf-cd07cc2ac422:b6d14f57-68c6-4862-bfdf-cd07cc2ac422",
+        606, "length": 14}]}], "documents": [{"docType": "46be75e6-a46f-43f2-bc89-9dfa93b0c1a0:46be75e6-a46f-43f2-bc89-9dfa93b0c1a0",
         "boundingRegions": [{"pageNumber": 1, "boundingBox": [0, 0, 1700, 0, 1700,
-        2200, 0, 2200]}], "fields": {"CompanyPhoneNumber": {"type": "string", "valueString":
-        "938-294-2949", "content": "938-294-2949", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [706, 722, 882, 722, 882, 749, 706, 749]}], "confidence":
-        0.95, "spans": [{"offset": 308, "length": 12}]}, "Total": {"type": "string",
-        "valueString": "$144.00", "content": "$144.00", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [1427, 1669, 1527, 1669, 1527, 1698, 1427, 1698]}], "confidence":
-        0.95, "spans": [{"offset": 739, "length": 7}]}, "Email": {"type": "string",
-        "valueString": "accounts@herolimited.com", "content": "accounts@herolimited.com",
-        "boundingRegions": [{"pageNumber": 1, "boundingBox": [164, 479, 471, 479,
-        471, 503, 164, 503]}], "confidence": 0.95, "spans": [{"offset": 153, "length":
-        24}]}, "Merchant": {"type": "string", "valueString": "Hero Limited", "content":
-        "Hero Limited", "boundingRegions": [{"pageNumber": 1, "boundingBox": [620,
-        204, 1058, 204, 1058, 266, 620, 266]}], "confidence": 0.95, "spans": [{"offset":
-        15, "length": 12}]}, "Tax": {"type": "string", "valueString": "$4.00", "content":
-        "$4.00", "boundingRegions": [{"pageNumber": 1, "boundingBox": [1458, 1615,
-        1529, 1615, 1529, 1643, 1458, 1643]}], "confidence": 0.95, "spans": [{"offset":
-        727, "length": 5}]}, "Signature": {"type": "string", "valueString": "Bernie
-        Sanders", "content": "Bernie Sanders", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [484, 1670, 763, 1670, 763, 1708, 484, 1708]}], "confidence":
-        0.241, "spans": [{"offset": 606, "length": 14}]}, "Quantity": {"type": "number",
-        "valueNumber": 20, "content": "20", "boundingRegions": [{"pageNumber": 1,
-        "boundingBox": [859, 1094, 887, 1094, 887, 1119, 859, 1119]}], "confidence":
-        0.95, "spans": [{"offset": 498, "length": 2}]}, "VendorName": {"type": "string",
-        "valueString": "Hillary Swank", "content": "Hillary Swank", "boundingRegions":
-        [{"pageNumber": 1, "boundingBox": [346, 609, 518, 609, 518, 639, 346, 639]}],
-        "confidence": 0.95, "spans": [{"offset": 202, "length": 13}]}, "CompanyName":
-        {"type": "string", "valueString": "Higgly Wiggly Books", "content": "Higgly
-        Wiggly Books", "boundingRegions": [{"pageNumber": 1, "boundingBox": [372,
-        646, 628, 646, 628, 679, 372, 679]}], "confidence": 0.95, "spans": [{"offset":
-        230, "length": 19}]}, "PurchaseOrderNumber": {"type": "string", "valueString":
-        "948284", "content": "948284", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [1275, 461, 1373, 461, 1373, 489, 1275, 489]}], "confidence": 0.95, "spans":
-        [{"offset": 146, "length": 6}]}, "Subtotal": {"type": "string", "valueString":
-        "$140.00", "content": "$140.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [1426, 1572, 1526, 1572, 1526, 1599, 1426, 1599]}], "confidence": 0.95, "spans":
-        [{"offset": 715, "length": 7}]}, "DatedAs": {"type": "string", "valueString":
-        "12/20/2020", "content": "12/20/2020", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [1162, 420, 1312, 420, 1312, 449, 1162, 449]}], "confidence":
-        0.95, "spans": [{"offset": 117, "length": 10}]}, "Website": {"type": "string",
-        "valueString": "www.herolimited.com", "content": "www.herolimited.com", "boundingRegions":
-        [{"pageNumber": 1, "boundingBox": [270, 393, 522, 393, 522, 418, 270, 418]}],
-        "confidence": 0.95, "spans": [{"offset": 65, "length": 19}]}, "CompanyAddress":
+        2200, 0, 2200]}], "fields": {"Total": {"type": "string", "valueString": "$144.00",
+        "content": "$144.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
+        [1427, 1669, 1527, 1669, 1527, 1698, 1427, 1698]}], "confidence": 0.95, "spans":
+        [{"offset": 739, "length": 7}]}, "Tax": {"type": "string", "valueString":
+        "$4.00", "content": "$4.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
+        [1458, 1615, 1529, 1615, 1529, 1643, 1458, 1643]}], "confidence": 0.95, "spans":
+        [{"offset": 727, "length": 5}]}, "CompanyName": {"type": "string", "valueString":
+        "Higgly Wiggly Books", "content": "Higgly Wiggly Books", "boundingRegions":
+        [{"pageNumber": 1, "boundingBox": [372, 646, 628, 646, 628, 679, 372, 679]}],
+        "confidence": 0.95, "spans": [{"offset": 230, "length": 19}]}, "CompanyAddress":
         {"type": "string", "valueString": "938 NE Burner Road Boulder City, CO 92848",
         "content": "938 NE Burner Road Boulder City, CO 92848", "boundingRegions":
         [{"pageNumber": 1, "boundingBox": [271, 685, 559, 685, 559, 751, 271, 751]}],
-        "confidence": 0.762, "spans": [{"offset": 259, "length": 41}]}, "PhoneNumber":
+        "confidence": 0.698, "spans": [{"offset": 259, "length": 41}]}, "DatedAs":
+        {"type": "string", "valueString": "12/20/2020", "content": "12/20/2020", "boundingRegions":
+        [{"pageNumber": 1, "boundingBox": [1162, 420, 1312, 420, 1312, 449, 1162,
+        449]}], "confidence": 0.95, "spans": [{"offset": 117, "length": 10}]}, "FullSignature":
+        {"type": "signature", "valueSignature": "signed", "content": "", "boundingRegions":
+        [{"pageNumber": 1, "boundingBox": [453, 1659, 807, 1659, 807, 1722, 453, 1722]}],
+        "confidence": 0.95}, "Website": {"type": "string", "valueString": "www.herolimited.com",
+        "content": "www.herolimited.com", "boundingRegions": [{"pageNumber": 1, "boundingBox":
+        [270, 393, 522, 393, 522, 418, 270, 418]}], "confidence": 0.95, "spans": [{"offset":
+        65, "length": 19}]}, "CompanyPhoneNumber": {"type": "string", "valueString":
+        "938-294-2949", "content": "938-294-2949", "boundingRegions": [{"pageNumber":
+        1, "boundingBox": [706, 722, 882, 722, 882, 749, 706, 749]}], "confidence":
+        0.95, "spans": [{"offset": 308, "length": 12}]}, "PurchaseOrderNumber": {"type":
+        "string", "valueString": "948284", "content": "948284", "boundingRegions":
+        [{"pageNumber": 1, "boundingBox": [1275, 461, 1373, 461, 1373, 489, 1275,
+        489]}], "confidence": 0.95, "spans": [{"offset": 146, "length": 6}]}, "Merchant":
+        {"type": "string", "valueString": "Hero Limited", "content": "Hero Limited",
+        "boundingRegions": [{"pageNumber": 1, "boundingBox": [620, 204, 1058, 204,
+        1058, 266, 620, 266]}], "confidence": 0.95, "spans": [{"offset": 15, "length":
+        12}]}, "VendorName": {"type": "string", "valueString": "Hillary Swank", "content":
+        "Hillary Swank", "boundingRegions": [{"pageNumber": 1, "boundingBox": [346,
+        609, 518, 609, 518, 639, 346, 639]}], "confidence": 0.95, "spans": [{"offset":
+        202, "length": 13}]}, "Subtotal": {"type": "string", "valueString": "$140.00",
+        "content": "$140.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
+        [1426, 1572, 1526, 1572, 1526, 1599, 1426, 1599]}], "confidence": 0.95, "spans":
+        [{"offset": 715, "length": 7}]}, "Email": {"type": "string", "valueString":
+        "accounts@herolimited.com", "content": "accounts@herolimited.com", "boundingRegions":
+        [{"pageNumber": 1, "boundingBox": [164, 479, 471, 479, 471, 503, 164, 503]}],
+        "confidence": 0.95, "spans": [{"offset": 153, "length": 24}]}, "Quantity":
+        {"type": "number", "valueNumber": 20, "content": "20", "boundingRegions":
+        [{"pageNumber": 1, "boundingBox": [859, 1094, 887, 1094, 887, 1119, 859, 1119]}],
+        "confidence": 0.95, "spans": [{"offset": 498, "length": 2}]}, "PhoneNumber":
         {"type": "string", "valueString": "555-348-6512", "content": "555-348-6512",
         "boundingRegions": [{"pageNumber": 1, "boundingBox": [363, 351, 524, 351,
         524, 378, 363, 378]}], "confidence": 0.95, "spans": [{"offset": 43, "length":
-        12}]}}, "confidence": 0.92, "spans": [{"offset": 0, "length": 880}]}]}}'
+        12}]}, "Signature": {"type": "string", "confidence": 0.919}}, "confidence":
+        0.92, "spans": [{"offset": 0, "length": 880}]}]}}'
     headers:
-      apim-request-id: c1e23f97-4446-4f21-ad48-f592ead53cc8
+      apim-request-id: 326270e8-1766-40ce-a032-71508233239d
       content-type: application/json; charset=utf-8
-      date: Sat, 25 Sep 2021 02:31:16 GMT
+      date: Thu, 28 Oct 2021 22:09:57 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '428'
+      x-envoy-upstream-service-time: '355'
     status:
       code: 200
       message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/b6d14f57-68c6-4862-bfdf-cd07cc2ac422/analyzeResults/800ebd89-ad27-4edd-bbbc-c27008f8225a?api-version=2021-09-30-preview
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/46be75e6-a46f-43f2-bc89-9dfa93b0c1a0/analyzeResults/0ac9e88d-f404-4842-8332-022bd025a676?api-version=2021-09-30-preview
 version: 1

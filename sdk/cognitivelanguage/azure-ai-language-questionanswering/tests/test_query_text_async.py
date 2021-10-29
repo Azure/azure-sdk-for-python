@@ -15,7 +15,7 @@ from testcase import (
 )
 
 from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
-from azure.ai.language.questionanswering.operations._operations import build_get_answers_from_text_request
+from azure.ai.language.questionanswering._operations._operations import build_get_answers_from_text_request
 from azure.ai.language.questionanswering.models import (
     AnswersFromTextOptions,
     TextDocument
