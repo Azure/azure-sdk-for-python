@@ -11,7 +11,7 @@ DESCRIPTION:
         - getting a schema by its ID
         - getting schema id.
 USAGE:
-    python schema_registry.py
+    python schema_registry_async.py
     Set the environment variables with your own values before running the sample:
     1) SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
      which should follow the format: `<your-namespace>.servicebus.windows.net`
