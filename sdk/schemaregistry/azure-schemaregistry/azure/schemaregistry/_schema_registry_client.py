@@ -46,7 +46,7 @@ class SchemaRegistryClient(object):
     :param str fully_qualified_namespace: The Schema Registry service fully qualified host name.
      For example: my-namespace.servicebus.windows.net.
     :param credential: To authenticate managing the entities of the SchemaRegistry namespace.
-    :type credential: TokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential
 
     .. admonition:: Example:
 
@@ -96,7 +96,7 @@ class SchemaRegistryClient(object):
         :param format: Format for the schema being registered.
          For now Avro is the only supported schema format by the service.
         :type format: Union[str, SchemaFormat]
-        :rtype: SchemaProperties
+        :rtype: ~azure.schemaregistry.SchemaProperties
         :raises: :class:`~azure.core.exceptions.HttpResponseError:`
 
         .. admonition:: Example:
@@ -134,7 +134,7 @@ class SchemaRegistryClient(object):
         Azure Schema Registry guarantees that ID is unique within a namespace.
 
         :param str id: References specific schema in registry namespace.
-        :rtype: Schema
+        :rtype: ~azure.schemaregistry.Schema
         :raises: :class:`~azure.core.exceptions.HttpResponseError:`
 
         .. admonition:: Example:
@@ -165,7 +165,7 @@ class SchemaRegistryClient(object):
         :param str schema_definition: String representation of the schema being registered.
         :param format: Format for the schema being registered.
         :type format: Union[str, SchemaFormat]
-        :rtype: SchemaProperties
+        :rtype: ~azure.schemaregistry.SchemaProperties
         :raises: :class:`~azure.core.exceptions.HttpResponseError:`
 
         .. admonition:: Example:
