@@ -1751,6 +1751,18 @@ class _AnalyzeActionsType(str, Enum):
     MULTI_CATEGORY_CLASSIFY = "multi_category_classify"
 
 
+class ActionPointerKind(str, Enum):
+    RECOGNIZE_ENTITIES = "entityRecognitionTasks"
+    RECOGNIZE_PII_ENTITIES = "entityRecognitionPiiTasks"
+    EXTRACT_KEY_PHRASES = "keyPhraseExtractionTasks"
+    RECOGNIZE_LINKED_ENTITIES = "entityLinkingTasks"
+    ANALYZE_SENTIMENT = "sentimentAnalysisTasks"
+    EXTRACT_SUMMARY = "extractiveSummarizationTasks"
+    RECOGNIZE_CUSTOM_ENTITIES = "customEntityRecognitionTasks"
+    SINGLE_CATEGORY_CLASSIFY = "customSingleClassificationTasks"
+    MULTI_CATEGORY_CLASSIFY = "customMultiClassificationTasks"
+
+
 class RecognizeEntitiesAction(DictMixin):
     """RecognizeEntitiesAction encapsulates the parameters for starting a long-running Entities Recognition operation.
 
