@@ -634,7 +634,7 @@ class TestAnalyze(TextAnalyticsTest):
             ],
             show_stats=True,
             polling_interval=self._interval(),
-        ).result()
+        ).result(timeout=360)
 
         pages = list(result)
         assert len(pages) == len(docs)
@@ -731,7 +731,7 @@ class TestAnalyze(TextAnalyticsTest):
             actions=actions,
             polling_interval=self._interval(),
             raw_response_hook=callback,
-        ).result()
+        ).result(timeout=360)
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -1108,6 +1108,7 @@ class TestAnalyze(TextAnalyticsTest):
                     assert classification.category
                     assert classification.confidence_score
 
+    @pytest.mark.skip
     @TextAnalyticsPreparer()
     def test_recognize_custom_entities(
             self,

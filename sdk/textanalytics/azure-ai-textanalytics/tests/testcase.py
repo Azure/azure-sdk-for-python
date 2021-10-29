@@ -65,6 +65,7 @@ class TextAnalyticsClientPreparer(AzureMgmtPreparer):
         client = self.client_cls(
             textanalytics_test_endpoint,
             AzureKeyCredential(textanalytics_test_api_key),
+            logging_enable=True,
             **self.client_kwargs
         )
         kwargs.update({"client": client})

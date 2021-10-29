@@ -703,7 +703,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 ],
                 show_stats=True,
                 polling_interval=self._interval()
-            )).result()
+            )).result(timeout=360)
 
             pages = []
             async for p in result:
@@ -796,7 +796,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             documents=["Test for logging disable"],
             actions=actions,
             polling_interval=self._interval(),
-        )).result()
+        )).result(timeout=360)
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -1201,6 +1201,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     assert classification.category
                     assert classification.confidence_score
 
+    @pytest.mark.skip
     @TextAnalyticsPreparer()
     async def test_recognize_custom_entities(
             self,
