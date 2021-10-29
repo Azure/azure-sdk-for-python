@@ -46,11 +46,12 @@ class VideosOperations:
         resource_group_name: str,
         account_name: str,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VideoEntityCollection"]:
-        """List all existing video resources.
+        """Retrieves all existing video resources.
 
-        List all existing video resources in the specified account.
+        Retrieves a list of video resources that have been created, along with their JSON
+        representations.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -70,7 +71,7 @@ class VideosOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01-preview"
+        api_version = "2021-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -83,7 +84,7 @@ class VideosOperations:
                 url = self.list.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'accountName': self._serialize.url("account_name", account_name, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -130,17 +131,17 @@ class VideosOperations:
         resource_group_name: str,
         account_name: str,
         video_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VideoEntity":
-        """Retrieves a video resource.
+        """Retrieves an existing video resource.
 
-        Retrieves an existing video resource within an account with a given name.
+        Retrieves an existing video resource with the given name.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param account_name: The Azure Video Analyzer account name.
         :type account_name: str
-        :param video_name: The name of the video to retrieve.
+        :param video_name: The Video name.
         :type video_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VideoEntity, or the result of cls(response)
@@ -152,14 +153,14 @@ class VideosOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01-preview"
+        api_version = "2021-11-01-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
             'videoName': self._serialize.url("video_name", video_name, 'str'),
         }
@@ -196,17 +197,17 @@ class VideosOperations:
         account_name: str,
         video_name: str,
         parameters: "_models.VideoEntity",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VideoEntity":
-        """Create or updates a video resource.
+        """Creates a new video resource or updates an existing one.
 
-        Creates a new video resource or updates an existing one in an account.
+        Creates a new video resource or updates an existing video resource with the given name.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param account_name: The Azure Video Analyzer account name.
         :type account_name: str
-        :param video_name: The name of the video to create or update.
+        :param video_name: The Video name.
         :type video_name: str
         :param parameters: The request parameters.
         :type parameters: ~video_analyzer.models.VideoEntity
@@ -220,7 +221,7 @@ class VideosOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01-preview"
+        api_version = "2021-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -228,7 +229,7 @@ class VideosOperations:
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
             'videoName': self._serialize.url("video_name", video_name, 'str'),
         }
@@ -272,9 +273,9 @@ class VideosOperations:
         resource_group_name: str,
         account_name: str,
         video_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
-        """Deletes a video resource.
+        """Deletes an existing video resource and its underlying data.
 
         Deletes an existing video resource and its underlying data. This operation is irreversible.
 
@@ -282,7 +283,7 @@ class VideosOperations:
         :type resource_group_name: str
         :param account_name: The Azure Video Analyzer account name.
         :type account_name: str
-        :param video_name: The name of the video to delete.
+        :param video_name: The Video name.
         :type video_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -294,14 +295,14 @@ class VideosOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01-preview"
+        api_version = "2021-11-01-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
             'videoName': self._serialize.url("video_name", video_name, 'str'),
         }
@@ -335,17 +336,17 @@ class VideosOperations:
         account_name: str,
         video_name: str,
         parameters: "_models.VideoEntity",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VideoEntity":
-        """Updates the properties of a video resource.
+        """Updates individual properties of an existing video resource.
 
-        Updates individual properties of an existing video resource.
+        Updates individual properties of an existing video resource with the given name.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param account_name: The Azure Video Analyzer account name.
         :type account_name: str
-        :param video_name: The name of the video to update.
+        :param video_name: The Video name.
         :type video_name: str
         :param parameters: The request parameters.
         :type parameters: ~video_analyzer.models.VideoEntity
@@ -359,7 +360,7 @@ class VideosOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01-preview"
+        api_version = "2021-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -367,7 +368,7 @@ class VideosOperations:
         url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
             'videoName': self._serialize.url("video_name", video_name, 'str'),
         }
@@ -402,41 +403,42 @@ class VideosOperations:
         return deserialized
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}/videos/{videoName}'}  # type: ignore
 
-    async def list_streaming_token(
+    async def list_content_token(
         self,
         resource_group_name: str,
         account_name: str,
         video_name: str,
-        **kwargs
-    ) -> "_models.VideoStreamingToken":
-        """Generates a streaming token for video playback.
+        **kwargs: Any
+    ) -> "_models.VideoContentToken":
+        """Generates a streaming token which can be used for accessing content from video content URLs.
 
-        Generates a streaming token used for authenticating video playback.
+        Generates a streaming token which can be used for accessing content from video content URLs,
+        for a video resource with the given name.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param account_name: The Azure Video Analyzer account name.
         :type account_name: str
-        :param video_name: The name of the video to generate a token for playback.
+        :param video_name: The Video name.
         :type video_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: VideoStreamingToken, or the result of cls(response)
-        :rtype: ~video_analyzer.models.VideoStreamingToken
+        :return: VideoContentToken, or the result of cls(response)
+        :rtype: ~video_analyzer.models.VideoContentToken
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VideoStreamingToken"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VideoContentToken"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01-preview"
+        api_version = "2021-11-01-preview"
         accept = "application/json"
 
         # Construct URL
-        url = self.list_streaming_token.metadata['url']  # type: ignore
+        url = self.list_content_token.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
             'videoName': self._serialize.url("video_name", video_name, 'str'),
         }
@@ -459,10 +461,10 @@ class VideosOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('VideoStreamingToken', pipeline_response)
+        deserialized = self._deserialize('VideoContentToken', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list_streaming_token.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}/videos/{videoName}/listStreamingToken'}  # type: ignore
+    list_content_token.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/videoAnalyzers/{accountName}/videos/{videoName}/listContentToken'}  # type: ignore

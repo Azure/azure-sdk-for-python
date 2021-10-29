@@ -773,7 +773,9 @@ class FormRecognizerTest(AzureTestCase):
             field_type = expected.type
             assert adjust_value_type(field_type) == document_fields[label].value_type
             assert expected.confidence == document_fields[label].confidence
-            assert expected.content == document_fields[label].content
+            # In the case of content for a signature type field we get '' in expected.content
+            # vs. None for document_fields[label].content
+            assert (expected.content == document_fields[label].content) or (expected.content == '' and not document_fields[label].content)
             self.assertDocumentFieldValueTransformCorrect(document_fields[label], expected)
 
             for span, expected_span in zip(document_fields[label].spans or [], expected.spans or []):

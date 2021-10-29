@@ -1,28 +1,8 @@
-# --------------------------------------------------------------------------
-#
+# --------------------------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
-#
-# The MIT License (MIT)
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the ""Software""), to
-# deal in the Software without restriction, including without limitation the
-# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-# sell copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-# IN THE SOFTWARE.
-#
-# --------------------------------------------------------------------------
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+
 try:
     from functools import lru_cache
 except ImportError:
@@ -32,10 +12,12 @@ from io import BytesIO
 import avro
 from avro.io import DatumWriter, DatumReader, BinaryDecoder, BinaryEncoder
 
+from ._abstract_avro_serializer import AbstractAvroObjectSerializer
+
 ObjectType = TypeVar("ObjectType")
 
 
-class AvroObjectSerializer(object):
+class ApacheAvroObjectSerializer(AbstractAvroObjectSerializer):
 
     def __init__(self, codec=None):
         """A Avro serializer using avro lib from Apache.
@@ -44,13 +26,21 @@ class AvroObjectSerializer(object):
         self._writer_codec = codec
 
     @lru_cache(maxsize=128)
-    def _get_schema_writer(self, schema):   # pylint: disable=no-self-use
-        schema = avro.schema.parse(schema)
+    def parse_schema(self, schema):   # pylint: disable=no-self-use
+        return avro.schema.parse(schema)
+
+    def get_schema_fullname(self, schema):
+        parsed_schema = self.parse_schema(schema)
+        return parsed_schema.fullname
+
+    @lru_cache(maxsize=128)
+    def get_schema_writer(self, schema):   # pylint: disable=no-self-use
+        schema = self.parse_schema(schema)
         return DatumWriter(schema)
 
     @lru_cache(maxsize=128)
-    def _get_schema_reader(self, schema):   # pylint: disable=no-self-use
-        schema = avro.schema.parse(schema)
+    def get_schema_reader(self, schema):   # pylint: disable=no-self-use
+        schema = self.parse_schema(schema)
         return DatumReader(writers_schema=schema)
 
     # pylint: disable=no-self-use
@@ -66,14 +56,14 @@ class AvroObjectSerializer(object):
         :param data: An object to serialize
         :type data: ObjectType
         :param schema: An Avro RecordSchema
-        :type schema: Union[str, bytes, avro.schema.Schema]
+        :type schema: str
         :returns: Encoded bytes
         :rtype: bytes
         """
         if not schema:
             raise ValueError("Schema is required in Avro serializer.")
 
-        writer = self._get_schema_writer(str(schema))
+        writer = self.get_schema_writer(schema)
 
         stream = BytesIO()
         with stream:
@@ -93,14 +83,14 @@ class AvroObjectSerializer(object):
         :param data: A stream of bytes or bytes directly
         :type data: BinaryIO or bytes
         :param schema: An Avro RecordSchema
-        :type schema: Union[str, bytes, avro.schema.Schema]
+        :type schema: str
         :returns: An instantiated object
         :rtype: ObjectType
         """
         if not hasattr(data, 'read'):
             data = BytesIO(data)
 
-        reader = self._get_schema_reader(str(schema))
+        reader = self.get_schema_reader(schema)
 
         with data:
             bin_decoder = BinaryDecoder(data)
