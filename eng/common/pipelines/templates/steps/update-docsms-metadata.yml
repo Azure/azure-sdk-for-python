@@ -23,7 +23,7 @@ parameters:
     type: boolean
     default: false
   - name: CodeOwners
-    type: string[]
+    type: object
     default: []
   - name: SparseCheckoutPaths
     type: object
