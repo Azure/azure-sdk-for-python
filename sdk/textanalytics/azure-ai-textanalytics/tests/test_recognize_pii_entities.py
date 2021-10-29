@@ -24,7 +24,7 @@ from azure.ai.textanalytics import (
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
 # the first one
 TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
-
+@pytest.mark.skip
 class TestRecognizePIIEntities(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()

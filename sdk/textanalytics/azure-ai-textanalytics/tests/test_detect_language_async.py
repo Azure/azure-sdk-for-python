@@ -25,7 +25,7 @@ from asynctestcase import AsyncTextAnalyticsTest
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
 TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
 
-
+@pytest.mark.skip
 class TestDetectLanguage(AsyncTextAnalyticsTest):
 
     @TextAnalyticsPreparer()

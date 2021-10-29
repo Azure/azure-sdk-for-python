@@ -17,7 +17,7 @@ from azure.ai.textanalytics import TextAnalyticsClient
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
 # the first one
 TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
-
+@pytest.mark.skip
 class TestEncoding(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()

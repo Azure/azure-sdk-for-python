@@ -12,7 +12,9 @@ except ImportError:  # python < 3.3
 from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsTest, TextAnalyticsPreparer
 from azure.ai.textanalytics import TextAnalyticsClient
+import pytest
 
+@pytest.mark.skip
 class TestContextManager(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()

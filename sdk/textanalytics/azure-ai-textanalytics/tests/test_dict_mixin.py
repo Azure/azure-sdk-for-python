@@ -7,7 +7,7 @@
 import pytest
 from azure.ai.textanalytics import _models
 
-
+@pytest.mark.skip
 class TestDictMixin:
 
     def test_contains(self):

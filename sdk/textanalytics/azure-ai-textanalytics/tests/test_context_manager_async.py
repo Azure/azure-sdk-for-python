@@ -21,6 +21,8 @@ def get_completed_future(result=None):
     future.set_result(result)
     return future
 
+import pytest
+@pytest.mark.skip
 class AsyncMockTransport(mock.MagicMock):
     """Mock with do-nothing aenter/exit for mocking async transport.
     This is unnecessary on 3.8+, where MagicMocks implement aenter/exit.

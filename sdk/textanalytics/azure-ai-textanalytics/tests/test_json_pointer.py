@@ -95,7 +95,7 @@ def generated_sentiment_response(generated_document_sentiment):
         model_version="0000-00-00",
     )
 
-
+@pytest.mark.skip
 class TestJsonPointer():
 
     def test_json_pointer_parsing(self):

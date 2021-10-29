@@ -10,7 +10,7 @@ from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsPreparer
 from asynctestcase import AsyncTextAnalyticsTest
 
-
+@pytest.mark.skip
 class TestAuth(AsyncTextAnalyticsTest):
     @pytest.mark.live_test_only
     @TextAnalyticsPreparer()

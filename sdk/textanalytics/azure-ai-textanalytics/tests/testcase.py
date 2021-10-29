@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import os
+import logging
 import pytest
 import functools
 from azure.core.credentials import AccessToken, AzureKeyCredential
@@ -24,6 +25,9 @@ from azure.ai.textanalytics import (
 )
 from devtools_testutils import PowerShellPreparer
 from azure_devtools.scenario_tests import ReplayableTest
+
+LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
+
 
 
 TextAnalyticsPreparer = functools.partial(
@@ -82,6 +86,7 @@ class TextAnalyticsTest(AzureTestCase):
     FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key']
 
     def __init__(self, method_name):
+        self.configure_logging()
         super(TextAnalyticsTest, self).__init__(method_name)
 
     def get_oauth_endpoint(self):
@@ -99,6 +104,23 @@ class TextAnalyticsTest(AzureTestCase):
 
     def generate_fake_token(self):
         return FakeTokenCredential()
+
+    def configure_logging(self):
+        self.enable_logging()
+
+    def enable_logging(self):
+        self.logger = logging.getLogger('azure')
+        handler = logging.StreamHandler()
+        handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
+        self.logger.handlers = [handler]
+        self.logger.setLevel(logging.DEBUG)
+        self.logger.propagate = True
+        self.logger.disabled = False
+
+    def disable_logging(self):
+        self.logger.propagate = False
+        self.logger.disabled = True
+        self.logger.handlers = []
 
     def assertOpinionsEqual(self, opinion_one, opinion_two):
         self.assertEqual(opinion_one.sentiment, opinion_two.sentiment)

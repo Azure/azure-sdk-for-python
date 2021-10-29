@@ -9,7 +9,7 @@ import pytest
 from testcase import TextAnalyticsTest, TextAnalyticsPreparer
 from azure.ai.textanalytics import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
-
+@pytest.mark.skip
 class TestAuth(TextAnalyticsTest):
     @pytest.mark.live_test_only
     def test_active_directory_auth(self):
