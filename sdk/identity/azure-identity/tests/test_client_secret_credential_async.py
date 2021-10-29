@@ -257,8 +257,7 @@ async def test_multitenant_authentication():
     second_token = first_token * 2
 
     async def send(request, **kwargs):
-        with pytest.raises(KeyError):
-            kwargs["tenant_id"]
+        assert "tenant_id" not in kwargs, "tenant_id kwarg shouldn't get passed to send method"
 
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
