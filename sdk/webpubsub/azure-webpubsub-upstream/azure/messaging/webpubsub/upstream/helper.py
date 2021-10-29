@@ -49,7 +49,7 @@ from .utils import (
 )
 
 from .headers import (
-    AWPS_SPEC_VERSION,
+    CE_AWPSVERSION,
     EVENT_SYS_CONNECT,
     EVENT_SYS_CONNECTED,
     EVENT_SYS_DISCONNECTED,
@@ -57,7 +57,7 @@ from .headers import (
     WEBHOOK_REQUEST_ORIGIN,
 )
 
-HEADER_SPEC_VERSION = "HTTP_" + AWPS_SPEC_VERSION.upper().replace('-', '_')
+HEADER_SPEC_VERSION = "HTTP_" + CE_AWPSVERSION.upper().replace('-', '_')
 HEADER_WEBHOOK_REQUEST_ORIGIN = "HTTP_" + \
     WEBHOOK_REQUEST_ORIGIN.upper().replace('-', '_')
 

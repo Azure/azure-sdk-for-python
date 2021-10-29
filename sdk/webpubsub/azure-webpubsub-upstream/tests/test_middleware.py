@@ -95,7 +95,7 @@ def test_skip_when_path_mismatch():
     app = handler.wrap(default_app, '/upstream')
     dispatcher = TestDispatcher()
     actual = app({
-        'HTTP_AWPS_SPECVERSION': '1.0',
+        'HTTP_CE_AWPSVERSION': '1.0',
         'PATH_INFO': '/',
     }, dispatcher.start_response)
     assert [b''] == actual
@@ -107,7 +107,7 @@ def test_preflight_missing_origin():
     app = handler.wrap(default_app, '/upstream')
     dispatcher = TestDispatcher()
     actual = app({
-        'HTTP_AWPS_SPECVERSION': '1.0',
+        'HTTP_CE_AWPSVERSION': '1.0',
         'PATH_INFO': '/upstream',
     }, dispatcher.start_response)
     assert [b'Missing webhook request origin.'] == actual
@@ -129,7 +129,7 @@ def test_not_allowed_http_methods(http_method):
     app = handler.wrap(default_app, '/upstream')
     dispatcher = TestDispatcher()
     actual = app({
-        'HTTP_AWPS_SPECVERSION': '1.0',
+        'HTTP_CE_AWPSVERSION': '1.0',
         'HTTP_WEBHOOK_REQUEST_ORIGIN': 'foo.bar',
         'PATH_INFO': '/upstream',
         "REQUEST_METHOD": http_method,
@@ -148,7 +148,7 @@ def test_preflight_failed():
     app = handler.wrap(default_app, '/upstream')
     dispatcher = TestDispatcher()
     actual = app({
-        'HTTP_AWPS_SPECVERSION': '1.0',
+        'HTTP_CE_AWPSVERSION': '1.0',
         'HTTP_WEBHOOK_REQUEST_ORIGIN': 'foo',
         'PATH_INFO': '/upstream',
         "REQUEST_METHOD": "OPTIONS",
@@ -162,7 +162,7 @@ def test_preflight_passed():
     app = handler.wrap(default_app, '/upstream')
     dispatcher = TestDispatcher()
     actual = app({
-        'HTTP_AWPS_SPECVERSION': '1.0',
+        'HTTP_CE_AWPSVERSION': '1.0',
         'HTTP_WEBHOOK_REQUEST_ORIGIN': 'foo.bar',
         'PATH_INFO': '/upstream',
         "REQUEST_METHOD": "OPTIONS",
@@ -192,7 +192,7 @@ def test_missing_required_headers(header_key: str, required: bool):
     dispatcher = TestDispatcher()
     headers = {
         "REQUEST_METHOD": "POST",
-        'HTTP_AWPS_SPECVERSION': '1.0',
+        'HTTP_CE_AWPSVERSION': '1.0',
         'HTTP_CE_CONNECTIONID': 'abcdefg',
         'HTTP_CE_CONNECTIONSTATE': build_connection_state(),
         'HTTP_CE_EVENTNAME': 'connect',
@@ -232,7 +232,7 @@ def test_signature_validation_failed(signature: str, success: bool):
     dispatcher = TestDispatcher()
     headers = {
         "REQUEST_METHOD": "POST",
-        'HTTP_AWPS_SPECVERSION': '1.0',
+        'HTTP_CE_AWPSVERSION': '1.0',
         'HTTP_CE_CONNECTIONID': 'abcdefg',
         'HTTP_CE_CONNECTIONSTATE': build_connection_state(),
         'HTTP_CE_EVENTNAME': 'connect',
@@ -270,7 +270,7 @@ def test_invalid_event_type(event_type: str, exists: bool):
     dispatcher = TestDispatcher()
     headers = {
         "REQUEST_METHOD": "POST",
-        'HTTP_AWPS_SPECVERSION': '1.0',
+        'HTTP_CE_AWPSVERSION': '1.0',
         'HTTP_CE_CONNECTIONID': 'abcdefg',
         'HTTP_CE_CONNECTIONSTATE': build_connection_state(),
         'HTTP_CE_EVENTNAME': 'connect',
@@ -314,7 +314,7 @@ def test_disconnected(with_handler: bool):
     dispatcher = TestDispatcher()
     environ = {
         "REQUEST_METHOD": "POST",
-        'HTTP_AWPS_SPECVERSION': '1.0',
+        'HTTP_CE_AWPSVERSION': '1.0',
         'HTTP_CE_CONNECTIONID': 'abcdefg',
         'HTTP_CE_CONNECTIONSTATE': build_connection_state(),
         'HTTP_CE_EVENTNAME': 'disconnected',
@@ -359,7 +359,7 @@ def test_user_message(with_handler: bool):
     dispatcher = TestDispatcher()
     environ = {
         "REQUEST_METHOD": "POST",
-        'HTTP_AWPS_SPECVERSION': '1.0',
+        'HTTP_CE_AWPSVERSION': '1.0',
         'HTTP_CE_CONNECTIONID': 'abcdefg',
         'HTTP_CE_CONNECTIONSTATE': build_connection_state(),
         'HTTP_CE_EVENTNAME': 'message',
@@ -417,7 +417,7 @@ def test_connect():
     dispatcher = TestDispatcher()
     environ = {
         "REQUEST_METHOD": "POST",
-        'HTTP_AWPS_SPECVERSION': '1.0',
+        'HTTP_CE_AWPSVERSION': '1.0',
         'HTTP_CE_CONNECTIONID': 'abcdefg',
         'HTTP_CE_CONNECTIONSTATE': build_connection_state(),
         'HTTP_CE_EVENTNAME': 'connect',

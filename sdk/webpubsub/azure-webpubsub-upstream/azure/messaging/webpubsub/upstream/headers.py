@@ -9,19 +9,19 @@
 
 __prefix = "ce-"
 
-CE_SIGNATURE = __prefix + "signature"
-CE_HUB = __prefix + "hub"
+CE_AWPSVERSION = __prefix + "awpsversion"
 CE_CONNECTION_ID = __prefix + "connectionid"
+CE_CONNECTION_STATE = __prefix + "connectionstate"
+CE_EVENT_NAME = __prefix + "eventname"
+CE_HUB = __prefix + "hub"
 CE_ID = __prefix + "id"
+CE_SIGNATURE = __prefix + "signature"
+CE_SOURCE = __prefix + "source"
+CE_SUBPROTOCOL = __prefix + "subprotocol"
 CE_TIME = __prefix + "time"
 CE_TYPE = __prefix + "type"
-CE_SOURCE = __prefix + "source"
-CE_EVENT_NAME = __prefix + "eventname"
-CE_SUBPROTOCOL = __prefix + "subprotocol"
 CE_USER_ID = __prefix + "userId"
-CE_CONNECTION_STATE = __prefix + "connectionstate"
 
-AWPS_SPEC_VERSION = "awps-specversion"
 WEBHOOK_REQUEST_ORIGIN = "webhook-request-origin"
 
 EVENT_USER_MESSAGE = "azure.webpubsub.user.message"
