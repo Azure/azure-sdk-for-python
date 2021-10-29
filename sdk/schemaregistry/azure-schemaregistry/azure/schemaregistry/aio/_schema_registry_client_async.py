@@ -99,6 +99,7 @@ class SchemaRegistryClient(object):
          For now Avro is the only supported schema format by the service.
         :type format: Union[str, SchemaFormat]
         :rtype: SchemaProperties
+        :raises: :class:`~azure.core.exceptions.HttpResponseError:`
 
         .. admonition:: Example:
 
@@ -139,6 +140,7 @@ class SchemaRegistryClient(object):
 
         :param str id: References specific schema in registry namespace.
         :rtype: Schema
+        :raises: :class:`~azure.core.exceptions.HttpResponseError:`
 
         .. admonition:: Example:
 
@@ -173,6 +175,7 @@ class SchemaRegistryClient(object):
         :param format: Format for the schema being registered.
         :type format: Union[str, SchemaFormat]
         :rtype: SchemaProperties
+        :raises: :class:`~azure.core.exceptions.HttpResponseError:`
 
         .. admonition:: Example:
 

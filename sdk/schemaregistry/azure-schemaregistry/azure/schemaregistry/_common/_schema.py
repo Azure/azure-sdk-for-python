@@ -38,14 +38,16 @@ class SchemaProperties(object):
     :vartype version: int
     """
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         # type: (Any) -> None
-        self.id = kwargs.pop('id')
-        self.format = kwargs.pop('format')
-        self.version = kwargs.pop('version')
+        self.id = kwargs.pop("id")
+        self.format = kwargs.pop("format")
+        self.version = kwargs.pop("version")
+
+    def __repr__(self):
+        return "SchemaProperties(id={}, format={}, version={})".format(
+            self.id, self.format, self.version
+        )[:1024]
 
 
 class Schema(object):
@@ -58,10 +60,12 @@ class Schema(object):
     :vartype properties: SchemaProperties
     """
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         # type: (Any) -> None
         self.schema_definition = kwargs.pop("schema_definition")
         self.properties = kwargs.pop("properties")
+
+    def __repr__(self):
+        return "Schema(schema_definition={}, properties={})".format(
+            self.schema_definition, self.properties
+        )[:1024]
