@@ -435,6 +435,15 @@ def test_json_file_invalid():
         assert not request.content.closed
         assert request.content.read() == b'{"more": "cowbell" i am not valid'
 
+def test_json_file_content_type_input():
+    json_bytes = bytearray('{"more": "cowbell"}', encoding='utf-8')
+    with io.BytesIO(json_bytes) as json_file:
+        request = HttpRequest("PUT", "/fake", json=json_file, headers={"Content-Type": "application/json-special"})
+        assert request.headers == {"Content-Type": "application/json-special"}
+        assert request.content == json_file
+        assert not request.content.closed
+        assert request.content.read() == b'{"more": "cowbell"}'
+
 # NOTE: For files, we don't allow list of tuples yet, just dict. Will uncomment when we add this capability
 # def test_multipart_multiple_files_single_input_content():
 #     files = [
