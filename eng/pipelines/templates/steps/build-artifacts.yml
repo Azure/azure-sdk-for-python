@@ -95,6 +95,10 @@ steps:
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv=sphinx
 
+  - template: ../steps/run_apistub.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+
   - ${{ parameters.BeforePublishSteps }}
 
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml

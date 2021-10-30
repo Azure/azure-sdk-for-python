@@ -108,12 +108,6 @@ steps:
       artifactName: 'packages'
       targetPath: $(Build.ArtifactStagingDirectory)
 
-  - template: ../steps/run_apistub.yml
-    parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      TestMarkArgument: ${{ parameters.TestMarkArgument }}
-      AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
-
   - template: ../steps/run_bandit.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
