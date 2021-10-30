@@ -15,6 +15,7 @@ from .storage_testcase import (
 )
 from .keyvault_preparer import KeyVaultPreparer
 from .powershell_preparer import PowerShellPreparer
+from .proxy_docker_startup import proxy_docker_container, start_container, stop_container
 from .proxy_testcase import recorded_by_proxy
 from .sanitizers import (
     add_body_key_sanitizer,
@@ -57,6 +58,9 @@ __all__ = [
     "CachedResourceGroupPreparer",
     "PowerShellPreparer",
     "recorded_by_proxy",
+    "proxy_docker_container",
+    "start_container",
+    "stop_container",
     "ResponseCallback",
     "RetryCounter",
     "FakeTokenCredential",
