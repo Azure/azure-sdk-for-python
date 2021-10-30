@@ -5,24 +5,24 @@
 # ------------------------------------
 
 """
-FILE: sample_analyze_conversation_app.py
+FILE: sample_analyze_orchestration_app.py
 
 DESCRIPTION:
-    This sample demonstrates how to analyze user query for intents and entities using a conversation project.
+    This sample demonstrates how to analyze user query using an orchestration project.
 
-    For more info about how to setup a CLU conversation project, see the README.
+    For more info about how to setup a CLU orchestration project, see the README.
 
 USAGE:
-    python sample_analyze_conversation_app.py
+    python sample_analyze_orchestration_app.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_CONVERSATIONS_ENDPOINT - the endpoint to your CLU resource.
     2) AZURE_CONVERSATIONS_KEY - your CLU API key.
-    3) AZURE_CONVERSATIONS_PROJECT - the name of your CLU conversations project.
+    3) AZURE_CONVERSATIONS_WORKFLOW_PROJECT - the name of your CLU orchestration project.
 """
 
-def sample_analyze_conversation_app():
-    # [START analyze_conversation_app]
+def sample_analyze_orchestration_app():
+    # [START analyze_orchestration_app]
     # import libraries
     import os
     from azure.core.credentials import AzureKeyCredential
@@ -33,21 +33,21 @@ def sample_analyze_conversation_app():
     # get secrets
     conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-    conv_project = os.environ["AZURE_CONVERSATIONS_PROJECT"]
+    orchestration_project = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT"]
 
     # prepare data
-    query = "One california maki please."
+    query = "How do you make sushi rice?",
     input = ConversationAnalysisOptions(
         query=query
     )
 
-    # analyze quey
+    # analyze query
     client = ConversationAnalysisClient(conv_endpoint, AzureKeyCredential(conv_key))
     with client:
         result = client.analyze_conversations(
             input,
-            project_name=conv_project,
-            deployment_name='production'
+            project_name=orchestration_project,
+            deployment_name='production',
         )
 
     # view result
@@ -55,17 +55,15 @@ def sample_analyze_conversation_app():
     print("project kind: {}\n".format(result.prediction.project_kind))
 
     print("view top intent:")
-    print("\ttop intent: {}".format(result.prediction.top_intent))
-    print("\tcategory: {}".format(result.prediction.intents[0].category))
-    print("\tconfidence score: {}\n".format(result.prediction.intents[0].confidence_score))
+    top_intent = result.prediction.top_intent
+    print("\ttop intent: {}".format(top_intent))
 
-    print("view entities:")
-    for entity in result.prediction.entities:
-        print("\tcategory: {}".format(entity.category))
-        print("\ttext: {}".format(entity.text))
-        print("\tconfidence score: {}".format(entity.confidence_score))
-    # [END analyze_conversation_app]
+    top_intent_object = result.prediction.intents[top_intent]
+    print("\tconfidence score: {}\n".format(top_intent_object.confidence_score))
 
+    print("view result:")
+    print("\tresult: {}\n".format(top_intent_object.result))
+    # [END analyze_orchestration_app]
 
 if __name__ == '__main__':
-    sample_analyze_conversation_app()
+    sample_analyze_orchestration_app()
