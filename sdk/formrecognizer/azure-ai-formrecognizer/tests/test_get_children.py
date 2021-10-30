@@ -124,3 +124,19 @@ class TestGetChildren(FormRecognizerTest):
 
         elements = result.key_value_pairs[0].key.get_lines()
         assert len(elements) == 0
+
+
+    @FormRecognizerPreparer()
+    @DocumentAnalysisClientPreparer()
+    def test_get_words_after_get_lines(self, client):
+        with open(self.form_jpg, "rb") as fd:
+            document = fd.read()
+
+        poller = client.begin_analyze_document("prebuilt-document", document)
+        result = poller.result()
+
+        lines = result.entities[0].get_lines()
+        assert len(lines) == 1
+
+        words = lines[0].get_words()
+        assert len(words) == 1
