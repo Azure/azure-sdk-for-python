@@ -4204,14 +4204,11 @@ def _get_page(pages, page_number):
     raise ValueError("Could not find page to search for elements")
 
 def _get_element_list(parent, element):
-    # type: (DocumentPage, str) -> List[Union[DocumentContentElement, DocumentWord, DocumentLine]]
+    # type: (DocumentPage, str) -> List[Union[DocumentWord, DocumentLine]]
     if element == "word":
-        return parent.words
-    # TODO uncomment once selection marks issue is fixed
-    # if element == "selection_mark":
-    #     return parent.selection_marks
+        return [DocumentWord._from_generated(word) for word in parent.words]
     if element == "line":
-        return parent.lines
+        return [DocumentLine._from_generated(line, parent) for line in parent.lines]
     raise ValueError("Unsupported element requested.")
 
 
