@@ -81,6 +81,6 @@ if __name__ == "__main__":
     targeted_packages = process_glob_string(
         args.glob_string, target_dir, args.package_filter_string
     )
-    build_packages(
+    build_stub(
         targeted_packages, args.dest_dir
     )
