@@ -5,40 +5,40 @@
 # ------------------------------------
 
 """
-FILE: sample_analyze_workflow_app.py
+FILE: sample_analyze_orchestration_app_qna_response.py
 
 DESCRIPTION:
-    This sample demonstrates how to analyze user query using an orchestration/workflow project.
-    In this sample, workflow project's top intent will map to a Qna project.
+    This sample demonstrates how to analyze user query using an orchestration project.
+    In this sample, orchestration project's top intent will map to a Qna project.
 
-    For more info about how to setup a CLU workflow project, see the README.
+    For more info about how to setup a CLU orchestration project, see the README.
 
 USAGE:
-    python sample_analyze_workflow_app.py
+    python sample_analyze_orchestration_app_qna_response.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_CONVERSATIONS_ENDPOINT - the endpoint to your CLU resource.
     2) AZURE_CONVERSATIONS_KEY - your CLU API key.
-    3) AZURE_CONVERSATIONS_WORKFLOW_PROJECT - the name of your CLU workflow project.
+    3) AZURE_CONVERSATIONS_WORKFLOW_PROJECT - the name of your CLU orchestration project.
 """
 
-def sample_analyze_workflow_app():
-    # [START analyze_workflow_app]
+def sample_analyze_orchestration_app_qna_response():
+    # [START analyze_orchestration_app_qna_response]
     # import libraries
     import os
     from azure.core.credentials import AzureKeyCredential
 
     from azure.ai.language.conversations import ConversationAnalysisClient
-    from azure.ai.language.conversations.models import AnalyzeConversationOptions
+    from azure.ai.language.conversations.models import ConversationAnalysisOptions
 
     # get secrets
     conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-    workflow_project = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT"]
+    orchestration_project = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT"]
 
     # prepare data
     query = "How do you make sushi rice?",
-    input = AnalyzeConversationOptions(
+    input = ConversationAnalysisOptions(
         query=query
     )
 
@@ -47,7 +47,7 @@ def sample_analyze_workflow_app():
     with client:
         result = client.analyze_conversations(
             input,
-            project_name=workflow_project,
+            project_name=orchestration_project,
             deployment_name='production',
         )
 
@@ -57,14 +57,16 @@ def sample_analyze_workflow_app():
 
     print("view top intent:")
     top_intent = result.prediction.top_intent
-    print("top intent: {}".format(top_intent))
+    print("\ttop intent: {}".format(top_intent))
 
     top_intent_object = result.prediction.intents[top_intent]
     print("\tconfidence score: {}\n".format(top_intent_object.confidence_score))
 
     print("view qna result:")
-    print("\tresult: {}\n".format(top_intent_object.result))
-    # [END analyze_workflow_app]
+    qna_result = result.prediction.intents[top_intent].result
+    for answer in qna_result.answers:
+        print("\tanswer: {}\n".format(answer.answer))
+    # [END analyze_orchestration_app_qna_response]
 
 if __name__ == '__main__':
-    sample_analyze_workflow_app()
+    sample_analyze_orchestration_app_qna_response()

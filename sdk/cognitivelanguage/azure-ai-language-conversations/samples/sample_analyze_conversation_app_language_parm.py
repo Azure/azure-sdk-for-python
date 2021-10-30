@@ -5,15 +5,16 @@
 # ------------------------------------
 
 """
-FILE: sample_analyze_conversation_app.py
+FILE: sample_analyze_conversation_app_language_parm.py
 
 DESCRIPTION:
-    This sample demonstrates how to analyze user query for intents and entities using a conversation project.
+    This sample demonstrates how to analyze user query for intents and entities using
+    a conversation project with a language parameter.
 
     For more info about how to setup a CLU conversation project, see the README.
 
 USAGE:
-    python sample_analyze_conversation_app.py
+    python sample_analyze_conversation_app_language_parm.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_CONVERSATIONS_ENDPOINT - the endpoint to your CLU resource.
@@ -21,8 +22,8 @@ USAGE:
     3) AZURE_CONVERSATIONS_PROJECT - the name of your CLU conversations project.
 """
 
-def sample_analyze_conversation_app():
-    # [START analyze_conversation_app]
+def sample_analyze_conversation_app_language_parm():
+    # [START analyze_conversation_app_language_parm]
     # import libraries
     import os
     from azure.core.credentials import AzureKeyCredential
@@ -38,7 +39,8 @@ def sample_analyze_conversation_app():
     # prepare data
     query = "One california maki please."
     input = ConversationAnalysisOptions(
-        query=query
+        query=query,
+        language="en"
     )
 
     # analyze quey
@@ -64,8 +66,8 @@ def sample_analyze_conversation_app():
         print("\tcategory: {}".format(entity.category))
         print("\ttext: {}".format(entity.text))
         print("\tconfidence score: {}".format(entity.confidence_score))
-    # [END analyze_conversation_app]
+    # [END analyze_conversation_app_language_parm]
 
 
 if __name__ == '__main__':
-    sample_analyze_conversation_app()
+    sample_analyze_conversation_app_language_parm()

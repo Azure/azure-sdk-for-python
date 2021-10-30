@@ -16,27 +16,27 @@ from testcase import (
 
 from azure.ai.language.conversations import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
-    AnalyzeConversationOptions,
+    AnalysisParameters,
     AnalyzeConversationResult,
     QuestionAnsweringParameters,
-    DeepstackParameters,
-    WorkflowPrediction,
+    ConversationParameters,
+    OrchestratorPrediction,
     QuestionAnsweringTargetIntentResult,
-    DSTargetIntentResult,
+    ConversationTargetIntentResult,
     LUISTargetIntentResult
 )
 
 
-class WorkflowAppDirectTests(ConversationTest):
+class OrchestrationAppDirectTests(ConversationTest):
 
     @pytest.mark.skip(reason="internal server error!")
     @GlobalConversationAccountPreparer()
-    def test_direct_kb_intent(self, conv_account, conv_key, workflow_project):
+    def test_direct_kb_intent(self, conv_account, conv_key, orchestration_project):
 
         # prepare data
         query = "How do you make sushi rice?"
         target_intent = "SushiMaking"
-        input = AnalyzeConversationOptions(
+        input = AnalysisParameters(
             query=query,
             direct_target=target_intent,
             parameters={
@@ -55,26 +55,26 @@ class WorkflowAppDirectTests(ConversationTest):
         with client:
             result = client.analyze_conversations(
                 input,
-                project_name=workflow_project,
+                project_name=orchestration_project,
                 deployment_name='production',
             )
         
         # assert
         assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
-        assert isinstance(result.prediction, WorkflowPrediction)
+        assert isinstance(result.prediction, OrchestratorPrediction)
         assert result.prediction.project_kind == "workflow"
         assert result.prediction.top_intent == target_intent
-        # assert isinstance(result.prediction.intents, QuestionAnsweringTargetIntentResult)
+        assert isinstance(result.prediction.intents, QuestionAnsweringTargetIntentResult)
 
     @pytest.mark.skip(reason="internal server error!")
     @GlobalConversationAccountPreparer()
-    def test_kb_intent_with_model(self, conv_account, conv_key, workflow_project):
+    def test_kb_intent_with_model(self, conv_account, conv_key, orchestration_project):
 
         # prepare data
         query = "How do you make sushi rice?"
         target_intent = "SushiMaking"
-        input = AnalyzeConversationOptions(
+        input = AnalysisParameters(
             query=query,
             direct_target=target_intent,
             parameters={
@@ -93,31 +93,31 @@ class WorkflowAppDirectTests(ConversationTest):
         with client:
             result = client.analyze_conversations(
                 input,
-                project_name=workflow_project,
+                project_name=orchestration_project,
                 deployment_name='production',
             )
         
         # assert
         assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
-        assert isinstance(result.prediction, WorkflowPrediction)
+        assert isinstance(result.prediction, OrchestratorPrediction)
         assert result.prediction.project_kind == "workflow"
         assert result.prediction.top_intent == target_intent
-        # assert isinstance(result.prediction.intents, QuestionAnsweringTargetIntentResult)
+        assert isinstance(result.prediction.intents, QuestionAnsweringTargetIntentResult)
 
     @pytest.mark.skip(reason="internal server error!")
     @GlobalConversationAccountPreparer()
-    def test_deepstack_intent(self, conv_account, conv_key, workflow_project):
+    def test_conversation_intent(self, conv_account, conv_key, orchestration_project):
 
         # prepare data
         query = "I will have the oyako donburi please."
         target_intent = "SushiOrder"
         client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
-        input = AnalyzeConversationOptions(
+        input = AnalysisParameters(
             query=query,
             direct_target=target_intent,
             parameters={
-                "SushiOrder": DeepstackParameters(
+                "SushiOrder": ConversationParameters(
                     calling_options={
                        "verbose": True,
                     }
@@ -129,32 +129,32 @@ class WorkflowAppDirectTests(ConversationTest):
         with client:
             result = client.analyze_conversations(
                 input,
-                project_name=workflow_project,
+                project_name=orchestration_project,
                 deployment_name='production',
             )
         
         # assert
         assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
-        assert isinstance(result.prediction, WorkflowPrediction)
+        assert isinstance(result.prediction, OrchestratorPrediction)
         assert result.prediction.project_kind == "workflow"
         assert result.prediction.top_intent == target_intent
-        # assert isinstance(result.prediction.intents, DSTargetIntentResult)
+        assert isinstance(result.prediction.intents, ConversationTargetIntentResult)
 
 
     @pytest.mark.skip(reason="internal server error!")
     @GlobalConversationAccountPreparer()
-    def test_luis_intent(self, conv_account, conv_key, workflow_project):
+    def test_luis_intent(self, conv_account, conv_key, orchestration_project):
 
         # prepare data
         query = "I will have the oyako donburi please."
         target_intent = "SushiOrder"
         client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
-        input = AnalyzeConversationOptions(
+        input = AnalysisParameters(
             query=query,
             direct_target=target_intent,
             parameters={
-                "SushiOrder": DeepstackParameters(
+                "SushiOrder": ConversationParameters(
                     calling_options={
                        "verbose": True,
                     }
@@ -166,14 +166,14 @@ class WorkflowAppDirectTests(ConversationTest):
         with client:
             result = client.analyze_conversations(
                 input,
-                project_name=workflow_project,
+                project_name=orchestration_project,
                 deployment_name='production',
             )
         
         # assert
         assert isinstance(result, AnalyzeConversationResult)
         assert result.query == query
-        assert isinstance(result.prediction, WorkflowPrediction)
+        assert isinstance(result.prediction, OrchestratorPrediction)
         assert result.prediction.project_kind == "workflow"
         assert result.prediction.top_intent == target_intent
-        # assert isinstance(result.prediction.intents, LUISTargetIntentResult)
+        assert isinstance(result.prediction.intents, LUISTargetIntentResult)
