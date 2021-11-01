@@ -1,5 +1,18 @@
 # Release History
 
+## 2.1.0 (2021-11-01)
+
+**Features**
+
+  - Model DatasetCompression has a new parameter level
+  - Model PowerQuerySource has a new parameter flowlet
+  - Model DataFlowSource has a new parameter flowlet
+  - Model Transformation has a new parameter flowlet
+  - Model DataFlowDebugPackage has a new parameter data_flows
+  - Model DataFlowSink has a new parameter flowlet
+  - Model PowerQuerySink has a new parameter flowlet
+  - Model MappingDataFlow has a new parameter script_lines
+
 ## 2.0.0 (2021-10-09)
 
 **Features**
