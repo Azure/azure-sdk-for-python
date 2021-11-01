@@ -214,11 +214,11 @@ class FormRecognizerClientOperationsMixin:
 
         json = None
         content = None
-        if content_type.split(";")[0] in ['application/pdf', 'image/jpeg', 'image/png', 'image/tiff']:
-            content = file_stream
-        elif content_type.split(";")[0] in ['application/json']:
+        if content_type.split(";")[0] in ['application/json']:
             if file_stream is not None:
                 json = self._serialize.body(file_stream, 'SourcePath')
+        elif content_type.split(";")[0] in ['application/pdf', 'image/jpeg', 'image/png', 'image/tiff']:
+            content = file_stream
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
@@ -629,11 +629,11 @@ class FormRecognizerClientOperationsMixin:
 
         json = None
         content = None
-        if content_type.split(";")[0] in ['application/pdf', 'image/jpeg', 'image/png', 'image/tiff']:
-            content = file_stream
-        elif content_type.split(";")[0] in ['application/json']:
+        if content_type.split(";")[0] in ['application/json']:
             if file_stream is not None:
                 json = self._serialize.body(file_stream, 'SourcePath')
+        elif content_type.split(";")[0] in ['application/pdf', 'image/jpeg', 'image/png', 'image/tiff']:
+            content = file_stream
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
@@ -812,11 +812,11 @@ class FormRecognizerClientOperationsMixin:
 
         json = None
         content = None
-        if content_type.split(";")[0] in ['application/pdf', 'image/jpeg', 'image/png', 'image/tiff']:
-            content = file_stream
-        elif content_type.split(";")[0] in ['application/json']:
+        if content_type.split(";")[0] in ['application/json']:
             if file_stream is not None:
                 json = self._serialize.body(file_stream, 'SourcePath')
+        elif content_type.split(";")[0] in ['application/pdf', 'image/jpeg', 'image/png', 'image/tiff']:
+            content = file_stream
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
