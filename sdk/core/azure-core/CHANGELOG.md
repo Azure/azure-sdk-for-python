@@ -1,8 +1,10 @@
 # Release History
 
-## 1.19.1 (Unreleased)
+## 1.20.0 (Unreleased)
 
 ### Features Added
+
+- add kwargs to the methods for `iter_raw` and `iter_bytes`  #21529
 
 ### Breaking Changes
 
