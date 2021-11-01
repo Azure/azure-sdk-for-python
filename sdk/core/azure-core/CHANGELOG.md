@@ -2,10 +2,6 @@
 
 ## 1.19.1 (2021-11-01)
 
-### Features Added
-
-### Breaking Changes
-
 ### Bugs Fixed
 
 - respect text encoding specified in argument (thanks to @ryohji for the contribution)  #20796
