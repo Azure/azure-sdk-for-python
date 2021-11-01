@@ -46,7 +46,7 @@ perform-load: false
 These settings apply only when `--tag=release_3_0` is specified on the command line.
 
 ```yaml $(tag) == 'release_3_0'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/specification/cognitiveservices/data-plane/TextAnalytics/stable/v3.0/TextAnalytics.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/TextAnalytics/stable/v3.0/TextAnalytics.json
 namespace: azure.ai.textanalytics.v3_0
 output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v3_0
 ```
@@ -56,7 +56,7 @@ output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/
 These settings apply only when `--tag=release_3_1` is specified on the command line.
 
 ```yaml $(tag) == 'release_3_1'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/specification/cognitiveservices/data-plane/TextAnalytics/stable/v3.1/TextAnalytics.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/TextAnalytics/stable/v3.1/TextAnalytics.json
 namespace: azure.ai.textanalytics.v3_1
 output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v3_1
 ```
@@ -66,7 +66,7 @@ output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/
 These settings apply only when `--tag=release_3_2_preview.2` is specified on the command line.
 
 ```yaml $(tag) == 'release_3_2_preview.2'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/71c9d235dab9206194691d083f0248c8613e2e17/specification/cognitiveservices/data-plane/TextAnalytics/preview/v3.2-preview.2/TextAnalytics.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/TextAnalytics/preview/v3.2-preview.2/TextAnalytics.json
 namespace: azure.ai.textanalytics.v3_2_preview_2
 output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v3_2_preview_2
 ```
