@@ -33,7 +33,7 @@ class CommunicationNetworkTraversalClientConfiguration(Configuration):
         super(CommunicationNetworkTraversalClientConfiguration, self).__init__(**kwargs)
 
         self.endpoint = endpoint
-        self.api_version = "2021-06-21-preview"
+        self.api_version = "2021-10-08-preview"
         kwargs.setdefault('sdk_moniker', 'communicationnetworktraversalclient/{}'.format(VERSION))
         self._configure(**kwargs)
 

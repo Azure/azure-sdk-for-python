@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import Any, Callable, Dict, Generic, Optional, TypeVar
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -48,6 +48,7 @@ class CommunicationNetworkTraversalOperations:
     async def issue_relay_configuration(
         self,
         id: Optional[str] = None,
+        route_type: Optional[Union[str, "_models.CommunicationRelayConfigurationRequestRouteType"]] = None,
         **kwargs: Any
     ) -> "_models.CommunicationRelayConfiguration":
         """Issue a configuration for an STUN/TURN server for an existing identity.
@@ -56,6 +57,10 @@ class CommunicationNetworkTraversalOperations:
 
         :param id: An existing ACS identity.
         :type id: str
+        :param route_type: The routing methodology to where the ICE server will be located from the
+         client.
+        :type route_type: str or
+         ~azure.communication.networktraversal.models.CommunicationRelayConfigurationRequestRouteType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CommunicationRelayConfiguration, or the result of cls(response)
         :rtype: ~azure.communication.networktraversal.models.CommunicationRelayConfiguration
@@ -69,7 +74,7 @@ class CommunicationNetworkTraversalOperations:
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _body = _models.CommunicationRelayConfigurationRequest(id=id)
+        _body = _models.CommunicationRelayConfigurationRequest(id=id, route_type=route_type)
         if _body is not None:
             json = self._serialize.body(_body, 'CommunicationRelayConfigurationRequest')
         else:
@@ -86,7 +91,7 @@ class CommunicationNetworkTraversalOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:

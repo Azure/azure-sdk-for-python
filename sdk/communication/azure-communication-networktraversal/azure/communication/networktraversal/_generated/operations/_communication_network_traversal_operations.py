@@ -21,7 +21,7 @@ from .._vendor import _convert_request
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ def build_issue_relay_configuration_request(
     # type: (...) -> HttpRequest
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-06-21-preview"
+    api_version = "2021-10-08-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/networktraversal/:issueRelayConfiguration')
@@ -85,6 +85,7 @@ class CommunicationNetworkTraversalOperations(object):
     def issue_relay_configuration(
         self,
         id=None,  # type: Optional[str]
+        route_type=None,  # type: Optional[Union[str, "_models.CommunicationRelayConfigurationRequestRouteType"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.CommunicationRelayConfiguration"
@@ -94,6 +95,10 @@ class CommunicationNetworkTraversalOperations(object):
 
         :param id: An existing ACS identity.
         :type id: str
+        :param route_type: The routing methodology to where the ICE server will be located from the
+         client.
+        :type route_type: str or
+         ~azure.communication.networktraversal.models.CommunicationRelayConfigurationRequestRouteType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CommunicationRelayConfiguration, or the result of cls(response)
         :rtype: ~azure.communication.networktraversal.models.CommunicationRelayConfiguration
@@ -107,7 +112,7 @@ class CommunicationNetworkTraversalOperations(object):
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _body = _models.CommunicationRelayConfigurationRequest(id=id)
+        _body = _models.CommunicationRelayConfigurationRequest(id=id, route_type=route_type)
         if _body is not None:
             json = self._serialize.body(_body, 'CommunicationRelayConfigurationRequest')
         else:
@@ -124,7 +129,7 @@ class CommunicationNetworkTraversalOperations(object):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:

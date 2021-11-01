@@ -19,10 +19,17 @@ except (SyntaxError, ImportError):
     from ._models import CommunicationRelayConfiguration  # type: ignore
     from ._models import CommunicationRelayConfigurationRequest  # type: ignore
 
+from ._communication_network_traversal_client_enums import (
+    CommunicationIceServerRouteType,
+    CommunicationRelayConfigurationRequestRouteType,
+)
+
 __all__ = [
     'CommunicationError',
     'CommunicationErrorResponse',
     'CommunicationIceServer',
     'CommunicationRelayConfiguration',
     'CommunicationRelayConfigurationRequest',
+    'CommunicationIceServerRouteType',
+    'CommunicationRelayConfigurationRequestRouteType',
 ]

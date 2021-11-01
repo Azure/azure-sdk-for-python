@@ -103,18 +103,24 @@ class CommunicationIceServer(msrest.serialization.Model):
     :vartype username: str
     :ivar credential: Required. Credential for the server.
     :vartype credential: str
+    :ivar route_type: Required. The routing methodology to where the ICE server will be located
+     from the client. Possible values include: "any", "nearest".
+    :vartype route_type: str or
+     ~azure.communication.networktraversal.models.CommunicationIceServerRouteType
     """
 
     _validation = {
         'urls': {'required': True},
         'username': {'required': True},
         'credential': {'required': True},
+        'route_type': {'required': True},
     }
 
     _attribute_map = {
         'urls': {'key': 'urls', 'type': '[str]'},
         'username': {'key': 'username', 'type': 'str'},
         'credential': {'key': 'credential', 'type': 'str'},
+        'route_type': {'key': 'routeType', 'type': 'str'},
     }
 
     def __init__(
@@ -128,11 +134,16 @@ class CommunicationIceServer(msrest.serialization.Model):
         :paramtype username: str
         :keyword credential: Required. Credential for the server.
         :paramtype credential: str
+        :keyword route_type: Required. The routing methodology to where the ICE server will be located
+         from the client. Possible values include: "any", "nearest".
+        :paramtype route_type: str or
+         ~azure.communication.networktraversal.models.CommunicationIceServerRouteType
         """
         super(CommunicationIceServer, self).__init__(**kwargs)
         self.urls = kwargs['urls']
         self.username = kwargs['username']
         self.credential = kwargs['credential']
+        self.route_type = kwargs['route_type']
 
 
 class CommunicationRelayConfiguration(msrest.serialization.Model):
@@ -181,10 +192,15 @@ class CommunicationRelayConfigurationRequest(msrest.serialization.Model):
 
     :ivar id: An existing ACS identity.
     :vartype id: str
+    :ivar route_type: The routing methodology to where the ICE server will be located from the
+     client. Possible values include: "any", "nearest".
+    :vartype route_type: str or
+     ~azure.communication.networktraversal.models.CommunicationRelayConfigurationRequestRouteType
     """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
+        'route_type': {'key': 'routeType', 'type': 'str'},
     }
 
     def __init__(
@@ -194,6 +210,11 @@ class CommunicationRelayConfigurationRequest(msrest.serialization.Model):
         """
         :keyword id: An existing ACS identity.
         :paramtype id: str
+        :keyword route_type: The routing methodology to where the ICE server will be located from the
+         client. Possible values include: "any", "nearest".
+        :paramtype route_type: str or
+         ~azure.communication.networktraversal.models.CommunicationRelayConfigurationRequestRouteType
         """
         super(CommunicationRelayConfigurationRequest, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
+        self.route_type = kwargs.get('route_type', None)
