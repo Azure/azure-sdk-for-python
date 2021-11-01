@@ -147,12 +147,18 @@ def _from_cncf_events(event):
     :raises: AttributeError when a dictionary is passed/ when data attribute is not
      present in the event.
     """
-    res = {item: event[item] for item in event}
-    if isinstance(event.data, six.binary_type):
-        res['data_base64'] = event.data
-    else:
-        res['data'] = event.data
-    return res
+    try:
+        from cloudevents.http import to_json
+        return json.loads(to_json(event))
+    except AttributeError:
+        # means this is not a CNCF event
+        return event
+    except ImportError:
+        # this means it was not meant to be a cloud event
+        return None
+    except: # pylint: disable=bare-except
+        raise ValueError('Failed to deserialize the event.')
+
 
 def _build_request(endpoint, content_type, events):
     serialize = Serializer()

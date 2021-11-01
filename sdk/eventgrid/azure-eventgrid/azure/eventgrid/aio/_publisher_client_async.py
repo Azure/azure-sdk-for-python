@@ -194,12 +194,9 @@ class EventGridPublisherClient:
                 ]
             except AttributeError:
                 ## this is either a dictionary or a CNCF cloud event
-                try:
-                    events = [
-                        _from_cncf_events(e) for e in events
-                    ]
-                except AttributeError:
-                    pass  # means it's a dictionary
+                events = [
+                    _from_cncf_events(e) for e in events
+                ]
             content_type = "application/cloudevents-batch+json; charset=utf-8"
         elif isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
             for event in events:
