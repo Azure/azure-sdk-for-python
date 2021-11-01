@@ -30,7 +30,7 @@ TEST_BLOB_PREFIX = 'blob'
 class BlobStorageAccountTest(StorageTestCase):
 
     def _setup(self, bsc):
-        self.container_name = self.get_resource_name('utcontainer')
+        self.container_name = self.get_resource_name('utcontainer12')
 
         if self.is_live:
             bsc.create_container(self.container_name)

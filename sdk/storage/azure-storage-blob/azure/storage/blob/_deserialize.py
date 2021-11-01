@@ -8,7 +8,7 @@ from typing import (  # pylint: disable=unused-import
     Tuple, Dict, List,
     TYPE_CHECKING
 )
-
+from urllib.parse import unquote
 from ._models import BlobType, CopyProperties, ContentSettings, LeaseProperties, BlobProperties, ImmutabilityPolicy
 from ._shared.models import get_enum_value
 
@@ -122,7 +122,10 @@ def service_properties_deserialize(generated):
 
 def get_blob_properties_from_generated_code(generated):
     blob = BlobProperties()
-    blob.name = generated.name
+    if generated.name.encoded:
+        blob.name = unquote(generated.name.content)
+    else:
+        blob.name = generated.name.content
     blob_type = get_enum_value(generated.properties.blob_type)
     blob.blob_type = BlobType(blob_type) if blob_type else None
     blob.etag = generated.properties.etag
