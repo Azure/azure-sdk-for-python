@@ -5,7 +5,7 @@
 # ------------------------------------
 
 import functools
-from azure.ai.formrecognizer import DocumentAnalysisClient
+from azure.ai.formrecognizer import DocumentAnalysisClient, AnalyzedDocument, DocumentEntity, DocumentField, DocumentKeyValueElement, DocumentKeyValuePair, DocumentLine, DocumentTable, DocumentTableCell
 from preparers import FormRecognizerPreparer
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -24,8 +24,11 @@ class TestGetChildren(FormRecognizerTest):
 
         poller = client.begin_analyze_document("prebuilt-document", document)
         result = poller.result()
-        
-        elements = result.pages[0].lines[0].get_words()
+
+        d = result.pages[0].lines[0].to_dict()
+        elem = DocumentLine.from_dict(d)
+
+        elements = elem.get_words()
         assert len(elements) == 1
         assert elements[0].content == "Contoso"
 
@@ -39,10 +42,13 @@ class TestGetChildren(FormRecognizerTest):
         poller = client.begin_analyze_document("prebuilt-layout", document)
         result = poller.result()
         
-        elements = result.tables[0].get_words()
+        d = result.tables[0].to_dict()
+        elem = DocumentTable.from_dict(d)
+
+        elements = elem.get_words()
         assert len(elements) == 25
 
-        elements = result.tables[0].get_lines()
+        elements = elem.get_lines()
         assert len(elements) == 20
 
 
@@ -55,10 +61,13 @@ class TestGetChildren(FormRecognizerTest):
         poller = client.begin_analyze_document("prebuilt-layout", document)
         result = poller.result()
         
-        elements = result.tables[0].cells[0].get_words()
+        d = result.tables[0].cells[0].to_dict()
+        elem = DocumentTableCell.from_dict(d)
+
+        elements = elem.get_words()
         assert len(elements) == 1
 
-        elements = result.tables[0].cells[0].get_lines()
+        elements = elem.get_lines()
         assert len(elements) == 1
 
 
@@ -71,10 +80,13 @@ class TestGetChildren(FormRecognizerTest):
         poller = client.begin_analyze_document("prebuilt-invoice", document)
         result = poller.result()
         
-        elements = result.documents[0].get_words()
+        d = result.documents[0].to_dict()
+        elem = AnalyzedDocument.from_dict(d)
+
+        elements = elem.get_words()
         assert len(elements) == 132
 
-        elements = result.documents[0].get_lines()
+        elements = elem.get_lines()
         assert len(elements) == 54
 
 
@@ -87,10 +99,13 @@ class TestGetChildren(FormRecognizerTest):
         poller = client.begin_analyze_document("prebuilt-invoice", document)
         result = poller.result()
         
-        elements = result.documents[0].fields.get("InvoiceTotal").get_words()
+        d = result.documents[0].fields.get("InvoiceTotal").to_dict()
+        elem = DocumentField.from_dict(d)
+
+        elements = elem.get_words()
         assert len(elements) == 1
 
-        elements = result.documents[0].fields.get("InvoiceTotal").get_lines()
+        elements = elem.get_lines()
         assert len(elements) == 1
 
 
@@ -103,10 +118,13 @@ class TestGetChildren(FormRecognizerTest):
         poller = client.begin_analyze_document("prebuilt-document", document)
         result = poller.result()
         
-        elements = result.entities[0].get_words()
+        d = result.entities[0].to_dict()
+        elem = DocumentEntity.from_dict(d)
+
+        elements = elem.get_words()
         assert len(elements) == 1
 
-        elements = result.entities[0].get_lines()
+        elements = elem.get_lines()
         assert len(elements) == 1
 
 
@@ -119,10 +137,13 @@ class TestGetChildren(FormRecognizerTest):
         poller = client.begin_analyze_document("prebuilt-document", document)
         result = poller.result()
         
-        elements = result.key_value_pairs[0].key.get_words()
+        d = result.key_value_pairs[0].key.to_dict()
+        elem = DocumentKeyValueElement.from_dict(d)
+
+        elements = elem.get_words()
         assert len(elements) == 2
 
-        elements = result.key_value_pairs[0].key.get_lines()
+        elements = elem.get_lines()
         assert len(elements) == 0
 
 

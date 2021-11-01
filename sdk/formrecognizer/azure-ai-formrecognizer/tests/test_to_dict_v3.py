@@ -222,9 +222,11 @@ class TestToDict(FormRecognizerTest):
                         },
                     ],
                     "confidence": 0.99,
+                    "_parent": None,
                 },
             },
             "confidence": 0.99,
+            "_parent": None,
         }
 
         assert d == final
@@ -296,6 +298,7 @@ class TestToDict(FormRecognizerTest):
                 },
             ],
             "confidence": 0.99,
+            "_parent": None,
         }
         assert d == final
 
@@ -366,6 +369,7 @@ class TestToDict(FormRecognizerTest):
                 },
             ],
             "confidence": 0.99,
+            "_parent": None,
         }
         assert d == final
 
@@ -430,6 +434,7 @@ class TestToDict(FormRecognizerTest):
                     "length": 2,
                 },
             ],
+            "_parent": None,
         }
 
         assert d == final
@@ -492,6 +497,7 @@ class TestToDict(FormRecognizerTest):
                         "length": 2,
                     },
                 ],
+                "_parent": None,
             },
             "value": {
                 "content": "value",
@@ -513,6 +519,7 @@ class TestToDict(FormRecognizerTest):
                         "length": 2,
                     },
                 ],
+                "_parent": None,
             },
             "confidence": 0.89,
         }
@@ -551,6 +558,7 @@ class TestToDict(FormRecognizerTest):
                     "length": 2,
                 },
             ],
+            "_parent": None
         }
         assert d == final
 
@@ -682,6 +690,7 @@ class TestToDict(FormRecognizerTest):
                             "length": 2,
                         },
                     ],
+                    "_parent": None,
                 },
             ],
         }
@@ -823,6 +832,7 @@ class TestToDict(FormRecognizerTest):
                             "length": 2,
                         },
                     ],
+                    "_parent": None,
                 },
             ],
             "bounding_regions": [
@@ -843,6 +853,7 @@ class TestToDict(FormRecognizerTest):
                     "length": 2,
                 },
             ],
+            "_parent": None,
         }
 
         assert d == final
@@ -896,6 +907,7 @@ class TestToDict(FormRecognizerTest):
                     "length": 2,
                 },
             ],
+            "_parent": None,
         }
 
         assert d == final
@@ -947,6 +959,7 @@ class TestToDict(FormRecognizerTest):
                     "length": 2,
                 },
             ],
+            "_parent": None,
         }
 
         assert d == final
@@ -1306,6 +1319,7 @@ class TestToDict(FormRecognizerTest):
                                     "length": 2,
                                 },
                             ],
+                            "_parent": None,
                         },
                     ],
                 },
@@ -1340,6 +1354,7 @@ class TestToDict(FormRecognizerTest):
                                     "length": 2,
                                 },
                             ],
+                            "_parent": None,
                         },
                     ],
                     "bounding_regions": [
@@ -1360,6 +1375,7 @@ class TestToDict(FormRecognizerTest):
                             "length": 2,
                         },
                     ],
+                    "_parent": None,
                 },
             ],
             "key_value_pairs": [
@@ -1384,6 +1400,7 @@ class TestToDict(FormRecognizerTest):
                                 "length": 2,
                             },
                         ],
+                        "_parent": None,
                     },
                     "value": {
                         "content": "value",
@@ -1405,6 +1422,7 @@ class TestToDict(FormRecognizerTest):
                                 "length": 2,
                             },
                         ],
+                        "_parent": None,
                     },
                     "confidence": 0.89,
                 },
@@ -1447,6 +1465,7 @@ class TestToDict(FormRecognizerTest):
                         },
                     ],
                     "confidence": 0.99,
+                    "_parent": None,
                 },
             ],
             "styles": [
@@ -1534,9 +1553,11 @@ class TestToDict(FormRecognizerTest):
                                 },
                             ],
                             "confidence": 0.99,
+                            "_parent": None,
                         },
                     },
                     "confidence": 0.99,
+                    "_parent": None,
                 },
             ],
         }

@@ -2258,6 +2258,7 @@ class AnalyzedDocument(object):
             if self.fields
             else {},
             "confidence": self.confidence,
+            "_parent": self._parent,
         }
 
     @classmethod
@@ -2281,6 +2282,7 @@ class AnalyzedDocument(object):
             if data.get("fields")
             else {},
             confidence=data.get("confidence", None),
+            _parent=data.get("_parent", None),
         )
 
     def get_words(self, **kwargs):  # pylint: disable=unused-argument
@@ -2387,6 +2389,7 @@ class DocumentEntity(object):
             if self.spans
             else [],
             "confidence": self.confidence,
+            "_parent": self._parent,
         }
 
     @classmethod
@@ -2409,6 +2412,7 @@ class DocumentEntity(object):
             if len(data.get("spans", [])) > 0
             else [],
             confidence=data.get("confidence", None),
+            _parent=data.get("_parent", None),
         )
 
     def get_words(self, **kwargs):  # pylint: disable=unused-argument
@@ -2523,6 +2527,7 @@ class DocumentField(object):
             if self.spans
             else [],
             "confidence": self.confidence,
+            "_parent": self._parent,
         }
 
     @classmethod
@@ -2545,6 +2550,7 @@ class DocumentField(object):
             if len(data.get("spans", [])) > 0
             else [],
             confidence=data.get("confidence", None),
+            _parent=data.get("_parent", None),
         )
 
     def get_words(self, **kwargs):  # pylint: disable=unused-argument
@@ -2624,6 +2630,7 @@ class DocumentKeyValueElement(object):
             "spans": [f.to_dict() for f in self.spans]
             if self.spans
             else [],
+            "_parent": self._parent,
         }
 
     @classmethod
@@ -2643,6 +2650,7 @@ class DocumentKeyValueElement(object):
             spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
             if len(data.get("spans", [])) > 0
             else [],
+            _parent=data.get("_parent", None),
         )
 
     def get_words(self, **kwargs):  # pylint: disable=unused-argument
@@ -2780,6 +2788,7 @@ class DocumentLine(object):
             "spans": [f.to_dict() for f in self.spans]
             if self.spans
             else [],
+            "_parent": self._parent,
         }
 
     @classmethod
@@ -2799,6 +2808,7 @@ class DocumentLine(object):
             spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
             if len(data.get("spans", [])) > 0
             else [],
+            _parent=data.get("_parent", None),
         )
 
     def get_words(self, **kwargs):  # pylint: disable=unused-argument
@@ -3161,6 +3171,7 @@ class DocumentTable(object):
             "spans": [f.to_dict() for f in self.spans]
             if self.spans
             else [],
+            "_parent": self._parent,
         }
 
     @classmethod
@@ -3184,6 +3195,7 @@ class DocumentTable(object):
             spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
             if len(data.get("spans", [])) > 0
             else [],
+            _parent=data.get("_parent", None),
         )
 
     def get_words(self, **kwargs):  # pylint: disable=unused-argument
@@ -3294,6 +3306,7 @@ class DocumentTableCell(object):
             "spans": [f.to_dict() for f in self.spans]
             if self.spans
             else [],
+            "_parent": self._parent,
         }
 
     @classmethod
@@ -3318,6 +3331,7 @@ class DocumentTableCell(object):
             spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
             if len(data.get("spans", [])) > 0
             else [],
+            _parent=data.get("_parent", None),
         )
 
     def get_words(self, **kwargs):  # pylint: disable=unused-argument
