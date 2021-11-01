@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added support for publishing native CNCF cloudevents.
+- Added support for publishing native CNCF cloudevents (https://pypi.org/project/cloudevents/).
 
 ### Breaking Changes
 
