@@ -977,10 +977,10 @@ class WebPubSubServiceClientOperationsMixin(object):
 
         json = None
         content = None
-        if content_type.split(";")[0] in ['application/json', 'application/octet-stream']:
-            content = message
-        elif content_type.split(";")[0] in ['text/plain']:
+        if content_type.split(";")[0] in ['application/json']:
             json = message
+        elif content_type.split(";")[0] in ['application/octet-stream', 'text/plain']:
+            content = message
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
@@ -1173,10 +1173,10 @@ class WebPubSubServiceClientOperationsMixin(object):
 
         json = None
         content = None
-        if content_type.split(";")[0] in ['application/json', 'application/octet-stream']:
-            content = message
-        elif content_type.split(";")[0] in ['text/plain']:
+        if content_type.split(";")[0] in ['application/json']:
             json = message
+        elif content_type.split(";")[0] in ['application/octet-stream', 'text/plain']:
+            content = message
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
@@ -1376,10 +1376,10 @@ class WebPubSubServiceClientOperationsMixin(object):
 
         json = None
         content = None
-        if content_type.split(";")[0] in ['application/json', 'application/octet-stream']:
-            content = message
-        elif content_type.split(";")[0] in ['text/plain']:
+        if content_type.split(";")[0] in ['application/json']:
             json = message
+        elif content_type.split(";")[0] in ['application/octet-stream', 'text/plain']:
+            content = message
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
@@ -1699,10 +1699,10 @@ class WebPubSubServiceClientOperationsMixin(object):
 
         json = None
         content = None
-        if content_type.split(";")[0] in ['application/json', 'application/octet-stream']:
-            content = message
-        elif content_type.split(";")[0] in ['text/plain']:
+        if content_type.split(";")[0] in ['application/json']:
             json = message
+        elif content_type.split(";")[0] in ['application/octet-stream', 'text/plain']:
+            content = message
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
