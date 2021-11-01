@@ -621,11 +621,6 @@ class CallingServerClient(object):
         **kwargs  # type: Any
     ):  # type: (...) -> StartCallRecordingResult
 
-        if not call_locator:
-            raise ValueError("call_locator cannot be None")
-        if not CallingServerUtils.is_valid_url(recording_state_callback_uri):
-            raise ValueError("recording_state_callback_uri is invalid")
-
         start_call_recording_with_calllocator_request = StartCallRecordingWithCallLocatorRequest(
             call_locator=serialize_call_locator(call_locator),
             recording_state_callback_uri=recording_state_callback_uri,
@@ -647,9 +642,6 @@ class CallingServerClient(object):
         **kwargs  # type: Any
     ):  # type: (...) -> HttpResponse
 
-        if not recording_id:
-            raise ValueError("recording_id cannot be None")
-
         return self._server_call_client.pause_recording(
             recording_id=recording_id,
             **kwargs
@@ -661,9 +653,6 @@ class CallingServerClient(object):
         recording_id,  # type: str
         **kwargs  # type: Any
     ):  # type: (...) -> HttpResponse
-
-        if not recording_id:
-            raise ValueError("recording_id cannot be None")
 
         return self._server_call_client.resume_recording(
             recording_id=recording_id,
@@ -677,9 +666,6 @@ class CallingServerClient(object):
         **kwargs  # type: Any
     ):  # type: (...) -> HttpResponse
 
-        if not recording_id:
-            raise ValueError("recording_id cannot be None")
-
         return self._server_call_client.stop_recording(
             recording_id=recording_id,
             **kwargs
@@ -691,9 +677,6 @@ class CallingServerClient(object):
         recording_id,  # type: str
         **kwargs  # type: Any
     ):  # type: (...) -> CallRecordingProperties
-
-        if not recording_id:
-            raise ValueError("recording_id cannot be None")
 
         return self._server_call_client.get_recording_properties(
             recording_id=recording_id,

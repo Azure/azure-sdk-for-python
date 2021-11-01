@@ -321,8 +321,6 @@ class ContentStreamDownloader():  # pylint: disable=too-many-instance-attributes
             try:
                 stream.seek(stream.tell())
             except (NotImplementedError, AttributeError):
-                # https://stackoverflow.com/questions/27318327/how-to-imitate-python-3s-raise-from-in-python-2
-                # https://stackoverflow.com/questions/34463087/valid-syntax-in-both-python-2-x-and-3-x-for-raising-exception/40877934
                 traceback = sys.exc_info()[2]
                 raise_(ValueError, error_message, traceback)
 

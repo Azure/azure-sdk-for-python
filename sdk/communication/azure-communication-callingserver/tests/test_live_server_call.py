@@ -197,6 +197,31 @@ class ServerCallTest(CommunicationTestCase):
 
         with self.assertRaises(HttpResponseError):
             self.callingserver_client.start_recording(GroupCallLocator(invalid_server_call_id), CONST.CALLBACK_URI)
+    
+
+    def test_start_recording_relative_uri_fails(self):
+        # create GroupCalls
+        group_id = CallingServerLiveTestUtils.get_group_id("test_start_recording_relative_uri_fails")
+        if self.is_live:
+            self.recording_processors.extend([
+            RequestReplacerProcessor(keys=group_id,
+                replacement=CallingServerLiveTestUtils.get_playback_group_id("test_start_recording_relative_uri_fails"))])
+
+        call_connections = CallingServerLiveTestUtils.create_group_calls(
+            self.callingserver_client,
+            group_id,
+            self.from_user,
+            self.to_user,
+            CONST.CALLBACK_URI
+            )
+
+        try:
+            with self.assertRaises(HttpResponseError):
+                self.callingserver_client.start_recording(GroupCallLocator(group_id), "/not/absolute/uri")
+        finally:
+            # Clean up/Hang up
+            CallingServerLiveTestUtils.sleep_if_in_live_mode()
+            CallingServerLiveTestUtils.clean_up_connections(call_connections)
 
     @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
     def test_delete_success(self):

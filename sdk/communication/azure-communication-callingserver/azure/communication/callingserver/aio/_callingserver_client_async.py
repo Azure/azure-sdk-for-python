@@ -625,11 +625,6 @@ class CallingServerClient:
         **kwargs: Any
     ) -> StartCallRecordingResult:
 
-        if not call_locator:
-            raise ValueError("call_locator cannot be None")
-        if not CallingServerUtils.is_valid_url(recording_state_callback_uri):
-            raise ValueError("recording_state_callback_uri is invalid")
-
         start_call_recording_request = StartCallRecordingWithCallLocatorRequest(
             call_locator=serialize_call_locator(call_locator),
             recording_state_callback_uri=recording_state_callback_uri,
