@@ -20,7 +20,7 @@ autorest
 ### Settings
 
 ```yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/webpubsub/data-plane/WebPubSub/stable/2021-10-01/webpubsub.json
+input-file: D:\dev2\azure-rest-api-specs\specification\webpubsub\data-plane\WebPubSub\stable\2021-10-01\webpubsub.json
 output-folder: ../azure/messaging/webpubsubservice
 namespace: azure.messaging.webpubsubservice
 package-name: azure-messaging-webpubsubservice

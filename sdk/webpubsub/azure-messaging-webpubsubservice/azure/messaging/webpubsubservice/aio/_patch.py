@@ -25,21 +25,33 @@
 #
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 import importlib
 
 from azure.core import AsyncPipelineClient
-from msrest import Deserializer, Serializer
+from msrest import Deserializer
 
 from .._version import VERSION
 from .._patch import JwtCredentialPolicy, ApiManagementProxy, _parse_connection_string
 from ._web_pub_sub_service_client import WebPubSubServiceClient as GeneratedWebPubSubServiceClient
+from ..operations._operations import build_send_to_all_request, build_send_to_connection_request, build_send_to_group_request
 
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 from azure.core.credentials import AzureKeyCredential
+from msrest import Serializer
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union
 
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.pipeline import PipelineResponse
+from azure.core.pipeline.transport import AsyncHttpResponse
+from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator_async import distributed_trace_async
+
+
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -137,6 +149,232 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         return cls(credential=credential, **kwargs)
 
 
+    # could be removed after https://github.com/Azure/autorest.python/issues/1073 is fixed
+    @distributed_trace_async
+    async def send_to_all(
+        self,
+        hub: str,
+        message: Union[IO, str],
+        *,
+        excluded: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """Broadcast content inside request body to all the connected client connections.
+
+        Broadcast content inside request body to all the connected client connections.
+
+        :param hub: Target hub name, which should start with alphabetic characters and only contain
+         alpha-numeric characters or underscore.
+        :type hub: str
+        :param message: The payload body.
+        :type message: IO or str
+        :keyword excluded: Excluded connection Ids.
+        :paramtype excluded: list[str]
+        :keyword str content_type: Media type of the body sent to the API. Default value is
+         "application/json". Allowed values are: "application/json", "application/octet-stream",
+         "text/plain."
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        content_type = kwargs.pop('content_type', "text/plain")  # type: Optional[str]
+
+        json = None
+        content = None
+        if content_type.split(";")[0] in ['text/plain', 'application/octet-stream']:
+            content = message
+        elif content_type.split(";")[0] in ['application/json']:
+            json = message
+        else:
+            raise ValueError(
+                "The content_type '{}' is not one of the allowed values: "
+                "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
+            )
+
+        request = build_send_to_all_request(
+            hub=hub,
+            content_type=content_type,
+            json=json,
+            content=content,
+            excluded=excluded,
+            template_url=self.send_to_all.metadata['url'],
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    send_to_all.metadata = {'url': '/api/hubs/{hub}/:send'}  # type: ignore
+
+
+    # could be removed after https://github.com/Azure/autorest.python/issues/1073 is fixed
+    @distributed_trace_async
+    async def send_to_connection(
+        self,
+        hub: str,
+        connection_id: str,
+        message: Union[IO, str],
+        **kwargs: Any
+    ) -> None:
+        """Send content inside request body to the specific connection.
+
+        Send content inside request body to the specific connection.
+
+        :param hub: Target hub name, which should start with alphabetic characters and only contain
+         alpha-numeric characters or underscore.
+        :type hub: str
+        :param connection_id: The connection Id.
+        :type connection_id: str
+        :param message: The payload body.
+        :type message: IO or str
+        :keyword str content_type: Media type of the body sent to the API. Default value is
+         "application/json". Allowed values are: "application/json", "application/octet-stream",
+         "text/plain."
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        content_type = kwargs.pop('content_type', "text/plain")  # type: Optional[str]
+
+        json = None
+        content = None
+        if content_type.split(";")[0] in ['text/plain', 'application/octet-stream']:
+            content = message
+        elif content_type.split(";")[0] in ['application/json']:
+            json = message
+        else:
+            raise ValueError(
+                "The content_type '{}' is not one of the allowed values: "
+                "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
+            )
+
+        request = build_send_to_connection_request(
+            hub=hub,
+            connection_id=connection_id,
+            content_type=content_type,
+            json=json,
+            content=content,
+            template_url=self.send_to_connection.metadata['url'],
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    send_to_connection.metadata = {'url': '/api/hubs/{hub}/connections/{connectionId}/:send'}  # type: ignore
+
+
+    # could be removed after https://github.com/Azure/autorest.python/issues/1073 is fixed
+    @distributed_trace_async
+    async def send_to_group(
+        self,
+        hub: str,
+        group: str,
+        message: Union[IO, str],
+        *,
+        excluded: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """Send content inside request body to a group of connections.
+
+        Send content inside request body to a group of connections.
+
+        :param hub: Target hub name, which should start with alphabetic characters and only contain
+         alpha-numeric characters or underscore.
+        :type hub: str
+        :param group: Target group name, which length should be greater than 0 and less than 1025.
+        :type group: str
+        :param message: The payload body.
+        :type message: IO or str
+        :keyword excluded: Excluded connection Ids.
+        :paramtype excluded: list[str]
+        :keyword str content_type: Media type of the body sent to the API. Default value is
+         "application/json". Allowed values are: "application/json", "application/octet-stream",
+         "text/plain."
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        content_type = kwargs.pop('content_type', "text/plain")  # type: Optional[str]
+
+        json = None
+        content = None
+        if content_type.split(";")[0] in ['text/plain', 'application/octet-stream']:
+            content = message
+        elif content_type.split(";")[0] in ['application/json']:
+            json = message
+        else:
+            raise ValueError(
+                "The content_type '{}' is not one of the allowed values: "
+                "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
+            )
+
+        request = build_send_to_group_request(
+            hub=hub,
+            group=group,
+            content_type=content_type,
+            json=json,
+            content=content,
+            excluded=excluded,
+            template_url=self.send_to_group.metadata['url'],
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    send_to_group.metadata = {'url': '/api/hubs/{hub}/groups/{group}/:send'}  # type: ignore
+
+
 def patch_sdk():
     curr_package = importlib.import_module("azure.messaging.webpubsubservice.aio")
     curr_package.WebPubSubServiceClient = WebPubSubServiceClient
+    del curr_package.operations.WebPubSubServiceClientOperationsMixin.generate_client_token
