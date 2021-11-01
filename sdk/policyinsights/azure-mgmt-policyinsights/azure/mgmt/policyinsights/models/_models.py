@@ -1925,6 +1925,9 @@ class Remediation(msrest.serialization.Model):
     :vartype type: str
     :ivar name: The name of the remediation.
     :vartype name: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.policyinsights.models.SystemData
     :param policy_assignment_id: The resource ID of the policy assignment that should be
      remediated.
     :type policy_assignment_id: str
@@ -1947,22 +1950,42 @@ class Remediation(msrest.serialization.Model):
     :ivar deployment_status: The deployment status summary for all deployments created by the
      remediation.
     :vartype deployment_status: ~azure.mgmt.policyinsights.models.RemediationDeploymentSummary
+    :ivar status_message: The remediation status message. Provides additional details regarding the
+     state of the remediation.
+    :vartype status_message: str
+    :ivar correlation_id: The remediation correlation Id. Can be used to find events related to the
+     remediation in the activity log.
+    :vartype correlation_id: str
+    :param resource_count: Determines the max number of resources that can be remediated by the
+     remediation job. If not provided, the default resource count is used.
+    :type resource_count: int
+    :param parallel_deployments: Determines how many resources to remediate at any given time. Can
+     be used to increase or reduce the pace of the remediation. If not provided, the default
+     parallel deployments value is used.
+    :type parallel_deployments: int
+    :param failure_threshold: The remediation failure threshold settings.
+    :type failure_threshold:
+     ~azure.mgmt.policyinsights.models.RemediationPropertiesFailureThreshold
     """
 
     _validation = {
         'id': {'readonly': True},
         'type': {'readonly': True},
         'name': {'readonly': True},
+        'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'created_on': {'readonly': True},
         'last_updated_on': {'readonly': True},
         'deployment_status': {'readonly': True},
+        'status_message': {'readonly': True},
+        'correlation_id': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'policy_assignment_id': {'key': 'properties.policyAssignmentId', 'type': 'str'},
         'policy_definition_reference_id': {'key': 'properties.policyDefinitionReferenceId', 'type': 'str'},
         'resource_discovery_mode': {'key': 'properties.resourceDiscoveryMode', 'type': 'str'},
@@ -1971,6 +1994,11 @@ class Remediation(msrest.serialization.Model):
         'last_updated_on': {'key': 'properties.lastUpdatedOn', 'type': 'iso-8601'},
         'filters': {'key': 'properties.filters', 'type': 'RemediationFilters'},
         'deployment_status': {'key': 'properties.deploymentStatus', 'type': 'RemediationDeploymentSummary'},
+        'status_message': {'key': 'properties.statusMessage', 'type': 'str'},
+        'correlation_id': {'key': 'properties.correlationId', 'type': 'str'},
+        'resource_count': {'key': 'properties.resourceCount', 'type': 'int'},
+        'parallel_deployments': {'key': 'properties.parallelDeployments', 'type': 'int'},
+        'failure_threshold': {'key': 'properties.failureThreshold', 'type': 'RemediationPropertiesFailureThreshold'},
     }
 
     def __init__(
@@ -1981,6 +2009,7 @@ class Remediation(msrest.serialization.Model):
         self.id = None
         self.type = None
         self.name = None
+        self.system_data = None
         self.policy_assignment_id = kwargs.get('policy_assignment_id', None)
         self.policy_definition_reference_id = kwargs.get('policy_definition_reference_id', None)
         self.resource_discovery_mode = kwargs.get('resource_discovery_mode', None)
@@ -1989,6 +2018,11 @@ class Remediation(msrest.serialization.Model):
         self.last_updated_on = None
         self.filters = kwargs.get('filters', None)
         self.deployment_status = None
+        self.status_message = None
+        self.correlation_id = None
+        self.resource_count = kwargs.get('resource_count', None)
+        self.parallel_deployments = kwargs.get('parallel_deployments', None)
+        self.failure_threshold = kwargs.get('failure_threshold', None)
 
 
 class RemediationDeployment(msrest.serialization.Model):
@@ -2161,6 +2195,27 @@ class RemediationListResult(msrest.serialization.Model):
         super(RemediationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class RemediationPropertiesFailureThreshold(msrest.serialization.Model):
+    """The remediation failure threshold settings.
+
+    :param percentage: A number between 0.0 to 1.0 representing the percentage failure threshold.
+     The remediation will fail if the percentage of failed remediation operations (i.e. failed
+     deployments) exceeds this threshold.
+    :type percentage: float
+    """
+
+    _attribute_map = {
+        'percentage': {'key': 'percentage', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RemediationPropertiesFailureThreshold, self).__init__(**kwargs)
+        self.percentage = kwargs.get('percentage', None)
 
 
 class SlimPolicyMetadata(msrest.serialization.Model):
