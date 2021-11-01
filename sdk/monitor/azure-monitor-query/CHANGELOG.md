@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed a bug where Metadata values in timestamp don't show up sometimes.
+
 ### Other Changes
 
 ## 1.0.0 (2021-10-06)
