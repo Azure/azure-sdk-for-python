@@ -29,84 +29,22 @@ if TYPE_CHECKING:
 _SERIALIZER = Serializer()
 # fmt: off
 
-def build_rerun_trigger_instance_request(
-    trigger_name,  # type: str
-    run_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2020-12-01"
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/triggers/{triggerName}/triggerRuns/{runId}/rerun')
-    path_format_arguments = {
-        "triggerName": _SERIALIZER.url("trigger_name", trigger_name, 'str', max_length=260, min_length=1, pattern=r'^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$'),
-        "runId": _SERIALIZER.url("run_id", run_id, 'str'),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="POST",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_cancel_trigger_instance_request(
-    trigger_name,  # type: str
-    run_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2020-12-01"
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/triggers/{triggerName}/triggerRuns/{runId}/cancel')
-    path_format_arguments = {
-        "triggerName": _SERIALIZER.url("trigger_name", trigger_name, 'str', max_length=260, min_length=1, pattern=r'^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$'),
-        "runId": _SERIALIZER.url("run_id", run_id, 'str'),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="POST",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_query_trigger_runs_by_workspace_request(
+def build_register_request(
+    id,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2020-12-01"
+    api_version = "2021-07-01-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/queryTriggerRuns')
+    url = kwargs.pop("template_url", '/metastore/create-database-operations/{id}')
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -119,7 +57,107 @@ def build_query_trigger_runs_by_workspace_request(
     header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
-        method="POST",
+        method="PUT",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_get_database_operations_request(
+    id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = "2021-07-01-preview"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/metastore/create-database-operations/{id}')
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_update_request(
+    id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    api_version = "2021-07-01-preview"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/metastore/update-database-operations/{id}')
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="PUT",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_delete_request(
+    id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = "2021-07-01-preview"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/metastore/databases/{id}')
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="DELETE",
         url=url,
         params=query_parameters,
         headers=header_parameters,
@@ -127,8 +165,8 @@ def build_query_trigger_runs_by_workspace_request(
     )
 
 # fmt: on
-class TriggerRunOperations(object):
-    """TriggerRunOperations operations.
+class MetastoreOperations(object):
+    """MetastoreOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -150,124 +188,26 @@ class TriggerRunOperations(object):
         self._config = config
 
     @distributed_trace
-    def rerun_trigger_instance(
+    def register(
         self,
-        trigger_name,  # type: str
-        run_id,  # type: str
+        id,  # type: str
+        input_folder,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> None
-        """Rerun single trigger instance by runId.
+        # type: (...) -> "_models.MetastoreRegistrationResponse"
+        """Register files in Syms.
 
-        :param trigger_name: The trigger name.
-        :type trigger_name: str
-        :param run_id: The pipeline run identifier.
-        :type run_id: str
+        :param id: The name of the database to be created. The name can contain only alphanumeric
+         characters and should not exceed 24 characters.
+        :type id: str
+        :param input_folder: The input folder containing CDM files.
+        :type input_folder: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: MetastoreRegistrationResponse, or the result of cls(response)
+        :rtype: ~azure.synapse.artifacts.models.MetastoreRegistrationResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        
-        request = build_rerun_trigger_instance_request(
-            trigger_name=trigger_name,
-            run_id=run_id,
-            template_url=self.rerun_trigger_instance.metadata['url'],
-        )
-        request = _convert_request(request)
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CloudErrorAutoGenerated, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    rerun_trigger_instance.metadata = {'url': '/triggers/{triggerName}/triggerRuns/{runId}/rerun'}  # type: ignore
-
-
-    @distributed_trace
-    def cancel_trigger_instance(
-        self,
-        trigger_name,  # type: str
-        run_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Cancel single trigger instance by runId.
-
-        :param trigger_name: The trigger name.
-        :type trigger_name: str
-        :param run_id: The pipeline run identifier.
-        :type run_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        
-        request = build_cancel_trigger_instance_request(
-            trigger_name=trigger_name,
-            run_id=run_id,
-            template_url=self.cancel_trigger_instance.metadata['url'],
-        )
-        request = _convert_request(request)
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CloudErrorAutoGenerated, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    cancel_trigger_instance.metadata = {'url': '/triggers/{triggerName}/triggerRuns/{runId}/cancel'}  # type: ignore
-
-
-    @distributed_trace
-    def query_trigger_runs_by_workspace(
-        self,
-        filter_parameters,  # type: "_models.RunFilterParameters"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.TriggerRunsQueryResponse"
-        """Query trigger runs.
-
-        :param filter_parameters: Parameters to filter the pipeline run.
-        :type filter_parameters: ~azure.synapse.artifacts.models.RunFilterParameters
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TriggerRunsQueryResponse, or the result of cls(response)
-        :rtype: ~azure.synapse.artifacts.models.TriggerRunsQueryResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerRunsQueryResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MetastoreRegistrationResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -275,12 +215,65 @@ class TriggerRunOperations(object):
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(filter_parameters, 'RunFilterParameters')
+        _register_body = _models.MetastoreRegisterObject(input_folder=input_folder)
+        json = self._serialize.body(_register_body, 'MetastoreRegisterObject')
 
-        request = build_query_trigger_runs_by_workspace_request(
+        request = build_register_request(
+            id=id,
             content_type=content_type,
             json=json,
-            template_url=self.query_trigger_runs_by_workspace.metadata['url'],
+            template_url=self.register.metadata['url'],
+        )
+        request = _convert_request(request)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorContract, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('MetastoreRegistrationResponse', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    register.metadata = {'url': '/metastore/create-database-operations/{id}'}  # type: ignore
+
+
+    @distributed_trace
+    def get_database_operations(
+        self,
+        id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.MetastoreRequestSuccessResponse"
+        """Gets status of the database.
+
+        :param id:
+        :type id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: MetastoreRequestSuccessResponse, or the result of cls(response)
+        :rtype: ~azure.synapse.artifacts.models.MetastoreRequestSuccessResponse
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MetastoreRequestSuccessResponse"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        
+        request = build_get_database_operations_request(
+            id=id,
+            template_url=self.get_database_operations.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -293,15 +286,122 @@ class TriggerRunOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CloudErrorAutoGenerated, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorContract, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('TriggerRunsQueryResponse', pipeline_response)
+        deserialized = self._deserialize('MetastoreRequestSuccessResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    query_trigger_runs_by_workspace.metadata = {'url': '/queryTriggerRuns'}  # type: ignore
+    get_database_operations.metadata = {'url': '/metastore/create-database-operations/{id}'}  # type: ignore
+
+
+    @distributed_trace
+    def update(
+        self,
+        id,  # type: str
+        input_folder,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.MetastoreUpdationResponse"
+        """Update files in Syms.
+
+        :param id: The name of the database to be updated.
+        :type id: str
+        :param input_folder: The input folder containing CDM files.
+        :type input_folder: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: MetastoreUpdationResponse, or the result of cls(response)
+        :rtype: ~azure.synapse.artifacts.models.MetastoreUpdationResponse
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MetastoreUpdationResponse"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _update_body = _models.MetastoreUpdateObject(input_folder=input_folder)
+        json = self._serialize.body(_update_body, 'MetastoreUpdateObject')
+
+        request = build_update_request(
+            id=id,
+            content_type=content_type,
+            json=json,
+            template_url=self.update.metadata['url'],
+        )
+        request = _convert_request(request)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorContract, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('MetastoreUpdationResponse', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    update.metadata = {'url': '/metastore/update-database-operations/{id}'}  # type: ignore
+
+
+    @distributed_trace
+    def delete(
+        self,
+        id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Remove files in Syms.
+
+        :param id:
+        :type id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        
+        request = build_delete_request(
+            id=id,
+            template_url=self.delete.metadata['url'],
+        )
+        request = _convert_request(request)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorContract, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    delete.metadata = {'url': '/metastore/databases/{id}'}  # type: ignore
 
