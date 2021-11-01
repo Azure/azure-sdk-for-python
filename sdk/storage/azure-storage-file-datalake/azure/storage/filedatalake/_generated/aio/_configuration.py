@@ -21,6 +21,10 @@ class AzureDataLakeStorageRESTAPIConfiguration(Configuration):
 
     :param url: The URL of the service account, container, or blob that is the target of the desired operation.
     :type url: str
+    :keyword resource: The value must be "filesystem" for all filesystem operations. The default value is "filesystem". Note that overriding this default value may result in unsupported behavior.
+    :paramtype resource: str
+    :keyword version: Specifies the version of the operation to use for this request. The default value is "2020-06-12". Note that overriding this default value may result in unsupported behavior.
+    :paramtype version: str
     """
 
     def __init__(
@@ -28,13 +32,16 @@ class AzureDataLakeStorageRESTAPIConfiguration(Configuration):
         url: str,
         **kwargs: Any
     ) -> None:
+        super(AzureDataLakeStorageRESTAPIConfiguration, self).__init__(**kwargs)
+        resource = kwargs.pop('resource', "filesystem")  # type: str
+        version = kwargs.pop('version', "2020-06-12")  # type: str
+
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
-        super(AzureDataLakeStorageRESTAPIConfiguration, self).__init__(**kwargs)
 
         self.url = url
-        self.resource = "filesystem"
-        self.version = "2020-06-12"
+        self.resource = resource
+        self.version = version
         kwargs.setdefault('sdk_moniker', 'azuredatalakestoragerestapi/{}'.format(VERSION))
         self._configure(**kwargs)
 
