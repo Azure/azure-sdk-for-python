@@ -32,7 +32,6 @@ def build_exchange_aad_access_token_for_acr_refresh_token_request(
 ):
     # type: (...) -> HttpRequest
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    data = kwargs.pop('data', "access_token")  # type: str
 
     accept = "application/json"
     # Construct URL
