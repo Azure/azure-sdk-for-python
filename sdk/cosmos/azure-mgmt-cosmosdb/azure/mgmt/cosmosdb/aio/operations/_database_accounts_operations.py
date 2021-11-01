@@ -65,7 +65,7 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-10-15"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -113,7 +113,7 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-10-15"
+        api_version = "2021-07-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -237,7 +237,7 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-10-15"
+        api_version = "2021-07-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -361,7 +361,7 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-10-15"
+        api_version = "2021-07-01-preview"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -468,7 +468,7 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-10-15"
+        api_version = "2021-07-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -591,7 +591,7 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-10-15"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -660,7 +660,7 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-10-15"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -733,7 +733,7 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-10-15"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -791,7 +791,7 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-10-15"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -839,7 +839,7 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-10-15"
+        api_version = "2021-07-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -958,7 +958,7 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-10-15"
+        api_version = "2021-07-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1087,7 +1087,7 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-10-15"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1145,7 +1145,7 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-10-15"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1193,7 +1193,7 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-10-15"
+        api_version = "2021-07-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -1318,7 +1318,7 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-10-15"
+        api_version = "2021-07-01-preview"
 
         # Construct URL
         url = self.check_name_exists.metadata['url']  # type: ignore
@@ -1375,7 +1375,7 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-10-15"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1454,7 +1454,7 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-10-15"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1530,7 +1530,7 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-10-15"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
