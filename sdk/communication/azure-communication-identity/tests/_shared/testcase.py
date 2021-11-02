@@ -110,4 +110,4 @@ class CommunicationTestCase(AzureTestCase):
         return teams_user_aad_token
 
     def skip_get_token_for_teams_user_test(self):
-        return self.skip_get_token_for_teams_user_tests.lower() == 'true'
+        return str(self.skip_get_token_for_teams_user_tests).lower() == 'true'

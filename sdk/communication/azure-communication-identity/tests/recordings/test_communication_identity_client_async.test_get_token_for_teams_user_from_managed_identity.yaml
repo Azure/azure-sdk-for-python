@@ -9,8 +9,8 @@ interactions:
       Connection:
       - keep-alive
       Cookie:
-      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrkrwpusCjFksN_bKfjO76ZTVPQqURHZCHszWaeR9-hO1i6wGj8gdxuTsktlenLAqbQS5hxhwa2Ae5YDZULAbspV91IPApYl76jIKxflgfCneKaL10XyG5v9DrrLu7vJ7HWlu3B3PUVj1ZWbToubaifXjoaPmyDxD__NfbqqzbalogAA;
-        fpc=Aq0eGqD6X2lDpayMcoZxFLs; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrjYbd8G8MLd29SURYj6Nn30M8xCPPUcUVXpJICHBjb3KiZfvUZtynHinoOx1WDiCimv5rnWb5aluZly3d7f5Da8sc6DMi2OEAKGsOh5t_KIIkI4p4OklARZn-1e8PavgNb3T4FrLc2A5BnGLhQSkdgP5LqDz7Pp2WfYCulECfWP8gAA;
+        fpc=AiKB7Lzp9jdEnWnATXCqmno; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
       User-Agent:
       - python-requests/2.26.0
     method: GET
@@ -29,7 +29,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 Oct 2021 07:24:42 GMT
+      - Tue, 02 Nov 2021 10:40:54 GMT
       expires:
       - '-1'
       p3p:
@@ -37,7 +37,7 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - fpc=Aq0eGqD6X2lDpayMcoZxFLs; expires=Fri, 26-Nov-2021 07:24:42 GMT; path=/;
+      - fpc=AiKB7Lzp9jdEnWnATXCqmno; expires=Thu, 02-Dec-2021 10:40:55 GMT; path=/;
         secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
@@ -46,7 +46,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ests-server:
-      - 2.1.12158.6 - NEULR1 ProdSlices
+      - 2.1.12171.14 - WEULR1 ProdSlices
     status:
       code: 200
       message: OK
@@ -65,17 +65,17 @@ interactions:
     uri: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2021-10-31-preview
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-10-27T08:24:41.3035484+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2021-11-02T11:40:54.5598223+00:00"}'
     headers:
       api-supported-versions: 2021-03-31-preview1, 2021-10-31-preview
       content-length: '818'
       content-type: application/json; charset=utf-8
-      date: Wed, 27 Oct 2021 07:24:42 GMT
-      ms-cv: WDMdWpSLrkKaB/lzy66kYw.0
+      date: Tue, 02 Nov 2021 10:40:56 GMT
+      ms-cv: V2lv1AoJTkWyGY5ruQtUEg.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 394ms
+      x-processing-time: 392ms
     status:
       code: 200
       message: OK
