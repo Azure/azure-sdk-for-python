@@ -155,7 +155,6 @@ def _from_cncf_events(event):
     except Exception as err: # pylint: disable=broad-except
         msg = """Failed to serialize the event. Please ensure your
         CloudEvents is correctly formatted (https://pypi.org/project/cloudevents/)"""
-        
         raise_with_traceback(ValueError, msg, err)
 
 
