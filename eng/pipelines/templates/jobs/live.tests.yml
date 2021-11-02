@@ -68,8 +68,6 @@ jobs:
         value: true
       - name: ArmTemplateParameters
         value: '@{}'
-      - name: BuildTargetingStringValue
-        value: $[ coalesce(variables['BuildTargetingString'], '${{ parameters.BuildTargetingString }}') ]
 
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
     continueOnError: false
@@ -87,6 +85,10 @@ jobs:
         parameters:
           AgentImage: $(OSVmImage)
 
+      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+        parameters:
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
       - template: /eng/common/TestResources/build-test-resource-config.yml
         parameters:
           SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
@@ -101,7 +103,6 @@ jobs:
 
       - template: ../steps/build-test.yml
         parameters:
-          BuildTargetingString: $(BuildTargetingStringValue)
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           CloudName: ${{ parameters.CloudConfig.Cloud }}
           CoverageArg: $(CoverageArg)

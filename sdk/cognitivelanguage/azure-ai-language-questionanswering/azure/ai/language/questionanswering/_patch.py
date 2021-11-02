@@ -37,10 +37,9 @@ def _get_positional_body(*args, **kwargs):
     """Verify args and kwargs are valid, and then return the positional body, if users passed it in."""
     if len(args) > 1:
         raise TypeError("There can only be one positional argument, which is the POST body of this request.")
-    if args and "options" in kwargs:
+    if "options" in kwargs:
         raise TypeError(
-            "You have already supplied the request body as a positional parameter, "
-            "you can not supply it as a keyword argument as well."
+            "The 'options' parameter is positional only."
         )
     return args[0] if args else None
 

@@ -355,6 +355,19 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
                 client.get_answers("positional_one", "positional_two")
             with pytest.raises(TypeError):
                 client.get_answers("positional_options_bag", options="options bag by name")
+            with pytest.raises(TypeError):
+                client.get_answers(
+                    options={'qnaId': 15},
+                    project_name="hello",
+                    deployment_name='test'
+                )
+            with pytest.raises(TypeError):
+                client.get_answers(
+                    {'qnaId': 15},
+                    question='Why?',
+                    project_name="hello",
+                    deployment_name='test'
+                )
 
     def test_query_knowledgebase_question_or_qna_id(self):
         with QuestionAnsweringClient("http://fake.com", AzureKeyCredential("123")) as client:
