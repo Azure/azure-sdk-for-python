@@ -362,12 +362,27 @@ class HttpResponse:
         ...
 
     def read(self) -> bytes:
+        """Read the response's bytes.
+
+        :return: The read in bytes
+        :rtype: bytes
+        """
         ...
 
     def iter_raw(self, **kwargs: Any) -> Iterator[bytes]:
+        """Iterates over the response's bytes. Will not decompress in the process.
+
+        :return: An iterator of bytes from the response
+        :rtype: Iterator[str]
+        """
         ...
 
     def iter_bytes(self, **kwargs: Any) -> Iterator[bytes]:
+        """Iterates over the response's bytes. Will decompress in the process.
+
+        :return: An iterator of bytes from the response
+        :rtype: Iterator[str]
+        """
         ...
 
 ```
