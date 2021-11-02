@@ -35,7 +35,7 @@ class WebSearchClientConfiguration(Configuration):
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = '{Endpoint}/bing/v7.0'
+        base_url = '{Endpoint}/v7.0'
 
         super(WebSearchClientConfiguration, self).__init__(base_url)
 
