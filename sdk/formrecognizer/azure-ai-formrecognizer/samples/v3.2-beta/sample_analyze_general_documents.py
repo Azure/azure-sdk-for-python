@@ -104,7 +104,7 @@ def analyze_general_documents():
         for line_idx, line in enumerate(page.lines):
             words = line.get_words()
             print(
-                "...Line # {} has word count {} and text '{}' within bounding box '{}'".format(
+                "...Line # {} has {} words and text '{}' within bounding box '{}'".format(
                     line_idx,
                     len(words),
                     line.content,
