@@ -41,9 +41,6 @@ class FileOperations:
 
     async def create(
         self,
-        share_name: str,
-        directory: str,
-        file_name: str,
         file_content_length: int,
         timeout: Optional[int] = None,
         metadata: Optional[str] = None,
@@ -58,12 +55,6 @@ class FileOperations:
     ) -> None:
         """Creates a new file or replaces a file. Note it only initializes the file with no content.
 
-        :param share_name: The name of the target share.
-        :type share_name: str
-        :param directory: The path of the target directory.
-        :type directory: str
-        :param file_name: The path of the target file.
-        :type file_name: str
         :param file_content_length: Specifies the maximum size for the file, up to 4 TB.
         :type file_content_length: long
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -127,9 +118,6 @@ class FileOperations:
         url = self.create.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'shareName': self._serialize.url("share_name", share_name, 'str'),
-            'directory': self._serialize.url("directory", directory, 'str'),
-            'fileName': self._serialize.url("file_name", file_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -199,9 +187,6 @@ class FileOperations:
 
     async def download(
         self,
-        share_name: str,
-        directory: str,
-        file_name: str,
         timeout: Optional[int] = None,
         range: Optional[str] = None,
         range_get_content_md5: Optional[bool] = None,
@@ -210,12 +195,6 @@ class FileOperations:
     ) -> IO:
         """Reads or downloads a file from the system, including its metadata and properties.
 
-        :param share_name: The name of the target share.
-        :type share_name: str
-        :param directory: The path of the target directory.
-        :type directory: str
-        :param file_name: The path of the target file.
-        :type file_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -249,9 +228,6 @@ class FileOperations:
         url = self.download.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'shareName': self._serialize.url("share_name", share_name, 'str'),
-            'directory': self._serialize.url("directory", directory, 'str'),
-            'fileName': self._serialize.url("file_name", file_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -361,9 +337,6 @@ class FileOperations:
 
     async def get_properties(
         self,
-        share_name: str,
-        directory: str,
-        file_name: str,
         sharesnapshot: Optional[str] = None,
         timeout: Optional[int] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
@@ -372,12 +345,6 @@ class FileOperations:
         """Returns all user-defined metadata, standard HTTP properties, and system properties for the
         file. It does not return the content of the file.
 
-        :param share_name: The name of the target share.
-        :type share_name: str
-        :param directory: The path of the target directory.
-        :type directory: str
-        :param file_name: The path of the target file.
-        :type file_name: str
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the share snapshot to query.
         :type sharesnapshot: str
@@ -408,9 +375,6 @@ class FileOperations:
         url = self.get_properties.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'shareName': self._serialize.url("share_name", share_name, 'str'),
-            'directory': self._serialize.url("directory", directory, 'str'),
-            'fileName': self._serialize.url("file_name", file_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -477,21 +441,12 @@ class FileOperations:
 
     async def delete(
         self,
-        share_name: str,
-        directory: str,
-        file_name: str,
         timeout: Optional[int] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         **kwargs: Any
     ) -> None:
         """removes the file from the storage account.
 
-        :param share_name: The name of the target share.
-        :type share_name: str
-        :param directory: The path of the target directory.
-        :type directory: str
-        :param file_name: The path of the target file.
-        :type file_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -519,9 +474,6 @@ class FileOperations:
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'shareName': self._serialize.url("share_name", share_name, 'str'),
-            'directory': self._serialize.url("directory", directory, 'str'),
-            'fileName': self._serialize.url("file_name", file_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -558,9 +510,6 @@ class FileOperations:
 
     async def set_http_headers(
         self,
-        share_name: str,
-        directory: str,
-        file_name: str,
         timeout: Optional[int] = None,
         file_content_length: Optional[int] = None,
         file_permission: Optional[str] = "inherit",
@@ -574,12 +523,6 @@ class FileOperations:
     ) -> None:
         """Sets HTTP headers on the file.
 
-        :param share_name: The name of the target share.
-        :type share_name: str
-        :param directory: The path of the target directory.
-        :type directory: str
-        :param file_name: The path of the target file.
-        :type file_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -643,9 +586,6 @@ class FileOperations:
         url = self.set_http_headers.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'shareName': self._serialize.url("share_name", share_name, 'str'),
-            'directory': self._serialize.url("directory", directory, 'str'),
-            'fileName': self._serialize.url("file_name", file_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -714,9 +654,6 @@ class FileOperations:
 
     async def set_metadata(
         self,
-        share_name: str,
-        directory: str,
-        file_name: str,
         timeout: Optional[int] = None,
         metadata: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
@@ -724,12 +661,6 @@ class FileOperations:
     ) -> None:
         """Updates user-defined metadata for the specified file.
 
-        :param share_name: The name of the target share.
-        :type share_name: str
-        :param directory: The path of the target directory.
-        :type directory: str
-        :param file_name: The path of the target file.
-        :type file_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -760,9 +691,6 @@ class FileOperations:
         url = self.set_metadata.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'shareName': self._serialize.url("share_name", share_name, 'str'),
-            'directory': self._serialize.url("directory", directory, 'str'),
-            'fileName': self._serialize.url("file_name", file_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -804,9 +732,6 @@ class FileOperations:
 
     async def acquire_lease(
         self,
-        share_name: str,
-        directory: str,
-        file_name: str,
         timeout: Optional[int] = None,
         duration: Optional[int] = None,
         proposed_lease_id: Optional[str] = None,
@@ -816,12 +741,6 @@ class FileOperations:
         """[Update] The Lease File operation establishes and manages a lock on a file for write and delete
         operations.
 
-        :param share_name: The name of the target share.
-        :type share_name: str
-        :param directory: The path of the target directory.
-        :type directory: str
-        :param file_name: The path of the target file.
-        :type file_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -856,9 +775,6 @@ class FileOperations:
         url = self.acquire_lease.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'shareName': self._serialize.url("share_name", share_name, 'str'),
-            'directory': self._serialize.url("directory", directory, 'str'),
-            'fileName': self._serialize.url("file_name", file_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -905,9 +821,6 @@ class FileOperations:
 
     async def release_lease(
         self,
-        share_name: str,
-        directory: str,
-        file_name: str,
         lease_id: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -916,12 +829,6 @@ class FileOperations:
         """[Update] The Lease File operation establishes and manages a lock on a file for write and delete
         operations.
 
-        :param share_name: The name of the target share.
-        :type share_name: str
-        :param directory: The path of the target directory.
-        :type directory: str
-        :param file_name: The path of the target file.
-        :type file_name: str
         :param lease_id: Specifies the current lease ID on the resource.
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -950,9 +857,6 @@ class FileOperations:
         url = self.release_lease.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'shareName': self._serialize.url("share_name", share_name, 'str'),
-            'directory': self._serialize.url("directory", directory, 'str'),
-            'fileName': self._serialize.url("file_name", file_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -995,9 +899,6 @@ class FileOperations:
 
     async def change_lease(
         self,
-        share_name: str,
-        directory: str,
-        file_name: str,
         lease_id: str,
         timeout: Optional[int] = None,
         proposed_lease_id: Optional[str] = None,
@@ -1007,12 +908,6 @@ class FileOperations:
         """[Update] The Lease File operation establishes and manages a lock on a file for write and delete
         operations.
 
-        :param share_name: The name of the target share.
-        :type share_name: str
-        :param directory: The path of the target directory.
-        :type directory: str
-        :param file_name: The path of the target file.
-        :type file_name: str
         :param lease_id: Specifies the current lease ID on the resource.
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1045,9 +940,6 @@ class FileOperations:
         url = self.change_lease.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'shareName': self._serialize.url("share_name", share_name, 'str'),
-            'directory': self._serialize.url("directory", directory, 'str'),
-            'fileName': self._serialize.url("file_name", file_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1093,9 +985,6 @@ class FileOperations:
 
     async def break_lease(
         self,
-        share_name: str,
-        directory: str,
-        file_name: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
@@ -1104,12 +993,6 @@ class FileOperations:
         """[Update] The Lease File operation establishes and manages a lock on a file for write and delete
         operations.
 
-        :param share_name: The name of the target share.
-        :type share_name: str
-        :param directory: The path of the target directory.
-        :type directory: str
-        :param file_name: The path of the target file.
-        :type file_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -1142,9 +1025,6 @@ class FileOperations:
         url = self.break_lease.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'shareName': self._serialize.url("share_name", share_name, 'str'),
-            'directory': self._serialize.url("directory", directory, 'str'),
-            'fileName': self._serialize.url("file_name", file_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1189,9 +1069,6 @@ class FileOperations:
 
     async def upload_range(
         self,
-        share_name: str,
-        directory: str,
-        file_name: str,
         range: str,
         content_length: int,
         timeout: Optional[int] = None,
@@ -1203,12 +1080,6 @@ class FileOperations:
     ) -> None:
         """Upload a range of bytes to a file.
 
-        :param share_name: The name of the target share.
-        :type share_name: str
-        :param directory: The path of the target directory.
-        :type directory: str
-        :param file_name: The path of the target file.
-        :type file_name: str
         :param range: Specifies the range of bytes to be written. Both the start and end of the range
          must be specified. For an update operation, the range can be up to 4 MB in size. For a clear
          operation, the range can be up to the value of the file's full size. The File service accepts
@@ -1260,9 +1131,6 @@ class FileOperations:
         url = self.upload_range.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'shareName': self._serialize.url("share_name", share_name, 'str'),
-            'directory': self._serialize.url("directory", directory, 'str'),
-            'fileName': self._serialize.url("file_name", file_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1312,9 +1180,6 @@ class FileOperations:
 
     async def upload_range_from_url(
         self,
-        share_name: str,
-        directory: str,
-        file_name: str,
         range: str,
         copy_source: str,
         content_length: int,
@@ -1328,12 +1193,6 @@ class FileOperations:
     ) -> None:
         """Upload a range of bytes to a file where the contents are read from a URL.
 
-        :param share_name: The name of the target share.
-        :type share_name: str
-        :param directory: The path of the target directory.
-        :type directory: str
-        :param file_name: The path of the target file.
-        :type file_name: str
         :param range: Writes data to the specified byte range in the file.
         :type range: str
         :param copy_source: Specifies the URL of the source file or blob, up to 2 KB in length. To copy
@@ -1390,9 +1249,6 @@ class FileOperations:
         url = self.upload_range_from_url.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'shareName': self._serialize.url("share_name", share_name, 'str'),
-            'directory': self._serialize.url("directory", directory, 'str'),
-            'fileName': self._serialize.url("file_name", file_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1448,9 +1304,6 @@ class FileOperations:
 
     async def get_range_list(
         self,
-        share_name: str,
-        directory: str,
-        file_name: str,
         sharesnapshot: Optional[str] = None,
         prevsharesnapshot: Optional[str] = None,
         timeout: Optional[int] = None,
@@ -1460,12 +1313,6 @@ class FileOperations:
     ) -> "_models.ShareFileRangeList":
         """Returns the list of valid ranges for a file.
 
-        :param share_name: The name of the target share.
-        :type share_name: str
-        :param directory: The path of the target directory.
-        :type directory: str
-        :param file_name: The path of the target file.
-        :type file_name: str
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the share snapshot to query.
         :type sharesnapshot: str
@@ -1502,9 +1349,6 @@ class FileOperations:
         url = self.get_range_list.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'shareName': self._serialize.url("share_name", share_name, 'str'),
-            'directory': self._serialize.url("directory", directory, 'str'),
-            'fileName': self._serialize.url("file_name", file_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1553,9 +1397,6 @@ class FileOperations:
 
     async def start_copy(
         self,
-        share_name: str,
-        directory: str,
-        file_name: str,
         copy_source: str,
         timeout: Optional[int] = None,
         metadata: Optional[str] = None,
@@ -1567,12 +1408,6 @@ class FileOperations:
     ) -> None:
         """Copies a blob or file to a destination file within the storage account.
 
-        :param share_name: The name of the target share.
-        :type share_name: str
-        :param directory: The path of the target directory.
-        :type directory: str
-        :param file_name: The path of the target file.
-        :type file_name: str
         :param copy_source: Specifies the URL of the source file or blob, up to 2 KB in length. To copy
          a file to another file within the same storage account, you may use Shared Key to authenticate
          the source file. If you are copying a file from another storage account, or if you are copying
@@ -1634,9 +1469,6 @@ class FileOperations:
         url = self.start_copy.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'shareName': self._serialize.url("share_name", share_name, 'str'),
-            'directory': self._serialize.url("directory", directory, 'str'),
-            'fileName': self._serialize.url("file_name", file_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1696,9 +1528,6 @@ class FileOperations:
 
     async def abort_copy(
         self,
-        share_name: str,
-        directory: str,
-        file_name: str,
         copy_id: str,
         timeout: Optional[int] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
@@ -1707,12 +1536,6 @@ class FileOperations:
         """Aborts a pending Copy File operation, and leaves a destination file with zero length and full
         metadata.
 
-        :param share_name: The name of the target share.
-        :type share_name: str
-        :param directory: The path of the target directory.
-        :type directory: str
-        :param file_name: The path of the target file.
-        :type file_name: str
         :param copy_id: The copy identifier provided in the x-ms-copy-id header of the original Copy
          File operation.
         :type copy_id: str
@@ -1745,9 +1568,6 @@ class FileOperations:
         url = self.abort_copy.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'shareName': self._serialize.url("share_name", share_name, 'str'),
-            'directory': self._serialize.url("directory", directory, 'str'),
-            'fileName': self._serialize.url("file_name", file_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1787,9 +1607,6 @@ class FileOperations:
 
     async def list_handles(
         self,
-        share_name: str,
-        directory: str,
-        file_name: str,
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
         timeout: Optional[int] = None,
@@ -1798,12 +1615,6 @@ class FileOperations:
     ) -> "_models.ListHandlesResponse":
         """Lists handles for file.
 
-        :param share_name: The name of the target share.
-        :type share_name: str
-        :param directory: The path of the target directory.
-        :type directory: str
-        :param file_name: The path of the target file.
-        :type file_name: str
         :param marker: A string value that identifies the portion of the list to be returned with the
          next list operation. The operation returns a marker value within the response body if the list
          returned was not complete. The marker value may then be used in a subsequent call to request
@@ -1838,9 +1649,6 @@ class FileOperations:
         url = self.list_handles.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'shareName': self._serialize.url("share_name", share_name, 'str'),
-            'directory': self._serialize.url("directory", directory, 'str'),
-            'fileName': self._serialize.url("file_name", file_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1885,9 +1693,6 @@ class FileOperations:
 
     async def force_close_handles(
         self,
-        share_name: str,
-        directory: str,
-        file_name: str,
         handle_id: str,
         timeout: Optional[int] = None,
         marker: Optional[str] = None,
@@ -1896,12 +1701,6 @@ class FileOperations:
     ) -> None:
         """Closes all handles open for given file.
 
-        :param share_name: The name of the target share.
-        :type share_name: str
-        :param directory: The path of the target directory.
-        :type directory: str
-        :param file_name: The path of the target file.
-        :type file_name: str
         :param handle_id: Specifies handle ID opened on the file or directory to be closed. Asterisk
          (‘*’) is a wildcard that specifies all handles.
         :type handle_id: str
@@ -1935,9 +1734,6 @@ class FileOperations:
         url = self.force_close_handles.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'shareName': self._serialize.url("share_name", share_name, 'str'),
-            'directory': self._serialize.url("directory", directory, 'str'),
-            'fileName': self._serialize.url("file_name", file_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 

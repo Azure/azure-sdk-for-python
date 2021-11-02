@@ -84,7 +84,7 @@ directive:
 ```
 
 ### Don't include share name, directory, or file name in path - we have direct URIs.
-```
+``` yaml
 directive:
 - from: swagger-document
   where: $["x-ms-paths"]
