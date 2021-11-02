@@ -1,6 +1,16 @@
 # Release History
 
-## 4.5.0b4 (Unreleased)
+## 4.5.0b5 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 4.5.0b4 (2021-10-07)
 
 ### Features Added
 - Added `KeyClient.get_cryptography_client`, which provides a simple way to create a
@@ -10,10 +20,6 @@
   ([#19840](https://github.com/Azure/azure-sdk-for-python/issues/19840))
   - Added `KeyClient.rotate_key` to rotate a key on-demand
   - Added `KeyClient.update_key_rotation_policy` to update a key's automated rotation policy
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 - `CryptographyClient` no longer requires a key version when providing a key ID to its constructor

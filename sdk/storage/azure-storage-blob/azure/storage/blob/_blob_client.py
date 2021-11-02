@@ -8,8 +8,8 @@ from functools import partial
 from io import BytesIO
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
-    TYPE_CHECKING
-)
+    TYPE_CHECKING,
+    TypeVar, Type)
 
 try:
     from urllib.parse import urlparse, quote, unquote
@@ -74,6 +74,8 @@ _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
     'The require_encryption flag is set, but encryption is not supported'
     ' for this method.')
 
+ClassType = TypeVar("ClassType")
+
 
 class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-methods
     """A client to interact with a specific blob, although that blob may not yet exist.
@@ -101,8 +103,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
     :keyword str api_version:
-        The Storage API version to use for requests. Default value is '2019-07-07'.
-        Setting to an older version may result in reduced feature compatibility.
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
         .. versionadded:: 12.2.0
 
@@ -202,7 +204,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @classmethod
     def from_blob_url(cls, blob_url, credential=None, snapshot=None, **kwargs):
-        # type: (str, Optional[Any], Optional[Union[str, Dict[str, Any]]], Any) -> BlobClient
+        # type: (Type[ClassType], str, Optional[Any], Optional[Union[str, Dict[str, Any]]], Any) -> ClassType
         """Create BlobClient from a blob url. This doesn't support customized blob url with '/' in blob name.
 
         :param str blob_url:
@@ -272,13 +274,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
+            cls,  # type: Type[ClassType]
+            conn_str,  # type: str
             container_name,  # type: str
             blob_name,  # type: str
             snapshot=None,  # type: Optional[str]
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):  # type: (...) -> BlobClient
+        ):  # type: (...) -> ClassType
         """Create BlobClient from a Connection String.
 
         :param str conn_str:

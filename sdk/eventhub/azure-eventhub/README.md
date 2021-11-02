@@ -14,6 +14,11 @@ The Azure Event Hubs client library allows for publishing and consuming of Azure
 - Receive events from one or more publishers, transform them to better meet the needs of your ecosystem, then publish the transformed events to a new stream for consumers to observe.
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/) | [Package (PyPi)](https://pypi.org/project/azure-eventhub/) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/latest/azure.eventhub.html) | [Product documentation](https://docs.microsoft.com/azure/event-hubs/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples)
+
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 ## Getting started
 
 ### Prerequisites

@@ -14,7 +14,7 @@ from msrest import Deserializer, Serializer
 
 from . import models
 from ._configuration import QuestionAnsweringClientConfiguration
-from .operations import QuestionAnsweringClientOperationsMixin
+from ._operations import QuestionAnsweringClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -25,10 +25,10 @@ if TYPE_CHECKING:
 
 
 class QuestionAnsweringClient(QuestionAnsweringClientOperationsMixin):
-    """The language service API is a suite of natural language processing (NLP) skills built with best-in-class Microsoft machine learning algorithms.  The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction, language detection and question answering. Further documentation can be found in :code:`<a href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
+    """The language service API is a suite of natural language processing (NLP) skills built with best-in-class Microsoft machine learning algorithms.  The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction, language detection and question answering. Further documentation can be found in https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
-     https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
+     https://<resource-name>.api.cognitiveservices.azure.com).
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.AzureKeyCredential

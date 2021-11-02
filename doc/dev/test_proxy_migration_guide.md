@@ -28,25 +28,25 @@ class TestExample(AzureTestCase):
 ### New test structure
 
 To use the proxy, test classes should inherit from AzureRecordedTestCase and recorded test methods should use a
-RecordedByProxy decorator:
+`recorded_by_proxy` decorator:
 
 ```py
-from devtools_testutils import AzureRecordedTestCase, RecordedByProxy
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 class TestExample(AzureRecordedTestCase):
 
-    @RecordedByProxy
+    @recorded_by_proxy
     def test_example(self):
         ...
 
     @ExamplePreparer()
-    @RecordedByProxy
+    @recorded_by_proxy
     def test_example_with_preparer(self):
         ...
 ```
 
-For async tests, import the RecordedByProxyAsync decorator from `devtools_testutils.aio` and use it in the same
-way as RecordedByProxy.
+For async tests, import the `recorded_by_proxy_async` decorator from `devtools_testutils.aio` and use it in the same
+way as `recorded_by_proxy`.
 
 > **Note:** since AzureRecordedTestCase doesn't inherit from `unittest.TestCase`, test class names need to start
 > with "Test" in order to be properly collected by pytest by default. For more information, please refer to
@@ -95,30 +95,82 @@ do.
 
 Since the test proxy doesn't use [`vcrpy`][vcrpy], tests don't use a scrubber to sanitize values in recordings.
 Instead, sanitizers (as well as matchers and transforms) can be registered on the proxy as detailed in
-[this][sanitizers] section of the proxy documentation. At the time of writing, sanitizers can be registered via the
-`add_sanitizer` method in `devtools_testutils`.
+[this][sanitizers] section of the proxy documentation. Sanitizers can be registered via `add_*_sanitizer` methods in
+`devtools_testutils`. For example, the general-use method for sanitizing recording bodies, headers, and URIs is
+`add_general_regex_sanitizer`. Other sanitizers are available for more specific scenarios and can be found at
+[devtools_testutils/sanitizers.py][py_sanitizers].
 
 Sanitizers, matchers, and transforms remain registered until the proxy container is stopped, so for any sanitizers that
 are shared by different tests, using a session fixture declared in a `conftest.py` file is recommended. Please refer to
 [pytest's scoped fixture documentation][pytest_fixtures] for more details.
 
-For example, to sanitize URIs in recordings, you can set up a URI sanitizer for all tests in the pytest session by
-adding something like the following in the package's `conftest.py` file:
+As a simple example, to emulate the effect registering a name pair with a `vcrpy` scrubber, you can provide the exact
+value you want to sanitize from recordings as the `regex` in the general regex sanitizer. To replace all instances of
+the string "my-key-vault" with "fake-vault" in recordings, you could add something like the following in the package's
+`conftest.py` file:
 
 ```python
-from devtools_testutils import add_sanitizer
+from devtools_testutils import add_general_regex_sanitizer
 
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
 @pytest.fixture(scope="session", autouse=True)
-def sanitize_uris():
-    add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")
+def add_sanitizers():
+    add_general_regex_sanitizer(regex="my-key-vault", value="fake-vault")
 ```
 
-`add_sanitizer` accepts a sanitizer, matcher, or transform type from the ProxyRecordingSanitizer enum as a required
-parameter. Keyword-only arguments can be provided to customize the sanitizer; for example, in the snippet above, any
-request URIs that match the default URI regular expression will have their domain name replaced with "fakeendpoint". A
-request made to `https://tableaccount.table.core.windows.net` will be recorded as being made to
-`https://fakeendpoint.table.core.windows.net`.
+For a more advanced scenario, where we want to sanitize the account names of all storage endpoints in recordings, we
+could instead call
+
+```python
+add_general_regex_sanitizer(
+    regex="(?<=\\/\\/)[a-z]+(?=(?:|-secondary)\\.(?:table|blob|queue)\\.core\\.windows\\.net)",
+    value="fakeendpoint",
+)
+```
+
+`add_general_regex_sanitizer` accepts a regex, replacement value, and capture group as keyword-only arguments. In the
+snippet above, any storage endpoint URIs that match the specified URI regex will have their account name replaced with
+"fakeendpoint". A request made to `https://tableaccount-secondary.table.core.windows.net` will be recorded as being
+made to `https://fakeendpoint-secondary.table.core.windows.net`, and URIs will also be sanitized in bodies and headers.
+
+For more details about sanitizers and their options, please refer to [devtools_testutils/sanitizers.py][py_sanitizers].
+
+### Record test variables
+
+To run recorded tests successfully when there's an element of non-secret randomness to them, the test proxy provides a
+[`variables` API](https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy#storing-variables).
+This makes it possible for a test to record the values of variables that were used during recording and use the same
+values in playback mode without a sanitizer.
+
+For example, imagine that a test uses a randomized `table_name` variable when creating resources. The same random value
+for `table_name` can be used in playback mode by using this `variables` API.
+
+There are two requirements for a test to use recorded variables. First, the test method should accept `**kwargs` and/or
+a `variables` parameter. Second, the test method should `return` a dictionary with any test variables that it wants to
+record. This dictionary will be stored in the recording when the test is run live, and will be passed to the test as a
+`variables` keyword argument when the test is run in playback.
+
+Below is a code example of how a test method could use recorded variables:
+
+```python
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+
+class TestExample(AzureRecordedTestCase):
+
+    @recorded_by_proxy
+    def test_example(self, variables):
+        # in live mode, variables is an empty dictionary
+        # in playback mode, the value of variables is {"table_name": "random-value"}
+        if self.is_live:
+            table_name = "random-value"
+            variables = {"table_name": table_name}
+        
+        # use variables["table_name"] when using the table name throughout the test
+        ...
+
+        # return the variables at the end of the test
+        return variables
+```
 
 ## Implementation details
 
@@ -132,7 +184,7 @@ For example, if an operation would typically make a GET request to
 `https://localhost:5001/Tables` instead. The original endpoint should be stored in an `x-recording-upstream-base-uri` --
 the proxy will send the original request and record the result.
 
-The RecordedByProxy and RecordedByProxyAsync decorators patch test requests to do this for you.
+The `recorded_by_proxy` and `recorded_by_proxy_async` decorators patch test requests to do this for you.
 
 ### How does the test proxy know when and what to record or play back?
 
@@ -164,13 +216,14 @@ Running tests in playback follows the same pattern, except that requests will be
 `/playback/stop` instead. A header, `x-recording-mode`, should be set to `record` for all requests when recording and
 `playback` when playing recordings back. More details can be found [here][detailed_docs].
 
-The RecordedByProxy and RecordedByProxyAsync decorators send the appropriate requests at the start and end of each test
+The `recorded_by_proxy` and `recorded_by_proxy_async` decorators send the appropriate requests at the start and end of each test
 case.
 
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
 [docker_start_proxy]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/testproxy/docker-start-proxy.ps1
 [general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/README.md
 [proxy_cert_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/trusting-cert-per-language.md
+[py_sanitizers]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/sanitizers.py
 [pytest_collection]: https://docs.pytest.org/latest/goodpractices.html#test-discovery
 [pytest_fixtures]: https://docs.pytest.org/latest/fixture.html#scope-sharing-fixtures-across-classes-modules-packages-or-session
 [sanitizers]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md#session-and-test-level-transforms-sanitiziers-and-matchers

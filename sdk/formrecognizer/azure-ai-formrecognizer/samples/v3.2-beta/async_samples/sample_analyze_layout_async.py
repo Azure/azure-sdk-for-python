@@ -45,7 +45,7 @@ async def analyze_layout_async():
             "./sample_forms/forms/form_selection_mark.png",
         )
     )
-    # [START analyze_layout_async]
+
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 
@@ -133,8 +133,6 @@ async def analyze_layout_async():
                 )
 
     print("----------------------------------------")
-
-    # [END analyze_layout_async]
 
 
 async def main():

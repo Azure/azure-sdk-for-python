@@ -49,28 +49,22 @@ class EdgeModulesOperations(object):
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        filter=None,  # type: Optional[str]
         top=None,  # type: Optional[int]
-        orderby=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.EdgeModuleEntityCollection"]
-        """List edge module resources.
+        """List all existing edge module resources.
 
-        List all of the existing edge module resources for a given Video Analyzer account.
+        List all existing edge module resources, along with their JSON representations.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param account_name: The Azure Video Analyzer account name.
         :type account_name: str
-        :param filter: Restricts the set of items returned.
-        :type filter: str
         :param top: Specifies a non-negative integer n that limits the number of items returned from a
          collection. The service returns the number of available items up to but not greater than the
          specified value n.
         :type top: int
-        :param orderby: Specifies the key by which the result collection should be ordered.
-        :type orderby: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either EdgeModuleEntityCollection or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~video_analyzer.models.EdgeModuleEntityCollection]
@@ -81,7 +75,7 @@ class EdgeModulesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01-preview"
+        api_version = "2021-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -94,19 +88,15 @@ class EdgeModulesOperations(object):
                 url = self.list.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'accountName': self._serialize.url("account_name", account_name, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
-                if orderby is not None:
-                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -150,13 +140,13 @@ class EdgeModulesOperations(object):
         # type: (...) -> "_models.EdgeModuleEntity"
         """Retrieves an existing edge module resource.
 
-        Retrieves a specific existing edge module resource in the given Video Analyzer account.
+        Retrieves an existing edge module resource with the given name.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param account_name: The Azure Video Analyzer account name.
         :type account_name: str
-        :param edge_module_name: The name of the edge module to retrieve.
+        :param edge_module_name: The Edge Module name.
         :type edge_module_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EdgeModuleEntity, or the result of cls(response)
@@ -168,14 +158,14 @@ class EdgeModulesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01-preview"
+        api_version = "2021-11-01-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
             'edgeModuleName': self._serialize.url("edge_module_name", edge_module_name, 'str'),
         }
@@ -229,7 +219,7 @@ class EdgeModulesOperations(object):
         :type resource_group_name: str
         :param account_name: The Azure Video Analyzer account name.
         :type account_name: str
-        :param edge_module_name: The name of the edge module to create or update.
+        :param edge_module_name: The Edge Module name.
         :type edge_module_name: str
         :param parameters: The request parameters.
         :type parameters: ~video_analyzer.models.EdgeModuleEntity
@@ -243,7 +233,7 @@ class EdgeModulesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01-preview"
+        api_version = "2021-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -251,7 +241,7 @@ class EdgeModulesOperations(object):
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
             'edgeModuleName': self._serialize.url("edge_module_name", edge_module_name, 'str'),
         }
@@ -308,7 +298,7 @@ class EdgeModulesOperations(object):
         :type resource_group_name: str
         :param account_name: The Azure Video Analyzer account name.
         :type account_name: str
-        :param edge_module_name: The name of the edge module to be deleted.
+        :param edge_module_name: The Edge Module name.
         :type edge_module_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -320,14 +310,14 @@ class EdgeModulesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01-preview"
+        api_version = "2021-11-01-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
             'edgeModuleName': self._serialize.url("edge_module_name", edge_module_name, 'str'),
         }
@@ -378,7 +368,7 @@ class EdgeModulesOperations(object):
         :type resource_group_name: str
         :param account_name: The Azure Video Analyzer account name.
         :type account_name: str
-        :param edge_module_name: The name of the edge module used to create a new provisioning token.
+        :param edge_module_name: The Edge Module name.
         :type edge_module_name: str
         :param parameters: The request parameters.
         :type parameters: ~video_analyzer.models.ListProvisioningTokenInput
@@ -392,7 +382,7 @@ class EdgeModulesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01-preview"
+        api_version = "2021-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -400,7 +390,7 @@ class EdgeModulesOperations(object):
         url = self.list_provisioning_token.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
             'edgeModuleName': self._serialize.url("edge_module_name", edge_module_name, 'str'),
         }

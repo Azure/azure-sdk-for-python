@@ -14,16 +14,16 @@ interactions:
     uri: https://servicebustestsbname.servicebus.windows.net/$namespaceinfo?api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestappwyrpk4k.servicebus.windows.net/$namespaceinfo?api-version=2021-05</id><title
-        type="text">servicebustestappwyrpk4k</title><updated>2021-09-28T19:01:40Z</updated><author><name>servicebustestappwyrpk4k</name></author><link
-        rel="self" href="https://servicebustestappwyrpk4k.servicebus.windows.net/$namespaceinfo?api-version=2021-05"></link><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestaweyco6xnr.servicebus.windows.net/$namespaceinfo?api-version=2021-05</id><title
+        type="text">servicebustestaweyco6xnr</title><updated>2021-10-21T05:18:27Z</updated><author><name>servicebustestaweyco6xnr</name></author><link
+        rel="self" href="https://servicebustestaweyco6xnr.servicebus.windows.net/$namespaceinfo?api-version=2021-05"></link><content
         type="application/xml"><NamespaceInfo xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><CreatedTime>2021-09-28T19:00:40.38Z</CreatedTime><MessagingSKU>Standard</MessagingSKU><ModifiedTime>2021-09-28T19:00:40.38Z</ModifiedTime><Name>servicebustestappwyrpk4k</Name><NamespaceType>Messaging</NamespaceType></NamespaceInfo></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><CreatedTime>2021-10-21T05:17:26.17Z</CreatedTime><MessagingSKU>Standard</MessagingSKU><ModifiedTime>2021-10-21T05:17:26.17Z</ModifiedTime><Name>servicebustestaweyco6xnr</Name><NamespaceType>Messaging</NamespaceType></NamespaceInfo></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Tue, 28 Sep 2021 19:01:39 GMT
+      - Thu, 21 Oct 2021 05:18:26 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:

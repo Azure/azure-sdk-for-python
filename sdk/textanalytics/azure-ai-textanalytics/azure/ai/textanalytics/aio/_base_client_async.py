@@ -35,8 +35,8 @@ class AsyncTextAnalyticsClientBase(object):
             credential=credential,
             api_version=kwargs.pop("api_version", DEFAULT_API_VERSION),
             sdk_moniker=USER_AGENT,
-            authentication_policy=_authentication_policy(credential),
-            custom_hook_policy=TextAnalyticsResponseHookPolicy(**kwargs),
+            authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
+            custom_hook_policy=kwargs.pop("custom_hook_policy", TextAnalyticsResponseHookPolicy(**kwargs)),
             **kwargs
         )
 

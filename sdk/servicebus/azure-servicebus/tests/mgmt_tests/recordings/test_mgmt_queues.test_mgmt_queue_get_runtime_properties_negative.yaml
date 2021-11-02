@@ -16,13 +16,13 @@ interactions:
     body:
       string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Publicly
         Listed Services</title><subtitle type="text">This is the list of publicly-listed
-        services currently available.</subtitle><id>uuid:c4422ea9-78c4-4053-b550-0ef5187077a4;id=6738</id><updated>2021-09-28T19:02:20Z</updated><generator>Service
+        services currently available.</subtitle><id>uuid:b4774077-8c51-4963-afa2-7de390ed4dea;id=26504</id><updated>2021-10-21T05:19:10Z</updated><generator>Service
         Bus 1.1</generator></feed>
     headers:
       content-type:
       - application/atom+xml;type=feed;charset=utf-8
       date:
-      - Tue, 28 Sep 2021 19:02:20 GMT
+      - Thu, 21 Oct 2021 05:19:10 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

@@ -44,8 +44,6 @@ class MetricsQueryClient(object):
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword endpoint: The endpoint to connect to. Defaults to 'https://management.azure.com'.
     :paramtype endpoint: str
-    :keyword audience: URL to use for credential authentication with AAD.
-    :paramtype audience: str
     """
 
     def __init__(self, credential, **kwargs):

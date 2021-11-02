@@ -1,6 +1,21 @@
 # Release History
 
-## 1.0.0b3 (2021-10-05)
+## 1.0.0b4 (Unreleased)
+
+### Features Added
+
+- Async version of `AvroSerializer` has been added under `azure.schemaregistry.serializer.avroserializer.aio`.
+- `SchemaParseError`, `SchemaSerializationError`, and `SchemaDeserializationError` have been introduced under `azure.schemaregistry.serializer.avroserializer.exceptions` and will be raised for corresponding operations.
+  - `SchemaParseError` and `SchemaSerializationError` may be raised for errors when calling `serialize` on `AvroSerializer`.
+  - `SchemaParseError` and `SchemaDeserializationError` may be raised for errors when calling `deserialize` on `AvroSerializer`.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b3 (2021-10-06)
 
 ### Features Added
 

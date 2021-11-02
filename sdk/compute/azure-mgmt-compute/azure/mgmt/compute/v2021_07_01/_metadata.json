@@ -133,6 +133,9 @@
         "gallery_sharing_profile": "GallerySharingProfileOperations",
         "shared_galleries": "SharedGalleriesOperations",
         "shared_gallery_images": "SharedGalleryImagesOperations",
-        "shared_gallery_image_versions": "SharedGalleryImageVersionsOperations"
+        "shared_gallery_image_versions": "SharedGalleryImageVersionsOperations",
+        "community_galleries": "CommunityGalleriesOperations",
+        "community_gallery_images": "CommunityGalleryImagesOperations",
+        "community_gallery_image_versions": "CommunityGalleryImageVersionsOperations"
     }
 }

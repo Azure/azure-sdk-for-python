@@ -47,7 +47,7 @@ class VirtualHubBgpConnectionsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListVirtualHubBgpConnectionResults"]:
         """Retrieves the details of all VirtualHubBgpConnections.
 
@@ -122,7 +122,7 @@ class VirtualHubBgpConnectionsOperations:
         resource_group_name: str,
         hub_name: str,
         connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.PeerRouteList"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PeerRouteList"]]
         error_map = {
@@ -173,7 +173,7 @@ class VirtualHubBgpConnectionsOperations:
         resource_group_name: str,
         hub_name: str,
         connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.PeerRouteList"]:
         """Retrieves a list of routes the virtual hub bgp connection has learned.
 
@@ -185,8 +185,8 @@ class VirtualHubBgpConnectionsOperations:
         :type connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PeerRouteList or the result of cls(response)
@@ -245,7 +245,7 @@ class VirtualHubBgpConnectionsOperations:
         resource_group_name: str,
         hub_name: str,
         connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.PeerRouteList"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PeerRouteList"]]
         error_map = {
@@ -296,7 +296,7 @@ class VirtualHubBgpConnectionsOperations:
         resource_group_name: str,
         hub_name: str,
         connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.PeerRouteList"]:
         """Retrieves a list of routes the virtual hub bgp connection is advertising to the specified peer.
 
@@ -308,8 +308,8 @@ class VirtualHubBgpConnectionsOperations:
         :type connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PeerRouteList or the result of cls(response)

@@ -85,7 +85,7 @@ class CommunicationRelayClient(object):
     @distributed_trace
     def get_relay_configuration(
             self,
-            user, # type: CommunicationUserIdentifier
+            user=None, # type: CommunicationUserIdentifier
             **kwargs # type: Any
     ):
         # type: (Any) -> CommunicationRelayConfiguration
@@ -94,6 +94,9 @@ class CommunicationRelayClient(object):
         :return: CommunicationRelayConfiguration
         :rtype: ~azure.communication.networktraversal.CommunicationRelayConfiguration
         """
+        if user is None:
+            return self._network_traversal_service_client.communication_network_traversal.issue_relay_configuration(
+                None, **kwargs)
         return self._network_traversal_service_client.communication_network_traversal.issue_relay_configuration(
             user.properties['id'],
             **kwargs)
