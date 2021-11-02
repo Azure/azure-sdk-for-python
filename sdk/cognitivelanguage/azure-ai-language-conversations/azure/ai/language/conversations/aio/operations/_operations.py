@@ -26,7 +26,7 @@ class ConversationAnalysisClientOperationsMixin:
     @distributed_trace_async
     async def analyze_conversations(
         self,
-        analyze_conversation_options: "_models.AnalyzeConversationOptions",
+        conversation_analysis_options: "_models.ConversationAnalysisOptions",
         *,
         project_name: str,
         deployment_name: str,
@@ -34,9 +34,9 @@ class ConversationAnalysisClientOperationsMixin:
     ) -> "_models.AnalyzeConversationResult":
         """Analyzes the input conversation utterance.
 
-        :param analyze_conversation_options: Post body of the request.
-        :type analyze_conversation_options:
-         ~azure.ai.language.conversations.models.AnalyzeConversationOptions
+        :param conversation_analysis_options: Post body of the request.
+        :type conversation_analysis_options:
+         ~azure.ai.language.conversations.models.ConversationAnalysisOptions
         :keyword project_name: The name of the project to use.
         :paramtype project_name: str
         :keyword deployment_name: The name of the specific deployment of the project to use.
@@ -53,7 +53,7 @@ class ConversationAnalysisClientOperationsMixin:
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(analyze_conversation_options, 'AnalyzeConversationOptions')
+        json = self._serialize.body(conversation_analysis_options, 'ConversationAnalysisOptions')
 
         request = build_analyze_conversations_request(
             content_type=content_type,
