@@ -39,7 +39,7 @@ steps:
               Write-Host "Repository $($repository.Name) is being initialized."
 
               Write-Host "git clone --no-checkout --filter=tree:0 https://github.com/$($repository.Name) ."
-              git clone --no-checkout --filter=tree:0 https:git://github.com/$($repository.Name) .
+              git clone --no-checkout --filter=tree:0 https://github.com/$($repository.Name) .
 
               Write-Host "git sparse-checkout init"
               git sparse-checkout init
