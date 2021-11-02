@@ -10,9 +10,16 @@
 
 ### Bugs Fixed
 
+### Other Changes
+
+## 1.19.1 (2021-11-01)
+
+### Bugs Fixed
+
 - respect text encoding specified in argument (thanks to @ryohji for the contribution)  #20796
 - Fix "coroutine x.read() was never awaited" warning from `ContentDecodePolicy`  #21318
 - fix type check for `data` input to `azure.core.rest` for python 2.7 users  #21341
+- use `charset_normalizer` if `chardet` is not installed to migrate aiohttp 3.8.0 changes.
 
 ### Other Changes
 
