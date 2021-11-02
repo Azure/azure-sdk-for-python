@@ -361,8 +361,8 @@ class HttpResponse(_HttpResponseBase):
         """
 
     @abc.abstractmethod
-    def iter_raw(self):
-        # type: () -> Iterator[bytes]
+    def iter_raw(self, **kwargs):
+        # type: (Any) -> Iterator[bytes]
         """Iterates over the response's bytes. Will not decompress in the process.
 
         :return: An iterator of bytes from the response
@@ -370,8 +370,8 @@ class HttpResponse(_HttpResponseBase):
         """
 
     @abc.abstractmethod
-    def iter_bytes(self):
-        # type: () -> Iterator[bytes]
+    def iter_bytes(self, **kwargs):
+        # type: (Any) -> Iterator[bytes]
         """Iterates over the response's bytes. Will decompress in the process.
 
         :return: An iterator of bytes from the response
