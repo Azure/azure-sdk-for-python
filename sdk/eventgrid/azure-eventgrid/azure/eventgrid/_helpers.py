@@ -143,21 +143,17 @@ def _cloud_event_to_generated(cloud_event, **kwargs):
 
 def _from_cncf_events(event):
     """This takes in a CNCF cloudevent and returns a dictionary.
-
-    :raises: AttributeError when a dictionary is passed/ when data attribute is not
-     present in the event.
+    If cloud events library is not installed, the event is returned back.
     """
     try:
         from cloudevents.http import to_json
         return json.loads(to_json(event))
-    except AttributeError:
+    except (AttributeError, ImportError):
         # means this is not a CNCF event
         return event
-    except ImportError:
-        # this means it was not meant to be a cloud event
-        return None
     except: # pylint: disable=bare-except
-        raise ValueError('Failed to deserialize the event.')
+        raise ValueError('Failed to serialize the event. Please ensure your' +
+        'CloudEvents is correctly formatted (https://pypi.org/project/cloudevents/)')
 
 
 def _build_request(endpoint, content_type, events):
