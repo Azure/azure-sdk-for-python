@@ -14,7 +14,8 @@ When constructing an SDK, a developer may consume the pipeline like so:
 
 ```python
 from azure.core.pipeline import Pipeline
-from azure.core.transport import RequestsTransport, HttpRequest
+from azure.core.rest import HttpRequest
+from azure.core.transport import RequestsTransport
 from azure.core.pipeline.policies import (
     UserAgentPolicy,
     HeadersPolicy,
@@ -193,9 +194,9 @@ proxy_policy.proxies = {'https': 'http://user:password@10.10.1.10:1180/'}
 
 ### HttpRequest and HttpResponse
 
-The HttpRequest and HttpResponse objects represent a generic concept of HTTP request and response constructs and are in no way tied to a particular transport or HTTP library.
+The `HttpRequest` and `HttpResponse` objects represent a generic concept of HTTP request and response constructs and are in no way tied to a particular transport or HTTP library.
 
-The HttpRequest has the following API. It does not vary between transports:
+The `HttpRequest` has the following API. It does not vary between transports:
 
 ```python
 class HttpRequest:
@@ -226,57 +227,231 @@ class HttpRequest:
         """
 ```
 
-The HttpResponse object on the other hand will generally have a transport-specific derivative.
-This is to accomodate how the data is extracted for the object returned by the HTTP library.
-There is also an async flavor: AsyncHttpResponse. This is to allow for the asynchronous streaming of
-data from the response.
-For example:
+`HttpResponse` on the other hand is an abstract base class that will have to be implemented
+for a transport-specific derivative to accommodate how data is extracted from the object
+returned by the HTTP library.
 
-```python
-from azure.core.pipeline.transport import (
-    RequestsTransportResponse,  # HttpResponse
-    AioHttpTransportResponse, # AsyncHttpResponse
-    TrioRequestsTransportResponse,  # AsyncHttpResponse
-    AsyncioRequestsTransportResponse,  # AsyncHttpResponse
-)
-```
-
-The API for each of these response types is identical, so the consumer of the Response need not know about these
+The API for each of these response types is identical, so the consumer of the `HttpResponse` need not know about these
 particular types.
 
-The HttpResponse has the following API. It does not vary between transports:
+The `HttpResponse` has the following API. It does not vary between transports. This is an abstract base class
+that you will have to implement for your specific transport.
 
 ```python
-class HttpResponse(object):
+class HttpResponse:
 
-    def __init__(self, request, internal_response):
-        self.request = request
-        self.internal_response = internal_response  # The object returned by the HTTP library
-        self.status_code = None
-        self.headers = CaseInsensitiveDict()
-        self.reason = None
-        self.content_type = None
+    @property
+    @abc.abstractmethod
+    def request(self) -> HttpRequest:
+        """The request that resulted in this response.
 
-    def body(self):
-        """Return the whole body as bytes in memory."""
+        :rtype: ~azure.core.rest.HttpRequest
+        """
+        ...
 
-    def text(self, encoding=None):
-        """Return the whole body as a string."""
+    @property
+    @abc.abstractmethod
+    def status_code(self) -> int:
+        """The status code of this response.
 
-    def stream_download(self, pipeline, **kwargs):
-        """Generator for streaming request body data.
-        Should be implemented by sub-classes if streaming download
-        is supported.
-        For the AsyncHttpResponse object this function will return
-        and asynchronous generator.
+        :rtype: int
+        """
+        ...
+
+    @property
+    @abc.abstractmethod
+    def headers(self) -> MutableMapping[str, str]:
+        """The response headers. Must be case-insensitive.
+
+        :rtype: MutableMapping[str, str]
+        """
+        ...
+
+    @property
+    @abc.abstractmethod
+    def reason(self) -> str:
+        """The reason phrase for this response.
+
+        :rtype: str
+        """
+        ...
+
+    @property
+    @abc.abstractmethod
+    def content_type(self) -> Optional[str]:
+        """The content type of the response.
+
+        :rtype: str
+        """
+        ...
+
+    @property
+    @abc.abstractmethod
+    def is_closed(self) -> bool:
+        """Whether the network connection has been closed yet.
+
+        :rtype: bool
+        """
+        ...
+
+    @property
+    @abc.abstractmethod
+    def is_stream_consumed(self) -> bool:
+        """Whether the stream has been consumed.
+
+        :rtype: bool
+        """
+        ...
+
+    @property
+    @abc.abstractmethod
+    def encoding(self) -> Optional[str]:
+        """Returns the response encoding.
+
+        :return: The response encoding. We either return the encoding set by the user,
+         or try extracting the encoding from the response's content type. If all fails,
+         we return `None`.
+        :rtype: optional[str]
+        """
+        ...
+
+    @encoding.setter
+    def encoding(self, value: Optional[str]) -> None:
+        """Sets the response encoding.
+
+        :rtype: None
         """
 
-    def parts(self):
-        """An iterator of parts if content-type is multipart/mixed.
-        For the AsyncHttpResponse object this function will return
-        and asynchronous iterator.
+    @property
+    @abc.abstractmethod
+    def url(self) -> str:
+        """The URL that resulted in this response.
+
+        :rtype: str
+        """
+        ...
+
+    @property
+    @abc.abstractmethod
+    def content(self) -> bytes:
+        """Return the response's content in bytes.
+
+        :rtype: bytes
+        """
+        ...
+
+    @abc.abstractmethod
+    def text(self, encoding: Optional[str] = None) -> str:
+        """Returns the response body as a string.
+
+        :param optional[str] encoding: The encoding you want to decode the text with. Can
+         also be set independently through our encoding property
+        :return: The response's content decoded as a string.
+        :rtype: str
+        """
+        ...
+
+    @abc.abstractmethod
+    def json(self) -> Any:
+        """Returns the whole body as a json object.
+
+        :return: The JSON deserialized response body
+        :rtype: any
+        :raises json.decoder.JSONDecodeError or ValueError (in python 2.7) if object is not JSON decodable:
+        """
+        ...
+
+    @abc.abstractmethod
+    def raise_for_status(self) -> None:
+        """Raises an HttpResponseError if the response has an error status code.
+
+        If response is good, does nothing.
+
+        :rtype: None
+        :raises ~azure.core.HttpResponseError if the object has an error status code.:
+        """
+        ...
+
+    @abc.abstractmethod
+    def __enter__(self) -> "HttpResponse":
+        ...
+
+    @abc.abstractmethod
+    def __exit__(self, *args) -> None:
+        ...
+
+    @abc.abstractmethod
+    def close(self) -> None:
+        ...
+
+    @abc.abstractmethod
+    def read(self) -> bytes:
+        """Read the response's bytes.
+
+        :return: The read in bytes
+        :rtype: bytes
+        """
+        ...
+
+    @abc.abstractmethod
+    def iter_raw(self, **kwargs: Any) -> Iterator[bytes]:
+        """Iterates over the response's bytes. Will not decompress in the process.
+
+        :return: An iterator of bytes from the response
+        :rtype: Iterator[str]
+        """
+        ...
+
+    @abc.abstractmethod
+    def iter_bytes(self, **kwargs: Any) -> Iterator[bytes]:
+        """Iterates over the response's bytes. Will decompress in the process.
+
+        :return: An iterator of bytes from the response
+        :rtype: Iterator[str]
+        """
+        ...
+
+```
+
+Async calls to networks will return an `AsyncHttpResponse` instead. It shares most of its properties with an `HttpResponse` with the following exceptions:
+
+```python
+class AsyncHttpResponse:
+
+    ...
+
+    @abc.abstractmethod
+    async def read(self) -> bytes:
+        """Read the response's bytes into memory.
+
+        :return: The response's bytes
+        :rtype: bytes
+        """
+        ...
+
+    @abc.abstractmethod
+    async def iter_raw(self, **kwargs: Any) -> AsyncIterator[bytes]:
+        """Asynchronously iterates over the response's bytes. Will not decompress in the process.
+
+        :return: An async iterator of bytes from the response
+        :rtype: AsyncIterator[bytes]
         """
 
+    @abc.abstractmethod
+    async def iter_bytes(self, **kwargs: Any) -> AsyncIterator[bytes]:
+        """Asynchronously iterates over the response's bytes. Will decompress in the process.
+
+        :return: An async iterator of bytes from the response
+        :rtype: AsyncIterator[bytes]
+        """
+
+    @abc.abstractmethod
+    async def close(self) -> None:
+        ...
+
+    @abc.abstractmethod
+    async def __aexit__(self, *args) -> None:
+        ...
 ```
 
 ### PipelineRequest and PipelineResponse
@@ -451,7 +626,7 @@ A pipeline can either be synchronous or asynchronous.
 The pipeline does not expose the policy chain, so individual policies cannot/should not be further
 configured once the pipeline has been instantiated.
 
-The pipeline has a single exposed operation: `run(request)` which will send a new HttpRequest object down
+The pipeline has a single exposed operation: `run(request)` which will send a new `HttpRequest` object down
 the pipeline. This operation returns a `PipelineResponse` object.
 
 ```python
