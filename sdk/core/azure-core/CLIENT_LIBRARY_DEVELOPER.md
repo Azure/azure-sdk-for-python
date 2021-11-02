@@ -331,11 +331,7 @@ def on_response(self, request, response):
     """Is executed after the request comes back from the policy."""
 
 def on_exception(self, request):
-    """Is executed if an exception is raised while executing this policy.
-
-    Return True if the exception has been handled and should not
-    be forwarded to the caller.
-    """
+    """Is executed if an exception is raised while executing this policy."""
 ```
 
 SansIOHTTPPolicy methods can be declared as coroutines, but then they can only be used with a AsyncPipeline.

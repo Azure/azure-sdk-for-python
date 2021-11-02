@@ -1,6 +1,6 @@
 # Release History
 
-## 5.2.0b2 (Unreleased)
+## 5.2.0b2 (2021-11-02)
 
 This version of the SDK defaults to the latest supported API version, which currently is `v3.2-preview.2`.
 
@@ -10,13 +10,12 @@ This version of the SDK defaults to the latest supported API version, which curr
 - Added support for Custom Multi Classification through the `begin_analyze_actions` API with the `MultiCategoryClassifyAction` and `MultiCategoryClassifyActionResult` types.
 - Multiple of the same action type is now supported with `begin_analyze_actions`.
 
-### Breaking Changes
-
 ### Bugs Fixed
 - Restarting a long-running operation from a saved state is now supported for the `begin_analyze_actions` and `begin_recognize_healthcare_entities` methods.
+- In the event of an action level error, available partial results are now returned for any successful actions in `begin_analyze_actions`.
 
 ### Other Changes
-- Package requires [azure-core](https://pypi.org/project/azure-core/) version 1.16.0 or greater
+- Package requires [azure-core](https://pypi.org/project/azure-core/) version 1.19.1 or greater
 
 ## 5.2.0b1 (2021-08-09)
 

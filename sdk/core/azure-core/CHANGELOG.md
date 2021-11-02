@@ -9,14 +9,26 @@ requests and sends them through our pipelines.
 - GA `azure.core.rest`. `azure.core.rest` is our new public simple HTTP library in `azure.core` that users will use to create requests, and consume responses.
 - GA errors `StreamConsumedError`, `StreamClosedError`, and `ResponseNotReadError` to `azure.core.exceptions`. These errors
 are thrown if you mishandle streamed responses from the `azure.core.rest` module
+- add kwargs to the methods for `iter_raw` and `iter_bytes`  #21529
 
 ### Breaking Changes
+
+- SansIOHTTPPolicy.on_exception returns None instead of bool.
+
+### Bugs Fixed
+
+- UnboundLocalError when SansIOHTTPPolicy handles an exception    #15222
+
+### Other Changes
+
+## 1.19.1 (2021-11-01)
 
 ### Bugs Fixed
 
 - respect text encoding specified in argument (thanks to @ryohji for the contribution)  #20796
 - Fix "coroutine x.read() was never awaited" warning from `ContentDecodePolicy`  #21318
 - fix type check for `data` input to `azure.core.rest` for python 2.7 users  #21341
+- use `charset_normalizer` if `chardet` is not installed to migrate aiohttp 3.8.0 changes.
 
 ### Other Changes
 

@@ -17,16 +17,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0b2 Python/3.9.5 (macOS-11.5.2-x86_64-i386-64bit)
+      - azsdk-python-ai-language-questionanswering/1.0.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-text?api-version=2021-07-15-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-text?api-version=2021-10-01
   response:
     body:
       string: "{\n  \"answers\": [\n    {\n      \"answer\": \"Power and charging.
         It takes two to four hours to charge the Surface Pro 4 battery fully from
         an empty state. It can take longer if you\u2019re using your Surface for power-intensive
         activities like gaming or video streaming while you\u2019re charging it.\",\n
-        \     \"confidenceScore\": 0.9298818707466125,\n      \"id\": \"1\",\n      \"answerSpan\":
+        \     \"confidenceScore\": 0.9298818111419678,\n      \"id\": \"1\",\n      \"answerSpan\":
         {\n        \"text\": \"two to four hours\",\n        \"confidenceScore\":
         0.98579097,\n        \"offset\": 28,\n        \"length\": 18\n      },\n      \"offset\":
         0,\n      \"length\": 245\n    },\n    {\n      \"answer\": \"It takes two
@@ -38,21 +38,21 @@ interactions:
         8,\n        \"length\": 18\n      },\n      \"offset\": 20,\n      \"length\":
         225\n    },\n    {\n      \"answer\": \"It can take longer if you\u2019re
         using your Surface for power-intensive activities like gaming or video streaming
-        while you\u2019re charging it.\",\n      \"confidenceScore\": 0.05503518134355545,\n
+        while you\u2019re charging it.\",\n      \"confidenceScore\": 0.05503516271710396,\n
         \     \"id\": \"1\",\n      \"answerSpan\": {\n        \"text\": \"longer\",\n
-        \       \"confidenceScore\": 0.624118,\n        \"offset\": 11,\n        \"length\":
+        \       \"confidenceScore\": 0.62411773,\n        \"offset\": 11,\n        \"length\":
         7\n      },\n      \"offset\": 110,\n      \"length\": 135\n    }\n  ]\n}"
     headers:
-      apim-request-id: 5bd3db5f-1a20-4d42-8720-772e5f694ccd
-      content-length: '1478'
+      apim-request-id: 60727ee6-98a6-4af8-aaff-19de3371e467
+      content-length: '1480'
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=2
-      date: Thu, 30 Sep 2021 15:52:36 GMT
+      date: Thu, 28 Oct 2021 17:25:29 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '633'
+      x-envoy-upstream-service-time: '309'
     status:
       code: 200
       message: OK
-    url: https://wuppe.api.cognitive.microsoft.com/language/:query-text?api-version=2021-07-15-preview
+    url: https://wuppe.api.cognitive.microsoft.com/language/:query-text?api-version=2021-10-01
 version: 1

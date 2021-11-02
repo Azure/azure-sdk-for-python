@@ -349,7 +349,7 @@ class HttpResponse(_HttpResponseBase):
         ...
 
     @abc.abstractmethod
-    def iter_raw(self) -> Iterator[bytes]:
+    def iter_raw(self, **kwargs: Any) -> Iterator[bytes]:
         """Iterates over the response's bytes. Will not decompress in the process.
 
         :return: An iterator of bytes from the response
@@ -358,7 +358,7 @@ class HttpResponse(_HttpResponseBase):
         ...
 
     @abc.abstractmethod
-    def iter_bytes(self) -> Iterator[bytes]:
+    def iter_bytes(self, **kwargs: Any) -> Iterator[bytes]:
         """Iterates over the response's bytes. Will decompress in the process.
 
         :return: An iterator of bytes from the response
@@ -399,7 +399,7 @@ class AsyncHttpResponse(_HttpResponseBase):
         ...
 
     @abc.abstractmethod
-    async def iter_raw(self) -> AsyncIterator[bytes]:
+    async def iter_raw(self, **kwargs: Any) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process.
 
         :return: An async iterator of bytes from the response
@@ -410,7 +410,7 @@ class AsyncHttpResponse(_HttpResponseBase):
         yield  # pylint: disable=unreachable
 
     @abc.abstractmethod
-    async def iter_bytes(self) -> AsyncIterator[bytes]:
+    async def iter_bytes(self, **kwargs: Any) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process.
 
         :return: An async iterator of bytes from the response
