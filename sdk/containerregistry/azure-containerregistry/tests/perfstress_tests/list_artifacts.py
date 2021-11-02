@@ -19,9 +19,6 @@ class ListArtifactsTest(PerfStressTest):
         self.async_anon_client = AsyncContainerRegistryClient(endpoint=account_url, credential=None, audience=audience)       
         self.repository = "node"
 
-    async def global_setup(self):
-        await super().global_setup()
-
     async def close(self):
         await self.async_anon_client.close()
         await super().close()

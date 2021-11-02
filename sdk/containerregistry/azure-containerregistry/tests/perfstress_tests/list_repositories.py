@@ -17,9 +17,6 @@ class ListRepositoriesTest(PerfStressTest):
         audience = "https://management.azure.com"
         self.anon_client = ContainerRegistryClient(endpoint=account_url, credential=None, audience=audience)
         self.async_anon_client = AsyncContainerRegistryClient(endpoint=account_url, credential=None, audience=audience)
-        
-    async def global_setup(self):
-        await super().global_setup()
 
     async def close(self):
         await self.async_anon_client.close()
