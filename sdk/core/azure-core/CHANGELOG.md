@@ -1,6 +1,6 @@
 # Release History
 
-## 1.19.2 (Unreleased)
+## 1.20.0 (Unreleased)
 
 ### Features Added
 
@@ -8,11 +8,14 @@
 
 ### Breaking Changes
 
+- SansIOHTTPPolicy.on_exception returns None instead of bool.
+
 ### Bugs Fixed
 
 - The `Content-Length` header in a http response is strictly checked against the actual number of bytes in the body,
   rather than silently truncating data in case the underlying tcp connection is closed prematurely. 
   (thanks to @jochen-ott-by for the contribution)   #20412
+- UnboundLocalError when SansIOHTTPPolicy handles an exception    #15222
 
 ### Other Changes
 
