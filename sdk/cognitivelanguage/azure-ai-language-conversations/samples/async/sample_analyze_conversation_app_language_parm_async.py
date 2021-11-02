@@ -30,7 +30,7 @@ async def sample_analyze_conversation_app_language_parm_async():
     import os
     from azure.core.credentials import AzureKeyCredential
 
-    from azure.ai.language.conversations import ConversationAnalysisClient
+    from azure.ai.language.conversations.aio import ConversationAnalysisClient
     from azure.ai.language.conversations.models import ConversationAnalysisOptions
 
     # get secrets
@@ -48,7 +48,7 @@ async def sample_analyze_conversation_app_language_parm_async():
     # analyze quey
     client = ConversationAnalysisClient(conv_endpoint, AzureKeyCredential(conv_key))
     async with client:
-        result = client.analyze_conversations(
+        result = await client.analyze_conversations(
             input,
             project_name=conv_project,
             deployment_name='production'
