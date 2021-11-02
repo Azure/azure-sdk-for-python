@@ -220,7 +220,11 @@ class HttpRequest:
 
     @property
     def content(self) -> Any:
-        ...
+        """Get's the request's content
+
+        :return: The request's content
+        :rtype: any
+        """
 ```
 
 `HttpResponse` on the other hand is an abstract base class that will have to be implemented
@@ -230,68 +234,128 @@ returned by the HTTP library.
 The API for each of these response types is identical, so the consumer of the `HttpResponse` need not know about these
 particular types.
 
-The `HttpResponse` has the following API. It does not vary between transports, and has the following surface area.
+The `HttpResponse` has the following API. It does not vary between transports, and has the following surface area:
 
 ```python
 class HttpResponse:
 
     @property
     def request(self) -> HttpRequest:
+        """The request that resulted in this response.
+
+        :rtype: ~azure.core.rest.HttpRequest
+        """
         ...
 
     @property
     def status_code(self) -> int:
+        """The status code of this response.
+
+        :rtype: int
+        """
         ...
 
     @property
     def headers(self) -> MutableMapping[str, str]:
+        """The response headers. Must be case-insensitive.
+
+        :rtype: MutableMapping[str, str]
+        """
         ...
 
     @property
     def reason(self) -> str:
+        """The reason phrase for this response.
+
+        :rtype: str
+        """
         ...
 
     @property
     def content_type(self) -> Optional[str]:
+        """The content type of the response.
+
+        :rtype: str
+        """
         ...
 
     @property
     def is_closed(self) -> bool:
+        """Whether the network connection has been closed yet.
+
+        :rtype: bool
+        """
         ...
 
     @property
     def is_stream_consumed(self) -> bool:
+        """Whether the stream has been consumed.
+
+        :rtype: bool
+        """
         ...
 
     @property
     def encoding(self) -> Optional[str]:
+        """Returns the response encoding.
+
+        :return: The response encoding. We either return the encoding set by the user,
+         or try extracting the encoding from the response's content type. If all fails,
+         we return `None`.
+        :rtype: optional[str]
+        """
         ...
 
     @encoding.setter
     def encoding(self, value: Optional[str]) -> None:
-        ...
+        """Sets the response encoding.
+
+        :rtype: None
+        """
 
     @property
     def url(self) -> str:
+        """The URL that resulted in this response.
+
+        :rtype: str
+        """
         ...
 
     @property
     def content(self) -> bytes:
+        """Return the response's content in bytes.
+
+        :rtype: bytes
+        """
         ...
 
     def text(self, encoding: Optional[str] = None) -> str:
+        """Returns the response body as a string.
+
+        :param optional[str] encoding: The encoding you want to decode the text with. Can
+         also be set independently through our encoding property
+        :return: The response's content decoded as a string.
+        :rtype: str
+        """
         ...
 
     def json(self) -> Any:
+        """Returns the whole body as a json object.
+
+        :return: The JSON deserialized response body
+        :rtype: any
+        :raises json.decoder.JSONDecodeError or ValueError (in python 2.7) if object is not JSON decodable:
+        """
         ...
 
     def raise_for_status(self) -> None:
-        ...
+        """Raises an HttpResponseError if the response has an error status code.
 
-    def __enter__(self) -> "HttpResponse":
-        ...
+        If response is good, does nothing.
 
-    def __exit__(self, *args) -> None:
+        :rtype: None
+        :raises ~azure.core.HttpResponseError if the object has an error status code.:
+        """
         ...
 
     def close(self) -> None:
@@ -316,18 +380,28 @@ class AsyncHttpResponse:
     ...
 
     async def read(self) -> bytes:
+        """Read the response's bytes into memory.
+
+        :return: The response's bytes
+        :rtype: bytes
+        """
         ...
 
     async def iter_raw(self, **kwargs: Any) -> AsyncIterator[bytes]:
-        ...
+        """Asynchronously iterates over the response's bytes. Will not decompress in the process.
+
+        :return: An async iterator of bytes from the response
+        :rtype: AsyncIterator[bytes]
+        """
 
     async def iter_bytes(self, **kwargs: Any) -> AsyncIterator[bytes]:
-        ...
+        """Asynchronously iterates over the response's bytes. Will decompress in the process.
+
+        :return: An async iterator of bytes from the response
+        :rtype: AsyncIterator[bytes]
+        """
 
     async def close(self) -> None:
-        ...
-
-    async def __aexit__(self, *args) -> None:
         ...
 ```
 
