@@ -33,9 +33,9 @@ def build_create_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-10-31-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-10-31-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/identities')
@@ -64,7 +64,8 @@ def build_delete_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-10-31-preview"
+    api_version = kwargs.pop('api_version', "2021-10-31-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/identities/{id}')
@@ -96,7 +97,8 @@ def build_revoke_access_tokens_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-10-31-preview"
+    api_version = kwargs.pop('api_version', "2021-10-31-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/identities/{id}/:revokeAccessTokens')
@@ -127,9 +129,9 @@ def build_exchange_teams_user_access_token_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-10-31-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-10-31-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/teamsUser/:exchangeAccessToken')
@@ -158,9 +160,9 @@ def build_issue_access_token_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-10-31-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-10-31-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/identities/{id}/:issueAccessToken')
@@ -225,6 +227,9 @@ class CommunicationIdentityOperations(object):
         :param create_token_with_scopes: Also create access token for the created identity.
         :type create_token_with_scopes: list[str or
          ~azure.communication.identity.models.CommunicationTokenScope]
+        :keyword api_version: Api Version. The default value is "2021-10-31-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CommunicationIdentityAccessTokenResult, or the result of cls(response)
         :rtype: ~azure.communication.identity.models.CommunicationIdentityAccessTokenResult
@@ -236,6 +241,7 @@ class CommunicationIdentityOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-31-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _body = _models.CommunicationIdentityCreateRequest(create_token_with_scopes=create_token_with_scopes)
@@ -245,6 +251,7 @@ class CommunicationIdentityOperations(object):
             json = None
 
         request = build_create_request(
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.create.metadata['url'],
@@ -286,6 +293,9 @@ class CommunicationIdentityOperations(object):
 
         :param id: Identifier of the identity to be deleted.
         :type id: str
+        :keyword api_version: Api Version. The default value is "2021-10-31-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -297,9 +307,12 @@ class CommunicationIdentityOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-31-preview")  # type: str
+
         
         request = build_delete_request(
             id=id,
+            api_version=api_version,
             template_url=self.delete.metadata['url'],
         )
         request = _convert_request(request)
@@ -335,6 +348,9 @@ class CommunicationIdentityOperations(object):
 
         :param id: Identifier of the identity.
         :type id: str
+        :keyword api_version: Api Version. The default value is "2021-10-31-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -346,9 +362,12 @@ class CommunicationIdentityOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-31-preview")  # type: str
+
         
         request = build_revoke_access_tokens_request(
             id=id,
+            api_version=api_version,
             template_url=self.revoke_access_tokens.metadata['url'],
         )
         request = _convert_request(request)
@@ -387,6 +406,9 @@ class CommunicationIdentityOperations(object):
         :param token: AAD access token of a Teams User to acquire a new Communication Identity access
          token.
         :type token: str
+        :keyword api_version: Api Version. The default value is "2021-10-31-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CommunicationIdentityAccessToken, or the result of cls(response)
         :rtype: ~azure.communication.identity.models.CommunicationIdentityAccessToken
@@ -398,12 +420,14 @@ class CommunicationIdentityOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-31-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _body = _models.TeamsUserAccessTokenRequest(token=token)
         json = self._serialize.body(_body, 'TeamsUserAccessTokenRequest')
 
         request = build_exchange_teams_user_access_token_request(
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.exchange_teams_user_access_token.metadata['url'],
@@ -448,6 +472,9 @@ class CommunicationIdentityOperations(object):
         :type id: str
         :param scopes: List of scopes attached to the token.
         :type scopes: list[str or ~azure.communication.identity.models.CommunicationTokenScope]
+        :keyword api_version: Api Version. The default value is "2021-10-31-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CommunicationIdentityAccessToken, or the result of cls(response)
         :rtype: ~azure.communication.identity.models.CommunicationIdentityAccessToken
@@ -459,6 +486,7 @@ class CommunicationIdentityOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-31-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _body = _models.CommunicationIdentityAccessTokenRequest(scopes=scopes)
@@ -466,6 +494,7 @@ class CommunicationIdentityOperations(object):
 
         request = build_issue_access_token_request(
             id=id,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.issue_access_token.metadata['url'],

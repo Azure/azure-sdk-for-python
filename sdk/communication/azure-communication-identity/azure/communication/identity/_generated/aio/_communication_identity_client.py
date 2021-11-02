@@ -26,6 +26,9 @@ class CommunicationIdentityClient:
     :param endpoint: The communication resource, for example
      https://my-resource.communication.azure.com.
     :type endpoint: str
+    :keyword api_version: Api Version. The default value is "2021-10-31-preview". Note that
+     overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -34,7 +37,7 @@ class CommunicationIdentityClient:
         **kwargs: Any
     ) -> None:
         _base_url = '{endpoint}'
-        self._config = CommunicationIdentityClientConfiguration(endpoint, **kwargs)
+        self._config = CommunicationIdentityClientConfiguration(endpoint=endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=_base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
