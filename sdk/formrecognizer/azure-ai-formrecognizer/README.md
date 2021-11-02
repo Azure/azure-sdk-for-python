@@ -540,7 +540,7 @@ except ResourceNotFoundError:
     print("Successfully deleted model with id {}".format(custom_model.model_id))
 ```
 
-### Convenience methods to get items from a specific model
+### Convenience methods to get items from a specific model (**Beta feature**)
 
 In version `azure-ai-formrecognizer (3.2.0b2)`, the following models have a `get_words()` convenience method:
 - `AnalyzedDocument`
