@@ -88,6 +88,11 @@ async def analyze_general_documents():
     print("----Entities found in document----")
     for entity in result.entities:
         print("Entity of category '{}' with sub-category '{}'".format(entity.category, entity.sub_category))
+        # NOTE: Calling get_lines() on each entity will return a list of DocumentLines that can be processed 
+        # just like any other DocumentLine instance.
+        line_length = len(entity.get_lines())
+        if line_length > 0:
+            print("...has {} line(s)".format(line_length))
         print("...has content '{}'".format(entity.content))
         print("...within '{}' bounding regions".format(format_bounding_region(entity.bounding_regions)))
         print("...with confidence {}\n".format(entity.confidence))
@@ -101,20 +106,22 @@ async def analyze_general_documents():
         )
 
         for line_idx, line in enumerate(page.lines):
+            words = line.get_words()
             print(
-                "Line # {} has text content '{}' within bounding box '{}'".format(
+                "...Line # {} has word count {} and text '{}' within bounding box '{}'".format(
                     line_idx,
+                    len(words),
                     line.content,
                     format_bounding_box(line.bounding_box),
                 )
             )
 
-        for word in page.words:
-            print(
-                "...Word '{}' has a confidence of {}".format(
-                    word.content, word.confidence
+            for word in words:
+                print(
+                    "......Word '{}' has a confidence of {}".format(
+                        word.content, word.confidence
+                    )
                 )
-            )
 
         for selection_mark in page.selection_marks:
             print(
@@ -129,6 +136,11 @@ async def analyze_general_documents():
         print(
             "Table # {} has {} rows and {} columns".format(
                 table_idx, table.row_count, table.column_count
+            )
+        )
+        print(
+            "Table # {} has {} lines and {} words".format(
+                table_idx, len(table.get_lines()), len(table.get_words())
             )
         )
         for region in table.bounding_regions:
