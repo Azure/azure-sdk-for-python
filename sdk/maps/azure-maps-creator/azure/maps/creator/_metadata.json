@@ -1,0 +1,80 @@
+{
+    "chosen_version": "",
+    "total_api_version_list": ["1.0", "2.0"],
+    "client": {
+        "name": "CreatorClient",
+        "filename": "_creator_client",
+        "description": "APIs for managing aliases in Azure Maps.",
+        "base_url": null,
+        "custom_base_url": "\u0027https://{geography}.atlas.microsoft.com\u0027",
+        "azure_arm": false,
+        "has_lro_operations": true,
+        "client_side_validation": false
+    },
+    "global_parameters": {
+        "sync": {
+            "credential": {
+                "signature": "credential,  # type: \"TokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true
+            },
+            "client_id": {
+                "signature": "client_id=None,  # type: Optional[str]",
+                "description": "Specifies which account is intended for usage in conjunction with the Azure AD security model.  It represents a unique ID for the Azure Maps account and can be retrieved from the Azure Maps management  plane Account API. To use Azure AD security in Azure Maps see the following `articles \u003chttps://aka.ms/amauthdetails\u003e`_ for guidance.",
+                "docstring_type": "str",
+                "required": false
+            },
+            "geography": {
+                "signature": "geography=\"us\",  # type: Union[str, \"models.Geography\"]",
+                "description": "This parameter specifies where the Azure Maps Creator resource is located.  Valid values are us and eu.",
+                "docstring_type": "str or ~azure.maps.creator.models.Geography",
+                "required": true
+            }
+        },
+        "async": {
+            "credential": {
+                "signature": "credential,  # type: \"AsyncTokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
+                "required": true
+            },
+            "client_id": {
+                "signature": "client_id=None,  # type: Optional[str]",
+                "description": "Specifies which account is intended for usage in conjunction with the Azure AD security model.  It represents a unique ID for the Azure Maps account and can be retrieved from the Azure Maps management  plane Account API. To use Azure AD security in Azure Maps see the following `articles \u003chttps://aka.ms/amauthdetails\u003e`_ for guidance.",
+                "docstring_type": "str",
+                "required": false
+            },
+            "geography": {
+                "signature": "geography=\"us\",  # type: Union[str, \"models.Geography\"]",
+                "description": "This parameter specifies where the Azure Maps Creator resource is located.  Valid values are us and eu.",
+                "docstring_type": "str or ~azure.maps.creator.models.Geography",
+                "required": true
+            }
+        },
+        "constant": {
+        },
+        "call": "credential, client_id, geography"
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://atlas.microsoft.com/.default"],
+        "credential_default_policy_type": "BearerTokenCredentialPolicy",
+        "credential_default_policy_type_has_async_version": true,
+        "credential_key_header_name": null
+    },
+    "operation_groups": {
+        "alias": "AliasOperations",
+        "data": "DataOperations",
+        "dataset": "DatasetOperations",
+        "conversion": "ConversionOperations",
+        "feature_state": "FeatureStateOperations",
+        "spatial": "SpatialOperations",
+        "tileset": "TilesetOperations",
+        "wfs": "WFSOperations"
+    },
+    "operation_mixins": {
+    },
+    "sync_imports": "None",
+    "async_imports": "None"
+}

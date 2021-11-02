@@ -1,0 +1,132 @@
+{
+    "chosen_version": "1.0",
+    "total_api_version_list": ["1.0"],
+    "client": {
+        "name": "TimezoneClient",
+        "filename": "_timezone_client",
+        "description": "Azure Maps Time Zone REST APIs.",
+        "base_url": "\u0027https://atlas.microsoft.com\u0027",
+        "custom_base_url": null,
+        "azure_arm": false,
+        "has_lro_operations": false,
+        "client_side_validation": false
+    },
+    "global_parameters": {
+        "sync": {
+            "credential": {
+                "signature": "credential,  # type: \"TokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true
+            },
+            "client_id": {
+                "signature": "client_id=None,  # type: Optional[str]",
+                "description": "Specifies which account is intended for usage in conjunction with the Azure AD security model.  It represents a unique ID for the Azure Maps account and can be retrieved from the Azure Maps management  plane Account API. To use Azure AD security in Azure Maps see the following `articles \u003chttps://aka.ms/amauthdetails\u003e`_ for guidance.",
+                "docstring_type": "str",
+                "required": false
+            }
+        },
+        "async": {
+            "credential": {
+                "signature": "credential,  # type: \"AsyncTokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
+                "required": true
+            },
+            "client_id": {
+                "signature": "client_id=None,  # type: Optional[str]",
+                "description": "Specifies which account is intended for usage in conjunction with the Azure AD security model.  It represents a unique ID for the Azure Maps account and can be retrieved from the Azure Maps management  plane Account API. To use Azure AD security in Azure Maps see the following `articles \u003chttps://aka.ms/amauthdetails\u003e`_ for guidance.",
+                "docstring_type": "str",
+                "required": false
+            }
+        },
+        "constant": {
+        },
+        "call": "credential, client_id"
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://atlas.microsoft.com/.default"],
+        "credential_default_policy_type": "BearerTokenCredentialPolicy",
+        "credential_default_policy_type_has_async_version": true,
+        "credential_key_header_name": null
+    },
+    "operation_groups": {
+    },
+    "operation_mixins": {
+        "get_timezone_by_id" : {
+            "sync": {
+                "signature": "def get_timezone_by_id(\n    self,\n    timezone_id,  # type: str\n    accept_language=None,  # type: Optional[str]\n    options=None,  # type: Optional[Union[str, \"models.TimezoneOptions\"]]\n    time_stamp=None,  # type: Optional[datetime.datetime]\n    daylight_savings_time_from=None,  # type: Optional[datetime.datetime]\n    daylight_savings_time_lasting_years=None,  # type: Optional[int]\n    format=\"json\",  # type: Union[str, \"models.JsonFormat\"]\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"**Time Zone by Id**\n\n**Applies to**\\ : S0 and S1 pricing tiers.\n\nThis API returns current, historical, and future time zone information for the specified IANA\ntime zone ID.\n\n:param timezone_id: The IANA time zone ID.\n:type timezone_id: str\n:param accept_language: Specifies the language code in which the timezone names should be\n returned. If no language code is provided, the response will be in \"EN\". Please refer to\n `Supported Languages \u003chttps://docs.microsoft.com/en-us/azure/azure-maps/supported-languages\u003e`_\n for details.\n:type accept_language: str\n:param options: Alternatively, use alias \"o\". Options available for types of information\n returned in the result.\n:type options: str or ~azure.maps.timezone.models.TimezoneOptions\n:param time_stamp: Alternatively, use alias \"stamp\", or \"s\". Reference time, if omitted, the\n API will use the machine time serving the request.\n:type time_stamp: ~datetime.datetime\n:param daylight_savings_time_from: Alternatively, use alias \"tf\". The start date from which\n daylight savings time (DST) transitions are requested, only applies when \"options\" = all or\n \"options\" = transitions.\n:type daylight_savings_time_from: ~datetime.datetime\n:param daylight_savings_time_lasting_years: Alternatively, use alias \"ty\". The number of years\n from \"transitionsFrom\" for which DST transitions are requested, only applies when \"options\" =\n all or \"options\" = transitions.\n:type daylight_savings_time_lasting_years: int\n:param format: Desired format of the response. Only ``json`` format is supported.\n:type format: str or ~azure.maps.timezone.models.JsonFormat\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: TimezoneResult, or the result of cls(response)\n:rtype: ~azure.maps.timezone.models.TimezoneResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def get_timezone_by_id(\n    self,\n    timezone_id: str,\n    accept_language: Optional[str] = None,\n    options: Optional[Union[str, \"models.TimezoneOptions\"]] = None,\n    time_stamp: Optional[datetime.datetime] = None,\n    daylight_savings_time_from: Optional[datetime.datetime] = None,\n    daylight_savings_time_lasting_years: Optional[int] = None,\n    format: Union[str, \"models.JsonFormat\"] = \"json\",\n    **kwargs\n) -\u003e \"models.TimezoneResult\":\n",
+                "doc": "\"\"\"**Time Zone by Id**\n\n**Applies to**\\ : S0 and S1 pricing tiers.\n\nThis API returns current, historical, and future time zone information for the specified IANA\ntime zone ID.\n\n:param timezone_id: The IANA time zone ID.\n:type timezone_id: str\n:param accept_language: Specifies the language code in which the timezone names should be\n returned. If no language code is provided, the response will be in \"EN\". Please refer to\n `Supported Languages \u003chttps://docs.microsoft.com/en-us/azure/azure-maps/supported-languages\u003e`_\n for details.\n:type accept_language: str\n:param options: Alternatively, use alias \"o\". Options available for types of information\n returned in the result.\n:type options: str or ~azure.maps.timezone.models.TimezoneOptions\n:param time_stamp: Alternatively, use alias \"stamp\", or \"s\". Reference time, if omitted, the\n API will use the machine time serving the request.\n:type time_stamp: ~datetime.datetime\n:param daylight_savings_time_from: Alternatively, use alias \"tf\". The start date from which\n daylight savings time (DST) transitions are requested, only applies when \"options\" = all or\n \"options\" = transitions.\n:type daylight_savings_time_from: ~datetime.datetime\n:param daylight_savings_time_lasting_years: Alternatively, use alias \"ty\". The number of years\n from \"transitionsFrom\" for which DST transitions are requested, only applies when \"options\" =\n all or \"options\" = transitions.\n:type daylight_savings_time_lasting_years: int\n:param format: Desired format of the response. Only ``json`` format is supported.\n:type format: str or ~azure.maps.timezone.models.JsonFormat\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: TimezoneResult, or the result of cls(response)\n:rtype: ~azure.maps.timezone.models.TimezoneResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "call": "timezone_id, accept_language, options, time_stamp, daylight_savings_time_from, daylight_savings_time_lasting_years, format"
+        },
+        "get_timezone_by_coordinates" : {
+            "sync": {
+                "signature": "def get_timezone_by_coordinates(\n    self,\n    coordinates,  # type: List[float]\n    accept_language=None,  # type: Optional[str]\n    options=None,  # type: Optional[Union[str, \"models.TimezoneOptions\"]]\n    time_stamp=None,  # type: Optional[datetime.datetime]\n    daylight_savings_time_from=None,  # type: Optional[datetime.datetime]\n    daylight_savings_time_lasting_years=None,  # type: Optional[int]\n    format=\"json\",  # type: Union[str, \"models.JsonFormat\"]\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"**Time Zone by Coordinates**\n\n**Applies to**\\ : S0 and S1 pricing tiers.\n\nThis API returns current, historical, and future time zone information for a specified\nlatitude-longitude pair. In addition, the API provides sunset and sunrise times for a given\nlocation.\n\n:param coordinates: Coordinates of the point for which time zone information is requested. This\n parameter is a list of coordinates, containing a pair of coordinate(lat, long). When this\n endpoint is called directly, coordinates are passed in as a single string containing\n coordinates, separated by commas.\n:type coordinates: list[float]\n:param accept_language: Specifies the language code in which the timezone names should be\n returned. If no language code is provided, the response will be in \"EN\". Please refer to\n `Supported Languages \u003chttps://docs.microsoft.com/en-us/azure/azure-maps/supported-languages\u003e`_\n for details.\n:type accept_language: str\n:param options: Alternatively, use alias \"o\". Options available for types of information\n returned in the result.\n:type options: str or ~azure.maps.timezone.models.TimezoneOptions\n:param time_stamp: Alternatively, use alias \"stamp\", or \"s\". Reference time, if omitted, the\n API will use the machine time serving the request.\n:type time_stamp: ~datetime.datetime\n:param daylight_savings_time_from: Alternatively, use alias \"tf\". The start date from which\n daylight savings time (DST) transitions are requested, only applies when \"options\" = all or\n \"options\" = transitions.\n:type daylight_savings_time_from: ~datetime.datetime\n:param daylight_savings_time_lasting_years: Alternatively, use alias \"ty\". The number of years\n from \"transitionsFrom\" for which DST transitions are requested, only applies when \"options\" =\n all or \"options\" = transitions.\n:type daylight_savings_time_lasting_years: int\n:param format: Desired format of the response. Only ``json`` format is supported.\n:type format: str or ~azure.maps.timezone.models.JsonFormat\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: TimezoneResult, or the result of cls(response)\n:rtype: ~azure.maps.timezone.models.TimezoneResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def get_timezone_by_coordinates(\n    self,\n    coordinates: List[float],\n    accept_language: Optional[str] = None,\n    options: Optional[Union[str, \"models.TimezoneOptions\"]] = None,\n    time_stamp: Optional[datetime.datetime] = None,\n    daylight_savings_time_from: Optional[datetime.datetime] = None,\n    daylight_savings_time_lasting_years: Optional[int] = None,\n    format: Union[str, \"models.JsonFormat\"] = \"json\",\n    **kwargs\n) -\u003e \"models.TimezoneResult\":\n",
+                "doc": "\"\"\"**Time Zone by Coordinates**\n\n**Applies to**\\ : S0 and S1 pricing tiers.\n\nThis API returns current, historical, and future time zone information for a specified\nlatitude-longitude pair. In addition, the API provides sunset and sunrise times for a given\nlocation.\n\n:param coordinates: Coordinates of the point for which time zone information is requested. This\n parameter is a list of coordinates, containing a pair of coordinate(lat, long). When this\n endpoint is called directly, coordinates are passed in as a single string containing\n coordinates, separated by commas.\n:type coordinates: list[float]\n:param accept_language: Specifies the language code in which the timezone names should be\n returned. If no language code is provided, the response will be in \"EN\". Please refer to\n `Supported Languages \u003chttps://docs.microsoft.com/en-us/azure/azure-maps/supported-languages\u003e`_\n for details.\n:type accept_language: str\n:param options: Alternatively, use alias \"o\". Options available for types of information\n returned in the result.\n:type options: str or ~azure.maps.timezone.models.TimezoneOptions\n:param time_stamp: Alternatively, use alias \"stamp\", or \"s\". Reference time, if omitted, the\n API will use the machine time serving the request.\n:type time_stamp: ~datetime.datetime\n:param daylight_savings_time_from: Alternatively, use alias \"tf\". The start date from which\n daylight savings time (DST) transitions are requested, only applies when \"options\" = all or\n \"options\" = transitions.\n:type daylight_savings_time_from: ~datetime.datetime\n:param daylight_savings_time_lasting_years: Alternatively, use alias \"ty\". The number of years\n from \"transitionsFrom\" for which DST transitions are requested, only applies when \"options\" =\n all or \"options\" = transitions.\n:type daylight_savings_time_lasting_years: int\n:param format: Desired format of the response. Only ``json`` format is supported.\n:type format: str or ~azure.maps.timezone.models.JsonFormat\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: TimezoneResult, or the result of cls(response)\n:rtype: ~azure.maps.timezone.models.TimezoneResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "call": "coordinates, accept_language, options, time_stamp, daylight_savings_time_from, daylight_savings_time_lasting_years, format"
+        },
+        "get_windows_timezone_ids" : {
+            "sync": {
+                "signature": "def get_windows_timezone_ids(\n    self,\n    format=\"json\",  # type: Union[str, \"models.JsonFormat\"]\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"**Windows Time Zones**\n\n**Applies to**\\ : S0 and S1 pricing tiers.\n\nThis API returns a full list of Windows Time Zone IDs.\n\n:param format: Desired format of the response. Only ``json`` format is supported.\n:type format: str or ~azure.maps.timezone.models.JsonFormat\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: list of TimezoneWindows, or the result of cls(response)\n:rtype: list[~azure.maps.timezone.models.TimezoneWindows]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def get_windows_timezone_ids(\n    self,\n    format: Union[str, \"models.JsonFormat\"] = \"json\",\n    **kwargs\n) -\u003e List[\"models.TimezoneWindows\"]:\n",
+                "doc": "\"\"\"**Windows Time Zones**\n\n**Applies to**\\ : S0 and S1 pricing tiers.\n\nThis API returns a full list of Windows Time Zone IDs.\n\n:param format: Desired format of the response. Only ``json`` format is supported.\n:type format: str or ~azure.maps.timezone.models.JsonFormat\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: list of TimezoneWindows, or the result of cls(response)\n:rtype: list[~azure.maps.timezone.models.TimezoneWindows]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "call": "format"
+        },
+        "get_iana_timezone_ids" : {
+            "sync": {
+                "signature": "def get_iana_timezone_ids(\n    self,\n    format=\"json\",  # type: Union[str, \"models.JsonFormat\"]\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"**IANA Time Zones**\n\n**Applies to**\\ : S0 and S1 pricing tiers.\n\nThis API returns a full list of IANA time zone IDs. Updates to the IANA service will be\nreflected in the system within one day.\n\n:param format: Desired format of the response. Only ``json`` format is supported.\n:type format: str or ~azure.maps.timezone.models.JsonFormat\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: list of IanaId, or the result of cls(response)\n:rtype: list[~azure.maps.timezone.models.IanaId]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def get_iana_timezone_ids(\n    self,\n    format: Union[str, \"models.JsonFormat\"] = \"json\",\n    **kwargs\n) -\u003e List[\"models.IanaId\"]:\n",
+                "doc": "\"\"\"**IANA Time Zones**\n\n**Applies to**\\ : S0 and S1 pricing tiers.\n\nThis API returns a full list of IANA time zone IDs. Updates to the IANA service will be\nreflected in the system within one day.\n\n:param format: Desired format of the response. Only ``json`` format is supported.\n:type format: str or ~azure.maps.timezone.models.JsonFormat\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: list of IanaId, or the result of cls(response)\n:rtype: list[~azure.maps.timezone.models.IanaId]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "call": "format"
+        },
+        "get_iana_version" : {
+            "sync": {
+                "signature": "def get_iana_version(\n    self,\n    format=\"json\",  # type: Union[str, \"models.JsonFormat\"]\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"**Time Zone IANA Version**\n\n**Applies to**\\ : S0 and S1 pricing tiers.\n\nThis API returns the current IANA version number as Metadata.\n\n:param format: Desired format of the response. Only ``json`` format is supported.\n:type format: str or ~azure.maps.timezone.models.JsonFormat\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: TimezoneIanaVersionResult, or the result of cls(response)\n:rtype: ~azure.maps.timezone.models.TimezoneIanaVersionResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def get_iana_version(\n    self,\n    format: Union[str, \"models.JsonFormat\"] = \"json\",\n    **kwargs\n) -\u003e \"models.TimezoneIanaVersionResult\":\n",
+                "doc": "\"\"\"**Time Zone IANA Version**\n\n**Applies to**\\ : S0 and S1 pricing tiers.\n\nThis API returns the current IANA version number as Metadata.\n\n:param format: Desired format of the response. Only ``json`` format is supported.\n:type format: str or ~azure.maps.timezone.models.JsonFormat\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: TimezoneIanaVersionResult, or the result of cls(response)\n:rtype: ~azure.maps.timezone.models.TimezoneIanaVersionResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "call": "format"
+        },
+        "convert_windows_timezone_to_iana" : {
+            "sync": {
+                "signature": "def convert_windows_timezone_to_iana(\n    self,\n    windows_timezone_id,  # type: str\n    format=\"json\",  # type: Union[str, \"models.JsonFormat\"]\n    windows_territory_code=None,  # type: Optional[str]\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"**Windows to IANA Time Zone**\n\n**Applies to**\\ : S0 and S1 pricing tiers.\n\nThis API returns a corresponding IANA ID, given a valid Windows Time Zone ID. Multiple IANA IDs\nmay be returned for a single Windows ID. It is possible to narrow these results by adding an\noptional territory parameter.\n\n:param windows_timezone_id: The Windows time zone ID.\n:type windows_timezone_id: str\n:param format: Desired format of the response. Only ``json`` format is supported.\n:type format: str or ~azure.maps.timezone.models.JsonFormat\n:param windows_territory_code: Windows Time Zone territory code.\n:type windows_territory_code: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: list of IanaId, or the result of cls(response)\n:rtype: list[~azure.maps.timezone.models.IanaId]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def convert_windows_timezone_to_iana(\n    self,\n    windows_timezone_id: str,\n    format: Union[str, \"models.JsonFormat\"] = \"json\",\n    windows_territory_code: Optional[str] = None,\n    **kwargs\n) -\u003e List[\"models.IanaId\"]:\n",
+                "doc": "\"\"\"**Windows to IANA Time Zone**\n\n**Applies to**\\ : S0 and S1 pricing tiers.\n\nThis API returns a corresponding IANA ID, given a valid Windows Time Zone ID. Multiple IANA IDs\nmay be returned for a single Windows ID. It is possible to narrow these results by adding an\noptional territory parameter.\n\n:param windows_timezone_id: The Windows time zone ID.\n:type windows_timezone_id: str\n:param format: Desired format of the response. Only ``json`` format is supported.\n:type format: str or ~azure.maps.timezone.models.JsonFormat\n:param windows_territory_code: Windows Time Zone territory code.\n:type windows_territory_code: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: list of IanaId, or the result of cls(response)\n:rtype: list[~azure.maps.timezone.models.IanaId]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "call": "windows_timezone_id, format, windows_territory_code"
+        }
+    },
+    "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}, \"stdlib\": {\"datetime\": [null], \"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"List\", \"Optional\", \"TypeVar\", \"Union\"]}}}",
+    "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}, \"stdlib\": {\"datetime\": [null], \"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"List\", \"Optional\", \"TypeVar\", \"Union\"]}}}"
+}
