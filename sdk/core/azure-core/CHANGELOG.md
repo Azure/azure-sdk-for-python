@@ -1,12 +1,16 @@
 # Release History
 
-## 1.19.2 (Unreleased)
+## 1.20.0 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
+- SansIOHTTPPolicy.on_exception returns None instead of bool.
+
 ### Bugs Fixed
+
+- UnboundLocalError when SansIOHTTPPolicy handles an exception    #15222
 
 ### Other Changes
 
