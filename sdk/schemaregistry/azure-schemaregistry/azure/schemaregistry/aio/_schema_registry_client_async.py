@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 from typing import Any, TYPE_CHECKING, Union
 
+from .._utils import get_http_request_kwargs
 from .._common._constants import SchemaFormat
 from .._common._schema import Schema, SchemaProperties
 from .._common._response_handlers import (
@@ -116,8 +117,7 @@ class SchemaRegistryClient(object):
         except AttributeError:
             pass
 
-        http_request_keywords = ["params", "headers", "json", "data", "files"]
-        http_request_kwargs = {key: kwargs.pop(key) for key in http_request_keywords if key in kwargs}
+        http_request_kwargs = get_http_request_kwargs(kwargs)
         request = schema_rest.build_register_request(
             group_name=group_name,
             schema_name=name,
@@ -153,8 +153,7 @@ class SchemaRegistryClient(object):
                 :caption: Get schema by id.
 
         """
-        http_request_keywords = ["params", "headers", "json", "data", "files"]
-        http_request_kwargs = {key: kwargs.pop(key, None) for key in http_request_keywords if key in kwargs}
+        http_request_kwargs = get_http_request_kwargs(kwargs)
         request = schema_rest.build_get_by_id_request(schema_id=id, **http_request_kwargs)
         response = await self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
@@ -194,8 +193,7 @@ class SchemaRegistryClient(object):
         except AttributeError:
             pass
 
-        http_request_keywords = ["params", "headers", "json", "data", "files"]
-        http_request_kwargs = {key: kwargs.pop(key, None) for key in http_request_keywords if key in kwargs}
+        http_request_kwargs = get_http_request_kwargs(kwargs)
         request = schema_rest.build_query_id_by_content_request(
             group_name=group_name,
             schema_name=name,
