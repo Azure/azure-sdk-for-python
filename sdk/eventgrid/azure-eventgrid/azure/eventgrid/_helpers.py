@@ -15,6 +15,7 @@ except ImportError:
     from urllib2 import quote  # type: ignore
 
 from msrest import Serializer
+from azure.core.exceptions import raise_with_traceback
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
@@ -151,9 +152,11 @@ def _from_cncf_events(event):
     except (AttributeError, ImportError):
         # means this is not a CNCF event
         return event
-    except: # pylint: disable=bare-except
-        raise ValueError('Failed to serialize the event. Please ensure your' +
-        'CloudEvents is correctly formatted (https://pypi.org/project/cloudevents/)')
+    except Exception as err: # pylint: disable=bare-except
+        msg  = 'Failed to serialize the event. Please ensure your' +
+        'CloudEvents is correctly formatted (https://pypi.org/project/cloudevents/)'
+        
+        raise_with_traceback(ValueError, msg, err)
 
 
 def _build_request(endpoint, content_type, events):
