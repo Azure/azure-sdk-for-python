@@ -38,14 +38,12 @@ exclude_packages = [
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
         'azure.schemaregistry',
-        'azure.schemaregistry.serializer'
     ]
 install_packages = [
     'azure-schemaregistry==1.0.0b3',
-    'avro<2.0.0,>=1.10.0'
+    'avro<2.0.0,==1.10.0',
+    'backports.functools-lru-cache >= 1.6.4; python_version == "2.7"'
 ]
-if sys.version_info < (3,0):
-    install_packages.append('backports.functools-lru-cache>=1.6.4')
 
 setup(
     name=PACKAGE_NAME,

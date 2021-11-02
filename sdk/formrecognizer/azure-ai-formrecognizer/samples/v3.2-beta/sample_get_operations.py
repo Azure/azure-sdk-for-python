@@ -51,18 +51,21 @@ def sample_get_operations():
 
     # [START get_operation]
     # Get an operation by ID
-    print("\nGetting operation info by ID: {}".format(operations[0].operation_id))
-    operation_info = document_model_admin_client.get_operation(operations[0].operation_id)
-    if operation_info.status == "succeeded":
-        print("My {} operation is completed.".format(operation_info.kind))
-        result = operation_info.result
-        print("Model ID: {}".format(result.model_id))
-    elif operation_info.status == "failed":
-        print("My {} operation failed.".format(operation_info.kind))
-        error = operation_info.error
-        print("{}: {}".format(error.code, error.message))
+    if operations:
+        print("\nGetting operation info by ID: {}".format(operations[0].operation_id))
+        operation_info = document_model_admin_client.get_operation(operations[0].operation_id)
+        if operation_info.status == "succeeded":
+            print("My {} operation is completed.".format(operation_info.kind))
+            result = operation_info.result
+            print("Model ID: {}".format(result.model_id))
+        elif operation_info.status == "failed":
+            print("My {} operation failed.".format(operation_info.kind))
+            error = operation_info.error
+            print("{}: {}".format(error.code, error.message))
+        else:
+            print("My operation status is {}".format(operation_info.status))
     else:
-        print("My operation status is {}".format(operation_info.status))
+        print("No operations found.")
     # [END get_operation]
 
 if __name__ == '__main__':

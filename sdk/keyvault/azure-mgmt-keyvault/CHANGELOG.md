@@ -1,5 +1,17 @@
 # Release History
 
+## 9.2.0 (2021-10-15)
+
+**Features**
+
+  - Model VaultProperties has a new parameter public_network_access
+  - Model VaultPatchProperties has a new parameter public_network_access
+  - Model KeyAttributes has a new parameter exportable
+  - Model Key has a new parameter release_policy
+  - Model Key has a new parameter rotation_policy
+  - Model KeyProperties has a new parameter release_policy
+  - Model KeyProperties has a new parameter rotation_policy
+
 ## 9.1.0 (2021-08-26)
 
 **Features**

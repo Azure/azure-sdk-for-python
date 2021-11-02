@@ -1,6 +1,6 @@
 # Release History
 
-## 1.19.1 (Unreleased)
+## 1.19.2 (Unreleased)
 
 ### Features Added
 
@@ -13,9 +13,21 @@
 - The `Content-Length` header in a http response is strictly checked against the actual number of bytes in the body,
   rather than silently truncating data in case the underlying tcp connection is closed prematurely. 
   (thanks to @jochen-ott-by for the contribution)   #20412
-- respect text encoding specified in argument (thanks to @ryohji for the contribution)  #20796
 
 ### Other Changes
+
+## 1.19.1 (2021-11-01)
+
+### Bugs Fixed
+
+- respect text encoding specified in argument (thanks to @ryohji for the contribution)  #20796
+- Fix "coroutine x.read() was never awaited" warning from `ContentDecodePolicy`  #21318
+- fix type check for `data` input to `azure.core.rest` for python 2.7 users  #21341
+- use `charset_normalizer` if `chardet` is not installed to migrate aiohttp 3.8.0 changes.
+
+### Other Changes
+
+- Refactor AzureJSONEncoder (thanks to @Codejune for the contribution)  #21028
 
 ## 1.19.0 (2021-09-30)
 

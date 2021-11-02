@@ -3,41 +3,37 @@
 """
 FILE: sample_logs_single_query_async.py
 DESCRIPTION:
-    This sample demonstrates authenticating the LogsQueryClient and querying a single query.
+    This sample demonstrates authenticating the LogsQueryClient and executing a single
+    Kusto query.
 USAGE:
     python sample_logs_single_query_async.py
     Set the environment variables with your own values before running the sample:
     1) LOGS_WORKSPACE_ID - The first (primary) workspace ID.
 
-    In order to use the DefaultAzureCredential, the following environment variables must be set:
-    1) AZURE_CLIENT_ID - The client ID of a user-assigned managed identity.
-    2) AZURE_TENANT_ID - Tenant ID to use when authenticating a user.
-    3) AZURE_CLIENT_ID - The client secret to be used for authentication.
+This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
+For more information on DefaultAzureCredential, see https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 
-**Note** - Although this example uses pandas to prin the response, it is totally optional and is
-not a required package for querying. Alternatively, native python can be used as well.
+**Note** - Although this example uses pandas to print the response, it's optional and
+isn't a required package for querying. Alternatively, native Python can be used as well.
 """
 import asyncio
 import os
 import pandas as pd
+from datetime import timedelta
 from azure.monitor.query.aio import LogsQueryClient
 from azure.monitor.query import LogsQueryStatus
 from azure.core.exceptions import HttpResponseError
 from azure.identity.aio import DefaultAzureCredential
 
 async def logs_query():
-    credential  = DefaultAzureCredential(
-            client_id = os.environ['AZURE_CLIENT_ID'],
-            client_secret = os.environ['AZURE_CLIENT_SECRET'],
-            tenant_id = os.environ['AZURE_TENANT_ID']
-        )
+    credential = DefaultAzureCredential()
 
     client = LogsQueryClient(credential)
 
     query= """AppRequests | take 5"""
 
     try:
-        response = await client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(days=1))
+        response = await client.query_workspace(os.environ['LOGS_WORKSPACE_ID'], query, timespan=timedelta(days=1))
         if response.status == LogsQueryStatus.PARTIAL:
             error = response.partial_error
             data = response.partial_data

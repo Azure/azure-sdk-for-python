@@ -28,10 +28,6 @@ from typing import (
     Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload
 )
 from collections.abc import AsyncIterator
-try:
-    import cchardet as chardet
-except ImportError:  # pragma: no cover
-    import chardet  # type: ignore
 
 import logging
 import asyncio
@@ -379,6 +375,13 @@ class AioHttpTransportResponse(AsyncHttpResponse):
                     "Cannot guess the encoding of a not yet read body"
                 )
             else:
+                try:
+                    import cchardet as chardet
+                except ImportError:  # pragma: no cover
+                    try:
+                        import chardet  # type: ignore
+                    except ImportError:  # pragma: no cover
+                        import charset_normalizer as chardet  # type: ignore[no-redef]
                 encoding = chardet.detect(body)["encoding"]
         if encoding == "utf-8" or encoding is None:
             encoding = "utf-8-sig"

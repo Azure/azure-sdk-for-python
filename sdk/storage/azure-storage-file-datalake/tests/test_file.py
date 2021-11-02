@@ -19,9 +19,8 @@ from azure.storage.filedatalake import ContentSettings, generate_account_sas, ge
     DataLakeFileClient, FileSystemClient, DataLakeDirectoryClient, FileSasPermissions, generate_file_system_sas, \
     FileSystemSasPermissions
 from azure.storage.filedatalake import DataLakeServiceClient
-from testcase import (
-    StorageTestCase,
-    DataLakePreparer)
+from settings.testcase import DataLakePreparer
+from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_DIRECTORY_PREFIX = 'directory'
@@ -32,7 +31,7 @@ FILE_PATH = 'file_output.temp.dat'
 
 class FileTest(StorageTestCase):
     def _setUp(self, account_name, account_key):
-        url = self._get_account_url(account_name)
+        url = self.account_url(account_name, 'dfs')
         self.dsc = DataLakeServiceClient(url, credential=account_key, logging_enable=True)
         self.config = self.dsc._config
 
@@ -398,7 +397,7 @@ class FileTest(StorageTestCase):
 
         # Get user delegation key
         token_credential = self.generate_oauth_token()
-        service_client = DataLakeServiceClient(self._get_account_url(datalake_storage_account_name), credential=token_credential, logging_enable=True)
+        service_client = DataLakeServiceClient(self.account_url(datalake_storage_account_name, 'dfs'), credential=token_credential, logging_enable=True)
         user_delegation_key = service_client.get_user_delegation_key(datetime.utcnow(),
                                                                      datetime.utcnow() + timedelta(hours=1))
 
@@ -412,7 +411,7 @@ class FileTest(StorageTestCase):
                                       )
 
         # doanload the data and make sure it is the same as uploaded data
-        new_file_client = DataLakeFileClient(self._get_account_url(datalake_storage_account_name),
+        new_file_client = DataLakeFileClient(self.account_url(datalake_storage_account_name, 'dfs'),
                                              file_client.file_system_name,
                                              file_client.path_name,
                                              credential=sas_token, logging_enable=True)
@@ -434,7 +433,7 @@ class FileTest(StorageTestCase):
 
         # Get user delegation key
         token_credential = self.generate_oauth_token()
-        service_client = DataLakeServiceClient(self._get_account_url(datalake_storage_account_name), credential=token_credential)
+        service_client = DataLakeServiceClient(self.account_url(datalake_storage_account_name, 'dfs'), credential=token_credential)
         user_delegation_key = service_client.get_user_delegation_key(datetime.utcnow(),
                                                                      datetime.utcnow() + timedelta(hours=1))
 
@@ -449,7 +448,7 @@ class FileTest(StorageTestCase):
                                       )
 
         # doanload the data and make sure it is the same as uploaded data
-        new_file_client = DataLakeFileClient(self._get_account_url(datalake_storage_account_name),
+        new_file_client = DataLakeFileClient(self.account_url(datalake_storage_account_name, 'dfs'),
                                              file_client.file_system_name,
                                              file_client.path_name,
                                              credential=sas_token)
@@ -477,7 +476,7 @@ class FileTest(StorageTestCase):
 
         # Get user delegation key
         token_credential = self.generate_oauth_token()
-        service_client = DataLakeServiceClient(self._get_account_url(datalake_storage_account_name), credential=token_credential)
+        service_client = DataLakeServiceClient(self.account_url(datalake_storage_account_name, 'dfs'), credential=token_credential)
         user_delegation_key = service_client.get_user_delegation_key(datetime.utcnow(),
                                                                      datetime.utcnow() + timedelta(hours=1))
 
@@ -493,7 +492,7 @@ class FileTest(StorageTestCase):
                                       )
 
         # doanload the data and make sure it is the same as uploaded data
-        new_file_client = DataLakeFileClient(self._get_account_url(datalake_storage_account_name),
+        new_file_client = DataLakeFileClient(self.account_url(datalake_storage_account_name, 'dfs'),
                                              file_client.file_system_name,
                                              file_client.path_name,
                                              credential=sas_token)

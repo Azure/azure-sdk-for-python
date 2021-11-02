@@ -363,14 +363,14 @@ class MgmtComputeTest(AzureMgmtTestCase):
             result = self.mgmt_client.virtual_machines.begin_perform_maintenance(resource_group.name, VIRTUAL_MACHINE_NAME)
             result = result.result()
         except ResourceExistsError as e:
-            self.assertEquals(str(e), "(OperationNotAllowed) Operation 'performMaintenance' is not allowed on VM '%s' since the Subscription of this VM is not eligible." % (VIRTUAL_MACHINE_NAME))
+            self.assertEqual(str(e), "(OperationNotAllowed) Operation 'performMaintenance' is not allowed on VM '%s' since the Subscription of this VM is not eligible." % (VIRTUAL_MACHINE_NAME))
 
         # VirtualMachine convert to managed disks (TODO: need swagger file)
         try:
             result = self.mgmt_client.virtual_machines.begin_convert_to_managed_disks(resource_group.name, VIRTUAL_MACHINE_NAME)
             result = result.result()
         except ResourceExistsError as e:
-            self.assertEquals(str(e), "(OperationNotAllowed) VM '%s' is already using managed disks." % (VIRTUAL_MACHINE_NAME))
+            self.assertEqual(str(e), "(OperationNotAllowed) VM '%s' is already using managed disks." % (VIRTUAL_MACHINE_NAME))
 
         # TODO: Message: The Reimage and OSUpgrade Virtual Machine actions require that the virtual machine has Automatic OS Upgrades enabled.
         # Reimage a Virtual Machine.[post]
@@ -381,7 +381,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             result = self.mgmt_client.virtual_machines.begin_reimage(resource_group.name, VIRTUAL_MACHINE_NAME)
             result = result.result()
         except ResourceExistsError as e:
-            self.assertEquals(str(e), "(OperationNotAllowed) The Reimage and OSUpgrade Virtual Machine actions require that the virtual machine has Automatic OS Upgrades enabled.")
+            self.assertEqual(str(e), "(OperationNotAllowed) The Reimage and OSUpgrade Virtual Machine actions require that the virtual machine has Automatic OS Upgrades enabled.")
 
         # Delete virtual machine (TODO: need swagger file)
         result = self.mgmt_client.virtual_machines.begin_delete(resource_group.name, VIRTUAL_MACHINE_NAME)

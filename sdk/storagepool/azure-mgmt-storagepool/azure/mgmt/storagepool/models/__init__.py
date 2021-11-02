@@ -29,6 +29,13 @@ try:
     from ._models_py3 import OutboundEnvironmentEndpointList
     from ._models_py3 import ProxyResource
     from ._models_py3 import Resource
+    from ._models_py3 import ResourceSkuCapability
+    from ._models_py3 import ResourceSkuInfo
+    from ._models_py3 import ResourceSkuListResult
+    from ._models_py3 import ResourceSkuLocationInfo
+    from ._models_py3 import ResourceSkuRestrictionInfo
+    from ._models_py3 import ResourceSkuRestrictions
+    from ._models_py3 import ResourceSkuZoneDetails
     from ._models_py3 import Sku
     from ._models_py3 import StoragePoolOperationDisplay
     from ._models_py3 import StoragePoolOperationListResult
@@ -58,6 +65,13 @@ except (SyntaxError, ImportError):
     from ._models import OutboundEnvironmentEndpointList  # type: ignore
     from ._models import ProxyResource  # type: ignore
     from ._models import Resource  # type: ignore
+    from ._models import ResourceSkuCapability  # type: ignore
+    from ._models import ResourceSkuInfo  # type: ignore
+    from ._models import ResourceSkuListResult  # type: ignore
+    from ._models import ResourceSkuLocationInfo  # type: ignore
+    from ._models import ResourceSkuRestrictionInfo  # type: ignore
+    from ._models import ResourceSkuRestrictions  # type: ignore
+    from ._models import ResourceSkuZoneDetails  # type: ignore
     from ._models import Sku  # type: ignore
     from ._models import StoragePoolOperationDisplay  # type: ignore
     from ._models import StoragePoolOperationListResult  # type: ignore
@@ -71,6 +85,8 @@ from ._storage_pool_management_enums import (
     IscsiTargetAclMode,
     OperationalStatus,
     ProvisioningStates,
+    ResourceSkuRestrictionsReasonCode,
+    ResourceSkuRestrictionsType,
 )
 
 __all__ = [
@@ -96,6 +112,13 @@ __all__ = [
     'OutboundEnvironmentEndpointList',
     'ProxyResource',
     'Resource',
+    'ResourceSkuCapability',
+    'ResourceSkuInfo',
+    'ResourceSkuListResult',
+    'ResourceSkuLocationInfo',
+    'ResourceSkuRestrictionInfo',
+    'ResourceSkuRestrictions',
+    'ResourceSkuZoneDetails',
     'Sku',
     'StoragePoolOperationDisplay',
     'StoragePoolOperationListResult',
@@ -107,4 +130,6 @@ __all__ = [
     'IscsiTargetAclMode',
     'OperationalStatus',
     'ProvisioningStates',
+    'ResourceSkuRestrictionsReasonCode',
+    'ResourceSkuRestrictionsType',
 ]

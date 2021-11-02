@@ -7,7 +7,7 @@ try:
 except ImportError:
     from mock import patch  # type: ignore
 
-from azure.identity import AzureApplicationCredential
+from azure.identity._credentials.application import AzureApplicationCredential
 from azure.identity._constants import EnvironmentVariables
 
 

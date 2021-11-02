@@ -110,3 +110,33 @@ directive:
       "AES256"
     ];
 ```
+
+### Remove ContainerName and BlobName from parameter list since they are not needed
+``` yaml
+directive:
+- from: swagger-document
+  where: $["x-ms-paths"]
+  transform: >
+    for (const property in $)
+    {
+        if (property.includes('/{containerName}/{blob}'))
+        {
+            $[property]["parameters"] = $[property]["parameters"].filter(function(param) { return (typeof param['$ref'] === "undefined") || (false == param['$ref'].endsWith("#/parameters/ContainerName") && false == param['$ref'].endsWith("#/parameters/Blob"))});
+        } 
+        else if (property.includes('/{containerName}'))
+        {
+            $[property]["parameters"] = $[property]["parameters"].filter(function(param) { return (typeof param['$ref'] === "undefined") || (false == param['$ref'].endsWith("#/parameters/ContainerName"))});
+        }
+    }
+```
+
+### Change to OrMetadata
+``` yaml
+directive:
+- from: swagger-document
+  where: $.definitions.BlobItemInternal
+  transform: |
+    $.properties.OrMetadata = $.properties.ObjectReplicationMetadata;
+    $.properties.OrMetadata["x-ms-client-name"] = "ObjectReplicationMetadata";
+    delete $.properties.ObjectReplicationMetadata;
+```

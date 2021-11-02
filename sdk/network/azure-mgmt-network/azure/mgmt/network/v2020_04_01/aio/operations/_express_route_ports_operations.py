@@ -47,7 +47,7 @@ class ExpressRoutePortsOperations:
         self,
         resource_group_name: str,
         express_route_port_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -91,7 +91,7 @@ class ExpressRoutePortsOperations:
         self,
         resource_group_name: str,
         express_route_port_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified ExpressRoutePort resource.
 
@@ -101,8 +101,8 @@ class ExpressRoutePortsOperations:
         :type express_route_port_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -155,7 +155,7 @@ class ExpressRoutePortsOperations:
         self,
         resource_group_name: str,
         express_route_port_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExpressRoutePort":
         """Retrieves the requested ExpressRoutePort resource.
 
@@ -214,7 +214,7 @@ class ExpressRoutePortsOperations:
         resource_group_name: str,
         express_route_port_name: str,
         parameters: "_models.ExpressRoutePort",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExpressRoutePort":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRoutePort"]
         error_map = {
@@ -271,7 +271,7 @@ class ExpressRoutePortsOperations:
         resource_group_name: str,
         express_route_port_name: str,
         parameters: "_models.ExpressRoutePort",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ExpressRoutePort"]:
         """Creates or updates the specified ExpressRoutePort resource.
 
@@ -283,8 +283,8 @@ class ExpressRoutePortsOperations:
         :type parameters: ~azure.mgmt.network.v2020_04_01.models.ExpressRoutePort
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ExpressRoutePort or the result of cls(response)
@@ -342,7 +342,7 @@ class ExpressRoutePortsOperations:
         resource_group_name: str,
         express_route_port_name: str,
         parameters: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExpressRoutePort":
         """Update ExpressRoutePort tags.
 
@@ -406,7 +406,7 @@ class ExpressRoutePortsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ExpressRoutePortListResult"]:
         """List all the ExpressRoutePort resources in the specified resource group.
 
@@ -475,7 +475,7 @@ class ExpressRoutePortsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ExpressRoutePortListResult"]:
         """List all the ExpressRoutePort resources in the specified subscription.
 
