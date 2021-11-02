@@ -6,13 +6,15 @@
 import json
 import os
 import logging
+import requests
 import shlex
 import sys
-import time
 from typing import TYPE_CHECKING
 
 import pytest
 import subprocess
+
+from .config import PROXY_URL
 
 if TYPE_CHECKING:
     from typing import Optional
@@ -55,9 +57,11 @@ def get_container_info():
 
     output, stderr = proc.communicate()
     try:
+        # This will succeed if we found a container with CONTAINER_NAME
         return json.loads(output)
     # We'll get a JSONDecodeError on Py3 (ValueError on Py2) if output is empty (i.e. there's no proxy container)
     except ValueError:
+        # Didn't find a container with CONTAINER_NAME
         return None
 
 
@@ -108,8 +112,16 @@ def start_test_proxy():
 
     proc = subprocess.Popen(shlex.split("docker container start " + CONTAINER_NAME))
     proc.communicate()
-    # wait for the proxy server to become available
-    time.sleep(10)
+
+    # Wait for the proxy server to become available
+    status_code = 0
+    while status_code != 200:
+        try:
+            response = requests.get(PROXY_URL.rstrip("/") + "/Info/Available")
+            status_code = response.status_code
+        # We get an SSLError for excess retries if the endpoint isn't available yet
+        except requests.exceptions.SSLError:
+            pass
 
 
 def stop_test_proxy():
@@ -132,5 +144,7 @@ def stop_test_proxy():
 def test_proxy():
     """Pytest fixture to be used before running any tests that are recorded with the test proxy"""
     start_test_proxy()
+    # Everything before this yield will be run before fixtures that invoke this one are run
+    # Everything after it will be run after invoking fixtures are done executing
     yield
     stop_test_proxy()
