@@ -1,5 +1,77 @@
 # Release History
 
+## 7.0.0b3 (2021-11-02)
+
+**Features**
+
+  - Model MongoDBDatabaseCreateUpdateParameters has a new parameter identity
+  - Model GremlinDatabaseCreateUpdateParameters has a new parameter identity
+  - Model DatabaseAccountUpdateParameters has a new parameter diagnostic_log_settings
+  - Model SqlTriggerGetResults has a new parameter identity
+  - Model SqlStoredProcedureGetResults has a new parameter identity
+  - Model MongoDBCollectionCreateUpdateParameters has a new parameter identity
+  - Model DatabaseAccountGetResults has a new parameter diagnostic_log_settings
+  - Model CassandraKeyspaceGetResults has a new parameter identity
+  - Model MongoDBDatabaseGetResults has a new parameter identity
+  - Model CassandraKeyspaceCreateUpdateParameters has a new parameter identity
+  - Model SqlStoredProcedureCreateUpdateParameters has a new parameter identity
+  - Model SqlUserDefinedFunctionGetResults has a new parameter identity
+  - Model CassandraTableCreateUpdateParameters has a new parameter identity
+  - Model GremlinGraphCreateUpdateParameters has a new parameter identity
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter diagnostic_log_settings
+  - Model SqlDatabaseGetResults has a new parameter identity
+  - Model SqlDatabaseCreateUpdateParameters has a new parameter identity
+  - Model LocationProperties has a new parameter status
+  - Model GremlinDatabaseGetResults has a new parameter identity
+  - Model GremlinGraphGetResults has a new parameter identity
+  - Model SqlTriggerCreateUpdateParameters has a new parameter identity
+  - Model TableCreateUpdateParameters has a new parameter identity
+  - Model ThroughputSettingsGetResults has a new parameter identity
+  - Model SqlContainerGetResults has a new parameter identity
+  - Model TableGetResults has a new parameter identity
+  - Model ARMResourceProperties has a new parameter identity
+  - Model MongoDBCollectionGetResults has a new parameter identity
+  - Model SqlContainerCreateUpdateParameters has a new parameter identity
+  - Model ThroughputSettingsUpdateParameters has a new parameter identity
+  - Model SqlUserDefinedFunctionCreateUpdateParameters has a new parameter identity
+  - Model CassandraTableGetResults has a new parameter identity
+  - Added operation CassandraClustersOperations.begin_fetch_node_status
+  - Added operation CassandraClustersOperations.get_backup
+  - Added operation CassandraClustersOperations.begin_request_repair
+  - Added operation CassandraClustersOperations.list_backups
+  - Added operation CassandraResourcesOperations.begin_migrate_cassandra_view_to_autoscale
+  - Added operation CassandraResourcesOperations.begin_migrate_cassandra_view_to_manual_throughput
+  - Added operation CassandraResourcesOperations.get_cassandra_view_throughput
+  - Added operation CassandraResourcesOperations.begin_update_cassandra_view_throughput
+  - Added operation CassandraResourcesOperations.begin_create_update_cassandra_view
+  - Added operation CassandraResourcesOperations.begin_delete_cassandra_view
+  - Added operation CassandraResourcesOperations.get_cassandra_view
+  - Added operation CassandraResourcesOperations.list_cassandra_views
+  - Added operation group GraphResourcesOperations
+  - Added operation group CosmosDBManagementClientOperationsMixin
+  - Added operation group ServiceOperations
+
+**Breaking changes**
+
+  - Parameter create_mode of model DatabaseAccountCreateUpdateParameters is now required
+  - Model DatabaseAccountUpdateParameters no longer has parameter capacity
+  - Model DatabaseAccountGetResults no longer has parameter capacity
+  - Model DataCenterResourceProperties no longer has parameter sku
+  - Model DataCenterResourceProperties no longer has parameter disk_capacity
+  - Model DataCenterResourceProperties no longer has parameter disk_sku
+  - Model DataCenterResourceProperties no longer has parameter managed_disk_customer_key_uri
+  - Model DataCenterResourceProperties no longer has parameter availability_zone
+  - Model DataCenterResourceProperties no longer has parameter backup_storage_customer_key_uri
+  - Model DatabaseAccountCreateUpdateParameters no longer has parameter capacity
+  - Model ClusterResourceProperties no longer has parameter deallocated
+  - Model ClusterResourceProperties no longer has parameter cassandra_audit_logging_enabled
+  - Removed operation MongoDBResourcesOperations.begin_retrieve_continuous_backup_information
+  - Removed operation CassandraClustersOperations.status
+  - Removed operation CassandraClustersOperations.begin_start
+  - Removed operation CassandraClustersOperations.begin_deallocate
+  - Removed operation CassandraClustersOperations.begin_invoke_command
+  - Removed operation group LocationsOperations
+
 ## 7.0.0b2 (2021-10-26)
 
 **Features**
