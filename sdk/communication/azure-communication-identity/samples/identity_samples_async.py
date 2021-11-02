@@ -23,8 +23,8 @@ USAGE:
     7) COMMUNICATION_M365_AAD_AUTHORITY - the AAD authority of M365 
     8) COMMUNICATION_M365_AAD_TENANT - the tenant ID of M365 application
     9) COMMUNICATION_M365_SCOPE - the scope of M365 application
-    10)COMMUNICATION_MSAL_USERNAME - the username for authenticating via MSAL library
-    11)COMMUNICATION_MSAL_PASSWORD - the password for authenticating via MSAL library 
+    10) COMMUNICATION_MSAL_USERNAME - the username for authenticating via the MSAL library
+    11) COMMUNICATION_MSAL_PASSWORD - the password for authenticating via the MSAL library 
 """
 from azure.communication.identity._shared.utils import parse_connection_str
 from azure.communication.identity._shared.utils import generate_teams_user_aad_token
