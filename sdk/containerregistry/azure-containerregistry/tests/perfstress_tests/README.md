@@ -16,6 +16,7 @@ CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT=<account URL of testing container regist
 ```
 
 ### Import docker images into the newly created registry
+An artifact should be prepared in the repository before running list_artifacts.py.
 ```
 az acr login -n <registry-name>
 az acr import --name <registry-name> --source docker.io/library/node:latest --image node:latest
