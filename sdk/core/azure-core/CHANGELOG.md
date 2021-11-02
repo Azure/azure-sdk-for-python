@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- add kwargs to the methods for `iter_raw` and `iter_bytes`  #21529
+
 ### Breaking Changes
 
 - SansIOHTTPPolicy.on_exception returns None instead of bool.
