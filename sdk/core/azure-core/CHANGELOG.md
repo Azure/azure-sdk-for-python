@@ -4,8 +4,8 @@
 
 ### Features Added
 
-- Added new error type `IncompleteReadError` which is raised if peer closes the connection before we have received the complete message body.
 - add kwargs to the methods for `iter_raw` and `iter_bytes`  #21529
+- Added new error type `IncompleteReadError` which is raised if peer closes the connection before we have received the complete message body.
 
 ### Breaking Changes
 
