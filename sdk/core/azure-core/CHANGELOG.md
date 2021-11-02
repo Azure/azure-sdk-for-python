@@ -5,6 +5,7 @@
 ### Features Added
 
 - add kwargs to the methods for `iter_raw` and `iter_bytes`  #21529
+- no longer raise JSON errors if users pass in file descriptors of JSON to the `json` kwarg in `HttpRequest`  #21504
 
 ### Breaking Changes
 
