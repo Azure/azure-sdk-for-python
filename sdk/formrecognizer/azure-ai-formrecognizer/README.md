@@ -540,6 +540,106 @@ except ResourceNotFoundError:
     print("Successfully deleted model with id {}".format(custom_model.model_id))
 ```
 
+### Convenience methods to get items from a specific model
+
+In version `azure-ai-formrecognizer (3.2.0b2)`, the following models have a `get_words()` convenience method:
+- `AnalyzedDocument`
+- `DocumentEntity`
+- `DocumentField`
+- `DocumentLine`
+- `DocumentKeyValueElement`
+- `DocumentTable`
+- `DocumentTableCell`
+
+The `get_words()` method can be used to obtain the words that are found within the same area of the document element that the call is made on.
+
+For instance, in the example below `get_words()` is called on every document line that is processed:
+```python
+    from azure.core.credentials import AzureKeyCredential
+    from azure.ai.formrecognizer import DocumentAnalysisClient
+
+    endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+    key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+
+    document_analysis_client = DocumentAnalysisClient(
+        endpoint=endpoint, credential=AzureKeyCredential(key)
+    )
+    with open(path_to_sample_documents, "rb") as f:
+        poller = document_analysis_client.begin_analyze_document(
+            "prebuilt-document", document=f
+        )
+    result = poller.result()
+
+    for page in result.pages:
+        print("----Analyzing document from page #{}----".format(page.page_number))
+
+        for line_idx, line in enumerate(page.lines):
+            words = line.get_words()
+            
+            print(
+                "...Line # {} has word count {} and text '{}' within bounding box '{}'".format(
+                    line_idx,
+                    len(words),
+                    line.content,
+                    format_bounding_box(line.bounding_box),
+                )
+            )
+
+            # print every word found for this line
+            for word in words:
+                print(
+                    "......Word '{}' has a confidence of {}".format(
+                        word.content, word.confidence
+                    )
+                )
+```
+
+
+Likewise, in version `azure-ai-formrecognizer (3.2.0b2)`, the following models have a `get_lines()` convenience method:
+- `AnalyzedDocument`
+- `DocumentEntity`
+- `DocumentField`
+- `DocumentKeyValueElement`
+- `DocumentTable`
+- `DocumentTableCell`
+
+The `get_lines()` method can be used to obtain the lines that are found within the same area of the document element that the call is made on.
+
+For instance, in the example below `get_lines()` is called on every document entity that is processed:
+```python
+    from azure.core.credentials import AzureKeyCredential
+    from azure.ai.formrecognizer import DocumentAnalysisClient
+
+    endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+    key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+
+    document_analysis_client = DocumentAnalysisClient(
+        endpoint=endpoint, credential=AzureKeyCredential(key)
+    )
+    with open(path_to_sample_documents, "rb") as f:
+        poller = document_analysis_client.begin_analyze_document(
+            "prebuilt-document", document=f
+        )
+    result = poller.result()
+
+    print("----Entities found in document----")
+    for entity in result.entities:
+        print("Entity of category '{}' with sub-category '{}'".format(entity.category, entity.sub_category))
+        # NOTE: Calling get_lines() here will return a list of the DocumentLines that make up the entity.
+        # These lines can be processed just like any other DocumentLine instance.
+        lines = entity.get_lines()
+
+        # print every line found for this document entity
+        for line in lines:
+            print(
+                "...Line has '{}' text and is within bounding box '{}'".format(
+                    line.content,
+                    line.bounding_box,
+                )
+            )
+```
+
+
 ## Troubleshooting
 
 ### General
