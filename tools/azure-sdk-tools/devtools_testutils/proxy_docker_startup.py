@@ -87,9 +87,9 @@ def create_container():
     proc.communicate()
 
 
-def start_container():
+def start_test_proxy():
     # type: () -> None
-    """Starts the test proxy Docker container and returns when the proxy server is ready to receive requests"""
+    """Starts the test proxy and returns when the proxy server is ready to receive requests"""
     _LOGGER.info("Starting the test proxy container...")
 
     container_info = get_container_info()
@@ -112,9 +112,9 @@ def start_container():
     time.sleep(10)
 
 
-def stop_container():
+def stop_test_proxy():
     # type: () -> None
-    """Stops any running instance of the test proxy Docker container"""
+    """Stops any running instance of the test proxy"""
     _LOGGER.info("Stopping the test proxy container...")
 
     container_info = get_container_info()
@@ -129,8 +129,8 @@ def stop_container():
 
 
 @pytest.fixture(scope="session")
-def proxy_docker_container():
+def test_proxy():
     """Pytest fixture to be used before running any tests that are recorded with the test proxy"""
-    start_container()
+    start_test_proxy()
     yield
-    stop_container()
+    stop_test_proxy()
