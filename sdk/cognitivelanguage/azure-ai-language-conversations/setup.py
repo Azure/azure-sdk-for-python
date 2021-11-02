@@ -76,6 +76,10 @@ setup(
     packages=find_packages(exclude=[
         'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
+        # This means any folder structure that only consists of a __init__.py.
+        # For example, for storage, this would mean adding 'azure.storage'
+        # in addition to the default 'azure' that is seen here.
+        'azure',
         'azure.ai',
         'azure.ai.language',
     ]),
