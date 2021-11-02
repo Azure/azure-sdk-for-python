@@ -83,3 +83,25 @@ directive:
     $.default = "inherit";
 ```
 
+### Don't include share name, directory, or file name in path - we have direct URIs.
+```
+directive:
+- from: swagger-document
+  where: $["x-ms-paths"]
+  transform: >
+    for (const property in $)
+    {
+        if (property.includes('/{shareName}/{directory}/{fileName}'))
+        {
+            $[property]["parameters"] = $[property]["parameters"].filter(function(param) { return (typeof param['$ref'] === "undefined") || (false == param['$ref'].endsWith("#/parameters/ShareName") && false == param['$ref'].endsWith("#/parameters/DirectoryPath") && false == param['$ref'].endsWith("#/parameters/FilePath"))});
+        } 
+        else if (property.includes('/{shareName}/{directory}'))
+        {
+            $[property]["parameters"] = $[property]["parameters"].filter(function(param) { return (typeof param['$ref'] === "undefined") || (false == param['$ref'].endsWith("#/parameters/ShareName") && false == param['$ref'].endsWith("#/parameters/DirectoryPath"))});
+        }
+        else if (property.includes('/{shareName}'))
+        {
+            $[property]["parameters"] = $[property]["parameters"].filter(function(param) { return (typeof param['$ref'] === "undefined") || (false == param['$ref'].endsWith("#/parameters/ShareName"))});
+        }
+    }
+```
