@@ -79,7 +79,7 @@ def register_schema(client, group_name, name, schema_string, format):
 
 def get_schema_by_id(client, id):
     print("Getting schema by id...")
-    schema = client.get_schema(id)
+    schema = client.get_schema(id, logging_enable=True)
     print("The schema string of schema id: {} string is {}".format(id, schema.schema_definition))
     print("Schema properties are {}".format(id))
     return schema.schema_definition
@@ -99,7 +99,7 @@ if __name__ == '__main__':
         client_id=CLIENT_ID,
         client_secret=CLIENT_SECRET
     )
-    schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=SCHEMAREGISTRY_FQN, credential=token_credential)
+    schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=SCHEMAREGISTRY_FQN, credential=token_credential, logging_enable=True)
     with schema_registry_client:
         schema_id = register_schema(schema_registry_client, GROUP_NAME, NAME, SCHEMA_STRING, FORMAT)
         schema_str = get_schema_by_id(schema_registry_client, schema_id)

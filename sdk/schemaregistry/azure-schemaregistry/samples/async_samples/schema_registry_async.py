@@ -39,7 +39,7 @@ async def register_schema(client, group_name, name, schema_string, format):
 
 async def get_schema_by_id(client, id):
     print("Getting schema by id...")
-    schema = await client.get_schema(id)
+    schema = await client.get_schema(id, logging_enable=True)
     print("The schema string of schema id: {} string is {}".format(id, schema.schema_definition))
     print("Schema properties are {}".format(id))
     return schema.schema_definition
@@ -59,7 +59,7 @@ async def main():
         client_id=CLIENT_ID,
         client_secret=CLIENT_SECRET
     )
-    schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=SCHEMAREGISTRY_FQN, credential=token_credential)
+    schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=SCHEMAREGISTRY_FQN, credential=token_credential, logging_enable=True)
     async with token_credential, schema_registry_client:
         schema_id = await register_schema(schema_registry_client, GROUP_NAME, NAME, SCHEMA_STRING, FORMAT)
         schema_str = await get_schema_by_id(schema_registry_client, schema_id)
