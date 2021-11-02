@@ -356,7 +356,7 @@ class ShareProperties(DictMixin):
         self.provisioned_egress_mbps = kwargs.get('x-ms-share-provisioned-egress-mbps')
         self.provisioned_ingress_mbps = kwargs.get('x-ms-share-provisioned-ingress-mbps')
         self.provisioned_iops = kwargs.get('x-ms-share-provisioned-iops')
-        self.provisioned_bandwidth_mi_bps = None
+        self.provisioned_bandwidth_mi_bps = kwargs.get('x-ms-share-provisioned-bandwidth-mibps')
         self.lease = LeaseProperties(**kwargs)
         self.protocols = [protocol.strip() for protocol in kwargs.get('x-ms-enabled-protocols', None).split(',')]\
             if kwargs.get('x-ms-enabled-protocols', None) else None
