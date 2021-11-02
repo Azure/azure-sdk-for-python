@@ -152,8 +152,8 @@ def _from_cncf_events(event):
     except (AttributeError, ImportError):
         # means this is not a CNCF event
         return event
-    except Exception as err: # pylint: disable=bare-except
-        msg  = """Failed to serialize the event. Please ensure your
+    except Exception as err: # pylint: disable=broad-except
+        msg = """Failed to serialize the event. Please ensure your
         CloudEvents is correctly formatted (https://pypi.org/project/cloudevents/)"""
         
         raise_with_traceback(ValueError, msg, err)
