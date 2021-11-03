@@ -1,5 +1,19 @@
 # Release History
 
+## 13.0.0 (2021-11-03)
+
+**Features**
+
+  - Model DomainAvailability has a new parameter kind
+  - Model CheckDomainAvailabilityParameter has a new parameter kind
+  - Added operation group CommitmentPlansOperations
+  - Added operation group CommitmentTiersOperations
+  - Added operation group DeploymentsOperations
+
+**Breaking changes**
+
+  - Operation CognitiveServicesManagementClientOperationsMixin.check_domain_availability has a new signature
+
 ## 12.0.0 (2021-06-03)
 
 **Features**
