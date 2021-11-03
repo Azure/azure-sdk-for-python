@@ -35,7 +35,6 @@ def _parse_schema_properties_dict(response):
 
 def _parse_response_schema_properties(response, format):
     properties_dict = _parse_schema_properties_dict(response)
-    properties_dict['id'] = response.headers.get("schema-id")
     properties_dict['format'] = format
     return SchemaProperties(
         **properties_dict
