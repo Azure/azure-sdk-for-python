@@ -144,6 +144,19 @@ For complete list of recognizable system topics, visit [System Topics](https://d
 
 Event Grid on Kubernetes with Azure Arc is an offering that allows you to run Event Grid on your own Kubernetes cluster. This capability is enabled by the use of Azure Arc enabled Kubernetes. Through Azure Arc enabled Kubernetes, a supported Kubernetes cluster connects to Azure. Once connected, you are able to install Event Grid on it. Learn more about it [here](https://docs.microsoft.com/azure/event-grid/kubernetes/overview).
 
+### Support for CNCF Cloud Events
+
+Starting with v4.7.0, this package also supports publishing a CNCF cloud event from https://pypi.org/project/cloudevents/. You would be able to pass a CloudEvent object from this library to the `send` API.
+
+```python
+
+from cloudevents.http import CloudEvent
+
+event = CloudEvent(...)
+
+client.send(event)
+```
+
 ## Examples
 
 The following sections provide several code snippets covering some of the most common Event Grid tasks, including:
