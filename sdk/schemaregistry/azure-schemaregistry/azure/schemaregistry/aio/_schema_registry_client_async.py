@@ -65,7 +65,7 @@ class SchemaRegistryClient(object):
         credential: "AsyncTokenCredential",
         **kwargs: Any
     ) -> None:
-        self._generated_client = AzureSchemaRegistry(credential, fully_qualified_namespace, **kwargs)
+        self._generated_client = AzureSchemaRegistry(credential=credential, endpoint=fully_qualified_namespace, **kwargs)
 
     async def __aenter__(self):
         await self._generated_client.__aenter__()
@@ -155,7 +155,7 @@ class SchemaRegistryClient(object):
 
         """
         http_request_kwargs = get_http_request_kwargs(kwargs)
-        request = schema_rest.build_get_by_id_request(schema_id=id, **http_request_kwargs)
+        request = schema_rest.build_get_by_id_request(id=id, **http_request_kwargs)
         response = await self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
         return _parse_response_schema(response)
