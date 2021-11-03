@@ -2290,7 +2290,7 @@ class AnalyzedDocument(object):
         :return: iterable[DocumentWord]
         :rtype: iterable[DocumentWord]
         """
-        return _get_children(self, search_elements=["word"], cross_page=True)
+        return _get_children(self, search_element="word", cross_page=True)
 
     def get_lines(self, **kwargs):  # pylint: disable=unused-argument
         # type: (Any) -> Iterable[DocumentLine]
@@ -2299,7 +2299,7 @@ class AnalyzedDocument(object):
         :return: iterable[DocumentLine]
         :rtype: iterable[DocumentLine]
         """
-        return _get_children(self, search_elements=["line"], cross_page=True)
+        return _get_children(self, search_element="line", cross_page=True)
 
 
 class DocumentEntity(object):
@@ -2418,7 +2418,7 @@ class DocumentEntity(object):
         :return: iterable[DocumentWord]
         :rtype: iterable[DocumentWord]
         """
-        return _get_children(self, search_elements=["word"], cross_page=True)
+        return _get_children(self, search_element="word", cross_page=True)
 
     def get_lines(self, **kwargs):  # pylint: disable=unused-argument
         # type: (Any) -> Iterable[DocumentLine]
@@ -2427,7 +2427,7 @@ class DocumentEntity(object):
         :return: iterable[DocumentLine]
         :rtype: iterable[DocumentLine]
         """
-        return _get_children(self, search_elements=["line"], cross_page=True)
+        return _get_children(self, search_element="line", cross_page=True)
 
 
 class DocumentField(object):
@@ -2554,7 +2554,7 @@ class DocumentField(object):
         :return: iterable[DocumentWord]
         :rtype: iterable[DocumentWord]
         """
-        return _get_children(self, search_elements=["word"], cross_page=True)
+        return _get_children(self, search_element="word", cross_page=True)
 
     def get_lines(self, **kwargs):  # pylint: disable=unused-argument
         # type: (Any) -> Iterable[DocumentLine]
@@ -2563,7 +2563,7 @@ class DocumentField(object):
         :return: iterable[DocumentLine]
         :rtype: iterable[DocumentLine]
         """
-        return _get_children(self, search_elements=["line"], cross_page=True)
+        return _get_children(self, search_element="line", cross_page=True)
 
 
 class DocumentKeyValueElement(object):
@@ -2652,7 +2652,7 @@ class DocumentKeyValueElement(object):
         :return: iterable[DocumentWord]
         :rtype: iterable[DocumentWord]
         """
-        return _get_children(self, search_elements=["word"], cross_page=True)
+        return _get_children(self, search_element="word", cross_page=True)
 
     def get_lines(self, **kwargs):  # pylint: disable=unused-argument
         # type: (Any) -> Iterable[DocumentLine]
@@ -2661,7 +2661,7 @@ class DocumentKeyValueElement(object):
         :return: iterable[DocumentLine]
         :rtype: iterable[DocumentLine]
         """
-        return _get_children(self, search_elements=["line"], cross_page=True)
+        return _get_children(self, search_element="line", cross_page=True)
 
 
 class DocumentKeyValuePair(object):
@@ -2808,7 +2808,7 @@ class DocumentLine(object):
         :return: iterable[DocumentWord]
         :rtype: iterable[DocumentWord]
         """
-        return _get_children(self, search_elements=["word"], cross_page=False)
+        return _get_children(self, search_element="word", cross_page=False)
 
 
 class DocumentPage(object):
@@ -3193,7 +3193,7 @@ class DocumentTable(object):
         :return: iterable[DocumentWord]
         :rtype: iterable[DocumentWord]
         """
-        return _get_children(self, search_elements=["word"], cross_page=True)
+        return _get_children(self, search_element="word", cross_page=True)
 
     def get_lines(self, **kwargs):  # pylint: disable=unused-argument
         # type: (Any) -> Iterable[DocumentLine]
@@ -3202,7 +3202,7 @@ class DocumentTable(object):
         :return: iterable[DocumentLine]
         :rtype: iterable[DocumentLine]
         """
-        return _get_children(self, search_elements=["line"], cross_page=True)
+        return _get_children(self, search_element="line", cross_page=True)
 
 
 class DocumentTableCell(object):
@@ -3327,7 +3327,7 @@ class DocumentTableCell(object):
         :return: iterable[DocumentWord]
         :rtype: iterable[DocumentWord]
         """
-        return _get_children(self, search_elements=["word"], cross_page=True)
+        return _get_children(self, search_element="word", cross_page=True)
 
     def get_lines(self, **kwargs):  # pylint: disable=unused-argument
         # type: (Any) -> Iterable[DocumentLine]
@@ -3336,7 +3336,7 @@ class DocumentTableCell(object):
         :return: iterable[DocumentLine]
         :rtype: iterable[DocumentLine]
         """
-        return _get_children(self, search_elements=["line"], cross_page=True)
+        return _get_children(self, search_element="line", cross_page=True)
 
 
 class ModelOperationInfo(object):
@@ -4178,23 +4178,23 @@ class DocumentAnalysisInnerError(object):
             if data.get("innererror") else None
         )
 
-def _get_children(source_element, search_elements, cross_page=False):
+def _get_children(source_element, search_element, cross_page=False):
     result = []
 
     # search for elements across pages if cross_page is set to True
     if cross_page:
-        for elem in search_elements:
-            for region in source_element.bounding_regions:
-                for element in _get_element_list(_get_page(source_element._parent.pages, region.page_number), elem):
-                    if _in_span(element, source_element.spans):
-                        result.append(element)
+        for region in source_element.bounding_regions:
+            for element in _get_element_list(_get_page(source_element._parent.pages, region.page_number), search_element):
+                if _in_span(element, source_element.spans):
+                    result.append(element)
+                if _beyond_span(element, source_element.spans):
+                    break
         return result
 
     # look for elements on a specific page
-    for elem in search_elements:
-        for element in _get_element_list(source_element._parent, elem):
-            if _in_span(element, source_element.spans):
-                result.append(element)
+    for element in _get_element_list(source_element._parent, search_element):
+        if _in_span(element, source_element.spans):
+            result.append(element)
     return result
 
 def _get_page(pages, page_number):
@@ -4226,5 +4226,22 @@ def _in_span(element, spans):
                 if element_span.offset >= span.offset and (
                     element_span.offset + element_span.length
                 ) <= (span.offset + span.length):
+                    return True
+    return False
+
+def _beyond_span(element, spans):
+    # type: (Any, List[DocumentSpan]) -> bool
+    if hasattr(element, "span"):
+        for span in spans:
+            if element.span.offset >= span.offset and (
+                element.span.offset + element.span.length
+            ) > (span.offset + span.length):
+                return True
+    elif hasattr(element, "spans"):
+        for span in spans:
+            for element_span in element.spans:
+                if element_span.offset >= span.offset and (
+                    element_span.offset + element_span.length
+                ) > (span.offset + span.length):
                     return True
     return False
