@@ -88,11 +88,6 @@ async def analyze_general_documents():
     print("----Entities found in document----")
     for entity in result.entities:
         print("Entity of category '{}' with sub-category '{}'".format(entity.category, entity.sub_category))
-        # NOTE: Calling get_lines() here will return a list of the DocumentLines that make up the entity.
-        # These lines can be processed just like any other DocumentLine instance.
-        line_length = len(entity.get_lines())
-        if line_length > 0:
-            print("...has {} line(s)".format(line_length))
         print("...has content '{}'".format(entity.content))
         print("...within '{}' bounding regions".format(format_bounding_region(entity.bounding_regions)))
         print("...with confidence {}\n".format(entity.confidence))
