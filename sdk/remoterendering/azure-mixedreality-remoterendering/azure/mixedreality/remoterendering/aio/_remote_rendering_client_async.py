@@ -303,21 +303,26 @@ class RemoteRenderingClient(object):
     @distributed_trace_async
     async def update_rendering_session(self,
                                        session_id: str,
-                                       lease_time_minutes: int,
                                        **kwargs) -> RenderingSession:
         """
         Updates an already existing rendering session.
         :param str session_id: The identifier of the session to be updated.
-        :param int lease_time_minutes: The new lease time of the rendering session. Has to be strictly larger than
+        :keyword lease_time_minutes: The new lease time of the rendering session. Has to be strictly larger than
             the previous lease time.
+        :paramtype lease_time_minutes: int
         :rtype: ~azure.mixedreality.remoterendering.models.RenderingSession
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return await self._client.remote_rendering.update_session(account_id=self._account_id,
-                                                                  session_id=session_id,
-                                                                  body=UpdateSessionSettings(
-                                                                      lease_time_minutes=lease_time_minutes),
-                                                                  **kwargs)
+        lease_time_minutes = kwargs.pop("lease_time_minutes", None)  # type: Union[int,None]
+        if lease_time_minutes is not None:
+            return await self._client.remote_rendering.update_session(account_id=self._account_id,
+                                                                      session_id=session_id,
+                                                                      body=UpdateSessionSettings(
+                                                                          lease_time_minutes=lease_time_minutes),
+                                                                      **kwargs)
+
+        # if no param to update has been provided the unchanged session is returned
+        return await self._client.remote_rendering.get_session(self._account_id, session_id=session_id, **kwargs)
 
     @distributed_trace_async
     async def stop_rendering_session(self, session_id: str, **kwargs) -> None:
