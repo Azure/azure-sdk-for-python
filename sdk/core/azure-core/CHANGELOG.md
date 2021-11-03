@@ -17,8 +17,7 @@
   rather than silently truncating data in case the underlying tcp connection is closed prematurely. 
   (thanks to @jochen-ott-by for the contribution)   #20412
 - UnboundLocalError when SansIOHTTPPolicy handles an exception    #15222
-
-### Other Changes
+- Add default content type header of `text/plain` and content length header for users who pass unicode strings to the `content` kwarg of `HttpRequest` in 2.7  #21550
 
 ## 1.19.1 (2021-11-01)
 
