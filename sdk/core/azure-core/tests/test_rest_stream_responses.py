@@ -229,3 +229,15 @@ def test_error_reading(client):
     response.read()
     assert response.content == b""
     # try giving a really slow response, see what happens
+
+def test_pass_kwarg_to_iter_bytes(client):
+    request = HttpRequest("GET", "/basic/string")
+    response = client.send_request(request, stream=True)
+    for part in response.iter_bytes(chunk_size=5):
+        assert part
+
+def test_pass_kwarg_to_iter_raw(client):
+    request = HttpRequest("GET", "/basic/string")
+    response = client.send_request(request, stream=True)
+    for part in response.iter_raw(chunk_size=5):
+        assert part

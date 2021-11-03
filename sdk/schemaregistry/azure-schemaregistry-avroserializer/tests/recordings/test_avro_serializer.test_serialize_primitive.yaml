@@ -15,7 +15,7 @@ interactions:
       Serialization-Type:
       - Avro
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: PUT
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/null?api-version=2020-09-01-preview
   response:
@@ -25,7 +25,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Tue, 26 Oct 2021 00:20:09 GMT
+      - Thu, 28 Oct 2021 23:03:43 GMT
       location:
       - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/null/versions/1?api-version=2020-09-01-preview
       schema-id:

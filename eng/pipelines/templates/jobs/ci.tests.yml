@@ -72,6 +72,10 @@ jobs:
       value: ${{ parameters.InjectedPackages }}
 
     steps:
+    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+      parameters:
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
     - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
       parameters:
         AgentImage: $(OSVmImage)
@@ -99,7 +103,6 @@ jobs:
         OSVmImage: $(OSVmImage)
         CoverageArg: $(CoverageArg)
         PythonVersion: $(PythonVersion)
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ToxTestEnv: $(toxenv)
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: $(InjectedPackages)
@@ -112,7 +115,6 @@ jobs:
           - template: ../steps/set-dev-build.yml
             parameters:
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
-              BuildTargetingString: ${{ parameters.BuildTargetingString }}
           
           - ${{ each step in parameters.BeforeTestSteps }}:
             -  ${{ step }}
