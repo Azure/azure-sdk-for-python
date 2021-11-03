@@ -9,6 +9,7 @@ import logging
 import requests
 import shlex
 import sys
+import time
 from typing import TYPE_CHECKING
 
 import pytest
@@ -25,6 +26,7 @@ _LOGGER = logging.getLogger()
 CONTAINER_NAME = "ambitious_azsdk_test_proxy"
 LINUX_IMAGE_SOURCE_PREFIX = "azsdkengsys.azurecr.io/engsys/testproxy-lin"
 WINDOWS_IMAGE_SOURCE_PREFIX = "azsdkengsys.azurecr.io/engsys/testproxy-win"
+CONTAINER_STARTUP_TIMEOUT = 6000
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "..", ".."))
 
@@ -114,14 +116,17 @@ def start_test_proxy():
     proc.communicate()
 
     # Wait for the proxy server to become available
+    start = time.time()
+    now = time.time()
     status_code = 0
-    while status_code != 200:
+    while now - start < CONTAINER_STARTUP_TIMEOUT and status_code != 200:
         try:
-            response = requests.get(PROXY_URL.rstrip("/") + "/Info/Available")
+            response = requests.get(PROXY_URL.rstrip("/") + "/Info/Available", timeout=60)
             status_code = response.status_code
-        # We get an SSLError for excess retries if the endpoint isn't available yet
+        # We get an SSLError if the container is started but the endpoint isn't available yet
         except requests.exceptions.SSLError:
             pass
+        now = time.time()
 
 
 def stop_test_proxy():
