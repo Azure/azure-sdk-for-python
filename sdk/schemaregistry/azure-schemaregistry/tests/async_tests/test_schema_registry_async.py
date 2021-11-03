@@ -47,20 +47,20 @@ class SchemaRegistryAsyncTests(AzureTestCase):
             schema_name = self.get_resource_name('test-schema-basic-async')
             schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
             format = "Avro"
-            schema_properties = await client.register_schema(schemaregistry_group, schema_name, schema_str, format)
+            schema_properties = await client.register_schema(schemaregistry_group, schema_name, schema_str, format, logging_enable=True)
 
             assert schema_properties.id is not None
             assert schema_properties.version is 1
             assert schema_properties.format == "Avro"
 
-            returned_schema = await client.get_schema(id=schema_properties.id)
+            returned_schema = await client.get_schema(id=schema_properties.id, logging_enable=True)
 
             assert returned_schema.properties.id == schema_properties.id
             assert returned_schema.properties.version == 1
             assert returned_schema.properties.format == "Avro"
             assert returned_schema.schema_definition == schema_str
 
-            returned_schema_properties = await client.get_schema_properties(schemaregistry_group, schema_name, schema_str, format)
+            returned_schema_properties = await client.get_schema_properties(schemaregistry_group, schema_name, schema_str, format, logging_enable=True)
 
             assert returned_schema_properties.id == schema_properties.id
             assert returned_schema_properties.version == 1

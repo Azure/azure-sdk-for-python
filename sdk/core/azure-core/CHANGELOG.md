@@ -10,6 +10,7 @@ requests and sends them through our pipelines.
 - GA errors `StreamConsumedError`, `StreamClosedError`, and `ResponseNotReadError` to `azure.core.exceptions`. These errors
 are thrown if you mishandle streamed responses from the `azure.core.rest` module
 - add kwargs to the methods for `iter_raw` and `iter_bytes`  #21529
+- Added new error type `IncompleteReadError` which is raised if peer closes the connection before we have received the complete message body.
 
 ### Breaking Changes
 
@@ -17,9 +18,11 @@ are thrown if you mishandle streamed responses from the `azure.core.rest` module
 
 ### Bugs Fixed
 
+- The `Content-Length` header in a http response is strictly checked against the actual number of bytes in the body,
+  rather than silently truncating data in case the underlying tcp connection is closed prematurely. 
+  (thanks to @jochen-ott-by for the contribution)   #20412
 - UnboundLocalError when SansIOHTTPPolicy handles an exception    #15222
-
-### Other Changes
+- Add default content type header of `text/plain` and content length header for users who pass unicode strings to the `content` kwarg of `HttpRequest` in 2.7  #21550
 
 ## 1.19.1 (2021-11-01)
 
