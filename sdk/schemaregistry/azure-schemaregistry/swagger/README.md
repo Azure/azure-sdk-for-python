@@ -6,11 +6,11 @@
 ```ps
 cd C:\Work\SchemaRegistry\
 autorest --reset
-autorest --use=D:\Projects\autorest.python --low-level-client --modelerfour.lenient-model-deduplication
+autorest --low-level-client --modelerfour.lenient-model-deduplication README.md
 ```
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/deyaaeldeen/azure-rest-api-specs/schemaregistry/sdk-swagger-edits/specification/schemaregistry/data-plane/Microsoft.EventHub/preview/2021-11-01-preview/schemaregistry.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/2f33c13f9d5964781f4b8954bf3909b5039fe129/specification/schemaregistry/data-plane/Microsoft.EventHub/stable/2021-10/schemaregistry.json
 output-folder: ../azure/schemaregistry/_generated
 namespace: azure.schemaregistry._generated
 no-namespace-folders: true
