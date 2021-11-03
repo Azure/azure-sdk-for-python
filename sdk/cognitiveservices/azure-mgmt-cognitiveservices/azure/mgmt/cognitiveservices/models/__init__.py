@@ -18,6 +18,19 @@ try:
     from ._models_py3 import CallRateLimit
     from ._models_py3 import CheckDomainAvailabilityParameter
     from ._models_py3 import CheckSkuAvailabilityParameter
+    from ._models_py3 import CommitmentCost
+    from ._models_py3 import CommitmentPeriod
+    from ._models_py3 import CommitmentPlan
+    from ._models_py3 import CommitmentPlanListResult
+    from ._models_py3 import CommitmentPlanProperties
+    from ._models_py3 import CommitmentQuota
+    from ._models_py3 import CommitmentTier
+    from ._models_py3 import CommitmentTierListResult
+    from ._models_py3 import Deployment
+    from ._models_py3 import DeploymentListResult
+    from ._models_py3 import DeploymentModel
+    from ._models_py3 import DeploymentProperties
+    from ._models_py3 import DeploymentScaleSettings
     from ._models_py3 import DomainAvailability
     from ._models_py3 import Encryption
     from ._models_py3 import ErrorAdditionalInfo
@@ -39,6 +52,7 @@ try:
     from ._models_py3 import PrivateLinkResourceListResult
     from ._models_py3 import PrivateLinkResourceProperties
     from ._models_py3 import PrivateLinkServiceConnectionState
+    from ._models_py3 import ProxyResource
     from ._models_py3 import QuotaLimit
     from ._models_py3 import RegenerateKeyParameters
     from ._models_py3 import RequestMatchPattern
@@ -71,6 +85,19 @@ except (SyntaxError, ImportError):
     from ._models import CallRateLimit  # type: ignore
     from ._models import CheckDomainAvailabilityParameter  # type: ignore
     from ._models import CheckSkuAvailabilityParameter  # type: ignore
+    from ._models import CommitmentCost  # type: ignore
+    from ._models import CommitmentPeriod  # type: ignore
+    from ._models import CommitmentPlan  # type: ignore
+    from ._models import CommitmentPlanListResult  # type: ignore
+    from ._models import CommitmentPlanProperties  # type: ignore
+    from ._models import CommitmentQuota  # type: ignore
+    from ._models import CommitmentTier  # type: ignore
+    from ._models import CommitmentTierListResult  # type: ignore
+    from ._models import Deployment  # type: ignore
+    from ._models import DeploymentListResult  # type: ignore
+    from ._models import DeploymentModel  # type: ignore
+    from ._models import DeploymentProperties  # type: ignore
+    from ._models import DeploymentScaleSettings  # type: ignore
     from ._models import DomainAvailability  # type: ignore
     from ._models import Encryption  # type: ignore
     from ._models import ErrorAdditionalInfo  # type: ignore
@@ -92,6 +119,7 @@ except (SyntaxError, ImportError):
     from ._models import PrivateLinkResourceListResult  # type: ignore
     from ._models import PrivateLinkResourceProperties  # type: ignore
     from ._models import PrivateLinkServiceConnectionState  # type: ignore
+    from ._models import ProxyResource  # type: ignore
     from ._models import QuotaLimit  # type: ignore
     from ._models import RegenerateKeyParameters  # type: ignore
     from ._models import RequestMatchPattern  # type: ignore
@@ -116,6 +144,9 @@ except (SyntaxError, ImportError):
 from ._cognitive_services_management_client_enums import (
     ActionType,
     CreatedByType,
+    DeploymentProvisioningState,
+    DeploymentScaleType,
+    HostingModel,
     KeyName,
     KeySource,
     NetworkRuleAction,
@@ -144,6 +175,19 @@ __all__ = [
     'CallRateLimit',
     'CheckDomainAvailabilityParameter',
     'CheckSkuAvailabilityParameter',
+    'CommitmentCost',
+    'CommitmentPeriod',
+    'CommitmentPlan',
+    'CommitmentPlanListResult',
+    'CommitmentPlanProperties',
+    'CommitmentQuota',
+    'CommitmentTier',
+    'CommitmentTierListResult',
+    'Deployment',
+    'DeploymentListResult',
+    'DeploymentModel',
+    'DeploymentProperties',
+    'DeploymentScaleSettings',
     'DomainAvailability',
     'Encryption',
     'ErrorAdditionalInfo',
@@ -165,6 +209,7 @@ __all__ = [
     'PrivateLinkResourceListResult',
     'PrivateLinkResourceProperties',
     'PrivateLinkServiceConnectionState',
+    'ProxyResource',
     'QuotaLimit',
     'RegenerateKeyParameters',
     'RequestMatchPattern',
@@ -187,6 +232,9 @@ __all__ = [
     'VirtualNetworkRule',
     'ActionType',
     'CreatedByType',
+    'DeploymentProvisioningState',
+    'DeploymentScaleType',
+    'HostingModel',
     'KeyName',
     'KeySource',
     'NetworkRuleAction',
