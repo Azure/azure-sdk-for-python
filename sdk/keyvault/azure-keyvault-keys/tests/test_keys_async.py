@@ -479,8 +479,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         for i in range(5):
             # [START get_random_bytes]
             # get eight random bytes from a managed HSM
-            result = await client.get_random_bytes(count=8)
-            random_bytes = result.value
+            random_bytes = await client.get_random_bytes(count=8)
             # [END get_random_bytes]
             assert len(random_bytes) == 8
             assert all(random_bytes != rb for rb in generated_random_bytes)

@@ -9,7 +9,7 @@ from .crypto import CryptographyClient
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
 from ._shared._polling import DeleteRecoverPollingMethod, KeyVaultOperationPoller
-from ._models import DeletedKey, KeyVaultKey, KeyProperties, KeyRotationPolicy, RandomBytes, ReleaseKeyResult
+from ._models import DeletedKey, KeyVaultKey, KeyProperties, KeyRotationPolicy, ReleaseKeyResult
 
 try:
     from typing import TYPE_CHECKING
@@ -728,13 +728,13 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_random_bytes(self, count, **kwargs):
-        # type: (int, **Any) -> RandomBytes
+        # type: (int, **Any) -> bytes
         """Get the requested number of random bytes from a managed HSM.
 
         :param int count: The requested number of random bytes.
 
         :return: The random bytes.
-        :rtype: ~azure.keyvault.keys.RandomBytes
+        :rtype: bytes
         :raises:
             :class:`ValueError` if less than one random byte is requested,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -751,7 +751,7 @@ class KeyClient(KeyVaultClientBase):
             raise ValueError("At least one random byte must be requested")
         parameters = self._models.GetRandomBytesRequest(count=count)
         result = self._client.get_random_bytes(vault_base_url=self._vault_url, parameters=parameters, **kwargs)
-        return RandomBytes(value=result.value)
+        return result.value
 
     @distributed_trace
     def get_key_rotation_policy(self, name, **kwargs):
