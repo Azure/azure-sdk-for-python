@@ -11,7 +11,7 @@ if __name__ == '__main__':
     parser.add_argument('--new-version', required=True, help='new package version')
     parser.add_argument('--service', required=True, help='name of the service for which to set the dev build id (e.g. keyvault)')
     parser.add_argument('--release-date', help='date in the format "yyyy-MM-dd"')
-    parser.add_argument('--replace-latest-entry-title', help='indicate if to replace the latest changelog entry"')
+    parser.add_argument('--replace-latest-entry-title', help='indicate if to replace the latest changelog entry')
     parser.add_argument(
         dest="glob_string",
         nargs="?",
