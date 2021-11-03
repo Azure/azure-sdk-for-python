@@ -322,6 +322,7 @@ class StorageContainerTest(StorageTestCase):
         # Act
         container.set_container_metadata(metadata)
         metadata_from_response = container.get_container_properties().metadata
+        
         # Assert
         self.assertDictEqual(metadata_from_response, metadata)
 
