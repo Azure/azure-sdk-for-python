@@ -85,8 +85,8 @@ def get_document_elements():
     print("----Getting words in entities found in document----")
     for entity in result.entities:
         print("Entity of category '{}' with sub-category '{}'".format(entity.category, entity.sub_category))
-        # NOTE: Calling get_lines() here will return a list of the DocumentLines that make up the entity.
-        # These lines can be processed just like any other DocumentLine instance.
+        # NOTE: Calling get_words() here will return a list of the DocumentWords that make up the entity.
+        # These words can be processed just like any other DocumentWord instance.
         words = entity.get_words()
         for word in words:
             print(
