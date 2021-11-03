@@ -4,8 +4,9 @@ parameters:
   TargetLabelVariable: ''
   ServiceDirectory: ''
   DevOpsFeed: "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
+
 variables:
-    - template: ../variables/tool-version.yml"
+- template: ../variables/tool-version.yml
 steps:
   - pwsh: |
       dotnet tool install --tool-path . --add-source "${{ parameters.DevOpsFeed }}" --version '$("Azure.Sdk.Tools.RetrieveCodeOwners")' "Azure.Sdk.Tools.RetrieveCodeOwners"
