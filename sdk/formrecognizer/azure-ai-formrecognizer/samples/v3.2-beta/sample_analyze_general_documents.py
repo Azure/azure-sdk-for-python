@@ -97,20 +97,22 @@ def analyze_general_documents():
         )
 
         for line_idx, line in enumerate(page.lines):
+            words = line.get_words()
             print(
-                "...Line # {} has text content '{}' within bounding box '{}'".format(
+                "...Line # {} has {} words and text '{}' within bounding box '{}'".format(
                     line_idx,
+                    len(words),
                     line.content,
                     format_bounding_box(line.bounding_box),
                 )
             )
 
-        for word in page.words:
-            print(
-                "...Word '{}' has a confidence of {}".format(
-                    word.content, word.confidence
+            for word in words:
+                print(
+                    "......Word '{}' has a confidence of {}".format(
+                        word.content, word.confidence
+                    )
                 )
-            )
 
         for selection_mark in page.selection_marks:
             print(
@@ -125,6 +127,11 @@ def analyze_general_documents():
         print(
             "Table # {} has {} rows and {} columns".format(
                 table_idx, table.row_count, table.column_count
+            )
+        )
+        print(
+            "Table # {} has {} lines and {} words".format(
+                table_idx, len(table.get_lines()), len(table.get_words())
             )
         )
         for region in table.bounding_regions:

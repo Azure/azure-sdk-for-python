@@ -348,8 +348,32 @@ for style in result.styles:
         print("Document contains handwritten content: ")
         print(",".join([result.content[span.offset:span.offset + span.length] for span in style.spans]))
 
-print("----Selection marks found in document----")
 for page in result.pages:
+    print("----Analyzing document from page #{}----".format(page.page_number))
+    print(
+        "Page has width: {} and height: {}, measured with unit: {}".format(
+            page.width, page.height, page.unit
+        )
+    )
+
+    for line_idx, line in enumerate(page.lines):
+        words = line.get_words()
+        print(
+            "...Line # {} has {} words and text '{}' within bounding box '{}'".format(
+                line_idx,
+                len(words),
+                line.content,
+                format_bounding_box(line.bounding_box),
+            )
+        )
+
+        for word in words:
+            print(
+                "......Word '{}' has a confidence of {}".format(
+                    word.content, word.confidence
+                )
+            )
+
     for selection_mark in page.selection_marks:
         print(
             "...Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
