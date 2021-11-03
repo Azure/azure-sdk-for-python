@@ -430,7 +430,7 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
   return $packages
 }
 
-function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseDate, $ReplaceLatestEntryTitle)
+function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseDate, $ReplaceLatestEntryTitle=$True)
 {
   if($null -eq $ReleaseDate)
   {
