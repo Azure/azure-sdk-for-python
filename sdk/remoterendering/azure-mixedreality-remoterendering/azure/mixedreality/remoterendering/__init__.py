@@ -7,9 +7,6 @@
 from ._remote_rendering_client import RemoteRenderingClient
 from ._version import VERSION
 
-# note: ConversionOutput is an automatically generated class and we cannot rename it via an autorest directive
-#       so we rename it here
-
 from ._generated.models import (AssetConversion, AssetConversionInputSettings,
                                 AssetConversionOutput, AssetConversionOutputSettings,
                                 AssetConversionSettings, AssetConversionStatus, RemoteRenderingError,
