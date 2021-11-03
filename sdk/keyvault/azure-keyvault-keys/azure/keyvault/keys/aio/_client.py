@@ -68,13 +68,13 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :param str key_name: The name of the key used to perform cryptographic operations.
 
-        :keyword str version: Optional version of the key used to perform cryptographic operations.
+        :keyword str key_version: Optional version of the key used to perform cryptographic operations.
 
         :returns: A :class:`~azure.keyvault.keys.crypto.aio.CryptographyClient` using the same options, credentials, and
             HTTP client as this :class:`~azure.keyvault.keys.aio.KeyClient`.
         :rtype: ~azure.keyvault.keys.crypto.aio.CryptographyClient
         """
-        key_id = _get_key_id(self._vault_url, key_name, kwargs.get("version"))
+        key_id = _get_key_id(self._vault_url, key_name, kwargs.get("key_version"))
 
         # We provide a fake credential because the generated client already has the KeyClient's real credential
         return CryptographyClient(

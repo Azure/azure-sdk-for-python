@@ -606,7 +606,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         key = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
 
         # try specifying the key version
-        crypto_client = client.get_cryptography_client(key_name, version=key.properties.version)
+        crypto_client = client.get_cryptography_client(key_name, key_version=key.properties.version)
         # both clients should use the same generated client
         assert client._client == crypto_client._client
 
