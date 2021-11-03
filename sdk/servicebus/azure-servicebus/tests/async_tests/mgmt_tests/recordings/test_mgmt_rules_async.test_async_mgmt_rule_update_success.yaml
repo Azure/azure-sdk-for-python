@@ -5,22 +5,22 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://servicebustestsbname.servicebus.windows.net/$Resources/topics?$skip=0&$top=100&api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/$Resources/topics?$skip=0&$top=100&api-version=2021-05
   response:
     body:
-      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Topics</title><id>https://servicebustestm4fqorp5pk.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2021-04-22T15:23:27Z</updated><link
-        rel="self" href="https://servicebustestm4fqorp5pk.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2017-04"/></feed>
+      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Topics</title><id>https://servicebustestkjdemkkogk.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2021-05</id><updated>2021-10-21T05:22:19Z</updated><link
+        rel="self" href="https://servicebustestkjdemkkogk.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2021-05"/></feed>
     headers:
       content-type: application/atom+xml;type=feed;charset=utf-8
-      date: Thu, 22 Apr 2021 15:23:27 GMT
+      date: Thu, 21 Oct 2021 05:22:18 GMT
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
       code: 200
       message: OK
-    url: https://servicebustestm4fqorp5pk.servicebus.windows.net/$Resources/topics?$skip=0&$top=100&api-version=2017-04
+    url: https://servicebustestkjdemkkogk.servicebus.windows.net/$Resources/topics?$skip=0&$top=100&api-version=2021-05
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
@@ -34,26 +34,26 @@ interactions:
       Content-Type:
       - application/atom+xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://servicebustestsbname.servicebus.windows.net/fjrui?api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/fjrui?api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui?api-version=2017-04</id><title
-        type="text">fjrui</title><published>2021-04-22T15:23:28Z</published><updated>2021-04-22T15:23:28Z</updated><author><name>servicebustestm4fqorp5pk</name></author><link
-        rel="self" href="https://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestkjdemkkogk.servicebus.windows.net/fjrui?api-version=2021-05</id><title
+        type="text">fjrui</title><published>2021-10-21T05:22:19Z</published><updated>2021-10-21T05:22:19Z</updated><author><name>servicebustestkjdemkkogk</name></author><link
+        rel="self" href="https://servicebustestkjdemkkogk.servicebus.windows.net/fjrui?api-version=2021-05"/><content
         type="application/xml"><TopicDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><FilteringMessagesBeforePublishing>false</FilteringMessagesBeforePublishing><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2021-04-22T15:23:28.647Z</CreatedAt><UpdatedAt>2021-04-22T15:23:28.787Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableSubscriptionPartitioning>false</EnableSubscriptionPartitioning><EnableExpress>false</EnableExpress></TopicDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><FilteringMessagesBeforePublishing>false</FilteringMessagesBeforePublishing><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2021-10-21T05:22:19.69Z</CreatedAt><UpdatedAt>2021-10-21T05:22:19.727Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableSubscriptionPartitioning>false</EnableSubscriptionPartitioning><EnableExpress>false</EnableExpress><MaxMessageSizeInKilobytes>256</MaxMessageSizeInKilobytes></TopicDescription></content></entry>
     headers:
       content-type: application/atom+xml;type=entry;charset=utf-8
-      date: Thu, 22 Apr 2021 15:23:28 GMT
+      date: Thu, 21 Oct 2021 05:22:19 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
     status:
       code: 201
       message: Created
-    url: https://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui?api-version=2017-04
+    url: https://servicebustestkjdemkkogk.servicebus.windows.net/fjrui?api-version=2021-05
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
@@ -67,27 +67,27 @@ interactions:
       Content-Type:
       - application/atom+xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2017-04</id><title
-        type="text">eqkovc</title><published>2021-04-22T15:23:29Z</published><updated>2021-04-22T15:23:29Z</updated><link
-        rel="self" href="https://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestkjdemkkogk.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2021-05</id><title
+        type="text">eqkovc</title><published>2021-10-21T05:22:20Z</published><updated>2021-10-21T05:22:20Z</updated><link
+        rel="self" href="https://servicebustestkjdemkkogk.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2021-05"/><content
         type="application/xml"><SubscriptionDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2021-04-22T15:23:29.4839628Z</CreatedAt><UpdatedAt>2021-04-22T15:23:29.4839628Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2021-10-21T05:22:20.1411203Z</CreatedAt><UpdatedAt>2021-10-21T05:22:20.1411203Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><IsClientAffine>false</IsClientAffine></SubscriptionDescription></content></entry>
     headers:
       content-type: application/atom+xml;type=entry;charset=utf-8
-      date: Thu, 22 Apr 2021 15:23:29 GMT
-      etag: '637547018087870000'
+      date: Thu, 21 Oct 2021 05:22:20 GMT
+      etag: '637703905397270000'
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
     status:
       code: 201
       message: Created
-    url: https://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2017-04
+    url: https://servicebustestkjdemkkogk.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2021-05
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
@@ -103,65 +103,65 @@ interactions:
       Content-Type:
       - application/atom+xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2017-04</id><title
-        type="text">rule</title><published>2021-04-22T15:23:29Z</published><updated>2021-04-22T15:23:29Z</updated><link
-        rel="self" href="https://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestkjdemkkogk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2021-05</id><title
+        type="text">rule</title><published>2021-10-21T05:22:20Z</published><updated>2021-10-21T05:22:20Z</updated><link
+        rel="self" href="https://servicebustestkjdemkkogk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2021-05"/><content
         type="application/xml"><RuleDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="SqlFilter"><SqlExpression>Priority
         = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing></Filter><Action
-        i:type="EmptyRuleAction"/><CreatedAt>2021-04-22T15:23:29.9058414Z</CreatedAt><Name>rule</Name></RuleDescription></content></entry>
+        i:type="EmptyRuleAction"/><CreatedAt>2021-10-21T05:22:20.4380038Z</CreatedAt><Name>rule</Name></RuleDescription></content></entry>
     headers:
       content-type: application/atom+xml;type=entry;charset=utf-8
-      date: Thu, 22 Apr 2021 15:23:29 GMT
-      etag: '637547018087870000'
+      date: Thu, 21 Oct 2021 05:22:20 GMT
+      etag: '637703905397270000'
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
     status:
       code: 201
       message: Created
-    url: https://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2017-04
+    url: https://servicebustestkjdemkkogk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2021-05
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&amp;api-version=2017-04</id><title
-        type="text">rule</title><published>2021-04-22T15:23:30Z</published><updated>2021-04-22T15:23:30Z</updated><link
-        rel="self" href="sb://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&amp;api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustestkjdemkkogk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&amp;api-version=2021-05</id><title
+        type="text">rule</title><published>2021-10-21T05:22:20Z</published><updated>2021-10-21T05:22:20Z</updated><link
+        rel="self" href="sb://servicebustestkjdemkkogk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&amp;api-version=2021-05"/><content
         type="application/xml"><RuleDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="SqlFilter"><SqlExpression>Priority
         = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing><Parameters/></Filter><Action
-        i:type="EmptyRuleAction"/><CreatedAt>2021-04-22T15:23:30.0491327Z</CreatedAt><Name>rule</Name></RuleDescription></content></entry>
+        i:type="EmptyRuleAction"/><CreatedAt>2021-10-21T05:22:20.4304741Z</CreatedAt><Name>rule</Name></RuleDescription></content></entry>
     headers:
       content-type: application/atom+xml;type=entry;charset=utf-8
-      date: Thu, 22 Apr 2021 15:23:29 GMT
-      etag: '637547018087870000'
+      date: Thu, 21 Oct 2021 05:22:20 GMT
+      etag: '637703905397270000'
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
     status:
       code: 200
       message: OK
-    url: https://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&api-version=2017-04
+    url: https://servicebustestkjdemkkogk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&api-version=2021-05
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
       <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><ns0:content type="application/xml"><RuleDescription><Filter
       xsi:type="CorrelationFilter"><CorrelationId>testcid</CorrelationId></Filter><Action
-      xsi:type="SqlRuleAction"><SqlExpression>SET Priority = ''low''</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing></Action><CreatedAt>2021-04-22T15:23:30.049132Z</CreatedAt><Name>rule</Name></RuleDescription></ns0:content></ns0:entry>'
+      xsi:type="SqlRuleAction"><SqlExpression>SET Priority = ''low''</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing></Action><CreatedAt>2021-10-21T05:22:20.430474Z</CreatedAt><Name>rule</Name></RuleDescription></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
@@ -172,63 +172,63 @@ interactions:
       If-Match:
       - '*'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2017-04</id><title
-        type="text">rule</title><published>2021-04-22T15:23:30Z</published><updated>2021-04-22T15:23:30Z</updated><link
-        rel="self" href="https://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestkjdemkkogk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2021-05</id><title
+        type="text">rule</title><published>2021-10-21T05:22:20Z</published><updated>2021-10-21T05:22:20Z</updated><link
+        rel="self" href="https://servicebustestkjdemkkogk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2021-05"/><content
         type="application/xml"><RuleDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="CorrelationFilter"><CorrelationId>testcid</CorrelationId></Filter><Action
-        i:type="SqlRuleAction"><SqlExpression>SET Priority = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing></Action><CreatedAt>2021-04-22T15:23:30.5621563Z</CreatedAt><Name>rule</Name></RuleDescription></content></entry>
+        i:type="SqlRuleAction"><SqlExpression>SET Priority = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing></Action><CreatedAt>2021-10-21T05:22:20.6098887Z</CreatedAt><Name>rule</Name></RuleDescription></content></entry>
     headers:
       content-type: application/atom+xml;type=entry;charset=utf-8
-      date: Thu, 22 Apr 2021 15:23:30 GMT
-      etag: '637547018087870000'
+      date: Thu, 21 Oct 2021 05:22:20 GMT
+      etag: '637703905397270000'
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
     status:
       code: 200
       message: OK
-    url: https://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2017-04
+    url: https://servicebustestkjdemkkogk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2021-05
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&amp;api-version=2017-04</id><title
-        type="text">rule</title><published>2021-04-22T15:23:30Z</published><updated>2021-04-22T15:23:30Z</updated><link
-        rel="self" href="sb://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&amp;api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustestkjdemkkogk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&amp;api-version=2021-05</id><title
+        type="text">rule</title><published>2021-10-21T05:22:20Z</published><updated>2021-10-21T05:22:20Z</updated><link
+        rel="self" href="sb://servicebustestkjdemkkogk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&amp;api-version=2021-05"/><content
         type="application/xml"><RuleDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="CorrelationFilter"><CorrelationId>testcid</CorrelationId></Filter><Action
-        i:type="SqlRuleAction"><SqlExpression>SET Priority = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing></Action><CreatedAt>2021-04-22T15:23:30.0491327Z</CreatedAt><Name>rule</Name></RuleDescription></content></entry>
+        i:type="SqlRuleAction"><SqlExpression>SET Priority = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing><Parameters/></Action><CreatedAt>2021-10-21T05:22:20.4304741Z</CreatedAt><Name>rule</Name></RuleDescription></content></entry>
     headers:
       content-type: application/atom+xml;type=entry;charset=utf-8
-      date: Thu, 22 Apr 2021 15:23:30 GMT
-      etag: '637547018087870000'
+      date: Thu, 21 Oct 2021 05:22:20 GMT
+      etag: '637703905397270000'
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
     status:
       code: 200
       message: OK
-    url: https://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&api-version=2017-04
+    url: https://servicebustestkjdemkkogk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&api-version=2021-05
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
       <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><ns0:content type="application/xml"><RuleDescription><Filter
       xsi:type="CorrelationFilter"><CorrelationId>updatedcid</CorrelationId></Filter><Action
-      xsi:type="EmptyRuleAction" /><CreatedAt>2021-04-22T15:23:30.049132Z</CreatedAt><Name>rule</Name></RuleDescription></ns0:content></ns0:entry>'
+      xsi:type="EmptyRuleAction" /><CreatedAt>2021-10-21T05:22:20.430474Z</CreatedAt><Name>rule</Name></RuleDescription></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
@@ -239,120 +239,120 @@ interactions:
       If-Match:
       - '*'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2017-04</id><title
-        type="text">rule</title><published>2021-04-22T15:23:31Z</published><updated>2021-04-22T15:23:31Z</updated><link
-        rel="self" href="https://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestkjdemkkogk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2021-05</id><title
+        type="text">rule</title><published>2021-10-21T05:22:20Z</published><updated>2021-10-21T05:22:20Z</updated><link
+        rel="self" href="https://servicebustestkjdemkkogk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2021-05"/><content
         type="application/xml"><RuleDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="CorrelationFilter"><CorrelationId>updatedcid</CorrelationId></Filter><Action
-        i:type="EmptyRuleAction"/><CreatedAt>2021-04-22T15:23:31.1871446Z</CreatedAt><Name>rule</Name></RuleDescription></content></entry>
+        i:type="EmptyRuleAction"/><CreatedAt>2021-10-21T05:22:20.8442742Z</CreatedAt><Name>rule</Name></RuleDescription></content></entry>
     headers:
       content-type: application/atom+xml;type=entry;charset=utf-8
-      date: Thu, 22 Apr 2021 15:23:30 GMT
-      etag: '637547018087870000'
+      date: Thu, 21 Oct 2021 05:22:20 GMT
+      etag: '637703905397270000'
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
     status:
       code: 200
       message: OK
-    url: https://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2017-04
+    url: https://servicebustestkjdemkkogk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2021-05
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&amp;api-version=2017-04</id><title
-        type="text">rule</title><published>2021-04-22T15:23:30Z</published><updated>2021-04-22T15:23:30Z</updated><link
-        rel="self" href="sb://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&amp;api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustestkjdemkkogk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&amp;api-version=2021-05</id><title
+        type="text">rule</title><published>2021-10-21T05:22:20Z</published><updated>2021-10-21T05:22:20Z</updated><link
+        rel="self" href="sb://servicebustestkjdemkkogk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&amp;api-version=2021-05"/><content
         type="application/xml"><RuleDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="CorrelationFilter"><CorrelationId>updatedcid</CorrelationId></Filter><Action
-        i:type="EmptyRuleAction"/><CreatedAt>2021-04-22T15:23:30.0491327Z</CreatedAt><Name>rule</Name></RuleDescription></content></entry>
+        i:type="EmptyRuleAction"/><CreatedAt>2021-10-21T05:22:20.4304741Z</CreatedAt><Name>rule</Name></RuleDescription></content></entry>
     headers:
       content-type: application/atom+xml;type=entry;charset=utf-8
-      date: Thu, 22 Apr 2021 15:23:30 GMT
-      etag: '637547018087870000'
+      date: Thu, 21 Oct 2021 05:22:20 GMT
+      etag: '637703905397270000'
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
     status:
       code: 200
       message: OK
-    url: https://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&api-version=2017-04
+    url: https://servicebustestkjdemkkogk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&api-version=2021-05
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2021-05
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Apr 2021 15:23:31 GMT
-      etag: '637547018087870000'
+      date: Thu, 21 Oct 2021 05:22:20 GMT
+      etag: '637703905397270000'
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
     status:
       code: 200
       message: OK
-    url: https://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2017-04
+    url: https://servicebustestkjdemkkogk.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2021-05
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2021-05
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Apr 2021 15:23:31 GMT
-      etag: '637547018087870000'
+      date: Thu, 21 Oct 2021 05:22:20 GMT
+      etag: '637703905397270000'
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
     status:
       code: 200
       message: OK
-    url: https://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2017-04
+    url: https://servicebustestkjdemkkogk.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2021-05
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://servicebustestsbname.servicebus.windows.net/fjrui?api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/fjrui?api-version=2021-05
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Apr 2021 15:23:32 GMT
-      etag: '637547018087870000'
+      date: Thu, 21 Oct 2021 05:22:21 GMT
+      etag: '637703905397270000'
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
     status:
       code: 200
       message: OK
-    url: https://servicebustestm4fqorp5pk.servicebus.windows.net/fjrui?api-version=2017-04
+    url: https://servicebustestkjdemkkogk.servicebus.windows.net/fjrui?api-version=2021-05
 version: 1
