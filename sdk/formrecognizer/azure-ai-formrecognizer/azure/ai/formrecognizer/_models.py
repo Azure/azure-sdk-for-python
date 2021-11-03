@@ -4184,7 +4184,13 @@ def _get_children(source_element, search_element, cross_page=False):
     # search for elements across pages if cross_page is set to True
     if cross_page:
         for region in source_element.bounding_regions:
-            for element in _get_element_list(_get_page(source_element._parent.pages, region.page_number), search_element):
+            for element in _get_element_list(
+                _get_page(
+                    source_element._parent.pages,
+                    region.page_number,
+                    ),
+                search_element,
+            ):
                 if _in_span(element, source_element.spans):
                     result.append(element)
                 if _beyond_span(element, source_element.spans):
