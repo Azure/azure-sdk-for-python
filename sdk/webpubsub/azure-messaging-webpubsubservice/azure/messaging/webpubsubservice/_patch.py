@@ -283,7 +283,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         user = kwargs.pop("user_id", None)
         key = self._config.credential.key
         ttl = timedelta(minutes=kwargs.pop("minutes_to_expire", 60))
-        role = kwargs.pop("role", [])
+        roles = kwargs.pop("roles", [])
 
         payload = {
             "aud": audience,
@@ -292,11 +292,12 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         }
         if user:
             payload["sub"] = user
-        if role:
-            payload["role"] = role
+        if roles:
+            payload["roles"] = roles
 
         return six.ensure_str(jwt.encode(payload, key, algorithm="HS256"))
 
+    @distributed_trace
     def get_client_access_token(self, hub, **kwargs):
         # type: (str, Any) -> Dict[Any]
         """Build an authentication token.
@@ -305,8 +306,8 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         :type hub: str
         :keyword user_id: User Id.
         :paramtype user_id: str
-        :keyword role: Roles that the connection with the generated token will have.
-        :paramtype role: list[str]
+        :keyword roles: Roles that the connection with the generated token will have.
+        :paramtype roles: list[str]
         :keyword minutes_to_expire: The expire time of the generated token.
         :paramtype minutes_to_expire: int
         :returns: ~dict containing the web socket endpoint, the token and a url with the generated access token.
@@ -337,7 +338,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         if isinstance(self._config.credential, AzureKeyCredential):
             token = self._get_token_by_key(endpoint, hub, **kwargs)
         else:
-            token = self._generate_client_token(hub, **kwargs).get('token')
+            token = super().get_client_access_token(hub, **kwargs).get('token')
 
         return {
             "baseUrl": client_url,
@@ -345,305 +346,6 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
             "url": "{}?access_token={}".format(client_url, token),
         }
 
-    # could be removed after https://github.com/Azure/autorest.python/issues/1073 is fixed
-    @distributed_trace
-    def send_to_all(
-        self,
-        hub,  # type: str
-        message,  # type: Union[IO, str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Broadcast content inside request body to all the connected client connections.
-
-        Broadcast content inside request body to all the connected client connections.
-
-        :param hub: Target hub name, which should start with alphabetic characters and only contain
-         alpha-numeric characters or underscore.
-        :type hub: str
-        :param message: The payload body.
-        :type message: IO or str
-        :keyword excluded: Excluded connection Ids.
-        :paramtype excluded: list[str]
-        :keyword str content_type: Media type of the body sent to the API. Default value is
-         "application/json". Allowed values are: "application/json", "application/octet-stream",
-         "text/plain."
-        :return: None
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        content_type = kwargs.pop('content_type', "text/plain")  # type: Optional[str]
-        excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
-
-        json = None
-        content = None
-        if content_type.split(";")[0] in ['text/plain', 'application/octet-stream']:
-            content = message
-        elif content_type.split(";")[0] in ['application/json']:
-            json = message
-        else:
-            raise ValueError(
-                "The content_type '{}' is not one of the allowed values: "
-                "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
-            )
-
-        request = build_send_to_all_request(
-            hub=hub,
-            content_type=content_type,
-            json=json,
-            content=content,
-            excluded=excluded,
-            template_url=self.send_to_all.metadata['url'],
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    send_to_all.metadata = {'url': '/api/hubs/{hub}/:send'}  # type: ignore
-
-    # could be removed after https://github.com/Azure/autorest.python/issues/1073 is fixed
-    @distributed_trace
-    def send_to_connection(
-        self,
-        hub,  # type: str
-        connection_id,  # type: str
-        message,  # type: Union[IO, str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Send content inside request body to the specific connection.
-
-        Send content inside request body to the specific connection.
-
-        :param hub: Target hub name, which should start with alphabetic characters and only contain
-         alpha-numeric characters or underscore.
-        :type hub: str
-        :param connection_id: The connection Id.
-        :type connection_id: str
-        :param message: The payload body.
-        :type message: IO or str
-        :keyword str content_type: Media type of the body sent to the API. Default value is
-         "application/json". Allowed values are: "application/json", "application/octet-stream",
-         "text/plain."
-        :return: None
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        content_type = kwargs.pop('content_type', "text/plain")  # type: Optional[str]
-
-        json = None
-        content = None
-        if content_type.split(";")[0] in ['text/plain', 'application/octet-stream']:
-            content = message
-        elif content_type.split(";")[0] in ['application/json']:
-            json = message
-        else:
-            raise ValueError(
-                "The content_type '{}' is not one of the allowed values: "
-                "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
-            )
-
-        request = build_send_to_connection_request(
-            hub=hub,
-            connection_id=connection_id,
-            content_type=content_type,
-            json=json,
-            content=content,
-            template_url=self.send_to_connection.metadata['url'],
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    send_to_connection.metadata = {'url': '/api/hubs/{hub}/connections/{connectionId}/:send'}  # type: ignore
-
-
-    # could be removed after https://github.com/Azure/autorest.python/issues/1073 is fixed
-    @distributed_trace
-    def send_to_group(
-        self,
-        hub,  # type: str
-        group,  # type: str
-        message,  # type: Union[IO, str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Send content inside request body to a group of connections.
-
-        Send content inside request body to a group of connections.
-
-        :param hub: Target hub name, which should start with alphabetic characters and only contain
-         alpha-numeric characters or underscore.
-        :type hub: str
-        :param group: Target group name, which length should be greater than 0 and less than 1025.
-        :type group: str
-        :param message: The payload body.
-        :type message: IO or str
-        :keyword excluded: Excluded connection Ids.
-        :paramtype excluded: list[str]
-        :keyword str content_type: Media type of the body sent to the API. Default value is
-         "application/json". Allowed values are: "application/json", "application/octet-stream",
-         "text/plain."
-        :return: None
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        content_type = kwargs.pop('content_type', "text/plain")  # type: Optional[str]
-        excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
-
-        json = None
-        content = None
-        if content_type.split(";")[0] in ['text/plain', 'application/octet-stream']:
-            content = message
-        elif content_type.split(";")[0] in ['application/json']:
-            json = message
-        else:
-            raise ValueError(
-                "The content_type '{}' is not one of the allowed values: "
-                "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
-            )
-
-        request = build_send_to_group_request(
-            hub=hub,
-            group=group,
-            content_type=content_type,
-            json=json,
-            content=content,
-            excluded=excluded,
-            template_url=self.send_to_group.metadata['url'],
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    send_to_group.metadata = {'url': '/api/hubs/{hub}/groups/{group}/:send'}  # type: ignore
-
-    @distributed_trace
-    def _generate_client_token(
-            self,
-            hub,  # type: str
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> Any
-        """Generate token for the client to connect Azure Web PubSub service.
-
-        Generate token for the client to connect Azure Web PubSub service.
-
-        :param hub: Target hub name, which should start with alphabetic characters and only contain
-         alpha-numeric characters or underscore.
-        :type hub: str
-        :keyword user_id: User Id.
-        :paramtype user_id: str
-        :keyword role: Roles that the connection with the generated token will have.
-        :paramtype role: list[str]
-        :keyword minutes_to_expire: The expire time of the generated token.
-        :paramtype minutes_to_expire: int
-        :return: JSON object
-        :rtype: Any
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response.json() == {
-                    "token": "str"  # Optional. The token value for the WebSocket client to connect to the service.
-                }
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        user_id = kwargs.pop('user_id', None)  # type: Optional[str]
-        role = kwargs.pop('role', None)  # type: Optional[List[str]]
-        minutes_to_expire = kwargs.pop('minutes_to_expire', 60)  # type: Optional[int]
-
-        request = build_generate_client_token_request(
-            hub=hub,
-            user_id=user_id,
-            role=role,
-            minutes_to_expire=minutes_to_expire,
-            template_url=self._generate_client_token.metadata['url'],
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    _generate_client_token.metadata = {'url': '/api/hubs/{hub}/:generateToken'}  # type: ignore
-
-
 def patch_sdk():
     curr_package = importlib.import_module("azure.messaging.webpubsubservice")
     curr_package.WebPubSubServiceClient = WebPubSubServiceClient
-    del curr_package.operations.WebPubSubServiceClientOperationsMixin.generate_client_token

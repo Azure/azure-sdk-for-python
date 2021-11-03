@@ -29,14 +29,14 @@ if TYPE_CHECKING:
 _SERIALIZER = Serializer()
 # fmt: off
 
-def build_generate_client_token_request(
+def build_get_client_access_token_request(
     hub,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
     api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
     user_id = kwargs.pop('user_id', None)  # type: Optional[str]
-    role = kwargs.pop('role', None)  # type: Optional[List[str]]
+    roles = kwargs.pop('roles', None)  # type: Optional[List[str]]
     minutes_to_expire = kwargs.pop('minutes_to_expire', 60)  # type: Optional[int]
 
     accept = "application/json, text/json"
@@ -52,8 +52,8 @@ def build_generate_client_token_request(
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if user_id is not None:
         query_parameters['userId'] = _SERIALIZER.query("user_id", user_id, 'str')
-    if role is not None:
-        query_parameters['role'] = [_SERIALIZER.query("role", q, 'str') if q is not None else '' for q in role]
+    if roles is not None:
+        query_parameters['roles'] = [_SERIALIZER.query("roles", q, 'str') if q is not None else '' for q in roles]
     if minutes_to_expire is not None:
         query_parameters['minutesToExpire'] = _SERIALIZER.query("minutes_to_expire", minutes_to_expire, 'int')
     query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
@@ -754,7 +754,7 @@ def build_revoke_permission_request(
     )
 
 
-def build_check_permission_request(
+def build_has_permission_request(
     hub,  # type: str
     permission,  # type: str
     connection_id,  # type: str
@@ -797,7 +797,7 @@ def build_check_permission_request(
 class WebPubSubServiceClientOperationsMixin(object):
 
     @distributed_trace
-    def generate_client_token(
+    def get_client_access_token(
         self,
         hub,  # type: str
         **kwargs  # type: Any
@@ -812,8 +812,8 @@ class WebPubSubServiceClientOperationsMixin(object):
         :type hub: str
         :keyword user_id: User Id.
         :paramtype user_id: str
-        :keyword role: Roles that the connection with the generated token will have.
-        :paramtype role: list[str]
+        :keyword roles: Roles that the connection with the generated token will have.
+        :paramtype roles: list[str]
         :keyword minutes_to_expire: The expire time of the generated token.
         :paramtype minutes_to_expire: int
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
@@ -839,17 +839,17 @@ class WebPubSubServiceClientOperationsMixin(object):
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         user_id = kwargs.pop('user_id', None)  # type: Optional[str]
-        role = kwargs.pop('role', None)  # type: Optional[List[str]]
+        roles = kwargs.pop('roles', None)  # type: Optional[List[str]]
         minutes_to_expire = kwargs.pop('minutes_to_expire', 60)  # type: Optional[int]
 
 
-        request = build_generate_client_token_request(
+        request = build_get_client_access_token_request(
             hub=hub,
             api_version=api_version,
             user_id=user_id,
-            role=role,
+            roles=roles,
             minutes_to_expire=minutes_to_expire,
-            template_url=self.generate_client_token.metadata['url'],
+            template_url=self.get_client_access_token.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -873,7 +873,7 @@ class WebPubSubServiceClientOperationsMixin(object):
 
         return deserialized
 
-    generate_client_token.metadata = {'url': '/api/hubs/{hub}/:generateToken'}  # type: ignore
+    get_client_access_token.metadata = {'url': '/api/hubs/{hub}/:generateToken'}  # type: ignore
 
 
     @distributed_trace
@@ -2054,7 +2054,7 @@ class WebPubSubServiceClientOperationsMixin(object):
 
 
     @distributed_trace
-    def check_permission(
+    def has_permission(
         self,
         hub,  # type: str
         permission,  # type: str
@@ -2094,13 +2094,13 @@ class WebPubSubServiceClientOperationsMixin(object):
         target_name = kwargs.pop('target_name', None)  # type: Optional[str]
 
 
-        request = build_check_permission_request(
+        request = build_has_permission_request(
             hub=hub,
             permission=permission,
             connection_id=connection_id,
             api_version=api_version,
             target_name=target_name,
-            template_url=self.check_permission.metadata['url'],
+            template_url=self.has_permission.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2118,5 +2118,5 @@ class WebPubSubServiceClientOperationsMixin(object):
             return cls(pipeline_response, None, {})
         return 200 <= response.status_code <= 299
 
-    check_permission.metadata = {'url': '/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}'}  # type: ignore
+    has_permission.metadata = {'url': '/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}'}  # type: ignore
 

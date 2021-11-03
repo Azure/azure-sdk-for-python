@@ -15,7 +15,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ...operations._operations import build_add_connection_to_group_request, build_add_user_to_group_request, build_check_permission_request, build_close_all_connections_request, build_close_connection_request, build_close_group_connections_request, build_close_user_connections_request, build_connection_exists_request, build_generate_client_token_request, build_grant_permission_request, build_group_exists_request, build_remove_connection_from_group_request, build_remove_user_from_all_groups_request, build_remove_user_from_group_request, build_revoke_permission_request, build_send_to_all_request, build_send_to_connection_request, build_send_to_group_request, build_send_to_user_request, build_user_exists_request
+from ...operations._operations import build_add_connection_to_group_request, build_add_user_to_group_request, build_has_permission_request, build_close_all_connections_request, build_close_connection_request, build_close_group_connections_request, build_close_user_connections_request, build_connection_exists_request, build_generate_client_token_request, build_grant_permission_request, build_group_exists_request, build_remove_connection_from_group_request, build_remove_user_from_all_groups_request, build_remove_user_from_group_request, build_revoke_permission_request, build_send_to_all_request, build_send_to_connection_request, build_send_to_group_request, build_send_to_user_request, build_user_exists_request
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -24,12 +24,12 @@ JSONType = Any
 class WebPubSubServiceClientOperationsMixin:
 
     @distributed_trace_async
-    async def generate_client_token(
+    async def get_client_access_token(
         self,
         hub: str,
         *,
         user_id: Optional[str] = None,
-        role: Optional[List[str]] = None,
+        roles: Optional[List[str]] = None,
         minutes_to_expire: Optional[int] = 60,
         **kwargs: Any
     ) -> Any:
@@ -42,8 +42,8 @@ class WebPubSubServiceClientOperationsMixin:
         :type hub: str
         :keyword user_id: User Id.
         :paramtype user_id: str
-        :keyword role: Roles that the connection with the generated token will have.
-        :paramtype role: list[str]
+        :keyword roles: Roles that the connection with the generated token will have.
+        :paramtype roles: list[str]
         :keyword minutes_to_expire: The expire time of the generated token.
         :paramtype minutes_to_expire: int
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
@@ -74,9 +74,9 @@ class WebPubSubServiceClientOperationsMixin:
             hub=hub,
             api_version=api_version,
             user_id=user_id,
-            role=role,
+            roles=roles,
             minutes_to_expire=minutes_to_expire,
-            template_url=self.generate_client_token.metadata['url'],
+            template_url=self.get_client_access_token.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -100,7 +100,7 @@ class WebPubSubServiceClientOperationsMixin:
 
         return deserialized
 
-    generate_client_token.metadata = {'url': '/api/hubs/{hub}/:generateToken'}  # type: ignore
+    get_client_access_token.metadata = {'url': '/api/hubs/{hub}/:generateToken'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1271,7 +1271,7 @@ class WebPubSubServiceClientOperationsMixin:
 
 
     @distributed_trace_async
-    async def check_permission(
+    async def has_permission(
         self,
         hub: str,
         permission: str,
@@ -1311,13 +1311,13 @@ class WebPubSubServiceClientOperationsMixin:
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
 
-        request = build_check_permission_request(
+        request = build_has_permission_request(
             hub=hub,
             permission=permission,
             connection_id=connection_id,
             api_version=api_version,
             target_name=target_name,
-            template_url=self.check_permission.metadata['url'],
+            template_url=self.has_permission.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1335,5 +1335,5 @@ class WebPubSubServiceClientOperationsMixin:
             return cls(pipeline_response, None, {})
         return 200 <= response.status_code <= 299
 
-    check_permission.metadata = {'url': '/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}'}  # type: ignore
+    has_permission.metadata = {'url': '/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}'}  # type: ignore
 

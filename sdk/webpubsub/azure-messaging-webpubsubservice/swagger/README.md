@@ -61,3 +61,34 @@ directive:
           }
         }
 ```
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["paths"]["/api/hubs/{hub}/:generateToken"].post.parameters
+    transform: >
+        $[2] = {
+            "in": "query",
+            "name": "roles",
+            "description": "Roles that the connection with the generated token will have.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+        }
+```
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["paths"]["/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}"].head
+    transform: $["operationId"] = "HasPermission"
+```
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["paths"]["/api/hubs/{hub}/:generateToken"].post
+    transform: $["operationId"] = "GetClientAccessToken "
+```
