@@ -29,21 +29,24 @@ from ._schema import SchemaProperties, Schema
 def _parse_schema_properties_dict(response):
     return {
         'id': response.headers.get('schema-id'),
-        'format': response.headers.get('serialization-type'),
         'version': int(response.headers.get('schema-version'))
     }
 
 
-def _parse_response_schema_properties(response):
+def _parse_response_schema_properties(response, format):
     properties_dict = _parse_schema_properties_dict(response)
-    properties_dict['id'] = response.json()["id"]
+    properties_dict['id'] = response.headers.get("schema-id")
+    properties_dict['format'] = format
     return SchemaProperties(
         **properties_dict
     )
 
 
 def _parse_response_schema(response):
+    schema_props_dict = _parse_schema_properties_dict(response)
+    format = response.headers.get('content-type').split('serialization=')[1]
+    schema_props_dict['format'] = format
     return Schema(
         schema_definition=response.text(),
-        properties=SchemaProperties(**_parse_schema_properties_dict(response))
+        properties=SchemaProperties(**schema_props_dict)
     )

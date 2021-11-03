@@ -125,7 +125,7 @@ class SchemaRegistryClient(object):
 
         response = self._generated_client.send_request(request)
         response.raise_for_status()
-        return _parse_response_schema_properties(response)
+        return _parse_response_schema_properties(response, format)
 
     def get_schema(self, id, **kwargs):  # pylint:disable=redefined-builtin
         # type: (str, Any) -> Schema
@@ -192,4 +192,4 @@ class SchemaRegistryClient(object):
 
         response = self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
-        return _parse_response_schema_properties(response)
+        return _parse_response_schema_properties(response, format)
