@@ -28,6 +28,8 @@ Programming language to supply to metadata
 .PARAMETER RepoId
 GitHub repository ID of the SDK. Typically of the form: 'Azure/azure-sdk-for-js'
 
+.PARAMETER CodeOwners
+GitHub identities of the code owners. 
 #>
 
 param(
@@ -41,7 +43,10 @@ param(
   [string]$Language,
 
   [Parameter(Mandatory = $true)]
-  [string]$RepoId
+  [string]$RepoId,
+
+  [Parameter(Mandatory = $false)]
+  [string]$CodeOwners = ""
 )
 
 . (Join-Path $PSScriptRoot common.ps1)
@@ -78,12 +83,27 @@ function GetAdjustedReadmeContent($ReadmeContent, $PackageInfo, $PackageMetadata
     $ReadmeContent = $ReadmeContent -replace $releaseReplaceRegex, $replacementPattern
   }
   
+  $author = "ramya-rao-a"
+  $msauthor = "ramyar"
+  # We are currently lack of the ability to get ms alias from github identity. Use github identity as placeholder for now.
+  if ($CodeOwners) {
+    $author = $CodeOwners.Split(",")[0]
+    $msauthor = $author 
+  }
+  elseif (Test-Path '$PSScriptRoot/default-code-owner.json') {
+    # Json file is in a format of '{ "author":"value1", "msauthor":"value2" }' 
+    $authorFromJson = Get-Content '$PSScriptRoot/default-code-owner.json' | ConvertFrom-Json
+    $author = $authorFromJson.author
+    $msauthor = $authorFromJson.msauthor 
+  }
+  Write-Host "The author is: $author"
+  Write-Host "The ms alias is: $msauthor"
   $header = @"
 ---
 title: $foundTitle
 keywords: Azure, $Language, SDK, API, $($PackageInfo.Name), $service
-author: maggiepint
-ms.author: magpint
+author: $author
+ms.author: $msauthor
 ms.date: $date
 ms.topic: reference
 ms.prod: azure

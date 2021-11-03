@@ -10,11 +10,11 @@ parameters:
     default: []
 
 steps:
-  - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
-    parameters:
-      PackageName: "azure-template"
-      ServiceDirectory: "template"
-      TestPipeline: ${{ parameters.TestPipeline }}
+  # - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+  #   parameters:
+  #     PackageName: "azure-template"
+  #     ServiceDirectory: "template"
+  #     TestPipeline: ${{ parameters.TestPipeline }}
 
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'

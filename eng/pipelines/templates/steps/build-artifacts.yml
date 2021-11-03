@@ -22,11 +22,11 @@ parameters:
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
 steps:
-  - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
-    parameters:
-      PackageName: "azure-template"
-      ServiceDirectory: "template"
-      TestPipeline: ${{ parameters.TestPipeline }}
+  # - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+  #   parameters:
+  #     PackageName: "azure-template"
+  #     ServiceDirectory: "template"
+  #     TestPipeline: ${{ parameters.TestPipeline }}
 
   - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
 

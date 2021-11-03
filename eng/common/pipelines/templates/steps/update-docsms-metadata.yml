@@ -22,6 +22,9 @@ parameters:
   - name: DailyDocsBuild
     type: boolean
     default: false
+  - name: CodeOwners
+    type: string
+    default: ""
   - name: SparseCheckoutPaths
     type: object
     default:
@@ -33,7 +36,9 @@ steps:
 - pwsh: |
     Write-Host "###vso[task.setvariable variable=DocRepoLocation]${{ parameters.WorkingDirectory }}/doc"
   displayName: Set $(DocRepoLocation)
-
+- pwsh: |
+    Write-Host '${{ parameters.CodeOwners }}'
+  displayName: print code owners
 - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
   parameters:
     SkipDefaultCheckout: true
@@ -81,7 +86,8 @@ steps:
       -PackageInfoJsonLocations $packageInfoLocations `
       -DocRepoLocation "$(DocRepoLocation)" `
       -Language '${{parameters.Language}}' `
-      -RepoId '${{ parameters.RepoId }}'
+      -RepoId '${{ parameters.RepoId }}' `
+      -CodeOwners '${{ parameters.CodeOwners }}'
   displayName: Apply Documentation Updates
 
 - template: /eng/common/pipelines/templates/steps/git-push-changes.yml

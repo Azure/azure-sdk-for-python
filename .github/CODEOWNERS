@@ -107,7 +107,7 @@
 /sdk/synapse/                                                        @wonner @idear1203 @xiangyan99
 
 # PRLabel: %EngSys
-/sdk/template/                                                       @Azure/azure-sdk-eng
+/sdk/template/                                                       @wonner @idear1203 @xiangyan99
 
 # PRLabel: %Cognitive - Text Analytics
 /sdk/textanalytics/                                                  @kristapratico @iscai-msft @abhahn

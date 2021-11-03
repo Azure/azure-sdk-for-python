@@ -80,11 +80,11 @@ jobs:
       parameters:
         AgentImage: $(OSVmImage)
 
-    - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
-      parameters:
-        PackageName: "azure-template"
-        ServiceDirectory: "template"
-        TestPipeline: ${{ parameters.TestPipeline }}
+    # - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+    #   parameters:
+    #     PackageName: "azure-template"
+    #     ServiceDirectory: "template"
+    #     TestPipeline: ${{ parameters.TestPipeline }}
 
     - task: PythonScript@0
       displayName: 'Set Tox Environment'

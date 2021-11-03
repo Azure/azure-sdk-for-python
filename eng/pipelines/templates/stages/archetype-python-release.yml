@@ -32,11 +32,11 @@ stages:
                   steps:
                     - checkout: self
                     - template: /eng/common/pipelines/templates/steps/retain-run.yml
-                    - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
-                      parameters:
-                        PackageName: "azure-template"
-                        ServiceDirectory: "template"
-                        TestPipeline: ${{ parameters.TestPipeline }}
+                    # - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+                    #   parameters:
+                    #     PackageName: "azure-template"
+                    #     ServiceDirectory: "template"
+                    #     TestPipeline: ${{ parameters.TestPipeline }}
 
                     - ${{if ne(artifact.skipVerifyChangeLog, 'true')}}:
                       - template: /eng/common/pipelines/templates/steps/verify-changelog.yml
@@ -163,6 +163,11 @@ stages:
                               Paths:
                                 - sdk/**/*.md
                           - download: current
+                          - template: /eng/common/pipelines/templates/steps/get-code-owners.yml
+                            parameters:
+                              TargetUserVariable: "CodeOwners"
+                              ServiceDirectory: ${{parameters.ServiceDirectory}}
+ 
                           - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
                             parameters:
                               PackageInfoLocations:
@@ -171,6 +176,7 @@ stages:
                               TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
                               TargetDocRepoName: ${{parameters.TargetDocRepoName}}
                               Language: 'python'
+                              CodeOwners: "$(CodeOwners)"
                               SparseCheckoutPaths:
                                 - docs-ref-services/
                                 - metadata/
@@ -270,10 +276,21 @@ stages:
             SkipDefaultCheckout: true 
             Paths:
               - sdk/**/*.md
+              - .github/CODEOWNERS
         - download: current
         - pwsh: |
             Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/
           displayName: Show visible artifacts
+        - template: /eng/common/pipelines/templates/steps/get-code-owners.yml
+          parameters:
+            TargetUserVariable: "CodeOwners"
+            ServiceDirectory: ${{parameters.ServiceDirectory}}
+
+        - pwsh: |
+            $a = '$(CodeOwners)'
+            Write-Host $a
+            Write-Host $a.GetType()
+          displayName: Check variable type
 
         - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
           parameters:
@@ -286,6 +303,7 @@ stages:
             TargetDocRepoName: ${{parameters.TargetDocRepoName}}
             Language: 'python'
             DailyDocsBuild: true
+            CodeOwners: "$(CodeOwners)"
             SparseCheckoutPaths:
               - docs-ref-services/
               - metadata/

@@ -16,11 +16,11 @@ parameters:
 steps:
   - template: /eng/pipelines/templates/steps/analyze_dependency.yml
 
-  - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
-    parameters:
-      PackageName: "azure-template"
-      ServiceDirectory: "template"
-      TestPipeline: ${{ parameters.TestPipeline }}
+  # - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+  #   parameters:
+  #     PackageName: "azure-template"
+  #     ServiceDirectory: "template"
+  #     TestPipeline: ${{ parameters.TestPipeline }}
 
   - ${{ each artifact in parameters.Artifacts }}:
     - ${{if ne(artifact.skipVerifyChangeLog, 'true')}}:
