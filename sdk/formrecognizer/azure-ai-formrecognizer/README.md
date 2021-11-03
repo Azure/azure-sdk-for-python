@@ -181,7 +181,7 @@ More information about analyzing documents, including supported features, locale
 - Listing document model operations or getting a specific model operation created within the last 24 hours.
 - Copying a custom model from one Form Recognizer resource to another.
 
-Please note that models can also be built using a graphical user interface such as the [Form Recognizer Labeling Tool][labeling-tool].
+Please note that models can also be built using a graphical user interface such as [Form Recognizer Studio][fr-studio].
 
 Sample code snippets are provided to illustrate using a DocumentModelAdministrationClient [here](#examples "Examples").
 
@@ -597,6 +597,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [cognitive_resource_cli]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli?tabs=windows
 [azure-key-credential]: https://aka.ms/azsdk/python/core/azurekeycredential
 [labeling-tool]: https://aka.ms/azsdk/formrecognizer/labelingtool
+[fr-studio]: https://aka.ms/azsdk/formrecognizer/formrecognizerstudio
 [fr-build-model]: https://aka.ms/azsdk/formrecognizer/buildmodel
 [fr-build-training-set]: https://aka.ms/azsdk/formrecognizer/buildtrainingset
 [fr-models]: https://aka.ms/azsdk/formrecognizer/models

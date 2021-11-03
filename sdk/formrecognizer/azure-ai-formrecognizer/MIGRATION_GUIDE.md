@@ -666,4 +666,4 @@ For additional samples please take a look at the [Form Recognizer Samples][sampl
 
 [readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/README.md
 [samples_readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/README.md
-[fr_labeling_tool]: https://aka.ms/azsdk/formrecognizer/labelingtool
+[fr_labeling_tool]: https://aka.ms/azsdk/formrecognizer/formrecognizerstudio
