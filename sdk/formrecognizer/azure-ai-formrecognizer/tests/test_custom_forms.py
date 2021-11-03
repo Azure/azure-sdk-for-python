@@ -465,3 +465,26 @@ class TestCustomForms(FormRecognizerTest):
         assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
         result = poller.result()
         assert result
+
+
+    @FormRecognizerPreparer()
+    @DocumentModelAdministrationClientPreparer()
+    def test_custom_document_signature_field(self, client, formrecognizer_storage_container_sas_url):
+        fr_client = client.get_document_analysis_client()
+
+        with open(self.form_jpg, "rb") as fd:
+            myfile = fd.read()
+
+        build_polling = client.begin_build_model(formrecognizer_storage_container_sas_url)
+        model = build_polling.result()
+
+        poller = fr_client.begin_analyze_document(
+            model.model_id,
+            myfile,
+        )
+        result = poller.result()
+
+        assert result.documents[0].fields.get("FullSignature").value == "signed"
+        assert result.documents[0].fields.get("FullSignature").value_type == "signature"
+        # this will notify us of changes in the service, currently expecting to get a None content for signature type fields
+        assert result.documents[0].fields.get("FullSignature").content == None

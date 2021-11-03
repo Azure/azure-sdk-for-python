@@ -47,7 +47,7 @@ class QuestionAnsweringClientConfiguration(Configuration):
 
         self.endpoint = endpoint
         self.credential = credential
-        self.api_version = "2021-07-15-preview"
+        self.api_version = "2021-10-01"
         kwargs.setdefault("sdk_moniker", "ai-language-questionanswering/{}".format(VERSION))
         self._configure(**kwargs)
 

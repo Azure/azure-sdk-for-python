@@ -110,12 +110,21 @@ class DataControllerProperties(msrest.serialization.Model):
     :param last_uploaded_date: Last uploaded date from Kubernetes cluster. Defaults to current date
      time.
     :type last_uploaded_date: ~datetime.datetime
-    :param basic_login_information: Username and password for basic login authentication.
+    :param basic_login_information: Deprecated. Azure Arc Data Services data controller no longer
+     expose any endpoint. All traffic are exposed through Kubernetes native API.
     :type basic_login_information: ~azure_arc_data_management_client.models.BasicLoginInformation
+    :param metrics_dashboard_credential: Login credential for metrics dashboard on the Kubernetes
+     cluster.
+    :type metrics_dashboard_credential:
+     ~azure_arc_data_management_client.models.BasicLoginInformation
+    :param logs_dashboard_credential: Login credential for logs dashboard on the Kubernetes
+     cluster.
+    :type logs_dashboard_credential: ~azure_arc_data_management_client.models.BasicLoginInformation
     :param log_analytics_workspace_config: Log analytics workspace id and primary key.
     :type log_analytics_workspace_config:
      ~azure_arc_data_management_client.models.LogAnalyticsWorkspaceConfig
-    :param upload_service_principal: Service principal for uploading billing, metrics and logs.
+    :param upload_service_principal: Deprecated. Service principal is deprecated in favor of Arc
+     Kubernetes service extension managed identity.
     :type upload_service_principal: ~azure_arc_data_management_client.models.UploadServicePrincipal
     :ivar provisioning_state:
     :vartype provisioning_state: str
@@ -138,6 +147,8 @@ class DataControllerProperties(msrest.serialization.Model):
         'upload_watermark': {'key': 'uploadWatermark', 'type': 'UploadWatermark'},
         'last_uploaded_date': {'key': 'lastUploadedDate', 'type': 'iso-8601'},
         'basic_login_information': {'key': 'basicLoginInformation', 'type': 'BasicLoginInformation'},
+        'metrics_dashboard_credential': {'key': 'metricsDashboardCredential', 'type': 'BasicLoginInformation'},
+        'logs_dashboard_credential': {'key': 'logsDashboardCredential', 'type': 'BasicLoginInformation'},
         'log_analytics_workspace_config': {'key': 'logAnalyticsWorkspaceConfig', 'type': 'LogAnalyticsWorkspaceConfig'},
         'upload_service_principal': {'key': 'uploadServicePrincipal', 'type': 'UploadServicePrincipal'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
@@ -154,6 +165,8 @@ class DataControllerProperties(msrest.serialization.Model):
         upload_watermark: Optional["UploadWatermark"] = None,
         last_uploaded_date: Optional[datetime.datetime] = None,
         basic_login_information: Optional["BasicLoginInformation"] = None,
+        metrics_dashboard_credential: Optional["BasicLoginInformation"] = None,
+        logs_dashboard_credential: Optional["BasicLoginInformation"] = None,
         log_analytics_workspace_config: Optional["LogAnalyticsWorkspaceConfig"] = None,
         upload_service_principal: Optional["UploadServicePrincipal"] = None,
         cluster_id: Optional[str] = None,
@@ -167,6 +180,8 @@ class DataControllerProperties(msrest.serialization.Model):
         self.upload_watermark = upload_watermark
         self.last_uploaded_date = last_uploaded_date
         self.basic_login_information = basic_login_information
+        self.metrics_dashboard_credential = metrics_dashboard_credential
+        self.logs_dashboard_credential = logs_dashboard_credential
         self.log_analytics_workspace_config = log_analytics_workspace_config
         self.upload_service_principal = upload_service_principal
         self.provisioning_state = None

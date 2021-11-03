@@ -1,17 +1,27 @@
 # Release History
 
-## 7.3.5 (Unreleased)
+## 7.4.0 (Unreleased)
 
 ### Features Added
 
-### Breaking Changes
+- Added support to create and update queues and topics of large message size to `ServiceBusAdministrationClient`. This feature is only available for Service Bus of Premium Tier.
+  - Methods`create_queue`, `create_topic`, `update_queue`, `update_topic` on `ServiceBusAdministrationClient` now take a new keyword argument `max_message_size_in_kilobytes`.
+  - `QueueProperties` and `TopicProperties` now have a new instance variable `max_message_size_in_kilobytes`.
+- The constructor of`ServiceBusAdministrationClient` as well as `ServiceBusAdministrationClient.from_connection_string` now take keyword argument `api_version` to configure the Service Bus API version. Supported service versions are "2021-05" and "2017-04".
+- Added new enum class `azure.servicebus.management.ApiVersion` to represent the supported Service Bus API versions.
 
 ### Bugs Fixed
 
 - Fixed bug that `ServiceBusReceiver` can not connect to sessionful entity with session id being empty string.
 - Fixed bug that `ServiceBusMessage.partition_key` can not parse empty string properly.
 
-### Other Changes
+## 7.4.0b1 (2021-10-06)
+
+### Features Added
+
+- Added support to create and update queues and topics of large message size to `ServiceBusAdministrationClient`. This feature is only available for Service Bus of Premium Tier.
+  - Methods`create_queue`, `create_topic`, `update_queue`, `update_topic` on `ServiceBusAdministrationClient` now take a new keyword argument `max_message_size_in_kilobytes`.
+  - `QueueProperties` and `TopicProperties` now have a new instance variable `max_message_size_in_kilobytes`.
 
 ## 7.3.4 (2021-10-06)
 

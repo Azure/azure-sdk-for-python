@@ -12,6 +12,9 @@ import functools
 import itertools
 import json
 import time
+import sys
+import asyncio
+from unittest import mock
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
@@ -34,11 +37,51 @@ from azure.ai.textanalytics import (
     ExtractKeyPhrasesResult,
     PiiEntityCategory,
     ExtractSummaryAction,
-    ExtractSummaryResult
+    ExtractSummaryResult,
+    SingleCategoryClassifyAction,
+    MultiCategoryClassifyAction,
+    RecognizeCustomEntitiesAction,
+    SingleCategoryClassifyResult,
+    MultiCategoryClassifyResult,
+    RecognizeCustomEntitiesResult
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
 TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
+
+def get_completed_future(result=None):
+    future = asyncio.Future()
+    future.set_result(result)
+    return future
+
+
+def wrap_in_future(fn):
+    """Return a completed Future whose result is the return of fn.
+    Added to simplify using unittest.Mock in async code. Python 3.8's AsyncMock would be preferable.
+    """
+
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        result = fn(*args, **kwargs)
+        return get_completed_future(result)
+    return wrapper
+
+
+class AsyncMockTransport(mock.MagicMock):
+    """Mock with do-nothing aenter/exit for mocking async transport.
+
+    This is unnecessary on 3.8+, where MagicMocks implement aenter/exit.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if sys.version_info < (3, 8):
+            self.__aenter__ = mock.Mock(return_value=get_completed_future())
+            self.__aexit__ = mock.Mock(return_value=get_completed_future())
+
+    async def sleep(self, duration):
+        await asyncio.sleep(duration)
 
 
 class TestAnalyzeAsync(AsyncTextAnalyticsTest):
@@ -710,8 +753,18 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         assert excinfo.value.status_code == 400
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
-    async def test_disable_service_logs(self, client):
+    async def test_disable_service_logs(
+            self,
+            textanalytics_custom_text_endpoint,
+            textanalytics_custom_text_key,
+            textanalytics_single_category_classify_project_name,
+            textanalytics_single_category_classify_deployment_name,
+            textanalytics_multi_category_classify_project_name,
+            textanalytics_multi_category_classify_deployment_name,
+            textanalytics_custom_entities_project_name,
+            textanalytics_custom_entities_deployment_name
+    ):
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
         actions = [
             RecognizeEntitiesAction(disable_service_logs=True),
             ExtractKeyPhrasesAction(disable_service_logs=True),
@@ -719,6 +772,21 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             RecognizeLinkedEntitiesAction(disable_service_logs=True),
             AnalyzeSentimentAction(disable_service_logs=True),
             ExtractSummaryAction(disable_service_logs=True),
+            SingleCategoryClassifyAction(
+                project_name=textanalytics_single_category_classify_project_name,
+                deployment_name=textanalytics_single_category_classify_deployment_name,
+                disable_service_logs=True
+            ),
+            MultiCategoryClassifyAction(
+                project_name=textanalytics_multi_category_classify_project_name,
+                deployment_name=textanalytics_multi_category_classify_deployment_name,
+                disable_service_logs=True
+            ),
+            RecognizeCustomEntitiesAction(
+                project_name=textanalytics_custom_entities_project_name,
+                deployment_name=textanalytics_custom_entities_deployment_name,
+                disable_service_logs=True
+            )
         ]
 
         for action in actions:
@@ -803,20 +871,135 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
-    async def test_multiple_of_same_action_fail(self, client):
-        docs = [{"id": "1", "language": "en", "text": "I did not like the hotel we stayed at."},
-                {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at."}]
+    async def test_multiple_of_same_action(self, client):
+        docs = [
+            {"id": "28", "text": "My SSN is 859-98-0987. Here is another sentence."},
+            {"id": "3", "text": "Is 998.214.865-68 your Brazilian CPF number? Here is another sentence."},
+            {"id": "5", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+        ]
 
-        with pytest.raises(ValueError) as e:
-            await client.begin_analyze_actions(
+        actions = [
+            AnalyzeSentimentAction(),
+            RecognizePiiEntitiesAction(),
+            RecognizeEntitiesAction(),
+            RecognizeLinkedEntitiesAction(),
+            ExtractSummaryAction(order_by="Rank"),
+            RecognizePiiEntitiesAction(categories_filter=[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER]),
+            ExtractKeyPhrasesAction(),
+            RecognizeEntitiesAction(),
+            AnalyzeSentimentAction(show_opinion_mining=True),
+            RecognizeLinkedEntitiesAction(),
+            ExtractSummaryAction(max_sentence_count=1),
+            ExtractKeyPhrasesAction(),
+        ]
+        async with client:
+            response = await (await client.begin_analyze_actions(
                 docs,
-                actions=[
-                    RecognizePiiEntitiesAction(domain_filter="phi"),
-                    RecognizePiiEntitiesAction(),
-                ],
+                actions=actions,
                 polling_interval=self._interval(),
-            )
-        assert "Multiple of the same action is not currently supported." in str(e.value)
+            )).result()
+
+            action_results = []
+            async for p in response:
+                action_results.append(p)
+        assert len(action_results) == len(docs)
+        assert len(action_results[0]) == len(actions)
+        assert len(action_results[1]) == len(actions)
+        assert len(action_results[2]) == len(actions)
+
+        for idx, action_result in enumerate(action_results):
+            if idx == 0:
+                doc_id = "28"
+            elif idx == 1:
+                doc_id = "3"
+            else:
+                doc_id = "5"
+
+            assert isinstance(action_result[0], AnalyzeSentimentResult)
+            assert not all([sentence.mined_opinions for sentence in action_result[0].sentences])
+            assert action_result[0].id == doc_id
+
+            assert isinstance(action_result[1], RecognizePiiEntitiesResult)
+            assert action_result[1].id == doc_id
+
+            assert isinstance(action_result[2], RecognizeEntitiesResult)
+            assert action_result[2].id == doc_id
+
+            assert isinstance(action_result[3], RecognizeLinkedEntitiesResult)
+            assert action_result[3].id == doc_id
+
+            assert isinstance(action_result[4], ExtractSummaryResult)
+            previous_score = 1.0
+            for sentence in action_result[4].sentences:
+                assert sentence.rank_score <= previous_score
+                previous_score = sentence.rank_score
+            assert action_result[4].id == doc_id
+
+            assert isinstance(action_result[5], RecognizePiiEntitiesResult)
+            assert action_result[5].id == doc_id
+            if doc_id == "28":
+                assert action_result[5].entities
+            else:
+                assert not action_result[5].entities
+
+            assert isinstance(action_result[6], ExtractKeyPhrasesResult)
+            assert action_result[6].id == doc_id
+
+            assert isinstance(action_result[7], RecognizeEntitiesResult)
+            assert action_result[7].id == doc_id
+
+            assert isinstance(action_result[8], AnalyzeSentimentResult)
+            assert [sentence.mined_opinions for sentence in action_result[0].sentences]
+            assert action_result[8].id == doc_id
+
+            assert isinstance(action_result[9], RecognizeLinkedEntitiesResult)
+            assert action_result[9].id == doc_id
+
+            assert isinstance(action_result[10], ExtractSummaryResult)
+            assert len(action_result[10].sentences) == 1
+
+            assert isinstance(action_result[11], ExtractKeyPhrasesResult)
+            assert action_result[11].id == doc_id
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_multiple_of_same_action_with_partial_results(self, client):
+        docs = [{"id": "5", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+                {"id": "2", "text": ""}]
+
+        actions = [
+            ExtractSummaryAction(max_sentence_count=3),
+            RecognizePiiEntitiesAction(),
+            ExtractSummaryAction(max_sentence_count=5)
+        ]
+
+        async with client:
+            response = await (await client.begin_analyze_actions(
+                docs,
+                actions=actions,
+                polling_interval=self._interval(),
+            )).result()
+
+            action_results = []
+            async for p in response:
+                action_results.append(p)
+
+        assert len(action_results) == len(docs)
+        assert len(action_results[0]) == len(actions)
+        assert len(action_results[1]) == len(actions)
+
+        # first doc
+        assert isinstance(action_results[0][0], ExtractSummaryResult)
+        assert action_results[0][0].id == "5"
+        assert isinstance(action_results[0][1], RecognizePiiEntitiesResult)
+        assert action_results[0][1].id == "5"
+        assert isinstance(action_results[0][2], ExtractSummaryResult)
+        assert action_results[0][2].id == "5"
+
+        # second doc
+        assert action_results[1][0].is_error
+        assert action_results[1][1].is_error
+        assert action_results[1][2].is_error
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -935,3 +1118,398 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
             assert not document_results[1][0].is_error
             assert isinstance(document_results[1][0], ExtractSummaryResult)
+
+    @TextAnalyticsPreparer()
+    async def test_single_category_classify(
+            self,
+            textanalytics_custom_text_endpoint,
+            textanalytics_custom_text_key,
+            textanalytics_single_category_classify_project_name,
+            textanalytics_single_category_classify_deployment_name
+    ):
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        docs = [
+            {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+            {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
+            {"id": "3", "language": "en", "text": "I need a reservation for an indoor restaurant in China. Please don't stop the music. Play music and add it to my playlist"},
+        ]
+
+        async with client:
+            response = await (await client.begin_analyze_actions(
+                docs,
+                actions=[
+                    SingleCategoryClassifyAction(
+                        project_name=textanalytics_single_category_classify_project_name,
+                        deployment_name=textanalytics_single_category_classify_deployment_name
+                    ),
+                ],
+                show_stats=True,
+                polling_interval=self._interval(),
+            )).result()
+
+            document_results = []
+            async for doc in response:
+                document_results.append(doc)
+        for doc_result in document_results:
+            for result in doc_result:
+                assert result.id
+                assert not result.is_error
+                assert not result.warnings
+                assert result.statistics
+                assert result.classification.category
+                assert result.classification.confidence_score
+
+    @TextAnalyticsPreparer()
+    async def test_multi_category_classify(
+            self,
+            textanalytics_custom_text_endpoint,
+            textanalytics_custom_text_key,
+            textanalytics_multi_category_classify_project_name,
+            textanalytics_multi_category_classify_deployment_name
+    ):
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        docs = [
+            {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+            {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
+            {"id": "3", "language": "en", "text": "I need a reservation for an indoor restaurant in China. Please don't stop the music. Play music and add it to my playlist"},
+        ]
+
+        async with client:
+            response = await (await client.begin_analyze_actions(
+                docs,
+                actions=[
+                    MultiCategoryClassifyAction(
+                        project_name=textanalytics_multi_category_classify_project_name,
+                        deployment_name=textanalytics_multi_category_classify_deployment_name
+                    ),
+                ],
+                show_stats=True,
+                polling_interval=self._interval(),
+            )).result()
+
+            document_results = []
+            async for doc in response:
+                document_results.append(doc)
+
+        for doc_result in document_results:
+            for result in doc_result:
+                assert result.id
+                assert not result.is_error
+                assert not result.warnings
+                assert result.statistics
+                for classification in result.classifications:
+                    assert classification.category
+                    assert classification.confidence_score
+
+    @TextAnalyticsPreparer()
+    async def test_recognize_custom_entities(
+            self,
+            textanalytics_custom_text_endpoint,
+            textanalytics_custom_text_key,
+            textanalytics_custom_entities_project_name,
+            textanalytics_custom_entities_deployment_name
+    ):
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        docs = [
+            {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+            {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
+            {"id": "3", "language": "en", "text": "I need a reservation for an indoor restaurant in China. Please don't stop the music. Play music and add it to my playlist"},
+        ]
+
+        async with client:
+            response = await (await client.begin_analyze_actions(
+                docs,
+                actions=[
+                    RecognizeCustomEntitiesAction(
+                        project_name=textanalytics_custom_entities_project_name,
+                        deployment_name=textanalytics_custom_entities_deployment_name
+                    )
+                ],
+                show_stats=True,
+                polling_interval=self._interval(),
+            )).result()
+
+            document_results = []
+            async for doc in response:
+                document_results.append(doc)
+
+        for doc_result in document_results:
+            for result in doc_result:
+                assert result.id
+                assert not result.is_error
+                assert not result.warnings
+                assert result.statistics
+                for entity in result.entities:
+                    assert entity.text
+                    assert entity.category
+                    assert entity.offset is not None
+                    assert entity.length is not None
+                    assert entity.confidence_score is not None
+
+    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/12409536 and https://github.com/Azure/azure-sdk-for-python/issues/21369")
+    @TextAnalyticsPreparer()
+    async def test_custom_partial_error(
+            self,
+            textanalytics_custom_text_endpoint,
+            textanalytics_custom_text_key,
+            textanalytics_single_category_classify_project_name,
+            textanalytics_single_category_classify_deployment_name,
+            textanalytics_multi_category_classify_project_name,
+            textanalytics_multi_category_classify_deployment_name,
+            textanalytics_custom_entities_project_name,
+            textanalytics_custom_entities_deployment_name
+    ):
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        docs = [
+            {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+            {"id": "2", "language": "en", "text": ""},
+        ]
+        async with client:
+            response = await (await client.begin_analyze_actions(
+                docs,
+                actions=[
+                    SingleCategoryClassifyAction(
+                        project_name=textanalytics_single_category_classify_project_name,
+                        deployment_name=textanalytics_single_category_classify_deployment_name
+                    ),
+                    MultiCategoryClassifyAction(
+                        project_name=textanalytics_multi_category_classify_project_name,
+                        deployment_name=textanalytics_multi_category_classify_deployment_name
+                    ),
+                    RecognizeCustomEntitiesAction(
+                        project_name=textanalytics_custom_entities_project_name,
+                        deployment_name=textanalytics_custom_entities_deployment_name
+                    )
+                ],
+                show_stats=True,
+                polling_interval=self._interval(),
+            )).result()
+
+            document_results = []
+            async for doc in response:
+                document_results.append(doc)
+
+        assert len(document_results) == 2
+        assert isinstance(document_results[0][0], SingleCategoryClassifyResult)
+        assert isinstance(document_results[0][1], MultiCategoryClassifyResult)
+        assert isinstance(document_results[0][2], RecognizeCustomEntitiesResult)
+        assert document_results[1][0].is_error
+        assert document_results[1][1].is_error
+        assert document_results[1][2].is_error
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_analyze_continuation_token(self, client):
+        docs = [
+            {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+            {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
+            {"id": "3", "text": ""},
+            {"id": "4", "language": "en", "text": "I need a reservation for an indoor restaurant in China. Please don't stop the music. Play music and add it to my playlist"},
+        ]
+
+        actions = [
+            RecognizeEntitiesAction(),
+            RecognizePiiEntitiesAction(),
+            AnalyzeSentimentAction(),
+            ExtractKeyPhrasesAction(),
+        ]
+        async with client:
+            initial_poller = await client.begin_analyze_actions(
+                docs,
+                actions=actions,
+                show_stats=True,
+                polling_interval=self._interval(),
+            )
+
+            cont_token = initial_poller.continuation_token()
+
+            poller = await client.begin_analyze_actions(
+                None,
+                None,
+                continuation_token=cont_token,
+                polling_interval=self._interval(),
+            )
+            response = await poller.result()
+
+            action_results = []
+            async for action_result in response:
+                action_results.append(action_result)
+
+            assert len(action_results) == len(docs)
+            action_order = [
+                _AnalyzeActionsType.RECOGNIZE_ENTITIES,
+                _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
+                _AnalyzeActionsType.ANALYZE_SENTIMENT,
+                _AnalyzeActionsType.EXTRACT_KEY_PHRASES,
+            ]
+            document_order = ["1", "2", "3", "4"]
+            for doc_idx, document_results in enumerate(action_results):
+                assert len(document_results) == 4
+                for action_idx, document_result in enumerate(document_results):
+                    if doc_idx == 2:
+                        assert document_result.id == document_order[doc_idx]
+                        assert document_result.is_error
+                    else:
+                        assert document_result.id == document_order[doc_idx]
+                        assert document_result.statistics
+                        assert self.document_result_to_action_type(document_result) == action_order[action_idx]
+
+            await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+
+    @TextAnalyticsPreparer()
+    async def test_generic_action_error_no_target(
+        self,
+        textanalytics_custom_text_endpoint,
+        textanalytics_custom_text_key,
+        textanalytics_single_category_classify_project_name,
+        textanalytics_single_category_classify_deployment_name,
+        textanalytics_multi_category_classify_project_name,
+        textanalytics_multi_category_classify_deployment_name,
+        textanalytics_custom_entities_project_name,
+        textanalytics_custom_entities_deployment_name
+    ):
+        docs = [
+            {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+            {"id": "2", "language": "en", "text": ""},
+        ]
+
+        response = mock.MagicMock(
+            status_code=200,
+            headers={"Content-Type": "application/json", "operation-location": "https://fakeurl.com"}
+        )
+        path_to_mock_json_response = os.path.abspath(
+            os.path.join(
+                os.path.abspath(__file__),
+                "..",
+                "./mock_test_responses/action_error_no_target.json",
+            )
+        )
+        with open(path_to_mock_json_response, "r") as fd:
+            mock_json_response = json.loads(fd.read())
+
+        response.text = lambda encoding=None: json.dumps(mock_json_response)
+        response.content_type = "application/json"
+        transport = AsyncMockTransport(send=wrap_in_future(lambda request, **kwargs: response))
+
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key), transport=transport)
+
+        with pytest.raises(HttpResponseError) as e:
+            async with client:
+                response = await (await client.begin_analyze_actions(
+                    docs,
+                    actions=[
+                        SingleCategoryClassifyAction(
+                            project_name=textanalytics_single_category_classify_project_name,
+                            deployment_name=textanalytics_single_category_classify_deployment_name
+                        ),
+                        MultiCategoryClassifyAction(
+                            project_name=textanalytics_multi_category_classify_project_name,
+                            deployment_name=textanalytics_multi_category_classify_deployment_name
+                        ),
+                        RecognizeCustomEntitiesAction(
+                            project_name=textanalytics_custom_entities_project_name,
+                            deployment_name=textanalytics_custom_entities_deployment_name
+                        )
+                    ],
+                    show_stats=True,
+                    polling_interval=self._interval(),
+                )).result()
+                results = []
+                async for resp in response:
+                    results.append(resp)
+            assert e.value.message == "(InternalServerError) 1 out of 3 job tasks failed. Failed job tasks : v3.2-preview.2/custom/entities/general."
+
+    @TextAnalyticsPreparer()
+    async def test_action_errors_with_targets(
+        self,
+        textanalytics_custom_text_endpoint,
+        textanalytics_custom_text_key,
+        textanalytics_single_category_classify_project_name,
+        textanalytics_single_category_classify_deployment_name,
+        textanalytics_multi_category_classify_project_name,
+        textanalytics_multi_category_classify_deployment_name,
+        textanalytics_custom_entities_project_name,
+        textanalytics_custom_entities_deployment_name
+    ):
+        docs = [
+            {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+            {"id": "2", "language": "en", "text": ""},
+        ]
+
+        response = mock.MagicMock(
+            status_code=200,
+            headers={"Content-Type": "application/json", "operation-location": "https://fakeurl.com"}
+        )
+
+        # a mix of action errors to translate to doc errors, regular doc errors, and a successful response
+        path_to_mock_json_response = os.path.abspath(
+            os.path.join(
+                os.path.abspath(__file__),
+                "..",
+                "./mock_test_responses/action_error_with_targets.json",
+            )
+        )
+        with open(path_to_mock_json_response, "r") as fd:
+            mock_json_response = json.loads(fd.read())
+
+        response.text = lambda encoding=None: json.dumps(mock_json_response)
+        response.content_type = "application/json"
+        transport = AsyncMockTransport(send=wrap_in_future(lambda request, **kwargs: response))
+
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key), transport=transport)
+
+        async with client:
+            response = await (await client.begin_analyze_actions(
+                docs,
+                actions=[
+                    RecognizeEntitiesAction(),
+                    ExtractKeyPhrasesAction(),
+                    RecognizePiiEntitiesAction(),
+                    RecognizeLinkedEntitiesAction(),
+                    AnalyzeSentimentAction(),
+                    ExtractSummaryAction(),
+                    RecognizePiiEntitiesAction(domain_filter="phi"),
+                    SingleCategoryClassifyAction(
+                        project_name=textanalytics_single_category_classify_project_name,
+                        deployment_name=textanalytics_single_category_classify_deployment_name
+                    ),
+                    MultiCategoryClassifyAction(
+                        project_name=textanalytics_multi_category_classify_project_name,
+                        deployment_name=textanalytics_multi_category_classify_deployment_name
+                    ),
+                    RecognizeCustomEntitiesAction(
+                        project_name=textanalytics_custom_entities_project_name,
+                        deployment_name=textanalytics_custom_entities_deployment_name
+                    ),
+                    SingleCategoryClassifyAction(
+                        project_name=textanalytics_single_category_classify_project_name,
+                        deployment_name=textanalytics_single_category_classify_deployment_name
+                    ),
+                ],
+                show_stats=True,
+                polling_interval=self._interval(),
+            )).result()
+            results = []
+            async for resp in response:
+                results.append(resp)
+
+        assert len(results) == len(docs)
+        for idx, result in enumerate(results[0]):
+            assert result.id == "1"
+            if idx == 10:
+                assert not result.is_error
+                assert isinstance(result, SingleCategoryClassifyResult)
+            else:
+                assert result.is_error
+                assert result.error.code == "InvalidRequest"
+                assert result.error.message == "Some error" + str(idx)  # confirms correct doc error order
+
+        for idx, result in enumerate(results[1]):
+            assert result.id == "2"
+            assert result.is_error
+            if idx == 10:
+                assert result.error.code == "InvalidDocument"
+                assert result.error.message == "Document text is empty."
+            else:
+                assert result.error.code == "InvalidRequest"
+                assert result.error.message == "Some error" + str(idx)  # confirms correct doc error order
