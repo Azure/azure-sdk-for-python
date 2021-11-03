@@ -220,11 +220,7 @@ class HttpRequest:
 
     @property
     def content(self) -> Any:
-        """Get's the request's content
-
-        :return: The request's content
-        :rtype: any
-        """
+        """Get's the request's content"""
 ```
 
 `HttpResponse` on the other hand is an abstract base class that will have to be implemented
