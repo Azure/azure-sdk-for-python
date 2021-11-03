@@ -1,0 +1,2 @@
+variables:
+  Azure.Sdk.Tools.RetrieveCodeOwners: '1.0.0-dev.20211019.1'
