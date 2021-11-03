@@ -268,7 +268,7 @@ stages:
       dependsOn: PublishPackages
       condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
       variables:
-      - template: eng/common/pipelines/template/variables/tool-version.yml
+      - template: /eng/common/pipelines/template/variables/tool-version.yml
       pool:
         name: azsdk-pool-mms-ubuntu-2004-general
         vmImage: MMSUbuntu20.04
