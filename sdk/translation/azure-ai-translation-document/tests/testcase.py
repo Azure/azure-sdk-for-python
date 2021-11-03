@@ -8,6 +8,7 @@ import os
 import time
 import datetime
 import uuid
+import logging
 from devtools_testutils import (
     AzureTestCase,
 )
@@ -17,6 +18,8 @@ from azure_devtools.scenario_tests import (
 )
 from azure.storage.blob import generate_container_sas, ContainerClient
 from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
+
+LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 
 
 class Document(object):
@@ -66,6 +69,7 @@ class DocumentTranslationTest(AzureTestCase):
 
     def __init__(self, method_name):
         super(DocumentTranslationTest, self).__init__(method_name)
+        self.configure_logging()
         self.vcr.match_on = ["path", "method", "query"]
         self.recording_processors.append(OperationLocationReplacer())
         self.storage_name = os.getenv("TRANSLATION_DOCUMENT_STORAGE_NAME", "redacted")
@@ -80,6 +84,23 @@ class DocumentTranslationTest(AzureTestCase):
         self.scrubber.register_name_pair(
             self.storage_key, "fakeZmFrZV9hY29jdW50X2tleQ=="
         )
+
+    def configure_logging(self):
+        self.enable_logging()
+
+    def enable_logging(self):
+        self.logger = logging.getLogger('azure')
+        handler = logging.StreamHandler()
+        handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
+        self.logger.handlers = [handler]
+        self.logger.setLevel(logging.DEBUG)
+        self.logger.propagate = True
+        self.logger.disabled = False
+
+    def disable_logging(self):
+        self.logger.propagate = False
+        self.logger.disabled = True
+        self.logger.handlers = []
 
     def get_oauth_endpoint(self):
         return os.getenv("TRANSLATION_DOCUMENT_TEST_ENDPOINT")
@@ -238,7 +259,7 @@ class DocumentTranslationTest(AzureTestCase):
         self.assertIsNotNone(poller.id)
         self.assertIsNotNone(poller.details.id)
         # wait for result
-        result = poller.result()
+        result = poller.result(timeout=600)
         # validate
         self._validate_translation_metadata(poller=poller, status='Succeeded', total=total_docs_count, succeeded=total_docs_count)
         for doc in result:
@@ -274,7 +295,7 @@ class DocumentTranslationTest(AzureTestCase):
             poller = client.begin_translation(translation_inputs)
             self.assertIsNotNone(poller.id)
             if wait_for_operation:
-                result = poller.result()
+                result = poller.result(timeout=600)
             else:
                 poller.wait()
             result_job_ids.append(poller.id)
@@ -309,7 +330,7 @@ class DocumentTranslationTest(AzureTestCase):
         self.assertIsNotNone(poller.id)
         # wait for result
         if wait_for_operation:
-            result = poller.result()
+            result = poller.result(timeout=600)
             for doc in result:
                 self._validate_doc_status(doc, "es")
         # validate

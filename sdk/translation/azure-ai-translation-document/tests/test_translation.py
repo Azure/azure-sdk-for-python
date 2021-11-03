@@ -215,7 +215,7 @@ class TestTranslation(DocumentTranslationTest):
 
         with pytest.raises(HttpResponseError) as e:
             poller = client.begin_translation(translation_inputs)
-            result = poller.result()
+            result = poller.result(timeout=600)
         assert e.value.error.code == "InvalidDocumentAccessLevel"
 
     @DocumentTranslationPreparer()
@@ -240,7 +240,7 @@ class TestTranslation(DocumentTranslationTest):
 
         with pytest.raises(HttpResponseError) as e:
             poller = client.begin_translation(translation_inputs)
-            result = poller.result()
+            result = poller.result(timeout=600)
         assert e.value.error.code == "InvalidTargetDocumentAccessLevel"
 
     @DocumentTranslationPreparer()
@@ -268,7 +268,7 @@ class TestTranslation(DocumentTranslationTest):
         ]
 
         poller = client.begin_translation(translation_inputs)
-        result = poller.result()
+        result = poller.result(timeout=600)
         self._validate_translation_metadata(poller=poller, status="Succeeded", total=1, succeeded=1)
         for document in result:
             self._validate_doc_status(document, "es")
@@ -294,7 +294,7 @@ class TestTranslation(DocumentTranslationTest):
         ]
 
         poller = client.begin_translation(translation_inputs)
-        result = poller.result()
+        result = poller.result(timeout=600)
         self._validate_translation_metadata(poller, status="Failed", total=1, failed=1)
 
         for doc in result:
@@ -322,7 +322,7 @@ class TestTranslation(DocumentTranslationTest):
         ]
 
         poller = client.begin_translation(translation_inputs)
-        result = poller.result()
+        result = poller.result(timeout=600)
         self._validate_translation_metadata(poller, status="Succeeded", total=2, failed=1)
 
         for doc in result:
@@ -350,7 +350,7 @@ class TestTranslation(DocumentTranslationTest):
         ]
 
         poller = client.begin_translation(translation_inputs)
-        result = poller.result()
+        result = poller.result(timeout=600)
         self._validate_translation_metadata(poller, status="Failed", total=1, failed=1)
 
         for doc in result:
@@ -381,13 +381,13 @@ class TestTranslation(DocumentTranslationTest):
 
         # positional
         poller = client.begin_translation(translation_inputs)
-        result = poller.result()
+        result = poller.result(timeout=600)
         self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
 
         # keyword
         translation_inputs[0].targets[0].target_url = target_container_sas_url_2
         poller = client.begin_translation(inputs=translation_inputs)
-        result = poller.result()
+        result = poller.result(timeout=600)
         self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
 
     @DocumentTranslationPreparer()
@@ -400,12 +400,12 @@ class TestTranslation(DocumentTranslationTest):
 
         # positional
         poller = client.begin_translation(source_container_sas_url, target_container_sas_url, "es")
-        result = poller.result()
+        result = poller.result(timeout=600)
         self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
 
         # keyword
         poller = client.begin_translation(source_url=source_container_sas_url, target_url=target_container_sas_url_2, target_language_code="es")
-        result = poller.result()
+        result = poller.result(timeout=600)
         self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
 
     @DocumentTranslationPreparer()
@@ -446,7 +446,7 @@ class TestTranslation(DocumentTranslationTest):
         cont_token = initial_poller.continuation_token()
 
         poller = client.begin_translation(None, continuation_token=cont_token)
-        result = poller.result()
+        result = poller.result(timeout=600)
         self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
         for doc in result:
             self._validate_doc_status(doc, target_language="es")
@@ -489,7 +489,7 @@ class TestTranslation(DocumentTranslationTest):
                 )],
                 raw_response_hook=callback
             )
-            poller.result()
+            poller.result(timeout=600)
         except HttpResponseError as e:
             pass
 
@@ -507,7 +507,7 @@ class TestTranslation(DocumentTranslationTest):
             "fr",
             prefix="kwargs"
         )
-        result = poller.result()
+        result = poller.result(timeout=600)
         self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
         for doc in result:
             self._validate_doc_status(doc, target_language="fr")
@@ -534,7 +534,7 @@ class TestTranslation(DocumentTranslationTest):
             "es",
             glossaries=[TranslationGlossary(glossary_url=glossary_file_sas_url, file_format="csv")]
         )
-        result = poller.result()
+        result = poller.result(timeout=600)
 
         container_client = ContainerClient(self.storage_endpoint, self.target_container_name,
                                            self.storage_key)

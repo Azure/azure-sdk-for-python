@@ -5,8 +5,6 @@ stages:
     parameters:
       BuildTargetingString: azure-ai-translation-document
       ServiceDirectory: translation
-      MatrixReplace:
-        - TestSamples=.*/true
       EnvVars:
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
