@@ -14,7 +14,7 @@ from ..._vendor import _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional, Union
+    from typing import Any, Optional
 
 _SERIALIZER = Serializer()
 
@@ -35,13 +35,17 @@ def build_get_by_id_request(
 
     :param id: References specific schema in registry namespace.
     :type id: str
+    :keyword api_version: Api Version. The default value is "2021-10". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
     :rtype: ~azure.core.rest.HttpRequest
     """
 
-    api_version = "2021-11-01-preview"
+    api_version = kwargs.pop('api_version', "2021-10")  # type: str
+
     accept = "text/plain, application/json, application/json;serialization=avro"
     # Construct URL
     url = kwargs.pop("template_url", '/$schemaGroups/$schemas/{id}')
@@ -86,6 +90,9 @@ def build_get_versions_request(
     :type group_name: str
     :param schema_name: Name of schema being registered.
     :type schema_name: str
+    :keyword api_version: Api Version. The default value is "2021-10". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
@@ -102,7 +109,8 @@ def build_get_versions_request(
             }
     """
 
-    api_version = "2021-11-01-preview"
+    api_version = kwargs.pop('api_version', "2021-10")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/$schemaGroups/{groupName}/schemas/{schemaName}/versions')
@@ -149,14 +157,15 @@ def build_query_id_by_content_request(
     :type group_name: str
     :param schema_name: Name of requested schema.
     :type schema_name: str
+    :keyword api_version: Api Version. The default value is "2021-10". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword json: Pass in a JSON-serializable object (usually a dictionary). See the template in
      our example to find the input shape. String representation (UTF-8) of the registered schema.
     :paramtype json: any
     :keyword content: Pass in binary content you want in the body of the request (typically bytes,
      a byte iterator, or stream input). String representation (UTF-8) of the registered schema.
     :paramtype content: any
-    :keyword str content_type: Media type of the body sent to the API. Default value is
-     "application/json". Allowed values are: "text/plain", "application/json."
     :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
@@ -169,9 +178,9 @@ def build_query_id_by_content_request(
             json = "str"  # Optional.
     """
 
+    api_version = kwargs.pop('api_version', "2021-10")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/$schemaGroups/{groupName}/schemas/{schemaName}:get-id')
@@ -221,6 +230,9 @@ def build_register_request(
     :type group_name: str
     :param schema_name: Name of schema being registered.
     :type schema_name: str
+    :keyword api_version: Api Version. The default value is "2021-10". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword json: Pass in a JSON-serializable object (usually a dictionary). See the template in
      our example to find the input shape. String representation (UTF-8) of the schema being
      registered.
@@ -229,8 +241,6 @@ def build_register_request(
      a byte iterator, or stream input). String representation (UTF-8) of the schema being
      registered.
     :paramtype content: any
-    :keyword str content_type: Media type of the body sent to the API. Default value is
-     "application/json". Allowed values are: "text/plain", "application/json."
     :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
@@ -243,9 +253,9 @@ def build_register_request(
             json = "str"  # Optional.
     """
 
+    api_version = kwargs.pop('api_version', "2021-10")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/$schemaGroups/{groupName}/schemas/{schemaName}')

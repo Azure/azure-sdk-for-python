@@ -29,6 +29,9 @@ class AzureSchemaRegistry(object):
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
+    :keyword api_version: Api Version. The default value is "2021-10". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -39,7 +42,7 @@ class AzureSchemaRegistry(object):
     ):
         # type: (...) -> None
         _endpoint = 'https://{endpoint}'
-        self._config = AzureSchemaRegistryConfiguration(endpoint, credential, **kwargs)
+        self._config = AzureSchemaRegistryConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
