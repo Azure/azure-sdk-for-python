@@ -36,7 +36,7 @@ import aiohttp
 from multidict import CIMultiDict
 
 from azure.core.configuration import ConnectionConfiguration
-from azure.core.exceptions import ServiceRequestError, ServiceResponseError
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError, IncompleteReadError
 from azure.core.pipeline import Pipeline
 
 from ._base import HttpRequest
@@ -300,6 +300,12 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         except _ResponseStopIteration:
             internal_response.close()
             raise StopAsyncIteration()
+        except aiohttp.client_exceptions.ClientPayloadError as err:
+            # This is the case that server closes connection before we finish the reading. aiohttp library
+            # raises ClientPayloadError.
+            _LOGGER.warning("Incomplete download: %s", err)
+            internal_response.close()
+            raise IncompleteReadError(err, error=err)
         except Exception as err:
             _LOGGER.warning("Unable to stream download: %s", err)
             internal_response.close()
@@ -384,7 +390,12 @@ class AioHttpTransportResponse(AsyncHttpResponse):
 
     async def load_body(self) -> None:
         """Load in memory the body, so it could be accessible from sync methods."""
-        self._content = await self.internal_response.read()
+        try:
+            self._content = await self.internal_response.read()
+        except aiohttp.client_exceptions.ClientPayloadError as err:
+            # This is the case that server closes connection before we finish the reading. aiohttp library
+            # raises ClientPayloadError.
+            raise IncompleteReadError(err, error=err)
 
     def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.

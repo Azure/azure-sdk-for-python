@@ -6,6 +6,7 @@
 
 - add kwargs to the methods for `iter_raw` and `iter_bytes`  #21529
 - no longer raise JSON errors if users pass in file descriptors of JSON to the `json` kwarg in `HttpRequest`  #21504
+- Added new error type `IncompleteReadError` which is raised if peer closes the connection before we have received the complete message body.
 
 ### Breaking Changes
 
@@ -13,6 +14,9 @@
 
 ### Bugs Fixed
 
+- The `Content-Length` header in a http response is strictly checked against the actual number of bytes in the body,
+  rather than silently truncating data in case the underlying tcp connection is closed prematurely.
+  (thanks to @jochen-ott-by for the contribution)   #20412
 - UnboundLocalError when SansIOHTTPPolicy handles an exception    #15222
 
 ### Other Changes
