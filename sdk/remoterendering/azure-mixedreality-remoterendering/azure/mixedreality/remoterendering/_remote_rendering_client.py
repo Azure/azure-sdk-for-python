@@ -67,16 +67,16 @@ class RemoteRenderingClient(object):
         validate_api_version(self._api_version)
 
         if not endpoint:
-            raise ValueError("endpoint can not be None")
+            raise ValueError("endpoint cannot be None")
 
         if not account_id:
-            raise ValueError("account_id can not be None")
+            raise ValueError("account_id cannot be None")
 
         if not account_domain:
-            raise ValueError("account_domain can not be None")
+            raise ValueError("account_domain cannot be None")
 
         if not credential:
-            raise ValueError("credential can not be None")
+            raise ValueError("credential cannot be None")
 
         if isinstance(credential, AccessToken):
             cred = StaticAccessTokenCredential(credential)  # type: TokenCredential

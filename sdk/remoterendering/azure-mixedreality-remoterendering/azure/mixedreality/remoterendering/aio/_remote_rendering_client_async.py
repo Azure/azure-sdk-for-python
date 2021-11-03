@@ -79,16 +79,16 @@ class RemoteRenderingClient(object):
         self._account_id = account_id
 
         if not endpoint:
-            raise ValueError("endpoint can not be None")
+            raise ValueError("endpoint cannot be None")
 
         if not account_id:
-            raise ValueError("account_id can not be None")
+            raise ValueError("account_id cannot be None")
 
         if not account_domain:
-            raise ValueError("account_domain can not be None")
+            raise ValueError("account_domain cannot be None")
 
         if not credential:
-            raise ValueError("credential can not be None")
+            raise ValueError("credential cannot be None")
 
         endpoint_url = kwargs.pop(
             'authentication_endpoint_url', construct_endpoint_url(account_domain))  # type: str
