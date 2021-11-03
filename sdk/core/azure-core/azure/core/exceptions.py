@@ -339,7 +339,7 @@ class DecodeError(HttpResponseError):
 
 
 class IncompleteReadError(DecodeError):
-    """Error raised if peer closes connection without sending complete message body."""
+    """Error raised if peer closes the connection before we have received the complete message body."""
 
 
 class ResourceExistsError(HttpResponseError):
