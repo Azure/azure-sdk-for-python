@@ -255,6 +255,17 @@ def test_data_str_input():
     assert len(request.headers) == 1
     assert request.headers['Content-Type'] == 'application/x-www-form-urlencoded'
 
+def test_content_str_input():
+    requests = [
+        HttpRequest("POST", "/fake", content="hello, world!"),
+        HttpRequest("POST", "/fake", content=u"hello, world!"),
+    ]
+    for request in requests:
+        assert len(request.headers) == 2
+        assert request.headers["Content-Type"] == "text/plain"
+        assert request.headers["Content-Length"] == "13"
+        assert request.content == "hello, world!"
+
 @pytest.mark.parametrize(("value"), (object(), {"key": "value"}))
 def test_multipart_invalid_value(value):
 

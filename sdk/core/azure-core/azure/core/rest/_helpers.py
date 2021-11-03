@@ -134,7 +134,7 @@ def _shared_set_content_body(content):
     if isinstance(content, ET.Element):
         # XML body
         return set_xml_body(content)
-    if isinstance(content, (str, bytes)):
+    if isinstance(content, (six.string_types, bytes)):
         headers = {}
         body = content
         if isinstance(content, six.string_types):
