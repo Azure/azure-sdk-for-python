@@ -1,4 +1,0 @@
-variables:
-  PythonVersion: '3.6'
-  skipComponentGovernanceDetection: true
-  AzureSDKCondaChannel: https://azuresdkconda.blob.core.windows.net/channel1/
