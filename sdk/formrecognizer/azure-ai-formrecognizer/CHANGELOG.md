@@ -1,6 +1,6 @@
 # Release History
 
-## 3.2.0b2 (Unreleased)
+## 3.2.0b2 (2021-11-09)
 
 ### Features Added
 - Added `get_words` methods on `AnalyzedDocument`, `DocumentEntity`, `DocumentField`, `DocumentLine`, `DocumentKeyValueElement`, `DocumentTable`, `DocumentTableCell`.
@@ -8,10 +8,6 @@
 
 ### Breaking Changes
 - Renamed `DocumentElement` to `DocumentContentElement`.
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 3.2.0b1 (2021-10-07)
 
