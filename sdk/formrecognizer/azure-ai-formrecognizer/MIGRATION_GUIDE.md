@@ -595,7 +595,7 @@ print("-----------------------------------")
 ### Training a custom model
 
 Differences between the versions:
-- Files for building a new model for version `3.2.x` can be created using the labeling tool found [here][fr_labeling_tool].
+- Files for building a new model for version `3.2.x` can be created using [Form Recognizer Studio][fr_labeling_tool].
 - In version `3.1.x` the `use_training_labels` keyword argument was used to indicate whether to use labeled data when creating the custom model.
 - In version `3.2.x` the `use_training_labels` keyword argument is not supported since training must be carried out with labeled training documents. Additionally train without labels is now replaced with the prebuilt model `prebuilt-document` which extracts entities, key-value pairs, and layout from a document. 
 
