@@ -29,6 +29,9 @@ class WebPubSubServiceClient(WebPubSubServiceClientOperationsMixin):
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
+    :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
