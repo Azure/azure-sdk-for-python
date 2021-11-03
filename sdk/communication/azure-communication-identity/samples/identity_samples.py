@@ -27,7 +27,7 @@ USAGE:
 """
 import os
 from azure.communication.identity._shared.utils import parse_connection_str
-from azure.communication.identity._shared.utils import generate_teams_user_aad_token
+from msal import PublicClientApplication
 class CommunicationIdentityClientSamples(object):
 
     def __init__(self):
@@ -129,8 +129,15 @@ class CommunicationIdentityClientSamples(object):
             identity_client = CommunicationIdentityClient(endpoint, DefaultAzureCredential())
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
-        add_token = generate_teams_user_aad_token(m365_app_id=self.m365_app_id, m365_aad_authority=self.m365_aad_authority, m365_aad_tenant=self.m365_aad_tenant, msal_username=self.msal_username, msal_password=self.msal_password, m365_scope=self.m365_scope) 
+        
+        msal_app = PublicClientApplication(client_id=self.m365_app_id, authority="{}/{}".format(self.m365_aad_authority, self.m365_aad_tenant))
+        result = msal_app.acquire_token_by_username_password(
+            username=self.msal_username,
+            password=self.msal_password,
+            scopes=[self.m365_scope])
+        add_token =  result["access_token"]
         print("AAD access token of a Teams User: " + add_token)
+
         tokenresponse = identity_client.get_token_for_teams_user(add_token)
         print("Token issued with value: " + tokenresponse.token)
 

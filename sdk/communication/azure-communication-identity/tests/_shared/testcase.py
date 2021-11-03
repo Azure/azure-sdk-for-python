@@ -10,7 +10,7 @@ from devtools_testutils import AzureTestCase
 from azure_devtools.scenario_tests import RecordingProcessor, ReplayableTest
 from azure_devtools.scenario_tests.utilities import is_text_payload
 from azure.communication.identity._shared.utils import parse_connection_str
-from azure.communication.identity._shared.utils import generate_teams_user_aad_token
+from _shared.utils import generate_teams_user_aad_token
 class ResponseReplacerProcessor(RecordingProcessor):
     def __init__(self, keys=None, replacement="sanitized"):
         self._keys = keys if keys else []
