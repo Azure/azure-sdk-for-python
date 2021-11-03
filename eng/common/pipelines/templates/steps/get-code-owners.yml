@@ -1,16 +1,15 @@
 
-variables:
-- template: ../variables/tool-version.yml
 parameters: 
   TargetUserVariable: ''
   TargetTeamVariable: ''
   TargetLabelVariable: ''
   ServiceDirectory: ''
+  Version: 'notspecified'
   DevOpsFeed: "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
 
 steps:
   - pwsh: |
-      dotnet tool install --tool-path . --add-source "${{ parameters.DevOpsFeed }}" --version '$("Azure.Sdk.Tools.RetrieveCodeOwners")' "Azure.Sdk.Tools.RetrieveCodeOwners"
+      dotnet tool install --tool-path . --add-source "${{ parameters.DevOpsFeed }}" --version "${{ parameters.Version }}" "Azure.Sdk.Tools.RetrieveCodeOwners"
     displayName: 'Install tool RetrieveCodeOwners'
     workingDirectory: '$(Agent.ToolsDirectory)'
 
