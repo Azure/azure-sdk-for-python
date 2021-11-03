@@ -157,11 +157,14 @@ def set_content_body(content):
 
 def set_json_body(json):
     # type: (Any) -> Tuple[Dict[str, str], Any]
-    body = dumps(json, cls=AzureJSONEncoder)
-    return {
-        "Content-Type": "application/json",
-        "Content-Length": str(len(body))
-    }, body
+    headers = {"Content-Type": "application/json"}
+    if hasattr(json, "read"):
+        content_headers, body = set_content_body(json)
+        headers.update(content_headers)
+    else:
+        body = dumps(json, cls=AzureJSONEncoder)
+        headers.update({"Content-Length": str(len(body))})
+    return headers, body
 
 def lookup_encoding(encoding):
     # type: (str) -> bool

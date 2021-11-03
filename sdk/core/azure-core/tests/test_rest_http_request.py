@@ -428,6 +428,32 @@ def test_per_call_policies_old_then_new(port):
     # work
     assert "I entered the policies!" in str(ex.value)
 
+def test_json_file_valid():
+    json_bytes = bytearray('{"more": "cowbell"}', encoding='utf-8')
+    with io.BytesIO(json_bytes) as json_file:
+        request = HttpRequest("PUT", "/fake", json=json_file)
+        assert request.headers == {"Content-Type": "application/json"}
+        assert request.content == json_file
+        assert not request.content.closed
+        assert request.content.read() == b'{"more": "cowbell"}'
+
+def test_json_file_invalid():
+    json_bytes = bytearray('{"more": "cowbell" i am not valid', encoding='utf-8')
+    with io.BytesIO(json_bytes) as json_file:
+        request = HttpRequest("PUT", "/fake", json=json_file)
+        assert request.headers == {"Content-Type": "application/json"}
+        assert request.content == json_file
+        assert not request.content.closed
+        assert request.content.read() == b'{"more": "cowbell" i am not valid'
+
+def test_json_file_content_type_input():
+    json_bytes = bytearray('{"more": "cowbell"}', encoding='utf-8')
+    with io.BytesIO(json_bytes) as json_file:
+        request = HttpRequest("PUT", "/fake", json=json_file, headers={"Content-Type": "application/json-special"})
+        assert request.headers == {"Content-Type": "application/json-special"}
+        assert request.content == json_file
+        assert not request.content.closed
+        assert request.content.read() == b'{"more": "cowbell"}'
 
 # NOTE: For files, we don't allow list of tuples yet, just dict. Will uncomment when we add this capability
 # def test_multipart_multiple_files_single_input_content():
