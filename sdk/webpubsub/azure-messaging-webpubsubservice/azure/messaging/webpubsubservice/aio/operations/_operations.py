@@ -15,7 +15,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ...operations._operations import build_add_connection_to_group_request, build_add_user_to_group_request, build_has_permission_request, build_close_all_connections_request, build_close_connection_request, build_close_group_connections_request, build_close_user_connections_request, build_connection_exists_request, build_generate_client_token_request, build_grant_permission_request, build_group_exists_request, build_remove_connection_from_group_request, build_remove_user_from_all_groups_request, build_remove_user_from_group_request, build_revoke_permission_request, build_send_to_all_request, build_send_to_connection_request, build_send_to_group_request, build_send_to_user_request, build_user_exists_request
+from ...operations._operations import build_add_connection_to_group_request, build_add_user_to_group_request, build_has_permission_request, build_close_all_connections_request, build_close_connection_request, build_close_group_connections_request, build_close_user_connections_request, build_connection_exists_request, build_get_client_access_token_request, build_grant_permission_request, build_group_exists_request, build_remove_connection_from_group_request, build_remove_user_from_all_groups_request, build_remove_user_from_group_request, build_revoke_permission_request, build_send_to_all_request, build_send_to_connection_request, build_send_to_group_request, build_send_to_user_request, build_user_exists_request
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -70,7 +70,7 @@ class WebPubSubServiceClientOperationsMixin:
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
 
-        request = build_generate_client_token_request(
+        request = build_get_client_access_token_request(
             hub=hub,
             api_version=api_version,
             user_id=user_id,

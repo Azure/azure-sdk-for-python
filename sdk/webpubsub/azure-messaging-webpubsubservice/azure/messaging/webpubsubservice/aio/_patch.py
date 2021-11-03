@@ -34,20 +34,17 @@ from msrest import Deserializer
 from .._version import VERSION
 from .._patch import JwtCredentialPolicy, ApiManagementProxy, _parse_connection_string
 from ._web_pub_sub_service_client import WebPubSubServiceClient as GeneratedWebPubSubServiceClient
-from ..operations._operations import build_send_to_all_request, build_send_to_connection_request, build_send_to_group_request
 
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 from azure.core.credentials import AzureKeyCredential
 from msrest import Serializer
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union
+from typing import Any, Callable, Dict, Optional, TypeVar, Union
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
-from azure.core.tracing.decorator_async import distributed_trace_async
 
 
 T = TypeVar('T')
@@ -71,6 +68,8 @@ class WebPubSubServiceClientConfiguration(Configuration):
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: Union[~azure.core.credentials_async.AsyncTokenCredential, ~azure.core.credentials.AzureKeyCredential]
+    :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -79,14 +78,17 @@ class WebPubSubServiceClientConfiguration(Configuration):
         credential: Union["AsyncTokenCredential", "AzureKeyCredential"],
         **kwargs: Any
     ) -> None:
+        super(WebPubSubServiceClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
-        super(WebPubSubServiceClientConfiguration, self).__init__(**kwargs)
 
         self.endpoint = endpoint
         self.credential = credential
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://webpubsub.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'messaging-webpubsubservice/{}'.format(VERSION))
         self._configure(**kwargs)
@@ -118,6 +120,9 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
