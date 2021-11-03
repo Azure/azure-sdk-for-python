@@ -27,7 +27,7 @@ from collections.abc import AsyncIterator
 import functools
 import logging
 from typing import (
-    Any, Callable, Union, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload
+    Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload
 )
 import trio
 import urllib3
@@ -36,7 +36,9 @@ import requests
 
 from azure.core.exceptions import (
     ServiceRequestError,
-    ServiceResponseError
+    ServiceResponseError,
+    IncompleteReadError,
+    HttpResponseError,
 )
 from azure.core.pipeline import Pipeline
 from ._base import HttpRequest
@@ -44,7 +46,7 @@ from ._base_async import (
     AsyncHttpResponse,
     _ResponseStopIteration,
     _iterate_response_content)
-from ._requests_basic import RequestsTransportResponse, _read_raw_stream
+from ._requests_basic import RequestsTransportResponse, _read_raw_stream, AzureErrorUnion
 from ._base_requests_async import RequestsAsyncTransportBase
 from .._tools import is_rest as _is_rest
 from .._tools_async import handle_no_stream_rest_response as _handle_no_stream_rest_response
@@ -105,6 +107,15 @@ class TrioStreamDownloadGenerator(AsyncIterator):
             raise StopAsyncIteration()
         except requests.exceptions.StreamConsumedError:
             raise
+        except requests.exceptions.ChunkedEncodingError as err:
+            msg = err.__str__()
+            if 'IncompleteRead' in msg:
+                _LOGGER.warning("Incomplete download: %s", err)
+                internal_response.close()
+                raise IncompleteReadError(err, error=err)
+            _LOGGER.warning("Unable to stream download: %s", err)
+            internal_response.close()
+            raise HttpResponseError(err, error=err)
         except Exception as err:
             _LOGGER.warning("Unable to stream download: %s", err)
             internal_response.close()
@@ -184,7 +195,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
         self.open()
         trio_limiter = kwargs.get("trio_limiter", None)
         response = None
-        error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
+        error = None    # type: Optional[AzureErrorUnion]
         data_to_send = await self._retrieve_request_data(request)
         try:
             try:
@@ -217,6 +228,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
                         allow_redirects=False,
                         **kwargs),
                     limiter=trio_limiter)
+            response.raw.enforce_content_length = True
 
         except urllib3.exceptions.NewConnectionError as err:
             error = ServiceRequestError(err, error=err)
@@ -227,6 +239,14 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
                 error = ServiceResponseError(err, error=err)
             else:
                 error = ServiceRequestError(err, error=err)
+        except requests.exceptions.ChunkedEncodingError as err:
+            msg = err.__str__()
+            if 'IncompleteRead' in msg:
+                _LOGGER.warning("Incomplete download: %s", err)
+                error = IncompleteReadError(err, error=err)
+            else:
+                _LOGGER.warning("Unable to stream download: %s", err)
+                error = HttpResponseError(err, error=err)
         except requests.RequestException as err:
             error = ServiceRequestError(err, error=err)
 
