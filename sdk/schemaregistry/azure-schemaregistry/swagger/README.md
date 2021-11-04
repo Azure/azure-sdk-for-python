@@ -10,7 +10,7 @@ autorest --low-level-client --modelerfour.lenient-model-deduplication README.md
 ```
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/2f33c13f9d5964781f4b8954bf3909b5039fe129/specification/schemaregistry/data-plane/Microsoft.EventHub/stable/2021-10/schemaregistry.json
+input-file: https://github.com/Azure/azure-rest-api-specs/blob/main/specification/schemaregistry/data-plane/Microsoft.EventHub/stable/2021-10/schemaregistry.json
 output-folder: ../azure/schemaregistry/_generated
 namespace: azure.schemaregistry._generated
 no-namespace-folders: true
