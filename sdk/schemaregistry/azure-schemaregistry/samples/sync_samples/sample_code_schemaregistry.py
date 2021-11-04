@@ -60,7 +60,7 @@ def create_client():
 def register_schema(schema_registry_client):
     # [START register_schema_sync]
     GROUP_NAME = os.environ["SCHEMAREGISTRY_GROUP"]
-    NAME = "your-schema-name"
+    SCHEMA_NAME = "your-schema-name"
     FORMAT = "Avro"
     SCHEMA_JSON = {
         "namespace": "example.avro",
@@ -74,20 +74,20 @@ def register_schema(schema_registry_client):
     }
     SCHEMA_DEFINITION = json.dumps(SCHEMA_JSON, separators=(",", ":"))
     schema_properties = schema_registry_client.register_schema(
-        GROUP_NAME, NAME, SCHEMA_DEFINITION, FORMAT
+        GROUP_NAME, SCHEMA_NAME, SCHEMA_DEFINITION, FORMAT
     )
     schema_id = schema_properties.id
     # [END register_schema_sync]
     return schema_id
 
 
-def get_schema(schema_registry_client, id):
+def get_schema(schema_registry_client, schema_id):
     # [START get_schema_sync]
-    schema = schema_registry_client.get_schema(id)
-    schema_definition = schema.schema_definition
+    schema = schema_registry_client.get_schema(schema_id)
+    definition = schema.definition
     properties = schema.properties
     # [END get_schema_sync]
-    print(schema_definition)
+    print(definition)
     print(properties)
     return schema
 
@@ -95,7 +95,7 @@ def get_schema(schema_registry_client, id):
 def get_schema_id(schema_registry_client):
     # [START get_schema_id_sync]
     group_name = os.environ["SCHEMAREGISTRY_GROUP"]
-    name = "your-schema-name"
+    schema_name = "your-schema-name"
     format = "Avro"
     schema_json = {
         "namespace": "example.avro",
@@ -109,7 +109,7 @@ def get_schema_id(schema_registry_client):
     }
     schema_definition = json.dumps(schema_json, separators=(",", ":"))
     schema_properties = schema_registry_client.get_schema_properties(
-        group_name, name, schema_definition, format
+        group_name, schema_name, schema_definition, format
     )
     schema_id = schema_properties.id
     # [END get_schema_id_sync]
@@ -119,6 +119,6 @@ def get_schema_id(schema_registry_client):
 if __name__ == "__main__":
     client = create_client()
     with client:
-        id = register_schema(client)
-        schema = get_schema(client, id)
-        id = get_schema_id(client)
+        schema_id = register_schema(client)
+        schema = get_schema(client, schema_id)
+        schema_id = get_schema_id(client)
