@@ -224,7 +224,7 @@ def main():
         issue.whether_author_comment = _whether_author_comment(item.get_comments())
         issue.issue_object = item
         issue.labels = [label.name for label in item.labels]
-        issue.days_from_latest_commit = _latest_comment_time(item.get_comments(), issue.delay_from_create_date)
+        issue.days_from_latest_comment = _latest_comment_time(item.get_comments(), issue.delay_from_create_date)
         if item.assignee:
             issue.assignee = item.assignee.login
 
@@ -260,7 +260,7 @@ def main():
             except Exception as e:
                 continue
         elif not item.author_latest_comment in _PYTHON_SDK_ADMINISTRATORS:
-            item.bot_advice = 'new comment for author.  <br>'
+            item.bot_advice = 'new comment.  <br>'
         if item.comment_num > 1 and item.language == 'Python':
             try:
                 auto_close_issue(request_repo, item)
@@ -274,11 +274,11 @@ def main():
         if abs(item.days_from_target) < 3:
             item.bot_advice += ' release date < 2 ! <br>'
 
-        if item.days_from_latest_commit >= 15 and item.language == 'Python' and '7days attention' in item.labels and item.days_from_target < 0:
+        if item.days_from_latest_comment >= 15 and item.language == 'Python' and '7days attention' in item.labels and item.days_from_target < 0:
             item.issue_object.create_comment(
                 f'hi @{item.author}, the issue is closed since there is no reply for a long time. Please reopen it if necessary or create new one.')
             item.issue_object.edit(state='close')
-        elif item.days_from_latest_commit >= 7 and item.language == 'Python' and '7days attention' not in item.labels and item.days_from_target < 7:
+        elif item.days_from_latest_comment >= 7 and item.language == 'Python' and '7days attention' not in item.labels and item.days_from_target < 7:
             item.issue_object.create_comment(
                 f'hi @{item.author}, this release-request has been delayed more than 7 days,'
                 ' please deal with it ASAP. We will close the issue if there is still no response after 7 days!')
@@ -297,9 +297,8 @@ def main():
     print_check('git commit -m \"update excel\"')
     print_check('git push -f origin HEAD')
 
-    # upload to storage account(it is created in advance)
 
-
+# upload to storage account(it is created in advance)
 #     blob = BlobClient.from_connection_string(conn_str=os.getenv('CONN_STR'), container_name=os.getenv('FILE'),
 #                                              blob_name=_FILE_OUT)
 #     with open(_FILE_OUT, 'rb') as data:
