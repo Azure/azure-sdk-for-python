@@ -91,6 +91,7 @@ function GetAdjustedReadmeContent($ReadmeContent, $PackageInfo, $PackageMetadata
   
   $author = "ramya-rao-a"
   $msauthor = "ramyar"
+  Write-Host $DefaultCodeOwnerFile
   # We are currently lack of the ability to get ms alias from github identity. Use github identity as placeholder for now.
   if ($CodeOwners) {
     $author = $CodeOwners.Split(",")[0]
