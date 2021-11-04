@@ -85,7 +85,7 @@ class GlobalConversationAccountPreparer(AzureMgmtPreparer):
                 'conv_account': os.environ.get("AZURE_CONVERSATIONS_ENDPOINT"),
                 'conv_key': os.environ.get("AZURE_CONVERSATIONS_KEY"),
                 'conv_project': os.environ.get("AZURE_CONVERSATIONS_PROJECT"),
-                'workflow_project': os.environ.get("AZURE_CONVERSATIONS_WORKFLOW_PROJECT")
+                'orchestration_project': os.environ.get("AZURE_CONVERSATIONS_WORKFLOW_PROJECT")
             }
         return {
             'location': REGION,
@@ -93,5 +93,5 @@ class GlobalConversationAccountPreparer(AzureMgmtPreparer):
             'conv_account': TEST_ENDPOINT,
             'conv_key': TEST_KEY,
             'conv_project': TEST_PROJECT,
-            'workflow_project': TEST_WORKFLOW
+            'orchestration_project': TEST_WORKFLOW
         }

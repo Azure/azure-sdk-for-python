@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from enum import Enum
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy, HttpLoggingPolicy
 from azure.core.credentials import AzureKeyCredential
 from ._generated import TextAnalyticsClient as _TextAnalyticsClient
 from ._policies import TextAnalyticsResponseHookPolicy
@@ -39,6 +39,30 @@ def _authentication_policy(credential):
 
 class TextAnalyticsClientBase(object):
     def __init__(self, endpoint, credential, **kwargs):
+        http_logging_policy = HttpLoggingPolicy(**kwargs)
+        http_logging_policy.allowed_header_names.update(
+            {
+                "Operation-Location",
+                "apim-request-id",
+                "x-envoy-upstream-service-time",
+                "Strict-Transport-Security",
+                "x-content-type-options",
+            }
+        )
+        http_logging_policy.allowed_query_params.update(
+            {
+                "model-version",
+                "showStats",
+                "loggingOptOut",
+                "domain",
+                "stringIndexType",
+                "piiCategories",
+                "$top",
+                "$skip",
+                "opinionMining",
+            }
+        )
+
         self._client = _TextAnalyticsClient(
             endpoint=endpoint,
             credential=credential,
@@ -46,6 +70,7 @@ class TextAnalyticsClientBase(object):
             sdk_moniker=USER_AGENT,
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
             custom_hook_policy=kwargs.pop("custom_hook_policy", TextAnalyticsResponseHookPolicy(**kwargs)),
+            http_logging_policy=kwargs.pop("http_logging_policy", http_logging_policy),
             **kwargs
         )
 
