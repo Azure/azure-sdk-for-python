@@ -135,7 +135,6 @@ def _whether_author_comment(comments):
     diff = q.difference(_PYTHON_SDK_ADMINISTRATORS)
     return len(diff) > 0
 
-
 def _latest_comment_time(comments, delay_from_create_date):
     q = [(comment.updated_at.timestamp(), comment.user.login)
          for comment in comments if comment.user.login not in _PYTHON_SDK_ADMINISTRATORS]
@@ -227,7 +226,6 @@ def main():
         issue.days_from_latest_comment = _latest_comment_time(item.get_comments(), issue.delay_from_create_date)
         if item.assignee:
             issue.assignee = item.assignee.login
-
         issue_status.append(issue)
         key = (issue.language, issue.package)
         duplicated_issue[key] = duplicated_issue.get(key, 0) + 1
@@ -297,13 +295,11 @@ def main():
     print_check('git commit -m \"update excel\"')
     print_check('git push -f origin HEAD')
 
-
 # upload to storage account(it is created in advance)
 #     blob = BlobClient.from_connection_string(conn_str=os.getenv('CONN_STR'), container_name=os.getenv('FILE'),
 #                                              blob_name=_FILE_OUT)
 #     with open(_FILE_OUT, 'rb') as data:
 #         blob.upload_blob(data, overwrite=True)
-
 
 if __name__ == '__main__':
     main()
