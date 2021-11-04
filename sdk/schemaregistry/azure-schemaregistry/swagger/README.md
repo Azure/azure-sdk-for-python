@@ -19,5 +19,5 @@ clear-output-folder: true
 python: true
 add-credential: true
 credential-scopes: "https://eventhubs.azure.net/.default"
-package-version: "1.0.0b4"
+package-version: "1.0.0"
 ```
