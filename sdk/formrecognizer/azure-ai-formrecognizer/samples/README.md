@@ -39,7 +39,7 @@ All of these samples need the endpoint to your Form Recognizer resource ([instru
 |[sample_manage_models.py][sample_manage_models] and [sample_manage_models_async.py][sample_manage_models_async]|Manage the models in your account|
 |[sample_get_operations.py][sample_get_operations] and [sample_get_operations_async.py][sample_get_operations_async]|Get and list the document model operations created within the past 24 hours|
 |[sample_copy_model.py][sample_copy] and [sample_copy_model_async.py][sample_copy_async]|Copy a custom model from one Form Recognizer resource to another|
-|[sample_get_document_elements.py][sample_get_document_elements] and [sample_get_document_elements_async.py][sample_get_document_elements_async]|Get document elements related to other elements returned after an analysis operation|
+|[sample_get_document_elements.py][sample_get_document_elements] and [sample_get_document_elements_async.py][sample_get_document_elements_async]|Get document elements, like words and lines, related to other elements returned after an analysis operation|
 
 ## Samples for client library versions 3.1.X
 
