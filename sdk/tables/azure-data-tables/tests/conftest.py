@@ -36,7 +36,7 @@ if sys.version_info < (3, 5):
     collect_ignore_glob.append("*_async.py")
 
 @pytest.fixture(scope="session", autouse=True)
-def sanitize_uris():
+def add_sanitizers():
     add_general_regex_sanitizer(
         value="fakeendpoint",
         regex="(?<=\\/\\/)[a-z]+(?=(?:|-secondary)\\.(?:table|blob|queue)\\.core\\.windows\\.net)"
