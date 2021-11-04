@@ -764,7 +764,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             textanalytics_custom_entities_project_name,
             textanalytics_custom_entities_deployment_name
     ):
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key), logging_enable=True)
         actions = [
             RecognizeEntitiesAction(disable_service_logs=True),
             ExtractKeyPhrasesAction(disable_service_logs=True),
@@ -1127,7 +1127,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             textanalytics_single_category_classify_project_name,
             textanalytics_single_category_classify_deployment_name
     ):
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key), logging_enable=True)
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
@@ -1167,7 +1167,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             textanalytics_multi_category_classify_project_name,
             textanalytics_multi_category_classify_deployment_name
     ):
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key), logging_enable=True)
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
@@ -1209,7 +1209,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             textanalytics_custom_entities_project_name,
             textanalytics_custom_entities_deployment_name
     ):
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key), logging_enable=True)
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
@@ -1259,7 +1259,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             textanalytics_custom_entities_project_name,
             textanalytics_custom_entities_deployment_name
     ):
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key), logging_enable=True)
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": ""},
