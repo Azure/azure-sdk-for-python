@@ -27,4 +27,9 @@ from enum import Enum
 
 
 class SchemaFormat(str, Enum):
+    """
+    Represents the format of the schema to be stored by the Schema Registry service.
+    """
+
     AVRO = "avro"
+    """Represents the Apache Avro schema format."""
