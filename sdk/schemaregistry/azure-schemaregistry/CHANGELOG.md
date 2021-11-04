@@ -20,7 +20,7 @@
 
 - `version` instance variable in `SchemaProperties` has been removed.  
 - `schema_definition` instance variable in `Schema` has been renamed `definition`.
-- `id` parameter in `get_schema` method on sync and async `SchemaRegistryClient` has been renamed `id`.
+- `id` parameter in `get_schema` method on sync and async `SchemaRegistryClient` has been renamed `schema_id`.
 - `name` parameter in `register_schema` and `get_schema_properties` methods on sync and async `SchemaRegistryClient` has been renamed `schema_name`.
 
 ### Bugs Fixed
