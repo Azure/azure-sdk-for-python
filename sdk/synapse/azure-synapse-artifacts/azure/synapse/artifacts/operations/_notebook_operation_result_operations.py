@@ -22,7 +22,6 @@ from .._vendor import _convert_request, _format_url_section
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Optional, TypeVar
-
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -34,7 +33,8 @@ def build_get_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2020-12-01"
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/notebookOperationResults/{operationId}')
@@ -94,6 +94,9 @@ class NotebookOperationResultOperations(object):
 
         :param operation_id: Operation ID.
         :type operation_id: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -105,9 +108,12 @@ class NotebookOperationResultOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_get_request(
             operation_id=operation_id,
+            api_version=api_version,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)

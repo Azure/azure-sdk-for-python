@@ -25,7 +25,6 @@ from .._vendor import _convert_request, _format_url_section
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, IO, Iterable, Optional, TypeVar, Union
-
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -36,7 +35,8 @@ def build_list_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2020-12-01"
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/libraries')
@@ -63,7 +63,8 @@ def build_flush_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2020-12-01"
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/libraries/{libraryName}/flush')
@@ -95,7 +96,8 @@ def build_get_operation_result_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2020-12-01"
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/libraryOperationResults/{operationId}')
@@ -127,7 +129,8 @@ def build_delete_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2020-12-01"
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/libraries/{libraryName}')
@@ -159,7 +162,8 @@ def build_get_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2020-12-01"
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/libraries/{libraryName}')
@@ -191,7 +195,8 @@ def build_create_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2020-12-01"
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/libraries/{libraryName}')
@@ -223,11 +228,11 @@ def build_append_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    comp = kwargs.pop('comp', "appendblock")  # type: str
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     blob_condition_append_position = kwargs.pop('blob_condition_append_position', None)  # type: Optional[int]
 
-    comp = "appendblock"
-    api_version = "2020-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/libraries/{libraryName}')
@@ -289,11 +294,16 @@ class LibraryOperations(object):
         # type: (...) -> Iterable["_models.LibraryListResponse"]
         """Lists Library.
 
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either LibraryListResponse or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.synapse.artifacts.models.LibraryListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.LibraryListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -303,6 +313,7 @@ class LibraryOperations(object):
             if not next_link:
                 
                 request = build_list_request(
+                    api_version=api_version,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -314,6 +325,7 @@ class LibraryOperations(object):
             else:
                 
                 request = build_list_request(
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -366,9 +378,12 @@ class LibraryOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_flush_request_initial(
             library_name=library_name,
+            api_version=api_version,
             template_url=self._flush_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -408,6 +423,9 @@ class LibraryOperations(object):
         :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
          the extension length.
         :type library_name: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -421,6 +439,7 @@ class LibraryOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.LibraryResourceInfo]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.LibraryResourceInfo"]
         lro_delay = kwargs.pop(
@@ -431,6 +450,7 @@ class LibraryOperations(object):
         if cont_token is None:
             raw_result = self._flush_initial(
                 library_name=library_name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -474,6 +494,9 @@ class LibraryOperations(object):
 
         :param operation_id: operation id for which status is requested.
         :type operation_id: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LibraryResource or OperationResult, or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.LibraryResource or
@@ -486,9 +509,12 @@ class LibraryOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_get_operation_result_request(
             operation_id=operation_id,
+            api_version=api_version,
             template_url=self.get_operation_result.metadata['url'],
         )
         request = _convert_request(request)
@@ -531,9 +557,12 @@ class LibraryOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_delete_request_initial(
             library_name=library_name,
+            api_version=api_version,
             template_url=self._delete_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -573,6 +602,9 @@ class LibraryOperations(object):
         :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
          the extension length.
         :type library_name: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -586,6 +618,7 @@ class LibraryOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.LibraryResourceInfo]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.LibraryResourceInfo"]
         lro_delay = kwargs.pop(
@@ -596,6 +629,7 @@ class LibraryOperations(object):
         if cont_token is None:
             raw_result = self._delete_initial(
                 library_name=library_name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -640,6 +674,9 @@ class LibraryOperations(object):
         :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
          the extension length.
         :type library_name: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LibraryResource, or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.LibraryResource or None
@@ -651,9 +688,12 @@ class LibraryOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_get_request(
             library_name=library_name,
+            api_version=api_version,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
@@ -694,9 +734,12 @@ class LibraryOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_create_request_initial(
             library_name=library_name,
+            api_version=api_version,
             template_url=self._create_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -736,6 +779,9 @@ class LibraryOperations(object):
         :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
          the extension length.
         :type library_name: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -749,6 +795,7 @@ class LibraryOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.LibraryResourceInfo]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.LibraryResourceInfo"]
         lro_delay = kwargs.pop(
@@ -759,6 +806,7 @@ class LibraryOperations(object):
         if cont_token is None:
             raw_result = self._create_initial(
                 library_name=library_name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -813,6 +861,12 @@ class LibraryOperations(object):
          Otherwise, the request fails with the AppendPositionConditionNotMet error (HTTP status code 412
          – Precondition Failed).
         :type blob_condition_append_position: long
+        :keyword comp: The default value is "appendblock". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -824,15 +878,20 @@ class LibraryOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        comp = kwargs.pop('comp', "appendblock")  # type: str
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/octet-stream")  # type: Optional[str]
 
         content = content
 
         request = build_append_request(
             library_name=library_name,
+            comp=comp,
+            api_version=api_version,
             content_type=content_type,
-            blob_condition_append_position=blob_condition_append_position,
             content=content,
+            content=content,
+            blob_condition_append_position=blob_condition_append_position,
             template_url=self.append.metadata['url'],
         )
         request = _convert_request(request)

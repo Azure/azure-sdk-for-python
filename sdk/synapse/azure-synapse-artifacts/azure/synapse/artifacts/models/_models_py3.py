@@ -16795,6 +16795,8 @@ class DataFlowReference(msrest.serialization.Model):
     :vartype reference_name: str
     :ivar dataset_parameters: Reference data flow parameters from dataset.
     :vartype dataset_parameters: any
+    :ivar parameters: Data flow parameters.
+    :vartype parameters: dict[str, any]
     """
 
     _validation = {
@@ -16807,6 +16809,7 @@ class DataFlowReference(msrest.serialization.Model):
         'type': {'key': 'type', 'type': 'str'},
         'reference_name': {'key': 'referenceName', 'type': 'str'},
         'dataset_parameters': {'key': 'datasetParameters', 'type': 'object'},
+        'parameters': {'key': 'parameters', 'type': '{object}'},
     }
 
     def __init__(
@@ -16816,6 +16819,7 @@ class DataFlowReference(msrest.serialization.Model):
         reference_name: str,
         additional_properties: Optional[Dict[str, Any]] = None,
         dataset_parameters: Optional[Any] = None,
+        parameters: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         """
@@ -16829,12 +16833,15 @@ class DataFlowReference(msrest.serialization.Model):
         :paramtype reference_name: str
         :keyword dataset_parameters: Reference data flow parameters from dataset.
         :paramtype dataset_parameters: any
+        :keyword parameters: Data flow parameters.
+        :paramtype parameters: dict[str, any]
         """
         super(DataFlowReference, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.type = type
         self.reference_name = reference_name
         self.dataset_parameters = dataset_parameters
+        self.parameters = parameters
 
 
 class SubResource(AzureEntityResource):
@@ -22644,9 +22651,6 @@ class Flowlet(DataFlow):
     :ivar folder: The folder that this data flow is in. If not specified, Data flow will appear at
      the root level.
     :vartype folder: ~azure.synapse.artifacts.models.DataFlowFolder
-    :ivar additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :vartype additional_properties: dict[str, any]
     :ivar sources: List of sources in Flowlet.
     :vartype sources: list[~azure.synapse.artifacts.models.DataFlowSource]
     :ivar sinks: List of sinks in Flowlet.
@@ -22657,8 +22661,6 @@ class Flowlet(DataFlow):
     :vartype script: str
     :ivar script_lines: Flowlet script lines.
     :vartype script_lines: list[str]
-    :ivar additional_properties1: Any object.
-    :vartype additional_properties1: any
     """
 
     _validation = {
@@ -22670,13 +22672,11 @@ class Flowlet(DataFlow):
         'description': {'key': 'description', 'type': 'str'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'folder': {'key': 'folder', 'type': 'DataFlowFolder'},
-        'additional_properties': {'key': '', 'type': '{object}'},
         'sources': {'key': 'typeProperties.sources', 'type': '[DataFlowSource]'},
         'sinks': {'key': 'typeProperties.sinks', 'type': '[DataFlowSink]'},
         'transformations': {'key': 'typeProperties.transformations', 'type': '[Transformation]'},
         'script': {'key': 'typeProperties.script', 'type': 'str'},
         'script_lines': {'key': 'typeProperties.scriptLines', 'type': '[str]'},
-        'additional_properties1': {'key': 'typeProperties.additionalProperties', 'type': 'object'},
     }
 
     def __init__(
@@ -22685,13 +22685,11 @@ class Flowlet(DataFlow):
         description: Optional[str] = None,
         annotations: Optional[List[Any]] = None,
         folder: Optional["DataFlowFolder"] = None,
-        additional_properties: Optional[Dict[str, Any]] = None,
         sources: Optional[List["DataFlowSource"]] = None,
         sinks: Optional[List["DataFlowSink"]] = None,
         transformations: Optional[List["Transformation"]] = None,
         script: Optional[str] = None,
         script_lines: Optional[List[str]] = None,
-        additional_properties1: Optional[Any] = None,
         **kwargs
     ):
         """
@@ -22702,9 +22700,6 @@ class Flowlet(DataFlow):
         :keyword folder: The folder that this data flow is in. If not specified, Data flow will appear
          at the root level.
         :paramtype folder: ~azure.synapse.artifacts.models.DataFlowFolder
-        :keyword additional_properties: Unmatched properties from the message are deserialized to this
-         collection.
-        :paramtype additional_properties: dict[str, any]
         :keyword sources: List of sources in Flowlet.
         :paramtype sources: list[~azure.synapse.artifacts.models.DataFlowSource]
         :keyword sinks: List of sinks in Flowlet.
@@ -22715,18 +22710,14 @@ class Flowlet(DataFlow):
         :paramtype script: str
         :keyword script_lines: Flowlet script lines.
         :paramtype script_lines: list[str]
-        :keyword additional_properties1: Any object.
-        :paramtype additional_properties1: any
         """
         super(Flowlet, self).__init__(description=description, annotations=annotations, folder=folder, **kwargs)
         self.type = 'Flowlet'  # type: str
-        self.additional_properties = additional_properties
         self.sources = sources
         self.sinks = sinks
         self.transformations = transformations
         self.script = script
         self.script_lines = script_lines
-        self.additional_properties1 = additional_properties1
 
 
 class ForEachActivity(ControlActivity):
@@ -30142,12 +30133,18 @@ class KqlScriptContentCurrentConnection(msrest.serialization.Model):
 
     :ivar name:
     :vartype name: str
+    :ivar pool_name:
+    :vartype pool_name: str
+    :ivar database_name:
+    :vartype database_name: str
     :ivar type:
     :vartype type: str
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'pool_name': {'key': 'poolName', 'type': 'str'},
+        'database_name': {'key': 'databaseName', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -30155,17 +30152,25 @@ class KqlScriptContentCurrentConnection(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
+        pool_name: Optional[str] = None,
+        database_name: Optional[str] = None,
         type: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword name:
         :paramtype name: str
+        :keyword pool_name:
+        :paramtype pool_name: str
+        :keyword database_name:
+        :paramtype database_name: str
         :keyword type:
         :paramtype type: str
         """
         super(KqlScriptContentCurrentConnection, self).__init__(**kwargs)
         self.name = name
+        self.pool_name = pool_name
+        self.database_name = database_name
         self.type = type
 
 
@@ -32270,149 +32275,6 @@ class MarketoSource(TabularSource):
         super(MarketoSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, additional_columns=additional_columns, **kwargs)
         self.type = 'MarketoSource'  # type: str
         self.query = query
-
-
-class MetastoreRegisterObject(msrest.serialization.Model):
-    """MetastoreRegisterObject.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar input_folder: Required. The input folder containing CDM files.
-    :vartype input_folder: str
-    """
-
-    _validation = {
-        'input_folder': {'required': True},
-    }
-
-    _attribute_map = {
-        'input_folder': {'key': 'inputFolder', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        input_folder: str,
-        **kwargs
-    ):
-        """
-        :keyword input_folder: Required. The input folder containing CDM files.
-        :paramtype input_folder: str
-        """
-        super(MetastoreRegisterObject, self).__init__(**kwargs)
-        self.input_folder = input_folder
-
-
-class MetastoreRegistrationResponse(msrest.serialization.Model):
-    """MetastoreRegistrationResponse.
-
-    :ivar status: Enumerates possible request statuses. Possible values include: "Running",
-     "Completed", "Failed".
-    :vartype status: str or ~azure.synapse.artifacts.models.RequestStatus
-    """
-
-    _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        status: Optional[Union[str, "RequestStatus"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword status: Enumerates possible request statuses. Possible values include: "Running",
-         "Completed", "Failed".
-        :paramtype status: str or ~azure.synapse.artifacts.models.RequestStatus
-        """
-        super(MetastoreRegistrationResponse, self).__init__(**kwargs)
-        self.status = status
-
-
-class MetastoreRequestSuccessResponse(msrest.serialization.Model):
-    """MetastoreRequestSuccessResponse.
-
-    :ivar status: Enumerates possible Status of the resource. Possible values include: "Creating",
-     "Created", "Failed".
-    :vartype status: str or ~azure.synapse.artifacts.models.ResourceStatus
-    """
-
-    _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        status: Optional[Union[str, "ResourceStatus"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword status: Enumerates possible Status of the resource. Possible values include:
-         "Creating", "Created", "Failed".
-        :paramtype status: str or ~azure.synapse.artifacts.models.ResourceStatus
-        """
-        super(MetastoreRequestSuccessResponse, self).__init__(**kwargs)
-        self.status = status
-
-
-class MetastoreUpdateObject(msrest.serialization.Model):
-    """MetastoreUpdateObject.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar input_folder: Required. The input folder containing CDM files.
-    :vartype input_folder: str
-    """
-
-    _validation = {
-        'input_folder': {'required': True},
-    }
-
-    _attribute_map = {
-        'input_folder': {'key': 'inputFolder', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        input_folder: str,
-        **kwargs
-    ):
-        """
-        :keyword input_folder: Required. The input folder containing CDM files.
-        :paramtype input_folder: str
-        """
-        super(MetastoreUpdateObject, self).__init__(**kwargs)
-        self.input_folder = input_folder
-
-
-class MetastoreUpdationResponse(msrest.serialization.Model):
-    """MetastoreUpdationResponse.
-
-    :ivar status: Enumerates possible request statuses. Possible values include: "Running",
-     "Completed", "Failed".
-    :vartype status: str or ~azure.synapse.artifacts.models.RequestStatus
-    """
-
-    _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        status: Optional[Union[str, "RequestStatus"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword status: Enumerates possible request statuses. Possible values include: "Running",
-         "Completed", "Failed".
-        :paramtype status: str or ~azure.synapse.artifacts.models.RequestStatus
-        """
-        super(MetastoreUpdationResponse, self).__init__(**kwargs)
-        self.status = status
 
 
 class MicrosoftAccessLinkedService(LinkedService):

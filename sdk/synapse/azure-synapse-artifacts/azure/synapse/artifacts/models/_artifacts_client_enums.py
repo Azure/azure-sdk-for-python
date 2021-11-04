@@ -549,28 +549,12 @@ class RecurrenceFrequency(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MONTH = "Month"
     YEAR = "Year"
 
-class RequestStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enumerates possible request statuses.
-    """
-
-    RUNNING = "Running"
-    COMPLETED = "Completed"
-    FAILED = "Failed"
-
 class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of managed identity for the workspace
     """
 
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
-
-class ResourceStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enumerates possible Status of the resource.
-    """
-
-    CREATING = "Creating"
-    CREATED = "Created"
-    FAILED = "Failed"
 
 class RestServiceAuthenticationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of authentication used to connect to the REST service.

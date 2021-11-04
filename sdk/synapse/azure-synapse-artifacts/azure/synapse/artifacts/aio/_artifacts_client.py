@@ -15,7 +15,7 @@ from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import ArtifactsClientConfiguration
-from .operations import BigDataPoolsOperations, DataFlowDebugSessionOperations, DataFlowOperations, DatasetOperations, IntegrationRuntimesOperations, KqlScriptOperations, KqlScriptsOperations, LibraryOperations, LinkedServiceOperations, MetastoreOperations, NotebookOperationResultOperations, NotebookOperations, PipelineOperations, PipelineRunOperations, SparkConfigurationOperations, SparkJobDefinitionOperations, SqlPoolsOperations, SqlScriptOperations, TriggerOperations, TriggerRunOperations, WorkspaceGitRepoManagementOperations, WorkspaceOperations
+from .operations import BigDataPoolsOperations, DataFlowDebugSessionOperations, DataFlowOperations, DatasetOperations, IntegrationRuntimesOperations, KqlScriptOperations, KqlScriptsOperations, LibraryOperations, LinkedServiceOperations, NotebookOperationResultOperations, NotebookOperations, PipelineOperations, PipelineRunOperations, SparkConfigurationOperations, SparkJobDefinitionOperations, SqlPoolsOperations, SqlScriptOperations, TriggerOperations, TriggerRunOperations, WorkspaceGitRepoManagementOperations, WorkspaceOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -24,8 +24,6 @@ if TYPE_CHECKING:
 class ArtifactsClient:
     """ArtifactsClient.
 
-    :ivar metastore: MetastoreOperations operations
-    :vartype metastore: azure.synapse.artifacts.aio.operations.MetastoreOperations
     :ivar kql_scripts: KqlScriptsOperations operations
     :vartype kql_scripts: azure.synapse.artifacts.aio.operations.KqlScriptsOperations
     :ivar kql_script: KqlScriptOperations operations
@@ -90,14 +88,13 @@ class ArtifactsClient:
         **kwargs: Any
     ) -> None:
         _base_url = '{endpoint}'
-        self._config = ArtifactsClientConfiguration(credential, endpoint, **kwargs)
+        self._config = ArtifactsClientConfiguration(credential=credential, endpoint=endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=_base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.metastore = MetastoreOperations(self._client, self._config, self._serialize, self._deserialize)
         self.kql_scripts = KqlScriptsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.kql_script = KqlScriptOperations(self._client, self._config, self._serialize, self._deserialize)
         self.spark_configuration = SparkConfigurationOperations(self._client, self._config, self._serialize, self._deserialize)

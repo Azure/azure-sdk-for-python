@@ -22,7 +22,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._pipeline_operations import build_create_or_update_pipeline_request_initial, build_create_pipeline_run_request, build_delete_pipeline_request_initial, build_get_pipeline_request, build_get_pipelines_by_workspace_request, build_rename_pipeline_request_initial
-
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -55,6 +54,9 @@ class PipelineOperations:
     ) -> AsyncIterable["_models.PipelineListResponse"]:
         """Lists pipelines.
 
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PipelineListResponse or the result of
          cls(response)
@@ -62,6 +64,8 @@ class PipelineOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.synapse.artifacts.models.PipelineListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PipelineListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -71,6 +75,7 @@ class PipelineOperations:
             if not next_link:
                 
                 request = build_get_pipelines_by_workspace_request(
+                    api_version=api_version,
                     template_url=self.get_pipelines_by_workspace.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -82,6 +87,7 @@ class PipelineOperations:
             else:
                 
                 request = build_get_pipelines_by_workspace_request(
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -135,15 +141,17 @@ class PipelineOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(pipeline, 'PipelineResource')
 
         request = build_create_or_update_pipeline_request_initial(
             pipeline_name=pipeline_name,
+            api_version=api_version,
             content_type=content_type,
-            if_match=if_match,
             json=json,
+            if_match=if_match,
             template_url=self._create_or_update_pipeline_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -188,6 +196,9 @@ class PipelineOperations:
         :param if_match: ETag of the pipeline entity.  Should only be specified for update, for which
          it should match existing entity or can be * for unconditional update.
         :type if_match: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -201,6 +212,7 @@ class PipelineOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.synapse.artifacts.models.PipelineResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PipelineResource"]
@@ -214,6 +226,7 @@ class PipelineOperations:
                 pipeline_name=pipeline_name,
                 pipeline=pipeline,
                 if_match=if_match,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -261,6 +274,9 @@ class PipelineOperations:
         :param if_none_match: ETag of the pipeline entity. Should only be specified for get. If the
          ETag matches the existing entity tag, or if * was provided, then no content will be returned.
         :type if_none_match: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PipelineResource, or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.PipelineResource or None
@@ -272,9 +288,12 @@ class PipelineOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_get_pipeline_request(
             pipeline_name=pipeline_name,
+            api_version=api_version,
             if_none_match=if_none_match,
             template_url=self.get_pipeline.metadata['url'],
         )
@@ -315,9 +334,12 @@ class PipelineOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_delete_pipeline_request_initial(
             pipeline_name=pipeline_name,
+            api_version=api_version,
             template_url=self._delete_pipeline_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -349,6 +371,9 @@ class PipelineOperations:
 
         :param pipeline_name: The pipeline name.
         :type pipeline_name: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -361,6 +386,7 @@ class PipelineOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -371,6 +397,7 @@ class PipelineOperations:
         if cont_token is None:
             raw_result = await self._delete_pipeline_initial(
                 pipeline_name=pipeline_name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -412,6 +439,7 @@ class PipelineOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
@@ -419,6 +447,7 @@ class PipelineOperations:
 
         request = build_rename_pipeline_request_initial(
             pipeline_name=pipeline_name,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self._rename_pipeline_initial.metadata['url'],
@@ -455,6 +484,9 @@ class PipelineOperations:
         :type pipeline_name: str
         :param new_name: New name of the artifact.
         :type new_name: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -467,6 +499,7 @@ class PipelineOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -479,6 +512,7 @@ class PipelineOperations:
             raw_result = await self._rename_pipeline_initial(
                 pipeline_name=pipeline_name,
                 new_name=new_name,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -535,6 +569,9 @@ class PipelineOperations:
         :param parameters: Parameters of the pipeline run. These parameters will be used only if the
          runId is not specified.
         :type parameters: dict[str, any]
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CreateRunResponse, or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.CreateRunResponse
@@ -546,6 +583,7 @@ class PipelineOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         if parameters is not None:
@@ -555,11 +593,12 @@ class PipelineOperations:
 
         request = build_create_pipeline_run_request(
             pipeline_name=pipeline_name,
+            api_version=api_version,
             content_type=content_type,
+            json=json,
             reference_pipeline_run_id=reference_pipeline_run_id,
             is_recovery=is_recovery,
             start_activity_name=start_activity_name,
-            json=json,
             template_url=self.create_pipeline_run.metadata['url'],
         )
         request = _convert_request(request)

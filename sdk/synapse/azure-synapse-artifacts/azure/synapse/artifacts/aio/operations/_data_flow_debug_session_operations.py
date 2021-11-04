@@ -22,7 +22,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._data_flow_debug_session_operations import build_add_data_flow_request, build_create_data_flow_debug_session_request_initial, build_delete_data_flow_debug_session_request, build_execute_command_request_initial, build_query_data_flow_debug_sessions_by_workspace_request
-
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -59,11 +58,13 @@ class DataFlowDebugSessionOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(request, 'CreateDataFlowDebugSessionRequest')
 
         request = build_create_data_flow_debug_session_request_initial(
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self._create_data_flow_debug_session_initial.metadata['url'],
@@ -108,6 +109,9 @@ class DataFlowDebugSessionOperations:
 
         :param request: Data flow debug session definition.
         :type request: ~azure.synapse.artifacts.models.CreateDataFlowDebugSessionRequest
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -122,6 +126,7 @@ class DataFlowDebugSessionOperations:
          ~azure.core.polling.AsyncLROPoller[~azure.synapse.artifacts.models.CreateDataFlowDebugSessionResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CreateDataFlowDebugSessionResponse"]
@@ -133,6 +138,7 @@ class DataFlowDebugSessionOperations:
         if cont_token is None:
             raw_result = await self._create_data_flow_debug_session_initial(
                 request=request,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -173,6 +179,9 @@ class DataFlowDebugSessionOperations:
     ) -> AsyncIterable["_models.QueryDataFlowDebugSessionsResponse"]:
         """Query all active data flow debug sessions.
 
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either QueryDataFlowDebugSessionsResponse or the result
          of cls(response)
@@ -180,6 +189,8 @@ class DataFlowDebugSessionOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.synapse.artifacts.models.QueryDataFlowDebugSessionsResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.QueryDataFlowDebugSessionsResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -189,6 +200,7 @@ class DataFlowDebugSessionOperations:
             if not next_link:
                 
                 request = build_query_data_flow_debug_sessions_by_workspace_request(
+                    api_version=api_version,
                     template_url=self.query_data_flow_debug_sessions_by_workspace.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -200,6 +212,7 @@ class DataFlowDebugSessionOperations:
             else:
                 
                 request = build_query_data_flow_debug_sessions_by_workspace_request(
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -250,6 +263,9 @@ class DataFlowDebugSessionOperations:
 
         :param request: Data flow debug session definition with debug content.
         :type request: ~azure.synapse.artifacts.models.DataFlowDebugPackage
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AddDataFlowToDebugSessionResponse, or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.AddDataFlowToDebugSessionResponse
@@ -261,11 +277,13 @@ class DataFlowDebugSessionOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(request, 'DataFlowDebugPackage')
 
         request = build_add_data_flow_request(
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.add_data_flow.metadata['url'],
@@ -304,6 +322,9 @@ class DataFlowDebugSessionOperations:
 
         :param request: Data flow debug session definition for deletion.
         :type request: ~azure.synapse.artifacts.models.DeleteDataFlowDebugSessionRequest
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -315,11 +336,13 @@ class DataFlowDebugSessionOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(request, 'DeleteDataFlowDebugSessionRequest')
 
         request = build_delete_data_flow_debug_session_request(
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.delete_data_flow_debug_session.metadata['url'],
@@ -355,11 +378,13 @@ class DataFlowDebugSessionOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(request, 'DataFlowDebugCommandRequest')
 
         request = build_execute_command_request_initial(
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self._execute_command_initial.metadata['url'],
@@ -404,6 +429,9 @@ class DataFlowDebugSessionOperations:
 
         :param request: Data flow debug command definition.
         :type request: ~azure.synapse.artifacts.models.DataFlowDebugCommandRequest
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -418,6 +446,7 @@ class DataFlowDebugSessionOperations:
          ~azure.core.polling.AsyncLROPoller[~azure.synapse.artifacts.models.DataFlowDebugCommandResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataFlowDebugCommandResponse"]
@@ -429,6 +458,7 @@ class DataFlowDebugSessionOperations:
         if cont_token is None:
             raw_result = await self._execute_command_initial(
                 request=request,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs

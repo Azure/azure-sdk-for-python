@@ -18,7 +18,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._trigger_run_operations import build_cancel_trigger_instance_request, build_query_trigger_runs_by_workspace_request, build_rerun_trigger_instance_request
-
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -57,6 +56,9 @@ class TriggerRunOperations:
         :type trigger_name: str
         :param run_id: The pipeline run identifier.
         :type run_id: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -68,10 +70,13 @@ class TriggerRunOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_rerun_trigger_instance_request(
             trigger_name=trigger_name,
             run_id=run_id,
+            api_version=api_version,
             template_url=self.rerun_trigger_instance.metadata['url'],
         )
         request = _convert_request(request)
@@ -107,6 +112,9 @@ class TriggerRunOperations:
         :type trigger_name: str
         :param run_id: The pipeline run identifier.
         :type run_id: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -118,10 +126,13 @@ class TriggerRunOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_cancel_trigger_instance_request(
             trigger_name=trigger_name,
             run_id=run_id,
+            api_version=api_version,
             template_url=self.cancel_trigger_instance.metadata['url'],
         )
         request = _convert_request(request)
@@ -154,6 +165,9 @@ class TriggerRunOperations:
 
         :param filter_parameters: Parameters to filter the pipeline run.
         :type filter_parameters: ~azure.synapse.artifacts.models.RunFilterParameters
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TriggerRunsQueryResponse, or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.TriggerRunsQueryResponse
@@ -165,11 +179,13 @@ class TriggerRunOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(filter_parameters, 'RunFilterParameters')
 
         request = build_query_trigger_runs_by_workspace_request(
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.query_trigger_runs_by_workspace.metadata['url'],

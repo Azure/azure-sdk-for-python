@@ -22,7 +22,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._trigger_operations import build_create_or_update_trigger_request_initial, build_delete_trigger_request_initial, build_get_event_subscription_status_request, build_get_trigger_request, build_get_triggers_by_workspace_request, build_start_trigger_request_initial, build_stop_trigger_request_initial, build_subscribe_trigger_to_events_request_initial, build_unsubscribe_trigger_from_events_request_initial
-
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -55,12 +54,17 @@ class TriggerOperations:
     ) -> AsyncIterable["_models.TriggerListResponse"]:
         """Lists triggers.
 
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either TriggerListResponse or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.synapse.artifacts.models.TriggerListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -70,6 +74,7 @@ class TriggerOperations:
             if not next_link:
                 
                 request = build_get_triggers_by_workspace_request(
+                    api_version=api_version,
                     template_url=self.get_triggers_by_workspace.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -81,6 +86,7 @@ class TriggerOperations:
             else:
                 
                 request = build_get_triggers_by_workspace_request(
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -134,6 +140,7 @@ class TriggerOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _trigger = _models.TriggerResource(properties=properties)
@@ -141,9 +148,10 @@ class TriggerOperations:
 
         request = build_create_or_update_trigger_request_initial(
             trigger_name=trigger_name,
+            api_version=api_version,
             content_type=content_type,
-            if_match=if_match,
             json=json,
+            if_match=if_match,
             template_url=self._create_or_update_trigger_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -188,6 +196,9 @@ class TriggerOperations:
         :param if_match: ETag of the trigger entity.  Should only be specified for update, for which it
          should match existing entity or can be * for unconditional update.
         :type if_match: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -201,6 +212,7 @@ class TriggerOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.synapse.artifacts.models.TriggerResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerResource"]
@@ -214,6 +226,7 @@ class TriggerOperations:
                 trigger_name=trigger_name,
                 properties=properties,
                 if_match=if_match,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -261,6 +274,9 @@ class TriggerOperations:
         :param if_none_match: ETag of the trigger entity. Should only be specified for get. If the ETag
          matches the existing entity tag, or if * was provided, then no content will be returned.
         :type if_none_match: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TriggerResource, or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.TriggerResource or None
@@ -272,9 +288,12 @@ class TriggerOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_get_trigger_request(
             trigger_name=trigger_name,
+            api_version=api_version,
             if_none_match=if_none_match,
             template_url=self.get_trigger.metadata['url'],
         )
@@ -315,9 +334,12 @@ class TriggerOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_delete_trigger_request_initial(
             trigger_name=trigger_name,
+            api_version=api_version,
             template_url=self._delete_trigger_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -349,6 +371,9 @@ class TriggerOperations:
 
         :param trigger_name: The trigger name.
         :type trigger_name: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -361,6 +386,7 @@ class TriggerOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -371,6 +397,7 @@ class TriggerOperations:
         if cont_token is None:
             raw_result = await self._delete_trigger_initial(
                 trigger_name=trigger_name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -411,9 +438,12 @@ class TriggerOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_subscribe_trigger_to_events_request_initial(
             trigger_name=trigger_name,
+            api_version=api_version,
             template_url=self._subscribe_trigger_to_events_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -451,6 +481,9 @@ class TriggerOperations:
 
         :param trigger_name: The trigger name.
         :type trigger_name: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -465,6 +498,7 @@ class TriggerOperations:
          ~azure.core.polling.AsyncLROPoller[~azure.synapse.artifacts.models.TriggerSubscriptionOperationStatus]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerSubscriptionOperationStatus"]
         lro_delay = kwargs.pop(
@@ -475,6 +509,7 @@ class TriggerOperations:
         if cont_token is None:
             raw_result = await self._subscribe_trigger_to_events_initial(
                 trigger_name=trigger_name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -517,6 +552,9 @@ class TriggerOperations:
 
         :param trigger_name: The trigger name.
         :type trigger_name: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TriggerSubscriptionOperationStatus, or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.TriggerSubscriptionOperationStatus
@@ -528,9 +566,12 @@ class TriggerOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_get_event_subscription_status_request(
             trigger_name=trigger_name,
+            api_version=api_version,
             template_url=self.get_event_subscription_status.metadata['url'],
         )
         request = _convert_request(request)
@@ -568,9 +609,12 @@ class TriggerOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_unsubscribe_trigger_from_events_request_initial(
             trigger_name=trigger_name,
+            api_version=api_version,
             template_url=self._unsubscribe_trigger_from_events_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -608,6 +652,9 @@ class TriggerOperations:
 
         :param trigger_name: The trigger name.
         :type trigger_name: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -622,6 +669,7 @@ class TriggerOperations:
          ~azure.core.polling.AsyncLROPoller[~azure.synapse.artifacts.models.TriggerSubscriptionOperationStatus]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerSubscriptionOperationStatus"]
         lro_delay = kwargs.pop(
@@ -632,6 +680,7 @@ class TriggerOperations:
         if cont_token is None:
             raw_result = await self._unsubscribe_trigger_from_events_initial(
                 trigger_name=trigger_name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -675,9 +724,12 @@ class TriggerOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_start_trigger_request_initial(
             trigger_name=trigger_name,
+            api_version=api_version,
             template_url=self._start_trigger_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -709,6 +761,9 @@ class TriggerOperations:
 
         :param trigger_name: The trigger name.
         :type trigger_name: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -721,6 +776,7 @@ class TriggerOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -731,6 +787,7 @@ class TriggerOperations:
         if cont_token is None:
             raw_result = await self._start_trigger_initial(
                 trigger_name=trigger_name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -771,9 +828,12 @@ class TriggerOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_stop_trigger_request_initial(
             trigger_name=trigger_name,
+            api_version=api_version,
             template_url=self._stop_trigger_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -805,6 +865,9 @@ class TriggerOperations:
 
         :param trigger_name: The trigger name.
         :type trigger_name: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -817,6 +880,7 @@ class TriggerOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -827,6 +891,7 @@ class TriggerOperations:
         if cont_token is None:
             raw_result = await self._stop_trigger_initial(
                 trigger_name=trigger_name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )

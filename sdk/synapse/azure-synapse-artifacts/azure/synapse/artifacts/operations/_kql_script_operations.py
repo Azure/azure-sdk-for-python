@@ -24,7 +24,6 @@ from .._vendor import _convert_request, _format_url_section
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
-
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -36,9 +35,9 @@ def build_create_or_update_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-11-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-06-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/kqlScripts/{kqlScriptName}')
@@ -72,7 +71,8 @@ def build_get_by_name_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-06-01-preview"
+    api_version = kwargs.pop('api_version', "2021-11-01-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/kqlScripts/{kqlScriptName}')
@@ -104,7 +104,8 @@ def build_delete_by_name_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-06-01-preview"
+    api_version = kwargs.pop('api_version', "2021-11-01-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/kqlScripts/{kqlScriptName}')
@@ -136,9 +137,9 @@ def build_rename_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-11-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-06-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/kqlScripts/{kqlScriptName}/rename')
@@ -202,12 +203,14 @@ class KqlScriptOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(kql_script, 'KqlScriptResource')
 
         request = build_create_or_update_request_initial(
             kql_script_name=kql_script_name,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self._create_or_update_initial.metadata['url'],
@@ -251,6 +254,9 @@ class KqlScriptOperations(object):
         :type kql_script_name: str
         :param kql_script: KQL script.
         :type kql_script: ~azure.synapse.artifacts.models.KqlScriptResource
+        :keyword api_version: Api Version. The default value is "2021-11-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -264,6 +270,7 @@ class KqlScriptOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.KqlScriptResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2021-11-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.KqlScriptResource"]
@@ -276,6 +283,7 @@ class KqlScriptOperations(object):
             raw_result = self._create_or_update_initial(
                 kql_script_name=kql_script_name,
                 kql_script=kql_script,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -320,6 +328,9 @@ class KqlScriptOperations(object):
 
         :param kql_script_name: KQL script name.
         :type kql_script_name: str
+        :keyword api_version: Api Version. The default value is "2021-11-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KqlScriptResource, or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.KqlScriptResource
@@ -331,9 +342,12 @@ class KqlScriptOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-01-preview")  # type: str
+
         
         request = build_get_by_name_request(
             kql_script_name=kql_script_name,
+            api_version=api_version,
             template_url=self.get_by_name.metadata['url'],
         )
         request = _convert_request(request)
@@ -372,9 +386,12 @@ class KqlScriptOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-01-preview")  # type: str
+
         
         request = build_delete_by_name_request_initial(
             kql_script_name=kql_script_name,
+            api_version=api_version,
             template_url=self._delete_by_name_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -407,6 +424,9 @@ class KqlScriptOperations(object):
 
         :param kql_script_name: KQL script name.
         :type kql_script_name: str
+        :keyword api_version: Api Version. The default value is "2021-11-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -419,6 +439,7 @@ class KqlScriptOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2021-11-01-preview")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -429,6 +450,7 @@ class KqlScriptOperations(object):
         if cont_token is None:
             raw_result = self._delete_by_name_initial(
                 kql_script_name=kql_script_name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -471,6 +493,7 @@ class KqlScriptOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _rename_request = _models.ArtifactRenameRequest(new_name=new_name)
@@ -478,6 +501,7 @@ class KqlScriptOperations(object):
 
         request = build_rename_request_initial(
             kql_script_name=kql_script_name,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self._rename_initial.metadata['url'],
@@ -515,6 +539,9 @@ class KqlScriptOperations(object):
         :type kql_script_name: str
         :param new_name: New name of the artifact.
         :type new_name: str
+        :keyword api_version: Api Version. The default value is "2021-11-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -527,6 +554,7 @@ class KqlScriptOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2021-11-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -539,6 +567,7 @@ class KqlScriptOperations(object):
             raw_result = self._rename_initial(
                 kql_script_name=kql_script_name,
                 new_name=new_name,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs

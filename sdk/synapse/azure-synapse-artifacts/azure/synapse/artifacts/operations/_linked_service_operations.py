@@ -25,7 +25,6 @@ from .._vendor import _convert_request, _format_url_section
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
-
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -36,7 +35,8 @@ def build_get_linked_services_by_workspace_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2020-12-01"
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/linkedservices')
@@ -63,10 +63,10 @@ def build_create_or_update_linked_service_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     if_match = kwargs.pop('if_match', None)  # type: Optional[str]
 
-    api_version = "2020-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/linkedservices/{linkedServiceName}')
@@ -102,9 +102,9 @@ def build_get_linked_service_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
 
-    api_version = "2020-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/linkedservices/{linkedServiceName}')
@@ -138,7 +138,8 @@ def build_delete_linked_service_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2020-12-01"
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/linkedservices/{linkedServiceName}')
@@ -170,9 +171,9 @@ def build_rename_linked_service_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2020-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/linkedservices/{linkedServiceName}/rename')
@@ -231,12 +232,17 @@ class LinkedServiceOperations(object):
         # type: (...) -> Iterable["_models.LinkedServiceListResponse"]
         """Lists linked services.
 
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either LinkedServiceListResponse or the result of
          cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.synapse.artifacts.models.LinkedServiceListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.LinkedServiceListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -246,6 +252,7 @@ class LinkedServiceOperations(object):
             if not next_link:
                 
                 request = build_get_linked_services_by_workspace_request(
+                    api_version=api_version,
                     template_url=self.get_linked_services_by_workspace.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -257,6 +264,7 @@ class LinkedServiceOperations(object):
             else:
                 
                 request = build_get_linked_services_by_workspace_request(
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -311,6 +319,7 @@ class LinkedServiceOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _linked_service = _models.LinkedServiceResource(properties=properties)
@@ -318,9 +327,10 @@ class LinkedServiceOperations(object):
 
         request = build_create_or_update_linked_service_request_initial(
             linked_service_name=linked_service_name,
+            api_version=api_version,
             content_type=content_type,
-            if_match=if_match,
             json=json,
+            if_match=if_match,
             template_url=self._create_or_update_linked_service_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -366,6 +376,9 @@ class LinkedServiceOperations(object):
         :param if_match: ETag of the linkedService entity.  Should only be specified for update, for
          which it should match existing entity or can be * for unconditional update.
         :type if_match: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -379,6 +392,7 @@ class LinkedServiceOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.LinkedServiceResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.LinkedServiceResource"]
@@ -392,6 +406,7 @@ class LinkedServiceOperations(object):
                 linked_service_name=linked_service_name,
                 properties=properties,
                 if_match=if_match,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -441,6 +456,9 @@ class LinkedServiceOperations(object):
          the ETag matches the existing entity tag, or if * was provided, then no content will be
          returned.
         :type if_none_match: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LinkedServiceResource, or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.LinkedServiceResource or None
@@ -452,9 +470,12 @@ class LinkedServiceOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_get_linked_service_request(
             linked_service_name=linked_service_name,
+            api_version=api_version,
             if_none_match=if_none_match,
             template_url=self.get_linked_service.metadata['url'],
         )
@@ -496,9 +517,12 @@ class LinkedServiceOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_delete_linked_service_request_initial(
             linked_service_name=linked_service_name,
+            api_version=api_version,
             template_url=self._delete_linked_service_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -531,6 +555,9 @@ class LinkedServiceOperations(object):
 
         :param linked_service_name: The linked service name.
         :type linked_service_name: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -543,6 +570,7 @@ class LinkedServiceOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -553,6 +581,7 @@ class LinkedServiceOperations(object):
         if cont_token is None:
             raw_result = self._delete_linked_service_initial(
                 linked_service_name=linked_service_name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -595,6 +624,7 @@ class LinkedServiceOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
@@ -602,6 +632,7 @@ class LinkedServiceOperations(object):
 
         request = build_rename_linked_service_request_initial(
             linked_service_name=linked_service_name,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self._rename_linked_service_initial.metadata['url'],
@@ -639,6 +670,9 @@ class LinkedServiceOperations(object):
         :type linked_service_name: str
         :param new_name: New name of the artifact.
         :type new_name: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -651,6 +685,7 @@ class LinkedServiceOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -663,6 +698,7 @@ class LinkedServiceOperations(object):
             raw_result = self._rename_linked_service_initial(
                 linked_service_name=linked_service_name,
                 new_name=new_name,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs

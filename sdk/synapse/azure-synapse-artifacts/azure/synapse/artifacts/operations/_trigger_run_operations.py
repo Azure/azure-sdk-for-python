@@ -22,7 +22,6 @@ from .._vendor import _convert_request, _format_url_section
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Optional, TypeVar
-
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -35,7 +34,8 @@ def build_rerun_trigger_instance_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2020-12-01"
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/triggers/{triggerName}/triggerRuns/{runId}/rerun')
@@ -69,7 +69,8 @@ def build_cancel_trigger_instance_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2020-12-01"
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/triggers/{triggerName}/triggerRuns/{runId}/cancel')
@@ -101,9 +102,9 @@ def build_query_trigger_runs_by_workspace_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2020-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/queryTriggerRuns')
@@ -163,6 +164,9 @@ class TriggerRunOperations(object):
         :type trigger_name: str
         :param run_id: The pipeline run identifier.
         :type run_id: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -174,10 +178,13 @@ class TriggerRunOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_rerun_trigger_instance_request(
             trigger_name=trigger_name,
             run_id=run_id,
+            api_version=api_version,
             template_url=self.rerun_trigger_instance.metadata['url'],
         )
         request = _convert_request(request)
@@ -214,6 +221,9 @@ class TriggerRunOperations(object):
         :type trigger_name: str
         :param run_id: The pipeline run identifier.
         :type run_id: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -225,10 +235,13 @@ class TriggerRunOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_cancel_trigger_instance_request(
             trigger_name=trigger_name,
             run_id=run_id,
+            api_version=api_version,
             template_url=self.cancel_trigger_instance.metadata['url'],
         )
         request = _convert_request(request)
@@ -262,6 +275,9 @@ class TriggerRunOperations(object):
 
         :param filter_parameters: Parameters to filter the pipeline run.
         :type filter_parameters: ~azure.synapse.artifacts.models.RunFilterParameters
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TriggerRunsQueryResponse, or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.TriggerRunsQueryResponse
@@ -273,11 +289,13 @@ class TriggerRunOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(filter_parameters, 'RunFilterParameters')
 
         request = build_query_trigger_runs_by_workspace_request(
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.query_trigger_runs_by_workspace.metadata['url'],

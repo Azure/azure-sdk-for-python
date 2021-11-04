@@ -18,7 +18,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._pipeline_run_operations import build_cancel_pipeline_run_request, build_get_pipeline_run_request, build_query_activity_runs_request, build_query_pipeline_runs_by_workspace_request
-
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -54,6 +53,9 @@ class PipelineRunOperations:
 
         :param filter_parameters: Parameters to filter the pipeline run.
         :type filter_parameters: ~azure.synapse.artifacts.models.RunFilterParameters
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PipelineRunsQueryResponse, or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.PipelineRunsQueryResponse
@@ -65,11 +67,13 @@ class PipelineRunOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(filter_parameters, 'RunFilterParameters')
 
         request = build_query_pipeline_runs_by_workspace_request(
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.query_pipeline_runs_by_workspace.metadata['url'],
@@ -108,6 +112,9 @@ class PipelineRunOperations:
 
         :param run_id: The pipeline run identifier.
         :type run_id: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PipelineRun, or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.PipelineRun
@@ -119,9 +126,12 @@ class PipelineRunOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_get_pipeline_run_request(
             run_id=run_id,
+            api_version=api_version,
             template_url=self.get_pipeline_run.metadata['url'],
         )
         request = _convert_request(request)
@@ -164,6 +174,9 @@ class PipelineRunOperations:
         :type run_id: str
         :param filter_parameters: Parameters to filter the activity runs.
         :type filter_parameters: ~azure.synapse.artifacts.models.RunFilterParameters
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActivityRunsQueryResponse, or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.ActivityRunsQueryResponse
@@ -175,6 +188,7 @@ class PipelineRunOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(filter_parameters, 'RunFilterParameters')
@@ -182,6 +196,7 @@ class PipelineRunOperations:
         request = build_query_activity_runs_request(
             pipeline_name=pipeline_name,
             run_id=run_id,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.query_activity_runs.metadata['url'],
@@ -224,6 +239,9 @@ class PipelineRunOperations:
         :param is_recursive: If true, cancel all the Child pipelines that are triggered by the current
          pipeline.
         :type is_recursive: bool
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -235,9 +253,12 @@ class PipelineRunOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_cancel_pipeline_run_request(
             run_id=run_id,
+            api_version=api_version,
             is_recursive=is_recursive,
             template_url=self.cancel_pipeline_run.metadata['url'],
         )

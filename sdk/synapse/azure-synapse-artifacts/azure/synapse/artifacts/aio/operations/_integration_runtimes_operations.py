@@ -18,7 +18,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._integration_runtimes_operations import build_get_request, build_list_request
-
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -51,6 +50,9 @@ class IntegrationRuntimesOperations:
     ) -> "_models.IntegrationRuntimeListResponse":
         """List Integration Runtimes.
 
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IntegrationRuntimeListResponse, or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.IntegrationRuntimeListResponse
@@ -62,8 +64,11 @@ class IntegrationRuntimesOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_list_request(
+            api_version=api_version,
             template_url=self.list.metadata['url'],
         )
         request = _convert_request(request)
@@ -100,6 +105,9 @@ class IntegrationRuntimesOperations:
 
         :param integration_runtime_name: The Integration Runtime name.
         :type integration_runtime_name: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IntegrationRuntimeResource, or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.IntegrationRuntimeResource
@@ -111,9 +119,12 @@ class IntegrationRuntimesOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_get_request(
             integration_runtime_name=integration_runtime_name,
+            api_version=api_version,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)

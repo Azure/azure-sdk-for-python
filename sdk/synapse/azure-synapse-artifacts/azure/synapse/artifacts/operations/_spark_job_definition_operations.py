@@ -25,7 +25,6 @@ from .._vendor import _convert_request, _format_url_section
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
-
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -36,7 +35,8 @@ def build_get_spark_job_definitions_by_workspace_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2020-12-01"
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/sparkJobDefinitions')
@@ -63,10 +63,10 @@ def build_create_or_update_spark_job_definition_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     if_match = kwargs.pop('if_match', None)  # type: Optional[str]
 
-    api_version = "2020-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/sparkJobDefinitions/{sparkJobDefinitionName}')
@@ -102,9 +102,9 @@ def build_get_spark_job_definition_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
 
-    api_version = "2020-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/sparkJobDefinitions/{sparkJobDefinitionName}')
@@ -138,7 +138,8 @@ def build_delete_spark_job_definition_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2020-12-01"
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/sparkJobDefinitions/{sparkJobDefinitionName}')
@@ -170,7 +171,8 @@ def build_execute_spark_job_definition_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2020-12-01"
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/sparkJobDefinitions/{sparkJobDefinitionName}/execute')
@@ -202,9 +204,9 @@ def build_rename_spark_job_definition_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2020-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/sparkJobDefinitions/{sparkJobDefinitionName}/rename')
@@ -237,9 +239,9 @@ def build_debug_spark_job_definition_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2020-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/debugSparkJobDefinition')
@@ -293,6 +295,9 @@ class SparkJobDefinitionOperations(object):
         # type: (...) -> Iterable["_models.SparkJobDefinitionsListResponse"]
         """Lists spark job definitions.
 
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SparkJobDefinitionsListResponse or the result of
          cls(response)
@@ -300,6 +305,8 @@ class SparkJobDefinitionOperations(object):
          ~azure.core.paging.ItemPaged[~azure.synapse.artifacts.models.SparkJobDefinitionsListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkJobDefinitionsListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -309,6 +316,7 @@ class SparkJobDefinitionOperations(object):
             if not next_link:
                 
                 request = build_get_spark_job_definitions_by_workspace_request(
+                    api_version=api_version,
                     template_url=self.get_spark_job_definitions_by_workspace.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -320,6 +328,7 @@ class SparkJobDefinitionOperations(object):
             else:
                 
                 request = build_get_spark_job_definitions_by_workspace_request(
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -374,6 +383,7 @@ class SparkJobDefinitionOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _spark_job_definition = _models.SparkJobDefinitionResource(properties=properties)
@@ -381,9 +391,10 @@ class SparkJobDefinitionOperations(object):
 
         request = build_create_or_update_spark_job_definition_request_initial(
             spark_job_definition_name=spark_job_definition_name,
+            api_version=api_version,
             content_type=content_type,
-            if_match=if_match,
             json=json,
+            if_match=if_match,
             template_url=self._create_or_update_spark_job_definition_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -429,6 +440,9 @@ class SparkJobDefinitionOperations(object):
         :param if_match: ETag of the Spark Job Definition entity.  Should only be specified for update,
          for which it should match existing entity or can be * for unconditional update.
         :type if_match: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -443,6 +457,7 @@ class SparkJobDefinitionOperations(object):
          ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.SparkJobDefinitionResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkJobDefinitionResource"]
@@ -456,6 +471,7 @@ class SparkJobDefinitionOperations(object):
                 spark_job_definition_name=spark_job_definition_name,
                 properties=properties,
                 if_match=if_match,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -505,6 +521,9 @@ class SparkJobDefinitionOperations(object):
          get. If the ETag matches the existing entity tag, or if * was provided, then no content will be
          returned.
         :type if_none_match: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SparkJobDefinitionResource, or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.SparkJobDefinitionResource or None
@@ -516,9 +535,12 @@ class SparkJobDefinitionOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_get_spark_job_definition_request(
             spark_job_definition_name=spark_job_definition_name,
+            api_version=api_version,
             if_none_match=if_none_match,
             template_url=self.get_spark_job_definition.metadata['url'],
         )
@@ -560,9 +582,12 @@ class SparkJobDefinitionOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_delete_spark_job_definition_request_initial(
             spark_job_definition_name=spark_job_definition_name,
+            api_version=api_version,
             template_url=self._delete_spark_job_definition_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -595,6 +620,9 @@ class SparkJobDefinitionOperations(object):
 
         :param spark_job_definition_name: The spark job definition name.
         :type spark_job_definition_name: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -607,6 +635,7 @@ class SparkJobDefinitionOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -617,6 +646,7 @@ class SparkJobDefinitionOperations(object):
         if cont_token is None:
             raw_result = self._delete_spark_job_definition_initial(
                 spark_job_definition_name=spark_job_definition_name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -658,9 +688,12 @@ class SparkJobDefinitionOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_execute_spark_job_definition_request_initial(
             spark_job_definition_name=spark_job_definition_name,
+            api_version=api_version,
             template_url=self._execute_spark_job_definition_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -701,6 +734,9 @@ class SparkJobDefinitionOperations(object):
 
         :param spark_job_definition_name: The spark job definition name.
         :type spark_job_definition_name: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -714,6 +750,7 @@ class SparkJobDefinitionOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.SparkBatchJob]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkBatchJob"]
         lro_delay = kwargs.pop(
@@ -724,6 +761,7 @@ class SparkJobDefinitionOperations(object):
         if cont_token is None:
             raw_result = self._execute_spark_job_definition_initial(
                 spark_job_definition_name=spark_job_definition_name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -769,6 +807,7 @@ class SparkJobDefinitionOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
@@ -776,6 +815,7 @@ class SparkJobDefinitionOperations(object):
 
         request = build_rename_spark_job_definition_request_initial(
             spark_job_definition_name=spark_job_definition_name,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self._rename_spark_job_definition_initial.metadata['url'],
@@ -813,6 +853,9 @@ class SparkJobDefinitionOperations(object):
         :type spark_job_definition_name: str
         :param new_name: New name of the artifact.
         :type new_name: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -825,6 +868,7 @@ class SparkJobDefinitionOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -837,6 +881,7 @@ class SparkJobDefinitionOperations(object):
             raw_result = self._rename_spark_job_definition_initial(
                 spark_job_definition_name=spark_job_definition_name,
                 new_name=new_name,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -879,12 +924,14 @@ class SparkJobDefinitionOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _spark_job_definition_azure_resource = _models.SparkJobDefinitionResource(properties=properties)
         json = self._serialize.body(_spark_job_definition_azure_resource, 'SparkJobDefinitionResource')
 
         request = build_debug_spark_job_definition_request_initial(
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self._debug_spark_job_definition_initial.metadata['url'],
@@ -927,6 +974,9 @@ class SparkJobDefinitionOperations(object):
 
         :param properties: Properties of spark job definition.
         :type properties: ~azure.synapse.artifacts.models.SparkJobDefinition
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -940,6 +990,7 @@ class SparkJobDefinitionOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.SparkBatchJob]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkBatchJob"]
@@ -951,6 +1002,7 @@ class SparkJobDefinitionOperations(object):
         if cont_token is None:
             raw_result = self._debug_spark_job_definition_initial(
                 properties=properties,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs

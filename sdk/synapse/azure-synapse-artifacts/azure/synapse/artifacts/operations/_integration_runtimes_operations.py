@@ -22,7 +22,6 @@ from .._vendor import _convert_request, _format_url_section
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Optional, TypeVar
-
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -33,7 +32,8 @@ def build_list_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2020-12-01"
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/integrationRuntimes')
@@ -60,7 +60,8 @@ def build_get_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2020-12-01"
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/integrationRuntimes/{integrationRuntimeName}')
@@ -117,6 +118,9 @@ class IntegrationRuntimesOperations(object):
         # type: (...) -> "_models.IntegrationRuntimeListResponse"
         """List Integration Runtimes.
 
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IntegrationRuntimeListResponse, or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.IntegrationRuntimeListResponse
@@ -128,8 +132,11 @@ class IntegrationRuntimesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_list_request(
+            api_version=api_version,
             template_url=self.list.metadata['url'],
         )
         request = _convert_request(request)
@@ -167,6 +174,9 @@ class IntegrationRuntimesOperations(object):
 
         :param integration_runtime_name: The Integration Runtime name.
         :type integration_runtime_name: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IntegrationRuntimeResource, or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.IntegrationRuntimeResource
@@ -178,9 +188,12 @@ class IntegrationRuntimesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_get_request(
             integration_runtime_name=integration_runtime_name,
+            api_version=api_version,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)

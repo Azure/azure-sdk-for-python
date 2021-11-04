@@ -25,7 +25,6 @@ from .._vendor import _convert_request, _format_url_section
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
-
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -36,7 +35,8 @@ def build_get_sql_scripts_by_workspace_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2020-12-01"
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/sqlScripts')
@@ -63,10 +63,10 @@ def build_create_or_update_sql_script_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     if_match = kwargs.pop('if_match', None)  # type: Optional[str]
 
-    api_version = "2020-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/sqlScripts/{sqlScriptName}')
@@ -102,9 +102,9 @@ def build_get_sql_script_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
 
-    api_version = "2020-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/sqlScripts/{sqlScriptName}')
@@ -138,7 +138,8 @@ def build_delete_sql_script_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2020-12-01"
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/sqlScripts/{sqlScriptName}')
@@ -170,9 +171,9 @@ def build_rename_sql_script_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2020-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/sqlScripts/{sqlScriptName}/rename')
@@ -231,12 +232,17 @@ class SqlScriptOperations(object):
         # type: (...) -> Iterable["_models.SqlScriptsListResponse"]
         """Lists sql scripts.
 
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SqlScriptsListResponse or the result of
          cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.synapse.artifacts.models.SqlScriptsListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SqlScriptsListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -246,6 +252,7 @@ class SqlScriptOperations(object):
             if not next_link:
                 
                 request = build_get_sql_scripts_by_workspace_request(
+                    api_version=api_version,
                     template_url=self.get_sql_scripts_by_workspace.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -257,6 +264,7 @@ class SqlScriptOperations(object):
             else:
                 
                 request = build_get_sql_scripts_by_workspace_request(
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -311,15 +319,17 @@ class SqlScriptOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(sql_script, 'SqlScriptResource')
 
         request = build_create_or_update_sql_script_request_initial(
             sql_script_name=sql_script_name,
+            api_version=api_version,
             content_type=content_type,
-            if_match=if_match,
             json=json,
+            if_match=if_match,
             template_url=self._create_or_update_sql_script_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -365,6 +375,9 @@ class SqlScriptOperations(object):
         :param if_match: ETag of the SQL script entity.  Should only be specified for update, for which
          it should match existing entity or can be * for unconditional update.
         :type if_match: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -378,6 +391,7 @@ class SqlScriptOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.SqlScriptResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SqlScriptResource"]
@@ -391,6 +405,7 @@ class SqlScriptOperations(object):
                 sql_script_name=sql_script_name,
                 sql_script=sql_script,
                 if_match=if_match,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -439,6 +454,9 @@ class SqlScriptOperations(object):
         :param if_none_match: ETag of the sql compute entity. Should only be specified for get. If the
          ETag matches the existing entity tag, or if * was provided, then no content will be returned.
         :type if_none_match: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SqlScriptResource, or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.SqlScriptResource or None
@@ -450,9 +468,12 @@ class SqlScriptOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_get_sql_script_request(
             sql_script_name=sql_script_name,
+            api_version=api_version,
             if_none_match=if_none_match,
             template_url=self.get_sql_script.metadata['url'],
         )
@@ -494,9 +515,12 @@ class SqlScriptOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_delete_sql_script_request_initial(
             sql_script_name=sql_script_name,
+            api_version=api_version,
             template_url=self._delete_sql_script_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -529,6 +553,9 @@ class SqlScriptOperations(object):
 
         :param sql_script_name: The sql script name.
         :type sql_script_name: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -541,6 +568,7 @@ class SqlScriptOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -551,6 +579,7 @@ class SqlScriptOperations(object):
         if cont_token is None:
             raw_result = self._delete_sql_script_initial(
                 sql_script_name=sql_script_name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -593,6 +622,7 @@ class SqlScriptOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
@@ -600,6 +630,7 @@ class SqlScriptOperations(object):
 
         request = build_rename_sql_script_request_initial(
             sql_script_name=sql_script_name,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self._rename_sql_script_initial.metadata['url'],
@@ -637,6 +668,9 @@ class SqlScriptOperations(object):
         :type sql_script_name: str
         :param new_name: New name of the artifact.
         :type new_name: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -649,6 +683,7 @@ class SqlScriptOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -661,6 +696,7 @@ class SqlScriptOperations(object):
             raw_result = self._rename_sql_script_initial(
                 sql_script_name=sql_script_name,
                 new_name=new_name,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs

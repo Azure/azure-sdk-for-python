@@ -25,7 +25,6 @@ from .._vendor import _convert_request, _format_url_section
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
-
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -36,7 +35,8 @@ def build_get_notebooks_by_workspace_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2020-12-01"
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/notebooks')
@@ -62,7 +62,8 @@ def build_get_notebook_summary_by_work_space_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2020-12-01"
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/notebooksSummary')
@@ -89,10 +90,10 @@ def build_create_or_update_notebook_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     if_match = kwargs.pop('if_match', None)  # type: Optional[str]
 
-    api_version = "2020-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/notebooks/{notebookName}')
@@ -128,9 +129,9 @@ def build_get_notebook_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
 
-    api_version = "2020-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/notebooks/{notebookName}')
@@ -164,7 +165,8 @@ def build_delete_notebook_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2020-12-01"
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/notebooks/{notebookName}')
@@ -196,9 +198,9 @@ def build_rename_notebook_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2020-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/notebooks/{notebookName}/rename')
@@ -257,12 +259,17 @@ class NotebookOperations(object):
         # type: (...) -> Iterable["_models.NotebookListResponse"]
         """Lists Notebooks.
 
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NotebookListResponse or the result of
          cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.synapse.artifacts.models.NotebookListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotebookListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -272,6 +279,7 @@ class NotebookOperations(object):
             if not next_link:
                 
                 request = build_get_notebooks_by_workspace_request(
+                    api_version=api_version,
                     template_url=self.get_notebooks_by_workspace.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -283,6 +291,7 @@ class NotebookOperations(object):
             else:
                 
                 request = build_get_notebooks_by_workspace_request(
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -331,12 +340,17 @@ class NotebookOperations(object):
         # type: (...) -> Iterable["_models.NotebookListResponse"]
         """Lists a summary of Notebooks.
 
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NotebookListResponse or the result of
          cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.synapse.artifacts.models.NotebookListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotebookListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -346,6 +360,7 @@ class NotebookOperations(object):
             if not next_link:
                 
                 request = build_get_notebook_summary_by_work_space_request(
+                    api_version=api_version,
                     template_url=self.get_notebook_summary_by_work_space.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -357,6 +372,7 @@ class NotebookOperations(object):
             else:
                 
                 request = build_get_notebook_summary_by_work_space_request(
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -411,15 +427,17 @@ class NotebookOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(notebook, 'NotebookResource')
 
         request = build_create_or_update_notebook_request_initial(
             notebook_name=notebook_name,
+            api_version=api_version,
             content_type=content_type,
-            if_match=if_match,
             json=json,
+            if_match=if_match,
             template_url=self._create_or_update_notebook_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -465,6 +483,9 @@ class NotebookOperations(object):
         :param if_match: ETag of the Note book entity.  Should only be specified for update, for which
          it should match existing entity or can be * for unconditional update.
         :type if_match: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -478,6 +499,7 @@ class NotebookOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.NotebookResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotebookResource"]
@@ -491,6 +513,7 @@ class NotebookOperations(object):
                 notebook_name=notebook_name,
                 notebook=notebook,
                 if_match=if_match,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -539,6 +562,9 @@ class NotebookOperations(object):
         :param if_none_match: ETag of the Notebook entity. Should only be specified for get. If the
          ETag matches the existing entity tag, or if * was provided, then no content will be returned.
         :type if_none_match: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NotebookResource, or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.NotebookResource or None
@@ -550,9 +576,12 @@ class NotebookOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_get_notebook_request(
             notebook_name=notebook_name,
+            api_version=api_version,
             if_none_match=if_none_match,
             template_url=self.get_notebook.metadata['url'],
         )
@@ -594,9 +623,12 @@ class NotebookOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_delete_notebook_request_initial(
             notebook_name=notebook_name,
+            api_version=api_version,
             template_url=self._delete_notebook_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -629,6 +661,9 @@ class NotebookOperations(object):
 
         :param notebook_name: The notebook name.
         :type notebook_name: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -641,6 +676,7 @@ class NotebookOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -651,6 +687,7 @@ class NotebookOperations(object):
         if cont_token is None:
             raw_result = self._delete_notebook_initial(
                 notebook_name=notebook_name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -693,6 +730,7 @@ class NotebookOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
@@ -700,6 +738,7 @@ class NotebookOperations(object):
 
         request = build_rename_notebook_request_initial(
             notebook_name=notebook_name,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self._rename_notebook_initial.metadata['url'],
@@ -737,6 +776,9 @@ class NotebookOperations(object):
         :type notebook_name: str
         :param new_name: New name of the artifact.
         :type new_name: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -749,6 +791,7 @@ class NotebookOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -761,6 +804,7 @@ class NotebookOperations(object):
             raw_result = self._rename_notebook_initial(
                 notebook_name=notebook_name,
                 new_name=new_name,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs

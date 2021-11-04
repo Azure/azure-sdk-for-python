@@ -22,7 +22,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._data_flow_operations import build_create_or_update_data_flow_request_initial, build_delete_data_flow_request_initial, build_get_data_flow_request, build_get_data_flows_by_workspace_request, build_rename_data_flow_request_initial
-
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -61,6 +60,7 @@ class DataFlowOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _data_flow = _models.DataFlowResource(properties=properties)
@@ -68,9 +68,10 @@ class DataFlowOperations:
 
         request = build_create_or_update_data_flow_request_initial(
             data_flow_name=data_flow_name,
+            api_version=api_version,
             content_type=content_type,
-            if_match=if_match,
             json=json,
+            if_match=if_match,
             template_url=self._create_or_update_data_flow_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -115,6 +116,9 @@ class DataFlowOperations:
         :param if_match: ETag of the data flow entity. Should only be specified for update, for which
          it should match existing entity or can be * for unconditional update.
         :type if_match: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -128,6 +132,7 @@ class DataFlowOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.synapse.artifacts.models.DataFlowResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataFlowResource"]
@@ -141,6 +146,7 @@ class DataFlowOperations:
                 data_flow_name=data_flow_name,
                 properties=properties,
                 if_match=if_match,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -188,6 +194,9 @@ class DataFlowOperations:
         :param if_none_match: ETag of the data flow entity. Should only be specified for get. If the
          ETag matches the existing entity tag, or if * was provided, then no content will be returned.
         :type if_none_match: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DataFlowResource, or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.DataFlowResource
@@ -199,9 +208,12 @@ class DataFlowOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_get_data_flow_request(
             data_flow_name=data_flow_name,
+            api_version=api_version,
             if_none_match=if_none_match,
             template_url=self.get_data_flow.metadata['url'],
         )
@@ -240,9 +252,12 @@ class DataFlowOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         
         request = build_delete_data_flow_request_initial(
             data_flow_name=data_flow_name,
+            api_version=api_version,
             template_url=self._delete_data_flow_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -274,6 +289,9 @@ class DataFlowOperations:
 
         :param data_flow_name: The data flow name.
         :type data_flow_name: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -286,6 +304,7 @@ class DataFlowOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -296,6 +315,7 @@ class DataFlowOperations:
         if cont_token is None:
             raw_result = await self._delete_data_flow_initial(
                 data_flow_name=data_flow_name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -337,6 +357,7 @@ class DataFlowOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
@@ -344,6 +365,7 @@ class DataFlowOperations:
 
         request = build_rename_data_flow_request_initial(
             data_flow_name=data_flow_name,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self._rename_data_flow_initial.metadata['url'],
@@ -380,6 +402,9 @@ class DataFlowOperations:
         :type data_flow_name: str
         :param new_name: New name of the artifact.
         :type new_name: str
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -392,6 +417,7 @@ class DataFlowOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -404,6 +430,7 @@ class DataFlowOperations:
             raw_result = await self._rename_data_flow_initial(
                 data_flow_name=data_flow_name,
                 new_name=new_name,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -441,6 +468,9 @@ class DataFlowOperations:
     ) -> AsyncIterable["_models.DataFlowListResponse"]:
         """Lists data flows.
 
+        :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DataFlowListResponse or the result of
          cls(response)
@@ -448,6 +478,8 @@ class DataFlowOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.synapse.artifacts.models.DataFlowListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataFlowListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -457,6 +489,7 @@ class DataFlowOperations:
             if not next_link:
                 
                 request = build_get_data_flows_by_workspace_request(
+                    api_version=api_version,
                     template_url=self.get_data_flows_by_workspace.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -468,6 +501,7 @@ class DataFlowOperations:
             else:
                 
                 request = build_get_data_flows_by_workspace_request(
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)

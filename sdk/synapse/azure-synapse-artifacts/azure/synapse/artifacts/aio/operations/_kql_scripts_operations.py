@@ -20,7 +20,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._kql_scripts_operations import build_get_all_request
-
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -53,6 +52,9 @@ class KqlScriptsOperations:
     ) -> AsyncIterable["_models.KqlScriptsResourceCollectionResponse"]:
         """Get all KQL scripts.
 
+        :keyword api_version: Api Version. The default value is "2021-11-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KqlScriptsResourceCollectionResponse or the result
          of cls(response)
@@ -60,6 +62,8 @@ class KqlScriptsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.synapse.artifacts.models.KqlScriptsResourceCollectionResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2021-11-01-preview")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.KqlScriptsResourceCollectionResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -69,6 +73,7 @@ class KqlScriptsOperations:
             if not next_link:
                 
                 request = build_get_all_request(
+                    api_version=api_version,
                     template_url=self.get_all.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -80,6 +85,7 @@ class KqlScriptsOperations:
             else:
                 
                 request = build_get_all_request(
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)

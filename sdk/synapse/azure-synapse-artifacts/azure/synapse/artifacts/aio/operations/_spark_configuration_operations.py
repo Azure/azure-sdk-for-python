@@ -22,7 +22,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._spark_configuration_operations import build_create_or_update_spark_configuration_request_initial, build_delete_spark_configuration_request_initial, build_get_spark_configuration_request, build_get_spark_configurations_by_workspace_request, build_rename_spark_configuration_request_initial
-
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -55,6 +54,9 @@ class SparkConfigurationOperations:
     ) -> AsyncIterable["_models.SparkConfigurationListResponse"]:
         """Lists sparkconfigurations.
 
+        :keyword api_version: Api Version. The default value is "2021-06-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SparkConfigurationListResponse or the result of
          cls(response)
@@ -62,6 +64,8 @@ class SparkConfigurationOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.synapse.artifacts.models.SparkConfigurationListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkConfigurationListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -71,6 +75,7 @@ class SparkConfigurationOperations:
             if not next_link:
                 
                 request = build_get_spark_configurations_by_workspace_request(
+                    api_version=api_version,
                     template_url=self.get_spark_configurations_by_workspace.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -82,6 +87,7 @@ class SparkConfigurationOperations:
             else:
                 
                 request = build_get_spark_configurations_by_workspace_request(
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -135,6 +141,7 @@ class SparkConfigurationOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _spark_configuration = _models.SparkConfigurationResource(properties=properties)
@@ -142,9 +149,10 @@ class SparkConfigurationOperations:
 
         request = build_create_or_update_spark_configuration_request_initial(
             spark_configuration_name=spark_configuration_name,
+            api_version=api_version,
             content_type=content_type,
-            if_match=if_match,
             json=json,
+            if_match=if_match,
             template_url=self._create_or_update_spark_configuration_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -189,6 +197,9 @@ class SparkConfigurationOperations:
         :param if_match: ETag of the sparkConfiguration entity.  Should only be specified for update,
          for which it should match existing entity or can be * for unconditional update.
         :type if_match: str
+        :keyword api_version: Api Version. The default value is "2021-06-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -203,6 +214,7 @@ class SparkConfigurationOperations:
          ~azure.core.polling.AsyncLROPoller[~azure.synapse.artifacts.models.SparkConfigurationResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkConfigurationResource"]
@@ -216,6 +228,7 @@ class SparkConfigurationOperations:
                 spark_configuration_name=spark_configuration_name,
                 properties=properties,
                 if_match=if_match,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -264,6 +277,9 @@ class SparkConfigurationOperations:
          If the ETag matches the existing entity tag, or if * was provided, then no content will be
          returned.
         :type if_none_match: str
+        :keyword api_version: Api Version. The default value is "2021-06-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SparkConfigurationResource, or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.SparkConfigurationResource or None
@@ -275,9 +291,12 @@ class SparkConfigurationOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
+
         
         request = build_get_spark_configuration_request(
             spark_configuration_name=spark_configuration_name,
+            api_version=api_version,
             if_none_match=if_none_match,
             template_url=self.get_spark_configuration.metadata['url'],
         )
@@ -318,9 +337,12 @@ class SparkConfigurationOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
+
         
         request = build_delete_spark_configuration_request_initial(
             spark_configuration_name=spark_configuration_name,
+            api_version=api_version,
             template_url=self._delete_spark_configuration_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -352,6 +374,9 @@ class SparkConfigurationOperations:
 
         :param spark_configuration_name: The spark Configuration name.
         :type spark_configuration_name: str
+        :keyword api_version: Api Version. The default value is "2021-06-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -364,6 +389,7 @@ class SparkConfigurationOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -374,6 +400,7 @@ class SparkConfigurationOperations:
         if cont_token is None:
             raw_result = await self._delete_spark_configuration_initial(
                 spark_configuration_name=spark_configuration_name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -415,6 +442,7 @@ class SparkConfigurationOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
@@ -422,6 +450,7 @@ class SparkConfigurationOperations:
 
         request = build_rename_spark_configuration_request_initial(
             spark_configuration_name=spark_configuration_name,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self._rename_spark_configuration_initial.metadata['url'],
@@ -458,6 +487,9 @@ class SparkConfigurationOperations:
         :type spark_configuration_name: str
         :param new_name: New name of the artifact.
         :type new_name: str
+        :keyword api_version: Api Version. The default value is "2021-06-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -470,6 +502,7 @@ class SparkConfigurationOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -482,6 +515,7 @@ class SparkConfigurationOperations:
             raw_result = await self._rename_spark_configuration_initial(
                 spark_configuration_name=spark_configuration_name,
                 new_name=new_name,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs

@@ -23,7 +23,6 @@ from .._vendor import _convert_request
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
-
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -34,7 +33,8 @@ def build_get_all_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-06-01-preview"
+    api_version = kwargs.pop('api_version', "2021-11-01-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/kqlScripts')
@@ -86,6 +86,9 @@ class KqlScriptsOperations(object):
         # type: (...) -> Iterable["_models.KqlScriptsResourceCollectionResponse"]
         """Get all KQL scripts.
 
+        :keyword api_version: Api Version. The default value is "2021-11-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KqlScriptsResourceCollectionResponse or the result
          of cls(response)
@@ -93,6 +96,8 @@ class KqlScriptsOperations(object):
          ~azure.core.paging.ItemPaged[~azure.synapse.artifacts.models.KqlScriptsResourceCollectionResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2021-11-01-preview")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.KqlScriptsResourceCollectionResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -102,6 +107,7 @@ class KqlScriptsOperations(object):
             if not next_link:
                 
                 request = build_get_all_request(
+                    api_version=api_version,
                     template_url=self.get_all.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -113,6 +119,7 @@ class KqlScriptsOperations(object):
             else:
                 
                 request = build_get_all_request(
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
