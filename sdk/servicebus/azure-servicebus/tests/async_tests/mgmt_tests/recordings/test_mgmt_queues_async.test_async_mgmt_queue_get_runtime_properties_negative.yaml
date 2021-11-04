@@ -5,23 +5,23 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.8.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://servicebustestsbname.servicebus.windows.net/non_existing_queue?enrich=false&api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/non_existing_queue?enrich=false&api-version=2021-05
   response:
     body:
       string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Publicly
         Listed Services</title><subtitle type="text">This is the list of publicly-listed
-        services currently available.</subtitle><id>uuid:e4e29a83-4283-42c2-b898-651ab270db36;id=33496</id><updated>2020-08-17T08:04:04Z</updated><generator>Service
+        services currently available.</subtitle><id>uuid:1f9fd359-4818-4e6a-919f-e14a8506e396;id=19441</id><updated>2021-10-21T05:19:58Z</updated><generator>Service
         Bus 1.1</generator></feed>
     headers:
       content-type: application/atom+xml;type=feed;charset=utf-8
-      date: Mon, 17 Aug 2020 08:04:04 GMT
+      date: Thu, 21 Oct 2021 05:19:57 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
     status:
       code: 200
       message: OK
-    url: https://servicebustest32ip2wgoaa.servicebus.windows.net/non_existing_queue?enrich=false&api-version=2017-04
+    url: https://servicebustestkjdemkkogk.servicebus.windows.net/non_existing_queue?enrich=false&api-version=2021-05
 version: 1

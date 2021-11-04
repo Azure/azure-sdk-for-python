@@ -13,7 +13,8 @@ DESCRIPTION:
     This sample demonstrates how to recognize custom entities in documents.
     Recognizing custom entities is available as an action type through the begin_analyze_actions API.
 
-    To train a model to recognize your custom entities, see https://aka.ms/azsdk/textanalytics/customentityrecognition
+    For information on regional support of custom features and how to train a model to
+    recognize custom entities, see https://aka.ms/azsdk/textanalytics/customentityrecognition
 
 USAGE:
     python sample_recognize_custom_entities.py
@@ -33,33 +34,34 @@ def sample_recognize_custom_entities():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import (
         TextAnalyticsClient,
-        RecognizeCustomEntitiesAction
+        RecognizeCustomEntitiesAction,
     )
 
     endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
     key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
     project_name = os.environ["CUSTOM_ENTITIES_PROJECT_NAME"]
     deployed_model_name = os.environ["CUSTOM_ENTITIES_DEPLOYMENT_NAME"]
+    path_to_sample_document = os.path.abspath(
+        os.path.join(
+            os.path.abspath(__file__),
+            "..",
+            "./text_samples/custom_entities_sample.txt",
+        )
+    )
 
     text_analytics_client = TextAnalyticsClient(
         endpoint=endpoint,
         credential=AzureKeyCredential(key),
     )
 
-    document = [
-        "The Grantor(s), John Smith, who also appears of record as John A. Smith, for and in consideration of "
-        "Ten dollars and Zero cents ($10.00) and other good and valuable consideration in hand paid, conveys, and "
-        "warrants to Jane Doe, the following described real estate, situated in the County of King, State of "
-        "Washington: Lot A, King County Short Plat Number AAAAAAAA, recorded under Recording Number AAAAAAAAA in "
-        "King County, Washington."
-    ]
+    with open(path_to_sample_document, "r") as fd:
+        document = [fd.read()]
 
     poller = text_analytics_client.begin_analyze_actions(
         document,
         actions=[
             RecognizeCustomEntitiesAction(
-                project_name=project_name,
-                deployment_name=deployed_model_name
+                project_name=project_name, deployment_name=deployed_model_name
             ),
         ],
     )
@@ -69,34 +71,17 @@ def sample_recognize_custom_entities():
         custom_entities_result = result[0]  # first document, first result
         if not custom_entities_result.is_error:
             for entity in custom_entities_result.entities:
-                if entity.category == "Seller Name":
-                    print("The seller of the property is {} with confidence score {}.".format(
-                        entity.text, entity.confidence_score)
+                print(
+                    "Entity '{}' has category '{}' with confidence score of '{}'".format(
+                        entity.text, entity.category, entity.confidence_score
                     )
-                if entity.category == "Buyer Name":
-                    print("The buyer of the property is {} with confidence score {}.".format(
-                        entity.text, entity.confidence_score)
-                    )
-                if entity.category == "Buyer Fee":
-                    print("The buyer fee is {} with confidence score {}.".format(
-                        entity.text, entity.confidence_score)
-                    )
-                if entity.category == "Lot Number":
-                    print("The lot number of the property is {} with confidence score {}.".format(
-                        entity.text, entity.confidence_score)
-                    )
-                if entity.category == "Short Plat Number":
-                    print("The short plat number of the property is {} with confidence score {}.".format(
-                        entity.text, entity.confidence_score)
-                    )
-                if entity.category == "Recording Number":
-                    print("The recording number of the property is {} with confidence score {}.".format(
-                        entity.text, entity.confidence_score)
-                    )
+                )
         else:
-            print("...Is an error with code '{}' and message '{}'".format(
-                custom_entities_result.code, custom_entities_result.message
-            ))
+            print(
+                "...Is an error with code '{}' and message '{}'".format(
+                    custom_entities_result.code, custom_entities_result.message
+                )
+            )
 
 
 if __name__ == "__main__":
