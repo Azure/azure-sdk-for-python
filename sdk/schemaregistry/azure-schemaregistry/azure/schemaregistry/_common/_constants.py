@@ -39,8 +39,8 @@ class ApiVersion(str, Enum):
     Represents the Schema Registry API version to use for requests.
     """
 
-    V2020_10 = "2020-10"
+    V2021_10 = "2021-10"
     """This is the default version."""
 
 
-DEFAULT_VERSION = ApiVersion.V2020_10
+DEFAULT_VERSION = ApiVersion.V2021_10
