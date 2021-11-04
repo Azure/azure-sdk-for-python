@@ -26,7 +26,7 @@
 from typing import Any, TYPE_CHECKING, Union
 
 from .._utils import get_http_request_kwargs
-from .._common._constants import SchemaFormat
+from .._common._constants import SchemaFormat, DEFAULT_VERSION
 from .._common._schema import Schema, SchemaProperties
 from .._common._response_handlers import (
     _parse_response_schema,
@@ -48,6 +48,8 @@ class SchemaRegistryClient(object):
      For example: my-namespace.servicebus.windows.net.
     :param credential: To authenticate managing the entities of the SchemaRegistry namespace.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword str api_version: The Schema Registry service API version to use for requests.
+        Default value and only accepted value currently is "2021-10".
 
     .. admonition:: Example:
 
@@ -66,8 +68,12 @@ class SchemaRegistryClient(object):
         credential: "AsyncTokenCredential",
         **kwargs: Any
     ) -> None:
+        api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._generated_client = AzureSchemaRegistry(
-            credential=credential, endpoint=fully_qualified_namespace, **kwargs
+            credential=credential,
+            endpoint=fully_qualified_namespace,
+            api_version=api_version,
+            **kwargs
         )
 
     async def __aenter__(self):
@@ -86,7 +92,7 @@ class SchemaRegistryClient(object):
     async def register_schema(
         self,
         group_name: str,
-        name: str,
+        schema_name: str,
         schema_definition: str,
         format: Union[str, SchemaFormat],  # pylint:disable=redefined-builtin
         **kwargs: Any
@@ -97,7 +103,7 @@ class SchemaRegistryClient(object):
         schema is created at latest version + 1.
 
         :param str group_name: Schema group under which schema should be registered.
-        :param str name: Name of schema being registered.
+        :param str schema_name: Name of schema being registered.
         :param str schema_definition: String representation of the schema being registered.
         :param format: Format for the schema being registered.
          For now Avro is the only supported schema format by the service.
@@ -124,7 +130,7 @@ class SchemaRegistryClient(object):
         http_request_kwargs = get_http_request_kwargs(kwargs)
         request = schema_rest.build_register_request(
             group_name=group_name,
-            schema_name=name,
+            schema_name=schema_name,
             content=schema_definition,
             content_type=kwargs.pop(
                 "content_type", "application/json; serialization={}".format(format)
@@ -136,14 +142,12 @@ class SchemaRegistryClient(object):
         response.raise_for_status()
         return _parse_response_schema_properties(response, format)
 
-    async def get_schema(
-        self, id: str, **kwargs: Any  # pylint:disable=redefined-builtin
-    ) -> Schema:
+    async def get_schema(self, schema_id: str, **kwargs: Any) -> Schema:
         """
         Gets a registered schema by its unique ID.
         Azure Schema Registry guarantees that ID is unique within a namespace.
 
-        :param str id: References specific schema in registry namespace.
+        :param str schema_id: References specific schema in registry namespace.
         :rtype: ~azure.schemaregistry.Schema
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -158,7 +162,9 @@ class SchemaRegistryClient(object):
 
         """
         http_request_kwargs = get_http_request_kwargs(kwargs)
-        request = schema_rest.build_get_by_id_request(id=id, **http_request_kwargs)
+        request = schema_rest.build_get_by_id_request(
+            id=schema_id, **http_request_kwargs
+        )
         response = await self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
         return _parse_response_schema(response)
@@ -166,7 +172,7 @@ class SchemaRegistryClient(object):
     async def get_schema_properties(
         self,
         group_name: str,
-        name: str,
+        schema_name: str,
         schema_definition: str,
         format: Union[str, SchemaFormat],  # pylint:disable=redefined-builtin
         **kwargs: Any
@@ -176,7 +182,7 @@ class SchemaRegistryClient(object):
         as matched by schema defintion comparison.
 
         :param str group_name: Schema group under which schema should be registered.
-        :param str name: Name of schema being registered.
+        :param str schema_name: Name of schema being registered.
         :param str schema_definition: String representation of the schema being registered.
         :param format: Format for the schema being registered.
         :type format: Union[str, ~azure.schemaregistry.SchemaFormat]
@@ -202,7 +208,7 @@ class SchemaRegistryClient(object):
         http_request_kwargs = get_http_request_kwargs(kwargs)
         request = schema_rest.build_query_id_by_content_request(
             group_name=group_name,
-            schema_name=name,
+            schema_name=schema_name,
             content=schema_definition,
             content_type=kwargs.pop(
                 "content_type", "application/json; serialization={}".format(format)

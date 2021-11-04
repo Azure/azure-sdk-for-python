@@ -20,7 +20,7 @@ from ._configuration import AzureQuotaExtensionAPIConfiguration
 from .operations import UsagesOperations
 from .operations import QuotaOperations
 from .operations import QuotaRequestStatusOperations
-from .operations import OperationOperations
+from .operations import QuotaOperationOperations
 from .. import models
 
 
@@ -33,8 +33,8 @@ class AzureQuotaExtensionAPI(object):
     :vartype quota: azure.mgmt.quota.aio.operations.QuotaOperations
     :ivar quota_request_status: QuotaRequestStatusOperations operations
     :vartype quota_request_status: azure.mgmt.quota.aio.operations.QuotaRequestStatusOperations
-    :ivar operation: OperationOperations operations
-    :vartype operation: azure.mgmt.quota.aio.operations.OperationOperations
+    :ivar quota_operation: QuotaOperationOperations operations
+    :vartype quota_operation: azure.mgmt.quota.aio.operations.QuotaOperationOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param str base_url: Service URL
@@ -63,7 +63,7 @@ class AzureQuotaExtensionAPI(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.quota_request_status = QuotaRequestStatusOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.operation = OperationOperations(
+        self.quota_operation = QuotaOperationOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:

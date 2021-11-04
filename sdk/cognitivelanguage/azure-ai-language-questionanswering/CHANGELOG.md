@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0 (Unreleased)
+## 1.0.0 (2021-11-03)
 
 * We are now targeting service version `2021-10-01`
 
