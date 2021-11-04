@@ -106,9 +106,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0b2 Python/3.9.5 (macOS-11.5.2-x86_64-i386-64bit)
+      - azsdk-python-ai-language-questionanswering/1.0.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-text?api-version=2021-07-15-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-text?api-version=2021-10-01
   response:
     body:
       string: "{\n  \"answers\": [\n    {\n      \"answer\": \"Battery Life  Get an
@@ -119,7 +119,7 @@ interactions:
         Battery Life - Longest Lasting Laptop Batteries  Competing laptops like the
         ZenBook S UX391UA (7:05), Surface Laptop 2 (9:22) and Notebook 9 Pro (8:53)
         outstayed the 4K Envy 13 but powered down long before the 1080p version.\",\n
-        \     \"confidenceScore\": 0.01745828054845333,\n      \"id\": \"doc3\",\n
+        \     \"confidenceScore\": 0.017458289861679077,\n      \"id\": \"doc3\",\n
         \     \"answerSpan\": {\n        \"text\": \"Battery Life\",\n        \"confidenceScore\":
         0.26247412,\n        \"offset\": 0,\n        \"length\": 12\n      },\n      \"offset\":
         1779,\n      \"length\": 555\n    },\n    {\n      \"answer\": \"Along with
@@ -142,21 +142,21 @@ interactions:
         5391,\n      \"length\": 393\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - abf593a7-19a1-45a9-b94c-e590f8f3bf5a
+      - cc590361-bd1a-4ace-b7bc-ce2ee426c476
       content-length:
-      - '2146'
+      - '2147'
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=9
       date:
-      - Thu, 30 Sep 2021 15:52:33 GMT
+      - Thu, 28 Oct 2021 17:25:05 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '323'
+      - '429'
     status:
       code: 200
       message: OK

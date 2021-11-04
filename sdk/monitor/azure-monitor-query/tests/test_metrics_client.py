@@ -40,6 +40,23 @@ def test_metrics_granularity():
     assert response.granularity == timedelta(minutes=5)
 
 @pytest.mark.live_test_only
+def test_metrics_filter():
+    credential = _credential()
+    client = MetricsQueryClient(credential)
+    response = client.query_resource(
+        os.environ['METRICS_RESOURCE_URI'],
+        metric_names=["MatchedEventCount"],
+        timespan=timedelta(days=1),
+        granularity=timedelta(minutes=5),
+        filter="EventSubscriptionName eq '*'",
+        aggregations=[MetricAggregationType.COUNT]
+        )
+    assert response
+    metric = response.metrics['MatchedEventCount']
+    for t in metric.timeseries:
+        assert t.metadata_values is not None
+
+@pytest.mark.live_test_only
 def test_metrics_list():
     credential = _credential()
     client = MetricsQueryClient(credential)

@@ -1,10 +1,26 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
+## 1.0.0 (Unreleased)
+
+**Note:** This is the first stable release of our efforts to create a user-friendly and Pythonic client library for Azure Schema Registry.
 
 ### Features Added
 
+- `SchemaRegistryClient` is the top-level client class interacting with the Azure Schema Registry Service. It provides three methods:
+  - `register_schema`: Store schema in the service by providing schema group name, schema name, schema format and schema definition.
+  - `get_schema`: Get schema definition and its properties by schema id.
+  - `get_schema_properties`: Get schema properties by providing schema group name, schema name, schema format and schema definition.
+- `SchemaProperties` has the following instance variables: `id`, `format`, `version`.
+- `Schema` has the following properties: `properties` and `schema_definition`.
+- `SchemaFormat` provides the schema format to be stored by the service. Currently, the only supported format is `Avro`.
+- `api_version` has been added as a keyword arg to the sync and async `SchemaRegistryClient` constructors
+
 ### Breaking Changes
+
+- `version` instance variable in `SchemaProperties` has been removed.  
+- `schema_definition` instance variable in `Schema` has been renamed `definition`.
+- `id` parameter in `get_schema` method on sync and async `SchemaRegistryClient` has been renamed `schema_id`.
+- `name` parameter in `register_schema` and `get_schema_properties` methods on sync and async `SchemaRegistryClient` has been renamed `schema_name`.
 
 ### Bugs Fixed
 
