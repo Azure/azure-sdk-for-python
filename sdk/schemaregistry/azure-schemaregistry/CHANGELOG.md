@@ -13,6 +13,8 @@
 - `SchemaProperties` has the following instance variables: `id`, `format`, `version`.
 - `Schema` has the following properties: `properties` and `schema_definition`.
 - `SchemaFormat` provides the schema format to be stored by the service. Currently, the only supported format is `Avro`.
+- `api_version` has been added as a keyword arg to the sync and async `SchemaRegistryClient` constructors:
+  - currently defaults to and only accepts the string `"2021-10"`
 
 ### Breaking Changes
 
@@ -20,8 +22,6 @@
 - `schema_definition` instance variable in `Schema` has been renamed `definition`.
 - `id` parameter in `get_schema` method on sync and async `SchemaRegistryClient` has been renamed `id`.
 - `name` parameter in `register_schema` and `get_schema_properties` methods on sync and async `SchemaRegistryClient` has been renamed `schema_name`.
-- `api_version` has been added as a keyword arg to the sync and async `SchemaRegistryClient` constructors:
-  - currently defaults to and only accepts the string `"2021-10"`
 
 ### Bugs Fixed
 

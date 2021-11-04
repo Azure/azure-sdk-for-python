@@ -26,7 +26,7 @@
 from typing import Any, TYPE_CHECKING, Union
 
 from .._utils import get_http_request_kwargs
-from .._common._constants import SchemaFormat, SUPPORTED_API_VERSIONS
+from .._common._constants import SchemaFormat, DEFAULT_VERSION
 from .._common._schema import Schema, SchemaProperties
 from .._common._response_handlers import (
     _parse_response_schema,
@@ -48,9 +48,8 @@ class SchemaRegistryClient(object):
      For example: my-namespace.servicebus.windows.net.
     :param credential: To authenticate managing the entities of the SchemaRegistry namespace.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The Schema Registry service API version to use for requests.
+    :keyword str api_version: The Schema Registry service API version to use for requests.
         Default value and only accepted value currently is "2021-10".
-    :paramtype api_version: str
 
     .. admonition:: Example:
 
@@ -62,21 +61,20 @@ class SchemaRegistryClient(object):
             :caption: Create a new instance of the SchemaRegistryClient.
 
     """
+
     def __init__(
         self,
         fully_qualified_namespace: str,
         credential: "AsyncTokenCredential",
         **kwargs: Any
     ) -> None:
-        api_version = kwargs.get("api_version")
-        if api_version and api_version not in SUPPORTED_API_VERSIONS:
-            versions = "\n".join(SUPPORTED_API_VERSIONS)
-            raise ValueError(
-                "Unsupported API version '{}'. Please select from:\n{}".format(
-                    api_version, versions
-                )
-            )
-        self._generated_client = AzureSchemaRegistry(credential, fully_qualified_namespace, **kwargs)
+        api_version = kwargs.pop("api_version", DEFAULT_VERSION)
+        self._generated_client = AzureSchemaRegistry(
+            credential=credential,
+            endpoint=fully_qualified_namespace,
+            api_version=api_version,
+            **kwargs
+        )
 
     async def __aenter__(self):
         await self._generated_client.__aenter__()
@@ -86,7 +84,7 @@ class SchemaRegistryClient(object):
         await self._generated_client.__aexit__(*args)
 
     async def close(self) -> None:
-        """ This method is to close the sockets opened by the client.
+        """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
         await self._generated_client.close()
@@ -142,11 +140,7 @@ class SchemaRegistryClient(object):
         response.raise_for_status()
         return _parse_response_schema_properties(response)
 
-    async def get_schema(
-        self,
-        schema_id: str,
-        **kwargs: Any
-    ) -> Schema:
+    async def get_schema(self, schema_id: str, **kwargs: Any) -> Schema:
         """
         Gets a registered schema by its unique ID.
         Azure Schema Registry guarantees that ID is unique within a namespace.
@@ -166,7 +160,9 @@ class SchemaRegistryClient(object):
 
         """
         http_request_kwargs = get_http_request_kwargs(kwargs)
-        request = schema_rest.build_get_by_id_request(schema_id=schema_id, **http_request_kwargs)
+        request = schema_rest.build_get_by_id_request(
+            schema_id=schema_id, **http_request_kwargs
+        )
         response = await self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
         return _parse_response_schema(response)
