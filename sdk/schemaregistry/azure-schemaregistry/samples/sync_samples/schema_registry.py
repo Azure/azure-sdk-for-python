@@ -107,5 +107,5 @@ if __name__ == "__main__":
         )
         schema_str = get_schema_by_id(schema_registry_client, schema_id)
         schema_id = get_schema_id(
-            schema_registry_client, GROUP_NAME, NAME, SCHEMA_STRING, FORMAT
+            schema_registry_client, GROUP_NAME, SCHEMA_NAME, SCHEMA_STRING, FORMAT
         )
