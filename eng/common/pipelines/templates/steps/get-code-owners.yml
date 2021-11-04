@@ -1,8 +1,8 @@
 
 parameters: 
   TargetUserVariable: ''
-  TargetTeamVariable: ''
-  TargetLabelVariable: ''
+  TargetTeamVariable: 'notspecified'
+  TargetLabelVariable: 'notspecified'
   ServiceDirectory: ''
   DevOpsFeed: "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
 
