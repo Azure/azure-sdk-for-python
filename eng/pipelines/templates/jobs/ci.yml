@@ -116,15 +116,15 @@ jobs:
           Directory: sdk/${{ parameters.ServiceDirectory }}
         CheckLinkGuidance: $true
 
-    - template: ../steps/analyze.yml
-      parameters:
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
-        TestPipeline: ${{ parameters.TestPipeline }}
-        Artifacts: ${{ parameters.Artifacts }}
-        VerifyAutorest: ${{ parameters.VerifyAutorest }}
-        ValidateFormatting: ${{ parameters.ValidateFormatting }}
+    # - template: ../steps/analyze.yml
+    #   parameters:
+    #     ServiceDirectory: ${{ parameters.ServiceDirectory }}
+    #     TestMarkArgument: ${{ parameters.TestMarkArgument }}
+    #     AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+    #     TestPipeline: ${{ parameters.TestPipeline }}
+    #     Artifacts: ${{ parameters.Artifacts }}
+    #     VerifyAutorest: ${{ parameters.VerifyAutorest }}
+    #     ValidateFormatting: ${{ parameters.ValidateFormatting }}
 
   - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
     parameters:
