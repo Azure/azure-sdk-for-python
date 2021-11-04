@@ -15,7 +15,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ...operations._operations import build_add_connection_to_group_request, build_add_user_to_group_request, build_has_permission_request, build_close_all_connections_request, build_close_connection_request, build_close_group_connections_request, build_close_user_connections_request, build_connection_exists_request, build_get_client_access_token_request, build_grant_permission_request, build_group_exists_request, build_remove_connection_from_group_request, build_remove_user_from_all_groups_request, build_remove_user_from_group_request, build_revoke_permission_request, build_send_to_all_request, build_send_to_connection_request, build_send_to_group_request, build_send_to_user_request, build_user_exists_request
+from ...operations._operations import build_add_connection_to_group_request, build_add_user_to_group_request, build_close_all_connections_request, build_close_connection_request, build_close_group_connections_request, build_close_user_connections_request, build_connection_exists_request, build_get_client_access_token_request, build_grant_permission_request, build_group_exists_request, build_has_permission_request, build_remove_connection_from_group_request, build_remove_user_from_all_groups_request, build_remove_user_from_group_request, build_revoke_permission_request, build_send_to_all_request, build_send_to_connection_request, build_send_to_group_request, build_send_to_user_request, build_user_exists_request
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -30,7 +30,7 @@ class WebPubSubServiceClientOperationsMixin:
         *,
         user_id: Optional[str] = None,
         roles: Optional[List[str]] = None,
-        minutes_to_expire: Optional[int] = 60,
+        expire_in_minutes: Optional[int] = 60,
         **kwargs: Any
     ) -> Any:
         """Generate token for the client to connect Azure Web PubSub service.
@@ -44,8 +44,8 @@ class WebPubSubServiceClientOperationsMixin:
         :paramtype user_id: str
         :keyword roles: Roles that the connection with the generated token will have.
         :paramtype roles: list[str]
-        :keyword minutes_to_expire: The expire time of the generated token.
-        :paramtype minutes_to_expire: int
+        :keyword expire_in_minutes: The expire time of the generated token.
+        :paramtype expire_in_minutes: int
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
@@ -75,7 +75,7 @@ class WebPubSubServiceClientOperationsMixin:
             api_version=api_version,
             user_id=user_id,
             roles=roles,
-            minutes_to_expire=minutes_to_expire,
+            expire_in_minutes=expire_in_minutes,
             template_url=self.get_client_access_token.metadata['url'],
         )
         path_format_arguments = {

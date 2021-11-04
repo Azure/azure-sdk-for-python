@@ -37,7 +37,7 @@ def build_get_client_access_token_request(
     api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
     user_id = kwargs.pop('user_id', None)  # type: Optional[str]
     roles = kwargs.pop('roles', None)  # type: Optional[List[str]]
-    minutes_to_expire = kwargs.pop('minutes_to_expire', 60)  # type: Optional[int]
+    expire_in_minutes = kwargs.pop('expire_in_minutes', 60)  # type: Optional[int]
 
     accept = "application/json, text/json"
     # Construct URL
@@ -53,9 +53,9 @@ def build_get_client_access_token_request(
     if user_id is not None:
         query_parameters['userId'] = _SERIALIZER.query("user_id", user_id, 'str')
     if roles is not None:
-        query_parameters['roles'] = [_SERIALIZER.query("roles", q, 'str') if q is not None else '' for q in roles]
-    if minutes_to_expire is not None:
-        query_parameters['minutesToExpire'] = _SERIALIZER.query("minutes_to_expire", minutes_to_expire, 'int')
+        query_parameters['role'] = [_SERIALIZER.query("roles", q, 'str') if q is not None else '' for q in roles]
+    if expire_in_minutes is not None:
+        query_parameters['minutesToExpire'] = _SERIALIZER.query("expire_in_minutes", expire_in_minutes, 'int')
     query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
@@ -814,8 +814,8 @@ class WebPubSubServiceClientOperationsMixin(object):
         :paramtype user_id: str
         :keyword roles: Roles that the connection with the generated token will have.
         :paramtype roles: list[str]
-        :keyword minutes_to_expire: The expire time of the generated token.
-        :paramtype minutes_to_expire: int
+        :keyword expire_in_minutes: The expire time of the generated token.
+        :paramtype expire_in_minutes: int
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
@@ -840,7 +840,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         user_id = kwargs.pop('user_id', None)  # type: Optional[str]
         roles = kwargs.pop('roles', None)  # type: Optional[List[str]]
-        minutes_to_expire = kwargs.pop('minutes_to_expire', 60)  # type: Optional[int]
+        expire_in_minutes = kwargs.pop('expire_in_minutes', 60)  # type: Optional[int]
 
 
         request = build_get_client_access_token_request(
@@ -848,7 +848,7 @@ class WebPubSubServiceClientOperationsMixin(object):
             api_version=api_version,
             user_id=user_id,
             roles=roles,
-            minutes_to_expire=minutes_to_expire,
+            expire_in_minutes=expire_in_minutes,
             template_url=self.get_client_access_token.metadata['url'],
         )
         path_format_arguments = {

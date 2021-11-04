@@ -67,16 +67,8 @@ directive:
   - from: swagger-document
     where: $["paths"]["/api/hubs/{hub}/:generateToken"].post.parameters
     transform: >
-        $[2] = {
-            "in": "query",
-            "name": "roles",
-            "description": "Roles that the connection with the generated token will have.",
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-        }
+        $[2]["x-ms-client-name"] = "roles",
+        $[3]["x-ms-client-name"] = "expireInMinutes"
 ```
 
 ```yaml
@@ -90,5 +82,5 @@ directive:
 directive:
   - from: swagger-document
     where: $["paths"]["/api/hubs/{hub}/:generateToken"].post
-    transform: $["operationId"] = "GetClientAccessToken "
+    transform: $["operationId"] = "GetClientAccessToken"
 ```
