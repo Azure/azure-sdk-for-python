@@ -35,6 +35,10 @@ class SchemaRegistryTests(AzureTestCase):
     def create_client(self, fully_qualified_namespace):
         credential = self.get_credential(SchemaRegistryClient)
         return self.create_client_from_credential(SchemaRegistryClient, credential, fully_qualified_namespace=fully_qualified_namespace)
+    
+    def create_client_invalid_api_version(self, fully_qualified_namespace):
+        credential = self.get_credential(SchemaRegistryClient)
+        return self.create_client_from_credential(SchemaRegistryClient, credential, fully_qualified_namespace=fully_qualified_namespace, api_version='2020-10')
 
     @SchemaRegistryPowerShellPreparer()
     def test_schema_basic(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
@@ -119,3 +123,8 @@ class SchemaRegistryTests(AzureTestCase):
 
         with pytest.raises(HttpResponseError):
             client.get_schema('a' * 32)
+
+    @SchemaRegistryPowerShellPreparer()
+    def test_schema_invalid_api_version(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        with pytest.raises(ValueError):
+            client = self.create_client_invalid_api_version(schemaregistry_fully_qualified_namespace)

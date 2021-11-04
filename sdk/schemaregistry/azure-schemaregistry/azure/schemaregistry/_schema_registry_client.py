@@ -26,7 +26,7 @@
 from typing import Any, TYPE_CHECKING, Union
 
 from ._utils import get_http_request_kwargs
-from ._common._constants import SchemaFormat
+from ._common._constants import SchemaFormat, SUPPORTED_API_VERSIONS
 from ._common._schema import Schema, SchemaProperties
 from ._common._response_handlers import (
     _parse_response_schema,
@@ -48,6 +48,9 @@ class SchemaRegistryClient(object):
      For example: my-namespace.servicebus.windows.net.
     :param credential: To authenticate managing the entities of the SchemaRegistry namespace.
     :type credential: ~azure.core.credentials.TokenCredential
+    :keyword api_version: The Schema Registry service API version to use for requests.
+        Default value and only accepted value currently is "2021-10".
+    :paramtype api_version: str
 
     .. admonition:: Example:
 
@@ -62,6 +65,14 @@ class SchemaRegistryClient(object):
 
     def __init__(self, fully_qualified_namespace, credential, **kwargs):
         # type: (str, TokenCredential, Any) -> None
+        api_version = kwargs.get("api_version")
+        if api_version and api_version not in SUPPORTED_API_VERSIONS:
+            versions = "\n".join(SUPPORTED_API_VERSIONS)
+            raise ValueError(
+                "Unsupported API version '{}'. Please select from:\n{}".format(
+                    api_version, versions
+                )
+            )
         self._generated_client = AzureSchemaRegistry(
             credential=credential, endpoint=fully_qualified_namespace, **kwargs
         )

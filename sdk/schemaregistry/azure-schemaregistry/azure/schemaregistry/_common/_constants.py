@@ -33,3 +33,5 @@ class SchemaFormat(str, Enum):
 
     AVRO = "avro"
     """Represents the Apache Avro schema format."""
+
+SUPPORTED_API_VERSIONS = ["2021-10"]
