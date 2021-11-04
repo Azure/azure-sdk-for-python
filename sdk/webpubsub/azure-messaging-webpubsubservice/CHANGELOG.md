@@ -1,5 +1,15 @@
 # Release History
 
+## 1.0.0b3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.0.0b2 (2021-10-14)
 
 - Change api-version to `2021-10-01`  

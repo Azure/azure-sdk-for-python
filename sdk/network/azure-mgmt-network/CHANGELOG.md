@@ -1,5 +1,30 @@
 # Release History
 
+## 19.2.0 (2021-10-21)
+
+**Features**
+
+  - Added operation group AdminRuleCollectionsOperations
+  - Added operation group SecurityUserConfigurationsOperations
+  - Added operation group ConnectivityConfigurationsOperations
+  - Added operation group ActiveSecurityUserRulesOperations
+  - Added operation group NetworkManagerCommitsOperations
+  - Added operation group NetworkManagersOperations
+  - Added operation group NetworkManagerDeploymentStatusOperations
+  - Added operation group ActiveConnectivityConfigurationsOperations
+  - Added operation group NetworkManagerEffectiveSecurityAdminRulesOperations
+  - Added operation group UserRuleCollectionsOperations
+  - Added operation group ActiveSecurityAdminRulesOperations
+  - Added operation group UserRulesOperations
+  - Added operation group NetworkGroupsOperations
+  - Added operation group EffectiveVirtualNetworksOperations
+  - Added operation group NetworkSecurityPerimetersOperations
+  - Added operation group PerimeterAssociableResourceTypesOperations
+  - Added operation group AdminRulesOperations
+  - Added operation group SecurityAdminConfigurationsOperations
+  - Added operation group EffectiveConnectivityConfigurationsOperations
+  - Removed old api-version `2017-08-01`
+
 ## 19.1.0 (2021-10-09)
 
 **Features**

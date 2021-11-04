@@ -103,13 +103,18 @@ class SearchIndexClient(HeadersMixin):
         # type: (**Any) -> AsyncItemPaged[SearchIndex]
         """List the indexes in an Azure Search service.
 
+        :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
+         list of JSON property names, or '*' for all properties. The default is all
+         properties.
+        :paramtype select: list[str]
         :return: List of indexes
         :rtype: ~azure.core.async_paging.AsyncItemPaged[:class:`~azure.search.documents.indexes.models.SearchIndex`]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-
+        if kwargs.get('select', None):
+            kwargs['select'] = ','.join(kwargs['select'])
         # pylint:disable=protected-access
         return self._client.indexes.list(
             cls=lambda objs: [SearchIndex._from_generated(x) for x in objs], **kwargs
@@ -313,6 +318,10 @@ class SearchIndexClient(HeadersMixin):
         # type: (**Any) -> List[SynonymMap]
         """List the Synonym Maps in an Azure Search service.
 
+        :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
+         list of JSON property names, or '*' for all properties. The default is all
+         properties.
+        :paramtype select: list[str]
         :return: List of synonym maps
         :rtype: list[~azure.search.documents.indexes.models.SynonymMap]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -328,6 +337,8 @@ class SearchIndexClient(HeadersMixin):
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        if kwargs.get('select', None):
+            kwargs['select'] = ','.join(kwargs['select'])
         result = await self._client.synonym_maps.list(**kwargs)
         # pylint:disable=protected-access
         return [SynonymMap._from_generated(x) for x in result.synonym_maps]

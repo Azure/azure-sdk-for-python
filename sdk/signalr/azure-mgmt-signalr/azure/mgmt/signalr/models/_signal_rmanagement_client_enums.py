@@ -72,6 +72,7 @@ class KeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     PRIMARY = "Primary"
     SECONDARY = "Secondary"
+    SALT = "Salt"
 
 class ManagedIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Represent the identity type: systemAssigned, userAssigned, None
@@ -104,6 +105,14 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UPDATING = "Updating"
     DELETING = "Deleting"
     MOVING = "Moving"
+
+class ScaleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The scale type applicable to the sku.
+    """
+
+    NONE = "None"
+    MANUAL = "Manual"
+    AUTOMATIC = "Automatic"
 
 class ServiceKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The kind of the service - e.g. "SignalR" for "Microsoft.SignalRService/SignalR"

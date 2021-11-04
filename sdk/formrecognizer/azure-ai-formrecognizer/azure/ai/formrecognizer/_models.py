@@ -6,6 +6,7 @@
 
 # pylint: disable=protected-access, too-many-lines
 
+from typing import Union, Any, Iterable, List
 from enum import Enum
 from collections import namedtuple
 from ._generated.v2021_09_30_preview.models import ModelInfo, Error
@@ -96,7 +97,7 @@ def get_field_value(
     return None
 
 
-def get_field_value_v3(value):  # pylint: disable=too-many-return-statements
+def get_field_value_v3(value, parent):  # pylint: disable=too-many-return-statements
     if value is None:
         return value
     if value.type == "string":
@@ -115,14 +116,14 @@ def get_field_value_v3(value):  # pylint: disable=too-many-return-statements
         return value.value_signature
     if value.type == "array":
         return (
-            [DocumentField._from_generated(value) for value in value.value_array]
+            [DocumentField._from_generated(value, parent) for value in value.value_array]
             if value.value_array
             else []
         )
     if value.type == "object":
         return (
             {
-                key: DocumentField._from_generated(value)
+                key: DocumentField._from_generated(value, parent)
                 for key, value in value.value_object.items()
             }
             if value.value_object
@@ -2125,13 +2126,17 @@ class BoundingRegion(object):
         )
 
 
-class DocumentElement(object):
-    """A DocumentElement.
+class DocumentContentElement(object):
+    """A DocumentContentElement.
 
-    :ivar content: Text content of the word.
+    :ivar content: Text content of the document content element.
     :vartype content: str
-    :ivar bounding_box: Bounding box of the word.
+    :ivar bounding_box: Bounding box of the document content element.
     :vartype bounding_box: list[Point]
+    :ivar span: Location of the element in the full document content.
+    :vartype span: ~azure.ai.formrecognizer.DocumentSpan
+    :ivar confidence: Confidence of accurately extracting the document content element.
+    :vartype confidence: float
     :ivar str kind: The kind of document element. Possible kinds are "word" or "selectionMark" which
         correspond to a :class:`~azure.ai.formrecognizer.DocumentWord` or
         :class:`~azure.ai.formrecognizer.DocumentSelectionMark`, respectively.
@@ -2140,16 +2145,18 @@ class DocumentElement(object):
     def __init__(self, **kwargs):
         self.content = kwargs.get("content", None)
         self.bounding_box = kwargs.get("bounding_box", None)
+        self.span = kwargs.get("span", None)
+        self.confidence = kwargs.get("confidence", None)
         self.kind = kwargs.get("kind", None)
 
     def __repr__(self):
-        return "DocumentElement(content={}, bounding_box={}, kind={})".format(
-            self.content, self.bounding_box, self.kind
+        return "DocumentContentElement(content={}, bounding_box={}, span={}, confidence={}, kind={})".format(
+            self.content, self.bounding_box, self.span, self.confidence, self.kind
         )
 
     def to_dict(self):
         # type: () -> dict
-        """Returns a dict representation of DocumentElement.
+        """Returns a dict representation of DocumentContentElement.
 
         :return: dict
         :rtype: dict
@@ -2159,23 +2166,27 @@ class DocumentElement(object):
             "bounding_box": [f.to_dict() for f in self.bounding_box]
             if self.bounding_box
             else [],
+            "span": self.span.to_dict() if self.span else None,
+            "confidence": self.confidence,
             "kind": self.kind,
         }
 
     @classmethod
     def from_dict(cls, data):
-        # type: (dict) -> DocumentElement
-        """Converts a dict in the shape of a DocumentElement to the model itself.
+        # type: (dict) -> DocumentContentElement
+        """Converts a dict in the shape of a DocumentContentElement to the model itself.
 
-        :param dict data: A dictionary in the shape of DocumentElement.
-        :return: DocumentElement
-        :rtype: DocumentElement
+        :param dict data: A dictionary in the shape of DocumentContentElement.
+        :return: DocumentContentElement
+        :rtype: DocumentContentElement
         """
         return cls(
             content=data.get("content", None),
             bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
             if len(data.get("bounding_box", [])) > 0
             else [],
+            span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
+            confidence=data.get("confidence", None),
             kind=data.get("kind", None),
         )
 
@@ -2196,6 +2207,7 @@ class AnalyzedDocument(object):
     """
 
     def __init__(self, **kwargs):
+        self._parent = kwargs.get("_parent", None)
         self.doc_type = kwargs.get("doc_type", None)
         self.bounding_regions = kwargs.get("bounding_regions", None)
         self.spans = kwargs.get("spans", None)
@@ -2203,13 +2215,14 @@ class AnalyzedDocument(object):
         self.confidence = kwargs.get("confidence", None)
 
     @classmethod
-    def _from_generated(cls, document):
+    def _from_generated(cls, document, analyze_result):
         return cls(
+            _parent=analyze_result,
             doc_type=document.doc_type,
             bounding_regions=prepare_bounding_regions(document.bounding_regions),
             spans=prepare_document_spans(document.spans),
             fields={
-                key: DocumentField._from_generated(field)
+                key: DocumentField._from_generated(field, analyze_result)
                 for key, field in document.fields.items()
             }
             if document.fields
@@ -2270,6 +2283,24 @@ class AnalyzedDocument(object):
             confidence=data.get("confidence", None),
         )
 
+    def get_words(self, **kwargs):  # pylint: disable=unused-argument
+        # type: (Any) -> Iterable[DocumentWord]
+        """Get the words found in the spans of this AnalyzedDocument.
+
+        :return: iterable[DocumentWord]
+        :rtype: iterable[DocumentWord]
+        """
+        return _get_children(self, search_elements=["word"], cross_page=True)
+
+    def get_lines(self, **kwargs):  # pylint: disable=unused-argument
+        # type: (Any) -> Iterable[DocumentLine]
+        """Get the lines found in the spans of this AnalyzedDocument.
+
+        :return: iterable[DocumentLine]
+        :rtype: iterable[DocumentLine]
+        """
+        return _get_children(self, search_elements=["line"], cross_page=True)
+
 
 class DocumentEntity(object):
     """An object representing various categories of entities.
@@ -2289,6 +2320,7 @@ class DocumentEntity(object):
     """
 
     def __init__(self, **kwargs):
+        self._parent = kwargs.get("_parent", None)
         self.category = kwargs.get("category", None)
         self.sub_category = kwargs.get("sub_category", None)
         self.content = kwargs.get("content", None)
@@ -2297,8 +2329,9 @@ class DocumentEntity(object):
         self.confidence = kwargs.get("confidence", None)
 
     @classmethod
-    def _from_generated(cls, entity):
+    def _from_generated(cls, entity, analyze_result):
         return cls(
+            _parent=analyze_result,
             category=entity.category,
             sub_category=entity.sub_category,
             content=entity.content,
@@ -2378,6 +2411,24 @@ class DocumentEntity(object):
             confidence=data.get("confidence", None),
         )
 
+    def get_words(self, **kwargs):  # pylint: disable=unused-argument
+        # type: (Any) -> Iterable[DocumentWord]
+        """Get the words found in the spans of this DocumentEntity.
+
+        :return: iterable[DocumentWord]
+        :rtype: iterable[DocumentWord]
+        """
+        return _get_children(self, search_elements=["word"], cross_page=True)
+
+    def get_lines(self, **kwargs):  # pylint: disable=unused-argument
+        # type: (Any) -> Iterable[DocumentLine]
+        """Get the lines found in the spans of this DocumentEntity.
+
+        :return: iterable[DocumentLine]
+        :rtype: iterable[DocumentLine]
+        """
+        return _get_children(self, search_elements=["line"], cross_page=True)
+
 
 class DocumentField(object):
     """An object representing the content and location of a document field value.
@@ -2403,6 +2454,7 @@ class DocumentField(object):
     """
 
     def __init__(self, **kwargs):
+        self._parent = kwargs.get("_parent", None)
         self.value_type = kwargs.get("value_type", None)
         self.value = kwargs.get("value", None)
         self.content = kwargs.get("content", None)
@@ -2411,11 +2463,12 @@ class DocumentField(object):
         self.confidence = kwargs.get("confidence", None)
 
     @classmethod
-    def _from_generated(cls, field):
+    def _from_generated(cls, field, analyze_result):
         if field is None:
             return None
         return cls(
-            value=get_field_value_v3(field),
+            _parent=analyze_result,
+            value=get_field_value_v3(field, analyze_result),
             value_type=adjust_value_type(field.type) if field.type else None,
             content=field.content if field.content else None,
             bounding_regions=[
@@ -2494,6 +2547,24 @@ class DocumentField(object):
             confidence=data.get("confidence", None),
         )
 
+    def get_words(self, **kwargs):  # pylint: disable=unused-argument
+        # type: (Any) -> Iterable[DocumentWord]
+        """Get the words found in the spans of this DocumentField.
+
+        :return: iterable[DocumentWord]
+        :rtype: iterable[DocumentWord]
+        """
+        return _get_children(self, search_elements=["word"], cross_page=True)
+
+    def get_lines(self, **kwargs):  # pylint: disable=unused-argument
+        # type: (Any) -> Iterable[DocumentLine]
+        """Get the lines found in the spans of this DocumentField.
+
+        :return: iterable[DocumentLine]
+        :rtype: iterable[DocumentLine]
+        """
+        return _get_children(self, search_elements=["line"], cross_page=True)
+
 
 class DocumentKeyValueElement(object):
     """An object representing the field key or value in a key-value pair.
@@ -2508,13 +2579,15 @@ class DocumentKeyValueElement(object):
     """
 
     def __init__(self, **kwargs):
+        self._parent = kwargs.get("_parent", None)
         self.content = kwargs.get("content", None)
         self.bounding_regions = kwargs.get("bounding_regions", None)
         self.spans = kwargs.get("spans", None)
 
     @classmethod
-    def _from_generated(cls, element):
+    def _from_generated(cls, element, analyze_result):
         return cls(
+            _parent=analyze_result,
             content=element.content,
             bounding_regions=[
                 BoundingRegion._from_generated(region)
@@ -2572,6 +2645,24 @@ class DocumentKeyValueElement(object):
             else [],
         )
 
+    def get_words(self, **kwargs):  # pylint: disable=unused-argument
+        # type: (Any) -> Iterable[DocumentWord]
+        """Get the words found in the spans of this DocumentKeyValueElement.
+
+        :return: iterable[DocumentWord]
+        :rtype: iterable[DocumentWord]
+        """
+        return _get_children(self, search_elements=["word"], cross_page=True)
+
+    def get_lines(self, **kwargs):  # pylint: disable=unused-argument
+        # type: (Any) -> Iterable[DocumentLine]
+        """Get the lines found in the spans of this DocumentKeyValueElement.
+
+        :return: iterable[DocumentLine]
+        :rtype: iterable[DocumentLine]
+        """
+        return _get_children(self, search_elements=["line"], cross_page=True)
+
 
 class DocumentKeyValuePair(object):
     """An object representing a document field with distinct field label (key) and field value (may be empty).
@@ -2590,12 +2681,12 @@ class DocumentKeyValuePair(object):
         self.confidence = kwargs.get("confidence", None)
 
     @classmethod
-    def _from_generated(cls, key_value_pair):
+    def _from_generated(cls, key_value_pair, analyze_result):
         return cls(
-            key=DocumentKeyValueElement._from_generated(key_value_pair.key)
+            key=DocumentKeyValueElement._from_generated(key_value_pair.key, analyze_result)
             if key_value_pair.key
             else None,
-            value=DocumentKeyValueElement._from_generated(key_value_pair.value)
+            value=DocumentKeyValueElement._from_generated(key_value_pair.value, analyze_result)
             if key_value_pair.value
             else None,
             confidence=key_value_pair.confidence,
@@ -2653,13 +2744,15 @@ class DocumentLine(object):
     """
 
     def __init__(self, **kwargs):
+        self._parent = kwargs.get("_parent", None)
         self.content = kwargs.get("content", None)
         self.bounding_box = kwargs.get("bounding_box", None)
         self.spans = kwargs.get("spans", None)
 
     @classmethod
-    def _from_generated(cls, line):
+    def _from_generated(cls, line, document_page):
         return cls(
+            _parent=document_page,
             content=line.content,
             bounding_box=get_bounding_box(line),
             spans=prepare_document_spans(line.spans),
@@ -2707,6 +2800,15 @@ class DocumentLine(object):
             if len(data.get("spans", [])) > 0
             else [],
         )
+
+    def get_words(self, **kwargs):  # pylint: disable=unused-argument
+        # type: (Any) -> Iterable[DocumentWord]
+        """Get the words found in the spans of this DocumentLine.
+
+        :return: iterable[DocumentWord]
+        :rtype: iterable[DocumentWord]
+        """
+        return _get_children(self, search_elements=["word"], cross_page=False)
 
 
 class DocumentPage(object):
@@ -2756,7 +2858,7 @@ class DocumentPage(object):
             width=page.width,
             height=page.height,
             unit=page.unit,
-            lines=[DocumentLine._from_generated(line) for line in page.lines]
+            lines=[DocumentLine._from_generated(line, page) for line in page.lines]
             if page.lines
             else [],
             words=[DocumentWord._from_generated(word) for word in page.words]
@@ -2844,7 +2946,7 @@ class DocumentPage(object):
         )
 
 
-class DocumentSelectionMark(DocumentElement):
+class DocumentSelectionMark(DocumentContentElement):
     """A selection mark object representing check boxes, radio buttons, and other elements indicating a selection.
 
     :ivar state: State of the selection mark. Possible values include: "selected",
@@ -2865,8 +2967,6 @@ class DocumentSelectionMark(DocumentElement):
     def __init__(self, **kwargs):
         super(DocumentSelectionMark, self).__init__(kind="selectionMark", **kwargs)
         self.state = kwargs.get("state", None)
-        self.span = kwargs.get("span", None)
-        self.confidence = kwargs.get("confidence", None)
 
     @classmethod
     def _from_generated(cls, mark):
@@ -3010,6 +3110,7 @@ class DocumentTable(object):
     """
 
     def __init__(self, **kwargs):
+        self._parent = kwargs.get("_parent", None)
         self.row_count = kwargs.get("row_count", None)
         self.column_count = kwargs.get("column_count", None)
         self.cells = kwargs.get("cells", None)
@@ -3017,11 +3118,12 @@ class DocumentTable(object):
         self.spans = kwargs.get("spans", None)
 
     @classmethod
-    def _from_generated(cls, table):
+    def _from_generated(cls, table, analyze_result):
         return cls(
+            _parent=analyze_result,
             row_count=table.row_count,
             column_count=table.column_count,
-            cells=[DocumentTableCell._from_generated(cell) for cell in table.cells]
+            cells=[DocumentTableCell._from_generated(cell, analyze_result) for cell in table.cells]
             if table.cells
             else [],
             bounding_regions=prepare_bounding_regions(table.bounding_regions),
@@ -3084,6 +3186,24 @@ class DocumentTable(object):
             else [],
         )
 
+    def get_words(self, **kwargs):  # pylint: disable=unused-argument
+        # type: (Any) -> Iterable[DocumentWord]
+        """Get the words found in the spans of this DocumentTable.
+
+        :return: iterable[DocumentWord]
+        :rtype: iterable[DocumentWord]
+        """
+        return _get_children(self, search_elements=["word"], cross_page=True)
+
+    def get_lines(self, **kwargs):  # pylint: disable=unused-argument
+        # type: (Any) -> Iterable[DocumentLine]
+        """Get the lines found in the spans of this DocumentTable.
+
+        :return: iterable[DocumentLine]
+        :rtype: iterable[DocumentLine]
+        """
+        return _get_children(self, search_elements=["line"], cross_page=True)
+
 
 class DocumentTableCell(object):
     """An object representing the location and content of a table cell.
@@ -3108,6 +3228,7 @@ class DocumentTableCell(object):
     """
 
     def __init__(self, **kwargs):
+        self._parent = kwargs.get("_parent", None)
         self.kind = kwargs.get("kind", "content")
         self.row_index = kwargs.get("row_index", None)
         self.column_index = kwargs.get("column_index", None)
@@ -3118,13 +3239,14 @@ class DocumentTableCell(object):
         self.spans = kwargs.get("spans", None)
 
     @classmethod
-    def _from_generated(cls, cell):
+    def _from_generated(cls, cell, analyze_result):
         return cls(
-            kind=cell.kind,
+            _parent=analyze_result,
+            kind=cell.kind if cell.kind else "content",
             row_index=cell.row_index,
             column_index=cell.column_index,
-            row_span=cell.row_span,
-            column_span=cell.column_span,
+            row_span=cell.row_span if cell.row_span else 1,
+            column_span=cell.column_span if cell.column_span else 1,
             content=cell.content,
             bounding_regions=[
                 BoundingRegion._from_generated(region)
@@ -3184,11 +3306,11 @@ class DocumentTableCell(object):
         :rtype: DocumentTableCell
         """
         return cls(
-            kind=data.get("kind", None),
+            kind=data.get("kind", "content"),
             row_index=data.get("row_index", None),
             column_index=data.get("column_index", None),
-            row_span=data.get("row_span", None),
-            column_span=data.get("column_span", None),
+            row_span=data.get("row_span", 1),
+            column_span=data.get("column_span", 1),
             content=data.get("content", None),
             bounding_regions=[BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
             if len(data.get("bounding_regions", [])) > 0
@@ -3197,6 +3319,24 @@ class DocumentTableCell(object):
             if len(data.get("spans", [])) > 0
             else [],
         )
+
+    def get_words(self, **kwargs):  # pylint: disable=unused-argument
+        # type: (Any) -> Iterable[DocumentWord]
+        """Get the words found in the spans of this DocumentTableCell.
+
+        :return: iterable[DocumentWord]
+        :rtype: iterable[DocumentWord]
+        """
+        return _get_children(self, search_elements=["word"], cross_page=True)
+
+    def get_lines(self, **kwargs):  # pylint: disable=unused-argument
+        # type: (Any) -> Iterable[DocumentLine]
+        """Get the lines found in the spans of this DocumentTableCell.
+
+        :return: iterable[DocumentLine]
+        :rtype: iterable[DocumentLine]
+        """
+        return _get_children(self, search_elements=["line"], cross_page=True)
 
 
 class ModelOperationInfo(object):
@@ -3408,7 +3548,7 @@ class ModelOperation(ModelOperationInfo):
         )
 
 
-class DocumentWord(DocumentElement):
+class DocumentWord(DocumentContentElement):
     """A word object consisting of a contiguous sequence of characters.  For non-space delimited languages,
     such as Chinese, Japanese, and Korean, each character is represented as its own word.
 
@@ -3425,8 +3565,6 @@ class DocumentWord(DocumentElement):
 
     def __init__(self, **kwargs):
         super(DocumentWord, self).__init__(kind="word", **kwargs)
-        self.span = kwargs.get("span", None)
-        self.confidence = kwargs.get("confidence", None)
 
     @classmethod
     def _from_generated(cls, word):
@@ -3530,17 +3668,17 @@ class AnalyzeResult(object):
             pages=[DocumentPage._from_generated(page) for page in response.pages]
             if response.pages
             else [],
-            tables=[DocumentTable._from_generated(table) for table in response.tables]
+            tables=[DocumentTable._from_generated(table, response) for table in response.tables]
             if response.tables
             else [],
             key_value_pairs=[
-                DocumentKeyValuePair._from_generated(kv)
+                DocumentKeyValuePair._from_generated(kv, response)
                 for kv in response.key_value_pairs
             ]
             if response.key_value_pairs
             else [],
             entities=[
-                DocumentEntity._from_generated(entity) for entity in response.entities
+                DocumentEntity._from_generated(entity, response) for entity in response.entities
             ]
             if response.entities
             else [],
@@ -3548,7 +3686,7 @@ class AnalyzeResult(object):
             if response.styles
             else [],
             documents=[
-                AnalyzedDocument._from_generated(document)
+                AnalyzedDocument._from_generated(document, response)
                 for document in response.documents
             ]
             if response.documents
@@ -4039,3 +4177,54 @@ class DocumentAnalysisInnerError(object):
             innererror=DocumentAnalysisInnerError.from_dict(data.get("innererror"))  # type: ignore
             if data.get("innererror") else None
         )
+
+def _get_children(source_element, search_elements, cross_page=False):
+    result = []
+
+    # search for elements across pages if cross_page is set to True
+    if cross_page:
+        for elem in search_elements:
+            for region in source_element.bounding_regions:
+                for element in _get_element_list(_get_page(source_element._parent.pages, region.page_number), elem):
+                    if _in_span(element, source_element.spans):
+                        result.append(element)
+        return result
+
+    # look for elements on a specific page
+    for elem in search_elements:
+        for element in _get_element_list(source_element._parent, elem):
+            if _in_span(element, source_element.spans):
+                result.append(element)
+    return result
+
+def _get_page(pages, page_number):
+    for page in pages:
+        if page.page_number == page_number:
+            return page
+    raise ValueError("Could not find page to search for elements")
+
+def _get_element_list(parent, element):
+    # type: (DocumentPage, str) -> List[Union[DocumentWord, DocumentLine]]
+    if element == "word":
+        return [DocumentWord._from_generated(word) for word in parent.words]
+    if element == "line":
+        return [DocumentLine._from_generated(line, parent) for line in parent.lines]
+    raise ValueError("Unsupported element requested.")
+
+
+def _in_span(element, spans):
+    # type: (Any, List[DocumentSpan]) -> bool
+    if hasattr(element, "span"):
+        for span in spans:
+            if element.span.offset >= span.offset and (
+                element.span.offset + element.span.length
+            ) <= (span.offset + span.length):
+                return True
+    elif hasattr(element, "spans"):
+        for span in spans:
+            for element_span in element.spans:
+                if element_span.offset >= span.offset and (
+                    element_span.offset + element_span.length
+                ) <= (span.offset + span.length):
+                    return True
+    return False

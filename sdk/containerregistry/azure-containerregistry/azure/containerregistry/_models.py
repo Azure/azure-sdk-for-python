@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Dict, Any, List
 
 from ._generated.models import (
     ArtifactTagProperties as GeneratedArtifactTagProperties,
-    RepositoryProperties as GeneratedRepositoryProperties,
+    ContainerRepositoryProperties as GeneratedRepositoryProperties,
     RepositoryWriteableProperties,
     TagWriteableProperties,
     ManifestWriteableProperties,
