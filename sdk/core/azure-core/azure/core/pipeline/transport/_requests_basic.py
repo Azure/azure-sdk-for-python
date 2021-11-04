@@ -36,7 +36,9 @@ import requests
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import (
     ServiceRequestError,
-    ServiceResponseError
+    ServiceResponseError,
+    IncompleteReadError,
+    HttpResponseError,
 )
 from . import HttpRequest # pylint: disable=unused-import
 
@@ -50,6 +52,13 @@ from .._tools import is_rest as _is_rest, handle_non_stream_rest_response as _ha
 
 if TYPE_CHECKING:
     from ...rest import HttpRequest as RestHttpRequest, HttpResponse as RestHttpResponse
+
+AzureErrorUnion = Union[
+    ServiceRequestError,
+    ServiceResponseError,
+    IncompleteReadError,
+    HttpResponseError,
+]
 
 PipelineType = TypeVar("PipelineType")
 
@@ -78,6 +87,7 @@ def _read_raw_stream(response, chunk_size=1):
     # following behavior from requests iter_content, we set content consumed to True
     # https://github.com/psf/requests/blob/master/requests/models.py#L774
     response._content_consumed = True  # pylint: disable=protected-access
+
 
 class _RequestsTransportResponseBase(_HttpResponseBase):
     """Base class for accessing response data.
@@ -164,6 +174,15 @@ class StreamDownloadGenerator(object):
             raise StopIteration()
         except requests.exceptions.StreamConsumedError:
             raise
+        except requests.exceptions.ChunkedEncodingError as err:
+            msg = err.__str__()
+            if 'IncompleteRead' in msg:
+                _LOGGER.warning("Incomplete download: %s", err)
+                internal_response.close()
+                raise IncompleteReadError(err, error=err)
+            _LOGGER.warning("Unable to stream download: %s", err)
+            internal_response.close()
+            raise HttpResponseError(err, error=err)
         except Exception as err:
             _LOGGER.warning("Unable to stream download: %s", err)
             internal_response.close()
@@ -289,7 +308,7 @@ class RequestsTransport(HttpTransport):
         """
         self.open()
         response = None
-        error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
+        error = None    # type: Optional[AzureErrorUnion]
 
         try:
             connection_timeout = kwargs.pop('connection_timeout', self.connection_config.timeout)
@@ -313,6 +332,7 @@ class RequestsTransport(HttpTransport):
                 cert=kwargs.pop('connection_cert', self.connection_config.cert),
                 allow_redirects=False,
                 **kwargs)
+            response.raw.enforce_content_length = True
 
         except (urllib3.exceptions.NewConnectionError, urllib3.exceptions.ConnectTimeoutError) as err:
             error = ServiceRequestError(err, error=err)
@@ -323,6 +343,14 @@ class RequestsTransport(HttpTransport):
                 error = ServiceResponseError(err, error=err)
             else:
                 error = ServiceRequestError(err, error=err)
+        except requests.exceptions.ChunkedEncodingError as err:
+            msg = err.__str__()
+            if 'IncompleteRead' in msg:
+                _LOGGER.warning("Incomplete download: %s", err)
+                error = IncompleteReadError(err, error=err)
+            else:
+                _LOGGER.warning("Unable to stream download: %s", err)
+                error = HttpResponseError(err, error=err)
         except requests.RequestException as err:
             error = ServiceRequestError(err, error=err)
 

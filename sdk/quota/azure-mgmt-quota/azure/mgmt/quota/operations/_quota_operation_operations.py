@@ -23,8 +23,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class OperationOperations(object):
-    """OperationOperations operations.
+class QuotaOperationOperations(object):
+    """QuotaOperationOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -50,7 +50,7 @@ class OperationOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.OperationList"]
-        """GET operations.
+        """GET quota operations.
 
         List all the operations supported by the Microsoft.Quota resource provider.
 
