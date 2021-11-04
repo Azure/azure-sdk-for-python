@@ -59,13 +59,16 @@ class SchemaRegistryClient(object):
             :caption: Create a new instance of the SchemaRegistryClient.
 
     """
+
     def __init__(
         self,
         fully_qualified_namespace: str,
         credential: "AsyncTokenCredential",
         **kwargs: Any
     ) -> None:
-        self._generated_client = AzureSchemaRegistry(credential=credential, endpoint=fully_qualified_namespace, **kwargs)
+        self._generated_client = AzureSchemaRegistry(
+            credential=credential, endpoint=fully_qualified_namespace, **kwargs
+        )
 
     async def __aenter__(self):
         await self._generated_client.__aenter__()
@@ -75,7 +78,7 @@ class SchemaRegistryClient(object):
         await self._generated_client.__aexit__(*args)
 
     async def close(self) -> None:
-        """ This method is to close the sockets opened by the client.
+        """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
         await self._generated_client.close()
@@ -123,7 +126,9 @@ class SchemaRegistryClient(object):
             group_name=group_name,
             schema_name=name,
             content=schema_definition,
-            content_type=kwargs.pop("content_type", "application/json; serialization={}".format(format)),
+            content_type=kwargs.pop(
+                "content_type", "application/json; serialization={}".format(format)
+            ),
             **http_request_kwargs
         )
 
@@ -132,9 +137,7 @@ class SchemaRegistryClient(object):
         return _parse_response_schema_properties(response, format)
 
     async def get_schema(
-        self,
-        id: str,    # pylint:disable=redefined-builtin
-        **kwargs: Any
+        self, id: str, **kwargs: Any  # pylint:disable=redefined-builtin
     ) -> Schema:
         """
         Gets a registered schema by its unique ID.
@@ -201,7 +204,9 @@ class SchemaRegistryClient(object):
             group_name=group_name,
             schema_name=name,
             content=schema_definition,
-            content_type=kwargs.pop("content_type", "application/json; serialization={}".format(format)),
+            content_type=kwargs.pop(
+                "content_type", "application/json; serialization={}".format(format)
+            ),
             **http_request_kwargs
         )
 

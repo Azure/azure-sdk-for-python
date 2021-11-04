@@ -34,6 +34,7 @@ def _parse_schema_properties_dict(response):
 
 
 def _parse_response_schema_properties(response, format):
+    # pylint:disable=redefined-builtin
     properties_dict = _parse_schema_properties_dict(response)
     properties_dict['format'] = format
     return SchemaProperties(
@@ -42,6 +43,7 @@ def _parse_response_schema_properties(response, format):
 
 
 def _parse_response_schema(response):
+    # pylint:disable=redefined-builtin
     schema_props_dict = _parse_schema_properties_dict(response)
     format = response.headers.get('content-type').split('serialization=')[1]
     schema_props_dict['format'] = format
