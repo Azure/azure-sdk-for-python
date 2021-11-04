@@ -287,7 +287,7 @@ stages:
           parameters:
             TargetUserVariable: "CodeOwners"
             ServiceDirectory: ${{parameters.ServiceDirectory}}
-            Version: '$(Azure.Sdk.Tools.RetrieveCodeOwners)'
+            Version: "$(RetrieveCodeOwners)"
 
         - pwsh: |
             $a = '$(CodeOwners)'
