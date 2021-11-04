@@ -679,7 +679,6 @@ class TestAnalyze(TextAnalyticsTest):
             )
         assert excinfo.value.status_code == 400
 
-    @pytest.mark.skip
     @TextAnalyticsPreparer()
     def test_disable_service_logs(
             self,
@@ -1109,7 +1108,6 @@ class TestAnalyze(TextAnalyticsTest):
                     assert classification.category
                     assert classification.confidence_score
 
-    @pytest.mark.skip
     @TextAnalyticsPreparer()
     def test_recognize_custom_entities(
             self,
@@ -1135,7 +1133,7 @@ class TestAnalyze(TextAnalyticsTest):
             ],
             show_stats=True,
             polling_interval=self._interval(),
-        ).result()
+        ).result(timeout=360)
 
         document_results = list(response)
         for doc_result in document_results:

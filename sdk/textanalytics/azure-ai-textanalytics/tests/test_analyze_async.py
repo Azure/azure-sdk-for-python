@@ -752,7 +752,6 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 )).result()
         assert excinfo.value.status_code == 400
 
-    @pytest.mark.skip
     @TextAnalyticsPreparer()
     async def test_disable_service_logs(
             self,
@@ -1202,7 +1201,6 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     assert classification.category
                     assert classification.confidence_score
 
-    @pytest.mark.skip
     @TextAnalyticsPreparer()
     async def test_recognize_custom_entities(
             self,
