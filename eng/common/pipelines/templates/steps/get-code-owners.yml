@@ -4,12 +4,12 @@ parameters:
   TargetTeamVariable: ''
   TargetLabelVariable: ''
   ServiceDirectory: ''
-  Version: 'notspecified'
   DevOpsFeed: "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
 
 steps:
   - pwsh: |
-      Write-Host "${{ parameters.Version }}"
+      Write-Host "$(RetrieveCodeOwnerToolVersion)"
+      Write-Host "$(RetrieveCodeOwnerToolName)"
       dotnet tool install --tool-path . --add-source "${{ parameters.DevOpsFeed }}" --version "$(RetrieveCodeOwnerToolVersion)" "$(RetrieveCodeOwnerToolName)"
     displayName: 'Install tool RetrieveCodeOwners'
     workingDirectory: '$(Agent.ToolsDirectory)'
