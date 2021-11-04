@@ -89,4 +89,4 @@ class Operations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list.metadata = {'url': '/providers/microsoft.insights/operations'}  # type: ignore
+    list.metadata = {'url': '/providers/Microsoft.Insights/operations'}  # type: ignore

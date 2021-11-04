@@ -110,7 +110,8 @@ class Metric(msrest.serialization.Model):
      string.
     :type name: ~$(python-base-namespace).v2016_09_01.models.LocalizableString
     :param unit: Required. the unit of the metric. Possible values include: "Count", "Bytes",
-     "Seconds", "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds".
+     "Seconds", "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds",
+     "Unspecified", "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
     :type unit: str or ~$(python-base-namespace).v2016_09_01.models.Unit
     :param data: Required. Array of data points representing the metric values.
     :type data: list[~$(python-base-namespace).v2016_09_01.models.MetricValue]
@@ -357,8 +358,7 @@ class ServiceDiagnosticSettingsResource(Resource):
     :type logs: list[~$(python-base-namespace).v2016_09_01.models.LogSettings]
     :param workspace_id: The workspace ID (resource ID of a Log Analytics workspace) for a Log
      Analytics workspace to which you would like to send Diagnostic Logs. Example:
-     /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-
-     integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
+     /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
     :type workspace_id: str
     """
 
@@ -417,8 +417,7 @@ class ServiceDiagnosticSettingsResourcePatch(msrest.serialization.Model):
     :type logs: list[~$(python-base-namespace).v2016_09_01.models.LogSettings]
     :param workspace_id: The workspace ID (resource ID of a Log Analytics workspace) for a Log
      Analytics workspace to which you would like to send Diagnostic Logs. Example:
-     /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-
-     integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
+     /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
     :type workspace_id: str
     """
 

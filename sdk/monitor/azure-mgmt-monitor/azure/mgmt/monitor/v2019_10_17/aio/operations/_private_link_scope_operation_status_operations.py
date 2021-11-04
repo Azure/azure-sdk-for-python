@@ -44,7 +44,7 @@ class PrivateLinkScopeOperationStatusOperations:
         self,
         async_operation_id: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OperationStatus":
         """Get the status of an azure asynchronous operation associated with a private link scope
         operation.
@@ -71,7 +71,7 @@ class PrivateLinkScopeOperationStatusOperations:
         path_format_arguments = {
             'asyncOperationId': self._serialize.url("async_operation_id", async_operation_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 

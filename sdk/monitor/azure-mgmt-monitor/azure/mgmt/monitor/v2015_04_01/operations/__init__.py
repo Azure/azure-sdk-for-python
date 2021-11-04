@@ -11,6 +11,7 @@ from ._autoscale_settings_operations import AutoscaleSettingsOperations
 from ._event_categories_operations import EventCategoriesOperations
 from ._operations import Operations
 from ._tenant_activity_logs_operations import TenantActivityLogsOperations
+from ._alert_rules_operations import AlertRulesOperations
 
 __all__ = [
     'ActivityLogsOperations',
@@ -18,4 +19,5 @@ __all__ = [
     'EventCategoriesOperations',
     'Operations',
     'TenantActivityLogsOperations',
+    'AlertRulesOperations',
 ]
