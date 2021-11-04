@@ -97,7 +97,7 @@ def get_field_value(
     return None
 
 
-def get_field_value_v3(value, parent):  # pylint: disable=too-many-return-statements
+def get_field_value_v3(value):  # pylint: disable=too-many-return-statements
     if value is None:
         return value
     if value.type == "string":
@@ -116,14 +116,14 @@ def get_field_value_v3(value, parent):  # pylint: disable=too-many-return-statem
         return value.value_signature
     if value.type == "array":
         return (
-            [DocumentField._from_generated(value, parent) for value in value.value_array]
+            [DocumentField._from_generated(value) for value in value.value_array]
             if value.value_array
             else []
         )
     if value.type == "object":
         return (
             {
-                key: DocumentField._from_generated(value, parent)
+                key: DocumentField._from_generated(value)
                 for key, value in value.value_object.items()
             }
             if value.value_object
@@ -3552,17 +3552,17 @@ class AnalyzeResult(object):
             pages=[DocumentPage._from_generated(page) for page in response.pages]
             if response.pages
             else [],
-            tables=[DocumentTable._from_generated(table, response) for table in response.tables]
+            tables=[DocumentTable._from_generated(table) for table in response.tables]
             if response.tables
             else [],
             key_value_pairs=[
-                DocumentKeyValuePair._from_generated(kv, response)
+                DocumentKeyValuePair._from_generated(kv)
                 for kv in response.key_value_pairs
             ]
             if response.key_value_pairs
             else [],
             entities=[
-                DocumentEntity._from_generated(entity, response) for entity in response.entities
+                DocumentEntity._from_generated(entity) for entity in response.entities
             ]
             if response.entities
             else [],
@@ -3570,7 +3570,7 @@ class AnalyzeResult(object):
             if response.styles
             else [],
             documents=[
-                AnalyzedDocument._from_generated(document, response)
+                AnalyzedDocument._from_generated(document)
                 for document in response.documents
             ]
             if response.documents
