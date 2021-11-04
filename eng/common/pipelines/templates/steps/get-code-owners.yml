@@ -1,11 +1,9 @@
-
 parameters: 
   TargetUserVariable: ''
   TargetTeamVariable: 'notspecified'
   TargetLabelVariable: 'notspecified'
   ServiceDirectory: ''
   DevOpsFeed: "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
-
 steps:
   - pwsh: |
       Write-Host "$(RetrieveCodeOwnerToolVersion)"
@@ -15,12 +13,11 @@ steps:
     workingDirectory: '$(Agent.ToolsDirectory)'
 
   - pwsh: |
-      Push-Location '$(Agent.ToolsDirectory)'
-      .\retrieve-codeowners `
+      ./retrieve-codeowners `
         --target-directory "/sdk/${{ parameters.ServiceDirectory }}/" `
         --root-directory "$(Build.SourcesDirectory)" `
         --vso-owning-users "${{ parameters.TargetUserVariable }}" `
         --vso-owning-teams "${{ parameters.TargetTeamVariable }}" `
         --vso-owning-labels "${{ parameters.TargetLabelVariable }}"
-      Pop-Location
     displayName: 'Add CodeOwners if Present'
+    workingDirectory: '$(Agent.ToolsDirectory)'
