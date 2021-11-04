@@ -23,15 +23,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 03 Nov 2021 21:47:16 GMT
+      - Thu, 04 Nov 2021 22:30:09 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2021-10
       schema-group-name:
       - swathip-test-schema
       schema-id:
-      - f54b7c75b0574f1faee15ba0c4869560
+      - 56c1a4d33b924df485d11fe4a96ffec3
       schema-id-location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/$schemas/f54b7c75b0574f1faee15ba0c4869560?api-version=2021-10
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/$schemas/56c1a4d33b924df485d11fe4a96ffec3?api-version=2021-10
       schema-name:
       - test-schema-twice863b11a7
       schema-version:
@@ -69,15 +69,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 03 Nov 2021 21:47:16 GMT
+      - Thu, 04 Nov 2021 22:30:09 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2021-10
       schema-group-name:
       - swathip-test-schema
       schema-id:
-      - f54b7c75b0574f1faee15ba0c4869560
+      - 56c1a4d33b924df485d11fe4a96ffec3
       schema-id-location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/$schemas/f54b7c75b0574f1faee15ba0c4869560?api-version=2021-10
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/$schemas/56c1a4d33b924df485d11fe4a96ffec3?api-version=2021-10
       schema-name:
       - test-schema-twice863b11a7
       schema-version:

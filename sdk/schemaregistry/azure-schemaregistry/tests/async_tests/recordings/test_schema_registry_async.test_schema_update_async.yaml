@@ -17,13 +17,13 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 03 Nov 2021 21:47:31 GMT
-      location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update-async24591503/versions/7?api-version=2021-10
+      date: Thu, 04 Nov 2021 22:30:25 GMT
+      location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update-async24591503/versions/3?api-version=2021-10
       schema-group-name: swathip-test-schema
-      schema-id: ff874fd8eea84d9cb6c038595e122cfa
-      schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/$schemas/ff874fd8eea84d9cb6c038595e122cfa?api-version=2021-10
+      schema-id: 095057f3633c4f618dc02f24e6f70872
+      schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/$schemas/095057f3633c4f618dc02f24e6f70872?api-version=2021-10
       schema-name: test-schema-update-async24591503
-      schema-version: '7'
+      schema-version: '3'
       schema-versions-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/test-schema-update-async24591503/versions?api-version=2021-10
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
@@ -49,13 +49,13 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 03 Nov 2021 21:47:32 GMT
-      location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update-async24591503/versions/8?api-version=2021-10
+      date: Thu, 04 Nov 2021 22:30:25 GMT
+      location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update-async24591503/versions/4?api-version=2021-10
       schema-group-name: swathip-test-schema
-      schema-id: 99708571ad994ebb85543f38cd5e4ba3
-      schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/$schemas/99708571ad994ebb85543f38cd5e4ba3?api-version=2021-10
+      schema-id: ff255a6755db411c9c0cf273923f9118
+      schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/$schemas/ff255a6755db411c9c0cf273923f9118?api-version=2021-10
       schema-name: test-schema-update-async24591503
-      schema-version: '8'
+      schema-version: '4'
       schema-versions-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/test-schema-update-async24591503/versions?api-version=2021-10
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
@@ -67,23 +67,23 @@ interactions:
     body: null
     headers:
       Accept:
-      - text/plain, application/json, application/json;serialization=avro
+      - application/json; serialization=avro
       User-Agent:
       - azsdk-python-azureschemaregistry/1.0.0b4 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/99708571ad994ebb85543f38cd5e4ba3?api-version=2021-10
+    uri: https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/ff255a6755db411c9c0cf273923f9118?api-version=2021-10
   response:
     body:
       string: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_food","type":["string","null"]}]}'
     headers:
       content-type: application/json;serialization=Avro
-      date: Wed, 03 Nov 2021 21:47:32 GMT
-      location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update-async24591503/versions/8?api-version=2021-10
+      date: Thu, 04 Nov 2021 22:30:26 GMT
+      location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update-async24591503/versions/4?api-version=2021-10
       schema-group-name: swathip-test-schema
-      schema-id: 99708571ad994ebb85543f38cd5e4ba3
-      schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/$schemas/99708571ad994ebb85543f38cd5e4ba3?api-version=2021-10
+      schema-id: ff255a6755db411c9c0cf273923f9118
+      schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/$schemas/ff255a6755db411c9c0cf273923f9118?api-version=2021-10
       schema-name: test-schema-update-async24591503
-      schema-version: '8'
+      schema-version: '4'
       schema-versions-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/test-schema-update-async24591503/versions?api-version=2021-10
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
@@ -91,5 +91,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://swathip-test-eventhubs.servicebus.windows.net/$schemaGroups/$schemas/99708571ad994ebb85543f38cd5e4ba3?api-version=2021-10
+    url: https://swathip-test-eventhubs.servicebus.windows.net/$schemaGroups/$schemas/ff255a6755db411c9c0cf273923f9118?api-version=2021-10
 version: 1

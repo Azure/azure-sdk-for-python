@@ -3,7 +3,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - text/plain, application/json, application/json;serialization=avro
+      - application/json; serialization=avro
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -15,14 +15,14 @@ interactions:
   response:
     body:
       string: '{"Code":400,"Detail":"SubCode=40000, UnknownType:The request is invalid.
-        [MGResponseHttpError=BadRequest]. TrackingId:76c2ee14-9ff8-401d-a5a5-fe765fc19119_G29,
+        [MGResponseHttpError=BadRequest]. TrackingId:973d8c89-db27-4054-a574-523f644aecd3_G2,
         SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/$schemas\/a,
-        Timestamp:2021-11-03T21:47:09"}'
+        Timestamp:2021-11-04T22:29:57"}'
     headers:
       content-type:
       - application/json
       date:
-      - Wed, 03 Nov 2021 21:47:09 GMT
+      - Thu, 04 Nov 2021 22:29:57 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -36,7 +36,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - text/plain, application/json, application/json;serialization=avro
+      - application/json; serialization=avro
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -48,13 +48,13 @@ interactions:
   response:
     body:
       string: '{"Code":404,"Detail":"Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does
-        not exist. TrackingId:40a50790-73ce-4fd5-a0ad-8c59d09fe2dc_G29, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/$schemas\/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
-        Timestamp:2021-11-03T21:47:09"}'
+        not exist. TrackingId:898587d1-c881-4af1-a882-da1167ec36a5_G2, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/$schemas\/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
+        Timestamp:2021-11-04T22:29:57"}'
     headers:
       content-type:
       - application/json
       date:
-      - Wed, 03 Nov 2021 21:47:09 GMT
+      - Thu, 04 Nov 2021 22:29:57 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

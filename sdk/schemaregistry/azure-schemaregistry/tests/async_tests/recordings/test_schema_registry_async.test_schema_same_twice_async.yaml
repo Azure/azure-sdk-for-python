@@ -17,11 +17,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 03 Nov 2021 21:47:30 GMT
+      date: Thu, 04 Nov 2021 22:30:22 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-twice-async7bfd16a1/versions/1?api-version=2021-10
       schema-group-name: swathip-test-schema
-      schema-id: e3c06d2767d6471589717f4c949c0bdc
-      schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/$schemas/e3c06d2767d6471589717f4c949c0bdc?api-version=2021-10
+      schema-id: b2c1409c64b2421c819b2b5f387a0a78
+      schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/$schemas/b2c1409c64b2421c819b2b5f387a0a78?api-version=2021-10
       schema-name: test-schema-twice-async7bfd16a1
       schema-version: '1'
       schema-versions-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/test-schema-twice-async7bfd16a1/versions?api-version=2021-10
@@ -49,11 +49,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 03 Nov 2021 21:47:30 GMT
+      date: Thu, 04 Nov 2021 22:30:23 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-twice-async7bfd16a1/versions/1?api-version=2021-10
       schema-group-name: swathip-test-schema
-      schema-id: e3c06d2767d6471589717f4c949c0bdc
-      schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/$schemas/e3c06d2767d6471589717f4c949c0bdc?api-version=2021-10
+      schema-id: b2c1409c64b2421c819b2b5f387a0a78
+      schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/$schemas/b2c1409c64b2421c819b2b5f387a0a78?api-version=2021-10
       schema-name: test-schema-twice-async7bfd16a1
       schema-version: '1'
       schema-versions-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/test-schema-twice-async7bfd16a1/versions?api-version=2021-10

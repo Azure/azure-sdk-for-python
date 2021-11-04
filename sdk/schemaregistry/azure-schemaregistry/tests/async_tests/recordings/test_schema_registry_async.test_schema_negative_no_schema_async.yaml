@@ -3,7 +3,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - text/plain, application/json, application/json;serialization=avro
+      - application/json; serialization=avro
       User-Agent:
       - azsdk-python-azureschemaregistry/1.0.0b4 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: GET
@@ -11,12 +11,12 @@ interactions:
   response:
     body:
       string: '{"Code":400,"Detail":"SubCode=40000, UnknownType:The request is invalid.
-        [MGResponseHttpError=BadRequest]. TrackingId:fd838a93-fe27-4cd4-84d2-c691535391d2_G15,
+        [MGResponseHttpError=BadRequest]. TrackingId:b18e7f36-16f0-4557-a38f-025672c3ccdf_G10,
         SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/$schemas\/a,
-        Timestamp:2021-11-03T21:47:23"}'
+        Timestamp:2021-11-04T22:30:15"}'
     headers:
       content-type: application/json
-      date: Wed, 03 Nov 2021 21:47:23 GMT
+      date: Thu, 04 Nov 2021 22:30:15 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
@@ -28,7 +28,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - text/plain, application/json, application/json;serialization=avro
+      - application/json; serialization=avro
       User-Agent:
       - azsdk-python-azureschemaregistry/1.0.0b4 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: GET
@@ -36,11 +36,11 @@ interactions:
   response:
     body:
       string: '{"Code":404,"Detail":"Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does
-        not exist. TrackingId:3b970498-90d6-433a-b6b1-11d9b9ffa427_G15, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/$schemas\/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
-        Timestamp:2021-11-03T21:47:24"}'
+        not exist. TrackingId:0a6c7dc3-3ce9-4c06-b807-a5cbcd0cf844_G10, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/$schemas\/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
+        Timestamp:2021-11-04T22:30:16"}'
     headers:
       content-type: application/json
-      date: Wed, 03 Nov 2021 21:47:24 GMT
+      date: Thu, 04 Nov 2021 22:30:15 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
