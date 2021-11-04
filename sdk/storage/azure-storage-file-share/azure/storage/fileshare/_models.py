@@ -334,6 +334,8 @@ class ShareProperties(DictMixin):
     :ivar int remaining_retention_days:
         To indicate how many remaining days the deleted share will be kept.
         This is a service returned value, and the value will be set when list shared including deleted ones.
+    :ivar int provisioned_bandwidth_mi_bps:
+        Provisioned bandwidth in megabits/second. Only applicable to premium file accounts.
     :ivar ~azure.storage.fileshare.models.ShareRootSquash or str root_squash:
         Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
     :ivar list(str) protocols:
