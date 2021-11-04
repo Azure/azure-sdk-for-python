@@ -116,19 +116,16 @@ class TooManyRedirectsError(HttpResponseError):
 
 *kwargs* are keyword arguments to include with the exception.
 
-#### **Provisional** StreamConsumedError
-A **provisional** error thrown if you try to access the stream of the **provisional**
-responses `azure.core.rest.HttpResponse` or `azure.core.rest.AsyncHttpResponse` once
+#### StreamConsumedError
+An error thrown if you try to access the stream of `azure.core.rest.HttpResponse` or `azure.core.rest.AsyncHttpResponse` once
 the response stream has been consumed.
 
-#### **Provisional** StreamClosedError
-A **provisional** error thrown if you try to access the stream of the **provisional**
-responses `azure.core.rest.HttpResponse` or `azure.core.rest.AsyncHttpResponse` once
+#### StreamClosedError
+An error thrown if you try to access the stream of the `azure.core.rest.HttpResponse` or `azure.core.rest.AsyncHttpResponse` once
 the response stream has been closed.
 
-#### **Provisional** ResponseNotReadError
-A **provisional** error thrown if you try to access the `content` of the **provisional**
-responses `azure.core.rest.HttpResponse` or `azure.core.rest.AsyncHttpResponse` before
+#### ResponseNotReadError
+An error thrown if you try to access the `content` of `azure.core.rest.HttpResponse` or `azure.core.rest.AsyncHttpResponse` before
 reading in the response's bytes first.
 
 ### Configurations
