@@ -287,7 +287,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         audience = "{}/client/hubs/{}".format(endpoint, hub)
         user = kwargs.pop("user_id", None)
         key = self._config.credential.key
-        ttl = timedelta(minutes=kwargs.pop("minutes_to_expire", 60))
+        ttl = timedelta(minutes=kwargs.pop("expire_in_minutes", 60))
         roles = kwargs.pop("roles", [])
 
         payload = {
@@ -298,7 +298,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         if user:
             payload["sub"] = user
         if roles:
-            payload["roles"] = roles
+            payload["role"] = roles
 
         return six.ensure_str(jwt.encode(payload, key, algorithm="HS256"))
 
@@ -313,8 +313,8 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         :paramtype user_id: str
         :keyword roles: Roles that the connection with the generated token will have.
         :paramtype roles: list[str]
-        :keyword minutes_to_expire: The expire time of the generated token.
-        :paramtype minutes_to_expire: int
+        :keyword expire_in_minutes: The expire time of the generated token.
+        :paramtype expire_in_minutes: int
         :returns: ~dict containing the web socket endpoint, the token and a url with the generated access token.
         :rtype: ~dict
 
@@ -351,6 +351,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
             "url": "{}?access_token={}".format(client_url, token),
         }
     get_client_access_token.metadata = {'url': '/api/hubs/{hub}/:generateToken'}  # type: ignore
+
 
 def patch_sdk():
     curr_package = importlib.import_module("azure.messaging.webpubsubservice")
