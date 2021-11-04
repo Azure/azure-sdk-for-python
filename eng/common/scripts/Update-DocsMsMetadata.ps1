@@ -86,12 +86,14 @@ function GetAdjustedReadmeContent($ReadmeContent, $PackageInfo, $PackageMetadata
   $author = "ramya-rao-a"
   $msauthor = "ramyar"
   # We are currently lack of the ability to get ms alias from github identity. Use github identity as placeholder for now.
-  if ($CodeOwners) {
-    $author = $CodeOwners.Split(",")[0]
-    $msauthor = $author 
-  }
-  elseif (Test-Path '$PSScriptRoot/default-code-owner.json') {
+  # if ($CodeOwners) {
+  #   $author = $CodeOwners.Split(",")[0]
+  #   $msauthor = $author 
+  # }
+  # else
+  if (Test-Path '$PSScriptRoot/default-code-owner.json') {
     # Json file is in a format of '{ "author":"value1", "msauthor":"value2" }' 
+    Write-Host "I am here"
     $authorFromJson = Get-Content '$PSScriptRoot/default-code-owner.json' | ConvertFrom-Json
     $author = $authorFromJson.author
     $msauthor = $authorFromJson.msauthor 
