@@ -22,7 +22,7 @@
 """Create, read, update and delete and execute scripts in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, AnyStr, List, Dict, Union, Iterable, Optional
+from typing import Any, List, Dict, Union, Iterable, Optional
 
 from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options
@@ -53,7 +53,7 @@ class ScriptsProxy(object):
 
     def _get_resource_link(self, script_or_id, typ):
         # type: (Union[Dict[str, Any], str], str) -> str
-        if isinstance(script_or_id, AnyStr):
+        if isinstance(script_or_id, str):
             return u"{}/{}/{}".format(self.container_link, typ, script_or_id)
         return script_or_id["_self"]
 
@@ -73,7 +73,13 @@ class ScriptsProxy(object):
             collection_link=self.container_link, options=feed_options, **kwargs
         )
 
-    def query_stored_procedures(self, query, parameters=None, max_item_count=None, **kwargs):
+    def query_stored_procedures(
+        self,
+        query,
+        parameters=None,
+        max_item_count=None,
+        **kwargs
+    ):
         # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
         """Return all stored procedures matching the given `query`.
 
@@ -94,7 +100,7 @@ class ScriptsProxy(object):
             **kwargs
         )
 
-    async def get_stored_procedure(self, sproc, **kwargs):
+    async def read_stored_procedure(self, sproc, **kwargs):
         # type: (Union[str, Dict[str, Any]], Any) -> Dict[str, Any]
         """Get the stored procedure identified by `id`.
 
@@ -126,7 +132,12 @@ class ScriptsProxy(object):
             collection_link=self.container_link, sproc=body, options=request_options, **kwargs
         )
 
-    async def replace_stored_procedure(self, sproc, body, **kwargs):
+    async def replace_stored_procedure(
+        self,
+        sproc,
+        body,
+        **kwargs
+    ):
         # type: (Union[str, Dict[str, Any]], Dict[str, Any], Any) -> Dict[str, Any]
         """Replace a specified stored procedure in the container.
 
@@ -167,7 +178,7 @@ class ScriptsProxy(object):
 
     async def execute_stored_procedure(
         self,
-        sproc,  # type: Union[str, Dict[str, Any]]
+        sproc_id,  # type: str
         partition_key=None,  # type: Optional[str]
         params=None,  # type: Optional[List[Any]]
         enable_script_logging=None,  # type: Optional[bool]
@@ -178,7 +189,7 @@ class ScriptsProxy(object):
 
         If the stored procedure does not already exist in the container, an exception is raised.
 
-        :param sproc: The ID (name) or dict representing stored procedure to be executed.
+        :param sproc: The ID (name) representing the stored procedure to be executed.
         :param partition_key: Specifies the partition key to indicate which partition the sproc should execute on.
         :param params: List of parameters to be passed to the stored procedure to be executed.
         :param bool enable_script_logging: Enables or disables script logging for the current request.
@@ -199,7 +210,7 @@ class ScriptsProxy(object):
             request_options["enableScriptLogging"] = enable_script_logging
 
         return await self.client_connection.ExecuteStoredProcedure(
-            sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure),
+            sproc_link=self._get_resource_link(sproc_id, ScriptType.StoredProcedure),
             params=params,
             options=request_options,
             **kwargs
@@ -242,7 +253,7 @@ class ScriptsProxy(object):
             **kwargs
         )
 
-    async def get_trigger(self, trigger, **kwargs):
+    async def read_trigger(self, trigger, **kwargs):
         # type: (Union[str, Dict[str, Any]], Any) -> Dict[str, Any]
         """Get a trigger identified by `id`.
 
@@ -350,7 +361,7 @@ class ScriptsProxy(object):
             **kwargs
         )
 
-    async def get_user_defined_function(self, udf, **kwargs):
+    async def read_user_defined_function(self, udf, **kwargs):
         # type: (Union[str, Dict[str, Any]], Any) -> Dict[str, Any]
         """Get a user-defined functions identified by `id`.
 

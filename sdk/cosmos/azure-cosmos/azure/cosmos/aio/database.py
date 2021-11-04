@@ -22,7 +22,7 @@
 """Interact with databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, AnyStr, List, Dict, Union, cast, Iterable, Optional
+from typing import Any, List, Dict, Union, cast, Iterable, Optional
 
 import warnings
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -86,7 +86,7 @@ class DatabaseProxy(object):
     @staticmethod
     def _get_container_id(container_or_id):
         # type: (Union[str, ContainerProxy, Dict[str, Any]]) -> str
-        if isinstance(container_or_id, AnyStr):
+        if isinstance(container_or_id, str):
             return container_or_id
         try:
             return cast("ContainerProxy", container_or_id).id
@@ -100,7 +100,7 @@ class DatabaseProxy(object):
 
     def _get_user_link(self, user_or_id):
         # type: (Union[UserProxy, str, Dict[str, Any]]) -> str
-        if isinstance(user_or_id, AnyStr):
+        if isinstance(user_or_id, str):
             return u"{}/users/{}".format(self.database_link, user_or_id)
         try:
             return cast("UserProxy", user_or_id).user_link
@@ -115,11 +115,10 @@ class DatabaseProxy(object):
         return self._properties
 
     @distributed_trace_async
-    async def read(self, populate_query_metrics=None, **kwargs):
+    async def read(self, **kwargs):
         # type: (Optional[bool], Any) -> Dict[str, Any]
         """Read the database properties.
 
-        :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -132,8 +131,6 @@ class DatabaseProxy(object):
         database_link = CosmosClient._get_database_link(self)
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        if populate_query_metrics is not None:
-            request_options["populateQueryMetrics"] = populate_query_metrics
 
         self._properties = await self.client_connection.ReadDatabase(
             database_link, options=request_options, **kwargs
@@ -151,7 +148,6 @@ class DatabaseProxy(object):
         partition_key,  # type: Any
         indexing_policy=None,  # type: Optional[Dict[str, Any]]
         default_ttl=None,  # type: Optional[int]
-        populate_query_metrics=None,  # type: Optional[bool]
         offer_throughput=None,  # type: Optional[int]
         unique_key_policy=None,  # type: Optional[Dict[str, Any]]
         conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
@@ -166,7 +162,6 @@ class DatabaseProxy(object):
         :param partition_key: The partition key to use for the container.
         :param indexing_policy: The indexing policy to apply to the container.
         :param default_ttl: Default time to live (TTL) for items in the container. If unspecified, items do not expire.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
         :param offer_throughput: The provisioned throughput for this offer.
         :param unique_key_policy: The unique key policy to apply to the container.
         :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
@@ -185,7 +180,7 @@ class DatabaseProxy(object):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/examples.py
+            .. literalinclude:: ../samples/examples_async.py
                 :start-after: [START create_container]
                 :end-before: [END create_container]
                 :language: python
@@ -193,7 +188,7 @@ class DatabaseProxy(object):
                 :caption: Create a container with default settings:
                 :name: create_container
 
-            .. literalinclude:: ../samples/examples.py
+            .. literalinclude:: ../samples/examples_async.py
                 :start-after: [START create_container_with_settings]
                 :end-before: [END create_container_with_settings]
                 :language: python
@@ -224,8 +219,6 @@ class DatabaseProxy(object):
 
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        if populate_query_metrics is not None:
-            request_options["populateQueryMetrics"] = populate_query_metrics
         if offer_throughput is not None:
             request_options["offerThroughput"] = offer_throughput
 
@@ -245,7 +238,6 @@ class DatabaseProxy(object):
         partition_key,  # type: Any
         indexing_policy=None,  # type: Optional[Dict[str, Any]]
         default_ttl=None,  # type: Optional[int]
-        populate_query_metrics=None,  # type: Optional[bool]
         offer_throughput=None,  # type: Optional[int]
         unique_key_policy=None,  # type: Optional[Dict[str, Any]]
         conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
@@ -262,7 +254,6 @@ class DatabaseProxy(object):
         :param partition_key: The partition key to use for the container.
         :param indexing_policy: The indexing policy to apply to the container.
         :param default_ttl: Default time to live (TTL) for items in the container. If unspecified, items do not expire.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
         :param offer_throughput: The provisioned throughput for this offer.
         :param unique_key_policy: The unique key policy to apply to the container.
         :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
@@ -284,7 +275,6 @@ class DatabaseProxy(object):
         try:
             container_proxy = self.get_container_client(id)
             await container_proxy.read(
-                populate_query_metrics=populate_query_metrics,
                 **kwargs
             )
             return container_proxy
@@ -294,25 +284,23 @@ class DatabaseProxy(object):
                 partition_key=partition_key,
                 indexing_policy=indexing_policy,
                 default_ttl=default_ttl,
-                populate_query_metrics=populate_query_metrics,
                 offer_throughput=offer_throughput,
                 unique_key_policy=unique_key_policy,
                 conflict_resolution_policy=conflict_resolution_policy,
                 analytical_storage_ttl=analytical_storage_ttl
             )
 
-    def get_container_client(self, container):
-        # type: (Union[str, ContainerProxy, Dict[str, Any]]) -> ContainerProxy
+    def get_container_client(self, container_id):
+        # type: (str) -> ContainerProxy
         """Get a `ContainerProxy` for a container with specified ID (name).
 
-        :param container: The ID (name) of the container, a :class:`ContainerProxy` instance,
-            or a dict representing the properties of the container to be retrieved.
+        :param container: The ID (name) of the container to be retrieved.
         :returns: A `ContainerProxy` instance representing the container.
         :rtype: ~azure.cosmos.ContainerProxy
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/examples.py
+            .. literalinclude:: ../samples/examples_async.py
                 :start-after: [START get_container]
                 :end-before: [END get_container]
                 :language: python
@@ -320,23 +308,19 @@ class DatabaseProxy(object):
                 :caption: Get an existing container, handling a failure if encountered:
                 :name: get_container
         """
-        if isinstance(container, ContainerProxy):
-            id_value = container.id
-        else:
-            try:
-                id_value = container["id"]
-            except TypeError:
-                id_value = container
 
-        return ContainerProxy(self.client_connection, self.database_link, id_value)
+        return ContainerProxy(self.client_connection, self.database_link, container_id)
 
     @distributed_trace
-    def list_containers(self, max_item_count=None, populate_query_metrics=None, **kwargs):
+    def list_containers(
+        self,
+        max_item_count=None,
+        **kwargs
+        ):
         # type: (Optional[int], Optional[bool], Any) -> Iterable[Dict[str, Any]]
         """List the containers in the database.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -345,7 +329,7 @@ class DatabaseProxy(object):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/examples.py
+            .. literalinclude:: ../samples/examples_async.py
                 :start-after: [START list_containers]
                 :end-before: [END list_containers]
                 :language: python
@@ -357,8 +341,6 @@ class DatabaseProxy(object):
         response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        if populate_query_metrics is not None:
-            feed_options["populateQueryMetrics"] = populate_query_metrics
 
         result = self.client_connection.ReadContainers(
             database_link=self.database_link, options=feed_options, **kwargs
@@ -373,7 +355,6 @@ class DatabaseProxy(object):
         query=None,  # type: Optional[str]
         parameters=None,  # type: Optional[List[str]]
         max_item_count=None,  # type: Optional[int]
-        populate_query_metrics=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
@@ -382,7 +363,6 @@ class DatabaseProxy(object):
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -393,8 +373,6 @@ class DatabaseProxy(object):
         response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        if populate_query_metrics is not None:
-            feed_options["populateQueryMetrics"] = populate_query_metrics
 
         result = self.client_connection.QueryContainers(
             database_link=self.database_link,
@@ -414,7 +392,6 @@ class DatabaseProxy(object):
         indexing_policy=None,  # type: Optional[Dict[str, Any]]
         default_ttl=None,  # type: Optional[int]
         conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
-        populate_query_metrics=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
         # type: (...) -> ContainerProxy
@@ -430,7 +407,6 @@ class DatabaseProxy(object):
         :param default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
         :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
@@ -444,7 +420,7 @@ class DatabaseProxy(object):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/examples.py
+            .. literalinclude:: ../samples/examples_async.py
                 :start-after: [START reset_container_properties]
                 :end-before: [END reset_container_properties]
                 :language: python
@@ -454,8 +430,6 @@ class DatabaseProxy(object):
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        if populate_query_metrics is not None:
-            request_options["populateQueryMetrics"] = populate_query_metrics
 
         container_id = self._get_container_id(container)
         container_link = self._get_container_link(container_id)
@@ -486,7 +460,6 @@ class DatabaseProxy(object):
     async def delete_container(
         self,
         container,  # type: Union[str, ContainerProxy, Dict[str, Any]]
-        populate_query_metrics=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -495,7 +468,6 @@ class DatabaseProxy(object):
         :param container: The ID (name) of the container to delete. You can either
             pass in the ID of the container to delete, a :class:`ContainerProxy` instance or
             a dict representing the properties of the container.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -507,8 +479,6 @@ class DatabaseProxy(object):
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        if populate_query_metrics is not None:
-            request_options["populateQueryMetrics"] = populate_query_metrics
 
         collection_link = self._get_container_link(container)
         result = await self.client_connection.DeleteContainer(collection_link, options=request_options, **kwargs)
@@ -532,7 +502,7 @@ class DatabaseProxy(object):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/examples.py
+            .. literalinclude:: ../samples/examples_async.py
                 :start-after: [START create_user]
                 :end-before: [END create_user]
                 :language: python
@@ -707,9 +677,9 @@ class DatabaseProxy(object):
             response_hook(self.client_connection.last_response_headers, result)
 
     @distributed_trace_async
-    async def read_offer(self, **kwargs):
+    async def read_throughput(self, **kwargs):
         # type: (Any) -> Offer
-        """Read the Offer object for this database.
+        """Read the throughput offer for this database.
 
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: Offer for the database.

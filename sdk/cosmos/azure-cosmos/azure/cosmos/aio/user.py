@@ -24,7 +24,7 @@
 """Create, read, update and delete users in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, AnyStr, List, Dict, Union, cast, Iterable, Optional
+from typing import Any, List, Dict, Union, cast, Iterable, Optional
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
@@ -54,7 +54,7 @@ class UserProxy(object):
 
     def _get_permission_link(self, permission_or_id):
         # type: (Union[Permission, str, Dict[str, Any]]) -> str
-        if isinstance(permission_or_id, AnyStr):
+        if isinstance(permission_or_id, str):
             return u"{}/permissions/{}".format(self.user_link, permission_or_id)
         try:
             return cast("Permission", permission_or_id).permission_link
@@ -146,12 +146,11 @@ class UserProxy(object):
         return result
 
     @distributed_trace_async
-    async def get_permission(self, permission, **kwargs):
+    async def read_permission(self, permission_id, **kwargs):
         # type: (str, Any) -> Permission
         """Get the permission identified by `id`.
 
-        :param permission: The ID (name), dict representing the properties or :class:`Permission`
-            instance of the permission to be retrieved.
+        :param permission: The ID (name) of the permission to be retrieved.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A dict representing the retrieved permission.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given permission couldn't be retrieved.
@@ -161,7 +160,7 @@ class UserProxy(object):
         response_hook = kwargs.pop('response_hook', None)
 
         permission_resp = await self.client_connection.ReadPermission(
-            permission_link=self._get_permission_link(permission), options=request_options, **kwargs
+            permission_link=self._get_permission_link(permission_id), options=request_options, **kwargs
         )  # type: Dict[str, str]
 
         if response_hook:
@@ -273,14 +272,13 @@ class UserProxy(object):
         )
 
     @distributed_trace_async
-    async def delete_permission(self, permission, **kwargs):
+    async def delete_permission(self, permission_id, **kwargs):
         # type: (str, Any) -> None
         """Delete the specified permission from the user.
 
         If the permission does not already exist, an exception is raised.
 
-        :param permission: The ID (name), dict representing the properties or :class:`Permission`
-            instance of the permission to be replaced.
+        :param permission: The ID (name) of the permission to be replaced.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The permission wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The permission does not exist for the user.
@@ -290,7 +288,7 @@ class UserProxy(object):
         response_hook = kwargs.pop('response_hook', None)
 
         result = await self.client_connection.DeletePermission(
-            permission_link=self._get_permission_link(permission), options=request_options, **kwargs
+            permission_link=self._get_permission_link(permission_id), options=request_options, **kwargs
         )
 
         if response_hook:

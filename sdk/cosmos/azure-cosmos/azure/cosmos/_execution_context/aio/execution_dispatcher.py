@@ -23,7 +23,6 @@
 Cosmos database service.
 """
 
-from six.moves import xrange
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos._execution_context.execution_dispatcher import _is_partitioned_execution_info, _get_partitioned_execution_info
 from azure.cosmos._execution_context.aio import multi_execution_aggregator
@@ -183,7 +182,7 @@ class _PipelineExecutionContext(_QueryExecutionContextBase):  # pylint: disable=
         """
 
         results = []
-        for _ in xrange(self._page_size):
+        for _ in range(self._page_size):
             try:
                 results.append(await self.__anext__())
             except StopAsyncIteration:

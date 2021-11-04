@@ -1,4 +1,4 @@
-## 4.2.1 (Unreleased)
+## 4.3.0 (Unreleased)
 **New features**
 - Added language native async i/o client
 

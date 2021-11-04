@@ -24,7 +24,7 @@ database service.
 """
 
 import asyncio
-from six.moves.urllib.parse import urlparse
+from urllib.parse import urlparse
 from .. import _constants as constants
 from .. import exceptions
 from .._location_cache import LocationCache
@@ -38,7 +38,7 @@ class _GlobalEndpointManager(object):
     """
 
     def __init__(self, client):
-        self.Client = client
+        self.client = client
         self.EnableEndpointDiscovery = client.connection_policy.EnableEndpointDiscovery
         self.PreferredLocations = client.connection_policy.PreferredLocations
         self.DefaultEndpoint = client.url_connection
@@ -139,7 +139,7 @@ class _GlobalEndpointManager(object):
 
         This can be used for mocking purposes as well.
         """
-        return await self.Client.GetDatabaseAccount(endpoint, **kwargs)
+        return await self.client.GetDatabaseAccount(endpoint, **kwargs)
 
     @staticmethod
     def GetLocationalEndpoint(default_endpoint, location_name):

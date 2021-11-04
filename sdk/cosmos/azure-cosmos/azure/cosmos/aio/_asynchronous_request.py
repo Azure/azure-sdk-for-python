@@ -25,8 +25,7 @@
 import json
 import time
 
-from six.moves.urllib.parse import urlparse
-from typing import AnyStr
+from urllib.parse import urlparse
 from azure.core.exceptions import DecodeError  # type: ignore
 
 from .. import exceptions
@@ -167,7 +166,7 @@ async def AsynchronousRequest(
     :rtype: tuple of (dict dict)
     """
     request.data = _request_body_from_data(request_data)
-    if request.data and isinstance(request.data, AnyStr):
+    if request.data and isinstance(request.data, str):
         request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data)
     elif request.data is None:
         request.headers[http_constants.HttpHeaders.ContentLength] = 0

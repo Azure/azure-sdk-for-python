@@ -142,8 +142,6 @@ class _QueryExecutionContextBase(object):
         
         return await _retry_utility_async.ExecuteAsync(self._client, self._client._global_endpoint_manager, callback)
 
-    next = __anext__  # Python 2 compatibility.
-
 
 class _DefaultQueryExecutionContext(_QueryExecutionContextBase):
     """
