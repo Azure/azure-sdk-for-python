@@ -86,7 +86,7 @@ from azure.schemaregistry import SchemaRegistryClient
 token_credential = DefaultAzureCredential()
 fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
 group_name = os.environ['SCHEMA_REGISTRY_GROUP']
-name = "your-schema-name"
+schema_name = "your-schema-name"
 format = "Avro"
 schema_definition = """
 {"namespace": "example.avro",
@@ -102,7 +102,7 @@ schema_definition = """
 
 schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=fully_qualified_namespace, credential=token_credential)
 with schema_registry_client:
-    schema_properties = schema_registry_client.register_schema(group_name, name, schema_definition, format)
+    schema_properties = schema_registry_client.register_schema(group_name, schema_name, schema_definition, format)
     id = schema_properties.id
 ```
 
@@ -118,12 +118,13 @@ from azure.schemaregistry import SchemaRegistryClient
 
 token_credential = DefaultAzureCredential()
 fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
-id = 'your-schema-id'
+schema_id = 'your-schema-id'
 
 schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=fully_qualified_namespace, credential=token_credential)
 with schema_registry_client:
-    schema = schema_registry_client.get_schema(id)
-    schema_definition = schema.schema_definition
+    schema = schema_registry_client.get_schema(schema_id)
+    definition = schema.definition
+    properties = schema.properties
 ```
 
 ### Get the id of a schema
@@ -139,7 +140,7 @@ from azure.schemaregistry import SchemaRegistryClient
 token_credential = DefaultAzureCredential()
 fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
 group_name = os.environ['SCHEMA_REGISTRY_GROUP']
-name = "your-schema-name"
+schema_name = "your-schema-name"
 format = "Avro"
 schema_definition = """
 {"namespace": "example.avro",
@@ -155,7 +156,7 @@ schema_definition = """
 
 schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=fully_qualified_namespace, credential=token_credential)
 with schema_registry_client:
-    schema_properties = schema_registry_client.register_schema(group_name, name, schema_definition, format)
+    schema_properties = schema_registry_client.register_schema(group_name, schema_name, schema_definition, format)
     id = schema_properties.id
 ```
 
