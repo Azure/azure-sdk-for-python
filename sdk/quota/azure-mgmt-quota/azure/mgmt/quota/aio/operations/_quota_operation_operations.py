@@ -19,8 +19,8 @@ from ... import models as _models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class OperationOperations:
-    """OperationOperations async operations.
+class QuotaOperationOperations:
+    """QuotaOperationOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -45,7 +45,7 @@ class OperationOperations:
         self,
         **kwargs: Any
     ) -> AsyncIterable["_models.OperationList"]:
-        """GET operations.
+        """GET quota operations.
 
         List all the operations supported by the Microsoft.Quota resource provider.
 
