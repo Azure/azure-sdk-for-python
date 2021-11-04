@@ -10,7 +10,7 @@ parameters:
 steps:
   - pwsh: |
       Write-Host "${{ parameters.Version }}"
-      dotnet tool install --tool-path . --add-source "${{ parameters.DevOpsFeed }}" --version "${{ parameters.Version }}" "Azure.Sdk.Tools.RetrieveCodeOwners"
+      dotnet tool install --tool-path . --add-source "${{ parameters.DevOpsFeed }}" --version "$(RetrieveCodeOwnerToolVersion)" "$(RetrieveCodeOwnerToolName)"
     displayName: 'Install tool RetrieveCodeOwners'
     workingDirectory: '$(Agent.ToolsDirectory)'
 

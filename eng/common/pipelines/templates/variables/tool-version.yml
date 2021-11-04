@@ -1,2 +1,5 @@
 variables:
-  RetrieveCodeOwners: '1.0.0-dev.20211019.1'
+  - name: 'RetrieveCodeOwnerToolName' # new variable defined in YAML
+    value: 'Azure.Sdk.Tools.RetrieveCodeOwners'
+  - name: 'RetrieveCodeOwnerToolVersion' # new variable defined in YAML
+    value: '1.0.0-dev.20211019.1'

@@ -287,7 +287,6 @@ stages:
           parameters:
             TargetUserVariable: "CodeOwners"
             ServiceDirectory: ${{parameters.ServiceDirectory}}
-            Version: "$(RetrieveCodeOwners)"
 
         - pwsh: |
             $a = '$(CodeOwners)'
