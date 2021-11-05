@@ -1873,13 +1873,17 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         blob_name = await self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
+        permission = BlobSasPermissions(read=True, write=True, delete=True, delete_previous_version=True,
+                                        permanent_delete=True, list=True, add=True, create=True, update=True)
+        self.assertIn('y', str(permission))
+
         token = generate_blob_sas(
             blob.account_name,
             blob.container_name,
             blob.blob_name,
             snapshot=blob.snapshot,
             account_key=blob.credential.account_key,
-            permission=BlobSasPermissions(read=True),
+            permission=permission,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -1937,11 +1941,15 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         await self._setup(storage_account_name, storage_account_key)
         blob_name = await self._create_block_blob()
 
+        account_sas_permission = AccountSasPermissions(read=True, write=True, delete=True, add=True,
+                                                       permanent_delete=True, list=True)
+        self.assertIn('y', str(account_sas_permission))
+
         token = generate_account_sas(
             self.bsc.account_name,
             self.bsc.credential.account_key,
             ResourceTypes(container=True, object=True),
-            AccountSasPermissions(read=True),
+            account_sas_permission,
             datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -2217,11 +2225,15 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
         container = self.bsc.get_container_client(self.container_name)
+        permission = ContainerSasPermissions(read=True, write=True, delete=True, delete_previous_version=True,
+                                             list=True, tag=True, set_immutability_policy=True,
+                                             permanent_delete=True)
+        self.assertIn('y', str(permission))
         token = generate_container_sas(
             container.account_name,
             container.container_name,
             account_key=container.credential.account_key,
-            permission=ContainerSasPermissions(read=True),
+            permission=permission,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         sas_container = ContainerClient.from_container_url(container.url, credential=token)
