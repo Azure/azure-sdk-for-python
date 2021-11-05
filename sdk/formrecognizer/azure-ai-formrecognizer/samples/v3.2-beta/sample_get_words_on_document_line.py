@@ -11,6 +11,8 @@ FILE: sample_get_words_on_document_line.py
 
 DESCRIPTION:
     This sample demonstrates how to get the words contained in a DocumentLine.
+    Please note that `get_words` on DocumentLine is only available in SDK version
+    3.2.0b2 and later.
 
 USAGE:
     python sample_get_words_on_document_line.py
