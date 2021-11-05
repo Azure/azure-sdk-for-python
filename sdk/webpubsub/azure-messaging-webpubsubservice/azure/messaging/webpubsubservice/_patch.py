@@ -79,6 +79,37 @@ class _UTC_TZ(tzinfo):
         return self.__class__.ZERO
 
 
+def _get_token_by_key(endpoint, hub, key, **kwargs):
+    # type: (str, str, str, Any) -> str
+    """build token with access key.
+
+    :param endpoint:  HTTPS endpoint for the WebPubSub service instance.
+    :type endpoint: str
+    :param hub: The hub to give access to.
+    :type hub: str
+    :param key: The access key
+    :type hub: str
+    :returns: token
+    :rtype: str
+    """
+    audience = "{}/client/hubs/{}".format(endpoint, hub)
+    user = kwargs.pop("user_id", None)
+    ttl = timedelta(minutes=kwargs.pop("expire_in_minutes", 60))
+    roles = kwargs.pop("roles", [])
+
+    payload = {
+        "aud": audience,
+        "iat": datetime.now(tz=_UTC_TZ()),
+        "exp": datetime.now(tz=_UTC_TZ()) + ttl,
+    }
+    if user:
+        payload["sub"] = user
+    if roles:
+        payload["role"] = roles
+
+    return six.ensure_str(jwt.encode(payload, key, algorithm="HS256"))
+
+
 def _parse_connection_string(connection_string, **kwargs):
     # type: (str, Any) -> Dict[Any]
     for segment in connection_string.split(";"):
@@ -273,35 +304,6 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         credential = AzureKeyCredential(kwargs.pop("accesskey"))
         return cls(credential=credential, **kwargs)
 
-    def _get_token_by_key(self, endpoint, hub, **kwargs):
-        # type: (str, str, Any) -> str
-        """build token with access key.
-
-        :param endpoint:  HTTPS endpoint for the WebPubSub service instance.
-        :type endpoint: str
-        :param hub: The hub to give access to.
-        :type hub: str
-        :returns: token
-        :rtype: str
-        """
-        audience = "{}/client/hubs/{}".format(endpoint, hub)
-        user = kwargs.pop("user_id", None)
-        key = self._config.credential.key
-        ttl = timedelta(minutes=kwargs.pop("expire_in_minutes", 60))
-        roles = kwargs.pop("roles", [])
-
-        payload = {
-            "aud": audience,
-            "iat": datetime.now(tz=_UTC_TZ()),
-            "exp": datetime.now(tz=_UTC_TZ()) + ttl,
-        }
-        if user:
-            payload["sub"] = user
-        if roles:
-            payload["role"] = roles
-
-        return six.ensure_str(jwt.encode(payload, key, algorithm="HS256"))
-
     @distributed_trace
     def get_client_access_token(self, hub, **kwargs):
         # type: (str, Any) -> Dict[Any]
@@ -341,7 +343,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         client_endpoint = "ws" + endpoint[4:]
         client_url = "{}/client/hubs/{}".format(client_endpoint, hub)
         if isinstance(self._config.credential, AzureKeyCredential):
-            token = self._get_token_by_key(endpoint, hub, **kwargs)
+            token = _get_token_by_key(endpoint, hub, self._config.credential.key, **kwargs)
         else:
             token = super().get_client_access_token(hub, **kwargs).get('token')
 
