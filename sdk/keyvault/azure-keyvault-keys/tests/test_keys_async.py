@@ -31,6 +31,7 @@ all_api_versions = get_decorator(is_async=True)
 only_hsm = get_decorator(only_hsm=True, is_async=True)
 only_hsm_7_3_preview = get_decorator(only_hsm=True, is_async=True, api_versions=[ApiVersion.V7_3_PREVIEW])
 only_vault_7_3_preview = get_decorator(only_vault=True, is_async=True, api_versions=[ApiVersion.V7_3_PREVIEW])
+only_7_3_preview = get_decorator(is_async=True, api_versions=[ApiVersion.V7_3_PREVIEW])
 logging_enabled = get_decorator(is_async=True, logging_enable=True)
 logging_disabled = get_decorator(is_async=True, logging_enable=False)
 
@@ -486,7 +487,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
             assert all(random_bytes != rb for rb in generated_random_bytes)
             generated_random_bytes.append(random_bytes)
 
-    @only_hsm_7_3_preview()
+    @only_7_3_preview()
     @client_setup
     async def test_key_release(self, client, **kwargs):
         attestation_uri = self._get_attestation_uri()
