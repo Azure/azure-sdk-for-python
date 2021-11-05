@@ -126,19 +126,21 @@ class SchemaRegistryClient(object):
         except AttributeError:
             pass
 
+        format = format.capitalize()
         http_request_kwargs = get_http_request_kwargs(kwargs)
         request = schema_rest.build_register_request(
             group_name=group_name,
             schema_name=schema_name,
             content=schema_definition,
-            serialization_type=format,
-            content_type=kwargs.pop("content_type", "application/json"),
+            content_type=kwargs.pop(
+                "content_type", "application/json; serialization={}".format(format)
+            ),
             **http_request_kwargs
         )
 
         response = await self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
-        return _parse_response_schema_properties(response)
+        return _parse_response_schema_properties(response, format)
 
     async def get_schema(self, schema_id: str, **kwargs: Any) -> Schema:
         """
@@ -161,7 +163,7 @@ class SchemaRegistryClient(object):
         """
         http_request_kwargs = get_http_request_kwargs(kwargs)
         request = schema_rest.build_get_by_id_request(
-            schema_id=schema_id, **http_request_kwargs
+            id=schema_id, **http_request_kwargs
         )
         response = await self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
@@ -202,16 +204,18 @@ class SchemaRegistryClient(object):
         except AttributeError:
             pass
 
+        format = format.capitalize()
         http_request_kwargs = get_http_request_kwargs(kwargs)
         request = schema_rest.build_query_id_by_content_request(
             group_name=group_name,
             schema_name=schema_name,
             content=schema_definition,
-            serialization_type=format,
-            content_type=kwargs.pop("content_type", "application/json"),
+            content_type=kwargs.pop(
+                "content_type", "application/json; serialization={}".format(format)
+            ),
             **http_request_kwargs
         )
 
         response = await self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
-        return _parse_response_schema_properties(response)
+        return _parse_response_schema_properties(response, format)
