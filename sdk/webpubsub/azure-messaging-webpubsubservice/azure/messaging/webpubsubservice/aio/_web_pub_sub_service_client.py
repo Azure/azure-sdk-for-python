@@ -14,7 +14,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from msrest import Deserializer, Serializer
 
 from ._configuration import WebPubSubServiceClientConfiguration
-from .operations import WebPubSubServiceClientOperationsMixin
+from ._operations import WebPubSubServiceClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports

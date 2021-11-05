@@ -94,7 +94,7 @@ def _get_token_by_key(endpoint, hub, key, **kwargs):
     """
     audience = "{}/client/hubs/{}".format(endpoint, hub)
     user = kwargs.pop("user_id", None)
-    ttl = timedelta(minutes=kwargs.pop("expire_in_minutes", 60))
+    ttl = timedelta(minutes=kwargs.pop("minutes_to_expire", 60))
     roles = kwargs.pop("roles", [])
 
     payload = {
@@ -315,8 +315,8 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         :paramtype user_id: str
         :keyword roles: Roles that the connection with the generated token will have.
         :paramtype roles: list[str]
-        :keyword expire_in_minutes: The expire time of the generated token.
-        :paramtype expire_in_minutes: int
+        :keyword minutes_to_expire: The expire time of the generated token.
+        :paramtype minutes_to_expire: int
         :returns: ~dict containing the web socket endpoint, the token and a url with the generated access token.
         :rtype: ~dict
 

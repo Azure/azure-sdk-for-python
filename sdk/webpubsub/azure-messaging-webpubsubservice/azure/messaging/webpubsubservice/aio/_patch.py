@@ -163,8 +163,8 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         :paramtype user_id: str
         :keyword roles: Roles that the connection with the generated token will have.
         :paramtype roles: list[str]
-        :keyword expire_in_minutes: The expire time of the generated token.
-        :paramtype expire_in_minutes: int
+        :keyword minutes_to_expire: The expire time of the generated token.
+        :paramtype minutes_to_expire: int
         :returns: ~dict containing the web socket endpoint, the token and a url with the generated access token.
         :rtype: ~dict
 

@@ -67,8 +67,7 @@ directive:
   - from: swagger-document
     where: $["paths"]["/api/hubs/{hub}/:generateToken"].post.parameters
     transform: >
-        $[2]["x-ms-client-name"] = "roles",
-        $[3]["x-ms-client-name"] = "expireInMinutes"
+        $[2]["x-ms-client-name"] = "roles"
 ```
 
 ```yaml

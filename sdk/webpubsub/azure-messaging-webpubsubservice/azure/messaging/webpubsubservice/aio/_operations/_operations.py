@@ -15,11 +15,10 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ...operations._operations import build_add_connection_to_group_request, build_add_user_to_group_request, build_close_all_connections_request, build_close_connection_request, build_close_group_connections_request, build_close_user_connections_request, build_connection_exists_request, build_get_client_access_token_request, build_grant_permission_request, build_group_exists_request, build_has_permission_request, build_remove_connection_from_group_request, build_remove_user_from_all_groups_request, build_remove_user_from_group_request, build_revoke_permission_request, build_send_to_all_request, build_send_to_connection_request, build_send_to_group_request, build_send_to_user_request, build_user_exists_request
-
+from ..._operations._operations import build_add_connection_to_group_request, build_add_user_to_group_request, build_close_all_connections_request, build_close_connection_request, build_close_group_connections_request, build_close_user_connections_request, build_connection_exists_request, build_get_client_access_token_request, build_grant_permission_request, build_group_exists_request, build_has_permission_request, build_remove_connection_from_group_request, build_remove_user_from_all_groups_request, build_remove_user_from_group_request, build_revoke_permission_request, build_send_to_all_request, build_send_to_connection_request, build_send_to_group_request, build_send_to_user_request, build_user_exists_request
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class WebPubSubServiceClientOperationsMixin:
 
@@ -30,9 +29,9 @@ class WebPubSubServiceClientOperationsMixin:
         *,
         user_id: Optional[str] = None,
         roles: Optional[List[str]] = None,
-        expire_in_minutes: Optional[int] = 60,
+        minutes_to_expire: Optional[int] = 60,
         **kwargs: Any
-    ) -> Any:
+    ) -> JSONType:
         """Generate token for the client to connect Azure Web PubSub service.
 
         Generate token for the client to connect Azure Web PubSub service.
@@ -44,13 +43,13 @@ class WebPubSubServiceClientOperationsMixin:
         :paramtype user_id: str
         :keyword roles: Roles that the connection with the generated token will have.
         :paramtype roles: list[str]
-        :keyword expire_in_minutes: The expire time of the generated token.
-        :paramtype expire_in_minutes: int
+        :keyword minutes_to_expire: The expire time of the generated token.
+        :paramtype minutes_to_expire: int
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :return: JSON object
-        :rtype: Any
+        :rtype: JSONType
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -61,7 +60,7 @@ class WebPubSubServiceClientOperationsMixin:
                     "token": "str"  # Optional. The token value for the WebSocket client to connect to the service.
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -69,13 +68,13 @@ class WebPubSubServiceClientOperationsMixin:
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
-
+        
         request = build_get_client_access_token_request(
             hub=hub,
             api_version=api_version,
             user_id=user_id,
             roles=roles,
-            expire_in_minutes=expire_in_minutes,
+            minutes_to_expire=minutes_to_expire,
             template_url=self.get_client_access_token.metadata['url'],
         )
         path_format_arguments = {
@@ -138,7 +137,7 @@ class WebPubSubServiceClientOperationsMixin:
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
-
+        
         request = build_close_all_connections_request(
             hub=hub,
             api_version=api_version,
@@ -168,7 +167,7 @@ class WebPubSubServiceClientOperationsMixin:
     async def send_to_all(
         self,
         hub: str,
-        message: Union[IO, str, JSONType],
+        message: Union[IO, str],
         *,
         excluded: Optional[List[str]] = None,
         **kwargs: Any
@@ -181,7 +180,7 @@ class WebPubSubServiceClientOperationsMixin:
          alpha-numeric characters or underscore.
         :type hub: str
         :param message: The payload body.
-        :type message: IO or str or JSONType
+        :type message: IO or str
         :keyword excluded: Excluded connection Ids.
         :paramtype excluded: list[str]
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
@@ -273,7 +272,7 @@ class WebPubSubServiceClientOperationsMixin:
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
-
+        
         request = build_connection_exists_request(
             hub=hub,
             connection_id=connection_id,
@@ -334,7 +333,7 @@ class WebPubSubServiceClientOperationsMixin:
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
-
+        
         request = build_close_connection_request(
             hub=hub,
             connection_id=connection_id,
@@ -365,7 +364,7 @@ class WebPubSubServiceClientOperationsMixin:
         self,
         hub: str,
         connection_id: str,
-        message: Union[IO, str, JSONType],
+        message: Union[IO, str],
         **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific connection.
@@ -378,7 +377,7 @@ class WebPubSubServiceClientOperationsMixin:
         :param connection_id: The connection Id.
         :type connection_id: str
         :param message: The payload body.
-        :type message: IO or str or JSONType
+        :type message: IO or str
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
@@ -468,7 +467,7 @@ class WebPubSubServiceClientOperationsMixin:
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
-
+        
         request = build_group_exists_request(
             hub=hub,
             group=group,
@@ -532,7 +531,7 @@ class WebPubSubServiceClientOperationsMixin:
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
-
+        
         request = build_close_group_connections_request(
             hub=hub,
             group=group,
@@ -564,7 +563,7 @@ class WebPubSubServiceClientOperationsMixin:
         self,
         hub: str,
         group: str,
-        message: Union[IO, str, JSONType],
+        message: Union[IO, str],
         *,
         excluded: Optional[List[str]] = None,
         **kwargs: Any
@@ -579,7 +578,7 @@ class WebPubSubServiceClientOperationsMixin:
         :param group: Target group name, which length should be greater than 0 and less than 1025.
         :type group: str
         :param message: The payload body.
-        :type message: IO or str or JSONType
+        :type message: IO or str
         :keyword excluded: Excluded connection Ids.
         :paramtype excluded: list[str]
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
@@ -675,7 +674,7 @@ class WebPubSubServiceClientOperationsMixin:
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
-
+        
         request = build_add_connection_to_group_request(
             hub=hub,
             group=group,
@@ -735,7 +734,7 @@ class WebPubSubServiceClientOperationsMixin:
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
-
+        
         request = build_remove_connection_from_group_request(
             hub=hub,
             group=group,
@@ -792,7 +791,7 @@ class WebPubSubServiceClientOperationsMixin:
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
-
+        
         request = build_user_exists_request(
             hub=hub,
             user_id=user_id,
@@ -856,7 +855,7 @@ class WebPubSubServiceClientOperationsMixin:
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
-
+        
         request = build_close_user_connections_request(
             hub=hub,
             user_id=user_id,
@@ -994,7 +993,7 @@ class WebPubSubServiceClientOperationsMixin:
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
-
+        
         request = build_add_user_to_group_request(
             hub=hub,
             group=group,
@@ -1054,7 +1053,7 @@ class WebPubSubServiceClientOperationsMixin:
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
-
+        
         request = build_remove_user_from_group_request(
             hub=hub,
             group=group,
@@ -1111,7 +1110,7 @@ class WebPubSubServiceClientOperationsMixin:
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
-
+        
         request = build_remove_user_from_all_groups_request(
             hub=hub,
             user_id=user_id,
@@ -1176,7 +1175,7 @@ class WebPubSubServiceClientOperationsMixin:
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
-
+        
         request = build_grant_permission_request(
             hub=hub,
             permission=permission,
@@ -1243,7 +1242,7 @@ class WebPubSubServiceClientOperationsMixin:
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
-
+        
         request = build_revoke_permission_request(
             hub=hub,
             permission=permission,
@@ -1310,7 +1309,7 @@ class WebPubSubServiceClientOperationsMixin:
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
-
+        
         request = build_has_permission_request(
             hub=hub,
             permission=permission,
