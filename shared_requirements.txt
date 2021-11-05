@@ -344,6 +344,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-datafactory msrest>=0.6.21
 #override azure-mgmt-containerinstance msrest>=0.6.21
 #override azure-mgmt-recoveryservicessiterecovery msrest>=0.6.21
+#override azure-mixedreality-remoterendering azure-core<2.0.0,>=1.6.0
 #override azure-mgmt-batch msrest>=0.6.21
 #override azure-batch msrest>=0.6.21
 #override azure-mgmt-servicebus msrest>=0.6.21
