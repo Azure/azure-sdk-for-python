@@ -479,8 +479,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         for i in range(5):
             # [START get_random_bytes]
             # get eight random bytes from a managed HSM
-            result = await client.get_random_bytes(count=8)
-            random_bytes = result.value
+            random_bytes = await client.get_random_bytes(count=8)
             # [END get_random_bytes]
             assert len(random_bytes) == 8
             assert all(random_bytes != rb for rb in generated_random_bytes)
@@ -603,7 +602,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         key = await self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
 
         # try specifying the key version
-        crypto_client = client.get_cryptography_client(key_name, version=key.properties.version)
+        crypto_client = client.get_cryptography_client(key_name, key_version=key.properties.version)
         # both clients should use the same generated client
         assert client._client == crypto_client._client
 
