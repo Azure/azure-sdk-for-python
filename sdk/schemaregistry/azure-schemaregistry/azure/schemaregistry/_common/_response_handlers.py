@@ -27,26 +27,21 @@ from ._schema import SchemaProperties, Schema
 
 
 def _parse_schema_properties_dict(response):
-    return {
-        'id': response.headers.get('schema-id')
-    }
+    return {"id": response.headers.get("schema-id")}
 
 
 def _parse_response_schema_properties(response, format):
     # pylint:disable=redefined-builtin
     properties_dict = _parse_schema_properties_dict(response)
-    properties_dict['format'] = format
-    return SchemaProperties(
-        **properties_dict
-    )
+    properties_dict["format"] = format
+    return SchemaProperties(**properties_dict)
 
 
 def _parse_response_schema(response):
     # pylint:disable=redefined-builtin
     schema_props_dict = _parse_schema_properties_dict(response)
-    format = response.headers.get('content-type').split('serialization=')[1]
-    schema_props_dict['format'] = format
+    format = response.headers.get("content-type").split("serialization=")[1]
+    schema_props_dict["format"] = format
     return Schema(
-        definition=response.text(),
-        properties=SchemaProperties(**schema_props_dict)
+        definition=response.text(), properties=SchemaProperties(**schema_props_dict)
     )
