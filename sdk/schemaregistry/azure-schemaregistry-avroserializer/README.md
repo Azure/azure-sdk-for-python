@@ -27,7 +27,7 @@ To use this package, you must have:
 * Python 2.7, 3.6 or later - [Install Python][python]
 
 ### Authenticate the client
-Interaction with Schema Registry Avro Serializer starts with an instance of AvroSerializer class. The client constructor takes the fully qualified namespace, schema group name, and and Azure Active Directory credential:
+Interaction with the Schema Registry Avro Serializer starts with an instance of AvroSerializer class, which takes the schema group name and the [Schema Registry Client][schemaregistry_client] class. The client constructor takes the Event Hubs fully qualified namespace and and Azure Active Directory credential:
 
 * The fully qualified namespace of the Schema Registry instance should follow the format: `<yournamespace>.servicebus.windows.net`.
 
@@ -44,7 +44,7 @@ pip install azure-identity
 pip install aiohttp
 ```
 
-**Create client using the azure-identity library:**
+**Create AvroSerializer using the azure-schemaregistry library:**
 
 ```python
 from azure.schemaregistry import SchemaRegistryClient
@@ -113,9 +113,8 @@ from azure.identity import DefaultAzureCredential
 token_credential = DefaultAzureCredential()
 fully_qualified_namespace = os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
 group_name = "<your-group-name>"
-
-schema_registry_client = SchemaRegistryClient(fully_qualified_namespace, token_credential)
-serializer = AvroSerializer(client=schema_registry_client, group_name=group_name, auto_register_schemas=True)
+schema_name = "example.avro.User"
+format = "Avro"
 
 schema_string = """
 {"namespace": "example.avro",
@@ -127,6 +126,10 @@ schema_string = """
      {"name": "favorite_color", "type": ["string", "null"]}
  ]
 }"""
+
+schema_registry_client = SchemaRegistryClient(fully_qualified_namespace, token_credential)
+schema_register_client.register(group_name, schema_name, schema_string, format)
+serializer = AvroSerializer(client=schema_registry_client, group_name=group_name)
 
 with serializer:
     dict_data = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
@@ -149,7 +152,7 @@ fully_qualified_namespace = os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE
 group_name = "<your-group-name>"
 
 schema_registry_client = SchemaRegistryClient(fully_qualified_namespace, token_credential)
-serializer = AvroSerializer(client=schema_registry_client, group_name=group_name, auto_register_schemas=True)
+serializer = AvroSerializer(client=schema_registry_client, group_name=group_name)
 
 with serializer:
     encoded_bytes = b'<data_encoded_by_azure_schema_registry_avro_serializer>'
@@ -218,7 +221,7 @@ eventhub_connection_str = os.environ['EVENT_HUB_CONN_STR']
 eventhub_name = os.environ['EVENT_HUB_NAME']
 
 schema_registry_client = SchemaRegistryClient(fully_qualified_namespace, token_credential)
-avro_serializer = AvroSerializer(client=schema_registry_client, group_name=group_name, auto_register_schemas=True)
+avro_serializer = AvroSerializer(client=schema_registry_client, group_name=group_name)
 
 eventhub_consumer = EventHubConsumerClient.from_connection_string(
     conn_str=eventhub_connection_str,
