@@ -1,17 +1,13 @@
 # Release History
 
-## 3.2.0b2 (Unreleased)
+## 3.2.0b2 (2021-11-09)
 
 ### Features Added
-- Added `get_words` methods on `AnalyzedDocument`, `DocumentEntity`, `DocumentField`, `DocumentLine`, `DocumentKeyValueElement`, `DocumentTable`, `DocumentTableCell`.
-- Added `get_lines` methods on `AnalyzedDocument`, `DocumentEntity`, `DocumentField`, `DocumentKeyValueElement`, `DocumentTable`, `DocumentTableCell`.
+- Added `get_words()` on `DocumentLine`.
+- Added samples showing how to use `get_words()` on a `DocumentLine` under `/samples/v3.2-beta`: `sample_get_words_on_document_line.py` and `sample_get_words_on_document_line_async.py`.
 
 ### Breaking Changes
 - Renamed `DocumentElement` to `DocumentContentElement`.
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 3.2.0b1 (2021-10-07)
 
