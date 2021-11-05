@@ -271,13 +271,16 @@ def main():
 
         if abs(item.days_from_target) < 3:
             item.bot_advice += ' release date < 2 ! <br>'
+            
+        assigner_repo = assigner_repoes[item.assignee]
+        assigner_issue = assigner_repo.get_issue(number=item.issue_object.number)
 
         if item.days_from_latest_comment >= 15 and item.language == 'Python' and '7days attention' in item.labels and item.days_from_target < 0:
-            item.issue_object.create_comment(
+            assigner_issue.create_comment(
                 f'hi @{item.author}, the issue is closed since there is no reply for a long time. Please reopen it if necessary or create new one.')
             item.issue_object.edit(state='close')
         elif item.days_from_latest_comment >= 7 and item.language == 'Python' and '7days attention' not in item.labels and item.days_from_target < 7:
-            item.issue_object.create_comment(
+            assigner_issue.create_comment(
                 f'hi @{item.author}, this release-request has been delayed more than 7 days,'
                 ' please deal with it ASAP. We will close the issue if there is still no response after 7 days!')
             item.issue_object.add_to_labels('7days attention')
