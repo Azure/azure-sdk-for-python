@@ -2730,7 +2730,8 @@ class DocumentLine(object):
         """
         if not self._parent:
             raise ValueError(
-                "Cannot use get_words() on a model that has been converted from a dictionary. Missing reference to parent element."
+                "Cannot use get_words() on a model that has been converted from a dictionary. "
+                "Missing reference to parent element."
                 )
         result = []
         for word in self._parent.words:
