@@ -152,6 +152,7 @@ class CallingServerClient(object):
         :returns: Instance of CallConnection.
         :rtype: ~azure.communication..callingserver.CallConnection
         """
+
         if not call_connection_id:
             raise ValueError("call_connection_id can not be None")
 
@@ -176,14 +177,6 @@ class CallingServerClient(object):
         :returns: CallConnection for a successful creating callConnection request.
         :rtype: ~azure.communication.callingserver.CallConnection
         """
-        if not source:
-            raise ValueError("source can not be None")
-
-        if not targets:
-            raise ValueError("targets can not be None or empty")
-
-        if not options:
-            raise ValueError("options can not be None")
 
         request = CreateCallRequest(
             source=serialize_identifier(source),
@@ -223,12 +216,6 @@ class CallingServerClient(object):
         :returns: CallConnection for a successful join request.
         :rtype: ~azure.communication.callingserver.CallConnection
         """
-        if not call_locator:
-            raise ValueError("call_locator can not be None")
-        if not source:
-            raise ValueError("source can not be None")
-        if not call_options:
-            raise ValueError("call_options can not be None")
 
         join_call_request = JoinCallRequestConverter.convert(
             call_locator=serialize_call_locator(call_locator),
@@ -256,9 +243,6 @@ class CallingServerClient(object):
         **kwargs  # type: Any
     ):  # type: (...) -> AnswerCallResult
 
-        if not incoming_call_context:
-            raise ValueError("incoming_call_context can not be None")
-
         answer_call_request = AnswerCallRequestConverter.convert(
             incoming_call_context=incoming_call_context,
             callback_uri=callback_uri,
@@ -280,9 +264,6 @@ class CallingServerClient(object):
         **kwargs  # type: Any
     ):  # type: (...) -> None
 
-        if not incoming_call_context:
-            raise ValueError("incoming_call_context can not be None")
-
         reject_call_request = RejectCallRequestConverter.convert(
             incoming_call_context=incoming_call_context,
             call_reject_reason=call_reject_reason,
@@ -303,9 +284,6 @@ class CallingServerClient(object):
         timeout_in_seconds=None,  # type: int
         **kwargs  # type: Any
     ):  # type: (...) -> None
-
-        if not incoming_call_context:
-            raise ValueError("incoming_call_context can not be None")
 
         redirect_call_request = RedirectCallRequestConverter.convert(
             incoming_call_context=incoming_call_context,
@@ -372,11 +350,6 @@ class CallingServerClient(object):
         **kwargs  # type: Any
     ):  # type: (...) -> AddParticipantResult
 
-        if not call_locator:
-            raise ValueError("call_locator can not be None")
-        if not participant:
-            raise ValueError("participant can not be None")
-
         alternate_caller_id = (None
             if alternate_caller_id is None
             else PhoneNumberIdentifierModel(value=alternate_caller_id))
@@ -401,11 +374,6 @@ class CallingServerClient(object):
         participant,  # type: CommunicationIdentifier
         **kwargs  # type: Any
     ): # type: (...) -> None
-
-        if not call_locator:
-            raise ValueError("call_locator can not be None")
-        if not participant:
-            raise ValueError("participant can not be None")
 
         remove_participant_with_call_locator_request = RemoveParticipantWithCallLocatorRequestConverter.convert(
             serialize_call_locator(call_locator),
@@ -459,9 +427,6 @@ class CallingServerClient(object):
             **kwargs  # type: Any
         ):  # type: (...) -> None
 
-        if not participant:
-            raise ValueError("participant can not be None")
-
         mute_participant_with_call_locator_request = MuteParticipantWithCallLocatorRequestConverter.convert(
             serialize_call_locator(call_locator),
             serialize_identifier(participant)
@@ -479,9 +444,6 @@ class CallingServerClient(object):
             participant,  # type: CommunicationIdentifier
             **kwargs  # type: Any
         ):  # type: (...) -> None
-
-        if not participant:
-            raise ValueError("participant can not be None")
 
         unmute_participant_with_call_locator_request = UnmuteParticipantWithCallLocatorRequestConverter.convert(
             serialize_call_locator(call_locator),
@@ -501,11 +463,6 @@ class CallingServerClient(object):
         **kwargs  # type: Any
     ): # type: (...) -> None
 
-        if not call_locator:
-            raise ValueError("call_locator can not be None")
-        if not media_operation_id:
-            raise ValueError("media_operation_id can not be None")
-
         cancel_media_operation_request = CancelMediaOperationWithCallLocatorRequestConverter.convert(
             serialize_call_locator(call_locator),
             media_operation_id=media_operation_id
@@ -524,13 +481,6 @@ class CallingServerClient(object):
         media_operation_id,  # type: str
         **kwargs  # type: Any
     ): # type: (...) -> None
-
-        if not call_locator:
-            raise ValueError("call_locator can not be None")
-        if not participant:
-            raise ValueError("participant can not be None")
-        if not media_operation_id:
-            raise ValueError("media_operation_id can not be None")
 
         cancel_participant_media_operation_request = \
         CancelParticipantMediaOperationWithCallLocatorRequestConverter.convert(
@@ -552,9 +502,6 @@ class CallingServerClient(object):
             **kwargs  # type: Any
         ):  # type: (...) -> None
 
-        if not participant:
-            raise ValueError("participant can not be None")
-
         hold_meeting_audio_with_call_locator_request = HoldMeetingAudioWithCallLocatorRequestConverter.convert(
             serialize_call_locator(call_locator),
             serialize_identifier(participant)
@@ -572,9 +519,6 @@ class CallingServerClient(object):
             participant,  # type: CommunicationIdentifier
             **kwargs  # type: Any
         ):  # type: (...) -> None
-
-        if not participant:
-            raise ValueError("participant can not be None")
 
         resume_meeting_audio_with_call_locator_request = ResumeMeetingAudioWithCallLocatorRequestConverter.convert(
             serialize_call_locator(call_locator),
@@ -675,11 +619,6 @@ class CallingServerClient(object):
         :returns: ContentStreamDownloader for a successful download request.
         :rtype: ~ContentStreamDownloader
         """
-        if not content_url:
-            raise ValueError("content_url can not be None")
-
-        if not CallingServerUtils.is_valid_url(content_url):
-            raise ValueError("content_url is invalid")
 
         # pylint:disable=protected-access
         content_downloader = ContentDownloader(

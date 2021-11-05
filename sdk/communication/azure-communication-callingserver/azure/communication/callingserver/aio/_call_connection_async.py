@@ -138,9 +138,6 @@ class CallConnection:
             **kwargs: Any
         ) -> AddParticipantResult:
 
-        if not participant:
-            raise ValueError("participant can not be None")
-
         alternate_caller_id = (None
             if alternate_caller_id is None
             else PhoneNumberIdentifierModel(value=alternate_caller_id))
@@ -231,12 +228,6 @@ class CallConnection:
             **kwargs: Any
         )-> None:
 
-        if not participant:
-            raise ValueError("participant can not be None")
-
-        if not media_operation_id:
-            raise ValueError("media_operation_id can not be None")
-
         cancel_media_operation_request = CancelParticipantMediaOperationRequestConverter.convert(
             identifier=serialize_identifier(participant),
             media_operation_id=media_operation_id
@@ -255,9 +246,6 @@ class CallConnection:
             **kwargs: Any
         ) -> None:
 
-        if not participant:
-            raise ValueError("participant can not be None")
-
         mute_participant_request = MuteParticipantRequestConverter.convert(
             identifier=serialize_identifier(participant)
             )
@@ -274,9 +262,6 @@ class CallConnection:
             participant: CommunicationIdentifier,
             **kwargs: Any
         ) -> None:
-
-        if not participant:
-            raise ValueError("participant can not be None")
 
         unmute_participant_request = UnmuteParticipantRequestConverter.convert(
             identifier=serialize_identifier(participant)
@@ -295,9 +280,6 @@ class CallConnection:
             **kwargs: Any
         ) -> None:
 
-        if not participant:
-            raise ValueError("participant can not be None")
-
         hold_meeting_audio_request = HoldMeetingAudioRequestConverter.convert(
             identifier=serialize_identifier(participant)
             )
@@ -314,9 +296,6 @@ class CallConnection:
             participant: CommunicationIdentifier,
             **kwargs: Any
         )  -> None:
-
-        if not participant:
-            raise ValueError("participant can not be None")
 
         resume_participant_meeting_audio_request = ResumeMeetingAudioRequestConverter.convert(
             identifier=serialize_identifier(participant)
@@ -338,11 +317,6 @@ class CallConnection:
             callback_uri: Optional[str] = None,
             **kwargs: Any
         )-> None:
-
-        if not target_participant:
-            raise ValueError("target_participant can not be None")
-        if not target_call_connection_id:
-            raise ValueError("target_call_connection_id can not be None")
 
         transfer_call_request = TransferCallRequestConverter.convert(
             target_participant=serialize_identifier(target_participant),
@@ -366,11 +340,6 @@ class CallConnection:
             **kwargs: Any
         ) -> CreateAudioRoutingGroupResult:
 
-        if not audio_routing_mode:
-            raise ValueError("audio_routing_mode can not be None")
-        if not targets:
-            raise ValueError("targets can not be None")
-
         audio_routing_group_request = AudioRoutingGroupRequestConverter.convert(
             audio_routing_mode=audio_routing_mode,
             target_identities=[serialize_identifier(m) for m in targets]
@@ -389,9 +358,6 @@ class CallConnection:
             **kwargs: Any
         ) -> AudioRoutingGroupResult:
 
-        if not audio_routing_group_id:
-            raise ValueError("audio_routing_group_id can not be None")
-
         return await self._call_connection_client.get_audio_routing_groups(
             call_connection_id=self.call_connection_id,
             audio_routing_group_id=audio_routing_group_id,
@@ -404,9 +370,6 @@ class CallConnection:
             audio_routing_group_id: str,
             **kwargs: Any
         ) -> None:
-
-        if not audio_routing_group_id:
-            raise ValueError("audio_routing_group_id can not be None")
 
         return await self._call_connection_client.delete_audio_routing_group(
             call_connection_id=self.call_connection_id,
@@ -421,11 +384,6 @@ class CallConnection:
             targets: List[CommunicationIdentifier],
             **kwargs: Any
         ) -> None:
-
-        if not audio_routing_group_id:
-            raise ValueError("audio_routing_group_id can not be None")
-        if not targets:
-            raise ValueError("targets can not be None")
 
         update_audio_routing_group_request = UpdateAudioRoutingGroupRequestConverter.convert(
             target_identities=[serialize_identifier(m) for m in targets]

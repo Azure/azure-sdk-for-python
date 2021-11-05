@@ -174,12 +174,6 @@ class CallingServerClient:
         :returns: CallConnection for a successful creating callConnection request.
         :rtype: ~azure.communication.callingserver.CallConnection
         """
-        if not source:
-            raise ValueError("source can not be None")
-        if not targets:
-            raise ValueError("targets can not be None or empty")
-        if not options:
-            raise ValueError("options can not be None")
 
         request = CreateCallRequest(
             source=serialize_identifier(source),
@@ -222,12 +216,6 @@ class CallingServerClient:
         :returns: CallConnection for a successful join request.
         :rtype: ~azure.communication.callingserver.CallConnection
         """
-        if not call_locator:
-            raise ValueError("call_locator can not be None")
-        if not source:
-            raise ValueError("source can not be None")
-        if not call_options:
-            raise ValueError("call_options can not be None")
 
         join_call_request = JoinCallRequestConverter.convert(
             call_locator=serialize_call_locator(call_locator),
@@ -256,9 +244,6 @@ class CallingServerClient:
         **kwargs: Any
     ) -> AnswerCallResult:
 
-        if not incoming_call_context:
-            raise ValueError("incoming_call_context can not be None")
-
         answer_call_request = AnswerCallRequestConverter.convert(
             incoming_call_context=incoming_call_context,
             callback_uri=callback_uri,
@@ -280,9 +265,6 @@ class CallingServerClient:
         **kwargs: Any
     ) -> None:
 
-        if not incoming_call_context:
-            raise ValueError("incoming_call_context can not be None")
-
         reject_call_request = RejectCallRequestConverter.convert(
             incoming_call_context=incoming_call_context,
             call_reject_reason=call_reject_reason,
@@ -303,11 +285,6 @@ class CallingServerClient:
         timeout_in_seconds=None,  # type: int
         **kwargs  # type: Any
     ):  # type: (...) -> None
-
-        if not incoming_call_context:
-            raise ValueError("incoming_call_context can not be None")
-        if not targets:
-            raise ValueError("targets can not be None")
 
         redirect_call_request = RedirectCallRequestConverter.convert(
             incoming_call_context=incoming_call_context,
@@ -373,13 +350,6 @@ class CallingServerClient:
         operation_context: Optional[str] = None,
         **kwargs: Any
     ) -> AddParticipantResult:
-
-        if not call_locator:
-            raise ValueError("call_locator can not be None")
-        if not participant:
-            raise ValueError("participant can not be None")
-        if not CallingServerUtils.is_valid_url(callback_uri):
-            raise ValueError("callback_uri is invalid")
 
         alternate_caller_id = (None
             if alternate_caller_id is None
@@ -463,9 +433,6 @@ class CallingServerClient:
             **kwargs  # type: Any
         ):  # type: (...) -> None
 
-        if not participant:
-            raise ValueError("participant can not be None")
-
         mute_participant_with_call_locator_request = MuteParticipantWithCallLocatorRequestConverter.convert(
             serialize_call_locator(call_locator),
             serialize_identifier(participant)
@@ -483,9 +450,6 @@ class CallingServerClient:
             participant,  # type: CommunicationIdentifier
             **kwargs  # type: Any
         ):  # type: (...) -> None
-
-        if not participant:
-            raise ValueError("participant can not be None")
 
         unmute_participant_with_call_locator_request = UnmuteParticipantWithCallLocatorRequestConverter.convert(
             serialize_call_locator(call_locator),
@@ -505,11 +469,6 @@ class CallingServerClient:
         **kwargs: Any
     ) -> None:
 
-        if not call_locator:
-            raise ValueError("call_locator can not be None")
-        if not media_operation_id:
-            raise ValueError("media_operation_id can not be None")
-
         cancel_media_operation_request = CancelMediaOperationWithCallLocatorRequestConverter.convert(
             serialize_call_locator(call_locator),
             media_operation_id=media_operation_id
@@ -528,13 +487,6 @@ class CallingServerClient:
         media_operation_id: str,
         **kwargs: Any
     ) -> None:
-
-        if not call_locator:
-            raise ValueError("call_locator can not be None")
-        if not participant:
-            raise ValueError("participant can not be None")
-        if not media_operation_id:
-            raise ValueError("media_operation_id can not be None")
 
         cancel_participant_media_operation_request = \
         CancelParticipantMediaOperationWithCallLocatorRequestConverter.convert(
@@ -556,9 +508,6 @@ class CallingServerClient:
             **kwargs  # type: Any
         ):  # type: (...) -> None
 
-        if not participant:
-            raise ValueError("participant can not be None")
-
         hold_meeting_audio_with_call_locator_request = HoldMeetingAudioWithCallLocatorRequestConverter.convert(
             serialize_call_locator(call_locator),
             serialize_identifier(participant)
@@ -576,9 +525,6 @@ class CallingServerClient:
             participant,  # type: CommunicationIdentifier
             **kwargs  # type: Any
         ):  # type: (...) -> None
-
-        if not participant:
-            raise ValueError("participant can not be None")
 
         resume_meeting_audio_with_call_locator_request = ResumeMeetingAudioWithCallLocatorRequestConverter.convert(
             serialize_call_locator(call_locator),
@@ -622,9 +568,6 @@ class CallingServerClient:
         **kwargs: Any
     ) -> HttpResponse:
 
-        if not recording_id:
-            raise ValueError("recording_id cannot be None")
-
         return await self._server_call_client.pause_recording(
             recording_id=recording_id,
             **kwargs
@@ -636,9 +579,6 @@ class CallingServerClient:
         recording_id: str,
         **kwargs: Any
     ) -> HttpResponse:
-
-        if not recording_id:
-            raise ValueError("recording_id cannot be None")
 
         return await self._server_call_client.resume_recording(
             recording_id=recording_id,
@@ -652,9 +592,6 @@ class CallingServerClient:
         **kwargs: Any
     ) -> HttpResponse:
 
-        if not recording_id:
-            raise ValueError("recording_id cannot be None")
-
         return await self._server_call_client.stop_recording(
             recording_id=recording_id,
             **kwargs
@@ -666,9 +603,6 @@ class CallingServerClient:
         recording_id: str,
         **kwargs: Any
     ) -> CallRecordingProperties:
-
-        if not recording_id:
-            raise ValueError("recording_id cannot be None")
 
         return await self._server_call_client.get_recording_properties(
             recording_id=recording_id,
