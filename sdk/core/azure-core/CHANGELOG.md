@@ -1,5 +1,19 @@
 # Release History
 
+## 1.20.1 (2021-11-08)
+
+### Bugs Fixed
+
+- Correctly set response's content to decompressed body when users are using aiohttp transport with decompression headers #21620
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.20.0 (2021-11-04)
 
 ### Features Added

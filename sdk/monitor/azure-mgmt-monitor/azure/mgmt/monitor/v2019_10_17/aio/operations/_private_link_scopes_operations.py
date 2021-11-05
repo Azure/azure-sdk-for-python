@@ -45,7 +45,7 @@ class PrivateLinkScopesOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AzureMonitorPrivateLinkScopeListResult"]:
         """Gets a list of all Azure Monitor PrivateLinkScopes within a subscription.
 
@@ -71,7 +71,7 @@ class PrivateLinkScopesOperations:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -112,7 +112,7 @@ class PrivateLinkScopesOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AzureMonitorPrivateLinkScopeListResult"]:
         """Gets a list of Azure Monitor PrivateLinkScopes within a resource group.
 
@@ -141,7 +141,7 @@ class PrivateLinkScopesOperations:
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -183,7 +183,7 @@ class PrivateLinkScopesOperations:
         self,
         resource_group_name: str,
         scope_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -196,7 +196,7 @@ class PrivateLinkScopesOperations:
         url = self._delete_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -225,7 +225,7 @@ class PrivateLinkScopesOperations:
         self,
         resource_group_name: str,
         scope_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a Azure Monitor PrivateLinkScope.
 
@@ -235,8 +235,8 @@ class PrivateLinkScopesOperations:
         :type scope_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -267,7 +267,7 @@ class PrivateLinkScopesOperations:
 
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
         }
 
@@ -289,7 +289,7 @@ class PrivateLinkScopesOperations:
         self,
         resource_group_name: str,
         scope_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AzureMonitorPrivateLinkScope":
         """Returns a Azure Monitor PrivateLinkScope.
 
@@ -314,7 +314,7 @@ class PrivateLinkScopesOperations:
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -348,7 +348,7 @@ class PrivateLinkScopesOperations:
         resource_group_name: str,
         scope_name: str,
         azure_monitor_private_link_scope_payload: "_models.AzureMonitorPrivateLinkScope",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AzureMonitorPrivateLinkScope":
         """Creates (or updates) a Azure Monitor PrivateLinkScope. Note: You cannot specify a different
         value for InstrumentationKey nor AppId in the Put operation.
@@ -378,7 +378,7 @@ class PrivateLinkScopesOperations:
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -420,7 +420,7 @@ class PrivateLinkScopesOperations:
         resource_group_name: str,
         scope_name: str,
         private_link_scope_tags: "_models.TagsResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AzureMonitorPrivateLinkScope":
         """Updates an existing PrivateLinkScope's tags. To update other fields use the CreateOrUpdate
         method.
@@ -450,7 +450,7 @@ class PrivateLinkScopesOperations:
         url = self.update_tags.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)

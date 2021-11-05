@@ -1,0 +1,7 @@
+[packaging]
+auto_update = false
+package_name = "azure-mixedreality-remoterendering"
+package_pprint_name = "Azure Remote Rendering"
+package_doc_id = ""
+is_stable = false
+is_arm = false

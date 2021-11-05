@@ -19,7 +19,6 @@ from .. import (
     KeyProperties,
     KeyRotationPolicy,
     KeyVaultKey,
-    RandomBytes,
     ReleaseKeyResult,
 )
 
@@ -68,13 +67,13 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :param str key_name: The name of the key used to perform cryptographic operations.
 
-        :keyword str version: Optional version of the key used to perform cryptographic operations.
+        :keyword str key_version: Optional version of the key used to perform cryptographic operations.
 
         :returns: A :class:`~azure.keyvault.keys.crypto.aio.CryptographyClient` using the same options, credentials, and
             HTTP client as this :class:`~azure.keyvault.keys.aio.KeyClient`.
         :rtype: ~azure.keyvault.keys.crypto.aio.CryptographyClient
         """
-        key_id = _get_key_id(self._vault_url, key_name, kwargs.get("version"))
+        key_id = _get_key_id(self._vault_url, key_name, kwargs.get("key_version"))
 
         # We provide a fake credential because the generated client already has the KeyClient's real credential
         return CryptographyClient(
@@ -707,13 +706,13 @@ class KeyClient(AsyncKeyVaultClientBase):
         return ReleaseKeyResult(result.value)
 
     @distributed_trace_async
-    async def get_random_bytes(self, count: int, **kwargs: "Any") -> RandomBytes:
+    async def get_random_bytes(self, count: int, **kwargs: "Any") -> bytes:
         """Get the requested number of random bytes from a managed HSM.
 
         :param int count: The requested number of random bytes.
 
         :return: The random bytes.
-        :rtype: ~azure.keyvault.keys.RandomBytes
+        :rtype: bytes
         :raises:
             :class:`ValueError` if less than one random byte is requested,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -730,7 +729,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             raise ValueError("At least one random byte must be requested")
         parameters = self._models.GetRandomBytesRequest(count=count)
         result = await self._client.get_random_bytes(vault_base_url=self._vault_url, parameters=parameters, **kwargs)
-        return RandomBytes(value=result.value)
+        return result.value
 
     @distributed_trace_async
     async def get_key_rotation_policy(self, name: str, **kwargs: "Any") -> "KeyRotationPolicy":

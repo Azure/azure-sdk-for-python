@@ -331,6 +331,9 @@ class AccountSasPermissions(object):
     :keyword bool set_immutability_policy:
         To enable operations related to set/delete immutability policy.
         To get immutability policy, you just need read permission.
+    :keyword bool permanent_delete:
+        To enable permanent delete on the blob is permitted.
+        Valid for Object resource type of Blob only.
     """
     def __init__(self, read=False, write=False, delete=False,
                  list=False,  # pylint: disable=redefined-builtin
@@ -339,6 +342,7 @@ class AccountSasPermissions(object):
         self.write = write
         self.delete = delete
         self.delete_previous_version = delete_previous_version
+        self.permanent_delete = kwargs.pop('permanent_delete', False)
         self.list = list
         self.add = add
         self.create = create
@@ -351,6 +355,7 @@ class AccountSasPermissions(object):
                      ('w' if self.write else '') +
                      ('d' if self.delete else '') +
                      ('x' if self.delete_previous_version else '') +
+                     ('y' if self.permanent_delete else '') +
                      ('l' if self.list else '') +
                      ('a' if self.add else '') +
                      ('c' if self.create else '') +
@@ -381,6 +386,7 @@ class AccountSasPermissions(object):
         p_write = 'w' in permission
         p_delete = 'd' in permission
         p_delete_previous_version = 'x' in permission
+        p_permanent_delete = 'y' in permission
         p_list = 'l' in permission
         p_add = 'a' in permission
         p_create = 'c' in permission
@@ -391,7 +397,8 @@ class AccountSasPermissions(object):
         p_set_immutability_policy = 'i' in permission
         parsed = cls(read=p_read, write=p_write, delete=p_delete, delete_previous_version=p_delete_previous_version,
                      list=p_list, add=p_add, create=p_create, update=p_update, process=p_process, tag=p_tag,
-                     filter_by_tags=p_filter_by_tags, set_immutability_policy=p_set_immutability_policy)
+                     filter_by_tags=p_filter_by_tags, set_immutability_policy=p_set_immutability_policy,
+                     permanent_delete=p_permanent_delete)
 
         return parsed
 
