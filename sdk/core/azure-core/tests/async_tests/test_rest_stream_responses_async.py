@@ -236,3 +236,12 @@ async def test_decompress_compressed_header_stream(client):
     assert content == b"hello world"
     assert response.content == content
     assert response.text() == "hello world"
+
+@pytest.mark.asyncio
+async def test_decompress_compressed_header_stream_body_content(client):
+    # expect plain text
+    request = HttpRequest("GET", "/encoding/gzip")
+    response = await client.send_request(request, stream=True)
+    await response.read()
+    content = response.content
+    assert content == response.body()
