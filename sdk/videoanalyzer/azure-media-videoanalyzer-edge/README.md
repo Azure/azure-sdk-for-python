@@ -1,6 +1,6 @@
 # Azure Video Analyzer Edge client library for Python
 
-Azure Video Analyzer provides a platform to build intelligent video applications that span the edge and the cloud. The platform offers the capability to capture, record, and analyze live video along with publishing the results, video and video analytics, to Azure services in the cloud or the edge. It is designed to be an extensible platform, enabling you to connect different video analysis edge modules (such as Cognitive services containers, custom edge modules built by you with open-source machine learning models or custom models trained with your own data) to it and use them to analyze live video without worrying about the complexity of building and running a live video pipeline.
+Azure Video Analyzer is an [Azure Applied AI Service][applied-ai-service] that provides a platform for you to build intelligent video applications that can span both edge and cloud infrastructures. The platform offers the capability to capture, record, and analyze live video along with publishing the results, video and video analytics, to Azure services at the edge or in the cloud. It is designed to be an extensible platform, enabling you to connect different video inferencing edge modules such as Cognitive services modules, or custom inferencing modules that have been trained with your own data using either open-source machine learning or [Azure Machine Learning][machine-learning].
 
 Use the client library for Video Analyzer Edge to:
 
@@ -28,6 +28,8 @@ pip install azure-media-videoanalyzer-edge
 
     | SDK  | Video Analyzer edge module  |
     |---|---|
+    | 1.0.0b3  | 1.1  |
+    | 1.0.0b2  | 1.0  |
     | 1.0.0b1  | 1.0  |
 
 ### Creating a pipeline topology and making requests
@@ -148,3 +150,5 @@ additional questions or comments.
 [iot-device-sdk]: https://pypi.org/project/azure-iot-device/
 [iot-hub-sdk]: https://pypi.org/project/azure-iot-hub/
 [github-page-issues]: https://github.com/Azure/azure-sdk-for-python/issues
+[applied-ai-service]: https://azure.microsoft.com/product-categories/applied-ai-services/#services
+[machine-learning]: https://azure.microsoft.com/services/machine-learning

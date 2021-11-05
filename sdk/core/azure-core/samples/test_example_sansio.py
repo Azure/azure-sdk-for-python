@@ -167,17 +167,3 @@ def example_proxy_policy():
     # You can also configure proxies by setting the environment variables
     # HTTP_PROXY and HTTPS_PROXY.
     # [END proxy_policy]
-
-def example_on_exception():
-    policy = SansIOHTTPPolicy()
-    request = HttpRequest("GET", "https://bing.com")
-    # [START on_exception]
-    try:
-        response = policy.on_request(request)
-    except Exception:
-        if not policy.on_exception(request):
-            raise
-
-    # or use
-    exc_type, exc_value, exc_traceback = sys.exc_info()
-    # [END on_exception]

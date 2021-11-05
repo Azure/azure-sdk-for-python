@@ -24,7 +24,7 @@ if TYPE_CHECKING:
     from azure.core.rest import HttpRequest, HttpResponse
 
 class ConversationAnalysisClient(ConversationAnalysisClientOperationsMixin):
-    """This API accepts a request and mediates among multiple language projects, such as LUIS Generally Available, Question Answering, LUIS Deepstack, and then calls the best candidate service to handle the request. At last, it returns a response with the candidate service's response as a payload.
+    """This API accepts a request and mediates among multiple language projects, such as LUIS Generally Available, Question Answering, Conversation, and then calls the best candidate service to handle the request. At last, it returns a response with the candidate service's response as a payload.
 
  In some cases, this API needs to forward requests and responses between the caller and an upstream service.
 

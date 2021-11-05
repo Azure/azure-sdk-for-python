@@ -64,7 +64,7 @@ class TopicTypesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-15-preview"
+        api_version = "2021-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -132,7 +132,7 @@ class TopicTypesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-15-preview"
+        api_version = "2021-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -188,7 +188,7 @@ class TopicTypesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-15-preview"
+        api_version = "2021-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):

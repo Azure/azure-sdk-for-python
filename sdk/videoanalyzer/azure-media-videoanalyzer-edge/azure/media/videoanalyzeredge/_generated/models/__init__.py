@@ -10,11 +10,14 @@ try:
     from ._models_py3 import CertificateSource
     from ._models_py3 import CognitiveServicesVisionProcessor
     from ._models_py3 import CredentialsBase
+    from ._models_py3 import DiscoveredOnvifDevice
+    from ._models_py3 import DiscoveredOnvifDeviceCollection
     from ._models_py3 import EndpointBase
     from ._models_py3 import ExtensionProcessorBase
     from ._models_py3 import FileSink
     from ._models_py3 import GrpcExtension
     from ._models_py3 import GrpcExtensionDataTransfer
+    from ._models_py3 import H264Configuration
     from ._models_py3 import HttpExtension
     from ._models_py3 import HttpHeaderCredentials
     from ._models_py3 import ImageFormatBmp
@@ -24,6 +27,7 @@ try:
     from ._models_py3 import ImageFormatRaw
     from ._models_py3 import ImageProperties
     from ._models_py3 import ImageScale
+    from ._models_py3 import IotHubDeviceConnection
     from ._models_py3 import IotHubMessageSink
     from ._models_py3 import IotHubMessageSource
     from ._models_py3 import LineCrossingProcessor
@@ -37,6 +41,9 @@ try:
     from ._models_py3 import LivePipelineProperties
     from ._models_py3 import LivePipelineSetRequest
     from ._models_py3 import LivePipelineSetRequestBody
+    from ._models_py3 import MPEG4Configuration
+    from ._models_py3 import MediaProfile
+    from ._models_py3 import MediaUri
     from ._models_py3 import MethodRequest
     from ._models_py3 import MethodRequestEmptyBodyBase
     from ._models_py3 import MotionDetectionProcessor
@@ -46,6 +53,12 @@ try:
     from ._models_py3 import NamedPolygonString
     from ._models_py3 import NodeInput
     from ._models_py3 import ObjectTrackingProcessor
+    from ._models_py3 import OnvifDevice
+    from ._models_py3 import OnvifDeviceDiscoverRequest
+    from ._models_py3 import OnvifDeviceGetRequest
+    from ._models_py3 import OnvifDns
+    from ._models_py3 import OnvifHostName
+    from ._models_py3 import OnvifSystemDateTime
     from ._models_py3 import OutputSelector
     from ._models_py3 import ParameterDeclaration
     from ._models_py3 import ParameterDefinition
@@ -59,6 +72,16 @@ try:
     from ._models_py3 import PipelineTopologySetRequest
     from ._models_py3 import PipelineTopologySetRequestBody
     from ._models_py3 import ProcessorNodeBase
+    from ._models_py3 import RateControl
+    from ._models_py3 import RemoteDeviceAdapter
+    from ._models_py3 import RemoteDeviceAdapterCollection
+    from ._models_py3 import RemoteDeviceAdapterDeleteRequest
+    from ._models_py3 import RemoteDeviceAdapterGetRequest
+    from ._models_py3 import RemoteDeviceAdapterListRequest
+    from ._models_py3 import RemoteDeviceAdapterProperties
+    from ._models_py3 import RemoteDeviceAdapterSetRequest
+    from ._models_py3 import RemoteDeviceAdapterSetRequestBody
+    from ._models_py3 import RemoteDeviceAdapterTarget
     from ._models_py3 import RtspSource
     from ._models_py3 import SamplingOptions
     from ._models_py3 import SignalGateProcessor
@@ -80,22 +103,29 @@ try:
     from ._models_py3 import SpatialAnalysisPersonZoneCrossingOperation
     from ._models_py3 import SpatialAnalysisPersonZoneCrossingZoneEvents
     from ._models_py3 import SpatialAnalysisTypedOperationBase
+    from ._models_py3 import SymmetricKeyCredentials
     from ._models_py3 import SystemData
     from ._models_py3 import TlsEndpoint
     from ._models_py3 import TlsValidationOptions
     from ._models_py3 import UnsecuredEndpoint
     from ._models_py3 import UsernamePasswordCredentials
     from ._models_py3 import VideoCreationProperties
+    from ._models_py3 import VideoEncoderConfiguration
+    from ._models_py3 import VideoPublishingOptions
+    from ._models_py3 import VideoResolution
     from ._models_py3 import VideoSink
 except (SyntaxError, ImportError):
     from ._models import CertificateSource  # type: ignore
     from ._models import CognitiveServicesVisionProcessor  # type: ignore
     from ._models import CredentialsBase  # type: ignore
+    from ._models import DiscoveredOnvifDevice  # type: ignore
+    from ._models import DiscoveredOnvifDeviceCollection  # type: ignore
     from ._models import EndpointBase  # type: ignore
     from ._models import ExtensionProcessorBase  # type: ignore
     from ._models import FileSink  # type: ignore
     from ._models import GrpcExtension  # type: ignore
     from ._models import GrpcExtensionDataTransfer  # type: ignore
+    from ._models import H264Configuration  # type: ignore
     from ._models import HttpExtension  # type: ignore
     from ._models import HttpHeaderCredentials  # type: ignore
     from ._models import ImageFormatBmp  # type: ignore
@@ -105,6 +135,7 @@ except (SyntaxError, ImportError):
     from ._models import ImageFormatRaw  # type: ignore
     from ._models import ImageProperties  # type: ignore
     from ._models import ImageScale  # type: ignore
+    from ._models import IotHubDeviceConnection  # type: ignore
     from ._models import IotHubMessageSink  # type: ignore
     from ._models import IotHubMessageSource  # type: ignore
     from ._models import LineCrossingProcessor  # type: ignore
@@ -118,6 +149,9 @@ except (SyntaxError, ImportError):
     from ._models import LivePipelineProperties  # type: ignore
     from ._models import LivePipelineSetRequest  # type: ignore
     from ._models import LivePipelineSetRequestBody  # type: ignore
+    from ._models import MPEG4Configuration  # type: ignore
+    from ._models import MediaProfile  # type: ignore
+    from ._models import MediaUri  # type: ignore
     from ._models import MethodRequest  # type: ignore
     from ._models import MethodRequestEmptyBodyBase  # type: ignore
     from ._models import MotionDetectionProcessor  # type: ignore
@@ -127,6 +161,12 @@ except (SyntaxError, ImportError):
     from ._models import NamedPolygonString  # type: ignore
     from ._models import NodeInput  # type: ignore
     from ._models import ObjectTrackingProcessor  # type: ignore
+    from ._models import OnvifDevice  # type: ignore
+    from ._models import OnvifDeviceDiscoverRequest  # type: ignore
+    from ._models import OnvifDeviceGetRequest  # type: ignore
+    from ._models import OnvifDns  # type: ignore
+    from ._models import OnvifHostName  # type: ignore
+    from ._models import OnvifSystemDateTime  # type: ignore
     from ._models import OutputSelector  # type: ignore
     from ._models import ParameterDeclaration  # type: ignore
     from ._models import ParameterDefinition  # type: ignore
@@ -140,6 +180,16 @@ except (SyntaxError, ImportError):
     from ._models import PipelineTopologySetRequest  # type: ignore
     from ._models import PipelineTopologySetRequestBody  # type: ignore
     from ._models import ProcessorNodeBase  # type: ignore
+    from ._models import RateControl  # type: ignore
+    from ._models import RemoteDeviceAdapter  # type: ignore
+    from ._models import RemoteDeviceAdapterCollection  # type: ignore
+    from ._models import RemoteDeviceAdapterDeleteRequest  # type: ignore
+    from ._models import RemoteDeviceAdapterGetRequest  # type: ignore
+    from ._models import RemoteDeviceAdapterListRequest  # type: ignore
+    from ._models import RemoteDeviceAdapterProperties  # type: ignore
+    from ._models import RemoteDeviceAdapterSetRequest  # type: ignore
+    from ._models import RemoteDeviceAdapterSetRequestBody  # type: ignore
+    from ._models import RemoteDeviceAdapterTarget  # type: ignore
     from ._models import RtspSource  # type: ignore
     from ._models import SamplingOptions  # type: ignore
     from ._models import SignalGateProcessor  # type: ignore
@@ -161,21 +211,28 @@ except (SyntaxError, ImportError):
     from ._models import SpatialAnalysisPersonZoneCrossingOperation  # type: ignore
     from ._models import SpatialAnalysisPersonZoneCrossingZoneEvents  # type: ignore
     from ._models import SpatialAnalysisTypedOperationBase  # type: ignore
+    from ._models import SymmetricKeyCredentials  # type: ignore
     from ._models import SystemData  # type: ignore
     from ._models import TlsEndpoint  # type: ignore
     from ._models import TlsValidationOptions  # type: ignore
     from ._models import UnsecuredEndpoint  # type: ignore
     from ._models import UsernamePasswordCredentials  # type: ignore
     from ._models import VideoCreationProperties  # type: ignore
+    from ._models import VideoEncoderConfiguration  # type: ignore
+    from ._models import VideoPublishingOptions  # type: ignore
+    from ._models import VideoResolution  # type: ignore
     from ._models import VideoSink  # type: ignore
 
 from ._azure_video_analyzerfor_edge_enums import (
     GrpcExtensionDataTransferMode,
+    H264Profile,
     ImageFormatRawPixelFormat,
     ImageScaleMode,
     LivePipelineState,
+    MPEG4Profile,
     MotionDetectionSensitivity,
     ObjectTrackingAccuracy,
+    OnvifSystemDateTimeType,
     OutputSelectorOperator,
     OutputSelectorProperty,
     ParameterType,
@@ -184,17 +241,21 @@ from ._azure_video_analyzerfor_edge_enums import (
     SpatialAnalysisPersonCountEventTrigger,
     SpatialAnalysisPersonDistanceEventTrigger,
     SpatialAnalysisPersonZoneCrossingEventType,
+    VideoEncoding,
 )
 
 __all__ = [
     'CertificateSource',
     'CognitiveServicesVisionProcessor',
     'CredentialsBase',
+    'DiscoveredOnvifDevice',
+    'DiscoveredOnvifDeviceCollection',
     'EndpointBase',
     'ExtensionProcessorBase',
     'FileSink',
     'GrpcExtension',
     'GrpcExtensionDataTransfer',
+    'H264Configuration',
     'HttpExtension',
     'HttpHeaderCredentials',
     'ImageFormatBmp',
@@ -204,6 +265,7 @@ __all__ = [
     'ImageFormatRaw',
     'ImageProperties',
     'ImageScale',
+    'IotHubDeviceConnection',
     'IotHubMessageSink',
     'IotHubMessageSource',
     'LineCrossingProcessor',
@@ -217,6 +279,9 @@ __all__ = [
     'LivePipelineProperties',
     'LivePipelineSetRequest',
     'LivePipelineSetRequestBody',
+    'MPEG4Configuration',
+    'MediaProfile',
+    'MediaUri',
     'MethodRequest',
     'MethodRequestEmptyBodyBase',
     'MotionDetectionProcessor',
@@ -226,6 +291,12 @@ __all__ = [
     'NamedPolygonString',
     'NodeInput',
     'ObjectTrackingProcessor',
+    'OnvifDevice',
+    'OnvifDeviceDiscoverRequest',
+    'OnvifDeviceGetRequest',
+    'OnvifDns',
+    'OnvifHostName',
+    'OnvifSystemDateTime',
     'OutputSelector',
     'ParameterDeclaration',
     'ParameterDefinition',
@@ -239,6 +310,16 @@ __all__ = [
     'PipelineTopologySetRequest',
     'PipelineTopologySetRequestBody',
     'ProcessorNodeBase',
+    'RateControl',
+    'RemoteDeviceAdapter',
+    'RemoteDeviceAdapterCollection',
+    'RemoteDeviceAdapterDeleteRequest',
+    'RemoteDeviceAdapterGetRequest',
+    'RemoteDeviceAdapterListRequest',
+    'RemoteDeviceAdapterProperties',
+    'RemoteDeviceAdapterSetRequest',
+    'RemoteDeviceAdapterSetRequestBody',
+    'RemoteDeviceAdapterTarget',
     'RtspSource',
     'SamplingOptions',
     'SignalGateProcessor',
@@ -260,19 +341,26 @@ __all__ = [
     'SpatialAnalysisPersonZoneCrossingOperation',
     'SpatialAnalysisPersonZoneCrossingZoneEvents',
     'SpatialAnalysisTypedOperationBase',
+    'SymmetricKeyCredentials',
     'SystemData',
     'TlsEndpoint',
     'TlsValidationOptions',
     'UnsecuredEndpoint',
     'UsernamePasswordCredentials',
     'VideoCreationProperties',
+    'VideoEncoderConfiguration',
+    'VideoPublishingOptions',
+    'VideoResolution',
     'VideoSink',
     'GrpcExtensionDataTransferMode',
+    'H264Profile',
     'ImageFormatRawPixelFormat',
     'ImageScaleMode',
     'LivePipelineState',
+    'MPEG4Profile',
     'MotionDetectionSensitivity',
     'ObjectTrackingAccuracy',
+    'OnvifSystemDateTimeType',
     'OutputSelectorOperator',
     'OutputSelectorProperty',
     'ParameterType',
@@ -281,4 +369,5 @@ __all__ = [
     'SpatialAnalysisPersonCountEventTrigger',
     'SpatialAnalysisPersonDistanceEventTrigger',
     'SpatialAnalysisPersonZoneCrossingEventType',
+    'VideoEncoding',
 ]
