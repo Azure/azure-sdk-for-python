@@ -70,8 +70,7 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
                 # tenant since our last request for it, this request will fail.
                 super(ChallengeAuthPolicy, self).on_request(request)
             else:
-                # acquire a new token because this vault is in a different tenant and the application has
-                # opted to allow tenant discovery
+                # acquire a new token because this vault is in a different tenant
                 self.authorize_request(request, *self._scopes, tenant_id=challenge.tenant_id)
             return
 
