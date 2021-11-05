@@ -50,7 +50,7 @@ from azure.schemaregistry import SchemaRegistryClient, SchemaFormat
 
 SCHEMAREGISTRY_FQN = os.environ["SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE"]
 GROUP_NAME = os.environ["SCHEMAREGISTRY_GROUP"]
-NAME = "your-schema-name"
+SCHEMA_NAME = "your-schema-name"
 FORMAT = SchemaFormat.AVRO
 
 SCHEMA_JSON = {
@@ -66,30 +66,30 @@ SCHEMA_JSON = {
 SCHEMA_STRING = json.dumps(SCHEMA_JSON, separators=(",", ":"))
 
 
-def register_schema(client, group_name, name, schema_string, format):
+def register_schema(client, group_name, schema_name, schema_string, format):
     print("Registering schema...")
-    schema_properties = client.register_schema(group_name, name, schema_string, format)
+    schema_properties = client.register_schema(group_name, schema_name, schema_string, format)
     print("Schema registered, returned schema id is {}".format(schema_properties.id))
     print("Schema properties are {}".format(schema_properties))
     return schema_properties.id
 
 
-def get_schema_by_id(client, id):
+def get_schema_by_id(client, schema_id):
     print("Getting schema by id...")
-    schema = client.get_schema(id)
+    schema = client.get_schema(schema_id)
     print(
         "The schema string of schema id: {} string is {}".format(
-            id, schema.schema_definition
+            id, schema.definition
         )
     )
-    print("Schema properties are {}".format(id))
-    return schema.schema_definition
+    print("Schema properties are {}".format(schema_id))
+    return schema.definition
 
 
-def get_schema_id(client, group_name, name, schema_string, format):
+def get_schema_id(client, group_name, schema_name, schema_string, format):
     print("Getting schema id...")
     schema_properties = client.get_schema_properties(
-        group_name, name, schema_string, format
+        group_name, schema_name, schema_string, format
     )
     print("The schema id is: {}".format(schema_properties.id))
     print("Schema properties are {}".format(schema_properties))
@@ -103,9 +103,9 @@ if __name__ == "__main__":
     )
     with schema_registry_client:
         schema_id = register_schema(
-            schema_registry_client, GROUP_NAME, NAME, SCHEMA_STRING, FORMAT
+            schema_registry_client, GROUP_NAME, SCHEMA_NAME, SCHEMA_STRING, FORMAT
         )
         schema_str = get_schema_by_id(schema_registry_client, schema_id)
         schema_id = get_schema_id(
-            schema_registry_client, GROUP_NAME, NAME, SCHEMA_STRING, FORMAT
+            schema_registry_client, GROUP_NAME, SCHEMA_NAME, SCHEMA_STRING, FORMAT
         )
