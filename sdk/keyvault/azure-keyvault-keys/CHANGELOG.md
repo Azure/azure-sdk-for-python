@@ -5,6 +5,12 @@
 ### Features Added
 
 ### Breaking Changes
+> These changes do not impact the API of stable versions such as 4.4.0.
+> Only code written against a beta version such as 4.5.0b1 may be affected.
+- `KeyClient.get_random_bytes` now returns bytes instead of RandomBytes. The RandomBytes class
+  has been removed.
+- Renamed the `version` keyword-only argument in `KeyClient.get_cryptography_client` to
+  `key_version`.
 
 ### Bugs Fixed
 

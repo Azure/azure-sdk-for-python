@@ -573,13 +573,3 @@ class DeletedKey(KeyVaultKey):
         :rtype: ~datetime.datetime or None
         """
         return self._scheduled_purge_date
-
-
-class RandomBytes(object):
-    """Contains random bytes returned from a managed HSM.
-
-    :param bytes value: the random bytes
-    """
-
-    def __init__(self, value):
-        self.value = value

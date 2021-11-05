@@ -95,6 +95,13 @@ Use the `delete_user` method to delete a user. Pass in the user object as a para
 identity_client.delete_user(user)
 ```
 
+### Exchanging AAD access token of a Teams User for a Communication Identity access token
+
+Use the `get_token_for_teams_user` method to exchange an AAD access token of a Teams User for a new Communication Identity access token.
+```python
+identity_client.get_token_for_teams_user(add_token)
+```
+
 # Troubleshooting
 The Azure Communication Service Identity client will raise exceptions defined in [Azure Core][azure_core].
 
