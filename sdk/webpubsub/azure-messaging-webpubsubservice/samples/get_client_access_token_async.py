@@ -56,7 +56,7 @@ async def main():
     client_key_async = WebPubSubServiceClientAsync.from_connection_string(connection_string)
 
     # Build authentication token(async)
-    token_key_async = client_key_async.get_client_access_token(hub='hub')
+    token_key_async = await client_key_async.get_client_access_token(hub='hub')
     print('token by access key(async): {}'.format(token_key_async))
 
 if __name__ == '__main__':

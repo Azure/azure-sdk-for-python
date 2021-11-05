@@ -35,3 +35,12 @@ class WebpubsubSmokeTest(WebpubsubTest):
         client = self.create_client(endpoint=webpubsub_endpoint, reverse_proxy_endpoint='https://example.azure-api.net')
         with pytest.raises(ServiceRequestError):
             client.send_to_all('Hub', {'hello': 'test_webpubsub_send_to_all_api_management_proxy_counter_test'})
+
+    @WebpubsubPowerShellPreparer()
+    def test_get_client_access_token(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
+        access_token = client.get_client_access_token(hub='hub')
+        assert len(access_token) == 3
+        assert access_token['baseUrl'][:3] == "wss"
+        assert access_token['token']
+        assert access_token['url'][:3] == "wss"
