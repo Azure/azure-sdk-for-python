@@ -2160,6 +2160,7 @@ class BlobOperations(object):
         source_modified_access_conditions=None,  # type: Optional["_models.SourceModifiedAccessConditions"]
         modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
+        cpk_scope_info=None,  # type: Optional["_models.CpkScopeInfo"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -2210,6 +2211,8 @@ class BlobOperations(object):
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
         :param lease_access_conditions: Parameter group.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
+        :param cpk_scope_info: Parameter group.
+        :type cpk_scope_info: ~azure.storage.blob.models.CpkScopeInfo
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -2231,6 +2234,9 @@ class BlobOperations(object):
         _if_none_match = None
         _if_tags = None
         _lease_id = None
+        _encryption_scope = None
+        if cpk_scope_info is not None:
+            _encryption_scope = cpk_scope_info.encryption_scope
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if modified_access_conditions is not None:
@@ -2302,6 +2308,8 @@ class BlobOperations(object):
             header_parameters['x-ms-legal-hold'] = self._serialize.header("legal_hold", legal_hold, 'bool')
         if copy_source_authorization is not None:
             header_parameters['x-ms-copy-source-authorization'] = self._serialize.header("copy_source_authorization", copy_source_authorization, 'str')
+        if _encryption_scope is not None:
+            header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", _encryption_scope, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
@@ -2325,6 +2333,7 @@ class BlobOperations(object):
         response_headers['x-ms-copy-status']=self._deserialize('str', response.headers.get('x-ms-copy-status'))
         response_headers['Content-MD5']=self._deserialize('bytearray', response.headers.get('Content-MD5'))
         response_headers['x-ms-content-crc64']=self._deserialize('bytearray', response.headers.get('x-ms-content-crc64'))
+        response_headers['x-ms-encryption-scope']=self._deserialize('str', response.headers.get('x-ms-encryption-scope'))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
