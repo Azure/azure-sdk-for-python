@@ -226,7 +226,7 @@ class TestCallConnection(unittest.TestCase):
         self,
         test_name, # type: str
         call_connection_id, # type: str
-        audio_file_uri, # type: str
+        audio_url, # type: str
         options, # type: PlayAudioOptions
         use_managed_identity = False # type: bool
         ):
@@ -238,7 +238,7 @@ class TestCallConnection(unittest.TestCase):
             use_managed_identity=use_managed_identity
             )
 
-        result = call_connection.play_audio(audio_file_uri, options)
+        result = call_connection.play_audio(audio_url, options)
         CallConnectionUnitTestUtils.verify_play_audio_result(result)
 
     @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_play_audio())
@@ -246,7 +246,7 @@ class TestCallConnection(unittest.TestCase):
         self,
         test_name, # type: str
         call_connection_id, # type: str
-        audio_file_uri, # type: str
+        audio_url, # type: str
         options, # type: PlayAudioOptions
         use_managed_identity = False # type: bool
         ):
@@ -260,7 +260,7 @@ class TestCallConnection(unittest.TestCase):
 
         raised = False
         try:
-            call_connection.play_audio(audio_file_uri, options)
+            call_connection.play_audio(audio_url, options)
         except:
             raised = True
         assert raised == True
@@ -271,7 +271,7 @@ class TestCallConnection(unittest.TestCase):
         test_name, # type: str
         call_connection_id, # type: str
         participant, # type: CommunicationIdentifier
-        audio_file_uri, # type: str
+        audio_url, # type: str
         options, # type: PlayAudioOptions
         use_managed_identity = False # type: bool
         ):
@@ -283,7 +283,7 @@ class TestCallConnection(unittest.TestCase):
             use_managed_identity=use_managed_identity
             )
 
-        result = call_connection.play_audio_to_participant(participant, audio_file_uri, options)
+        result = call_connection.play_audio_to_participant(participant, audio_url, options)
 
         CallConnectionUnitTestUtils.verify_play_audio_result(result)
 
@@ -293,7 +293,7 @@ class TestCallConnection(unittest.TestCase):
         test_name, # type: str
         call_connection_id, # type: str
         participant, # type: CommunicationIdentifier
-        audio_file_uri, # type: str
+        audio_url, # type: str
         options, # type: PlayAudioOptions
         use_managed_identity = False # type: bool
         ):
@@ -307,7 +307,7 @@ class TestCallConnection(unittest.TestCase):
 
         raised = False
         try:
-            call_connection.play_audio_to_participant(participant, audio_file_uri, options)
+            call_connection.play_audio_to_participant(participant, audio_url, options)
         except:
             raised = True
         assert raised == True

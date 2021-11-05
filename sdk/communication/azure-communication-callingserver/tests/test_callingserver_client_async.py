@@ -279,7 +279,7 @@ async def test_redirect_call_failed(
 async def test_play_audio_succeed(
     test_name, # type: str
     call_locator, # type: CallLocator
-    audio_file_uri, # type: str
+    audio_url, # type: str
     options, # type: PlayAudioOptions
     use_managed_identity = False # type: bool
     ):
@@ -292,7 +292,7 @@ async def test_play_audio_succeed(
 
     result = await calling_server_client.play_audio(
         call_locator,
-        audio_file_uri,
+        audio_url,
         options
         )
 
@@ -303,7 +303,7 @@ async def test_play_audio_succeed(
 async def test_play_audio_failed(
     test_name, # type: str
     call_locator, # type: CallLocator
-    audio_file_uri, # type: str
+    audio_url, # type: str
     options, # type: PlayAudioOptions
     use_managed_identity = False # type: bool
     ):
@@ -318,7 +318,7 @@ async def test_play_audio_failed(
     try:
         await calling_server_client.play_audio(
             call_locator,
-            audio_file_uri,
+            audio_url,
             options
             )
     except:
@@ -331,7 +331,7 @@ async def test_play_audio_to_participant_succeed(
     test_name, # type: str
     call_locator, # type: CallLocator
     participant, # type: CommunicationIdentifier
-    audio_file_uri, # type: str
+    audio_url, # type: str
     play_audio_options, # type: PlayAudioOptions
     use_managed_identity = False # type: bool
     ):
@@ -345,7 +345,7 @@ async def test_play_audio_to_participant_succeed(
     result = await calling_server_client.play_audio_to_participant(
         call_locator,
         participant,
-        audio_file_uri,
+        audio_url,
         play_audio_options
         )
     CallingServerUnitTestUtils.verify_play_audio_result(result)
@@ -356,7 +356,7 @@ async def test_play_audio_to_participant_failed(
     test_name, # type: str
     call_locator, # type: CallLocator
     participant, # type: CommunicationIdentifier
-    audio_file_uri, # type: str
+    audio_url, # type: str
     play_audio_options, # type: PlayAudioOptions
     use_managed_identity = False # type: bool
     ):
@@ -372,7 +372,7 @@ async def test_play_audio_to_participant_failed(
         await calling_server_client.play_audio_to_participant(
             call_locator,
             participant,
-            audio_file_uri,
+            audio_url,
             play_audio_options
             )
     except:

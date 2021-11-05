@@ -172,7 +172,7 @@ CancelAllMediaOperaionsResponsePayload = {
     }
 
 # PlayAudioPayload
-AUDIO_FILE_URI = "https://bot.contoso.io/audio/sample-message.wav"
+AUDIO_URL = "https://bot.contoso.io/audio/sample-message.wav"
 AUDIO_FILE_ID = "sampleAudioFileId"
 PlayAudioResponsePayload = {
     "operationId": OPERATION_ID,
@@ -186,14 +186,14 @@ AddParticipantResultPayload = {
     }
 
 # CreateAudioRoutingGroupPayload
-AUDIO_FILE_URI = "https://bot.contoso.io/audio/sample-message.wav"
+AUDIO_URL = "https://bot.contoso.io/audio/sample-message.wav"
 AUDIO_FILE_ID = "sampleAudioFileId"
 CreateAudioRoutingGroupResponsePayload = {
     "audioRoutingGroupId": AUDIO_ROUTING_GROUP_ID,
     }
 
 # GetAudioRoutingGroupPayload
-AUDIO_FILE_URI = "https://bot.contoso.io/audio/sample-message.wav"
+AUDIO_URL = "https://bot.contoso.io/audio/sample-message.wav"
 AUDIO_FILE_ID = "sampleAudioFileId"
 GetAudioRoutingGroupResponsePayload = {
     "audioRoutingMode": "oneToOne",

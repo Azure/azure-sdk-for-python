@@ -182,14 +182,14 @@ class CallingServerUnitTestUtils:
         parameters.append((
             _test_constants.ClientType_ConnectionString,
             ServerCallLocator(_test_constants.SEVERCALL_ID),
-            _test_constants.AUDIO_FILE_URI,
+            _test_constants.AUDIO_URL,
             options,
             ))
 
         parameters.append((
             _test_constants.ClientType_ManagedIdentity,
             ServerCallLocator(_test_constants.SEVERCALL_ID),
-            _test_constants.AUDIO_FILE_URI,
+            _test_constants.AUDIO_URL,
             options,
             True,
             ))
@@ -197,14 +197,14 @@ class CallingServerUnitTestUtils:
         parameters.append((
             _test_constants.ClientType_ConnectionString,
             GroupCallLocator(_test_constants.GROUPCALL_ID),
-            _test_constants.AUDIO_FILE_URI,
+            _test_constants.AUDIO_URL,
             options,
             ))
 
         parameters.append((
             _test_constants.ClientType_ManagedIdentity,
             GroupCallLocator(_test_constants.GROUPCALL_ID),
-            _test_constants.AUDIO_FILE_URI,
+            _test_constants.AUDIO_URL,
             options,
             True,
             ))
@@ -225,7 +225,7 @@ class CallingServerUnitTestUtils:
             _test_constants.ClientType_ConnectionString,
             ServerCallLocator(_test_constants.SEVERCALL_ID),
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-            _test_constants.AUDIO_FILE_URI,
+            _test_constants.AUDIO_URL,
             play_audio_options,
             ))
 
@@ -233,7 +233,7 @@ class CallingServerUnitTestUtils:
             _test_constants.ClientType_ManagedIdentity,
             ServerCallLocator(_test_constants.SEVERCALL_ID),
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-            _test_constants.AUDIO_FILE_URI,
+            _test_constants.AUDIO_URL,
             play_audio_options,
             True,
             ))
@@ -242,7 +242,7 @@ class CallingServerUnitTestUtils:
             _test_constants.ClientType_ConnectionString,
             GroupCallLocator(_test_constants.GROUPCALL_ID),
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-            _test_constants.AUDIO_FILE_URI,
+            _test_constants.AUDIO_URL,
             play_audio_options,
             ))
 
@@ -250,7 +250,7 @@ class CallingServerUnitTestUtils:
             _test_constants.ClientType_ManagedIdentity,
             GroupCallLocator(_test_constants.GROUPCALL_ID),
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-            _test_constants.AUDIO_FILE_URI,
+            _test_constants.AUDIO_URL,
             play_audio_options,
             True,
             ))
@@ -721,14 +721,14 @@ class CallConnectionUnitTestUtils:
         parameters.append((
             _test_constants.ClientType_ConnectionString,
             _test_constants.CALL_ID,
-            _test_constants.AUDIO_FILE_URI,
+            _test_constants.AUDIO_URL,
             options,
             ))
 
         parameters.append((
             _test_constants.ClientType_ManagedIdentity,
             _test_constants.CALL_ID,
-            _test_constants.AUDIO_FILE_URI,
+            _test_constants.AUDIO_URL,
             options,
             True,
             ))
@@ -748,7 +748,7 @@ class CallConnectionUnitTestUtils:
             _test_constants.ClientType_ConnectionString,
             _test_constants.CALL_ID,
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-            _test_constants.AUDIO_FILE_URI,
+            _test_constants.AUDIO_URL,
             options,
             ))
 
@@ -756,7 +756,7 @@ class CallConnectionUnitTestUtils:
             _test_constants.ClientType_ManagedIdentity,
             _test_constants.CALL_ID,
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-            _test_constants.AUDIO_FILE_URI,
+            _test_constants.AUDIO_URL,
             options,
             True,
             ))

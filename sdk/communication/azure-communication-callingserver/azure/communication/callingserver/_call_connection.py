@@ -123,16 +123,16 @@ class CallConnection(object):
     @distributed_trace()
     def play_audio(
             self,
-            audio_file_uri,  # type: str
+            audio_url,  # type: str
             play_audio_options,  # type: PlayAudioOptions
             **kwargs  # type: Any
         ): # type: (...) -> PlayAudioResult
 
-        if not audio_file_uri:
-            raise ValueError("audio_file_uri can not be None")
+        if not audio_url:
+            raise ValueError("audio_url can not be None")
 
-        if not CallingServerUtils.is_valid_url(audio_file_uri):
-            raise ValueError("audio_file_uri is invalid")
+        if not CallingServerUtils.is_valid_url(audio_url):
+            raise ValueError("audio_url is invalid")
 
         if not play_audio_options:
             raise ValueError("options can not be None")
@@ -143,7 +143,7 @@ class CallConnection(object):
         if not CallingServerUtils.is_valid_url(play_audio_options.callback_uri):
             raise ValueError("callback_uri is invalid")
 
-        play_audio_request = PlayAudioRequestConverter.convert(audio_file_uri, play_audio_options)
+        play_audio_request = PlayAudioRequestConverter.convert(audio_url, play_audio_options)
 
         return self._call_connection_client.play_audio(
             call_connection_id=self.call_connection_id,
@@ -241,29 +241,14 @@ class CallConnection(object):
     def play_audio_to_participant(
             self,
             participant,  # type: CommunicationIdentifier
-            audio_file_uri,  # type: str
+            audio_url,  # type: str
             play_audio_options,  # type: PlayAudioOptions
             **kwargs  # type: Any
         ): # type: (...) -> PlayAudioResult
 
-        if not participant:
-            raise ValueError("participant can not be None")
-
-        if not audio_file_uri:
-            raise ValueError("audio_file_uri can not be None")
-
-        if not CallingServerUtils.is_valid_url(audio_file_uri):
-            raise ValueError("audio_file_uri is invalid")
-
-        if not play_audio_options:
-            raise ValueError("play_audio_options can not be None")
-
-        if not CallingServerUtils.is_valid_url(play_audio_options.callback_uri):
-            raise ValueError("callback_uri is invalid")
-
         play_audio_to_participant_request = PlayAudioToParticipantRequestConverter.convert(
             identifier=serialize_identifier(participant),
-            audio_file_uri=audio_file_uri,
+            audio_url=audio_url,
             play_audio_options=play_audio_options
             )
 

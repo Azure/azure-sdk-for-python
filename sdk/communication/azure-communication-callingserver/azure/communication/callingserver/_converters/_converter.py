@@ -127,17 +127,17 @@ class RedirectCallRequestConverter(object):
 class PlayAudioRequestConverter(object):
     @staticmethod
     def convert(
-        audio_file_uri, # type: str
+        audio_url, # type: str
         play_audio_options # type: PlayAudioOptions
         ): # type: (...) -> PlayAudioRequest
 
-        if not audio_file_uri:
-            raise ValueError("audio_file_uri can not be None")
+        if not audio_url:
+            raise ValueError("audio_url can not be None")
         if not play_audio_options:
             raise ValueError("playaudio_options can not be None")
 
         return PlayAudioRequest(
-            audio_file_uri=audio_file_uri,
+            audio_file_uri=audio_url,
             loop=play_audio_options.loop,
             operation_context=play_audio_options,
             audio_file_id=play_audio_options.audio_file_id,
@@ -148,20 +148,20 @@ class PlayAudioWithCallLocatorRequestConverter(object):
     @staticmethod
     def convert(
         call_locator, # type: CallLocatorModel
-        audio_file_uri, # type: str
+        audio_url, # type: str
         play_audio_options # type: PlayAudioOptions
         ): # type: (...) -> PlayAudioWithCallLocatorRequest
 
         if not call_locator:
             raise ValueError("call_locator can not be None")
-        if not audio_file_uri:
-            raise ValueError("audio_file_uri can not be None")
+        if not audio_url:
+            raise ValueError("audio_url can not be None")
         if not play_audio_options:
             raise ValueError("play_audio_options can not be None")
 
         return PlayAudioWithCallLocatorRequest(
             call_locator=call_locator,
-            audio_file_uri=audio_file_uri,
+            audio_file_uri=audio_url,
             loop=play_audio_options.loop,
             operation_context=play_audio_options.operation_context,
             audio_file_id=play_audio_options.audio_file_id,
@@ -172,18 +172,18 @@ class PlayAudioToParticipantRequestConverter(object):
     @staticmethod
     def convert(
         identifier, # type: CommunicationIdentifierModel
-        audio_file_uri, # type: str
+        audio_url, # type: str
         play_audio_options # type: PlayAudioOptions
         ): # type: (...) -> PlayAudioToParticipantRequest
 
-        if not audio_file_uri:
-            raise ValueError("audio_file_uri can not be None")
+        if not audio_url:
+            raise ValueError("audio_url can not be None")
         if not play_audio_options:
             raise ValueError("playaudio_options can not be None")
 
         return PlayAudioToParticipantRequest(
             identifier=identifier,
-            audio_file_uri=audio_file_uri,
+            audio_file_uri=audio_url,
             loop=play_audio_options.loop,
             operation_context=play_audio_options,
             audio_file_id=play_audio_options.audio_file_id,
@@ -195,21 +195,21 @@ class PlayAudioToParticipantWithCallLocatorRequestConverter(object):
     def convert(
         call_locator, # type: CallLocatorModel
         identifier, # type: CommunicationIdentifierModel
-        audio_file_uri, # type: str
+        audio_url, # type: str
         play_audio_options # type: PlayAudioOptions
         ): # type: (...) -> PlayAudioToParticipantWithCallLocatorRequest
 
         if not call_locator:
             raise ValueError("call_locator can not be None")
-        if not audio_file_uri:
-            raise ValueError("audio_file_uri can not be None")
+        if not audio_url:
+            raise ValueError("audio_url can not be None")
         if not play_audio_options:
             raise ValueError("playaudio_options can not be None")
 
         return PlayAudioToParticipantWithCallLocatorRequest(
             call_locator=call_locator,
             identifier=identifier,
-            audio_file_uri=audio_file_uri,
+            audio_file_uri=audio_url,
             loop=play_audio_options.loop,
             operation_context=play_audio_options,
             audio_file_id=play_audio_options.audio_file_id,

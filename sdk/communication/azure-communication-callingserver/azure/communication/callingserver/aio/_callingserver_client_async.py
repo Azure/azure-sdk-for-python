@@ -325,25 +325,14 @@ class CallingServerClient:
     async def play_audio(
         self,
         call_locator: 'CallLocator',
-        audio_file_uri: str,
+        audio_url: str,
         play_audio_options: 'PlayAudioOptions',
         **kwargs: Any
     ) -> PlayAudioResult:
 
-        if not call_locator:
-            raise ValueError("call_locator can not be None")
-        if not audio_file_uri:
-            raise ValueError("audio_file_uri can not be None")
-        if not CallingServerUtils.is_valid_url(audio_file_uri):
-            raise ValueError("audio_file_uri is invalid")
-        if not play_audio_options:
-            raise ValueError("options can not be None")
-        if not CallingServerUtils.is_valid_url(play_audio_options.callback_uri):
-            raise ValueError("callback_uri is invalid")
-
         play_audio_request = PlayAudioWithCallLocatorRequestConverter.convert(
             call_locator=serialize_call_locator(call_locator),
-            audio_file_uri=audio_file_uri,
+            audio_url=audio_url,
             play_audio_options=play_audio_options
             )
 
@@ -357,28 +346,15 @@ class CallingServerClient:
         self,
         call_locator: 'CallLocator',
         participant: 'CommunicationIdentifier',
-        audio_file_uri: str,
+        audio_url: str,
         play_audio_options: 'PlayAudioOptions',
         **kwargs: Any
     ) -> PlayAudioResult:
 
-        if not call_locator:
-            raise ValueError("call_locator can not be None")
-        if not participant:
-            raise ValueError("participant can not be None")
-        if not audio_file_uri:
-            raise ValueError("audio_file_uri can not be None")
-        if not CallingServerUtils.is_valid_url(audio_file_uri):
-            raise ValueError("audio_file_uri is invalid")
-        if not play_audio_options:
-            raise ValueError("play_audio_options can not be None")
-        if not CallingServerUtils.is_valid_url(play_audio_options.callback_uri):
-            raise ValueError("callback_uri is invalid")
-
         play_audio_to_participant_request = PlayAudioToParticipantWithCallLocatorRequestConverter.convert(
             call_locator=serialize_call_locator(call_locator),
             identifier=serialize_identifier(participant),
-            audio_file_uri=audio_file_uri,
+            audio_url=audio_url,
             play_audio_options=play_audio_options
             )
 

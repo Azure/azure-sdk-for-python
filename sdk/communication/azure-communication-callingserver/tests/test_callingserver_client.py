@@ -281,7 +281,7 @@ class TestCallingServerClient(unittest.TestCase):
         self,
         test_name, # type: str
         call_locator, # type: CallLocator
-        audio_file_uri, # type: str
+        audio_url, # type: str
         options, # type: PlayAudioOptions
         use_managed_identity = False # type: bool
         ):
@@ -294,7 +294,7 @@ class TestCallingServerClient(unittest.TestCase):
 
         result = calling_server_client.play_audio(
             call_locator,
-            audio_file_uri,
+            audio_url,
             options
             )
 
@@ -305,7 +305,7 @@ class TestCallingServerClient(unittest.TestCase):
         self,
         test_name, # type: str
         call_locator, # type: CallLocator
-        audio_file_uri, # type: str
+        audio_url, # type: str
         options, # type: PlayAudioOptions
         use_managed_identity = False # type: bool
         ):
@@ -320,7 +320,7 @@ class TestCallingServerClient(unittest.TestCase):
         try:
             calling_server_client.play_audio(
                 call_locator,
-                audio_file_uri,
+                audio_url,
                 options
                 )
         except:
@@ -333,7 +333,7 @@ class TestCallingServerClient(unittest.TestCase):
         test_name, # type: str
         call_locator, # type: CallLocator
         participant, # type: CommunicationIdentifier
-        audio_file_uri, # type: str
+        audio_url, # type: str
         play_audio_options, # type: PlayAudioOptions
         use_managed_identity = False # type: bool
         ):
@@ -347,7 +347,7 @@ class TestCallingServerClient(unittest.TestCase):
         result = calling_server_client.play_audio_to_participant(
             call_locator,
             participant,
-            audio_file_uri,
+            audio_url,
             play_audio_options
             )
         CallingServerUnitTestUtils.verify_play_audio_result(result)
@@ -358,7 +358,7 @@ class TestCallingServerClient(unittest.TestCase):
         test_name, # type: str
         call_locator, # type: CallLocator
         participant, # type: CommunicationIdentifier
-        audio_file_uri, # type: str
+        audio_url, # type: str
         play_audio_options, # type: PlayAudioOptions
         use_managed_identity = False # type: bool
         ):
@@ -374,7 +374,7 @@ class TestCallingServerClient(unittest.TestCase):
             calling_server_client.play_audio_to_participant(
                 call_locator,
                 participant,
-                audio_file_uri,
+                audio_url,
                 play_audio_options
                 )
         except:
