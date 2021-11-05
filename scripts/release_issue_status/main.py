@@ -271,7 +271,7 @@ def main():
 
         if abs(item.days_from_target) < 3:
             item.bot_advice += ' release date < 2 ! <br>'
-            
+
         assigner_repo = assigner_repoes[item.assignee]
         assigner_issue = assigner_repo.get_issue(number=item.issue_object.number)
 
