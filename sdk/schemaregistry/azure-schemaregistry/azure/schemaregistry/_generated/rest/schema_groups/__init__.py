@@ -6,11 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_schema_registry import AzureSchemaRegistry
-__all__ = ['AzureSchemaRegistry']
-
 try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
+    from ._request_builders_py3 import build_list_request
+except (SyntaxError, ImportError):
+    from ._request_builders import build_list_request  # type: ignore
+
+__all__ = [
+    'build_list_request',
+]
