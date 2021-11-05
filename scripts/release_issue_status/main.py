@@ -241,6 +241,8 @@ def main():
     # rule7: if delay from created date is over 15 days and owner never reply, remind owner to handle it.
     for item in issue_status:
         if item.language == 'Python':
+            assigner_repo = assigner_repoes[item.assignee]
+            assigner_issue = assigner_repo.get_issue(number=item.issue_object.number)
             issue_status_python.append(item)
         if item.status == 'release':
             item.bot_advice = 'better to release asap.'
@@ -271,9 +273,6 @@ def main():
 
         if abs(item.days_from_target) < 3:
             item.bot_advice += ' release date < 2 ! <br>'
-
-        assigner_repo = assigner_repoes[item.assignee]
-        assigner_issue = assigner_repo.get_issue(number=item.issue_object.number)
 
         if item.days_from_latest_comment >= 15 and item.language == 'Python' and '7days attention' in item.labels and item.days_from_target < 0:
             assigner_issue.create_comment(
