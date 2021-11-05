@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.5.0b5 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestmultitenant-keybfb31bb2/create?api-version=7.3-preview
   response:
@@ -38,7 +38,7 @@ interactions:
       x-frame-options:
       - SAMEORIGIN
       x-ms-server-latency:
-      - '0'
+      - '1'
     status:
       code: 401
       message: Unauthorized
@@ -56,12 +56,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.5.0b5 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestmultitenant-keybfb31bb2/create?api-version=7.3-preview
   response:
     body:
-      string: '{"attributes":{"created":1634332167,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1634332167},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestmultitenant-keybfb31bb2/0656857aaf684753ba8d7c5c375da89c","kty":"RSA-HSM","n":"iJT8MiXcnFT6p1CEpwW5SuAUEHpUKrofqbYYcsB5GVFPJW_AsoxypERUSY8ZjgxY7_FmnExXUI4lDN86Nbe_korrVwMI1DLY3wZ-Oqh5JmAIKi9V6t-NVz-VIHN9fGJgf56UcJ5oc031qvPjrPJk8GRwXWtUoA4zBeBgYzFLktISsvV4CVDJD-sVp6K-_rfT2xC44-3-feebZE3z3m02pRaF40oy2t4UNd-EhSwVkL_s8JR4b759pvjUf_0untgEuEKRE6QbePf5wzhmO7_oPzyF52QuWWa3Eqz_rXISAFFa11ZA97j6P4ylV5-fajheC9jqZRPeZaibGuVdCTCU5Q"}}'
+      string: '{"attributes":{"created":1636131323,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1636131323},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestmultitenant-keybfb31bb2/451b8057153600668fa009e735a9d996","kty":"RSA-HSM","n":"iwhflbo8-_WYe32hbVI72HZyCBMW7TF-a1LYOiKyc9eDgXsDGc7TBQhfyIDYl-AXB2n4Y4hJtZWFoU4ePSF3PI5dpHrAwtxa7SifiR256Fad90bH03jXsjrgiQz3H3LOZVPomDSnA3FJrYawp9bealfge2RhrjQY_wGjOyhHUtIY-7_6aMqbPCORG3wPDQ6cflFl0_YNjCWQfs9iNxZ_xmYk19vmypvt1p9k6eiEPo8OYMuP2hmib9MhRh40mQhoYO2WuMKAGdNZnHFQ7DYsterHxPfSLT6f-3PWAleV7tNbcrcC846hDzoELVcNLEYMYO5ytS5B-8OH1BFYgTHvFQ"}}'
     headers:
       cache-control:
       - no-cache
@@ -82,7 +82,7 @@ interactions:
       x-ms-keyvault-region:
       - westus
       x-ms-server-latency:
-      - '735'
+      - '233'
     status:
       code: 200
       message: OK

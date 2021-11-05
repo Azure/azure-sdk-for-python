@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.5.0b5 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://vaultname.vault.azure.net/keys/livekvtestmultitenant-keydbee1c29/create?api-version=7.3-preview
   response:
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 15 Oct 2021 21:09:29 GMT
+      - Fri, 05 Nov 2021 16:55:26 GMT
       expires:
       - '-1'
       pragma:
@@ -65,12 +65,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.5.0b5 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://vaultname.vault.azure.net/keys/livekvtestmultitenant-keydbee1c29/create?api-version=7.3-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestmultitenant-keydbee1c29/e186e5bd9c104703ac32dcd859a5a104","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"yvdc3KPSBHWzA-FRSXY8Af6QA_eJiFbyNwpgbiQMNS4qCixGAIPaD1hluZVFSlzHSZcNKsdjSEX9nK88M1l_WHJMFXQ3tgZPOmKttMiROPfHvfJ5_BVo73x3zMRFAvc-DWL_9ILvPLD0es_8os00267MDMKBrF8NHhDjzxesa6b2ublJKmvgyJiWaf0OYOs4atIYt6UUxs0s4I7oOzg6Uki9Slqvk_6SDh4cgRzyU4yKyNU3Ah2HQCgJjav-6LD-gvFQT6M4KM7h8OT-Jfwj05gD_BamQCokQXBcCz_O9SXgQlGS0nrLDdhioKOvxlV9ns7zd7g7jU_uQ7Q8nBZ7_Q","e":"AQAB"},"attributes":{"enabled":true,"created":1634332170,"updated":1634332170,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestmultitenant-keydbee1c29/64bf4a78c2c5422cb10f0ce9110af961","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"ufrRN_nbOhbytEUrNHcnAXm3ciujUOmheywVnVDhJ9NlIREaqA6ALOJkgv5CczPJJpI6TcLv6BWpyH-Dvn8RwjHtBkXHOnRt4r_x4N4u85nMvf9mTlxTfggY-WZyWLaAhCzmaURooon0I6tRHFRQ5km4BXOsSo2G2jcHs0p-j_KSPTQKh8l6diMPGM3H3rYhZ1vVyvQY9zpgACf8AJccssBkKQLllF-6qpPXuELR4zLLFofhE6I-2_PZDt7NKROy4VRunV9CVNJz8uDjYFElycWlYCmJNwrPVgU8A2X6MpLQgWy1jkXw8r89li_EmucAROTJWrUvJlW1PlUBlbT9FQ","e":"AQAB"},"attributes":{"enabled":true,"created":1636131326,"updated":1636131326,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -79,7 +79,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 15 Oct 2021 21:09:29 GMT
+      - Fri, 05 Nov 2021 16:55:26 GMT
       expires:
       - '-1'
       pragma:

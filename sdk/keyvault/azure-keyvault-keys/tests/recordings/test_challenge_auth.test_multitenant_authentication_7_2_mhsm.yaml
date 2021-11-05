@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.5.0b5 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestmultitenant-keyedd01850/create?api-version=7.2
   response:
@@ -56,12 +56,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.5.0b5 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestmultitenant-keyedd01850/create?api-version=7.2
   response:
     body:
-      string: '{"attributes":{"created":1634332160,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1634332160},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestmultitenant-keyedd01850/11223d7f97bd00e2adbbd1734f8915ce","kty":"RSA-HSM","n":"p63FDvI8jWvyHP-3yvibhEv7XMyMbJms7am84eUkQA5vE0NDLjffbXXBF5iZscsQyHkE0pRUo6ZRhD8aU-TfUrVCHeblMrDx8_l3bBB8kpp00tHMOgYiRpVKyhYSleQ0sjDkxo28zDFuNlNqDfjtNKfuKeZV9iURHeSYk9qRwVUvSeblL3j-35l26RMN-RFwZGuGVOxN34hYbIhws6NRDDkF085dVHj3_Q192edyrSpuySpxT-QC-GetGqqWmY3XCv2bUBRHZXiVpvzqEc_g4_TeKIZvwXs5QKDJ4VdOVGg8Vqbk7R3sYWb1IEsBnHaBud6LBKDhxbwVE_5xjv54Vw"}}'
+      string: '{"attributes":{"created":1636131317,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1636131317},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestmultitenant-keyedd01850/dca01d9198cb035c24ec367adf277e8c","kty":"RSA-HSM","n":"zpWKZrFAszudjizF-IxDdFP5jAYzb52X5SWRbg_4xxMv-Xt4qdHmb2ip7KzI1pFojD2nFmuJ966IBQQU7xjNNfwjDBO-fEI3ZMiEiF0Zg2_sET5TGuAwn5AGM-qPiCkQvGGVVDqbu2-_e11AgfJ4IcT1N5P1Nz8AmPlKD_KNAbsVhIkC0WrYJKhaZFsL8z5w3EBqPLzvi0aWZ4f2n_w3Y6MxkCNY1JeqjlXLYjVXOWFy29t2zY7eYWLq4IUqPQzR8J05osE97aScAddEAMtPZvn5PL7ooqGEs9W8mvlJJIOBSbWFDuElcrEGdONDiibcFlFw_mu7dvzv9st3ppSzNQ"}}'
     headers:
       cache-control:
       - no-cache
@@ -82,7 +82,7 @@ interactions:
       x-ms-keyvault-region:
       - westus
       x-ms-server-latency:
-      - '781'
+      - '255'
     status:
       code: 200
       message: OK

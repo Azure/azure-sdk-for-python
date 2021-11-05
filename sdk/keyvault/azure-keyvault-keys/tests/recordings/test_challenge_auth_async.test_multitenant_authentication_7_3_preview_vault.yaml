@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.5.0b5 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://vaultname.vault.azure.net/keys/livekvtestmultitenant-key8ff41ea6/create?api-version=7.3-preview
   response:
@@ -20,7 +20,7 @@ interactions:
       cache-control: no-cache
       content-length: '97'
       content-type: application/json; charset=utf-8
-      date: Fri, 15 Oct 2021 21:08:46 GMT
+      date: Fri, 05 Nov 2021 16:55:44 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
@@ -34,5 +34,38 @@ interactions:
     status:
       code: 401
       message: Unauthorized
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestmultitenant-key8ff41ea6/create?api-version=7.3-preview
+- request:
+    body: '{"kty": "RSA"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '14'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: POST
+    uri: https://vaultname.vault.azure.net/keys/livekvtestmultitenant-key8ff41ea6/create?api-version=7.3-preview
+  response:
+    body:
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestmultitenant-key8ff41ea6/41af6e7fded24fcc84dbecf0b217c0c6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"10WaAIJ6LZzb7JCqZm8nkkjxjfTV_1PgI6a54zYBG3C0IsYigoyOrUp3ZSv2i-Mx5gSrqdcN1AQnt1GFiIEQjtO1kz24l7NIelrJn0YcCM8c2b0sBAWSY1zRaZzUmHJuAGtxUgBs77bOa7B-izuK1VSAhANu2I9cZVsTywSzveIqIuBRt5dN6-YsLPep1HS-ENPtCE7IgUOVQi6kFh-zLl-OcJ5MOiDuhoU0gIJ0e4aVWvr4kVLW5UHrcFkr1fUVxHzFwZJDNiez2tr8RM3utj4Le46_7W5yJjt-s8Q6anSojUhmlp4r7-hSZ4_EfRfZlifHWix9ZqiuPHuZFOJKyQ","e":"AQAB"},"attributes":{"enabled":true,"created":1636131345,"updated":1636131345,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+    headers:
+      cache-control: no-cache
+      content-length: '701'
+      content-type: application/json; charset=utf-8
+      date: Fri, 05 Nov 2021 16:55:45 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.9.150.1
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
     url: https://mcpatinotest.vault.azure.net/keys/livekvtestmultitenant-key8ff41ea6/create?api-version=7.3-preview
 version: 1
