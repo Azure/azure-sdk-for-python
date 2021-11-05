@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json; serialization=Avro
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b4 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: PUT
     uri: https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema-basic-asynce5e1482?api-version=2021-10
   response:
@@ -17,7 +17,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 04 Nov 2021 22:30:13 GMT
+      date: Fri, 05 Nov 2021 00:46:06 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic-asynce5e1482/versions/1?api-version=2021-10
       schema-group-name: swathip-test-schema
       schema-id: 81c67e31a76a45548697e097c53f6970
@@ -37,7 +37,7 @@ interactions:
       Accept:
       - application/json; serialization=avro
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b4 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/81c67e31a76a45548697e097c53f6970?api-version=2021-10
   response:
@@ -45,7 +45,7 @@ interactions:
       string: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}'
     headers:
       content-type: application/json;serialization=Avro
-      date: Thu, 04 Nov 2021 22:30:13 GMT
+      date: Fri, 05 Nov 2021 00:46:07 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic-asynce5e1482/versions/1?api-version=2021-10
       schema-group-name: swathip-test-schema
       schema-id: 81c67e31a76a45548697e097c53f6970
@@ -70,7 +70,7 @@ interactions:
       Content-Type:
       - application/json; serialization=Avro
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b4 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema-basic-asynce5e1482:get-id?api-version=2021-10
   response:
@@ -78,7 +78,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 04 Nov 2021 22:30:14 GMT
+      date: Fri, 05 Nov 2021 00:46:07 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic-asynce5e1482/versions/1?api-version=2021-10
       schema-group-name: swathip-test-schema
       schema-id: 81c67e31a76a45548697e097c53f6970

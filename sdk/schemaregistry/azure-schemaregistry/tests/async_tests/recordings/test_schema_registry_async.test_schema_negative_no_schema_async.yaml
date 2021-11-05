@@ -5,18 +5,18 @@ interactions:
       Accept:
       - application/json; serialization=avro
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b4 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/a?api-version=2021-10
   response:
     body:
       string: '{"Code":400,"Detail":"SubCode=40000, UnknownType:The request is invalid.
-        [MGResponseHttpError=BadRequest]. TrackingId:b18e7f36-16f0-4557-a38f-025672c3ccdf_G10,
+        [MGResponseHttpError=BadRequest]. TrackingId:7fcd3ad1-2cea-44ab-a89d-38862b7a0b99_G1,
         SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/$schemas\/a,
-        Timestamp:2021-11-04T22:30:15"}'
+        Timestamp:2021-11-05T00:46:09"}'
     headers:
       content-type: application/json
-      date: Thu, 04 Nov 2021 22:30:15 GMT
+      date: Fri, 05 Nov 2021 00:46:08 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
@@ -30,17 +30,17 @@ interactions:
       Accept:
       - application/json; serialization=avro
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b4 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2021-10
   response:
     body:
       string: '{"Code":404,"Detail":"Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does
-        not exist. TrackingId:0a6c7dc3-3ce9-4c06-b807-a5cbcd0cf844_G10, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/$schemas\/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
-        Timestamp:2021-11-04T22:30:16"}'
+        not exist. TrackingId:a1d97de6-7c99-49f9-aee2-99d048bff011_G1, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/$schemas\/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
+        Timestamp:2021-11-05T00:46:09"}'
     headers:
       content-type: application/json
-      date: Thu, 04 Nov 2021 22:30:15 GMT
+      date: Fri, 05 Nov 2021 00:46:08 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked

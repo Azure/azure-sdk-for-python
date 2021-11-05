@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json; serialization=Avro
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b4 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: PUT
     uri: https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema-basic31c70f88?api-version=2021-10
   response:
@@ -23,7 +23,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 04 Nov 2021 22:29:54 GMT
+      - Fri, 05 Nov 2021 00:45:47 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic31c70f88/versions/1?api-version=2021-10
       schema-group-name:
@@ -55,7 +55,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b4 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/5ac5faa3522a4dacbe1fb7be60f05abf?api-version=2021-10
   response:
@@ -65,7 +65,7 @@ interactions:
       content-type:
       - application/json;serialization=Avro
       date:
-      - Thu, 04 Nov 2021 22:29:55 GMT
+      - Fri, 05 Nov 2021 00:45:48 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic31c70f88/versions/1?api-version=2021-10
       schema-group-name:
@@ -103,7 +103,7 @@ interactions:
       Content-Type:
       - application/json; serialization=Avro
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b4 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema-basic31c70f88:get-id?api-version=2021-10
   response:
@@ -113,7 +113,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 04 Nov 2021 22:29:55 GMT
+      - Fri, 05 Nov 2021 00:45:48 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic31c70f88/versions/1?api-version=2021-10
       schema-group-name:
