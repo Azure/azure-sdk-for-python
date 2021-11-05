@@ -3,12 +3,16 @@
 ## 4.1.0b2 (Unreleased)
 
 ### Features Added
+- Added support for multi-tenant authentication against Managed HSM when using
+  `azure-identity` 1.7.1 or newer
+  ([#20698](https://github.com/Azure/azure-sdk-for-python/issues/20698))
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+- Updated minimum `azure-core` version to 1.15.0
 
 ## 4.1.0b1 (2021-09-09)
 

@@ -15,67 +15,61 @@ protocol again.
 """
 from typing import TYPE_CHECKING
 
-from azure.core.pipeline.policies import AsyncHTTPPolicy
+from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 
-from . import HttpChallengeCache
-from .challenge_auth_policy import _enforce_tls, _get_challenge_request, _update_challenge, ChallengeAuthPolicyBase
+from . import http_challenge_cache as ChallengeCache
+from .challenge_auth_policy import _enforce_tls, _update_challenge
 
 if TYPE_CHECKING:
-    from typing import Any
-    from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.pipeline import PipelineRequest
-    from azure.core.pipeline.transport import AsyncHttpResponse
-    from . import HttpChallenge
+    from typing import Any, Optional
+    from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 
-class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
+class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
     """policy for handling HTTP authentication challenges"""
 
-    def __init__(self, credential: "AsyncTokenCredential", **kwargs: "Any") -> None:
-        self._credential = credential
-        super(AsyncChallengeAuthPolicy, self).__init__(**kwargs)
+    def __init__(self, *args: "Any", **kwargs: "Any") -> None:
+        self._last_tenant_id = None  # type: Optional[str]
+        super().__init__(*args, **kwargs)
 
-    async def send(self, request: "PipelineRequest") -> "AsyncHttpResponse":
+    async def on_request(self, request: "PipelineRequest") -> None:
+        challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
+        if challenge:
+            if self._last_tenant_id == challenge.tenant_id:
+                # Super can handle this. Its cached token, if any, probably isn't from a different tenant, and
+                # it knows the scope to request for a new token. Note that if the vault has moved to a new
+                # tenant since our last request for it, this request will fail.
+                await super().on_request(request)
+            else:
+                # acquire a new token because this vault is in a different tenant and the application has
+                # opted to allow tenant discovery
+                await self.authorize_request(request, *self._scopes, tenant_id=challenge.tenant_id)
+            return
+
+        # else: discover authentication information by eliciting a challenge from Key Vault. Remove any request data,
+        # saving it for later. Key Vault will reject the request as unauthorized and respond with a challenge.
+        # on_challenge will parse that challenge, reattach any body removed here, authorize the request, and tell
+        # super to send it again.
         _enforce_tls(request)
+        if request.http_request.body:
+            request.context["key_vault_request_data"] = request.http_request.body
+            request.http_request.set_json_body(None)
+            request.http_request.headers["Content-Length"] = "0"
 
-        challenge = HttpChallengeCache.get_challenge_for_url(request.http_request.url)
-        if not challenge:
-            challenge_request = _get_challenge_request(request)
-            challenger = await self.next.send(challenge_request)
-            try:
-                challenge = _update_challenge(request, challenger)
-            except ValueError:
-                # didn't receive the expected challenge -> nothing more this policy can do
-                return challenger
 
-        await self._handle_challenge(request, challenge)
-        response = await self.next.send(request)
-
-        if response.http_response.status_code == 401:
-            # any cached token must be invalid
-            self._token = None
-
-            # cached challenge could be outdated; maybe this response has a new one?
-            try:
-                challenge = _update_challenge(request, response)
-            except ValueError:
-                # 401 with no legible challenge -> nothing more this policy can do
-                return response
-
-            await self._handle_challenge(request, challenge)
-            response = await self.next.send(request)
-
-        return response
-
-    async def _handle_challenge(self, request: "PipelineRequest", challenge: "HttpChallenge") -> None:
-        """authenticate according to challenge, add Authorization header to request"""
-
-        if self._need_new_token:
-            # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
+    async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
+        try:
+            challenge = _update_challenge(request, response)
             scope = challenge.get_scope() or challenge.get_resource() + "/.default"
-            # pass the tenant ID from the challenge to support multi-tenant authentication when possible
-            tenant_id = challenge.get_tenant_id()
-            self._token = await self._credential.get_token(scope, tenant_id=tenant_id)
+        except ValueError:
+            return False
 
-        # ignore mypy's warning because although self._token is Optional, get_token raises when it fails to get a token
-        request.http_request.headers["Authorization"] = "Bearer {}".format(self._token.token)  # type: ignore
+        self._scopes = (scope,)
+
+        body = request.context.pop("key_vault_request_data", None)
+        request.http_request.set_text_body(body)  # no-op when text is None
+
+        self._last_tenant_id = challenge.tenant_id
+        await self.authorize_request(request, *self._scopes, tenant_id=challenge.tenant_id)
+
+        return True

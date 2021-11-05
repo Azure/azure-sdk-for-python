@@ -40,6 +40,10 @@ class HttpChallenge(object):
         if "authorization" not in self._parameters and "authorization_uri" not in self._parameters:
             raise ValueError("Invalid challenge parameters")
 
+        authorization_uri = self.get_authorization_server()
+        # the authoritzation server URI should look something like https://login.windows.net/tenant-id
+        self.tenant_id = authorization_uri.split("/")[-1] or None
+
         # if the response headers were supplied
         if response_headers:
             # get the message signing key and message key encryption key from the headers
