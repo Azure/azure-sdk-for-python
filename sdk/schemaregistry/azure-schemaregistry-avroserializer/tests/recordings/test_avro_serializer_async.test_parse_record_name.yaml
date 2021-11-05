@@ -19,7 +19,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 05 Nov 2021 20:03:47 GMT
+      date: Fri, 05 Nov 2021 23:17:19 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/User.avro/versions/1?api-version=2021-10
       schema-group-name: swathip-test-schema
       schema-id: c785cfbccd2e43a69e0a95e61506da4c
@@ -37,7 +37,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json; serialization=avro
+      - application/json; serialization=Avro
       User-Agent:
       - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: GET
@@ -47,7 +47,7 @@ interactions:
       string: '{"namespace":"thrownaway","name":"User.avro","type":"record","fields":[{"name":"name","type":"string"}]}'
     headers:
       content-type: application/json;serialization=Avro
-      date: Fri, 05 Nov 2021 20:03:48 GMT
+      date: Fri, 05 Nov 2021 23:17:20 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/User.avro/versions/1?api-version=2021-10
       schema-group-name: swathip-test-schema
       schema-id: c785cfbccd2e43a69e0a95e61506da4c
@@ -81,7 +81,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 05 Nov 2021 20:03:49 GMT
+      date: Fri, 05 Nov 2021 23:17:20 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/User/versions/1?api-version=2021-10
       schema-group-name: swathip-test-schema
       schema-id: 31b0db60056a4d43b880870cf7139c72
@@ -99,7 +99,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json; serialization=avro
+      - application/json; serialization=Avro
       User-Agent:
       - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: GET
@@ -109,7 +109,7 @@ interactions:
       string: '{"name":"User","type":"record","fields":[{"name":"name","type":"string"}]}'
     headers:
       content-type: application/json;serialization=Avro
-      date: Fri, 05 Nov 2021 20:03:49 GMT
+      date: Fri, 05 Nov 2021 23:17:21 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/User/versions/1?api-version=2021-10
       schema-group-name: swathip-test-schema
       schema-id: 31b0db60056a4d43b880870cf7139c72

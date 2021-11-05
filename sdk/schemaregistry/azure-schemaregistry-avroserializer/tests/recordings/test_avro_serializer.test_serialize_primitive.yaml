@@ -23,7 +23,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 05 Nov 2021 20:03:38 GMT
+      - Fri, 05 Nov 2021 23:17:09 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/null/versions/1?api-version=2021-10
       schema-group-name:

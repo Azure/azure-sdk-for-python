@@ -21,7 +21,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 05 Nov 2021 20:03:51 GMT
+      date: Fri, 05 Nov 2021 23:17:24 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/example.avro.populatedrecord.User/versions/1?api-version=2021-10
       schema-group-name: swathip-test-schema
       schema-id: e151432d25624815913f3fe5e9e90139
@@ -39,7 +39,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json; serialization=avro
+      - application/json; serialization=Avro
       User-Agent:
       - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: GET
@@ -49,7 +49,7 @@ interactions:
       string: '{"name":"User","namespace":"example.avro.populatedrecord","type":"record","fields":[{"name":"name","type":"string"},{"name":"age","type":"int"},{"name":"married","type":"boolean"},{"name":"height","type":"float"},{"name":"randb","type":"bytes"}]}'
     headers:
       content-type: application/json;serialization=Avro
-      date: Fri, 05 Nov 2021 20:03:52 GMT
+      date: Fri, 05 Nov 2021 23:17:24 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/example.avro.populatedrecord.User/versions/1?api-version=2021-10
       schema-group-name: swathip-test-schema
       schema-id: e151432d25624815913f3fe5e9e90139

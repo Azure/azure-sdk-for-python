@@ -23,7 +23,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 05 Nov 2021 20:03:28 GMT
+      - Fri, 05 Nov 2021 23:17:01 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/example.avro.User/versions/1?api-version=2021-10
       schema-group-name:
@@ -71,7 +71,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 05 Nov 2021 20:03:29 GMT
+      - Fri, 05 Nov 2021 23:17:01 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/example.avro.User/versions/1?api-version=2021-10
       schema-group-name:
@@ -97,7 +97,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json; serialization=avro
+      - application/json; serialization=Avro
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -113,7 +113,7 @@ interactions:
       content-type:
       - application/json;serialization=Avro
       date:
-      - Fri, 05 Nov 2021 20:03:29 GMT
+      - Fri, 05 Nov 2021 23:17:01 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/example.avro.User/versions/1?api-version=2021-10
       schema-group-name:
