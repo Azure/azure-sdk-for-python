@@ -1,12 +1,10 @@
 # Release History
 
-## 1.7.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.7.1 (2021-11-09)
 
 ### Bugs Fixed
+
+- Fix multi-tenant auth using async AadClient ([#21289](https://github.com/Azure/azure-sdk-for-python/issues/21289))
 
 ### Other Changes
 
