@@ -1,5 +1,118 @@
 # Release History
 
+## 3.0.0 (2021-11-05)
+
+**Features**
+
+  - Model DataCollectionRuleAssociationProxyOnlyResource has a new parameter data_collection_endpoint_id
+  - Model DataCollectionRuleAssociationProxyOnlyResource has a new parameter system_data
+  - Model AutoscaleSettingResource has a new parameter predictive_autoscale_policy
+  - Model AutoscaleSettingResource has a new parameter target_resource_location
+  - Model AutoscaleSettingResource has a new parameter system_data
+  - Model ExtensionDataSource has a new parameter input_data_sources
+  - Model DataCollectionRuleResource has a new parameter kind
+  - Model DataCollectionRuleResource has a new parameter immutable_id
+  - Model DataCollectionRuleResource has a new parameter system_data
+  - Model ScheduledQueryRuleResourcePatch has a new parameter created_with_api_version
+  - Model ScheduledQueryRuleResourcePatch has a new parameter display_name
+  - Model ScheduledQueryRuleResourcePatch has a new parameter override_query_time_range
+  - Model ScheduledQueryRuleResourcePatch has a new parameter is_legacy_log_analytics_rule
+  - Model MetricDefinition has a new parameter category
+  - Model MetricDefinition has a new parameter metric_class
+  - Model MetricDefinition has a new parameter display_description
+  - Model ManagementGroupLogSettings has a new parameter category_group
+  - Model RuleMetricDataSource has a new parameter metric_namespace
+  - Model RuleMetricDataSource has a new parameter legacy_resource_id
+  - Model RuleMetricDataSource has a new parameter resource_location
+  - Model DiagnosticSettingsCategoryResource has a new parameter category_groups
+  - Model DiagnosticSettingsCategoryResource has a new parameter system_data
+  - Model RuleDataSource has a new parameter metric_namespace
+  - Model RuleDataSource has a new parameter legacy_resource_id
+  - Model RuleDataSource has a new parameter resource_location
+  - Model LogSearchRuleResource has a new parameter etag
+  - Model LogSearchRuleResource has a new parameter display_name
+  - Model LogSearchRuleResource has a new parameter kind
+  - Model LogSearchRuleResource has a new parameter created_with_api_version
+  - Model LogSearchRuleResource has a new parameter auto_mitigate
+  - Model LogSearchRuleResource has a new parameter is_legacy_log_analytics_rule
+  - Model ScheduledQueryRuleResource has a new parameter etag
+  - Model ScheduledQueryRuleResource has a new parameter display_name
+  - Model ScheduledQueryRuleResource has a new parameter override_query_time_range
+  - Model ScheduledQueryRuleResource has a new parameter kind
+  - Model ScheduledQueryRuleResource has a new parameter created_with_api_version
+  - Model ScheduledQueryRuleResource has a new parameter is_legacy_log_analytics_rule
+  - Model DataCollectionRuleAssociation has a new parameter data_collection_endpoint_id
+  - Model DataCollectionRuleResourceProperties has a new parameter immutable_id
+  - Model Operation has a new parameter service_specification
+  - Model Operation has a new parameter is_data_action
+  - Model CalculateBaselineResponse has a new parameter error_type
+  - Model CalculateBaselineResponse has a new parameter statistics
+  - Model CalculateBaselineResponse has a new parameter internal_operation_id
+  - Model LogSettings has a new parameter category_group
+  - Model LogAnalyticsDestination has a new parameter workspace_id
+  - Model Baseline has a new parameter error_type
+  - Model Baseline has a new parameter prediction_result_type
+  - Model Baseline has a new parameter timestamps
+  - Model TimeSeriesBaseline has a new parameter metadata_values
+  - Model BaselineResponse has a new parameter error_type
+  - Model BaselineResponse has a new parameter prediction_result_type
+  - Model BaselineResponse has a new parameter metdata
+  - Model BaselineResponse has a new parameter internal_operation_id
+  - Model ManagementGroupDiagnosticSettingsResource has a new parameter marketplace_partner_id
+  - Model ManagementGroupDiagnosticSettingsResource has a new parameter system_data
+  - Model SubscriptionLogSettings has a new parameter category_group
+  - Model MetricNamespace has a new parameter classification
+  - Model AutoscaleSettingResourcePatch has a new parameter predictive_autoscale_policy
+  - Model AutoscaleSettingResourcePatch has a new parameter target_resource_location
+  - Model OperationDisplay has a new parameter publisher
+  - Model OperationDisplay has a new parameter description
+  - Model DataCollectionRule has a new parameter immutable_id
+  - Model DataCollectionRuleAssociationProxyOnlyResourceProperties has a new parameter data_collection_endpoint_id
+  - Model MetricAlertResourcePatch has a new parameter is_migrated
+  - Model AlertRuleResource has a new parameter provisioning_state
+  - Model AlertRuleResource has a new parameter action
+  - Model MetricTrigger has a new parameter divide_per_instance
+  - Model MetricTrigger has a new parameter metric_resource_location
+  - Model Metric has a new parameter display_description
+  - Model Metric has a new parameter error_code
+  - Model Metric has a new parameter error_message
+  - Model ActionGroupResource has a new parameter kind
+  - Model ActionGroupResource has a new parameter event_hub_receivers
+  - Model ActionGroupResource has a new parameter identity
+  - Model RuleManagementEventDataSource has a new parameter metric_namespace
+  - Model RuleManagementEventDataSource has a new parameter legacy_resource_id
+  - Model RuleManagementEventDataSource has a new parameter resource_location
+  - Model AlertRuleResourcePatch has a new parameter provisioning_state
+  - Model AlertRuleResourcePatch has a new parameter action
+  - Model SubscriptionDiagnosticSettingsResource has a new parameter marketplace_partner_id
+  - Model SubscriptionDiagnosticSettingsResource has a new parameter system_data
+  - Model DiagnosticSettingsResource has a new parameter marketplace_partner_id
+  - Model DiagnosticSettingsResource has a new parameter system_data
+  - Model MetricAlertResource has a new parameter is_migrated
+  - Added operation ActionGroupsOperations.begin_post_test_notifications
+  - Added operation ActionGroupsOperations.get_test_notifications
+  - Added operation group PredictiveMetricOperations
+  - Added operation group DataCollectionEndpointsOperations
+
+**Breaking changes**
+
+  - Parameter scopes of model MetricAlertResource is now required
+  - Operation ActivityLogAlertsOperations.create_or_update has a new signature
+  - Operation ActivityLogAlertsOperations.update has a new signature
+  - Operation SubscriptionDiagnosticSettingsOperations.list has a new signature
+  - Operation SubscriptionDiagnosticSettingsOperations.get has a new signature
+  - Operation SubscriptionDiagnosticSettingsOperations.delete has a new signature
+  - Operation SubscriptionDiagnosticSettingsOperations.create_or_update has a new signature
+  - Model WindowsEventLogDataSource no longer has parameter scheduled_transfer_period
+  - Model ErrorResponse no longer has parameter target
+  - Model ErrorResponse no longer has parameter details
+  - Model ErrorResponse no longer has parameter additional_info
+  - Model TimeSeriesBaseline no longer has parameter metadata
+  - Model BaselineResponse no longer has parameter metadata
+  - Model ManagementGroupDiagnosticSettingsResource no longer has parameter location
+  - Model PerfCounterDataSource no longer has parameter scheduled_transfer_period
+  - Model SubscriptionDiagnosticSettingsResource no longer has parameter location
+
 ## 2.0.0 (2020-12-25)
 
 **Breaking changes**
