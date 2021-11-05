@@ -162,7 +162,7 @@ class RestAioHttpTransportResponse(AsyncHttpResponseImpl, _RestAioHttpTransportR
             **kwargs
         )
         self._decompress = decompress
-        self._decompressed_content = None
+        self._decompressed_content = False
 
     def __getstate__(self):
         state = self.__dict__.copy()
