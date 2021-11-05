@@ -98,7 +98,6 @@ async def test_streaming_response(client):
         assert not response.is_closed
 
         content = await response.read()
-
         assert content == b"Hello, world!"
         assert response.content == b"Hello, world!"
         assert response.is_closed
@@ -217,3 +216,23 @@ async def test_pass_kwarg_to_iter_raw(client):
     response = await client.send_request(request, stream=True)
     async for part in response.iter_raw(chunk_size=5):
         assert part
+
+@pytest.mark.asyncio
+async def test_decompress_compressed_header(client):
+    # expect plain text
+    request = HttpRequest("GET", "/encoding/gzip")
+    response = await client.send_request(request)
+    content = await response.read()
+    assert content == b"hello world"
+    assert response.content == content
+    assert response.text() == "hello world"
+
+@pytest.mark.asyncio
+async def test_decompress_compressed_header_stream(client):
+    # expect plain text
+    request = HttpRequest("GET", "/encoding/gzip")
+    response = await client.send_request(request, stream=True)
+    content = await response.read()
+    assert content == b"hello world"
+    assert response.content == content
+    assert response.text() == "hello world"
