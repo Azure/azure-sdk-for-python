@@ -214,7 +214,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
             "tag1": "val1"
           }
         }
-        result = self.loganalytics_client.workspaces.create_or_update(
+        result = self.loganalytics_client.workspaces.begin_create_or_update(
             group_name,
             workspace_name,
             BODY

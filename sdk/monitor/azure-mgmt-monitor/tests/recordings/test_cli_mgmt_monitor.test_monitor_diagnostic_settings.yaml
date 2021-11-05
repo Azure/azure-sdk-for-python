@@ -1,0 +1,50 @@
+interactions:
+- request:
+    body: '{"sku": {"name": "Standard_LRS"}, "kind": "Storage", "location": "eastus"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '74'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.21 msrest_azure/0.6.2 azure-mgmt-storage/5.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountx683f167c?api-version=2019-04-01
+  response:
+    body:
+      string: '{"error":{"code":"StorageAccountAlreadyExists","message":"The storage
+        account named storageaccountx683f167c already exists under the subscription."}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '149'
+      content-type:
+      - application/json
+      date:
+      - Fri, 05 Nov 2021 05:06:52 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 409
+      message: Conflict
+version: 1
