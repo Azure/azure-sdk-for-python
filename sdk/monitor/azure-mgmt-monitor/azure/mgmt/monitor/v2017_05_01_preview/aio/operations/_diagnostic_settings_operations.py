@@ -44,7 +44,7 @@ class DiagnosticSettingsOperations:
         self,
         resource_uri: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiagnosticSettingsResource":
         """Gets the active diagnostic settings for the specified resource.
 
@@ -87,7 +87,7 @@ class DiagnosticSettingsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticSettingsResource', pipeline_response)
@@ -96,14 +96,14 @@ class DiagnosticSettingsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/diagnosticSettings/{name}'}  # type: ignore
+    get.metadata = {'url': '/{resourceUri}/providers/Microsoft.Insights/diagnosticSettings/{name}'}  # type: ignore
 
     async def create_or_update(
         self,
         resource_uri: str,
         name: str,
         parameters: "_models.DiagnosticSettingsResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiagnosticSettingsResource":
         """Creates or updates diagnostic settings for the specified resource.
 
@@ -153,7 +153,7 @@ class DiagnosticSettingsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticSettingsResource', pipeline_response)
@@ -162,13 +162,13 @@ class DiagnosticSettingsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_or_update.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/diagnosticSettings/{name}'}  # type: ignore
+    create_or_update.metadata = {'url': '/{resourceUri}/providers/Microsoft.Insights/diagnosticSettings/{name}'}  # type: ignore
 
     async def delete(
         self,
         resource_uri: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes existing diagnostic settings for the specified resource.
 
@@ -211,18 +211,18 @@ class DiagnosticSettingsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/diagnosticSettings/{name}'}  # type: ignore
+    delete.metadata = {'url': '/{resourceUri}/providers/Microsoft.Insights/diagnosticSettings/{name}'}  # type: ignore
 
     async def list(
         self,
         resource_uri: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiagnosticSettingsResourceCollection":
         """Gets the active diagnostic settings list for the specified resource.
 
@@ -262,7 +262,7 @@ class DiagnosticSettingsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticSettingsResourceCollection', pipeline_response)
@@ -271,4 +271,4 @@ class DiagnosticSettingsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/diagnosticSettings'}  # type: ignore
+    list.metadata = {'url': '/{resourceUri}/providers/Microsoft.Insights/diagnosticSettings'}  # type: ignore
