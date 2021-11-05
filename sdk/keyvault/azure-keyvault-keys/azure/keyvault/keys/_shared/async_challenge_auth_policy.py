@@ -33,6 +33,7 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
         super().__init__(*args, **kwargs)
 
     async def on_request(self, request: "PipelineRequest") -> None:
+        _enforce_tls(request)
         challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
         if challenge:
             if self._last_tenant_id == challenge.tenant_id:
@@ -49,7 +50,6 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
         # saving it for later. Key Vault will reject the request as unauthorized and respond with a challenge.
         # on_challenge will parse that challenge, reattach any body removed here, authorize the request, and tell
         # super to send it again.
-        _enforce_tls(request)
         if request.http_request.body:
             request.context["key_vault_request_data"] = request.http_request.body
             request.http_request.set_json_body(None)

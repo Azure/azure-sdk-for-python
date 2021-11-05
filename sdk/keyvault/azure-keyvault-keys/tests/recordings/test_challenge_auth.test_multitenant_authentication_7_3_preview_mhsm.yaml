@@ -61,7 +61,7 @@ interactions:
     uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestmultitenant-keybfb31bb2/create?api-version=7.3-preview
   response:
     body:
-      string: '{"attributes":{"created":1636131323,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1636131323},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestmultitenant-keybfb31bb2/451b8057153600668fa009e735a9d996","kty":"RSA-HSM","n":"iwhflbo8-_WYe32hbVI72HZyCBMW7TF-a1LYOiKyc9eDgXsDGc7TBQhfyIDYl-AXB2n4Y4hJtZWFoU4ePSF3PI5dpHrAwtxa7SifiR256Fad90bH03jXsjrgiQz3H3LOZVPomDSnA3FJrYawp9bealfge2RhrjQY_wGjOyhHUtIY-7_6aMqbPCORG3wPDQ6cflFl0_YNjCWQfs9iNxZ_xmYk19vmypvt1p9k6eiEPo8OYMuP2hmib9MhRh40mQhoYO2WuMKAGdNZnHFQ7DYsterHxPfSLT6f-3PWAleV7tNbcrcC846hDzoELVcNLEYMYO5ytS5B-8OH1BFYgTHvFQ"}}'
+      string: '{"attributes":{"created":1636135977,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1636135977},"key":{"e":"AQAB","key_ops":["wrapKey","sign","verify","encrypt","decrypt","unwrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestmultitenant-keybfb31bb2/9ef4797f09fe05c595a6435eb95b5993","kty":"RSA-HSM","n":"qaB0QiIXjV1Z5qy8wFtT3ouRrEaP7GyCiO6HLOip6KCwMPpWQFylbZ_t0qVAorluh78TmozicZMrvT44s6NVjowzywgPqQU7C3b0oDL4_4mgOTK_1pSFXvwkIomjanrCcrVB8rt850wDLprgKoAspls9Jn02JKtbx3223oBlTkTLJ2H6PseotOYbV7-0q7lz9JJm4mrj6OdmRuoRDI4uRjNBdCIHhO9aKPXC0EdESy4pcwEiVaLGEqzcnG97IIMdqWLVXS17Dsm8d4fTn6AMeiaT7YooiVVX3xVzB2JPccp3UY27v1LB0rF8bfhWzJoaSBwBSMGPB9MefT1D3OrJ4Q"}}'
     headers:
       cache-control:
       - no-cache
@@ -82,7 +82,7 @@ interactions:
       x-ms-keyvault-region:
       - westus
       x-ms-server-latency:
-      - '233'
+      - '303'
     status:
       code: 200
       message: OK

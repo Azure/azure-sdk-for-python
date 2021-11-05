@@ -20,7 +20,7 @@ interactions:
       cache-control: no-cache
       content-length: '97'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Nov 2021 16:55:44 GMT
+      date: Fri, 05 Nov 2021 18:13:12 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
@@ -50,12 +50,12 @@ interactions:
     uri: https://vaultname.vault.azure.net/keys/livekvtestmultitenant-key8ff41ea6/create?api-version=7.3-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestmultitenant-key8ff41ea6/41af6e7fded24fcc84dbecf0b217c0c6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"10WaAIJ6LZzb7JCqZm8nkkjxjfTV_1PgI6a54zYBG3C0IsYigoyOrUp3ZSv2i-Mx5gSrqdcN1AQnt1GFiIEQjtO1kz24l7NIelrJn0YcCM8c2b0sBAWSY1zRaZzUmHJuAGtxUgBs77bOa7B-izuK1VSAhANu2I9cZVsTywSzveIqIuBRt5dN6-YsLPep1HS-ENPtCE7IgUOVQi6kFh-zLl-OcJ5MOiDuhoU0gIJ0e4aVWvr4kVLW5UHrcFkr1fUVxHzFwZJDNiez2tr8RM3utj4Le46_7W5yJjt-s8Q6anSojUhmlp4r7-hSZ4_EfRfZlifHWix9ZqiuPHuZFOJKyQ","e":"AQAB"},"attributes":{"enabled":true,"created":1636131345,"updated":1636131345,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestmultitenant-key8ff41ea6/63e1215f659f423b9e2f74b1f645802b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"5ibXDBzD5GIADx1Te_WJaLx2LQppykGOCC5Ici8SsLtAtmvRlCqhrzhCqlT1AQDp142JOv53j8iaBP_OWJ2QuUcn-1J_OwTW-bRroUdsr0UdDoSpKb7SgL-4O9ZWUMQZQCVVbUpqYhbVBE_faPskABG96XgwmMI6pdOTIkRAtu0eIgd5BhYre_O0eLGWImjNf8ICitAHC80xZ-sDF3Ckj5P3WU8T-nA64xzix62bw5WNBLD3LqRol1un9bxClEJyEwtPTwrk-SUrIhebdErzPafDRQlqVTIS1SDfvSSvViSC6EDuLhXMT6HDJOrcB9tI1hZRW0KvFeMJMyNRpnUzEQ","e":"AQAB"},"attributes":{"enabled":true,"created":1636135993,"updated":1636135993,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
       content-length: '701'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Nov 2021 16:55:45 GMT
+      date: Fri, 05 Nov 2021 18:13:12 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains

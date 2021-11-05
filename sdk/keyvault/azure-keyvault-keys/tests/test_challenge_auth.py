@@ -24,6 +24,7 @@ from azure.core.pipeline.transport import HttpRequest
 from azure.identity import ClientSecretCredential
 from azure.keyvault.keys import KeyClient
 from azure.keyvault.keys._shared import ChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
+from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 
 import pytest
 
@@ -32,27 +33,29 @@ from _shared.test_case import KeyVaultTestCase
 from _test_case import client_setup, get_decorator, KeysTestCase
 
 
-all_api_versions = get_decorator()
+only_default_version = get_decorator(api_versions=[DEFAULT_VERSION])
 
 
 class ChallengeAuthTests(KeysTestCase, KeyVaultTestCase):
     def __init__(self, *args, **kwargs):
         super(ChallengeAuthTests, self).__init__(*args, match_body=False, **kwargs)
 
-    @all_api_versions()
+    @only_default_version()
     @client_setup
     def test_multitenant_authentication(self, client, is_hsm, **kwargs):
+        if not self.is_live:
+            pytest.skip("This test is incompatible with vcrpy in playback")
+
         client_id = os.environ.get("KEYVAULT_CLIENT_ID")
         client_secret = os.environ.get("KEYVAULT_CLIENT_SECRET")
-        if self.is_live and not client_id and client_secret:
+        if not (client_id and client_secret):
             pytest.skip("Values for KEYVAULT_CLIENT_ID and KEYVAULT_CLIENT_SECRET are required")
 
         # we set up a client for this method to align with the async test, but we actually want to create a new client
         # this new client should use a credential with an initially fake tenant ID and still succeed with a real request
-        api_version = client.api_version
         credential = ClientSecretCredential(tenant_id=str(uuid4()), client_id=client_id, client_secret=client_secret)
         vault_url = self.managed_hsm_url if is_hsm else self.vault_url
-        client = KeyClient(vault_url=vault_url, credential=credential, api_version=api_version)
+        client = KeyClient(vault_url=vault_url, credential=credential)
 
         if self.is_live:
             time.sleep(2)  # to avoid throttling by the service
@@ -117,7 +120,7 @@ def test_challenge_parsing():
 
     assert challenge.get_authorization_server() == authority
     assert challenge.get_resource() == resource
-    assert challenge.get_tenant_id() == tenant
+    assert challenge.tenant_id == tenant
 
 
 @empty_challenge_cache
@@ -328,11 +331,7 @@ def test_token_expiration():
 
 @empty_challenge_cache
 def test_preserves_options_and_headers():
-    """After a challenge, the original request should be sent with its options and headers preserved.
-
-    If a policy mutates the options or headers of the challenge (unauthorized) request, the options of the service
-    request should be present when it is sent with authorization.
-    """
+    """After a challenge, the policy should send the original request with its options and headers preserved"""
 
     url = get_random_url()
     token = "**"
@@ -351,51 +350,31 @@ def test_preserves_options_and_headers():
         ]
         + [mock_response()] * 2,
     )
-    challenge_policy = ChallengeAuthPolicy(credential=credential)
-    policies = get_policies_for_request_mutation_test(challenge_policy)
-    pipeline = Pipeline(policies=policies, transport=transport)
 
-    response = pipeline.run(HttpRequest("GET", url))
-
-    # ensure the mock sans I/O policies were called
-    for policy in policies:
-        if hasattr(policy, "on_request"):
-            assert policy.on_request.called, "mock policy wasn't invoked"
-
-
-def get_policies_for_request_mutation_test(challenge_policy):
-    # create mock policies to add, remove, and verify an option and header
     key = "foo"
     value = "bar"
-    do_not_handle = lambda _: False
 
     def add(request):
         # add the expected option and header
         request.context.options[key] = value
         request.http_request.headers[key] = value
 
-    adder = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock(wraps=add), on_exception=do_not_handle)
-
-    def remove(request):
-        # remove expected header and all options of unauthorized (challenge) requests
-        if not request.http_request.headers.get("Authorization"):
-            request.http_request.headers.pop(key, None)
-            request.context.options = {}
-
-    remover = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock(wraps=remove), on_exception=do_not_handle)
+    adder = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock(wraps=add), on_exception=lambda _: False)
 
     def verify(request):
         # authorized (non-challenge) requests should have the expected option and header
         if request.http_request.headers.get("Authorization"):
-            assert request.context.options.get(key) == value, "request option not preserved across challenge"
-            assert request.http_request.headers.get(key) == value, "headers not preserved across challenge"
+            assert request.context.options.get(key) == value, "request option wasn't preserved across challenge"
+            assert request.http_request.headers.get(key) == value, "headers wasn't preserved across challenge"
 
     verifier = Mock(spec=SansIOHTTPPolicy, on_request=Mock(wraps=verify))
 
-    # Mutating the challenge request shouldn't affect the authorized request.
-    # This is the pipeline flow:
-    #  1. add option and header
-    #  2. challenge auth
-    #  3. remove option, header from unauthorized request
-    #  4. verify option, header on authorized request
-    return [adder, challenge_policy, remover, verifier]
+    challenge_policy = ChallengeAuthPolicy(credential=credential)
+    policies = [adder, challenge_policy, verifier]
+    pipeline = Pipeline(policies=policies, transport=transport)
+
+    pipeline.run(HttpRequest("GET", url))
+
+    # ensure the mock sans I/O policies were called
+    assert adder.on_request.called, "mock policy wasn't invoked"
+    assert verifier.on_request.called, "mock policy wasn't invoked"

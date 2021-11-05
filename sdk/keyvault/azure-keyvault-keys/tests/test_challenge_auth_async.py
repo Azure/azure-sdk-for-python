@@ -11,48 +11,49 @@ import os
 import time
 from uuid import uuid4
 
-try:
-    from unittest.mock import Mock, patch
-except ImportError:  # python < 3.3
-    from mock import Mock, patch  # type: ignore
+from unittest.mock import AsyncMock, patch
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import AsyncPipeline
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.pipeline.transport import HttpRequest
 from azure.identity.aio import ClientSecretCredential
 from azure.keyvault.keys.aio import KeyClient
 from azure.keyvault.keys._shared import AsyncChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
+from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 import pytest
 
 from _shared.helpers import mock_response, Request
 from _shared.helpers_async import async_validating_transport
 from _shared.test_case_async import KeyVaultTestCase
 from _test_case import client_setup, get_decorator, KeysTestCase
-from test_challenge_auth import empty_challenge_cache, get_policies_for_request_mutation_test, get_random_url
+from test_challenge_auth import empty_challenge_cache, get_random_url
 
 
-all_api_versions = get_decorator(is_async=True)
+only_default_version = get_decorator(is_async=True, api_versions=[DEFAULT_VERSION])
 
 
 class ChallengeAuthTests(KeysTestCase, KeyVaultTestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, match_body=False, **kwargs)
 
-    @all_api_versions()
+    @only_default_version()
     @client_setup
     async def test_multitenant_authentication(self, client, is_hsm, **kwargs):
+        if not self.is_live:
+            pytest.skip("This test is incompatible with vcrpy in playback")
+
         client_id = os.environ.get("KEYVAULT_CLIENT_ID")
         client_secret = os.environ.get("KEYVAULT_CLIENT_SECRET")
-        if self.is_live and not client_id and client_secret:
+        if not (client_id and client_secret):
             pytest.skip("Values for KEYVAULT_CLIENT_ID and KEYVAULT_CLIENT_SECRET are required")
 
         # we set up a client for this method so it gets awaited, but we actually want to create a new client
         # this new client should use a credential with an initially fake tenant ID and still succeed with a real request
-        api_version = client.api_version
         credential = ClientSecretCredential(tenant_id=str(uuid4()), client_id=client_id, client_secret=client_secret)
         vault_url = self.managed_hsm_url if is_hsm else self.vault_url
-        client = KeyClient(vault_url=vault_url, credential=credential, api_version=api_version)
+        client = KeyClient(vault_url=vault_url, credential=credential)
 
         if self.is_live:
             await asyncio.sleep(2)  # to avoid throttling by the service
@@ -67,8 +68,8 @@ async def test_enforces_tls():
     url = "http://not.secure"
     HttpChallengeCache.set_challenge_for_url(url, HttpChallenge(url, "Bearer authorization=_, resource=_"))
 
-    credential = Mock()
-    pipeline = AsyncPipeline(transport=Mock(), policies=[AsyncChallengeAuthPolicy(credential)])
+    credential = AsyncMock()
+    pipeline = AsyncPipeline(transport=AsyncMock(), policies=[AsyncChallengeAuthPolicy(credential)])
     with pytest.raises(ServiceRequestError):
         await pipeline.run(HttpRequest("GET", url))
 
@@ -98,7 +99,7 @@ async def test_scope():
                 assert request.headers["Content-Length"]
                 assert request.body == expected_content
                 assert expected_token in request.headers["Authorization"]
-                return Mock(status_code=200)
+                return AsyncMock(status_code=200)
             raise ValueError("unexpected request")
 
         async def get_token(*scopes, **_):
@@ -106,8 +107,10 @@ async def test_scope():
             assert scopes[0] == expected_scope
             return AccessToken(expected_token, 0)
 
-        credential = Mock(get_token=Mock(wraps=get_token))
-        pipeline = AsyncPipeline(policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
+        credential = AsyncMock(get_token=AsyncMock(wraps=get_token))
+        pipeline = AsyncPipeline(
+            policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=AsyncMock(send=send)
+        )
         request = HttpRequest("POST", get_random_url())
         request.set_bytes_body(expected_content)
         await pipeline.run(request)
@@ -120,12 +123,12 @@ async def test_scope():
     resource = "https://challenge.resource"
     scope = resource + "/.default"
 
-    challenge_with_resource = Mock(
+    challenge_with_resource = AsyncMock(
         status_code=401,
         headers={"WWW-Authenticate": 'Bearer authorization="{}", resource={}'.format(endpoint, resource)},
     )
 
-    challenge_with_scope = Mock(
+    challenge_with_scope = AsyncMock(
         status_code=401, headers={"WWW-Authenticate": 'Bearer authorization="{}", scope={}'.format(endpoint, scope)}
     )
 
@@ -158,15 +161,17 @@ async def test_tenant():
                 assert request.headers["Content-Length"]
                 assert request.body == expected_content
                 assert expected_token in request.headers["Authorization"]
-                return Mock(status_code=200)
+                return AsyncMock(status_code=200)
             raise ValueError("unexpected request")
 
         async def get_token(*_, **kwargs):
             assert kwargs.get("tenant_id") == expected_tenant
             return AccessToken(expected_token, 0)
 
-        credential = Mock(get_token=Mock(wraps=get_token))
-        pipeline = AsyncPipeline(policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
+        credential = AsyncMock(get_token=AsyncMock(wraps=get_token))
+        pipeline = AsyncPipeline(
+            policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=AsyncMock(send=send)
+        )
         request = HttpRequest("POST", get_random_url())
         request.set_bytes_body(expected_content)
         await pipeline.run(request)
@@ -176,7 +181,7 @@ async def test_tenant():
     tenant = "tenant-id"
     endpoint = "https://authority.net/{}".format(tenant)
 
-    challenge = Mock(
+    challenge = AsyncMock(
         status_code=401,
         headers={"WWW-Authenticate": 'Bearer authorization="{}", resource=https://challenge.resource'.format(endpoint)},
     )
@@ -230,7 +235,7 @@ async def test_policy_updates_cache():
     async def get_token(*_, **__):
         return token
 
-    credential = Mock(get_token=Mock(wraps=get_token))
+    credential = AsyncMock(get_token=AsyncMock(wraps=get_token))
     pipeline = AsyncPipeline(policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=transport)
 
     # policy should complete and cache the first challenge and access token
@@ -261,7 +266,7 @@ async def test_token_expiration():
     async def get_token(*_, **__):
         return token
 
-    credential = Mock(get_token=Mock(wraps=get_token))
+    credential = AsyncMock(get_token=AsyncMock(wraps=get_token))
     transport = async_validating_transport(
         requests=[
             Request(),
@@ -291,11 +296,7 @@ async def test_token_expiration():
 @pytest.mark.asyncio
 @empty_challenge_cache
 async def test_preserves_options_and_headers():
-    """After a challenge, the original request should be sent with its options and headers preserved.
-
-    If a policy mutates the options or headers of the challenge (unauthorized) request, the options of the service
-    request should be present when it is sent with authorization.
-    """
+    """After a challenge, the policy should send the original request with its options and headers preserved"""
 
     url = get_random_url()
 
@@ -304,7 +305,7 @@ async def test_preserves_options_and_headers():
     async def get_token(*_, **__):
         return AccessToken(token, 0)
 
-    credential = Mock(get_token=Mock(wraps=get_token))
+    credential = AsyncMock(get_token=AsyncMock(wraps=get_token))
 
     transport = async_validating_transport(
         requests=[Request()] * 2 + [Request(required_headers={"Authorization": "Bearer " + token})],
@@ -315,13 +316,30 @@ async def test_preserves_options_and_headers():
         ]
         + [mock_response()] * 2,
     )
+    key = "foo"
+    value = "bar"
+
+    def add(request):
+        # add the expected option and header
+        request.context.options[key] = value
+        request.http_request.headers[key] = value
+
+    adder = AsyncMock(spec_set=SansIOHTTPPolicy, on_request=AsyncMock(wraps=add), on_exception=lambda _: False)
+
+    def verify(request):
+        # authorized (non-challenge) requests should have the expected option and header
+        if request.http_request.headers.get("Authorization"):
+            assert request.context.options.get(key) == value, "request option wasn't preserved across challenge"
+            assert request.http_request.headers.get(key) == value, "headers wasn't preserved across challenge"
+
+    verifier = AsyncMock(spec=SansIOHTTPPolicy, on_request=AsyncMock(wraps=verify))
+
     challenge_policy = AsyncChallengeAuthPolicy(credential=credential)
-    policies = get_policies_for_request_mutation_test(challenge_policy)
+    policies = [adder, challenge_policy, verifier]
     pipeline = AsyncPipeline(policies=policies, transport=transport)
 
-    response = await pipeline.run(HttpRequest("GET", url))
+    await pipeline.run(HttpRequest("GET", url))
 
-    # ensure the mock sans I/O policies were used
-    for policy in policies:
-        if hasattr(policy, "on_request"):
-            assert policy.on_request.called, "mock policy wasn't invoked"
+    # ensure the mock sans I/O policies were called
+    assert adder.on_request.called, "mock policy wasn't invoked"
+    assert verifier.on_request.called, "mock policy wasn't invoked"
