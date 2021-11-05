@@ -50,7 +50,7 @@ class MetricBaselineOperations:
         aggregation: Optional[str] = None,
         sensitivities: Optional[str] = None,
         result_type: Optional[Union[str, "_models.ResultType"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BaselineResponse":
         """**Gets the baseline values for a specific metric**.
 
@@ -118,7 +118,7 @@ class MetricBaselineOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BaselineResponse', pipeline_response)
@@ -127,13 +127,13 @@ class MetricBaselineOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/baseline/{metricName}'}  # type: ignore
+    get.metadata = {'url': '/{resourceUri}/providers/Microsoft.Insights/baseline/{metricName}'}  # type: ignore
 
     async def calculate_baseline(
         self,
         resource_uri: str,
         time_series_information: "_models.TimeSeriesInformation",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CalculateBaselineResponse":
         """**Lists the baseline values for a resource**.
 
@@ -184,7 +184,7 @@ class MetricBaselineOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CalculateBaselineResponse', pipeline_response)
@@ -193,4 +193,4 @@ class MetricBaselineOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    calculate_baseline.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/calculatebaseline'}  # type: ignore
+    calculate_baseline.metadata = {'url': '/{resourceUri}/providers/Microsoft.Insights/calculatebaseline'}  # type: ignore
