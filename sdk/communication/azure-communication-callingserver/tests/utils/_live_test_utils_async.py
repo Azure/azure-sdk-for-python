@@ -8,6 +8,7 @@ from azure.communication.callingserver.aio import CallingServerClient, CallConne
 from azure.communication.callingserver import (
     CommunicationUserIdentifier,
     CreateCallOptions,
+    JoinCallOptions,
     CallMediaType,
     CallingEventSubscriptionType,
     ServerCallLocator,
@@ -39,7 +40,7 @@ class CallingServerLiveTestUtilsAsync:
         to_call_connection = None
         try:
             # join from_participant to Server Call
-            from_options = CreateCallOptions(
+            from_options = JoinCallOptions(
                 callback_uri=call_back_uri,
                 requested_media_types=[CallMediaType.AUDIO],
                 requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED]

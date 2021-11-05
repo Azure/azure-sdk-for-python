@@ -40,6 +40,16 @@ if TYPE_CHECKING:
     from ._models import PlayAudioOptions
 
 class CallConnection(object):
+    """An client to interact with the AzureCommunicationService Callingserver gateway.
+
+    This client provides operations on top of a established call connection.
+
+    :param str call_connection_id:
+        The id of this call connection.
+    :param CallConnectionsOperations call_connection_client:
+        The call connection client.
+    """
+
     def __init__(
             self,
             call_connection_id,  # type: str
@@ -54,7 +64,13 @@ class CallConnection(object):
             self,
             **kwargs  # type: Any
         ): # type: (...) -> CallConnectionProperties
+        """
+        Get CallConnectionProperties of this CallConnection.
 
+        :return: CallConnectionProperties
+        :rtype: ~azure.communication.callingserver.CallConnectionProperties
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
         return self._call_connection_client.get_call(
             call_connection_id=self.call_connection_id,
             **kwargs
@@ -143,7 +159,20 @@ class CallConnection(object):
             operation_context=None,  # type: Optional[str]
             **kwargs  # type: Any
         ): # type: (...) -> AddParticipantResult
+        """
+        Add participant to the call connection.
 
+        :param participant: Required. The participant identity.
+        :type participant: CommunicationIdentifier
+        :param alternate_caller_id: The alternate caller id.
+        :type alternate_caller_id: str
+        :param operation_context: The operation context.
+        :type operation_context: str
+        :return: AddParticipantResult
+        :rtype: ~azure.communication.callingserver.AddParticipantResult
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        """
         if not participant:
             raise ValueError("participant can not be None")
 

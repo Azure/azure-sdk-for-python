@@ -46,6 +46,7 @@ if TYPE_CHECKING:
     from .._models import PlayAudioOptions
 
 class CallConnection:
+
     def __init__(
             self,
             call_connection_id: str,
