@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"createTokenWithScopes": ["chat"]}'
+    body: '{"token": "sanitized"}'
     headers:
       Accept:
       - application/json
@@ -9,42 +9,39 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '35'
+      - '20'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 02 Nov 2021 10:40:28 GMT
+      - Tue, 02 Nov 2021 10:40:40 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/identities?api-version=2021-10-31-preview
+    uri: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2021-10-31-preview
   response:
     body:
-      string: '{"identity": {"id": "sanitized"}, "accessToken": {"token": "sanitized",
-        "expiresOn": "2021-11-03T10:40:29.6452865+00:00"}}'
+      string: '{"error": {"code": "InvalidAccessToken", "message": "Provided access
+        token is not valid."}}'
     headers:
-      api-supported-versions:
-      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
-        2021-10-31-preview
-      content-length:
-      - '920'
       content-type:
-      - application/json; charset=utf-8
+      - application/json
       date:
-      - Tue, 02 Nov 2021 10:40:29 GMT
+      - Tue, 02 Nov 2021 10:40:40 GMT
       ms-cv:
-      - HfG5sjPWekiQ7NTyhtCjsg.0
+      - 4zZNEB2wj0Kae+4AmQ6u5Q.0
       request-context:
       - appId=
       strict-transport-security:
       - max-age=2592000
+      transfer-encoding:
+      - chunked
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 174ms
+      - 19ms
     status:
-      code: 201
-      message: Created
+      code: 401
+      message: Unauthorized
 version: 1
