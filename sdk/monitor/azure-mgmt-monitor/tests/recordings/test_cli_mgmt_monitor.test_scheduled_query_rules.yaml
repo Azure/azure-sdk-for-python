@@ -20,17 +20,17 @@ interactions:
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"source\": \"Azure\",\r\n    \"customerId\"\
-        : \"afcbee74-5995-4404-aa7c-c091362af88b\",\r\n    \"provisioningState\":\
+        : \"52f6cca9-ebbd-4de5-aac4-97947fea2d17\",\r\n    \"provisioningState\":\
         \ \"Creating\",\r\n    \"sku\": {\r\n      \"name\": \"pergb2018\",\r\n  \
-        \    \"lastSkuUpdate\": \"Fri, 05 Nov 2021 05:07:10 GMT\"\r\n    },\r\n  \
+        \    \"lastSkuUpdate\": \"Fri, 05 Nov 2021 06:06:05 GMT\"\r\n    },\r\n  \
         \  \"retentionInDays\": 30,\r\n    \"features\": {\r\n      \"legacy\": 0,\r\
         \n      \"searchVersion\": 1,\r\n      \"enableLogAccessUsingOnlyResourcePermissions\"\
         : true\r\n    },\r\n    \"workspaceCapping\": {\r\n      \"dailyQuotaGb\"\
-        : -1.0,\r\n      \"quotaNextResetTime\": \"Sat, 06 Nov 2021 03:00:00 GMT\"\
+        : -1.0,\r\n      \"quotaNextResetTime\": \"Fri, 05 Nov 2021 22:00:00 GMT\"\
         ,\r\n      \"dataIngestionStatus\": \"RespectQuota\"\r\n    },\r\n    \"publicNetworkAccessForIngestion\"\
         : \"Enabled\",\r\n    \"publicNetworkAccessForQuery\": \"Enabled\",\r\n  \
-        \  \"createdDate\": \"Fri, 05 Nov 2021 05:07:10 GMT\",\r\n    \"modifiedDate\"\
-        : \"Fri, 05 Nov 2021 05:07:10 GMT\"\r\n  },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/microsoft.operationalinsights/workspaces/workspacexe69613f0\"\
+        \  \"createdDate\": \"Fri, 05 Nov 2021 06:06:05 GMT\",\r\n    \"modifiedDate\"\
+        : \"Fri, 05 Nov 2021 06:06:05 GMT\"\r\n  },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/microsoft.operationalinsights/workspaces/workspacexe69613f0\"\
         ,\r\n  \"name\": \"workspacexe69613f0\",\r\n  \"type\": \"Microsoft.OperationalInsights/workspaces\"\
         ,\r\n  \"location\": \"eastus\",\r\n  \"tags\": {\r\n    \"tag1\": \"val1\"\
         \r\n  }\r\n}"
@@ -42,7 +42,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 05 Nov 2021 05:07:11 GMT
+      - Fri, 05 Nov 2021 06:06:07 GMT
       pragma:
       - no-cache
       server:
@@ -53,7 +53,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1198'
       x-powered-by:
       - ASP.NET
       - ASP.NET
@@ -76,17 +76,17 @@ interactions:
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"source\": \"Azure\",\r\n    \"customerId\"\
-        : \"afcbee74-5995-4404-aa7c-c091362af88b\",\r\n    \"provisioningState\":\
+        : \"52f6cca9-ebbd-4de5-aac4-97947fea2d17\",\r\n    \"provisioningState\":\
         \ \"Succeeded\",\r\n    \"sku\": {\r\n      \"name\": \"pergb2018\",\r\n \
-        \     \"lastSkuUpdate\": \"Fri, 05 Nov 2021 05:07:10 GMT\"\r\n    },\r\n \
+        \     \"lastSkuUpdate\": \"Fri, 05 Nov 2021 06:06:05 GMT\"\r\n    },\r\n \
         \   \"retentionInDays\": 30,\r\n    \"features\": {\r\n      \"legacy\": 0,\r\
         \n      \"searchVersion\": 1,\r\n      \"enableLogAccessUsingOnlyResourcePermissions\"\
         : true\r\n    },\r\n    \"workspaceCapping\": {\r\n      \"dailyQuotaGb\"\
-        : -1.0,\r\n      \"quotaNextResetTime\": \"Sat, 06 Nov 2021 03:00:00 GMT\"\
+        : -1.0,\r\n      \"quotaNextResetTime\": \"Fri, 05 Nov 2021 22:00:00 GMT\"\
         ,\r\n      \"dataIngestionStatus\": \"RespectQuota\"\r\n    },\r\n    \"publicNetworkAccessForIngestion\"\
         : \"Enabled\",\r\n    \"publicNetworkAccessForQuery\": \"Enabled\",\r\n  \
-        \  \"createdDate\": \"Fri, 05 Nov 2021 05:07:10 GMT\",\r\n    \"modifiedDate\"\
-        : \"Fri, 05 Nov 2021 05:07:11 GMT\"\r\n  },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/microsoft.operationalinsights/workspaces/workspacexe69613f0\"\
+        \  \"createdDate\": \"Fri, 05 Nov 2021 06:06:05 GMT\",\r\n    \"modifiedDate\"\
+        : \"Fri, 05 Nov 2021 06:06:06 GMT\"\r\n  },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/microsoft.operationalinsights/workspaces/workspacexe69613f0\"\
         ,\r\n  \"name\": \"workspacexe69613f0\",\r\n  \"type\": \"Microsoft.OperationalInsights/workspaces\"\
         ,\r\n  \"location\": \"eastus\",\r\n  \"tags\": {\r\n    \"tag1\": \"val1\"\
         \r\n  }\r\n}"
@@ -98,7 +98,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 05 Nov 2021 05:07:43 GMT
+      - Fri, 05 Nov 2021 06:06:37 GMT
       pragma:
       - no-cache
       server:
@@ -145,8 +145,8 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Insights/scheduledQueryRules/scheduledqueryrulee69613f0?api-version=2018-04-16
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/scheduledqueryrules/scheduledqueryrulee69613f0","name":"scheduledqueryrulee69613f0","type":"microsoft.insights/scheduledqueryrules","location":"eastus","etag":"\"3500ee5e-0000-0100-0000-6184bc2f0000\"","properties":{"description":"log
-        alert description","displayName":"scheduledqueryrulee69613f0","enabled":"true","lastUpdatedTime":"2021-11-05T05:07:59Z","provisioningState":"Succeeded","source":{"query":"Heartbeat
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/scheduledqueryrules/scheduledqueryrulee69613f0","name":"scheduledqueryrulee69613f0","type":"microsoft.insights/scheduledqueryrules","location":"eastus","etag":"\"35005695-0000-0100-0000-6184c9fc0000\"","properties":{"description":"log
+        alert description","displayName":"scheduledqueryrulee69613f0","enabled":"true","lastUpdatedTime":"2021-11-05T06:06:52Z","provisioningState":"Succeeded","source":{"query":"Heartbeat
         | summarize AggregatedValue = count() by bin(TimeGenerated, 5m)","dataSourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/microsoft.operationalinsights/workspaces/workspacexe69613f0","queryType":"ResultCount"},"schedule":{"frequencyInMinutes":15,"timeWindowInMinutes":15},"action":{"severity":"1","aznsAction":{"actionGroup":[],"emailSubject":"Email
         Header","customWebhookPayload":"{}"},"trigger":{"thresholdOperator":"GreaterThan","threshold":3,"metricTrigger":{"thresholdOperator":"GreaterThan","threshold":5,"metricTriggerType":"Consecutive","metricColumn":"Computer"}},"odata.type":"Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction"}}}'
     headers:
@@ -157,7 +157,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Nov 2021 05:08:01 GMT
+      - Fri, 05 Nov 2021 06:06:53 GMT
       expires:
       - '-1'
       pragma:
@@ -169,13 +169,13 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1196'
       x-rate-limit-limit:
       - 1m
       x-rate-limit-remaining:
       - '14'
       x-rate-limit-reset:
-      - '2021-11-05T05:08:51.0458070Z'
+      - '2021-11-05T06:07:47.2686030Z'
     status:
       code: 201
       message: Created
@@ -194,8 +194,8 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Insights/scheduledQueryRules/scheduledqueryrulee69613f0?api-version=2018-04-16
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/scheduledqueryrules/scheduledqueryrulee69613f0","name":"scheduledqueryrulee69613f0","type":"microsoft.insights/scheduledqueryrules","location":"eastus","etag":"\"3500ee5e-0000-0100-0000-6184bc2f0000\"","properties":{"description":"log
-        alert description","displayName":"scheduledqueryrulee69613f0","enabled":"true","lastUpdatedTime":"2021-11-05T05:07:59Z","provisioningState":"Succeeded","source":{"query":"Heartbeat
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/scheduledqueryrules/scheduledqueryrulee69613f0","name":"scheduledqueryrulee69613f0","type":"microsoft.insights/scheduledqueryrules","location":"eastus","etag":"\"35005695-0000-0100-0000-6184c9fc0000\"","properties":{"description":"log
+        alert description","displayName":"scheduledqueryrulee69613f0","enabled":"true","lastUpdatedTime":"2021-11-05T06:06:52Z","provisioningState":"Succeeded","source":{"query":"Heartbeat
         | summarize AggregatedValue = count() by bin(TimeGenerated, 5m)","dataSourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/microsoft.operationalinsights/workspaces/workspacexe69613f0","queryType":"ResultCount"},"schedule":{"frequencyInMinutes":15,"timeWindowInMinutes":15},"action":{"severity":"1","aznsAction":{"actionGroup":[],"emailSubject":"Email
         Header","customWebhookPayload":"{}"},"trigger":{"thresholdOperator":"GreaterThan","threshold":3,"metricTrigger":{"thresholdOperator":"GreaterThan","threshold":5,"metricTriggerType":"Consecutive","metricColumn":"Computer"}},"odata.type":"Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction"}}}'
     headers:
@@ -206,7 +206,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Nov 2021 05:08:01 GMT
+      - Fri, 05 Nov 2021 06:06:54 GMT
       expires:
       - '-1'
       pragma:
@@ -226,7 +226,7 @@ interactions:
       x-rate-limit-remaining:
       - '49'
       x-rate-limit-reset:
-      - '2021-11-05T05:09:02.1026132Z'
+      - '2021-11-05T06:07:54.3201153Z'
     status:
       code: 200
       message: OK
@@ -249,8 +249,8 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Insights/scheduledQueryRules/scheduledqueryrulee69613f0?api-version=2018-04-16
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/scheduledqueryrules/scheduledqueryrulee69613f0","name":"scheduledqueryrulee69613f0","type":"microsoft.insights/scheduledqueryrules","location":"eastus","etag":"\"3500095f-0000-0100-0000-6184bc370000\"","properties":{"description":"log
-        alert description","displayName":"scheduledqueryrulee69613f0","enabled":"true","lastUpdatedTime":"2021-11-05T05:07:59Z","provisioningState":"Succeeded","source":{"query":"Heartbeat
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/scheduledqueryrules/scheduledqueryrulee69613f0","name":"scheduledqueryrulee69613f0","type":"microsoft.insights/scheduledqueryrules","location":"eastus","etag":"\"35006895-0000-0100-0000-6184ca000000\"","properties":{"description":"log
+        alert description","displayName":"scheduledqueryrulee69613f0","enabled":"true","lastUpdatedTime":"2021-11-05T06:06:52Z","provisioningState":"Succeeded","source":{"query":"Heartbeat
         | summarize AggregatedValue = count() by bin(TimeGenerated, 5m)","dataSourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/microsoft.operationalinsights/workspaces/workspacexe69613f0","queryType":"ResultCount"},"schedule":{"frequencyInMinutes":15,"timeWindowInMinutes":15},"action":{"severity":"1","aznsAction":{"actionGroup":[],"emailSubject":"Email
         Header","customWebhookPayload":"{}"},"trigger":{"thresholdOperator":"GreaterThan","threshold":3,"metricTrigger":{"thresholdOperator":"GreaterThan","threshold":5,"metricTriggerType":"Consecutive","metricColumn":"Computer"}},"odata.type":"Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction"}}}'
     headers:
@@ -261,7 +261,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Nov 2021 05:08:06 GMT
+      - Fri, 05 Nov 2021 06:06:56 GMT
       expires:
       - '-1'
       pragma:
@@ -277,7 +277,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1195'
     status:
       code: 200
       message: OK
@@ -305,7 +305,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 05 Nov 2021 05:08:13 GMT
+      - Fri, 05 Nov 2021 06:07:03 GMT
       expires:
       - '-1'
       pragma:
@@ -317,7 +317,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14998'
     status:
       code: 200
       message: OK

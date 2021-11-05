@@ -18,22 +18,23 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountx683f167c?api-version=2019-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountxx683f167c?api-version=2019-04-01
   response:
     body:
-      string: '{"error":{"code":"StorageAccountAlreadyExists","message":"The storage
-        account named storageaccountx683f167c already exists under the subscription."}}'
+      string: ''
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '149'
+      - '0'
       content-type:
-      - application/json
+      - text/plain; charset=utf-8
       date:
-      - Fri, 05 Nov 2021 05:06:52 GMT
+      - Fri, 05 Nov 2021 06:04:07 GMT
       expires:
       - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/a9078a08-7b0e-411c-8fdb-6cbc57964296?monitor=true&api-version=2019-04-01
       pragma:
       - no-cache
       server:
@@ -43,8 +44,196 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1194'
     status:
-      code: 409
-      message: Conflict
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.21 msrest_azure/0.6.2 azure-mgmt-storage/5.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/a9078a08-7b0e-411c-8fdb-6cbc57964296?monitor=true&api-version=2019-04-01
+  response:
+    body:
+      string: '{"sku":{"name":"Standard_LRS","tier":"Standard"},"kind":"Storage","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountxx683f167c","name":"storageaccountxx683f167c","type":"Microsoft.Storage/storageAccounts","location":"eastus","tags":{},"properties":{"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"enabled":true,"lastEnabledTime":"2021-11-05T06:04:05.1863038Z"},"blob":{"enabled":true,"lastEnabledTime":"2021-11-05T06:04:05.1863038Z"}},"keySource":"Microsoft.Storage"},"provisioningState":"Succeeded","creationTime":"2021-11-05T06:04:05.0613031Z","primaryEndpoints":{"blob":"https://storageaccountxx683f167c.blob.core.windows.net/","queue":"https://storageaccountxx683f167c.queue.core.windows.net/","table":"https://storageaccountxx683f167c.table.core.windows.net/","file":"https://storageaccountxx683f167c.file.core.windows.net/"},"primaryLocation":"eastus","statusOfPrimary":"available"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1173'
+      content-type:
+      - application/json
+      date:
+      - Fri, 05 Nov 2021 06:04:24 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"location": "eastus", "tags": {"tag1": "value1", "tag2": "value2"}, "sku":
+      {"name": "Standard", "tier": "Standard"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '117'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-eventhub/10.0.0 Python/3.6.9 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespacexx683f167c?api-version=2021-11-01
+  response:
+    body:
+      string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespacexx683f167c","name":"namespacexx683f167c","type":"Microsoft.EventHub/Namespaces","location":"East
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"disableLocalAuth":false,"zoneRedundant":false,"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:namespacexx683f167c","createdAt":"2021-11-05T06:04:34.257Z","updatedAt":"2021-11-05T06:04:34.257Z","serviceBusEndpoint":"https://namespacexx683f167c.servicebus.windows.net:443/","status":"Activating"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '820'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 05 Nov 2021 06:04:36 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Service-Bus-Resource-Provider/CH3
+      - Microsoft-HTTPAPI/2.0
+      server-sb:
+      - Service-Bus-Resource-Provider/CH3
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-resource-requests:
+      - '49'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-eventhub/10.0.0 Python/3.6.9 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespacexx683f167c?api-version=2021-11-01
+  response:
+    body:
+      string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespacexx683f167c","name":"namespacexx683f167c","type":"Microsoft.EventHub/Namespaces","location":"East
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"disableLocalAuth":false,"zoneRedundant":false,"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:namespacexx683f167c","createdAt":"2021-11-05T06:04:34.257Z","updatedAt":"2021-11-05T06:04:34.257Z","serviceBusEndpoint":"https://namespacexx683f167c.servicebus.windows.net:443/","status":"Activating"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '820'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 05 Nov 2021 06:05:08 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Service-Bus-Resource-Provider/CH3
+      - Microsoft-HTTPAPI/2.0
+      server-sb:
+      - Service-Bus-Resource-Provider/CH3
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-eventhub/10.0.0 Python/3.6.9 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespacexx683f167c?api-version=2021-11-01
+  response:
+    body:
+      string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespacexx683f167c","name":"namespacexx683f167c","type":"Microsoft.EventHub/Namespaces","location":"East
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"disableLocalAuth":false,"zoneRedundant":false,"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:namespacexx683f167c","createdAt":"2021-11-05T06:04:34.257Z","updatedAt":"2021-11-05T06:05:25.407Z","serviceBusEndpoint":"https://namespacexx683f167c.servicebus.windows.net:443/","status":"Active"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '818'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 05 Nov 2021 06:05:39 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Service-Bus-Resource-Provider/CH3
+      - Microsoft-HTTPAPI/2.0
+      server-sb:
+      - Service-Bus-Resource-Provider/CH3
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
 version: 1
