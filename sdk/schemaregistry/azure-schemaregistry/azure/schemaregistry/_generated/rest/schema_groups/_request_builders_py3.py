@@ -15,6 +15,7 @@ T = TypeVar('T')
 JSONType = Any
 
 _SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
 
 def build_list_request(
