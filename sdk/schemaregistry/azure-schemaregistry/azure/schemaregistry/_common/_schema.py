@@ -34,8 +34,6 @@ class SchemaProperties(object):
     :vartype id: str
     :ivar format: Format for the schema being stored.
     :vartype format: str
-    :ivar version: Version of the returned schema.
-    :vartype version: int
     """
 
     def __init__(self, **kwargs):
