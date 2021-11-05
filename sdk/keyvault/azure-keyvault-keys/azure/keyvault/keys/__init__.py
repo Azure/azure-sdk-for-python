@@ -13,7 +13,6 @@ from ._models import (
     KeyRotationPolicy,
     KeyVaultKey,
     KeyVaultKeyIdentifier,
-    RandomBytes,
     ReleaseKeyResult,
 )
 from ._client import KeyClient
@@ -34,7 +33,6 @@ __all__ = [
     "KeyReleasePolicy",
     "KeyRotationLifetimeAction",
     "KeyRotationPolicy",
-    "RandomBytes",
     "ReleaseKeyResult",
 ]
 
