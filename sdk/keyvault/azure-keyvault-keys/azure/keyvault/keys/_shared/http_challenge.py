@@ -42,7 +42,8 @@ class HttpChallenge(object):
 
         authorization_uri = self.get_authorization_server()
         # the authoritzation server URI should look something like https://login.windows.net/tenant-id
-        self.tenant_id = authorization_uri.split("/")[-1] or None
+        uri_path = parse.urlparse(authorization_uri).path.lstrip("/")
+        self.tenant_id = uri_path.split("/")[0] or None
 
         # if the response headers were supplied
         if response_headers:

@@ -28,22 +28,14 @@ if TYPE_CHECKING:
 class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
     """policy for handling HTTP authentication challenges"""
 
-    def __init__(self, *args: "Any", **kwargs: "Any") -> None:
-        self._last_tenant_id = None  # type: Optional[str]
-        super().__init__(*args, **kwargs)
-
     async def on_request(self, request: "PipelineRequest") -> None:
         _enforce_tls(request)
         challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
         if challenge:
-            if self._last_tenant_id == challenge.tenant_id:
-                # Super can handle this. Its cached token, if any, probably isn't from a different tenant, and
-                # it knows the scope to request for a new token. Note that if the vault has moved to a new
-                # tenant since our last request for it, this request will fail.
-                await super().on_request(request)
-            else:
-                # acquire a new token because this vault is in a different tenant
-                await self.authorize_request(request, *self._scopes, tenant_id=challenge.tenant_id)
+            # Super can handle this. Its cached token, if any, probably isn't from a different tenant, and
+            # it knows the scope to request for a new token. Note that if the vault has moved to a new
+            # tenant since our last request for it, this request will fail.
+            await super().on_request(request)
             return
 
         # else: discover authentication information by eliciting a challenge from Key Vault. Remove any request data,
@@ -67,8 +59,6 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
 
         body = request.context.pop("key_vault_request_data", None)
         request.http_request.set_text_body(body)  # no-op when text is None
-
-        self._last_tenant_id = challenge.tenant_id
         await self.authorize_request(request, *self._scopes, tenant_id=challenge.tenant_id)
 
         return True
