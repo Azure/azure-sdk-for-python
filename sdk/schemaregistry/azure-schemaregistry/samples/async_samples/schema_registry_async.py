@@ -92,5 +92,6 @@ async def main():
             schema_registry_client, GROUP_NAME, SCHEMA_NAME, SCHEMA_STRING, FORMAT
         )
 
+
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())

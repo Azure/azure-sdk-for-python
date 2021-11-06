@@ -42,9 +42,7 @@ class SchemaProperties(object):
         self.format = kwargs.pop("format")
 
     def __repr__(self):
-        return "SchemaProperties(id={}, format={})".format(
-            self.id, self.format
-        )[:1024]
+        return "SchemaProperties(id={}, format={})".format(self.id, self.format)[:1024]
 
 
 class Schema(object):

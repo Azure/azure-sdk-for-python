@@ -34,6 +34,7 @@ class SchemaFormat(str, Enum):
     AVRO = "avro"
     """Represents the Apache Avro schema format."""
 
+
 class ApiVersion(str, Enum):
     """
     Represents the Schema Registry API version to use for requests.
