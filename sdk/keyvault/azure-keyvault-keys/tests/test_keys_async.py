@@ -128,7 +128,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         assert key.properties.updated_on != key_bundle.properties.updated_on
         assert sorted(key_ops) == sorted(key_bundle.key_operations)
         if release_policy:
-            assert key.properties.release_policy.data != key_bundle.properties.release_policy.data
+            assert key.properties.release_policy.encoded_policy != key_bundle.properties.release_policy.encoded_policy
         return key_bundle
 
     async def _validate_key_list(self, keys, expected):
@@ -497,7 +497,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
             client, rsa_key_name, hardware_protected=True, exportable=True, release_policy=release_policy
         )
         assert key.properties.release_policy
-        assert key.properties.release_policy.data
+        assert key.properties.release_policy.encoded_policy
         assert key.properties.exportable
 
         release_result = await client.release_key(rsa_key_name, attestation)
@@ -515,7 +515,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
             client, imported_key_name, hardware_protected=True, exportable=True, release_policy=release_policy
         )
         assert key.properties.release_policy
-        assert key.properties.release_policy.data
+        assert key.properties.release_policy.encoded_policy
         assert key.properties.exportable
 
         release_result = await client.release_key(imported_key_name, attestation)
@@ -530,7 +530,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         key = await self._create_rsa_key(
             client, key_name, hardware_protected=True, exportable=True, release_policy=release_policy
         )
-        assert key.properties.release_policy.data
+        assert key.properties.release_policy.encoded_policy
 
         new_release_policy_json = {
             "anyOf": [
