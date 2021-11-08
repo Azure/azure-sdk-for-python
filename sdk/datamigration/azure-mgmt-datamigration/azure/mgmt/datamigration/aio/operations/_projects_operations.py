@@ -45,7 +45,7 @@ class ProjectsOperations:
         self,
         group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProjectList"]:
         """Get projects in a service.
 
@@ -66,7 +66,7 @@ class ProjectsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -125,7 +125,7 @@ class ProjectsOperations:
         service_name: str,
         project_name: str,
         parameters: "_models.Project",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Project":
         """Create or update project.
 
@@ -150,7 +150,7 @@ class ProjectsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -202,7 +202,7 @@ class ProjectsOperations:
         group_name: str,
         service_name: str,
         project_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Project":
         """Get project information.
 
@@ -225,7 +225,7 @@ class ProjectsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         accept = "application/json"
 
         # Construct URL
@@ -269,7 +269,7 @@ class ProjectsOperations:
         service_name: str,
         project_name: str,
         delete_running_tasks: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete project.
 
@@ -294,7 +294,7 @@ class ProjectsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         accept = "application/json"
 
         # Construct URL
@@ -337,7 +337,7 @@ class ProjectsOperations:
         service_name: str,
         project_name: str,
         parameters: "_models.Project",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Project":
         """Update project.
 
@@ -362,7 +362,7 @@ class ProjectsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

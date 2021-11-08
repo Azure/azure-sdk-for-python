@@ -41,6 +41,15 @@ class ActiveDirectoryStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     #: Active Directory Updating.
     UPDATING = "Updating"
 
+class AvsDataStore(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Specifies whether the volume is enabled for Azure VMware Solution (AVS) datastore purpose
+    """
+
+    #: avsDataStore is enabled.
+    ENABLED = "Enabled"
+    #: avsDataStore is disabled.
+    DISABLED = "Disabled"
+
 class BackupType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Type of backup Manual or Scheduled
     """
@@ -86,6 +95,16 @@ class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
+class EncryptionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Encryption type of the capacity pool, set encryption type for data at rest for this pool and
+    all volumes in it. This value can only be set when creating new pool.
+    """
+
+    #: EncryptionType Single, volumes will use single encryption at rest.
+    SINGLE = "Single"
+    #: EncryptionType Double, volumes will use double encryption at rest.
+    DOUBLE = "Double"
+
 class EndpointType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates whether the local volume is the source or destination for the Volume Replication
     """
@@ -102,6 +121,10 @@ class InAvailabilityReasonType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
 
+class MetricAggregationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    AVERAGE = "Average"
+
 class MirrorState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The status of the replication
     """
@@ -109,6 +132,15 @@ class MirrorState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UNINITIALIZED = "Uninitialized"
     MIRRORED = "Mirrored"
     BROKEN = "Broken"
+
+class NetworkFeatures(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Basic network, or Standard features available to the volume.
+    """
+
+    #: Basic network feature.
+    BASIC = "Basic"
+    #: Standard network feature.
+    STANDARD = "Standard"
 
 class QosType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The qos type of the pool
@@ -151,3 +183,16 @@ class ServiceLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PREMIUM = "Premium"
     #: Ultra service level.
     ULTRA = "Ultra"
+    #: Zone redundant storage service level.
+    STANDARD_ZRS = "StandardZRS"
+
+class VolumeStorageToNetworkProximity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Provides storage to network proximity information for the volume.
+    """
+
+    #: Basic storage to network connectivity.
+    DEFAULT = "Default"
+    #: Standard T1 storage to network connectivity.
+    T1 = "T1"
+    #: Standard T2 storage to network connectivity.
+    T2 = "T2"

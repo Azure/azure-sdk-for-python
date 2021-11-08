@@ -13,8 +13,6 @@ import glob
 import shutil
 from tox_helper_tasks import (
     get_package_details,
-    unzip_sdist_to_directory,
-    move_and_rename,
     unzip_file_to_directory,
 )
 from verify_whl import cleanup, should_verify_package

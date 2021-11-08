@@ -1,5 +1,12 @@
 # Release History
 
+## 12.7.0b1 (x-x-x)
+
+## 12.6.0 (2021-09-15)
+**Stable release of preview features**
+- Added support for service version 2020-10-02 (STG78)
+- Added OAuth support for file copy source.
+
 ## 12.6.0b1 (2021-07-27)
 **New features**
 - Added OAuth support for file copy source.

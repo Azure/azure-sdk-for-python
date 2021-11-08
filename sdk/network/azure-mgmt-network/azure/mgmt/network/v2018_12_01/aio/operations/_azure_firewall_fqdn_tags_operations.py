@@ -43,7 +43,7 @@ class AzureFirewallFqdnTagsOperations:
 
     def list_all(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AzureFirewallFqdnTagListResult"]:
         """Gets all the Azure Firewall FQDN Tags in a subscription.
 

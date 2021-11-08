@@ -28,13 +28,9 @@ class MsalCredential(object):
         # type: (str, Optional[Union[str, Dict]], **Any) -> None
         authority = kwargs.pop("authority", None)
         self._authority = normalize_authority(authority) if authority else get_default_authority()
-        self._regional_authority = kwargs.pop(
-            "regional_authority", os.environ.get(EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME)
-        )
+        self._regional_authority = os.environ.get(EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME)
         self._tenant_id = kwargs.pop("tenant_id", None) or "organizations"
         validate_tenant_id(self._tenant_id)
-        self._allow_multitenant = kwargs.pop("allow_multitenant_authentication", False)
-
         self._client = MsalClient(**kwargs)
         self._client_applications = {}  # type: Dict[str, msal.ClientApplication]
         self._client_credential = client_credential
@@ -50,9 +46,20 @@ class MsalCredential(object):
 
         super(MsalCredential, self).__init__()
 
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._client.__exit__(*args)
+
+    def close(self):
+        # type: () -> None
+        self.__exit__()
+
     def _get_app(self, **kwargs):
         # type: (**Any) -> msal.ClientApplication
-        tenant_id = resolve_tenant(self._tenant_id, self._allow_multitenant, **kwargs)
+        tenant_id = resolve_tenant(self._tenant_id, **kwargs)
         if tenant_id not in self._client_applications:
             # CP1 = can handle claims challenges (CAE)
             capabilities = None if "AZURE_IDENTITY_DISABLE_CP1" in os.environ else ["CP1"]

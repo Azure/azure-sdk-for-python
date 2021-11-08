@@ -11,30 +11,32 @@ interactions:
       Content-Length:
       - '7'
       Content-Type:
-      - application/pdf
+      - application/octet-stream
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
   response:
     body:
-      string: '{"error": {"code": "BadArgument", "innerError": {"requestId": "c132ee15-2415-4d32-a68e-0e8b9527b572"},
-        "message": "Bad or unrecognizable request JSON or binary file."}}'
+      string: '{"error": {"code": "InvalidRequest", "message": "Invalid request.",
+        "innererror": {"code": "InvalidContent", "message": "The file is corrupted
+        or format is unsupported. Refer to documentation for the list of supported
+        formats."}}}'
     headers:
       apim-request-id:
-      - c132ee15-2415-4d32-a68e-0e8b9527b572
-      content-length:
-      - '161'
+      - 176db937-2fa8-4047-b243-a055b28fb392
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 11 May 2021 03:06:23 GMT
+      - Tue, 14 Sep 2021 22:16:24 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '5'
+      - '13'
     status:
       code: 400
       message: Bad Request

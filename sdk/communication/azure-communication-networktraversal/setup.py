@@ -44,7 +44,7 @@ setup(
     license='MIT License',
     # ensure that the development status reflects the status of your package
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 4 - Beta",
 
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
@@ -62,10 +62,11 @@ setup(
         'azure.communication'
     ]),
     install_requires=[
-        'msrest>=0.5.0',
-        'azure-core<2.0.0,>=1.2.2'
+        "msrest>=0.6.21",
+        "azure-core<2.0.0,>=1.19.1"
     ],
     extras_require={
+        ":python_version<'3.0'": ['azure-communication-nspkg'],
         ":python_version<'3.8'": ["typing-extensions"]
     },
     project_urls={

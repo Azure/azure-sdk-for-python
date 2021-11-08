@@ -56,7 +56,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2021-04-01'
+    DEFAULT_API_VERSION = '2021-07-01'
     _PROFILE_TAG = "azure.mgmt.compute.ComputeManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -66,21 +66,11 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             'cloud_service_roles': '2021-03-01',
             'cloud_services': '2021-03-01',
             'cloud_services_update_domain': '2021-03-01',
-            'disk_accesses': '2020-12-01',
-            'disk_encryption_sets': '2020-12-01',
-            'disk_restore_point': '2020-12-01',
-            'disks': '2020-12-01',
-            'galleries': '2020-09-30',
-            'gallery_application_versions': '2020-09-30',
-            'gallery_applications': '2020-09-30',
-            'gallery_image_versions': '2020-09-30',
-            'gallery_images': '2020-09-30',
-            'gallery_sharing_profile': '2020-09-30',
-            'resource_skus': '2019-04-01',
-            'shared_galleries': '2020-09-30',
-            'shared_gallery_image_versions': '2020-09-30',
-            'shared_gallery_images': '2020-09-30',
-            'snapshots': '2020-12-01',
+            'disk_accesses': '2021-04-01',
+            'disk_encryption_sets': '2021-04-01',
+            'disk_restore_point': '2021-04-01',
+            'disks': '2021-04-01',
+            'snapshots': '2021-04-01',
         }},
         _PROFILE_TAG + " latest"
     )
@@ -134,6 +124,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-12-01: :mod:`v2020_12_01.models<azure.mgmt.compute.v2020_12_01.models>`
            * 2021-03-01: :mod:`v2021_03_01.models<azure.mgmt.compute.v2021_03_01.models>`
            * 2021-04-01: :mod:`v2021_04_01.models<azure.mgmt.compute.v2021_04_01.models>`
+           * 2021-07-01: :mod:`v2021_07_01.models<azure.mgmt.compute.v2021_07_01.models>`
         """
         if api_version == '2015-06-15':
             from .v2015_06_15 import models
@@ -204,6 +195,9 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2021-04-01':
             from .v2021_04_01 import models
             return models
+        elif api_version == '2021-07-01':
+            from .v2021_07_01 import models
+            return models
         raise ValueError("API version {} is not available".format(api_version))
 
     @property
@@ -225,6 +219,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-12-01: :class:`AvailabilitySetsOperations<azure.mgmt.compute.v2020_12_01.operations.AvailabilitySetsOperations>`
            * 2021-03-01: :class:`AvailabilitySetsOperations<azure.mgmt.compute.v2021_03_01.operations.AvailabilitySetsOperations>`
            * 2021-04-01: :class:`AvailabilitySetsOperations<azure.mgmt.compute.v2021_04_01.operations.AvailabilitySetsOperations>`
+           * 2021-07-01: :class:`AvailabilitySetsOperations<azure.mgmt.compute.v2021_07_01.operations.AvailabilitySetsOperations>`
         """
         api_version = self._get_api_version('availability_sets')
         if api_version == '2015-06-15':
@@ -257,6 +252,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_01.operations import AvailabilitySetsOperations as OperationClass
         elif api_version == '2021-04-01':
             from .v2021_04_01.operations import AvailabilitySetsOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import AvailabilitySetsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'availability_sets'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -266,10 +263,13 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2021-04-01: :class:`CapacityReservationGroupsOperations<azure.mgmt.compute.v2021_04_01.operations.CapacityReservationGroupsOperations>`
+           * 2021-07-01: :class:`CapacityReservationGroupsOperations<azure.mgmt.compute.v2021_07_01.operations.CapacityReservationGroupsOperations>`
         """
         api_version = self._get_api_version('capacity_reservation_groups')
         if api_version == '2021-04-01':
             from .v2021_04_01.operations import CapacityReservationGroupsOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import CapacityReservationGroupsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'capacity_reservation_groups'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -279,10 +279,13 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2021-04-01: :class:`CapacityReservationsOperations<azure.mgmt.compute.v2021_04_01.operations.CapacityReservationsOperations>`
+           * 2021-07-01: :class:`CapacityReservationsOperations<azure.mgmt.compute.v2021_07_01.operations.CapacityReservationsOperations>`
         """
         api_version = self._get_api_version('capacity_reservations')
         if api_version == '2021-04-01':
             from .v2021_04_01.operations import CapacityReservationsOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import CapacityReservationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'capacity_reservations'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -365,6 +368,45 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def community_galleries(self):
+        """Instance depends on the API version:
+
+           * 2021-07-01: :class:`CommunityGalleriesOperations<azure.mgmt.compute.v2021_07_01.operations.CommunityGalleriesOperations>`
+        """
+        api_version = self._get_api_version('community_galleries')
+        if api_version == '2021-07-01':
+            from .v2021_07_01.operations import CommunityGalleriesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'community_galleries'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def community_gallery_image_versions(self):
+        """Instance depends on the API version:
+
+           * 2021-07-01: :class:`CommunityGalleryImageVersionsOperations<azure.mgmt.compute.v2021_07_01.operations.CommunityGalleryImageVersionsOperations>`
+        """
+        api_version = self._get_api_version('community_gallery_image_versions')
+        if api_version == '2021-07-01':
+            from .v2021_07_01.operations import CommunityGalleryImageVersionsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'community_gallery_image_versions'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def community_gallery_images(self):
+        """Instance depends on the API version:
+
+           * 2021-07-01: :class:`CommunityGalleryImagesOperations<azure.mgmt.compute.v2021_07_01.operations.CommunityGalleryImagesOperations>`
+        """
+        api_version = self._get_api_version('community_gallery_images')
+        if api_version == '2021-07-01':
+            from .v2021_07_01.operations import CommunityGalleryImagesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'community_gallery_images'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def dedicated_host_groups(self):
         """Instance depends on the API version:
 
@@ -375,6 +417,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-12-01: :class:`DedicatedHostGroupsOperations<azure.mgmt.compute.v2020_12_01.operations.DedicatedHostGroupsOperations>`
            * 2021-03-01: :class:`DedicatedHostGroupsOperations<azure.mgmt.compute.v2021_03_01.operations.DedicatedHostGroupsOperations>`
            * 2021-04-01: :class:`DedicatedHostGroupsOperations<azure.mgmt.compute.v2021_04_01.operations.DedicatedHostGroupsOperations>`
+           * 2021-07-01: :class:`DedicatedHostGroupsOperations<azure.mgmt.compute.v2021_07_01.operations.DedicatedHostGroupsOperations>`
         """
         api_version = self._get_api_version('dedicated_host_groups')
         if api_version == '2019-03-01':
@@ -391,6 +434,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_01.operations import DedicatedHostGroupsOperations as OperationClass
         elif api_version == '2021-04-01':
             from .v2021_04_01.operations import DedicatedHostGroupsOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import DedicatedHostGroupsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'dedicated_host_groups'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -406,6 +451,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-12-01: :class:`DedicatedHostsOperations<azure.mgmt.compute.v2020_12_01.operations.DedicatedHostsOperations>`
            * 2021-03-01: :class:`DedicatedHostsOperations<azure.mgmt.compute.v2021_03_01.operations.DedicatedHostsOperations>`
            * 2021-04-01: :class:`DedicatedHostsOperations<azure.mgmt.compute.v2021_04_01.operations.DedicatedHostsOperations>`
+           * 2021-07-01: :class:`DedicatedHostsOperations<azure.mgmt.compute.v2021_07_01.operations.DedicatedHostsOperations>`
         """
         api_version = self._get_api_version('dedicated_hosts')
         if api_version == '2019-03-01':
@@ -422,6 +468,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_01.operations import DedicatedHostsOperations as OperationClass
         elif api_version == '2021-04-01':
             from .v2021_04_01.operations import DedicatedHostsOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import DedicatedHostsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'dedicated_hosts'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -434,6 +482,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-06-30: :class:`DiskAccessesOperations<azure.mgmt.compute.v2020_06_30.operations.DiskAccessesOperations>`
            * 2020-09-30: :class:`DiskAccessesOperations<azure.mgmt.compute.v2020_09_30.operations.DiskAccessesOperations>`
            * 2020-12-01: :class:`DiskAccessesOperations<azure.mgmt.compute.v2020_12_01.operations.DiskAccessesOperations>`
+           * 2021-04-01: :class:`DiskAccessesOperations<azure.mgmt.compute.v2021_04_01.operations.DiskAccessesOperations>`
         """
         api_version = self._get_api_version('disk_accesses')
         if api_version == '2020-05-01':
@@ -444,6 +493,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2020_09_30.operations import DiskAccessesOperations as OperationClass
         elif api_version == '2020-12-01':
             from .v2020_12_01.operations import DiskAccessesOperations as OperationClass
+        elif api_version == '2021-04-01':
+            from .v2021_04_01.operations import DiskAccessesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'disk_accesses'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -458,6 +509,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-06-30: :class:`DiskEncryptionSetsOperations<azure.mgmt.compute.v2020_06_30.operations.DiskEncryptionSetsOperations>`
            * 2020-09-30: :class:`DiskEncryptionSetsOperations<azure.mgmt.compute.v2020_09_30.operations.DiskEncryptionSetsOperations>`
            * 2020-12-01: :class:`DiskEncryptionSetsOperations<azure.mgmt.compute.v2020_12_01.operations.DiskEncryptionSetsOperations>`
+           * 2021-04-01: :class:`DiskEncryptionSetsOperations<azure.mgmt.compute.v2021_04_01.operations.DiskEncryptionSetsOperations>`
         """
         api_version = self._get_api_version('disk_encryption_sets')
         if api_version == '2019-07-01':
@@ -472,6 +524,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2020_09_30.operations import DiskEncryptionSetsOperations as OperationClass
         elif api_version == '2020-12-01':
             from .v2020_12_01.operations import DiskEncryptionSetsOperations as OperationClass
+        elif api_version == '2021-04-01':
+            from .v2021_04_01.operations import DiskEncryptionSetsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'disk_encryption_sets'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -482,12 +536,15 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2020-09-30: :class:`DiskRestorePointOperations<azure.mgmt.compute.v2020_09_30.operations.DiskRestorePointOperations>`
            * 2020-12-01: :class:`DiskRestorePointOperations<azure.mgmt.compute.v2020_12_01.operations.DiskRestorePointOperations>`
+           * 2021-04-01: :class:`DiskRestorePointOperations<azure.mgmt.compute.v2021_04_01.operations.DiskRestorePointOperations>`
         """
         api_version = self._get_api_version('disk_restore_point')
         if api_version == '2020-09-30':
             from .v2020_09_30.operations import DiskRestorePointOperations as OperationClass
         elif api_version == '2020-12-01':
             from .v2020_12_01.operations import DiskRestorePointOperations as OperationClass
+        elif api_version == '2021-04-01':
+            from .v2021_04_01.operations import DiskRestorePointOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'disk_restore_point'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -508,6 +565,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-06-30: :class:`DisksOperations<azure.mgmt.compute.v2020_06_30.operations.DisksOperations>`
            * 2020-09-30: :class:`DisksOperations<azure.mgmt.compute.v2020_09_30.operations.DisksOperations>`
            * 2020-12-01: :class:`DisksOperations<azure.mgmt.compute.v2020_12_01.operations.DisksOperations>`
+           * 2021-04-01: :class:`DisksOperations<azure.mgmt.compute.v2021_04_01.operations.DisksOperations>`
         """
         api_version = self._get_api_version('disks')
         if api_version == '2016-04-30-preview':
@@ -534,6 +592,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2020_09_30.operations import DisksOperations as OperationClass
         elif api_version == '2020-12-01':
             from .v2020_12_01.operations import DisksOperations as OperationClass
+        elif api_version == '2021-04-01':
+            from .v2021_04_01.operations import DisksOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'disks'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -547,6 +607,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2019-07-01: :class:`GalleriesOperations<azure.mgmt.compute.v2019_07_01.operations.GalleriesOperations>`
            * 2019-12-01: :class:`GalleriesOperations<azure.mgmt.compute.v2019_12_01.operations.GalleriesOperations>`
            * 2020-09-30: :class:`GalleriesOperations<azure.mgmt.compute.v2020_09_30.operations.GalleriesOperations>`
+           * 2021-07-01: :class:`GalleriesOperations<azure.mgmt.compute.v2021_07_01.operations.GalleriesOperations>`
         """
         api_version = self._get_api_version('galleries')
         if api_version == '2018-06-01':
@@ -559,6 +620,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2019_12_01.operations import GalleriesOperations as OperationClass
         elif api_version == '2020-09-30':
             from .v2020_09_30.operations import GalleriesOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import GalleriesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'galleries'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -571,6 +634,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2019-07-01: :class:`GalleryApplicationVersionsOperations<azure.mgmt.compute.v2019_07_01.operations.GalleryApplicationVersionsOperations>`
            * 2019-12-01: :class:`GalleryApplicationVersionsOperations<azure.mgmt.compute.v2019_12_01.operations.GalleryApplicationVersionsOperations>`
            * 2020-09-30: :class:`GalleryApplicationVersionsOperations<azure.mgmt.compute.v2020_09_30.operations.GalleryApplicationVersionsOperations>`
+           * 2021-07-01: :class:`GalleryApplicationVersionsOperations<azure.mgmt.compute.v2021_07_01.operations.GalleryApplicationVersionsOperations>`
         """
         api_version = self._get_api_version('gallery_application_versions')
         if api_version == '2019-03-01':
@@ -581,6 +645,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2019_12_01.operations import GalleryApplicationVersionsOperations as OperationClass
         elif api_version == '2020-09-30':
             from .v2020_09_30.operations import GalleryApplicationVersionsOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import GalleryApplicationVersionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'gallery_application_versions'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -593,6 +659,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2019-07-01: :class:`GalleryApplicationsOperations<azure.mgmt.compute.v2019_07_01.operations.GalleryApplicationsOperations>`
            * 2019-12-01: :class:`GalleryApplicationsOperations<azure.mgmt.compute.v2019_12_01.operations.GalleryApplicationsOperations>`
            * 2020-09-30: :class:`GalleryApplicationsOperations<azure.mgmt.compute.v2020_09_30.operations.GalleryApplicationsOperations>`
+           * 2021-07-01: :class:`GalleryApplicationsOperations<azure.mgmt.compute.v2021_07_01.operations.GalleryApplicationsOperations>`
         """
         api_version = self._get_api_version('gallery_applications')
         if api_version == '2019-03-01':
@@ -603,6 +670,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2019_12_01.operations import GalleryApplicationsOperations as OperationClass
         elif api_version == '2020-09-30':
             from .v2020_09_30.operations import GalleryApplicationsOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import GalleryApplicationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'gallery_applications'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -616,6 +685,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2019-07-01: :class:`GalleryImageVersionsOperations<azure.mgmt.compute.v2019_07_01.operations.GalleryImageVersionsOperations>`
            * 2019-12-01: :class:`GalleryImageVersionsOperations<azure.mgmt.compute.v2019_12_01.operations.GalleryImageVersionsOperations>`
            * 2020-09-30: :class:`GalleryImageVersionsOperations<azure.mgmt.compute.v2020_09_30.operations.GalleryImageVersionsOperations>`
+           * 2021-07-01: :class:`GalleryImageVersionsOperations<azure.mgmt.compute.v2021_07_01.operations.GalleryImageVersionsOperations>`
         """
         api_version = self._get_api_version('gallery_image_versions')
         if api_version == '2018-06-01':
@@ -628,6 +698,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2019_12_01.operations import GalleryImageVersionsOperations as OperationClass
         elif api_version == '2020-09-30':
             from .v2020_09_30.operations import GalleryImageVersionsOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import GalleryImageVersionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'gallery_image_versions'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -641,6 +713,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2019-07-01: :class:`GalleryImagesOperations<azure.mgmt.compute.v2019_07_01.operations.GalleryImagesOperations>`
            * 2019-12-01: :class:`GalleryImagesOperations<azure.mgmt.compute.v2019_12_01.operations.GalleryImagesOperations>`
            * 2020-09-30: :class:`GalleryImagesOperations<azure.mgmt.compute.v2020_09_30.operations.GalleryImagesOperations>`
+           * 2021-07-01: :class:`GalleryImagesOperations<azure.mgmt.compute.v2021_07_01.operations.GalleryImagesOperations>`
         """
         api_version = self._get_api_version('gallery_images')
         if api_version == '2018-06-01':
@@ -653,6 +726,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2019_12_01.operations import GalleryImagesOperations as OperationClass
         elif api_version == '2020-09-30':
             from .v2020_09_30.operations import GalleryImagesOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import GalleryImagesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'gallery_images'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -662,10 +737,13 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2020-09-30: :class:`GallerySharingProfileOperations<azure.mgmt.compute.v2020_09_30.operations.GallerySharingProfileOperations>`
+           * 2021-07-01: :class:`GallerySharingProfileOperations<azure.mgmt.compute.v2021_07_01.operations.GallerySharingProfileOperations>`
         """
         api_version = self._get_api_version('gallery_sharing_profile')
         if api_version == '2020-09-30':
             from .v2020_09_30.operations import GallerySharingProfileOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import GallerySharingProfileOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'gallery_sharing_profile'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -687,6 +765,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-12-01: :class:`ImagesOperations<azure.mgmt.compute.v2020_12_01.operations.ImagesOperations>`
            * 2021-03-01: :class:`ImagesOperations<azure.mgmt.compute.v2021_03_01.operations.ImagesOperations>`
            * 2021-04-01: :class:`ImagesOperations<azure.mgmt.compute.v2021_04_01.operations.ImagesOperations>`
+           * 2021-07-01: :class:`ImagesOperations<azure.mgmt.compute.v2021_07_01.operations.ImagesOperations>`
         """
         api_version = self._get_api_version('images')
         if api_version == '2016-04-30-preview':
@@ -715,6 +794,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_01.operations import ImagesOperations as OperationClass
         elif api_version == '2021-04-01':
             from .v2021_04_01.operations import ImagesOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import ImagesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'images'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -734,6 +815,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-12-01: :class:`LogAnalyticsOperations<azure.mgmt.compute.v2020_12_01.operations.LogAnalyticsOperations>`
            * 2021-03-01: :class:`LogAnalyticsOperations<azure.mgmt.compute.v2021_03_01.operations.LogAnalyticsOperations>`
            * 2021-04-01: :class:`LogAnalyticsOperations<azure.mgmt.compute.v2021_04_01.operations.LogAnalyticsOperations>`
+           * 2021-07-01: :class:`LogAnalyticsOperations<azure.mgmt.compute.v2021_07_01.operations.LogAnalyticsOperations>`
         """
         api_version = self._get_api_version('log_analytics')
         if api_version == '2017-12-01':
@@ -758,6 +840,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_01.operations import LogAnalyticsOperations as OperationClass
         elif api_version == '2021-04-01':
             from .v2021_04_01.operations import LogAnalyticsOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import LogAnalyticsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'log_analytics'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -777,6 +861,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-12-01: :class:`Operations<azure.mgmt.compute.v2020_12_01.operations.Operations>`
            * 2021-03-01: :class:`Operations<azure.mgmt.compute.v2021_03_01.operations.Operations>`
            * 2021-04-01: :class:`Operations<azure.mgmt.compute.v2021_04_01.operations.Operations>`
+           * 2021-07-01: :class:`Operations<azure.mgmt.compute.v2021_07_01.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2017-12-01':
@@ -801,6 +886,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_01.operations import Operations as OperationClass
         elif api_version == '2021-04-01':
             from .v2021_04_01.operations import Operations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -819,6 +906,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-12-01: :class:`ProximityPlacementGroupsOperations<azure.mgmt.compute.v2020_12_01.operations.ProximityPlacementGroupsOperations>`
            * 2021-03-01: :class:`ProximityPlacementGroupsOperations<azure.mgmt.compute.v2021_03_01.operations.ProximityPlacementGroupsOperations>`
            * 2021-04-01: :class:`ProximityPlacementGroupsOperations<azure.mgmt.compute.v2021_04_01.operations.ProximityPlacementGroupsOperations>`
+           * 2021-07-01: :class:`ProximityPlacementGroupsOperations<azure.mgmt.compute.v2021_07_01.operations.ProximityPlacementGroupsOperations>`
         """
         api_version = self._get_api_version('proximity_placement_groups')
         if api_version == '2018-04-01':
@@ -841,6 +929,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_01.operations import ProximityPlacementGroupsOperations as OperationClass
         elif api_version == '2021-04-01':
             from .v2021_04_01.operations import ProximityPlacementGroupsOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import ProximityPlacementGroupsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'proximity_placement_groups'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -852,6 +942,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2017-03-30: :class:`ResourceSkusOperations<azure.mgmt.compute.v2017_03_30.operations.ResourceSkusOperations>`
            * 2017-09-01: :class:`ResourceSkusOperations<azure.mgmt.compute.v2017_09_01.operations.ResourceSkusOperations>`
            * 2019-04-01: :class:`ResourceSkusOperations<azure.mgmt.compute.v2019_04_01.operations.ResourceSkusOperations>`
+           * 2021-07-01: :class:`ResourceSkusOperations<azure.mgmt.compute.v2021_07_01.operations.ResourceSkusOperations>`
         """
         api_version = self._get_api_version('resource_skus')
         if api_version == '2017-03-30':
@@ -860,6 +951,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2017_09_01.operations import ResourceSkusOperations as OperationClass
         elif api_version == '2019-04-01':
             from .v2019_04_01.operations import ResourceSkusOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import ResourceSkusOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'resource_skus'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -870,12 +963,15 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2021-03-01: :class:`RestorePointCollectionsOperations<azure.mgmt.compute.v2021_03_01.operations.RestorePointCollectionsOperations>`
            * 2021-04-01: :class:`RestorePointCollectionsOperations<azure.mgmt.compute.v2021_04_01.operations.RestorePointCollectionsOperations>`
+           * 2021-07-01: :class:`RestorePointCollectionsOperations<azure.mgmt.compute.v2021_07_01.operations.RestorePointCollectionsOperations>`
         """
         api_version = self._get_api_version('restore_point_collections')
         if api_version == '2021-03-01':
             from .v2021_03_01.operations import RestorePointCollectionsOperations as OperationClass
         elif api_version == '2021-04-01':
             from .v2021_04_01.operations import RestorePointCollectionsOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import RestorePointCollectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'restore_point_collections'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -886,12 +982,15 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2021-03-01: :class:`RestorePointsOperations<azure.mgmt.compute.v2021_03_01.operations.RestorePointsOperations>`
            * 2021-04-01: :class:`RestorePointsOperations<azure.mgmt.compute.v2021_04_01.operations.RestorePointsOperations>`
+           * 2021-07-01: :class:`RestorePointsOperations<azure.mgmt.compute.v2021_07_01.operations.RestorePointsOperations>`
         """
         api_version = self._get_api_version('restore_points')
         if api_version == '2021-03-01':
             from .v2021_03_01.operations import RestorePointsOperations as OperationClass
         elif api_version == '2021-04-01':
             from .v2021_04_01.operations import RestorePointsOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import RestorePointsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'restore_points'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -901,10 +1000,13 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2020-09-30: :class:`SharedGalleriesOperations<azure.mgmt.compute.v2020_09_30.operations.SharedGalleriesOperations>`
+           * 2021-07-01: :class:`SharedGalleriesOperations<azure.mgmt.compute.v2021_07_01.operations.SharedGalleriesOperations>`
         """
         api_version = self._get_api_version('shared_galleries')
         if api_version == '2020-09-30':
             from .v2020_09_30.operations import SharedGalleriesOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import SharedGalleriesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'shared_galleries'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -914,10 +1016,13 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2020-09-30: :class:`SharedGalleryImageVersionsOperations<azure.mgmt.compute.v2020_09_30.operations.SharedGalleryImageVersionsOperations>`
+           * 2021-07-01: :class:`SharedGalleryImageVersionsOperations<azure.mgmt.compute.v2021_07_01.operations.SharedGalleryImageVersionsOperations>`
         """
         api_version = self._get_api_version('shared_gallery_image_versions')
         if api_version == '2020-09-30':
             from .v2020_09_30.operations import SharedGalleryImageVersionsOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import SharedGalleryImageVersionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'shared_gallery_image_versions'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -927,10 +1032,13 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2020-09-30: :class:`SharedGalleryImagesOperations<azure.mgmt.compute.v2020_09_30.operations.SharedGalleryImagesOperations>`
+           * 2021-07-01: :class:`SharedGalleryImagesOperations<azure.mgmt.compute.v2021_07_01.operations.SharedGalleryImagesOperations>`
         """
         api_version = self._get_api_version('shared_gallery_images')
         if api_version == '2020-09-30':
             from .v2020_09_30.operations import SharedGalleryImagesOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import SharedGalleryImagesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'shared_gallery_images'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -951,6 +1059,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-06-30: :class:`SnapshotsOperations<azure.mgmt.compute.v2020_06_30.operations.SnapshotsOperations>`
            * 2020-09-30: :class:`SnapshotsOperations<azure.mgmt.compute.v2020_09_30.operations.SnapshotsOperations>`
            * 2020-12-01: :class:`SnapshotsOperations<azure.mgmt.compute.v2020_12_01.operations.SnapshotsOperations>`
+           * 2021-04-01: :class:`SnapshotsOperations<azure.mgmt.compute.v2021_04_01.operations.SnapshotsOperations>`
         """
         api_version = self._get_api_version('snapshots')
         if api_version == '2016-04-30-preview':
@@ -977,6 +1086,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2020_09_30.operations import SnapshotsOperations as OperationClass
         elif api_version == '2020-12-01':
             from .v2020_12_01.operations import SnapshotsOperations as OperationClass
+        elif api_version == '2021-04-01':
+            from .v2021_04_01.operations import SnapshotsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'snapshots'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -990,6 +1101,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-12-01: :class:`SshPublicKeysOperations<azure.mgmt.compute.v2020_12_01.operations.SshPublicKeysOperations>`
            * 2021-03-01: :class:`SshPublicKeysOperations<azure.mgmt.compute.v2021_03_01.operations.SshPublicKeysOperations>`
            * 2021-04-01: :class:`SshPublicKeysOperations<azure.mgmt.compute.v2021_04_01.operations.SshPublicKeysOperations>`
+           * 2021-07-01: :class:`SshPublicKeysOperations<azure.mgmt.compute.v2021_07_01.operations.SshPublicKeysOperations>`
         """
         api_version = self._get_api_version('ssh_public_keys')
         if api_version == '2019-12-01':
@@ -1002,6 +1114,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_01.operations import SshPublicKeysOperations as OperationClass
         elif api_version == '2021-04-01':
             from .v2021_04_01.operations import SshPublicKeysOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import SshPublicKeysOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'ssh_public_keys'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1025,6 +1139,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-12-01: :class:`UsageOperations<azure.mgmt.compute.v2020_12_01.operations.UsageOperations>`
            * 2021-03-01: :class:`UsageOperations<azure.mgmt.compute.v2021_03_01.operations.UsageOperations>`
            * 2021-04-01: :class:`UsageOperations<azure.mgmt.compute.v2021_04_01.operations.UsageOperations>`
+           * 2021-07-01: :class:`UsageOperations<azure.mgmt.compute.v2021_07_01.operations.UsageOperations>`
         """
         api_version = self._get_api_version('usage')
         if api_version == '2015-06-15':
@@ -1057,6 +1172,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_01.operations import UsageOperations as OperationClass
         elif api_version == '2021-04-01':
             from .v2021_04_01.operations import UsageOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import UsageOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'usage'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1080,6 +1197,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-12-01: :class:`VirtualMachineExtensionImagesOperations<azure.mgmt.compute.v2020_12_01.operations.VirtualMachineExtensionImagesOperations>`
            * 2021-03-01: :class:`VirtualMachineExtensionImagesOperations<azure.mgmt.compute.v2021_03_01.operations.VirtualMachineExtensionImagesOperations>`
            * 2021-04-01: :class:`VirtualMachineExtensionImagesOperations<azure.mgmt.compute.v2021_04_01.operations.VirtualMachineExtensionImagesOperations>`
+           * 2021-07-01: :class:`VirtualMachineExtensionImagesOperations<azure.mgmt.compute.v2021_07_01.operations.VirtualMachineExtensionImagesOperations>`
         """
         api_version = self._get_api_version('virtual_machine_extension_images')
         if api_version == '2015-06-15':
@@ -1112,6 +1230,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_01.operations import VirtualMachineExtensionImagesOperations as OperationClass
         elif api_version == '2021-04-01':
             from .v2021_04_01.operations import VirtualMachineExtensionImagesOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import VirtualMachineExtensionImagesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machine_extension_images'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1135,6 +1255,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-12-01: :class:`VirtualMachineExtensionsOperations<azure.mgmt.compute.v2020_12_01.operations.VirtualMachineExtensionsOperations>`
            * 2021-03-01: :class:`VirtualMachineExtensionsOperations<azure.mgmt.compute.v2021_03_01.operations.VirtualMachineExtensionsOperations>`
            * 2021-04-01: :class:`VirtualMachineExtensionsOperations<azure.mgmt.compute.v2021_04_01.operations.VirtualMachineExtensionsOperations>`
+           * 2021-07-01: :class:`VirtualMachineExtensionsOperations<azure.mgmt.compute.v2021_07_01.operations.VirtualMachineExtensionsOperations>`
         """
         api_version = self._get_api_version('virtual_machine_extensions')
         if api_version == '2015-06-15':
@@ -1167,6 +1288,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_01.operations import VirtualMachineExtensionsOperations as OperationClass
         elif api_version == '2021-04-01':
             from .v2021_04_01.operations import VirtualMachineExtensionsOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import VirtualMachineExtensionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machine_extensions'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1190,6 +1313,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-12-01: :class:`VirtualMachineImagesOperations<azure.mgmt.compute.v2020_12_01.operations.VirtualMachineImagesOperations>`
            * 2021-03-01: :class:`VirtualMachineImagesOperations<azure.mgmt.compute.v2021_03_01.operations.VirtualMachineImagesOperations>`
            * 2021-04-01: :class:`VirtualMachineImagesOperations<azure.mgmt.compute.v2021_04_01.operations.VirtualMachineImagesOperations>`
+           * 2021-07-01: :class:`VirtualMachineImagesOperations<azure.mgmt.compute.v2021_07_01.operations.VirtualMachineImagesOperations>`
         """
         api_version = self._get_api_version('virtual_machine_images')
         if api_version == '2015-06-15':
@@ -1222,6 +1346,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_01.operations import VirtualMachineImagesOperations as OperationClass
         elif api_version == '2021-04-01':
             from .v2021_04_01.operations import VirtualMachineImagesOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import VirtualMachineImagesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machine_images'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1233,6 +1359,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-12-01: :class:`VirtualMachineImagesEdgeZoneOperations<azure.mgmt.compute.v2020_12_01.operations.VirtualMachineImagesEdgeZoneOperations>`
            * 2021-03-01: :class:`VirtualMachineImagesEdgeZoneOperations<azure.mgmt.compute.v2021_03_01.operations.VirtualMachineImagesEdgeZoneOperations>`
            * 2021-04-01: :class:`VirtualMachineImagesEdgeZoneOperations<azure.mgmt.compute.v2021_04_01.operations.VirtualMachineImagesEdgeZoneOperations>`
+           * 2021-07-01: :class:`VirtualMachineImagesEdgeZoneOperations<azure.mgmt.compute.v2021_07_01.operations.VirtualMachineImagesEdgeZoneOperations>`
         """
         api_version = self._get_api_version('virtual_machine_images_edge_zone')
         if api_version == '2020-12-01':
@@ -1241,6 +1368,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_01.operations import VirtualMachineImagesEdgeZoneOperations as OperationClass
         elif api_version == '2021-04-01':
             from .v2021_04_01.operations import VirtualMachineImagesEdgeZoneOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import VirtualMachineImagesEdgeZoneOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machine_images_edge_zone'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1261,6 +1390,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-12-01: :class:`VirtualMachineRunCommandsOperations<azure.mgmt.compute.v2020_12_01.operations.VirtualMachineRunCommandsOperations>`
            * 2021-03-01: :class:`VirtualMachineRunCommandsOperations<azure.mgmt.compute.v2021_03_01.operations.VirtualMachineRunCommandsOperations>`
            * 2021-04-01: :class:`VirtualMachineRunCommandsOperations<azure.mgmt.compute.v2021_04_01.operations.VirtualMachineRunCommandsOperations>`
+           * 2021-07-01: :class:`VirtualMachineRunCommandsOperations<azure.mgmt.compute.v2021_07_01.operations.VirtualMachineRunCommandsOperations>`
         """
         api_version = self._get_api_version('virtual_machine_run_commands')
         if api_version == '2017-03-30':
@@ -1287,6 +1417,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_01.operations import VirtualMachineRunCommandsOperations as OperationClass
         elif api_version == '2021-04-01':
             from .v2021_04_01.operations import VirtualMachineRunCommandsOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import VirtualMachineRunCommandsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machine_run_commands'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1307,6 +1439,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-12-01: :class:`VirtualMachineScaleSetExtensionsOperations<azure.mgmt.compute.v2020_12_01.operations.VirtualMachineScaleSetExtensionsOperations>`
            * 2021-03-01: :class:`VirtualMachineScaleSetExtensionsOperations<azure.mgmt.compute.v2021_03_01.operations.VirtualMachineScaleSetExtensionsOperations>`
            * 2021-04-01: :class:`VirtualMachineScaleSetExtensionsOperations<azure.mgmt.compute.v2021_04_01.operations.VirtualMachineScaleSetExtensionsOperations>`
+           * 2021-07-01: :class:`VirtualMachineScaleSetExtensionsOperations<azure.mgmt.compute.v2021_07_01.operations.VirtualMachineScaleSetExtensionsOperations>`
         """
         api_version = self._get_api_version('virtual_machine_scale_set_extensions')
         if api_version == '2017-03-30':
@@ -1333,6 +1466,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_01.operations import VirtualMachineScaleSetExtensionsOperations as OperationClass
         elif api_version == '2021-04-01':
             from .v2021_04_01.operations import VirtualMachineScaleSetExtensionsOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import VirtualMachineScaleSetExtensionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machine_scale_set_extensions'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1353,6 +1488,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-12-01: :class:`VirtualMachineScaleSetRollingUpgradesOperations<azure.mgmt.compute.v2020_12_01.operations.VirtualMachineScaleSetRollingUpgradesOperations>`
            * 2021-03-01: :class:`VirtualMachineScaleSetRollingUpgradesOperations<azure.mgmt.compute.v2021_03_01.operations.VirtualMachineScaleSetRollingUpgradesOperations>`
            * 2021-04-01: :class:`VirtualMachineScaleSetRollingUpgradesOperations<azure.mgmt.compute.v2021_04_01.operations.VirtualMachineScaleSetRollingUpgradesOperations>`
+           * 2021-07-01: :class:`VirtualMachineScaleSetRollingUpgradesOperations<azure.mgmt.compute.v2021_07_01.operations.VirtualMachineScaleSetRollingUpgradesOperations>`
         """
         api_version = self._get_api_version('virtual_machine_scale_set_rolling_upgrades')
         if api_version == '2017-03-30':
@@ -1379,6 +1515,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_01.operations import VirtualMachineScaleSetRollingUpgradesOperations as OperationClass
         elif api_version == '2021-04-01':
             from .v2021_04_01.operations import VirtualMachineScaleSetRollingUpgradesOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import VirtualMachineScaleSetRollingUpgradesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machine_scale_set_rolling_upgrades'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1393,6 +1531,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-12-01: :class:`VirtualMachineScaleSetVMExtensionsOperations<azure.mgmt.compute.v2020_12_01.operations.VirtualMachineScaleSetVMExtensionsOperations>`
            * 2021-03-01: :class:`VirtualMachineScaleSetVMExtensionsOperations<azure.mgmt.compute.v2021_03_01.operations.VirtualMachineScaleSetVMExtensionsOperations>`
            * 2021-04-01: :class:`VirtualMachineScaleSetVMExtensionsOperations<azure.mgmt.compute.v2021_04_01.operations.VirtualMachineScaleSetVMExtensionsOperations>`
+           * 2021-07-01: :class:`VirtualMachineScaleSetVMExtensionsOperations<azure.mgmt.compute.v2021_07_01.operations.VirtualMachineScaleSetVMExtensionsOperations>`
         """
         api_version = self._get_api_version('virtual_machine_scale_set_vm_extensions')
         if api_version == '2019-07-01':
@@ -1407,6 +1546,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_01.operations import VirtualMachineScaleSetVMExtensionsOperations as OperationClass
         elif api_version == '2021-04-01':
             from .v2021_04_01.operations import VirtualMachineScaleSetVMExtensionsOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import VirtualMachineScaleSetVMExtensionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machine_scale_set_vm_extensions'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1419,6 +1560,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-12-01: :class:`VirtualMachineScaleSetVMRunCommandsOperations<azure.mgmt.compute.v2020_12_01.operations.VirtualMachineScaleSetVMRunCommandsOperations>`
            * 2021-03-01: :class:`VirtualMachineScaleSetVMRunCommandsOperations<azure.mgmt.compute.v2021_03_01.operations.VirtualMachineScaleSetVMRunCommandsOperations>`
            * 2021-04-01: :class:`VirtualMachineScaleSetVMRunCommandsOperations<azure.mgmt.compute.v2021_04_01.operations.VirtualMachineScaleSetVMRunCommandsOperations>`
+           * 2021-07-01: :class:`VirtualMachineScaleSetVMRunCommandsOperations<azure.mgmt.compute.v2021_07_01.operations.VirtualMachineScaleSetVMRunCommandsOperations>`
         """
         api_version = self._get_api_version('virtual_machine_scale_set_vm_run_commands')
         if api_version == '2020-06-01':
@@ -1429,6 +1571,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_01.operations import VirtualMachineScaleSetVMRunCommandsOperations as OperationClass
         elif api_version == '2021-04-01':
             from .v2021_04_01.operations import VirtualMachineScaleSetVMRunCommandsOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import VirtualMachineScaleSetVMRunCommandsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machine_scale_set_vm_run_commands'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1452,6 +1596,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-12-01: :class:`VirtualMachineScaleSetVMsOperations<azure.mgmt.compute.v2020_12_01.operations.VirtualMachineScaleSetVMsOperations>`
            * 2021-03-01: :class:`VirtualMachineScaleSetVMsOperations<azure.mgmt.compute.v2021_03_01.operations.VirtualMachineScaleSetVMsOperations>`
            * 2021-04-01: :class:`VirtualMachineScaleSetVMsOperations<azure.mgmt.compute.v2021_04_01.operations.VirtualMachineScaleSetVMsOperations>`
+           * 2021-07-01: :class:`VirtualMachineScaleSetVMsOperations<azure.mgmt.compute.v2021_07_01.operations.VirtualMachineScaleSetVMsOperations>`
         """
         api_version = self._get_api_version('virtual_machine_scale_set_vms')
         if api_version == '2015-06-15':
@@ -1484,6 +1629,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_01.operations import VirtualMachineScaleSetVMsOperations as OperationClass
         elif api_version == '2021-04-01':
             from .v2021_04_01.operations import VirtualMachineScaleSetVMsOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import VirtualMachineScaleSetVMsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machine_scale_set_vms'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1507,6 +1654,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-12-01: :class:`VirtualMachineScaleSetsOperations<azure.mgmt.compute.v2020_12_01.operations.VirtualMachineScaleSetsOperations>`
            * 2021-03-01: :class:`VirtualMachineScaleSetsOperations<azure.mgmt.compute.v2021_03_01.operations.VirtualMachineScaleSetsOperations>`
            * 2021-04-01: :class:`VirtualMachineScaleSetsOperations<azure.mgmt.compute.v2021_04_01.operations.VirtualMachineScaleSetsOperations>`
+           * 2021-07-01: :class:`VirtualMachineScaleSetsOperations<azure.mgmt.compute.v2021_07_01.operations.VirtualMachineScaleSetsOperations>`
         """
         api_version = self._get_api_version('virtual_machine_scale_sets')
         if api_version == '2015-06-15':
@@ -1539,6 +1687,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_01.operations import VirtualMachineScaleSetsOperations as OperationClass
         elif api_version == '2021-04-01':
             from .v2021_04_01.operations import VirtualMachineScaleSetsOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import VirtualMachineScaleSetsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machine_scale_sets'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1562,6 +1712,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-12-01: :class:`VirtualMachineSizesOperations<azure.mgmt.compute.v2020_12_01.operations.VirtualMachineSizesOperations>`
            * 2021-03-01: :class:`VirtualMachineSizesOperations<azure.mgmt.compute.v2021_03_01.operations.VirtualMachineSizesOperations>`
            * 2021-04-01: :class:`VirtualMachineSizesOperations<azure.mgmt.compute.v2021_04_01.operations.VirtualMachineSizesOperations>`
+           * 2021-07-01: :class:`VirtualMachineSizesOperations<azure.mgmt.compute.v2021_07_01.operations.VirtualMachineSizesOperations>`
         """
         api_version = self._get_api_version('virtual_machine_sizes')
         if api_version == '2015-06-15':
@@ -1594,6 +1745,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_01.operations import VirtualMachineSizesOperations as OperationClass
         elif api_version == '2021-04-01':
             from .v2021_04_01.operations import VirtualMachineSizesOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import VirtualMachineSizesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machine_sizes'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1617,6 +1770,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-12-01: :class:`VirtualMachinesOperations<azure.mgmt.compute.v2020_12_01.operations.VirtualMachinesOperations>`
            * 2021-03-01: :class:`VirtualMachinesOperations<azure.mgmt.compute.v2021_03_01.operations.VirtualMachinesOperations>`
            * 2021-04-01: :class:`VirtualMachinesOperations<azure.mgmt.compute.v2021_04_01.operations.VirtualMachinesOperations>`
+           * 2021-07-01: :class:`VirtualMachinesOperations<azure.mgmt.compute.v2021_07_01.operations.VirtualMachinesOperations>`
         """
         api_version = self._get_api_version('virtual_machines')
         if api_version == '2015-06-15':
@@ -1649,6 +1803,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_01.operations import VirtualMachinesOperations as OperationClass
         elif api_version == '2021-04-01':
             from .v2021_04_01.operations import VirtualMachinesOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import VirtualMachinesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machines'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

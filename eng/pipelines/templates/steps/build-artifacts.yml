@@ -5,9 +5,6 @@ parameters:
   - name: TestPipeline
     type: boolean
     default: false
-  - name: BuildTargetingString
-    type: string
-    default: 'azure-*'
   - name: ServiceDirectory
     type: string
     default: ''
@@ -18,13 +15,21 @@ parameters:
     type: object
     default: []
 
+# The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
+#     eng/pipelines/templates/jobs/ci.tests.yml
+#     eng/pipelines/templates/jobs/ci.yml
+#     eng/pipelines/templates/jobs/live.test.yml
+
+# Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
 steps:
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
     parameters:
       PackageName: "azure-template"
       ServiceDirectory: "template"
       TestPipeline: ${{ parameters.TestPipeline }}
+
   - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
+
   - script: |
       echo "##vso[build.addbuildtag]Scheduled"
     displayName: 'Tag scheduled builds'
@@ -43,7 +48,7 @@ steps:
     displayName: 'Generate Python2 Applicable Namespace Packages'
     inputs:
       scriptPath: 'scripts/devops_tasks/build_packages.py'
-      arguments: '-d "$(Build.ArtifactStagingDirectory)" "${{ parameters.BuildTargetingString }}" --pkgfilter="nspkg" --service=${{parameters.ServiceDirectory}}'
+      arguments: '-d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --pkgfilter="nspkg" --service=${{parameters.ServiceDirectory}}'
 
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
@@ -57,13 +62,23 @@ steps:
   - template: ../steps/set-dev-build.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
+  - task: Powershell@2
+    inputs:
+      filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
+      arguments: >
+        -ServiceDirectory ${{parameters.ServiceDirectory}}
+        -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
+        -AddDevVersion
+      pwsh: true
+      workingDirectory: $(Pipeline.Workspace)
+    displayName: Update package properties with dev version
+    condition: and(succeeded(),eq(variables['SetDevVersion'],'true'))
   - task: PythonScript@0
     displayName: 'Generate Packages'
     inputs:
       scriptPath: 'scripts/devops_tasks/build_packages.py'
-      arguments: '-d "$(Build.ArtifactStagingDirectory)" "${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}} --devbuild="$(SetDevVersion)"'
+      arguments: '-d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --devbuild="$(SetDevVersion)"'
 
   - script: |
       twine check $(Build.ArtifactStagingDirectory)/**/*.whl
@@ -76,7 +91,7 @@ steps:
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
-        "${{ parameters.BuildTargetingString }}" 
+        "$(TargetingString)" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv=sphinx
 

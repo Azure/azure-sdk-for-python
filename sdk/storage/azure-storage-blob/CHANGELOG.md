@@ -1,5 +1,23 @@
 # Release History
 
+## 12.10.0b1 (2021-11-5)
+**New Features**
+- Account level SAS tokens now support two new permissions:
+    - `permanent_delete`
+- Encryption Scope is now supported for Sync Blob Copy (`copy_from_url()`)
+- Encryption Scope is now supported as a SAS permission
+
+**Fixes**
+- Blob Client Typing annotation issues have been resolved, specifically `invalid type inference` issues (#19906)
+- Duplicate type signature issue has been resolved (#19739) 
+
+## 12.9.0 (2021-09-15)
+**Stable release of preview features**
+- Added support for service version 2020-10-02 (STG78)
+- Added support for object level immutability policy with versioning (Version Level WORM).
+- Added support for listing deleted root blobs that have versions.
+- Added OAuth support for sync copy blob source.
+
 ## 12.9.0b1 (2021-07-27)
 **New Features**
 - Added support for object level immutability policy with versioning (Version Level WORM).

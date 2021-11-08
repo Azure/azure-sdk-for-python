@@ -1,6 +1,9 @@
 # Release History
 
-## 1.1.0b1 (2021-08-10)
+## 1.1.0 (2021-09-15)
+- Updated `azure-communication-chat` version.
+
+## 1.1.0b1 (2021-08-16)
 
 ### Added
 - Added support to add `metadata` for `message`

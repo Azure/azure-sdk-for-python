@@ -43,7 +43,7 @@ class ExpressRouteServiceProvidersOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ExpressRouteServiceProviderListResult"]:
         """Gets all the available express route service providers.
 

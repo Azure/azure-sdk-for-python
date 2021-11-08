@@ -7,6 +7,7 @@ parameters:
       - azure-keyvault-keys
       - azure-keyvault-secrets
       - azure-keyvault-certificates
+      - azure-keyvault-administration
 
 stages:
   - ${{ each service in parameters.Services }}:
@@ -15,10 +16,8 @@ stages:
         ServiceDirectory: keyvault
         BuildTargetingString: ${{ service }}
         JobName: ${{ replace(service, '-', '_') }}
-        DeployArmTemplate: true
-        AllocateResourceGroup: true
         TestTimeoutInMinutes: 240
-        ${{ if eq(service, 'azure-keyvault-keys') }}:
+        ${{ if or(eq(service, 'azure-keyvault-keys'), eq(service, 'azure-keyvault-administration')) }}:
           AdditionalMatrixConfigs:
             - Name: keyvault_test_matrix_addons
               Path: sdk/keyvault/azure-keyvault-keys/platform-matrix.json

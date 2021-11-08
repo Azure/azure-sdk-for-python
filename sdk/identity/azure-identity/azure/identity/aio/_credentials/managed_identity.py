@@ -23,15 +23,15 @@ class ManagedIdentityCredential(AsyncContextManager):
     """Authenticates with an Azure managed identity in any hosting environment which supports managed identities.
 
     This credential defaults to using a system-assigned identity. To configure a user-assigned identity, use one of
-    the keyword arguments.
+    the keyword arguments. See `Azure Active Directory documentation
+    <https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview>`_ for more
+    information about configuring managed identity for applications.
 
-    See Azure Active Directory documentation for more information about configuring managed identity for applications:
-    https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview
-
-    :keyword str client_id: a user-assigned identity's client ID. This is supported in all hosting environments.
+    :keyword str client_id: a user-assigned identity's client ID or, when using Pod Identity, the client ID of an Azure
+        AD app registration. This argument is supported in all hosting environments.
     :keyword identity_config: a mapping ``{parameter_name: value}`` specifying a user-assigned identity by its object
-      or resource ID, for example ``{"object_id": "..."}``. Check the documentation for your hosting environment to
-      learn what values it expects.
+        or resource ID, for example ``{"object_id": "..."}``. Check the documentation for your hosting environment to
+        learn what values it expects.
     :paramtype identity_config: Mapping[str, str]
     """
 
@@ -62,6 +62,20 @@ class ManagedIdentityCredential(AsyncContextManager):
                 from .azure_arc import AzureArcCredential
 
                 self._credential = AzureArcCredential(**kwargs)
+        elif all(os.environ.get(var) for var in EnvironmentVariables.TOKEN_EXCHANGE_VARS):
+            _LOGGER.info("%s will use token exchange", self.__class__.__name__)
+            from .token_exchange import TokenExchangeCredential
+
+            client_id = kwargs.pop("client_id", None) or os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
+            if not client_id:
+                raise ValueError('Configure the environment with a client ID or pass a value for "client_id" argument')
+
+            self._credential = TokenExchangeCredential(
+                tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
+                client_id=client_id,
+                token_file_path=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
+                **kwargs
+            )
         else:
             from .imds import ImdsCredential
 
@@ -89,5 +103,10 @@ class ManagedIdentityCredential(AsyncContextManager):
         :raises ~azure.identity.CredentialUnavailableError: managed identity isn't available in the hosting environment
         """
         if not self._credential:
-            raise CredentialUnavailableError(message="No managed identity endpoint found.")
+            raise CredentialUnavailableError(
+                message="No managed identity endpoint found. \n"
+                        "The Target Azure platform could not be determined from environment variables. "
+                        "Visit https://aka.ms/azsdk/python/identity/managedidentitycredential/troubleshoot to "
+                        "troubleshoot this issue."
+            )
         return await self._credential.get_token(*scopes, **kwargs)

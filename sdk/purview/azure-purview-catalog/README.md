@@ -10,6 +10,10 @@ Azure Purview Catalog is a fully managed cloud service whose users can discover 
 
 [Source code][source_code] | [Package (PyPI)][catalog_pypi] | [API reference documentation][catalog_ref_docs]| [Product documentation][catalog_product_documentation]
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 ## Getting started
 
 ### Prerequisites
@@ -52,7 +56,7 @@ from azure.purview.catalog import PurviewCatalogClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-client = PurviewCatalogClient(endpoint="https://<my-account-name>.catalog.purview.azure.com", credential=credential)
+client = PurviewCatalogClient(endpoint="https://<my-account-name>.purview.azure.com", credential=credential)
 ```
 
 ## Key concepts
@@ -73,20 +77,14 @@ The following section shows you how to initialize and authenticate your client, 
 ```python
 from azure.purview.catalog import PurviewCatalogClient
 from azure.identity import DefaultAzureCredential
-from azure.purview.catalog.rest import types
 from azure.core.exceptions import HttpResponseError
 
 credential = DefaultAzureCredential()
-client = PurviewCatalogClient(endpoint="https://<my-account-name>.catalog.purview.azure.com", credential=credential)
-
-request = types.build_get_all_type_definitions_request()
-
-response = client.send_request(request)
+client = PurviewCatalogClient(endpoint="https://<my-account-name>.purview.azure.com", credential=credential)
 try:
-    response.raise_for_status()
-    json_response = response.json()
+    response = client.types.get_all_type_definitions()
     # print out all of your entity definitions
-    print(json_response['entityDefs'])
+    print(response['entityDefs'])
 
 except HttpResponseError as e:
     print(e)
@@ -122,7 +120,7 @@ logger.setLevel(logging.DEBUG)
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
-endpoint = "https://<my-account-name>.catalog.purview.azure.com"
+endpoint = "https://<my-account-name>.purview.azure.com"
 credential = DefaultAzureCredential()
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level
@@ -133,7 +131,7 @@ Similarly, `logging_enable` can enable detailed logging for a single `send_reque
 even when it isn't enabled for the client:
 
 ```python
-result = client.send_request(request, logging_enable=True)
+result = client.types.get_all_type_definitions(logging_enable=True)
 ```
 
 ## Next steps
@@ -163,6 +161,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [request_builders_and_client]: https://aka.ms/azsdk/python/protocol/quickstart
 [enable_aad]: https://docs.microsoft.com/azure/purview/create-catalog-portal#add-a-security-principal-to-a-data-plane-role
+[azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

@@ -20,7 +20,7 @@ azure_monitor_context = {
     "ai.device.locale": locale.getdefaultlocale()[0],
     "ai.device.osVersion": platform.version(),
     "ai.device.type": "Other",
-    "ai.internal.sdkVersion": "py{}:ot{}:ext{}".format(
+    "ai.internal.sdkVersion": "py{}:otel{}:ext{}".format(
         platform.python_version(), opentelemetry_version, ext_version
     ),
 }

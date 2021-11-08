@@ -48,7 +48,7 @@ class DataMaskingRulesOperations:
         sql_pool_name: str,
         data_masking_rule_name: str,
         parameters: "_models.DataMaskingRule",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataMaskingRule":
         """Creates or updates a Sql pool data masking rule.
 
@@ -72,7 +72,7 @@ class DataMaskingRulesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         data_masking_policy_name = "Default"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -81,7 +81,7 @@ class DataMaskingRulesOperations:
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
             'dataMaskingPolicyName': self._serialize.url("data_masking_policy_name", data_masking_policy_name, 'str'),
@@ -128,7 +128,7 @@ class DataMaskingRulesOperations:
         workspace_name: str,
         sql_pool_name: str,
         data_masking_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataMaskingRule":
         """Gets the specific Sql pool data masking rule.
 
@@ -150,7 +150,7 @@ class DataMaskingRulesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         data_masking_policy_name = "Default"
         accept = "application/json"
 
@@ -158,7 +158,7 @@ class DataMaskingRulesOperations:
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
             'dataMaskingPolicyName': self._serialize.url("data_masking_policy_name", data_masking_policy_name, 'str'),
@@ -196,7 +196,7 @@ class DataMaskingRulesOperations:
         resource_group_name: str,
         workspace_name: str,
         sql_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DataMaskingRuleListResult"]:
         """Gets a list of Sql pool data masking rules.
 
@@ -216,7 +216,7 @@ class DataMaskingRulesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         data_masking_policy_name = "Default"
         accept = "application/json"
 
@@ -230,7 +230,7 @@ class DataMaskingRulesOperations:
                 url = self.list_by_sql_pool.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
                     'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
                     'dataMaskingPolicyName': self._serialize.url("data_masking_policy_name", data_masking_policy_name, 'str'),

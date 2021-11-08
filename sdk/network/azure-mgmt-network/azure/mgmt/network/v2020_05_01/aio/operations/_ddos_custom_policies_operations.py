@@ -46,7 +46,7 @@ class DdosCustomPoliciesOperations:
         self,
         resource_group_name: str,
         ddos_custom_policy_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -90,7 +90,7 @@ class DdosCustomPoliciesOperations:
         self,
         resource_group_name: str,
         ddos_custom_policy_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified DDoS custom policy.
 
@@ -100,8 +100,8 @@ class DdosCustomPoliciesOperations:
         :type ddos_custom_policy_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -154,7 +154,7 @@ class DdosCustomPoliciesOperations:
         self,
         resource_group_name: str,
         ddos_custom_policy_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DdosCustomPolicy":
         """Gets information about the specified DDoS custom policy.
 
@@ -213,7 +213,7 @@ class DdosCustomPoliciesOperations:
         resource_group_name: str,
         ddos_custom_policy_name: str,
         parameters: "_models.DdosCustomPolicy",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DdosCustomPolicy":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DdosCustomPolicy"]
         error_map = {
@@ -270,7 +270,7 @@ class DdosCustomPoliciesOperations:
         resource_group_name: str,
         ddos_custom_policy_name: str,
         parameters: "_models.DdosCustomPolicy",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DdosCustomPolicy"]:
         """Creates or updates a DDoS custom policy.
 
@@ -282,8 +282,8 @@ class DdosCustomPoliciesOperations:
         :type parameters: ~azure.mgmt.network.v2020_05_01.models.DdosCustomPolicy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DdosCustomPolicy or the result of cls(response)
@@ -341,7 +341,7 @@ class DdosCustomPoliciesOperations:
         resource_group_name: str,
         ddos_custom_policy_name: str,
         parameters: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DdosCustomPolicy":
         """Update a DDoS custom policy tags.
 

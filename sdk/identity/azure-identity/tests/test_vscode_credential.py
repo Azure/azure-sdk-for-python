@@ -225,6 +225,15 @@ def test_adfs():
     assert "adfs" in ex.value.message.lower()
 
 
+def test_custom_cloud_no_authority():
+    """The credential is unavailable when VS Code is configured to use a custom cloud with no known authority"""
+
+    cloud_name = "AzureCustomCloud"
+    credential = get_credential({"azure.cloud": cloud_name})
+    with pytest.raises(CredentialUnavailableError, match="authority.*" + cloud_name):
+        credential.get_token("scope")
+
+
 @pytest.mark.parametrize(
     "cloud,authority",
     (
@@ -268,9 +277,7 @@ def test_no_user_settings():
     assert transport.send.call_count == 1
 
 
-def test_allow_multitenant_authentication():
-    """When allow_multitenant_authentication is True, the credential should respect get_token(tenant_id=...)"""
-
+def test_multitenant_authentication():
     first_tenant = "first-tenant"
     first_token = "***"
     second_tenant = "second-tenant"
@@ -284,7 +291,7 @@ def test_allow_multitenant_authentication():
         return mock_response(json_payload=build_aad_response(access_token=token))
 
     credential = get_credential(
-        tenant_id=first_tenant, allow_multitenant_authentication=True, transport=mock.Mock(send=send)
+        tenant_id=first_tenant, transport=mock.Mock(send=send)
     )
     with mock.patch(GET_REFRESH_TOKEN, lambda _: "**"):
         token = credential.get_token("scope")
@@ -301,10 +308,7 @@ def test_allow_multitenant_authentication():
     token = credential.get_token("scope")
     assert token.token == first_token
 
-
 def test_multitenant_authentication_not_allowed():
-    """get_token(tenant_id=...) should raise when allow_multitenant_authentication is False (the default)"""
-
     expected_tenant = "expected-tenant"
     expected_token = "***"
 
@@ -320,15 +324,12 @@ def test_multitenant_authentication_not_allowed():
         token = credential.get_token("scope")
     assert token.token == expected_token
 
-    # explicitly specifying the configured tenant is okay
     token = credential.get_token("scope", tenant_id=expected_tenant)
     assert token.token == expected_token
 
-    # but any other tenant should get an error
-    with pytest.raises(ClientAuthenticationError, match="allow_multitenant_authentication"):
-        credential.get_token("scope", tenant_id="un" + expected_tenant)
+    token = credential.get_token("scope", tenant_id="un" + expected_tenant)
+    assert token.token == expected_token * 2
 
-    # ...unless the compat switch is enabled
-    with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_ENABLE_LEGACY_TENANT_SELECTION: "true"}):
+    with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
         token = credential.get_token("scope", tenant_id="un" + expected_tenant)
-    assert token.token == expected_token, "credential should ignore tenant_id kwarg when the compat switch is enabled"
+        assert token.token == expected_token

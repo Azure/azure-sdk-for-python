@@ -1,5 +1,17 @@
 # Release History
 
+## 10.0.0 (2021-10-08)
+
+**Breaking changes**
+
+  - Model Server no longer has parameter identity
+
+## 9.1.0 (2021-09-02)
+
+**Features**
+
+  - Upgrade api-version to `2021-05-01`
+
 ## 9.1.0b1 (2021-07-19)
 
 **Features**

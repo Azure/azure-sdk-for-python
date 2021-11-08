@@ -1,16 +1,22 @@
 # Release History
 
-## 12.1.1 (Unreleased)
+## 12.2.0 (2021-11-09)
 
-### Features Added
+**Warning** This release involves a bug fix that may change the behaviour for some users. Partition and Row keys that contain a single quote character (`'`) will now be automatically escaped for upsert, update and delete entity operations. Partition and Row keys that were already escaped, or contained duplicate single quote char (`''`) will now be treated as unescaped values.
 
-### Breaking Changes
 
 ### Bugs Fixed
 
+* Resolved bug where strings couldn't be used instead of enum value for entity Update Mode (#20247).
+* Resolved bug where single quote characters in Partition and Row keys were not escaped correctly (#20301).
+
+### Features Added
+
+* Added support for async iterators in `aio.TableClient.submit_transaction (#21083, thank you yashbhutoria).
+
 ### Other Changes
 
-- Bumped dependency on `msrest` to `>=0.6.21`
+* Bumped dependency on `msrest` to `>=0.6.21`
 
 ## 12.1.0 (2021-07-06)
 

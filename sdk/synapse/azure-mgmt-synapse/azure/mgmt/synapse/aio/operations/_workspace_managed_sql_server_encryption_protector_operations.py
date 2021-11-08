@@ -48,7 +48,7 @@ class WorkspaceManagedSqlServerEncryptionProtectorOperations:
         resource_group_name: str,
         workspace_name: str,
         encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.EncryptionProtector":
         """Get workspace server's encryption protector.
 
@@ -70,14 +70,14 @@ class WorkspaceManagedSqlServerEncryptionProtectorOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'encryptionProtectorName': self._serialize.url("encryption_protector_name", encryption_protector_name, 'str'),
         }
@@ -114,14 +114,14 @@ class WorkspaceManagedSqlServerEncryptionProtectorOperations:
         workspace_name: str,
         encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
         parameters: "_models.EncryptionProtector",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.EncryptionProtector"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.EncryptionProtector"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -129,7 +129,7 @@ class WorkspaceManagedSqlServerEncryptionProtectorOperations:
         url = self._create_or_update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'encryptionProtectorName': self._serialize.url("encryption_protector_name", encryption_protector_name, 'str'),
         }
@@ -172,7 +172,7 @@ class WorkspaceManagedSqlServerEncryptionProtectorOperations:
         workspace_name: str,
         encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
         parameters: "_models.EncryptionProtector",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.EncryptionProtector"]:
         """Updates workspace server's encryption protector.
 
@@ -188,8 +188,8 @@ class WorkspaceManagedSqlServerEncryptionProtectorOperations:
         :type parameters: ~azure.mgmt.synapse.models.EncryptionProtector
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either EncryptionProtector or the result of cls(response)
@@ -225,7 +225,7 @@ class WorkspaceManagedSqlServerEncryptionProtectorOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'encryptionProtectorName': self._serialize.url("encryption_protector_name", encryption_protector_name, 'str'),
         }
@@ -248,7 +248,7 @@ class WorkspaceManagedSqlServerEncryptionProtectorOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.EncryptionProtectorListResult"]:
         """Get list of encryption protectors for the server.
 
@@ -268,7 +268,7 @@ class WorkspaceManagedSqlServerEncryptionProtectorOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -281,7 +281,7 @@ class WorkspaceManagedSqlServerEncryptionProtectorOperations:
                 url = self.list.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -325,20 +325,20 @@ class WorkspaceManagedSqlServerEncryptionProtectorOperations:
         resource_group_name: str,
         workspace_name: str,
         encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
 
         # Construct URL
         url = self._revalidate_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'encryptionProtectorName': self._serialize.url("encryption_protector_name", encryption_protector_name, 'str'),
         }
@@ -369,7 +369,7 @@ class WorkspaceManagedSqlServerEncryptionProtectorOperations:
         resource_group_name: str,
         workspace_name: str,
         encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Revalidates server's existing encryption protector.
 
@@ -383,8 +383,8 @@ class WorkspaceManagedSqlServerEncryptionProtectorOperations:
         :type encryption_protector_name: str or ~azure.mgmt.synapse.models.EncryptionProtectorName
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -416,7 +416,7 @@ class WorkspaceManagedSqlServerEncryptionProtectorOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'encryptionProtectorName': self._serialize.url("encryption_protector_name", encryption_protector_name, 'str'),
         }

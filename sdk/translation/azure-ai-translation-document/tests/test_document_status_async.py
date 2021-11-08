@@ -41,7 +41,7 @@ class DocumentStatus(AsyncDocumentTranslationTest):
         translation_id = await self._begin_and_validate_translation_async(client, translation_inputs, len(blob_data), target_language)
 
         # get doc statuses
-        doc_statuses = client.list_all_document_statuses(translation_id)
+        doc_statuses = client.list_document_statuses(translation_id)
         self.assertIsNotNone(doc_statuses)
 
         # get first doc

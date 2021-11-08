@@ -17,7 +17,7 @@
 # Service team
 ####
 # PRLabel: %Azure.Identity
-/sdk/identity/                                                       @chlowell @mccoyp @schaabs
+/sdk/identity/                                                       @chlowell @mccoyp @schaabs @xiangyan99
 
 # PRLabel: %Event Hubs
 /sdk/eventhub/                                                       @annatisch @yunhaoling @swathipil @rakshith91
@@ -26,7 +26,7 @@
 /sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @xiafu-msft @tasherif-msft @kasobol-msft
 
 # PRLabel: %App Configuration
-/sdk/appconfiguration/                                               @xiangyan99 @seankane-msft
+/sdk/appconfiguration/                                               @xiangyan99 @YalinLi0312
 
 /sdk/applicationinsights/azure-applicationinsights/                  @divya-jay @alongafni
 /sdk/loganalytics/azure-loganalytics/                                @divya-jay @alongafni
@@ -38,10 +38,13 @@
 /sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/  @areddish
 
 # PRLabel: %Communication
-/sdk/communication/                                                  @turalf @ankitarorabit @memontic-ms @Azure/azure-sdk-communication-code-reviewers
+/sdk/communication/                                                  @acsdevx-msft
+/sdk/communication/azure-communication-phonenumbers/                 @RoyHerrod @danielav7 @whisper6284 @AlonsoMondal
+/sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
+/sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk
 
 # PRLabel: %KeyVault
-/sdk/keyvault/                                                       @schaabs @chlowell @mccoyp
+/sdk/keyvault/                                                       @schaabs @chlowell @mccoyp @YalinLi0312
 
 # PRLabel: %Monitor - LogAnalytics
 /sdk/loganalytics/                                                   @alexeldeib
@@ -63,7 +66,7 @@
 /sdk/containerservice/                                               @samkreter @zqingqing1 @GaneshaThirumurthi
 
 # PRLabel: %Cosmos
-/sdk/cosmos/                                                         @southpolesteve @zfoster
+/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @moderakh 
 
 # PRLabel: %Data Factory
 /sdk/datafactory/                                                    @hvermis
@@ -89,7 +92,7 @@
 /sdk/schemaregistry/                                                 @yunhaoling
 
 # PRLabel: %Search
-/sdk/search/                                                         @xiangyan99
+/sdk/search/                                                         @tjprescott
 
 # PRLabel: %Service Fabric
 /sdk/servicefabric/                                                  @QingChenmsft @samedder
@@ -101,7 +104,7 @@
 /sdk/servicebus/                                                     @annatisch @yunhaoling @swathipil @rakshith91
 
 # PRLabel: %Synapse
-/sdk/synapse/                                                        @aim-for-better @idear1203
+/sdk/synapse/                                                        @wonner @idear1203 @xiangyan99
 
 # PRLabel: %EngSys
 /sdk/template/                                                       @Azure/azure-sdk-eng
@@ -119,13 +122,13 @@
 /sdk/translation/                                                    @kristapratico @mohamedshabanofficial
 
 # PRLabel: %Tables
-/sdk/tables/                                                         @seankane-msft
+/sdk/tables/                                                         @annatisch @YalinLi0312
 
 # PRLabel: %Media
 /sdk/media/                                                          @naiteeks @bennage @giakas
 
 # PRLabel: %Container Registry
-/sdk/containerregistry/                                              @seankane-msft
+/sdk/containerregistry/                                              @YalinLi0312
 
 # Smoke Tests
 /common/smoketest/                                                   @lmazuel @chlowell @annatisch @rakshith91 @shurd @southpolesteve
@@ -143,4 +146,4 @@
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
-/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp
+/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312

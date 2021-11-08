@@ -106,9 +106,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-language-questionanswering/1.0.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-text?api-version=2021-05-01-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-text?api-version=2021-10-01
   response:
     body:
       string: "{\n  \"answers\": [\n    {\n      \"answer\": \"Battery Life  Get an
@@ -119,9 +119,9 @@ interactions:
         Battery Life - Longest Lasting Laptop Batteries  Competing laptops like the
         ZenBook S UX391UA (7:05), Surface Laptop 2 (9:22) and Notebook 9 Pro (8:53)
         outstayed the 4K Envy 13 but powered down long before the 1080p version.\",\n
-        \     \"confidenceScore\": 0.017458289861679077,\n      \"id\": \"doc3\",\n
+        \     \"confidenceScore\": 0.017458291724324226,\n      \"id\": \"doc3\",\n
         \     \"answerSpan\": {\n        \"text\": \"Battery Life\",\n        \"confidenceScore\":
-        0.26247412,\n        \"offset\": 0,\n        \"length\": 12\n      },\n      \"offset\":
+        0.26247388,\n        \"offset\": 0,\n        \"length\": 12\n      },\n      \"offset\":
         1779,\n      \"length\": 555\n    },\n    {\n      \"answer\": \"Along with
         11-plus hours of battery life (on the FHD model), the Envy 13 has a sleek,
         ultraportable chassis, fast performance, and powerful speakers. Best of all,
@@ -142,19 +142,21 @@ interactions:
         5391,\n      \"length\": 393\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - eae82c61-0d7f-4130-8c21-680060b8a75d
+      - 465fe43a-5e13-4ca5-ad6f-1ae62cae5af3
       content-length:
       - '2147'
       content-type:
       - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=9
       date:
-      - Fri, 25 Jun 2021 19:41:19 GMT
+      - Thu, 28 Oct 2021 17:25:07 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '287'
+      - '366'
     status:
       code: 200
       message: OK

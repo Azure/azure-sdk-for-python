@@ -8,6 +8,10 @@ If you are a client library developer, please reference [client library develope
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/) | [Package (Pypi)][package] | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/)
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 ## Getting started
 
 Typically, you will not need to install azure core;
@@ -112,19 +116,16 @@ class TooManyRedirectsError(HttpResponseError):
 
 *kwargs* are keyword arguments to include with the exception.
 
-#### **Provisional** StreamConsumedError
-A **provisional** error thrown if you try to access the stream of the **provisional**
-responses `azure.core.rest.HttpResponse` or `azure.core.rest.AsyncHttpResponse` once
+#### StreamConsumedError
+An error thrown if you try to access the stream of `azure.core.rest.HttpResponse` or `azure.core.rest.AsyncHttpResponse` once
 the response stream has been consumed.
 
-#### **Provisional** StreamClosedError
-A **provisional** error thrown if you try to access the stream of the **provisional**
-responses `azure.core.rest.HttpResponse` or `azure.core.rest.AsyncHttpResponse` once
+#### StreamClosedError
+An error thrown if you try to access the stream of the `azure.core.rest.HttpResponse` or `azure.core.rest.AsyncHttpResponse` once
 the response stream has been closed.
 
-#### **Provisional** ResponseNotReadError
-A **provisional** error thrown if you try to access the `content` of the **provisional**
-responses `azure.core.rest.HttpResponse` or `azure.core.rest.AsyncHttpResponse` before
+#### ResponseNotReadError
+An error thrown if you try to access the `content` of `azure.core.rest.HttpResponse` or `azure.core.rest.AsyncHttpResponse` before
 reading in the response's bytes first.
 
 ### Configurations

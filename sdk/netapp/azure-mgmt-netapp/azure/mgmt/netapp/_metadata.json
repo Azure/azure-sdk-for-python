@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2021-04-01",
-    "total_api_version_list": ["2021-04-01"],
+    "chosen_version": "2021-06-01",
+    "total_api_version_list": ["2021-06-01"],
     "client": {
         "name": "NetAppManagementClient",
         "filename": "_net_app_management_client",
@@ -100,6 +100,7 @@
     "operation_groups": {
         "operations": "Operations",
         "net_app_resource": "NetAppResourceOperations",
+        "net_app_resource_quota_limits": "NetAppResourceQuotaLimitsOperations",
         "accounts": "AccountsOperations",
         "pools": "PoolsOperations",
         "volumes": "VolumesOperations",
