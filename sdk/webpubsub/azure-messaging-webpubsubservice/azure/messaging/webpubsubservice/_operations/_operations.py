@@ -841,7 +841,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         roles = kwargs.pop('roles', None)  # type: Optional[List[str]]
         minutes_to_expire = kwargs.pop('minutes_to_expire', 60)  # type: Optional[int]
 
-        
+
         request = build_get_client_access_token_request(
             hub=hub,
             api_version=api_version,
@@ -910,7 +910,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
         reason = kwargs.pop('reason', None)  # type: Optional[str]
 
-        
+
         request = build_close_all_connections_request(
             hub=hub,
             api_version=api_version,
@@ -940,7 +940,7 @@ class WebPubSubServiceClientOperationsMixin(object):
     def send_to_all(
         self,
         hub,  # type: str
-        message,  # type: Union[IO, str]
+        message,  # type: Union[IO, str, JSONType]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -952,7 +952,7 @@ class WebPubSubServiceClientOperationsMixin(object):
          alpha-numeric characters or underscore.
         :type hub: str
         :param message: The payload body.
-        :type message: IO or str
+        :type message: IO or str or JSONType
         :keyword excluded: Excluded connection Ids.
         :paramtype excluded: list[str]
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
@@ -1046,7 +1046,7 @@ class WebPubSubServiceClientOperationsMixin(object):
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
-        
+
         request = build_connection_exists_request(
             hub=hub,
             connection_id=connection_id,
@@ -1107,7 +1107,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         reason = kwargs.pop('reason', None)  # type: Optional[str]
 
-        
+
         request = build_close_connection_request(
             hub=hub,
             connection_id=connection_id,
@@ -1138,7 +1138,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         self,
         hub,  # type: str
         connection_id,  # type: str
-        message,  # type: Union[IO, str]
+        message,  # type: Union[IO, str, JSONType]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -1152,7 +1152,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         :param connection_id: The connection Id.
         :type connection_id: str
         :param message: The payload body.
-        :type message: IO or str
+        :type message: IO or str or JSONType
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
@@ -1243,7 +1243,7 @@ class WebPubSubServiceClientOperationsMixin(object):
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
-        
+
         request = build_group_exists_request(
             hub=hub,
             group=group,
@@ -1307,7 +1307,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
         reason = kwargs.pop('reason', None)  # type: Optional[str]
 
-        
+
         request = build_close_group_connections_request(
             hub=hub,
             group=group,
@@ -1339,7 +1339,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         self,
         hub,  # type: str
         group,  # type: str
-        message,  # type: Union[IO, str]
+        message,  # type: Union[IO, str, JSONType]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -1353,7 +1353,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         :param group: Target group name, which length should be greater than 0 and less than 1025.
         :type group: str
         :param message: The payload body.
-        :type message: IO or str
+        :type message: IO or str or JSONType
         :keyword excluded: Excluded connection Ids.
         :paramtype excluded: list[str]
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
@@ -1451,7 +1451,7 @@ class WebPubSubServiceClientOperationsMixin(object):
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
-        
+
         request = build_add_connection_to_group_request(
             hub=hub,
             group=group,
@@ -1512,7 +1512,7 @@ class WebPubSubServiceClientOperationsMixin(object):
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
-        
+
         request = build_remove_connection_from_group_request(
             hub=hub,
             group=group,
@@ -1570,7 +1570,7 @@ class WebPubSubServiceClientOperationsMixin(object):
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
-        
+
         request = build_user_exists_request(
             hub=hub,
             user_id=user_id,
@@ -1634,7 +1634,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
         reason = kwargs.pop('reason', None)  # type: Optional[str]
 
-        
+
         request = build_close_user_connections_request(
             hub=hub,
             user_id=user_id,
@@ -1666,7 +1666,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         self,
         hub,  # type: str
         user_id,  # type: str
-        message,  # type: Union[IO, str]
+        message,  # type: Union[IO, str, JSONType]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -1680,7 +1680,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         :param user_id: The user Id.
         :type user_id: str
         :param message: The payload body.
-        :type message: IO or str
+        :type message: IO or str or JSONType
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
@@ -1774,7 +1774,7 @@ class WebPubSubServiceClientOperationsMixin(object):
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
-        
+
         request = build_add_user_to_group_request(
             hub=hub,
             group=group,
@@ -1835,7 +1835,7 @@ class WebPubSubServiceClientOperationsMixin(object):
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
-        
+
         request = build_remove_user_from_group_request(
             hub=hub,
             group=group,
@@ -1893,7 +1893,7 @@ class WebPubSubServiceClientOperationsMixin(object):
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
-        
+
         request = build_remove_user_from_all_groups_request(
             hub=hub,
             user_id=user_id,
@@ -1958,7 +1958,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         target_name = kwargs.pop('target_name', None)  # type: Optional[str]
 
-        
+
         request = build_grant_permission_request(
             hub=hub,
             permission=permission,
@@ -2025,7 +2025,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         target_name = kwargs.pop('target_name', None)  # type: Optional[str]
 
-        
+
         request = build_revoke_permission_request(
             hub=hub,
             permission=permission,
@@ -2092,7 +2092,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         target_name = kwargs.pop('target_name', None)  # type: Optional[str]
 
-        
+
         request = build_has_permission_request(
             hub=hub,
             permission=permission,
