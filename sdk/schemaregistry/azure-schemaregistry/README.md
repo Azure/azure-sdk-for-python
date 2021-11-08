@@ -87,7 +87,7 @@ token_credential = DefaultAzureCredential()
 fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
 group_name = os.environ['SCHEMA_REGISTRY_GROUP']
 schema_name = "your-schema-name"
-format = "Avro"
+format = "avro"
 schema_definition = """
 {"namespace": "example.avro",
  "type": "record",
@@ -141,7 +141,7 @@ token_credential = DefaultAzureCredential()
 fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
 group_name = os.environ['SCHEMA_REGISTRY_GROUP']
 schema_name = "your-schema-name"
-format = "Avro"
+format = "avro"
 schema_definition = """
 {"namespace": "example.avro",
  "type": "record",
