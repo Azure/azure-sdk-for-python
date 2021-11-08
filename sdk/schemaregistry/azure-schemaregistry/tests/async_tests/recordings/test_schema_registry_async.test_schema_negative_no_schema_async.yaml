@@ -11,12 +11,12 @@ interactions:
   response:
     body:
       string: '{"Code":400,"Detail":"SubCode=40000, UnknownType:The request is invalid.
-        [MGResponseHttpError=BadRequest]. TrackingId:6dcade5a-075b-4faf-87ca-7d4d56fa0939_G10,
+        [MGResponseHttpError=BadRequest]. TrackingId:22b913ba-a4d9-4799-8f94-a6c248869d77_G28,
         SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/$schemas\/a,
-        Timestamp:2021-11-05T23:19:16"}'
+        Timestamp:2021-11-08T19:21:36"}'
     headers:
       content-type: application/json
-      date: Fri, 05 Nov 2021 23:19:15 GMT
+      date: Mon, 08 Nov 2021 19:21:35 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
@@ -36,11 +36,11 @@ interactions:
   response:
     body:
       string: '{"Code":404,"Detail":"Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does
-        not exist. TrackingId:53ed334b-e1b4-4d3b-a2bb-2622a9e45ca7_G10, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/$schemas\/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
-        Timestamp:2021-11-05T23:19:16"}'
+        not exist. TrackingId:fae7aad8-cc69-417b-b713-86c4760011ed_G28, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/$schemas\/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
+        Timestamp:2021-11-08T19:21:36"}'
     headers:
       content-type: application/json
-      date: Fri, 05 Nov 2021 23:19:16 GMT
+      date: Mon, 08 Nov 2021 19:21:36 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked

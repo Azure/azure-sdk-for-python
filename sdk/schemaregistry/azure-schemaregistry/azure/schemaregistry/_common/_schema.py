@@ -33,7 +33,7 @@ class SchemaProperties(object):
     :ivar id: References specific schema in registry namespace.
     :vartype id: str
     :ivar format: Format for the schema being stored.
-    :vartype format: str
+    :vartype format: ~azure.schemaregistry.SchemaFormat
     """
 
     def __init__(self, **kwargs):
