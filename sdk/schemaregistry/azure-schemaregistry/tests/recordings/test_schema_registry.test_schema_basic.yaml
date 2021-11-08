@@ -11,7 +11,7 @@ interactions:
       Content-Length:
       - '201'
       Content-Type:
-      - application/json; serialization=avro
+      - application/json; serialization=Avro
       User-Agent:
       - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: PUT
@@ -23,7 +23,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 08 Nov 2021 18:38:18 GMT
+      - Mon, 08 Nov 2021 19:21:14 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic31c70f88/versions/1?api-version=2021-10
       schema-group-name:
@@ -65,7 +65,7 @@ interactions:
       content-type:
       - application/json;serialization=Avro
       date:
-      - Mon, 08 Nov 2021 18:38:18 GMT
+      - Mon, 08 Nov 2021 19:21:15 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic31c70f88/versions/1?api-version=2021-10
       schema-group-name:
@@ -101,7 +101,7 @@ interactions:
       Content-Length:
       - '201'
       Content-Type:
-      - application/json; serialization=avro
+      - application/json; serialization=Avro
       User-Agent:
       - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: POST
@@ -113,7 +113,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 08 Nov 2021 18:38:19 GMT
+      - Mon, 08 Nov 2021 19:21:15 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic31c70f88/versions/1?api-version=2021-10
       schema-group-name:

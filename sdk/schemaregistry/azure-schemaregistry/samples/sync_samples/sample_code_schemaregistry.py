@@ -61,7 +61,7 @@ def register_schema(schema_registry_client):
     # [START register_schema_sync]
     GROUP_NAME = os.environ["SCHEMAREGISTRY_GROUP"]
     SCHEMA_NAME = "your-schema-name"
-    FORMAT = "avro"
+    FORMAT = "Avro"
     SCHEMA_JSON = {
         "namespace": "example.avro",
         "type": "record",
@@ -96,7 +96,7 @@ def get_schema_id(schema_registry_client):
     # [START get_schema_id_sync]
     group_name = os.environ["SCHEMAREGISTRY_GROUP"]
     schema_name = "your-schema-name"
-    format = "avro"
+    format = "Avro"
     schema_json = {
         "namespace": "example.avro",
         "type": "record",

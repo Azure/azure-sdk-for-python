@@ -139,7 +139,7 @@ class SchemaRegistryClient(object):
 
         response = self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
-        return _parse_response_schema_properties(response, format)
+        return _parse_response_schema_properties(response, format.capitalize())
 
     def get_schema(self, schema_id, **kwargs):
         # type: (str, Any) -> Schema
@@ -218,4 +218,4 @@ class SchemaRegistryClient(object):
 
         response = self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
-        return _parse_response_schema_properties(response, format)
+        return _parse_response_schema_properties(response, format.capitalize())
