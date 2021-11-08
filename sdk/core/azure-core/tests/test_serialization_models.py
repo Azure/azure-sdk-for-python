@@ -16,17 +16,16 @@ def modify_args(init):
 
 
 class BasicResource(Model):
-    # check docs
 
-    @rest_property(name="platformUpdateDomainCount", type="str")
+    @rest_property(name="platformUpdateDomainCount")
     def platform_update_domain_count(self):
         """How many times the platform update domain has been counted"""
 
-    @rest_property(original_name="platformFaultDomainCount")
+    @rest_property(name="platformFaultDomainCount")
     def platform_fault_domain_count(self):
         """How many times the platform fault domain has been counted"""
 
-    @rest_property(original_name="virtualMachines")
+    @rest_property(name="virtualMachines")
     def virtual_machines(self):
         """Number of virtual machines"""
 
@@ -114,8 +113,7 @@ def test_has_no_property():
 
     class BasicResourceWithProperty(BasicResource):
 
-        @property
-        @rest_property(original_name="noprop")
+        @rest_property(name="noprop")
         def no_prop(self):
             """Added prop"""
 
@@ -131,8 +129,7 @@ def test_has_no_property():
 def test_original_and_attr_name_same():
 
     class MyModel(Model):
-        @property
-        @rest_property(original_name="hello")
+        @rest_property(name="hello")
         def hello(self):
             """Prop with the same attr and dict name"""
 
@@ -162,6 +159,5 @@ def test_modify_property():
 
     # now let's modify the model through it's properties
     model.platform_fault_domain_count = 2000
+    model['platformFaultDomainCount']
     assert model.platform_fault_domain_count == model["platformFaultDomainCount"] == 2000
-
-# def test_

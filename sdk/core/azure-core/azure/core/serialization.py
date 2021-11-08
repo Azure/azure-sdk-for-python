@@ -152,8 +152,15 @@ def _deserialize(item):
 
 _SENTINEL = object()
 
-class rest_property:
+def _fget(self):
+    return "hello"
+    if self._get_rest_name(self.__name__) == _SENTINEL:
+        self._set_rest_name(attr_name=self.__name__, rest_name=rest_name)
+    return self.__getattr__(func.__name__)
+
+class rest_property(property):
     def __init__(self, name):
+        super().__init__(fget=_fget)
         self._name = name
 
     def __call__(self, func):
@@ -162,7 +169,7 @@ class rest_property:
             if self._get_rest_name(func.__name__) == _SENTINEL:
                 self._set_rest_name(attr_name=func.__name__, rest_name=rest_name)
             return self.__getattr__(func.__name__)
-        return wrapper
+        return property(wrapper)
 
 _MY_MODEL_PROPERTIES = [
     "_attr_name_to_rest_name",
@@ -208,6 +215,7 @@ class Model(dict):
             super().__setattr__(name, value)
         else:
             self.__setitem__(self._get_rest_name(name), value)
+            property.setter(rest_property(name), value)
 
     def __delattr__(self, attr):
         if attr in _MY_MODEL_PROPERTIES:
