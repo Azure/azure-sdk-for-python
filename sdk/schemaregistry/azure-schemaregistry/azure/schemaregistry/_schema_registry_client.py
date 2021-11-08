@@ -126,7 +126,6 @@ class SchemaRegistryClient(object):
         except AttributeError:
             pass
 
-        format = format.capitalize()
         http_request_kwargs = get_http_request_kwargs(kwargs)
         request = schema_rest.build_register_request(
             group_name=group_name,
@@ -206,7 +205,6 @@ class SchemaRegistryClient(object):
         except AttributeError:
             pass
 
-        format = format.capitalize()
         http_request_kwargs = get_http_request_kwargs(kwargs)
         request = schema_rest.build_query_id_by_content_request(
             group_name=group_name,

@@ -46,22 +46,22 @@ class SchemaRegistryAsyncTests(AzureTestCase):
         async with client:
             schema_name = self.get_resource_name('test-schema-basic-async')
             schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
-            format = "Avro"
+            format = "avro"
             schema_properties = await client.register_schema(schemaregistry_group, schema_name, schema_str, format, logging_enable=True)
 
             assert schema_properties.id is not None
-            assert schema_properties.format == "Avro"
+            assert schema_properties.format == "avro"
 
             returned_schema = await client.get_schema(schema_id=schema_properties.id, logging_enable=True)
 
             assert returned_schema.properties.id == schema_properties.id
-            assert returned_schema.properties.format == "Avro"
+            assert returned_schema.properties.format == "avro"
             assert returned_schema.definition == schema_str
 
             returned_schema_properties = await client.get_schema_properties(schemaregistry_group, schema_name, schema_str, format, logging_enable=True)
 
             assert returned_schema_properties.id == schema_properties.id
-            assert returned_schema_properties.format == "Avro"
+            assert returned_schema_properties.format == "avro"
         await client._generated_client._config.credential.close()
 
     @SchemaRegistryPowerShellPreparer()
@@ -70,24 +70,24 @@ class SchemaRegistryAsyncTests(AzureTestCase):
         async with client:
             schema_name = self.get_resource_name('test-schema-update-async')
             schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
-            format = "Avro"
+            format = "avro"
             schema_properties = await client.register_schema(schemaregistry_group, schema_name, schema_str, format)
 
             assert schema_properties.id is not None
-            assert schema_properties.format == "Avro"
+            assert schema_properties.format == "avro"
 
             schema_str_new = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_food","type":["string","null"]}]}"""
             new_schema_properties = await client.register_schema(schemaregistry_group, schema_name, schema_str_new, format)
 
             assert new_schema_properties.id is not None
-            assert new_schema_properties.format == "Avro"
+            assert new_schema_properties.format == "avro"
 
             new_schema = await client.get_schema(schema_id=new_schema_properties.id)
 
             assert new_schema.properties.id != schema_properties.id
             assert new_schema.properties.id == new_schema_properties.id
             assert new_schema.definition == schema_str_new
-            assert new_schema.properties.format == "Avro"
+            assert new_schema.properties.format == "avro"
 
         await client._generated_client._config.credential.close()
 
@@ -96,7 +96,7 @@ class SchemaRegistryAsyncTests(AzureTestCase):
         client = self.create_client(schemaregistry_fully_qualified_namespace)
         schema_name = self.get_resource_name('test-schema-twice-async')
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}"""
-        format = "Avro"
+        format = "avro"
         async with client:
             schema_properties = await client.register_schema(schemaregistry_group, schema_name, schema_str, format)
             schema_properties_second = await client.register_schema(schemaregistry_group, schema_name, schema_str, format)
@@ -110,7 +110,7 @@ class SchemaRegistryAsyncTests(AzureTestCase):
         async with client, credential:
             schema_name = self.get_resource_name('test-schema-negative-async')
             schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
-            format = "Avro"
+            format = "avro"
             with pytest.raises(ClientAuthenticationError):
                 await client.register_schema(schemaregistry_group, schema_name, schema_str, format)
 
@@ -120,7 +120,7 @@ class SchemaRegistryAsyncTests(AzureTestCase):
         async with client:
             schema_name = self.get_resource_name('test-schema-nonexist-async')
             schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
-            format = "Avro"
+            format = "avro"
             with pytest.raises(ServiceRequestError):
                 await client.register_schema(schemaregistry_group, schema_name, schema_str, format)
         await client._generated_client._config.credential.close()

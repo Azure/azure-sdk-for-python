@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 from ._schema import SchemaProperties, Schema
+from ._constants import SchemaFormat
 
 
 def _parse_schema_properties_dict(response):
@@ -33,7 +34,7 @@ def _parse_schema_properties_dict(response):
 def _parse_response_schema_properties(response, format):
     # pylint:disable=redefined-builtin
     properties_dict = _parse_schema_properties_dict(response)
-    properties_dict["format"] = format
+    properties_dict["format"] = SchemaFormat(format.lower())
     return SchemaProperties(**properties_dict)
 
 
@@ -41,7 +42,7 @@ def _parse_response_schema(response):
     # pylint:disable=redefined-builtin
     schema_props_dict = _parse_schema_properties_dict(response)
     format = response.headers.get("content-type").split("serialization=")[1]
-    schema_props_dict["format"] = format
+    schema_props_dict["format"] = SchemaFormat(format.lower())
     return Schema(
         definition=response.text(), properties=SchemaProperties(**schema_props_dict)
     )
