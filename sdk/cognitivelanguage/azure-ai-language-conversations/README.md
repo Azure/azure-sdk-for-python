@@ -6,7 +6,7 @@ The CLU **analyze api** encompasses two projects; conversation, and orchestratio
 You can use the "conversation" project if you want to extract intents (intention behind a user utterance) and custom entities.
 You can also use the "orchestration" project which orchestrates multiple language apps to get the best response (language apps like Question Answering, Luis, and Conversation).
 
-[Source code][conversationallanguage_client_src] | [Package (PyPI)][conversationallanguage_pypi_package] | [Product documentation][conversationallanguage_docs] | [Samples][conversationallanguage_samples]
+[Source code][conversationallanguage_client_src] | [Package (PyPI)][conversationallanguage_pypi_package] | [API reference documentation][api_reference_documentation] | [Product documentation][conversationallanguage_docs] | [Samples][conversationallanguage_samples]
 
 ## _Disclaimer_
 
@@ -296,6 +296,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [pip_link]:https://pypi.org/project/pip/
 [conversationallanguage_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations
 [conversationallanguage_pypi_package]: https://pypi.org/project/azure-ai-language-conversations/
+[api_reference_documentation]:https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-conversations/latest/azure.ai.language.conversations.html
 [conversationallanguage_refdocs]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations
 [conversationallanguage_docs]: https://docs.microsoft.com/azure/cognitive-services/language-service/conversational-language-understanding/overview
 [conversationallanguage_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/README.md

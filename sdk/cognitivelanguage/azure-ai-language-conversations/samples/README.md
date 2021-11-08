@@ -50,7 +50,6 @@ For more information about how the versioning of the SDK corresponds to the vers
 3. Follow the usage described in the file, e.g. `python sample_analyze_conversation_app.py`
 
 ## Advanced Samples
-
 The following samples showcase some advanced concepts in CLU
 
 | **Advanced Sample File Name**                                                                                                                                                               | **Description**                                                                                  |
@@ -60,6 +59,11 @@ The following samples showcase some advanced concepts in CLU
 | [sample_analyze_orchestration_app_qna_response.py][sample_analyze_orchestration_app_qna_response] and [sample_analyze_orchestration_app_qna_response_async.py][sample_analyze_orchestration_app_qna_response_async]                 | Same as orchestration sample, but in this case the best response will be a Qna project |
 | [sample_analyze_orchestration_app_conversation_response.py][sample_analyze_orchestration_app_conversation_response] and [sample_analyze_orchestration_app_conversation_reponse_async.py][sample_analyze_orchestration_app_conversation_response_async]                 | Same as orchestration sample, but in this case the best response will be a Conversation project |
 | [sample_analyze_orchestration_app_luis_response.py][sample_analyze_orchestration_app_luis_response] and [sample_analyze_orchestration_app_luis_response_async.py][sample_analyze_orchestration_app_luis_response_async]                 | Same as orchestration sample, but in this case the best response will be a LUIS project |
+
+## Next Steps
+
+Check out the [API reference documentation][api_reference_documentation] to learn more about
+what you can do with the Azure Conversational Language Understanding client library.
 
 
 [azure_subscription]: https://azure.microsoft.com/free/
@@ -81,4 +85,5 @@ The following samples showcase some advanced concepts in CLU
 [sample_analyze_orchestration_app_luis_response_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_analyze_orchestration_app_luis_response_async.py
 [sample_analyze_orchestration_app_with_params]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_analyze_orchestration_app_with_params.py
 [sample_analyze_orchestration_app_with_params_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_analyze_orchestration_app_with_params_async.py
+[api_reference_documentation]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-conversations/latest/azure.ai.language.conversations.html
 [versioning_story_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations#install-the-package
