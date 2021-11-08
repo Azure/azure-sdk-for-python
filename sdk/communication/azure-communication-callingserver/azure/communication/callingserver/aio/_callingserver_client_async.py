@@ -599,7 +599,7 @@ class CallingServerClient:
             call_locator,  # type: CallLocator
             participant,  # type: CommunicationIdentifier
             **kwargs  # type: Any
-        ):  # type: (...) -> None
+        )  -> None:
 
         if not participant:
             raise ValueError("participant can not be None")
@@ -619,18 +619,18 @@ class CallingServerClient:
         self,
         call_locator: CallLocator,
         recording_state_callback_uri: str,
-        recording_content_type: Optional[RecordingContentType] = None,
-        recording_channel_type: Optional[RecordingChannelType] = None,
-        recording_format_type: Optional[RecordingFormatType] = None,
+        content_type: Optional[RecordingContentType] = None,
+        channel_type: Optional[RecordingChannelType] = None,
+        format_type: Optional[RecordingFormatType] = None,
         **kwargs: Any
     ) -> StartCallRecordingResult:
 
         start_call_recording_request = StartCallRecordingWithCallLocatorRequest(
             call_locator=serialize_call_locator(call_locator),
             recording_state_callback_uri=recording_state_callback_uri,
-            recording_content_type=recording_content_type,
-            recording_channel_type=recording_channel_type,
-            recording_format_type=recording_format_type,
+            recording_content_type=content_type,
+            recording_channel_type=channel_type,
+            recording_format_type=format_type,
             **kwargs
         )
 
@@ -644,12 +644,12 @@ class CallingServerClient:
         self,
         recording_id: str,
         **kwargs: Any
-    ) -> HttpResponse:
+    ) -> None:
 
         if not recording_id:
             raise ValueError("recording_id cannot be None")
 
-        return await self._server_call_client.pause_recording(
+        await self._server_call_client.pause_recording(
             recording_id=recording_id,
             **kwargs
         )
@@ -659,12 +659,12 @@ class CallingServerClient:
         self,
         recording_id: str,
         **kwargs: Any
-    ) -> HttpResponse:
+    ) -> None:
 
         if not recording_id:
             raise ValueError("recording_id cannot be None")
 
-        return await self._server_call_client.resume_recording(
+        await self._server_call_client.resume_recording(
             recording_id=recording_id,
             **kwargs
         )
@@ -674,12 +674,12 @@ class CallingServerClient:
         self,
         recording_id: str,
         **kwargs: Any
-    ) -> HttpResponse:
+    ) -> None:
 
         if not recording_id:
             raise ValueError("recording_id cannot be None")
 
-        return await self._server_call_client.stop_recording(
+        await self._server_call_client.stop_recording(
             recording_id=recording_id,
             **kwargs
         )
