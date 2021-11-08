@@ -6,8 +6,6 @@
 
 - Fix multi-tenant auth using async AadClient ([#21289](https://github.com/Azure/azure-sdk-for-python/issues/21289))
 
-### Other Changes
-
 ## 1.7.0 (2021-10-14)
 
 ### Breaking Changes
