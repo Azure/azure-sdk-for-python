@@ -1,6 +1,6 @@
 # Release History
 
-## 12.7.0b1 (x-x-x)
+## 12.7.0b1 (Unreleased)
 
 ## 12.6.0 (2021-09-15)
 **Stable release of preview features**
