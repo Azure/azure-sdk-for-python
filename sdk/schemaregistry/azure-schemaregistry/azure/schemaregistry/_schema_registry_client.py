@@ -125,7 +125,7 @@ class SchemaRegistryClient(object):
             format = format.value
         except AttributeError:
             pass
-
+        format = format.capitalize()
         http_request_kwargs = get_http_request_kwargs(kwargs)
         request = schema_rest.build_register_request(
             group_name=group_name,
@@ -139,7 +139,7 @@ class SchemaRegistryClient(object):
 
         response = self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
-        return _parse_response_schema_properties(response, format.capitalize())
+        return _parse_response_schema_properties(response, format)
 
     def get_schema(self, schema_id, **kwargs):
         # type: (str, Any) -> Schema
@@ -205,6 +205,7 @@ class SchemaRegistryClient(object):
         except AttributeError:
             pass
 
+        format = format.capitalize()
         http_request_kwargs = get_http_request_kwargs(kwargs)
         request = schema_rest.build_query_id_by_content_request(
             group_name=group_name,
@@ -218,4 +219,4 @@ class SchemaRegistryClient(object):
 
         response = self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
-        return _parse_response_schema_properties(response, format.capitalize())
+        return _parse_response_schema_properties(response, format)
