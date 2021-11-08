@@ -890,7 +890,6 @@ class LibraryOperations(object):
             api_version=api_version,
             content_type=content_type,
             content=content,
-            content=content,
             blob_condition_append_position=blob_condition_append_position,
             template_url=self.append.metadata['url'],
         )
