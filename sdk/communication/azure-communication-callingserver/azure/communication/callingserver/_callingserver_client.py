@@ -672,7 +672,7 @@ class CallingServerClient(object):
         )
 
     @distributed_trace()
-    def get_recording_properities(
+    def get_recording_properties(
         self,
         recording_id,  # type: str
         **kwargs  # type: Any

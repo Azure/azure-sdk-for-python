@@ -685,7 +685,7 @@ class CallingServerClient:
         )
 
     @distributed_trace_async()
-    async def get_recording_properities(
+    async def get_recording_properties(
         self,
         recording_id: str,
         **kwargs: Any

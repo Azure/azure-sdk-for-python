@@ -172,17 +172,17 @@ class ServerCallTest(CommunicationTestCase):
             assert recording_id is not None
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
 
-            recording_state = self.callingserver_client.get_recording_properities(recording_id)
+            recording_state = self.callingserver_client.get_recording_properties(recording_id)
             assert recording_state.recording_state == "active"
 
             self.callingserver_client.pause_recording(recording_id)
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
-            recording_state = self.callingserver_client.get_recording_properities(recording_id)
+            recording_state = self.callingserver_client.get_recording_properties(recording_id)
             assert recording_state.recording_state == "inactive"
 
             self.callingserver_client.resume_recording(recording_id)
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
-            recording_state = self.callingserver_client.get_recording_properities(recording_id)
+            recording_state = self.callingserver_client.get_recording_properties(recording_id)
             assert recording_state.recording_state == "active"
 
             self.callingserver_client.stop_recording(recording_id)
