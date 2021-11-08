@@ -345,7 +345,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         if isinstance(self._config.credential, AzureKeyCredential):
             token = _get_token_by_key(endpoint, hub, self._config.credential.key, **kwargs)
         else:
-            token = super().get_client_access_token(hub, **kwargs).get('token')
+            token = super(WebPubSubServiceClient, self).get_client_access_token(hub, **kwargs).get('token')
 
         return {
             "baseUrl": client_url,
