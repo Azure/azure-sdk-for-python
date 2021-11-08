@@ -6,7 +6,7 @@
 # -------------------------------------------------------------------------
 import pytest
 from testcase import WebpubsubTest, WebpubsubPowerShellPreparer
-from azure.messaging.webpubsubservice.operations._operations import build_send_to_all_request
+from azure.messaging.webpubsubservice._operations._operations import build_send_to_all_request
 from azure.core.exceptions import ServiceRequestError
 
 class WebpubsubSmokeTest(WebpubsubTest):
