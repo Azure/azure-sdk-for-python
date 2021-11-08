@@ -11,7 +11,7 @@ import datetime
 import functools
 
 import msrest
-from azure.servicebus.management import ServiceBusAdministrationClient, QueueProperties
+from azure.servicebus.management import ServiceBusAdministrationClient, QueueProperties, ApiVersion
 from azure.servicebus._common.utils import utc_now
 from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ServiceRequestError, ResourceNotFoundError, ResourceExistsError
@@ -28,7 +28,8 @@ from mgmt_test_utilities import (
     MgmtQueueListRuntimeInfoTestHelper,
     run_test_mgmt_list_with_parameters,
     run_test_mgmt_list_with_negative_parameters,
-    clear_queues
+    clear_queues,
+    clear_topics
 )
 _logger = get_logger(logging.DEBUG)
 
@@ -223,7 +224,6 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
         with pytest.raises(msrest.exceptions.ValidationError):
             mgmt_service.create_queue('')
 
-
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_queue_create_with_queue_description(self, servicebus_namespace_connection_string, **kwargs):
@@ -231,6 +231,7 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
         clear_queues(mgmt_service)
         queue_name = "iweidk"
         queue_name_2 = "vladsk"
+        queue_name_3 = "famviq"
         topic_name = "aghadh"
 
         #TODO: Why don't we have an input model (queueOptions? as superclass of QueueProperties?) and output model to not show these params?
@@ -270,6 +271,12 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
             max_size_in_megabytes=3072,
             requires_session=True
         )
+
+        with pytest.raises(HttpResponseError):
+            mgmt_service.create_queue(
+                queue_name_3,
+                max_message_size_in_kilobytes=1024  # basic/standard ties does not support
+            )
 
         try:
             queue = mgmt_service.get_queue(queue_name)
@@ -312,6 +319,104 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
             mgmt_service.delete_queue(queue_name)
             mgmt_service.delete_queue(queue_name_2)
             mgmt_service.delete_topic(topic_name)
+            mgmt_service.close()
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest', sku='Premium')
+    def test_mgmt_queue_premium_create_with_queue_description(self, servicebus_namespace_connection_string, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+        clear_queues(mgmt_service)
+        queue_name = "iweidk"
+        queue_name_2 = "cpqmva"
+        queue_name_3 = "rekocd"
+
+        mgmt_service.create_queue(
+            queue_name,
+            auto_delete_on_idle=datetime.timedelta(minutes=10),
+            dead_lettering_on_message_expiration=True,
+            default_message_time_to_live=datetime.timedelta(minutes=11),
+            duplicate_detection_history_time_window=datetime.timedelta(minutes=12),
+            enable_batched_operations=True,
+            #enable_express=True,  # not enabled on premium
+            #enable_partitioning=True,  # not enabled on premium
+            lock_duration=datetime.timedelta(seconds=13),
+            max_delivery_count=14,
+            max_size_in_megabytes=3072,
+            #requires_duplicate_detection=True,  # not enabled on premium
+            requires_session=True,
+            max_message_size_in_kilobytes=12345
+        )
+
+        mgmt_service.create_queue(
+            queue_name_2,
+            auto_delete_on_idle="PT10M1S",
+            dead_lettering_on_message_expiration=True,
+            default_message_time_to_live="PT11M2S",
+            duplicate_detection_history_time_window="PT12M3S",
+            enable_batched_operations=True,
+            lock_duration="PT13S",
+            max_delivery_count=14,
+            max_size_in_megabytes=3072,
+            requires_session=True
+        )  # default max_message_size_in_kilobytes is 1024
+
+        with pytest.raises(HttpResponseError):
+            mgmt_service.create_queue(
+                queue_name_3,
+                max_message_size_in_kilobytes=1023  # min allowed is 1024
+            )
+
+        with pytest.raises(HttpResponseError):
+            mgmt_service.create_queue(
+                queue_name_3,
+                max_message_size_in_kilobytes=102401  # max allowed is 102400
+            )
+
+        try:
+            queue = mgmt_service.get_queue(queue_name)
+            assert queue.name == queue_name
+            assert queue.auto_delete_on_idle == datetime.timedelta(minutes=10)
+            assert queue.dead_lettering_on_message_expiration == True
+            assert queue.default_message_time_to_live == datetime.timedelta(minutes=11)
+            assert queue.duplicate_detection_history_time_window == datetime.timedelta(minutes=12)
+            assert queue.enable_batched_operations == True
+            # enable_express is not supported for the premium sku, see doc
+            # https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-premium-messaging#express-entities
+            # assert queue.enable_express == True
+            # partitioning is not available for the the premium sku, see doc
+            # https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-partitioning
+            # assert queue.enable_partitioning == True
+            assert queue.lock_duration == datetime.timedelta(seconds=13)
+            assert queue.max_delivery_count == 14
+            assert queue.max_size_in_megabytes % 3072 == 0  # TODO: In my local test, I don't see a multiple of the input number. To confirm
+            # This is disabled due to the following error:
+            # azure.core.exceptions.HttpResponseError: SubCode=40000. Both DelayedPersistence property and RequiresDuplicateDetection property cannot be enabled together.
+            # To know more visit https://aka.ms/sbResourceMgrExceptions.
+            #assert queue.requires_duplicate_detection == True
+            assert queue.requires_session == True
+            assert queue.max_message_size_in_kilobytes == 12345
+
+            queue_2 = mgmt_service.get_queue(queue_name_2)
+            assert queue_2.name == queue_name_2
+            assert queue_2.auto_delete_on_idle == datetime.timedelta(minutes=10, seconds=1)
+            assert queue_2.dead_lettering_on_message_expiration == True
+            assert queue_2.default_message_time_to_live == datetime.timedelta(minutes=11, seconds=2)
+            assert queue_2.duplicate_detection_history_time_window == datetime.timedelta(minutes=12, seconds=3)
+            assert queue_2.enable_batched_operations == True
+            assert queue_2.lock_duration == datetime.timedelta(seconds=13)
+            assert queue_2.max_delivery_count == 14
+            assert queue_2.max_size_in_megabytes % 3072 == 0
+            assert queue_2.requires_session == True
+            assert queue_2.max_message_size_in_kilobytes == 1024
+
+            queue_2.max_message_size_in_kilobytes = 54321
+            mgmt_service.update_queue(queue_2)
+            queue_2_new = mgmt_service.get_queue(queue_name_2)
+            assert queue_2_new.max_message_size_in_kilobytes == 54321
+
+        finally:
+            mgmt_service.delete_queue(queue_name)
+            mgmt_service.delete_queue(queue_name_2)
             mgmt_service.close()
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -681,3 +786,40 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
                 mgmt_service.update_queue(queue_description_only_name)
         finally:
             mgmt_service.delete_queue(queue_name)
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    def test_mgmt_queue_basic_v2017_04(self, servicebus_namespace_connection_string, servicebus_namespace,
+                                    servicebus_namespace_key_name, servicebus_namespace_primary_key):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string, api_version=ApiVersion.V2017_04)
+        clear_queues(mgmt_service)
+
+        mgmt_service.create_queue("test_queue")
+        queues = list(mgmt_service.list_queues())
+        assert len(queues) == 1 and queues[0].name == "test_queue"
+        queue = mgmt_service.get_queue("test_queue")
+        assert queue.name == "test_queue"
+        mgmt_service.delete_queue("test_queue")
+        queues = list(mgmt_service.list_queues())
+        assert len(queues) == 0
+
+        with pytest.raises(HttpResponseError):
+            mgmt_service.create_queue("queue_can_not_be_created", max_message_size_in_kilobytes=1024)
+
+        fully_qualified_namespace = servicebus_namespace.name + '.servicebus.windows.net'
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace,
+            credential=ServiceBusSharedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key),
+            api_version=ApiVersion.V2017_04
+        )
+        mgmt_service.create_queue("test_queue")
+        queues = list(mgmt_service.list_queues())
+        assert len(queues) == 1 and queues[0].name == "test_queue"
+        queue = mgmt_service.get_queue("test_queue")
+        assert queue.name == "test_queue"
+        mgmt_service.delete_queue("test_queue")
+        queues = list(mgmt_service.list_queues())
+        assert len(queues) == 0
+
+        with pytest.raises(HttpResponseError):
+            mgmt_service.create_queue("queue_can_not_be_created", max_message_size_in_kilobytes=1024)

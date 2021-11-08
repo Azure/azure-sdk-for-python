@@ -31,6 +31,7 @@ all_api_versions = get_decorator(is_async=True)
 only_hsm = get_decorator(only_hsm=True, is_async=True)
 only_hsm_7_3_preview = get_decorator(only_hsm=True, is_async=True, api_versions=[ApiVersion.V7_3_PREVIEW])
 only_vault_7_3_preview = get_decorator(only_vault=True, is_async=True, api_versions=[ApiVersion.V7_3_PREVIEW])
+only_7_3_preview = get_decorator(is_async=True, api_versions=[ApiVersion.V7_3_PREVIEW])
 logging_enabled = get_decorator(is_async=True, logging_enable=True)
 logging_disabled = get_decorator(is_async=True, logging_enable=False)
 
@@ -128,7 +129,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         assert key.properties.updated_on != key_bundle.properties.updated_on
         assert sorted(key_ops) == sorted(key_bundle.key_operations)
         if release_policy:
-            assert key.properties.release_policy.data != key_bundle.properties.release_policy.data
+            assert key.properties.release_policy.encoded_policy != key_bundle.properties.release_policy.encoded_policy
         return key_bundle
 
     async def _validate_key_list(self, keys, expected):
@@ -423,17 +424,21 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
-                messages_request = message.message.split("/n")
-                for m in messages_request:
+                # parts of the request are logged on new lines in a single message
+                request_sections = message.message.split("/n")
+                for section in request_sections:
                     try:
-                        body = json.loads(m)
+                        # the body of the request should be JSON
+                        body = json.loads(section)
                         expected_kty = "RSA-HSM" if is_hsm else "RSA"
                         if body["kty"] == expected_kty:
+                            mock_handler.close()
                             return
                     except (ValueError, KeyError):
-                        # this means the message is not JSON or has no kty property
+                        # this means the request section is not JSON or has no kty property
                         pass
 
+        mock_handler.close()
         assert False, "Expected request body wasn't logged"
 
     @logging_disabled()
@@ -450,15 +455,21 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
-                messages_request = message.message.split("/n")
-                for m in messages_request:
+                # parts of the request are logged on new lines in a single message
+                request_sections = message.message.split("/n")
+                for section in request_sections:
                     try:
-                        body = json.loads(m)
+                        # the body of the request should be JSON
+                        body = json.loads(section)
                         expected_kty = "RSA-HSM" if is_hsm else "RSA"
-                        assert body["kty"] != expected_kty, "Client request body was logged"
+                        if body["kty"] == expected_kty:
+                            mock_handler.close()
+                            assert False, "Client request body was logged"
                     except (ValueError, KeyError):
-                        # this means the message is not JSON or has no kty property
+                        # this means the request section is not JSON or has no kty property
                         pass
+
+        mock_handler.close()
 
     @only_hsm_7_3_preview()
     @client_setup
@@ -469,14 +480,13 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         for i in range(5):
             # [START get_random_bytes]
             # get eight random bytes from a managed HSM
-            result = await client.get_random_bytes(count=8)
-            random_bytes = result.value
+            random_bytes = await client.get_random_bytes(count=8)
             # [END get_random_bytes]
             assert len(random_bytes) == 8
             assert all(random_bytes != rb for rb in generated_random_bytes)
             generated_random_bytes.append(random_bytes)
 
-    @only_hsm_7_3_preview()
+    @only_7_3_preview()
     @client_setup
     async def test_key_release(self, client, **kwargs):
         attestation_uri = self._get_attestation_uri()
@@ -488,7 +498,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
             client, rsa_key_name, hardware_protected=True, exportable=True, release_policy=release_policy
         )
         assert key.properties.release_policy
-        assert key.properties.release_policy.data
+        assert key.properties.release_policy.encoded_policy
         assert key.properties.exportable
 
         release_result = await client.release_key(rsa_key_name, attestation)
@@ -506,7 +516,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
             client, imported_key_name, hardware_protected=True, exportable=True, release_policy=release_policy
         )
         assert key.properties.release_policy
-        assert key.properties.release_policy.data
+        assert key.properties.release_policy.encoded_policy
         assert key.properties.exportable
 
         release_result = await client.release_key(imported_key_name, attestation)
@@ -521,7 +531,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         key = await self._create_rsa_key(
             client, key_name, hardware_protected=True, exportable=True, release_policy=release_policy
         )
-        assert key.properties.release_policy.data
+        assert key.properties.release_policy.encoded_policy
 
         new_release_policy_json = {
             "anyOf": [
@@ -593,7 +603,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         key = await self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
 
         # try specifying the key version
-        crypto_client = client.get_cryptography_client(key_name, version=key.properties.version)
+        crypto_client = client.get_cryptography_client(key_name, key_version=key.properties.version)
         # both clients should use the same generated client
         assert client._client == crypto_client._client
 

@@ -44,7 +44,7 @@ class DiagnosticSettingsCategoryOperations:
         self,
         resource_uri: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiagnosticSettingsCategoryResource":
         """Gets the diagnostic settings category for the specified resource.
 
@@ -87,7 +87,7 @@ class DiagnosticSettingsCategoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticSettingsCategoryResource', pipeline_response)
@@ -96,12 +96,12 @@ class DiagnosticSettingsCategoryOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/diagnosticSettingsCategories/{name}'}  # type: ignore
+    get.metadata = {'url': '/{resourceUri}/providers/Microsoft.Insights/diagnosticSettingsCategories/{name}'}  # type: ignore
 
     async def list(
         self,
         resource_uri: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiagnosticSettingsCategoryResourceCollection":
         """Lists the diagnostic settings categories for the specified resource.
 
@@ -141,7 +141,7 @@ class DiagnosticSettingsCategoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticSettingsCategoryResourceCollection', pipeline_response)
@@ -150,4 +150,4 @@ class DiagnosticSettingsCategoryOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/diagnosticSettingsCategories'}  # type: ignore
+    list.metadata = {'url': '/{resourceUri}/providers/Microsoft.Insights/diagnosticSettingsCategories'}  # type: ignore

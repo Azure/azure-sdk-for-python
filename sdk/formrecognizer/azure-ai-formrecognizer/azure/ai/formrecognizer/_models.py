@@ -6,6 +6,7 @@
 
 # pylint: disable=protected-access, too-many-lines
 
+from typing import Union, Any, Iterable, List
 from enum import Enum
 from collections import namedtuple
 from ._generated.v2021_09_30_preview.models import ModelInfo, Error
@@ -2128,10 +2129,14 @@ class BoundingRegion(object):
 class DocumentContentElement(object):
     """A DocumentContentElement.
 
-    :ivar content: Text content of the word.
+    :ivar content: Text content of the document content element.
     :vartype content: str
-    :ivar bounding_box: Bounding box of the word.
+    :ivar bounding_box: Bounding box of the document content element.
     :vartype bounding_box: list[Point]
+    :ivar span: Location of the element in the full document content.
+    :vartype span: ~azure.ai.formrecognizer.DocumentSpan
+    :ivar confidence: Confidence of accurately extracting the document content element.
+    :vartype confidence: float
     :ivar str kind: The kind of document element. Possible kinds are "word" or "selectionMark" which
         correspond to a :class:`~azure.ai.formrecognizer.DocumentWord` or
         :class:`~azure.ai.formrecognizer.DocumentSelectionMark`, respectively.
@@ -2140,11 +2145,13 @@ class DocumentContentElement(object):
     def __init__(self, **kwargs):
         self.content = kwargs.get("content", None)
         self.bounding_box = kwargs.get("bounding_box", None)
+        self.span = kwargs.get("span", None)
+        self.confidence = kwargs.get("confidence", None)
         self.kind = kwargs.get("kind", None)
 
     def __repr__(self):
-        return "DocumentContentElement(content={}, bounding_box={}, kind={})".format(
-            self.content, self.bounding_box, self.kind
+        return "DocumentContentElement(content={}, bounding_box={}, span={}, confidence={}, kind={})".format(
+            self.content, self.bounding_box, self.span, self.confidence, self.kind
         )
 
     def to_dict(self):
@@ -2159,6 +2166,8 @@ class DocumentContentElement(object):
             "bounding_box": [f.to_dict() for f in self.bounding_box]
             if self.bounding_box
             else [],
+            "span": self.span.to_dict() if self.span else None,
+            "confidence": self.confidence,
             "kind": self.kind,
         }
 
@@ -2176,6 +2185,8 @@ class DocumentContentElement(object):
             bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
             if len(data.get("bounding_box", [])) > 0
             else [],
+            span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
+            confidence=data.get("confidence", None),
             kind=data.get("kind", None),
         )
 
@@ -2653,13 +2664,15 @@ class DocumentLine(object):
     """
 
     def __init__(self, **kwargs):
+        self._parent = kwargs.get("_parent", None)
         self.content = kwargs.get("content", None)
         self.bounding_box = kwargs.get("bounding_box", None)
         self.spans = kwargs.get("spans", None)
 
     @classmethod
-    def _from_generated(cls, line):
+    def _from_generated(cls, line, document_page):
         return cls(
+            _parent=document_page,
             content=line.content,
             bounding_box=get_bounding_box(line),
             spans=prepare_document_spans(line.spans),
@@ -2707,6 +2720,24 @@ class DocumentLine(object):
             if len(data.get("spans", [])) > 0
             else [],
         )
+
+    def get_words(self, **kwargs):  # pylint: disable=unused-argument
+        # type: (Any) -> Iterable[DocumentWord]
+        """Get the words found in the spans of this DocumentLine.
+
+        :return: iterable[DocumentWord]
+        :rtype: iterable[DocumentWord]
+        """
+        if not self._parent:
+            raise ValueError(
+                "Cannot use get_words() on a model that has been converted from a dictionary. "
+                "Missing reference to parent element."
+                )
+        result = []
+        for word in self._parent.words:
+            if _in_span(word, self.spans):
+                result.append(word)
+        return result
 
 
 class DocumentPage(object):
@@ -2756,7 +2787,7 @@ class DocumentPage(object):
             width=page.width,
             height=page.height,
             unit=page.unit,
-            lines=[DocumentLine._from_generated(line) for line in page.lines]
+            lines=[DocumentLine._from_generated(line, page) for line in page.lines]
             if page.lines
             else [],
             words=[DocumentWord._from_generated(word) for word in page.words]
@@ -2865,8 +2896,6 @@ class DocumentSelectionMark(DocumentContentElement):
     def __init__(self, **kwargs):
         super(DocumentSelectionMark, self).__init__(kind="selectionMark", **kwargs)
         self.state = kwargs.get("state", None)
-        self.span = kwargs.get("span", None)
-        self.confidence = kwargs.get("confidence", None)
 
     @classmethod
     def _from_generated(cls, mark):
@@ -3425,8 +3454,6 @@ class DocumentWord(DocumentContentElement):
 
     def __init__(self, **kwargs):
         super(DocumentWord, self).__init__(kind="word", **kwargs)
-        self.span = kwargs.get("span", None)
-        self.confidence = kwargs.get("confidence", None)
 
     @classmethod
     def _from_generated(cls, word):
@@ -4039,3 +4066,13 @@ class DocumentAnalysisInnerError(object):
             innererror=DocumentAnalysisInnerError.from_dict(data.get("innererror"))  # type: ignore
             if data.get("innererror") else None
         )
+
+
+def _in_span(element, spans):
+    # type: (DocumentWord, List[DocumentSpan]) -> bool
+    for span in spans:
+        if element.span.offset >= span.offset and (
+            element.span.offset + element.span.length
+        ) <= (span.offset + span.length):
+            return True
+    return False
