@@ -125,6 +125,7 @@ class SchemaRegistryClient(object):
             format = format.value
         except AttributeError:
             pass
+
         format = format.capitalize()
         http_request_kwargs = get_http_request_kwargs(kwargs)
         request = schema_rest.build_register_request(
