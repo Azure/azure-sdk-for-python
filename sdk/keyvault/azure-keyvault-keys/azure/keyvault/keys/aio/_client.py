@@ -129,7 +129,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         policy = kwargs.pop("release_policy", None)
         if policy is not None:
-            policy = self._models.KeyReleasePolicy(data=policy.data, content_type=policy.content_type)
+            policy = self._models.KeyReleasePolicy(data=policy.encoded_policy, content_type=policy.content_type)
         parameters = self._models.KeyCreateParameters(
             kty=key_type,
             key_size=kwargs.pop("size", None),
@@ -540,7 +540,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         policy = kwargs.pop("release_policy", None)
         if policy is not None:
-            policy = self._models.KeyReleasePolicy(content_type=policy.content_type, data=policy.data)
+            policy = self._models.KeyReleasePolicy(content_type=policy.content_type, data=policy.encoded_policy)
         parameters = self._models.KeyUpdateParameters(
             key_ops=kwargs.pop("key_operations", None),
             key_attributes=attributes,
@@ -654,7 +654,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         policy = kwargs.pop("release_policy", None)
         if policy is not None:
-            policy = self._models.KeyReleasePolicy(content_type=policy.content_type, data=policy.data)
+            policy = self._models.KeyReleasePolicy(content_type=policy.content_type, data=policy.encoded_policy)
         parameters = self._models.KeyImportParameters(
             key=key._to_generated_model(),
             key_attributes=attributes,
@@ -674,7 +674,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def release_key(
-        self, name: str, target: str, version: "Optional[str]" = None, **kwargs: "Any"
+        self, name: str, target_attestation_token: str, version: "Optional[str]" = None, **kwargs: "Any"
     ) -> ReleaseKeyResult:
         """Releases a key.
 
@@ -682,7 +682,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         exportable. This operation requires the keys/release permission.
 
         :param str name: The name of the key to get.
-        :param str target: The attestation assertion for the target of the key release.
+        :param str target_attestation_token: The attestation assertion for the target of the key release.
         :param str version: (optional) A specific version of the key to release. If unspecified, the latest version is
             released.
 
@@ -699,7 +699,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             key_name=name,
             key_version=version or "",
             parameters=self._models.KeyReleaseParameters(
-                target=target, nonce=kwargs.pop("nonce", None), enc=kwargs.pop("algorithm", None)
+                target=target_attestation_token, nonce=kwargs.pop("nonce", None), enc=kwargs.pop("algorithm", None)
             ),
             **kwargs
         )

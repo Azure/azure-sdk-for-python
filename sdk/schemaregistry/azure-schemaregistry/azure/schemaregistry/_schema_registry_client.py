@@ -132,7 +132,9 @@ class SchemaRegistryClient(object):
             group_name=group_name,
             schema_name=schema_name,
             content=schema_definition,
-            content_type=kwargs.pop("content_type", "application/json; serialization={}".format(format)),
+            content_type=kwargs.pop(
+                "content_type", "application/json; serialization={}".format(format)
+            ),
             **http_request_kwargs
         )
 
@@ -210,7 +212,9 @@ class SchemaRegistryClient(object):
             group_name=group_name,
             schema_name=schema_name,
             content=schema_definition,
-            content_type=kwargs.pop("content_type", "application/json; serialization={}".format(format)),
+            content_type=kwargs.pop(
+                "content_type", "application/json; serialization={}".format(format)
+            ),
             **http_request_kwargs
         )
 

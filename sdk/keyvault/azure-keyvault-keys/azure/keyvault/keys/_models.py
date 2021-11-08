@@ -264,7 +264,7 @@ class KeyReleasePolicy(object):
 
     def __init__(self, data, **kwargs):
         # type: (bytes, **Any) -> None
-        self.data = data
+        self.encoded_policy = data
         self.content_type = kwargs.get("content_type", None)
 
 

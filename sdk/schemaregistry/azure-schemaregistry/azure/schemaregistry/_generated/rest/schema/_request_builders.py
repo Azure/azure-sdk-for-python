@@ -14,11 +14,12 @@ from ..._vendor import _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional, TypeVar
+    from typing import Any, IO, Optional, TypeVar
     T = TypeVar('T')
     JSONType = Any
 
 _SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
 # fmt: off
 
@@ -48,7 +49,7 @@ def build_get_by_id_request(
 
     api_version = kwargs.pop('api_version', "2021-10")  # type: str
 
-    accept = "application/json; serialization=avro"
+    accept = "application/json; serialization=Avro"
     # Construct URL
     url = kwargs.pop("template_url", '/$schemaGroups/$schemas/{id}')
     path_format_arguments = {
@@ -162,9 +163,6 @@ def build_query_id_by_content_request(
     :keyword api_version: Api Version. The default value is "2021-10". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
-    :keyword json: Pass in a JSON-serializable object (usually a dictionary). See the template in
-     our example to find the input shape. String representation (UTF-8) of the registered schema.
-    :paramtype json: JSONType
     :keyword content: Pass in binary content you want in the body of the request (typically bytes,
      a byte iterator, or stream input). String representation (UTF-8) of the registered schema.
     :paramtype content: any
@@ -172,12 +170,6 @@ def build_query_id_by_content_request(
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
     :rtype: ~azure.core.rest.HttpRequest
-
-    Example:
-        .. code-block:: python
-
-            # JSON input template you can fill out and use as your body input.
-            json = "str"  # Optional.
     """
 
     api_version = kwargs.pop('api_version', "2021-10")  # type: str
@@ -235,10 +227,6 @@ def build_register_request(
     :keyword api_version: Api Version. The default value is "2021-10". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
-    :keyword json: Pass in a JSON-serializable object (usually a dictionary). See the template in
-     our example to find the input shape. String representation (UTF-8) of the schema being
-     registered.
-    :paramtype json: JSONType
     :keyword content: Pass in binary content you want in the body of the request (typically bytes,
      a byte iterator, or stream input). String representation (UTF-8) of the schema being
      registered.
@@ -247,12 +235,6 @@ def build_register_request(
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
     :rtype: ~azure.core.rest.HttpRequest
-
-    Example:
-        .. code-block:: python
-
-            # JSON input template you can fill out and use as your body input.
-            json = "str"  # Optional.
     """
 
     api_version = kwargs.pop('api_version', "2021-10")  # type: str

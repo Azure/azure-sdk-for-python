@@ -14,11 +14,12 @@ from ..._vendor import _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional, TypeVar
+    from typing import Any, IO, Optional, TypeVar
     T = TypeVar('T')
     JSONType = Any
 
 _SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
 # fmt: off
 

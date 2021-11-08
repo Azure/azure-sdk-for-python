@@ -68,7 +68,9 @@ SCHEMA_STRING = json.dumps(SCHEMA_JSON, separators=(",", ":"))
 
 def register_schema(client, group_name, schema_name, schema_string, format):
     print("Registering schema...")
-    schema_properties = client.register_schema(group_name, schema_name, schema_string, format)
+    schema_properties = client.register_schema(
+        group_name, schema_name, schema_string, format
+    )
     print("Schema registered, returned schema id is {}".format(schema_properties.id))
     print("Schema properties are {}".format(schema_properties))
     return schema_properties.id
@@ -78,9 +80,7 @@ def get_schema_by_id(client, schema_id):
     print("Getting schema by id...")
     schema = client.get_schema(schema_id)
     print(
-        "The schema string of schema id: {} string is {}".format(
-            id, schema.definition
-        )
+        "The schema string of schema id: {} string is {}".format(id, schema.definition)
     )
     print("Schema properties are {}".format(schema_id))
     return schema.definition

@@ -333,7 +333,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         self.reason = aiohttp_response.reason
         self.content_type = aiohttp_response.headers.get('content-type')
         self._content = None
-        self._decompressed_content = None
+        self._decompressed_content = False
         self._decompress = decompress
 
     def body(self) -> bytes:
