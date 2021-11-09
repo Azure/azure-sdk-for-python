@@ -27,7 +27,6 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Optional
     from azure.core.pipeline import PipelineResponse
 
 
@@ -55,30 +54,20 @@ def _update_challenge(request, challenger):
 class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
     """policy for handling HTTP authentication challenges"""
 
-    def __init__(self, *args, **kwargs):
-        # type: (*Any, **Any) -> None
-        self._last_tenant_id = None  # type: Optional[str]
-        super(ChallengeAuthPolicy, self).__init__(*args, **kwargs)
-
     def on_request(self, request):
         # type: (PipelineRequest) -> None
+        _enforce_tls(request)
         challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
         if challenge:
-            if self._last_tenant_id == challenge.tenant_id:
-                # Super can handle this. Its cached token, if any, probably isn't from a different tenant, and
-                # it knows the scope to request for a new token. Note that if the vault has moved to a new
-                # tenant since our last request for it, this request will fail.
-                super(ChallengeAuthPolicy, self).on_request(request)
-            else:
-                # acquire a new token because this vault is in a different tenant
-                self.authorize_request(request, *self._scopes, tenant_id=challenge.tenant_id)
-            return
+            # Note that if the vault has moved to a new tenant since our last request for it, this request will fail.
+            self._handle_challenge(request, challenge)
+            response = self.next.send(request)
+            return self._handle_response(request, response)
 
         # else: discover authentication information by eliciting a challenge from Key Vault. Remove any request data,
         # saving it for later. Key Vault will reject the request as unauthorized and respond with a challenge.
         # on_challenge will parse that challenge, reattach any body removed here, authorize the request, and tell
         # super to send it again.
-        _enforce_tls(request)
         if request.http_request.body:
             request.context["key_vault_request_data"] = request.http_request.body
             request.http_request.set_json_body(None)
@@ -96,8 +85,33 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
 
         body = request.context.pop("key_vault_request_data", None)
         request.http_request.set_text_body(body)  # no-op when text is None
-
-        self._last_tenant_id = challenge.tenant_id
         self.authorize_request(request, *self._scopes, tenant_id=challenge.tenant_id)
 
         return True
+
+    def _handle_challenge(self, request, challenge):
+        # type: (PipelineRequest, HttpChallenge) -> None
+        """Authenticate according to challenge, add Authorization header to request"""
+
+        scope = challenge.get_scope() or challenge.get_resource() + "/.default"
+        self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
+
+    def _handle_response(self, request, response):
+        # type: (PipelineRequest, PipelineResponse) -> PipelineResponse
+        """Return a response and attempt to handle any authentication challenges"""
+
+        if response.http_response.status_code == 401:
+            # any cached token must be invalid
+            self._token = None
+
+            # cached challenge could be outdated; maybe this response has a new one?
+            try:
+                challenge = _update_challenge(request, response)
+            except ValueError:
+                # 401 with no legible challenge -> nothing more this policy can do
+                return response
+
+            self._handle_challenge(request, challenge)
+            response = self.next.send(request)
+
+        return response
