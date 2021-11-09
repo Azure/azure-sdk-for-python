@@ -41,12 +41,12 @@ except KeyError:
     exit()
 
 # Build a client from the connection string. And for this example, we have enabled debug
-# tracing. For production code, this should be turned off. 
+# tracing. For production code, this should be turned off.
 client = WebPubSubServiceClient.from_connection_string(connection_string, logging_enable=True)
 
 try:
     # Raise an exception if the service rejected the call
-    client.send_to_all('Hub', message={'Hello': 'all!'}, content_type='application/json')
+    client.send_to_all('Hub', message={'Hello': 'all!'})
     print('Successfully sent a JSON message')
 except HttpResponseError as e:
     print('Failed to send JSON message: {}'.format(e.response.json()))

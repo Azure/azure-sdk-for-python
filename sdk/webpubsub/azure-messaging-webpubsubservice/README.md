@@ -46,7 +46,7 @@ python -m pip install azure-messaging-webpubsubservice
 #### 1. Create the client from the service connection string
 
 You can get the [API key][api_key] or [Connection string][connection_string] in the [Azure Portal][azure_portal].
-Once you have the value for the API key, you can pass it as a string into an instance of [AzureKeyCredential][azure-key-credential]. 
+Once you have the value for the API key, you can pass it as a string into an instance of [AzureKeyCredential][azure-key-credential].
 Use the key as the credential parameter to authenticate the client:
 
 ```python
@@ -56,7 +56,7 @@ Use the key as the credential parameter to authenticate the client:
 >>> client = WebPubSubServiceClient(endpoint='<endpoint>', credential=AzureKeyCredential("<api_key>"))
 ```
 
-Once you have the value for the connection string, you can pass it as a string into the function `from_connection_string` and it will 
+Once you have the value for the connection string, you can pass it as a string into the function `from_connection_string` and it will
 authenticate the client:
 ```python
 >>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
@@ -89,7 +89,7 @@ Use the returned token credential to authenticate the client:
 
 ## Examples
 
-### Broadcast messages 
+### Broadcast messages
 
 ```python
 >>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
@@ -99,7 +99,7 @@ Use the returned token credential to authenticate the client:
 >>> client = WebPubSubServiceClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 >>> with open('file.json', 'r') as f:
     try:
-        client.send_to_all('ahub', content=f, content_type='application/json')
+        client.send_to_all('ahub', content=f)
     except HttpResponseError as e:
         print('service responds error: {}'.format(e.response.json()))
 
