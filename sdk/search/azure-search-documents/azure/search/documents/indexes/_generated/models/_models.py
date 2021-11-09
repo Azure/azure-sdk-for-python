@@ -5327,12 +5327,12 @@ class PrioritizedFields(msrest.serialization.Model):
     :vartype title_field: ~azure.search.documents.indexes.models.SemanticField
     :ivar prioritized_content_fields: Defines the content fields to be used for semantic ranking,
      captions, highlights, and answers. For the best result, the selected fields should contain text
-     in natural language form. The order of the fields in the array represent their priority. Fields
-     with lower priority may get truncated if the content is long.
+     in natural language form. The order of the fields in the array represents their priority.
+     Fields with lower priority may get truncated if the content is long.
     :vartype prioritized_content_fields: list[~azure.search.documents.indexes.models.SemanticField]
     :ivar prioritized_keywords_fields: Defines the keyword fields to be used for semantic ranking,
      captions, highlights, and answers. For the best result, the selected fields should contain a
-     list of keywords. The order of the fields in the array represent their priority. Fields with
+     list of keywords. The order of the fields in the array represents their priority. Fields with
      lower priority may get truncated if the content is long.
     :vartype prioritized_keywords_fields:
      list[~azure.search.documents.indexes.models.SemanticField]
@@ -5354,13 +5354,13 @@ class PrioritizedFields(msrest.serialization.Model):
         :paramtype title_field: ~azure.search.documents.indexes.models.SemanticField
         :keyword prioritized_content_fields: Defines the content fields to be used for semantic
          ranking, captions, highlights, and answers. For the best result, the selected fields should
-         contain text in natural language form. The order of the fields in the array represent their
+         contain text in natural language form. The order of the fields in the array represents their
          priority. Fields with lower priority may get truncated if the content is long.
         :paramtype prioritized_content_fields:
          list[~azure.search.documents.indexes.models.SemanticField]
         :keyword prioritized_keywords_fields: Defines the keyword fields to be used for semantic
          ranking, captions, highlights, and answers. For the best result, the selected fields should
-         contain a list of keywords. The order of the fields in the array represent their priority.
+         contain a list of keywords. The order of the fields in the array represents their priority.
          Fields with lower priority may get truncated if the content is long.
         :paramtype prioritized_keywords_fields:
          list[~azure.search.documents.indexes.models.SemanticField]
@@ -5888,8 +5888,9 @@ class SearchIndex(msrest.serialization.Model):
      creation time and cannot be modified on existing indexes. If null, the ClassicSimilarity
      algorithm is used.
     :vartype similarity: ~azure.search.documents.indexes.models.Similarity
-    :ivar semantic: Defines parameters for a search index that influence semantic capabilities.
-    :vartype semantic: ~azure.search.documents.indexes.models.Semantic
+    :ivar semantic_settings: Defines parameters for a search index that influence semantic
+     capabilities.
+    :vartype semantic_settings: ~azure.search.documents.indexes.models.SemanticSettings
     :ivar e_tag: The ETag of the index.
     :vartype e_tag: str
     """
@@ -5913,7 +5914,7 @@ class SearchIndex(msrest.serialization.Model):
         'normalizers': {'key': 'normalizers', 'type': '[LexicalNormalizer]'},
         'encryption_key': {'key': 'encryptionKey', 'type': 'SearchResourceEncryptionKey'},
         'similarity': {'key': 'similarity', 'type': 'Similarity'},
-        'semantic': {'key': 'semantic', 'type': 'Semantic'},
+        'semantic_settings': {'key': 'semantic', 'type': 'SemanticSettings'},
         'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
     }
 
@@ -5960,8 +5961,9 @@ class SearchIndex(msrest.serialization.Model):
          creation time and cannot be modified on existing indexes. If null, the ClassicSimilarity
          algorithm is used.
         :paramtype similarity: ~azure.search.documents.indexes.models.Similarity
-        :keyword semantic: Defines parameters for a search index that influence semantic capabilities.
-        :paramtype semantic: ~azure.search.documents.indexes.models.Semantic
+        :keyword semantic_settings: Defines parameters for a search index that influence semantic
+         capabilities.
+        :paramtype semantic_settings: ~azure.search.documents.indexes.models.SemanticSettings
         :keyword e_tag: The ETag of the index.
         :paramtype e_tag: str
         """
@@ -5979,7 +5981,7 @@ class SearchIndex(msrest.serialization.Model):
         self.normalizers = kwargs.get('normalizers', None)
         self.encryption_key = kwargs.get('encryption_key', None)
         self.similarity = kwargs.get('similarity', None)
-        self.semantic = kwargs.get('semantic', None)
+        self.semantic_settings = kwargs.get('semantic_settings', None)
         self.e_tag = kwargs.get('e_tag', None)
 
 
@@ -7101,31 +7103,6 @@ class SearchResourceEncryptionKey(msrest.serialization.Model):
         self.identity = kwargs.get('identity', None)
 
 
-class Semantic(msrest.serialization.Model):
-    """Defines parameters for a search index that influence semantic capabilities.
-
-    :ivar semantic_configurations: The semantic configurations for the index.
-    :vartype semantic_configurations:
-     list[~azure.search.documents.indexes.models.SemanticConfiguration]
-    """
-
-    _attribute_map = {
-        'semantic_configurations': {'key': 'semanticConfigurations', 'type': '[SemanticConfiguration]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        :keyword semantic_configurations: The semantic configurations for the index.
-        :paramtype semantic_configurations:
-         list[~azure.search.documents.indexes.models.SemanticConfiguration]
-        """
-        super(Semantic, self).__init__(**kwargs)
-        self.semantic_configurations = kwargs.get('semantic_configurations', None)
-
-
 class SemanticConfiguration(msrest.serialization.Model):
     """Defines a specific configuration to be used in the context of semantic capabilities.
 
@@ -7187,6 +7164,29 @@ class SemanticField(msrest.serialization.Model):
         """
         super(SemanticField, self).__init__(**kwargs)
         self.field_name = kwargs.get('field_name', None)
+
+
+class SemanticSettings(msrest.serialization.Model):
+    """Defines parameters for a search index that influence semantic capabilities.
+
+    :ivar configurations: The semantic configurations for the index.
+    :vartype configurations: list[~azure.search.documents.indexes.models.SemanticConfiguration]
+    """
+
+    _attribute_map = {
+        'configurations': {'key': 'configurations', 'type': '[SemanticConfiguration]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword configurations: The semantic configurations for the index.
+        :paramtype configurations: list[~azure.search.documents.indexes.models.SemanticConfiguration]
+        """
+        super(SemanticSettings, self).__init__(**kwargs)
+        self.configurations = kwargs.get('configurations', None)
 
 
 class SentimentSkill(SearchIndexerSkill):

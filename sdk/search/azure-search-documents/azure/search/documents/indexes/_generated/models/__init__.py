@@ -123,9 +123,9 @@ try:
     from ._models_py3 import SearchIndexerStatus
     from ._models_py3 import SearchIndexerWarning
     from ._models_py3 import SearchResourceEncryptionKey
-    from ._models_py3 import Semantic
     from ._models_py3 import SemanticConfiguration
     from ._models_py3 import SemanticField
+    from ._models_py3 import SemanticSettings
     from ._models_py3 import SentimentSkill
     from ._models_py3 import SentimentSkillV3
     from ._models_py3 import ServiceCounters
@@ -273,9 +273,9 @@ except (SyntaxError, ImportError):
     from ._models import SearchIndexerStatus  # type: ignore
     from ._models import SearchIndexerWarning  # type: ignore
     from ._models import SearchResourceEncryptionKey  # type: ignore
-    from ._models import Semantic  # type: ignore
     from ._models import SemanticConfiguration  # type: ignore
     from ._models import SemanticField  # type: ignore
+    from ._models import SemanticSettings  # type: ignore
     from ._models import SentimentSkill  # type: ignore
     from ._models import SentimentSkillV3  # type: ignore
     from ._models import ServiceCounters  # type: ignore
@@ -469,9 +469,9 @@ __all__ = [
     'SearchIndexerStatus',
     'SearchIndexerWarning',
     'SearchResourceEncryptionKey',
-    'Semantic',
     'SemanticConfiguration',
     'SemanticField',
+    'SemanticSettings',
     'SentimentSkill',
     'SentimentSkillV3',
     'ServiceCounters',
