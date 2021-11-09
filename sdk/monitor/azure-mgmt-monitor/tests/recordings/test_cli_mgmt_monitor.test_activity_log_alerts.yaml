@@ -1,9 +1,9 @@
 interactions:
 - request:
-    body: 'b''{"location": "Global", "properties": {"scopes": ["subscriptions/00000000-0000-0000-0000-000000000000"],
-      "enabled": true, "condition": {"allOf": [{"field": "category", "equals": "Administrative"},
-      {"field": "level", "equals": "Error"}]}, "actions": {"actionGroups": []}, "description":
-      "Sample activity log alert description"}}'''
+    body: '{"location": "Global", "properties": {"scopes": ["subscriptions/00000000-0000-0000-0000-000000000000"],
+      "condition": {"allOf": [{"field": "category", "equals": "Administrative"}, {"field":
+      "level", "equals": "Error"}]}, "actions": {"actionGroups": []}, "enabled": true,
+      "description": "Sample activity log alert description"}}'
     headers:
       Accept:
       - application/json
@@ -16,9 +16,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-monitor/3.0.0 Python/3.6.9 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/activityLogAlerts/activitylogalertxbfb21318?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/activityLogAlerts/activitylogalertxbfb21318?api-version=2020-10-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/activityLogAlerts/activitylogalertxbfb21318","type":"Microsoft.Insights/ActivityLogAlerts","name":"activitylogalertxbfb21318","location":"Global","kind":null,"tags":{},"properties":{"scopes":["subscriptions/00000000-0000-0000-0000-000000000000"],"condition":{"allOf":[{"field":"category","equals":"Administrative","containsAny":null,"odata.type":null},{"field":"level","equals":"Error","containsAny":null,"odata.type":null}],"odata.type":null},"actions":{"actionGroups":[]},"enabled":true,"description":"Sample
@@ -27,11 +27,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '739'
+      - '744'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 03:19:35 GMT
+      - Fri, 05 Nov 2021 06:00:39 GMT
       expires:
       - '-1'
       pragma:
@@ -43,7 +43,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1195'
+      - '1193'
     status:
       code: 201
       message: Created
@@ -57,9 +57,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-monitor/3.0.0 Python/3.6.9 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/activityLogAlerts/activitylogalertxbfb21318?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/activityLogAlerts/activitylogalertxbfb21318?api-version=2020-10-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/activityLogAlerts/activitylogalertxbfb21318","type":"Microsoft.Insights/ActivityLogAlerts","name":"activitylogalertxbfb21318","location":"Global","kind":null,"tags":{},"properties":{"scopes":["subscriptions/00000000-0000-0000-0000-000000000000"],"condition":{"allOf":[{"field":"category","equals":"Administrative","containsAny":null,"odata.type":null},{"field":"level","equals":"Error","containsAny":null,"odata.type":null}],"odata.type":null},"actions":{"actionGroups":[]},"enabled":true,"description":"Sample
@@ -68,11 +68,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '739'
+      - '744'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 03:19:35 GMT
+      - Fri, 05 Nov 2021 06:00:39 GMT
       expires:
       - '-1'
       pragma:
@@ -105,9 +105,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-monitor/3.0.0 Python/3.6.9 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/activityLogAlerts/activitylogalertxbfb21318?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/activityLogAlerts/activitylogalertxbfb21318?api-version=2020-10-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/activityLogAlerts/activitylogalertxbfb21318","type":"Microsoft.Insights/ActivityLogAlerts","name":"activitylogalertxbfb21318","location":"Global","kind":null,"tags":{"key1":"value1","key2":"value2"},"properties":{"scopes":["subscriptions/00000000-0000-0000-0000-000000000000"],"condition":{"allOf":[{"field":"category","equals":"Administrative","containsAny":null,"odata.type":null},{"field":"level","equals":"Error","containsAny":null,"odata.type":null}],"odata.type":null},"actions":{"actionGroups":[]},"enabled":false,"description":"Sample
@@ -116,11 +116,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '771'
+      - '776'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 03:19:38 GMT
+      - Fri, 05 Nov 2021 06:00:43 GMT
       expires:
       - '-1'
       pragma:
@@ -136,7 +136,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1194'
+      - '1192'
     status:
       code: 200
       message: OK
@@ -152,9 +152,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-monitor/3.0.0 Python/3.6.9 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/activityLogAlerts/activitylogalertxbfb21318?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/activityLogAlerts/activitylogalertxbfb21318?api-version=2020-10-01
   response:
     body:
       string: ''
@@ -164,7 +164,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 16 Sep 2020 03:19:41 GMT
+      - Fri, 05 Nov 2021 06:00:47 GMT
       expires:
       - '-1'
       pragma:
@@ -176,7 +176,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14998'
     status:
       code: 200
       message: OK

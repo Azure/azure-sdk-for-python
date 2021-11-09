@@ -1,5 +1,7 @@
 # Release History
 
+## 12.2.0b1 (Unreleased)
+
 ## 12.1.6 (2021-04-20)
 **Fixes**
 - Make `AccountName`, `AccountKey` etc. in conn_str case insensitive

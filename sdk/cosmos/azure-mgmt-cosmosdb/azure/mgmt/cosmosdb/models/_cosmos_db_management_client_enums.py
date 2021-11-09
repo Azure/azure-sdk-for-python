@@ -91,6 +91,17 @@ class ConflictResolutionMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     LAST_WRITER_WINS = "LastWriterWins"
     CUSTOM = "Custom"
 
+class ConnectionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The kind of connection error that occurred.
+    """
+
+    UNKNOWN = "Unknown"
+    OK = "OK"
+    OPERATOR_TO_DATA_CENTER_NETWORK_ERROR = "OperatorToDataCenterNetworkError"
+    DATACENTER_TO_DATACENTER_NETWORK_ERROR = "DatacenterToDatacenterNetworkError"
+    INTERNAL_OPERATOR_TO_DATA_CENTER_CERTIFICATE_ERROR = "InternalOperatorToDataCenterCertificateError"
+    INTERNAL_ERROR = "InternalError"
+
 class ConnectorOffer(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The cassandra connector offer type for the Cosmos DB C* database account.
     """
@@ -142,14 +153,6 @@ class DefaultConsistencyLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     STRONG = "Strong"
     CONSISTENT_PREFIX = "ConsistentPrefix"
 
-class EnableFullTextQuery(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Describe the level of detail with which queries are to be logged.
-    """
-
-    NONE = "None"
-    TRUE = "True"
-    FALSE = "False"
-
 class IndexingMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates the indexing mode.
     """
@@ -186,6 +189,13 @@ class ManagedCassandraProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta,
     FAILED = "Failed"
     CANCELED = "Canceled"
 
+class ManagedCassandraResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of the resource.
+    """
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    NONE = "None"
+
 class NetworkAclBypass(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates what services are allowed to bypass firewall checks.
     """
@@ -194,7 +204,7 @@ class NetworkAclBypass(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     AZURE_SERVICES = "AzureServices"
 
 class NodeState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The state of the node in relation to the cluster.
+    """The state of the node in Cassandra ring.
     """
 
     NORMAL = "Normal"
@@ -281,33 +291,6 @@ class ServerVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     THREE2 = "3.2"
     THREE6 = "3.6"
     FOUR0 = "4.0"
-
-class ServiceSize(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Instance type for the service.
-    """
-
-    COSMOS_D4_S = "Cosmos.D4s"
-    COSMOS_D8_S = "Cosmos.D8s"
-    COSMOS_D16_S = "Cosmos.D16s"
-
-class ServiceStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Describes the status of a service.
-    """
-
-    CREATING = "Creating"
-    RUNNING = "Running"
-    UPDATING = "Updating"
-    DELETING = "Deleting"
-    ERROR = "Error"
-    STOPPED = "Stopped"
-
-class ServiceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """ServiceType for the service.
-    """
-
-    SQL_DEDICATED_GATEWAY = "SqlDedicatedGateway"
-    DATA_TRANSFER = "DataTransfer"
-    GRAPH_API_COMPUTE = "GraphAPICompute"
 
 class SpatialType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates the spatial type of index.

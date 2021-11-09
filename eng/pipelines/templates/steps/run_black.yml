@@ -1,5 +1,4 @@
 parameters:
-  BuildTargetingString: 'azure-*'
   ServiceDirectory: ''
   ValidateFormatting: false
   EnvVars: {}

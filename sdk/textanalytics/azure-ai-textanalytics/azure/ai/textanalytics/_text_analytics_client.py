@@ -5,7 +5,6 @@
 # ------------------------------------
 # pylint: disable=too-many-lines
 
-import copy
 from typing import (
     Union,
     Any,
@@ -18,6 +17,7 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._base_client import TextAnalyticsClientBase, TextAnalyticsApiVersion
+from ._lro import AnalyzeActionsLROPoller, AnalyzeHealthcareEntitiesLROPoller
 from ._request_handlers import (
     _validate_input,
     _determine_action_type,
@@ -64,8 +64,13 @@ if TYPE_CHECKING:
         AnalyzeHealthcareEntitiesResult,
         ExtractSummaryAction,
         ExtractSummaryResult,
+        RecognizeCustomEntitiesAction,
+        RecognizeCustomEntitiesResult,
+        SingleCategoryClassifyAction,
+        SingleCategoryClassifyResult,
+        MultiCategoryClassifyAction,
+        MultiCategoryClassifyResult,
     )
-    from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller
 
 
 class TextAnalyticsClient(TextAnalyticsClientBase):
@@ -558,7 +563,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             see https://aka.ms/text-analytics-offsets
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword str continuation_token:
+            Call `continuation_token()` on the poller object to save the long-running operation (LRO)
+            state into an opaque token. Pass the value as the `continuation_token` keyword argument
+            to restart the LRO from a saved state.
         :keyword bool disable_service_logs: Defaults to true, meaning that Text Analytics will not log your
             input text on the service side for troubleshooting. If set to False, Text Analytics logs your
             input text for 48 hours, solely to allow for troubleshooting issues in providing you with
@@ -589,7 +597,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         polling_interval = kwargs.pop("polling_interval", 5)
@@ -597,7 +604,28 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         string_index_type = kwargs.pop(
             "string_index_type", self._string_index_type_default
         )
+        disable_service_logs = kwargs.pop("disable_service_logs", None)
 
+        if continuation_token:
+            def get_result_from_cont_token(initial_response, pipeline_response):
+                doc_id_order = initial_response.context.options["doc_id_order"]
+                show_stats = initial_response.context.options["show_stats"]
+                return self._healthcare_result_callback(
+                    doc_id_order, pipeline_response, None, {}, show_stats=show_stats
+                )
+
+            return AnalyzeHealthcareEntitiesLROPoller.from_continuation_token(
+                polling_method=AnalyzeHealthcareEntitiesLROPollingMethod(
+                    text_analytics_client=self._client,
+                    timeout=polling_interval,
+                    **kwargs
+                ),
+                client=self._client._client,  # pylint: disable=protected-access
+                deserialization_callback=get_result_from_cont_token,
+                continuation_token=continuation_token
+            )
+
+        docs = _validate_input(documents, "language", language)
         doc_id_order = [doc.get("id") for doc in docs]
         my_cls = kwargs.pop(
             "cls",
@@ -605,28 +633,28 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 self._healthcare_result_callback, doc_id_order, show_stats=show_stats
             ),
         )
-        disable_service_logs = kwargs.pop("disable_service_logs", None)
-        polling_kwargs = kwargs
-        operation_kwargs = copy.copy(kwargs)
-        if disable_service_logs is not None:
-            operation_kwargs["logging_opt_out"] = disable_service_logs
 
         try:
             return self._client.begin_health(
                 docs,
                 model_version=model_version,
                 string_index_type=string_index_type,
+                logging_opt_out=disable_service_logs,
                 cls=my_cls,
                 polling=AnalyzeHealthcareEntitiesLROPollingMethod(
                     text_analytics_client=self._client,
                     timeout=polling_interval,
+                    doc_id_order=doc_id_order,
+                    show_stats=show_stats,
                     lro_algorithms=[
-                        TextAnalyticsOperationResourcePolling(show_stats=show_stats)
+                        TextAnalyticsOperationResourcePolling(
+                            show_stats=show_stats,
+                        )
                     ],
-                    **polling_kwargs
+                    **kwargs
                 ),
                 continuation_token=continuation_token,
-                **operation_kwargs
+                **kwargs
             )
 
         except ValueError as error:
@@ -854,14 +882,17 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def begin_analyze_actions(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        actions,  # type: List[Union[RecognizeEntitiesAction, RecognizeLinkedEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction, AnalyzeSentimentAction, ExtractSummaryAction]] # pylint: disable=line-too-long
+        actions,  # type: List[Union[RecognizeEntitiesAction, RecognizeLinkedEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction, AnalyzeSentimentAction, ExtractSummaryAction, RecognizeCustomEntitiesAction, SingleCategoryClassifyAction, MultiCategoryClassifyAction]] # pylint: disable=line-too-long
         **kwargs  # type: Any
-    ):  # type: (...) -> AnalyzeActionsLROPoller[ItemPaged[List[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult, ExtractKeyPhrasesResult, AnalyzeSentimentResult, ExtractSummaryResult, DocumentError]]]]  # pylint: disable=line-too-long
+    ):  # type: (...) -> AnalyzeActionsLROPoller[ItemPaged[List[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult, ExtractKeyPhrasesResult, AnalyzeSentimentResult, ExtractSummaryResult, RecognizeCustomEntitiesResult, SingleCategoryClassifyResult, MultiCategoryClassifyResult, DocumentError]]]]  # pylint: disable=line-too-long
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
 
         We recommend you use this function if you're looking to analyze larger documents, and / or
         combine multiple Text Analytics actions into one call. Otherwise, we recommend you use
         the action specific endpoints, for example :func:`analyze_sentiment`.
+
+        .. note:: See the service documentation for regional support of custom action features:
+            https://aka.ms/azsdk/textanalytics/customfunctionalities
 
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -874,10 +905,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :param actions: A heterogeneous list of actions to perform on the input documents.
             Each action object encapsulates the parameters used for the particular action type.
             The action results will be in the same order of the input actions.
-            Duplicate actions in list not supported.
         :type actions:
             list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or
-            RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or ExtractSummaryAction]
+            RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or ExtractSummaryAction or
+            RecognizeCustomEntitiesAction or SingleCategoryClassifyAction or MultiCategoryClassifyAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -887,6 +918,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token:
+            Call `continuation_token()` on the poller object to save the long-running operation (LRO)
+            state into an opaque token. Pass the value as the `continuation_token` keyword argument
+            to restart the LRO from a saved state.
         :return: An instance of an AnalyzeActionsLROPoller. Call `result()` on the poller
             object to return a pageable heterogeneous list of lists. This list of lists is first ordered
             by the documents you input, then ordered by the actions you input. For example,
@@ -901,13 +936,17 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :rtype:
             ~azure.ai.textanalytics.AnalyzeActionsLROPoller[~azure.core.paging.ItemPaged[
             list[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult,
-            ExtractKeyPhrasesResult, AnalyzeSentimentResult, ExtractSummaryAction, DocumentError]]]]
+            ExtractKeyPhrasesResult, AnalyzeSentimentResult, ExtractSummaryAction, RecognizeCustomEntitiesResult,
+            SingleCategoryClassifyResult, MultiCategoryClassifyResult, DocumentError]]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. versionadded:: v3.1
             The *begin_analyze_actions* client method.
         .. versionadded:: v3.2-preview
-            The *ExtractSummaryAction* input option and *ExtractSummaryResult* result object
+            The *ExtractSummaryAction*, *RecognizeCustomEntitiesAction*, *SingleCategoryClassifyAction*,
+            and *MultiCategoryClassifyAction* input options and the corresponding *ExtractSummaryResult*,
+            *RecognizeCustomEntitiesResult*, *SingleCategoryClassifyResult*, and *MultiCategoryClassifyResult*
+            result objects
 
         .. admonition:: Example:
 
@@ -920,92 +959,86 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     actions over a batch of documents.
         """
 
+        continuation_token = kwargs.pop("continuation_token", None)
         display_name = kwargs.pop("display_name", None)
         language_arg = kwargs.pop("language", None)
+        show_stats = kwargs.pop("show_stats", False)
+        polling_interval = kwargs.pop("polling_interval", 5)
         language = language_arg if language_arg is not None else self._default_language
+
+        if continuation_token:
+            def get_result_from_cont_token(initial_response, pipeline_response):
+                doc_id_order = initial_response.context.options["doc_id_order"]
+                task_id_order = initial_response.context.options["task_id_order"]
+                show_stats = initial_response.context.options["show_stats"]
+                return self._analyze_result_callback(
+                    doc_id_order, task_id_order, pipeline_response, None, {}, show_stats=show_stats
+                )
+
+            return AnalyzeActionsLROPoller.from_continuation_token(
+                polling_method=AnalyzeActionsLROPollingMethod(
+                    timeout=polling_interval,
+                    **kwargs
+                ),
+                client=self._client._client,  # pylint: disable=protected-access
+                deserialization_callback=get_result_from_cont_token,
+                continuation_token=continuation_token
+            )
+
         docs = self._client.models(
             api_version=self._api_version
         ).MultiLanguageBatchInput(
             documents=_validate_input(documents, "language", language)
         )
-        show_stats = kwargs.pop("show_stats", False)
-        polling_interval = kwargs.pop("polling_interval", 5)
-        continuation_token = kwargs.pop("continuation_token", None)
-
         doc_id_order = [doc.get("id") for doc in docs.documents]
-        task_order = [_determine_action_type(action) for action in actions]
-        if len(task_order) != len(set(task_order)):
-            raise ValueError("Multiple of the same action is not currently supported.")
+        try:
+            generated_tasks = [
+                action._to_generated(self._api_version, str(idx))  # pylint: disable=protected-access
+                for idx, action in enumerate(actions)
+            ]
+        except AttributeError:
+            raise TypeError("Unsupported action type in list.")
+        task_order = [(_determine_action_type(a), a.task_name) for a in generated_tasks]
 
         try:
             analyze_tasks = self._client.models(
                 api_version=self._api_version
             ).JobManifestTasks(
                 entity_recognition_tasks=[
-                    t._to_generated(  # pylint: disable=protected-access
-                        self._api_version
-                    )
-                    for t in [
-                        a
-                        for a in actions
-                        if _determine_action_type(a)
-                        == _AnalyzeActionsType.RECOGNIZE_ENTITIES
-                    ]
+                    a for a in generated_tasks
+                    if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_ENTITIES
                 ],
                 entity_recognition_pii_tasks=[
-                    t._to_generated(  # pylint: disable=protected-access
-                        self._api_version
-                    )
-                    for t in [
-                        a
-                        for a in actions
-                        if _determine_action_type(a)
-                        == _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
-                    ]
+                    a for a in generated_tasks
+                    if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
                 ],
                 key_phrase_extraction_tasks=[
-                    t._to_generated(  # pylint: disable=protected-access
-                        self._api_version
-                    )
-                    for t in [
-                        a
-                        for a in actions
-                        if _determine_action_type(a)
-                        == _AnalyzeActionsType.EXTRACT_KEY_PHRASES
-                    ]
+                    a for a in generated_tasks
+                    if _determine_action_type(a) == _AnalyzeActionsType.EXTRACT_KEY_PHRASES
                 ],
                 entity_linking_tasks=[
-                    t._to_generated(  # pylint: disable=protected-access
-                        self._api_version
-                    )
-                    for t in [
-                        a
-                        for a in actions
-                        if _determine_action_type(a)
-                        == _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
-                    ]
+                    a for a in generated_tasks
+                    if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
                 ],
                 sentiment_analysis_tasks=[
-                    t._to_generated(  # pylint: disable=protected-access
-                        self._api_version
-                    )
-                    for t in [
-                        a
-                        for a in actions
-                        if _determine_action_type(a)
-                        == _AnalyzeActionsType.ANALYZE_SENTIMENT
-                    ]
+                    a for a in generated_tasks
+                    if _determine_action_type(a) == _AnalyzeActionsType.ANALYZE_SENTIMENT
                 ],
                 extractive_summarization_tasks=[
-                    t._to_generated(  # pylint: disable=protected-access
-                        self._api_version
-                    )
-                    for t in [
-                        a
-                        for a in actions
-                        if _determine_action_type(a)
-                        == _AnalyzeActionsType.EXTRACT_SUMMARY
-                    ]
+                    a for a in generated_tasks
+                    if _determine_action_type(a) == _AnalyzeActionsType.EXTRACT_SUMMARY
+                ],
+                custom_entity_recognition_tasks=[
+                    a for a in generated_tasks
+                    if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES
+                ],
+                custom_single_classification_tasks=[
+                    a for a in generated_tasks
+                    if _determine_action_type(a) == _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY
+                ],
+                custom_multi_classification_tasks=[
+                    a for a in generated_tasks
+                    if _determine_action_type(a) == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY
                 ],
             )
             analyze_body = self._client.models(
@@ -1026,8 +1059,13 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 ),
                 polling=AnalyzeActionsLROPollingMethod(
                     timeout=polling_interval,
+                    show_stats=show_stats,
+                    doc_id_order=doc_id_order,
+                    task_id_order=task_order,
                     lro_algorithms=[
-                        TextAnalyticsOperationResourcePolling(show_stats=show_stats)
+                        TextAnalyticsOperationResourcePolling(
+                            show_stats=show_stats,
+                        )
                     ],
                     **kwargs
                 ),

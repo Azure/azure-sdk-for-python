@@ -145,7 +145,8 @@
                                 "verify",
                                 "sign",
                                 "purge",
-                                "rotate"
+                                "rotate",
+                                "release"
                             ],
                             "secrets": [
                                 "get",
