@@ -163,10 +163,6 @@ stages:
                               Paths:
                                 - sdk/**/*.md
                           - download: current
-                          - template: /eng/common/pipelines/templates/steps/get-code-owners.yml
-                            parameters:
-                              TargetUserVariable: "CodeOwners"
-                              ServiceDirectory: ${{parameters.ServiceDirectory}}
  
                           - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
                             parameters:
@@ -176,7 +172,6 @@ stages:
                               TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
                               TargetDocRepoName: ${{parameters.TargetDocRepoName}}
                               Language: 'python'
-                              CodeOwners: "$(CodeOwners)"
                               SparseCheckoutPaths:
                                 - docs-ref-services/
                                 - metadata/
@@ -283,10 +278,7 @@ stages:
         - pwsh: |
             Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/
           displayName: Show visible artifacts
-        - template: /eng/common/pipelines/templates/steps/get-code-owners.yml
-          parameters:
-            TargetUserVariable: "CodeOwners"
-            ServiceDirectory: ${{parameters.ServiceDirectory}}
+   
 
         - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
           parameters:
@@ -299,7 +291,6 @@ stages:
             TargetDocRepoName: ${{parameters.TargetDocRepoName}}
             Language: 'python'
             DailyDocsBuild: true
-            CodeOwners: "$(CodeOwners)"
             SparseCheckoutPaths:
               - docs-ref-services/
               - metadata/

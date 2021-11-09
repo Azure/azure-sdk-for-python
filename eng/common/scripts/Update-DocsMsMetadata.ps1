@@ -46,7 +46,7 @@ param(
   [string]$RepoId,
 
   [Parameter(Mandatory = $false)]
-  [string]$CodeOwners = ""
+  [string]$ToolPath = "$env:AGENT_TOOLSDIRECTORY"
 )
 
 . (Join-Path $PSScriptRoot common.ps1)
@@ -83,13 +83,7 @@ function GetAdjustedReadmeContent($ReadmeContent, $PackageInfo, $PackageMetadata
     $ReadmeContent = $ReadmeContent -replace $releaseReplaceRegex, $replacementPattern
   }
   
-  $author = "ramya-rao-a"
-  $msauthor = "ramyar"
-  # We are currently lack of the ability to get ms alias from github identity. Use github identity as placeholder for now.
-  if ($CodeOwners) {
-    $author = $CodeOwners.Split(",")[0].trim()
-    $msauthor = $author 
-  }
+  $author, $msauthor = RetrieveCodeOwners -targetDirectory $packageInfo.DirectoryPath
   Write-Host "The author is: $author"
   Write-Host "The ms alias is: $msauthor"
   $header = @"
@@ -109,6 +103,21 @@ ms.service: $service
 "@
 
   return "$header`n$ReadmeContent"
+}
+
+function RetrieveCodeOwners($targetDirectory) {
+  & "$ToolPath/retrieve-code-owners" --target-directory "/sdk/${{ parameters.ServiceDirectory }}/" `
+    --root-directory "$targetDirectory" `
+    --vso-owning-users "CodeOwners"
+  
+  $author = "ramya-rao-a"
+  $msauthor = "ramyar"
+  $docCodeOwner = "$env:CODEOWNERS"
+  if ($docCodeOwner) {
+    $author = $docCodeOwner
+    $msauthor = $author
+  }
+  return $author, $msauthor
 }
 
 function UpdateDocsMsMetadataForPackage($packageInfoJsonLocation) { 

@@ -4,6 +4,8 @@ parameters:
   TargetTeamVariable: 'notspecified'
   TargetLabelVariable: 'notspecified'
   ServiceDirectory: ''
+  RetrieveCodeOwnersToolVersion: '1.0.0-dev.20211108.8'
+  IdentityResolverToolVersion: '1.0.0-dev.20211018.1'
   DevOpsFeed: "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
 
 steps:
@@ -12,7 +14,7 @@ steps:
     inputs:
       command: custom
       custom: 'tool'
-      arguments: 'install --global --add-source "${{ parameters.DevOpsFeed }}" --version "1.0.0-dev.20211018.1" "Azure.Sdk.Tools.IdentityResolver"'
+      arguments: 'install --global --add-source "${{ parameters.DevOpsFeed }}" --version "${{ parameters.IdentityResolverToolVersion }}" "Azure.Sdk.Tools.IdentityResolver"'
       workingDirectory: '$(Agent.BuildDirectory)'
 
   - task: DotNetCoreCLI@2
@@ -20,7 +22,7 @@ steps:
     inputs:
       command: custom
       custom: 'tool'
-      arguments: 'install --global --add-source "${{ parameters.DevOpsFeed }}" --version "1.0.0-dev.20211019.1" "Azure.Sdk.Tools.RetrieveCodeOwners"'
+      arguments: 'install --global --add-source "${{ parameters.DevOpsFeed }}" --version "${{ parameters.RetrieveCodeOwnersToolVersion }}" "Azure.Sdk.Tools.RetrieveCodeOwners"'
       workingDirectory: '$(Agent.BuildDirectory)'
 
   - pwsh: |
