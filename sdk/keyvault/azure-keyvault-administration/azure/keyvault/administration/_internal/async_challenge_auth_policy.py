@@ -13,27 +13,41 @@ The policy caches the challenge and thus knows how to authenticate future reques
 requirements can change. For example, a vault may move to a new tenant. In such a case the policy will attempt the
 protocol again.
 """
+
+import time
 from typing import TYPE_CHECKING
 
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 
 from . import http_challenge_cache as ChallengeCache
-from .challenge_auth_policy import _enforce_tls, _update_challenge
+from .challenge_auth_policy import _enforce_tls, _get_challenge_scope, _update_challenge
 
 if TYPE_CHECKING:
+    from typing import Any, Optional
+    from azure.core.credentials import AccessToken
+    from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.pipeline import PipelineRequest, PipelineResponse
-    from .http_challenge import HttpChallenge
 
 
 class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
     """policy for handling HTTP authentication challenges"""
+
+    def __init__(self, credential: "AsyncTokenCredential", *scopes: str, **kwargs: "Any") -> None:
+        super().__init__(credential, *scopes, **kwargs)
+        self._credential = credential
+        self._token = None  # type: Optional[AccessToken]
 
     async def on_request(self, request: "PipelineRequest") -> None:
         _enforce_tls(request)
         challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
         if challenge:
             # Note that if the vault has moved to a new tenant since our last request for it, this request will fail.
-            await self._handle_challenge(request, challenge)
+            if self._need_new_token:
+                scope = _get_challenge_scope(challenge)
+                self._token = await self._credential.get_token(scope, tenant_id=challenge.tenant_id)
+
+            # ignore mypy's warning -- although self._token is Optional, get_token raises when it fails to get a token
+            request.http_request.headers["Authorization"] = "Bearer {}".format(self._token.token)  # type: ignore
             return
 
         # else: discover authentication information by eliciting a challenge from Key Vault. Remove any request data,
@@ -49,25 +63,17 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
     async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
         try:
             challenge = _update_challenge(request, response)
-            scope = challenge.get_scope() or challenge.get_resource() + "/.default"
+            scope = _get_challenge_scope(challenge)
         except ValueError:
             return False
 
-        self._scopes = (scope,)
-
         body = request.context.pop("key_vault_request_data", None)
         request.http_request.set_text_body(body)  # no-op when text is None
-        await self.authorize_request(request, *self._scopes, tenant_id=challenge.tenant_id)
+        await self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
 
         return True
 
-    async def _handle_challenge(self, request: "PipelineRequest", challenge: "HttpChallenge") -> None:
-        """Authenticate according to challenge, add Authorization header to request"""
-
-        if self._need_new_token():
-            # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
-            scope = challenge.get_scope() or challenge.get_resource() + "/.default"
-            self._token = await self._credential.get_token(scope, tenant_id=challenge.tenant_id)
-
-        # ignore mypy's warning because although self._token is Optional, get_token raises when it fails to get a token
-        request.http_request.headers["Authorization"] = "Bearer {}".format(self._token.token)  # type: ignore
+    @property
+    def _need_new_token(self) -> bool:
+        # pylint:disable=invalid-overridden-method
+        return not self._token or self._token.expires_on - time.time() < 300

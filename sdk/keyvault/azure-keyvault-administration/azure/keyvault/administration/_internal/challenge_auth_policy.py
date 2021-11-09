@@ -14,6 +14,8 @@ requirements can change. For example, a vault may move to a new tenant. In such 
 protocol again.
 """
 
+import time
+
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
@@ -27,6 +29,8 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
+    from typing import Any, Optional
+    from azure.core.credentials import AccessToken, TokenCredential
     from azure.core.pipeline import PipelineResponse
 
 
@@ -36,6 +40,12 @@ def _enforce_tls(request):
         raise ServiceRequestError(
             "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
         )
+
+
+def _get_challenge_scope(challenge):
+    # type: (HttpChallenge) -> str
+    # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
+    return challenge.get_scope() or challenge.get_resource() + "/.default"
 
 
 def _update_challenge(request, challenger):
@@ -54,13 +64,24 @@ def _update_challenge(request, challenger):
 class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
     """policy for handling HTTP authentication challenges"""
 
+    def __init__(self, credential, *scopes, **kwargs):
+        # type: (TokenCredential, *str, **Any) -> None
+        super(ChallengeAuthPolicy, self).__init__(credential, *scopes, **kwargs)
+        self._credential = credential
+        self._token = None  # type: Optional[AccessToken]
+
     def on_request(self, request):
         # type: (PipelineRequest) -> None
         _enforce_tls(request)
         challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
         if challenge:
             # Note that if the vault has moved to a new tenant since our last request for it, this request will fail.
-            self._handle_challenge(request, challenge)
+            if self._need_new_token:
+                scope = _get_challenge_scope(challenge)
+                self._token = self._credential.get_token(scope, tenant_id=challenge.tenant_id)
+
+            # ignore mypy's warning -- although self._token is Optional, get_token raises when it fails to get a token
+            request.http_request.headers["Authorization"] = "Bearer {}".format(self._token.token)  # type: ignore
             return
 
         # else: discover authentication information by eliciting a challenge from Key Vault. Remove any request data,
@@ -76,26 +97,17 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
         # type: (PipelineRequest, PipelineResponse) -> bool
         try:
             challenge = _update_challenge(request, response)
-            scope = challenge.get_scope() or challenge.get_resource() + "/.default"
+            scope = _get_challenge_scope(challenge)
         except ValueError:
             return False
 
-        self._scopes = (scope,)
-
         body = request.context.pop("key_vault_request_data", None)
         request.http_request.set_text_body(body)  # no-op when text is None
-        self.authorize_request(request, *self._scopes, tenant_id=challenge.tenant_id)
+        self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
 
         return True
 
-    def _handle_challenge(self, request, challenge):
-        # type: (PipelineRequest, HttpChallenge) -> None
-        """Authenticate according to challenge, add Authorization header to request"""
-
-        if self._need_new_token:
-            # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
-            scope = challenge.get_scope() or challenge.get_resource() + "/.default"
-            self._token = self._credential.get_token(scope, tenant_id=challenge.tenant_id)
-
-        # ignore mypy's warning because although self._token is Optional, get_token raises when it fails to get a token
-        request.http_request.headers["Authorization"] = "Bearer {}".format(self._token.token)  # type: ignore
+    @property
+    def _need_new_token(self):
+        # type: () -> bool
+        return not self._token or self._token.expires_on - time.time() < 300
