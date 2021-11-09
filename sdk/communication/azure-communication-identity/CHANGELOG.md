@@ -1,5 +1,15 @@
 # Release History
 
+## 1.1.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.1.0b1 (2021-11-09)
 ### Features Added
 - Added support for Microsoft 365 Teams identities
