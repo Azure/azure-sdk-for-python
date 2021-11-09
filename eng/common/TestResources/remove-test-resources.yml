@@ -4,6 +4,12 @@
 parameters:
   ServiceDirectory: ''
   SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+  - name: ResourceType
+    type: string
+    default: test
+    values:
+      - test
+      - perf
 
 # SubscriptionConfiguration will be splat into the parameters of the test
 # resources script. It should be JSON in the form:
@@ -28,6 +34,7 @@ steps:
       "@ | ConvertFrom-Json -AsHashtable;
 
       eng/common/TestResources/Remove-TestResources.ps1 `
+        -ResourceType '${{ parameters.ResourceType }}' `
         @subscriptionConfiguration `
         -ServiceDirectory "${{ parameters.ServiceDirectory }}" `
         -CI `
