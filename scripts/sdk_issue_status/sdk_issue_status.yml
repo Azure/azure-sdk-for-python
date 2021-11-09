@@ -1,0 +1,50 @@
+# Sdk issue status statistics
+
+name: SdkIssueStatus
+
+trigger:
+  branches:
+    exclude:
+    - '*'
+
+
+jobs:
+- job: SdkIssueStatus
+  displayName: SdkIssueStatus Python 3.8
+  timeoutInMinutes: 30
+  strategy:
+    maxParallel: 3
+  pool:
+    vmImage: 'ubuntu-20.04'
+  steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.8'
+        addToPath: true
+        architecture: 'x64'
+    - bash: |
+        script_path=$(pwd)/scripts/sdk_issue_status
+        cd ..
+        git config --global user.email "SdkIssueStatus"
+        git config --global user.name "SdkIssueStatus"
+
+        # clone(REPO: https://github.com/Azure/azure-sdk-for-python.git, USR_NAME: Azure, USR_TOKEN: xxxxxxxxxxxxx)
+        mkdir file-storage
+        git clone ${REPO:0:8}$(USR_NAME):$(USR_TOKEN)@${REPO:8} $(pwd)/file-storage
+
+        # import env variable
+        # export CONN_STR=$(ENV_CONN_STR)
+        # export FILE=$(ENV_FILE)
+        export JF_TOKEN=$(Jiefeng-GitToken)
+
+        # create virtual env
+        python -m venv venv-sdk
+        source venv-sdk/bin/activate
+        pip install -r $script_path/requirement.txt
+
+        # checkout the target branch
+        cd file-storage
+        git checkout release-issue-status
+
+        # run
+        python $script_path/main.py
