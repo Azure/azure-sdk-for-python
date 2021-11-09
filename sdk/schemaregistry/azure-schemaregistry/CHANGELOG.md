@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0 (2021-11-09)
+## 1.0.0 (2021-11-10)
 
 **Note:** This is the first stable release of our efforts to create a user-friendly and Pythonic client library for Azure Schema Registry.
 
