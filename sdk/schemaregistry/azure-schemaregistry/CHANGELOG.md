@@ -23,10 +23,6 @@
 - `id` parameter in `get_schema` method on sync and async `SchemaRegistryClient` has been renamed `schema_id`.
 - `schema_definition` parameter in `register_schema` and `get_schema_properties` methods on sync and async `SchemaRegistryClient` has been renamed `definition`.
 
-### Bugs Fixed
-
-### Other Changes
-
 ## 1.0.0b3 (2021-10-05)
 
 ### Breaking Changes
