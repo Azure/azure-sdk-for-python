@@ -30,7 +30,8 @@ no-namespace-folders: true
 python: true
 title: WebPubSubServiceClient
 version-tolerant: true
-package-version: 1.0.0b2
+head-as-boolean: true
+package-version: 1.0.0
 add-credential: true
 credential-scopes: https://webpubsub.azure.com/.default
 ```
@@ -59,4 +60,26 @@ directive:
             op["operationId"] = op["operationId"].replace("WebPubSub_", "");
           }
         }
+```
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["paths"]["/api/hubs/{hub}/:generateToken"].post.parameters
+    transform: >
+        $[2]["x-ms-client-name"] = "roles"
+```
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["paths"]["/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}"].head
+    transform: $["operationId"] = "HasPermission"
+```
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["paths"]["/api/hubs/{hub}/:generateToken"].post
+    transform: $["operationId"] = "GetClientAccessToken"
 ```

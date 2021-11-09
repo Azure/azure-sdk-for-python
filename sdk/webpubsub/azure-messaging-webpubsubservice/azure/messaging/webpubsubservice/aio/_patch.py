@@ -25,21 +25,29 @@
 #
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING, Union
-
+from typing import TYPE_CHECKING
+import importlib
 
 from azure.core import AsyncPipelineClient
-from msrest import Deserializer, Serializer
+from msrest import Deserializer
 
 from .._version import VERSION
-from .._patch import JwtCredentialPolicy, ApiManagementProxy, _parse_connection_string
+from .._patch import JwtCredentialPolicy, ApiManagementProxy, _parse_connection_string, _get_token_by_key
 from ._web_pub_sub_service_client import WebPubSubServiceClient as GeneratedWebPubSubServiceClient
-
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 from azure.core.credentials import AzureKeyCredential
+from msrest import Serializer
+from typing import Any, Callable, Dict, Optional, TypeVar, Union
 
+from azure.core.pipeline import PipelineResponse
+from azure.core.pipeline.transport import AsyncHttpResponse
+from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator_async import distributed_trace_async
+
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -59,6 +67,8 @@ class WebPubSubServiceClientConfiguration(Configuration):
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: Union[~azure.core.credentials_async.AsyncTokenCredential, ~azure.core.credentials.AzureKeyCredential]
+    :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -67,14 +77,17 @@ class WebPubSubServiceClientConfiguration(Configuration):
         credential: Union["AsyncTokenCredential", "AzureKeyCredential"],
         **kwargs: Any
     ) -> None:
+        super(WebPubSubServiceClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
-        super(WebPubSubServiceClientConfiguration, self).__init__(**kwargs)
 
         self.endpoint = endpoint
         self.credential = credential
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://webpubsub.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'messaging-webpubsubservice/{}'.format(VERSION))
         self._configure(**kwargs)
@@ -106,6 +119,9 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -136,6 +152,58 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         credential = AzureKeyCredential(kwargs.pop("accesskey"))
         return cls(credential=credential, **kwargs)
 
+    @distributed_trace_async
+    async def get_client_access_token(self, hub, **kwargs):
+        # type: (str, Any) -> Dict[Any]
+        """Build an authentication token.
+
+        :keyword hub: The hub to give access to.
+        :type hub: str
+        :keyword user_id: User Id.
+        :paramtype user_id: str
+        :keyword roles: Roles that the connection with the generated token will have.
+        :paramtype roles: list[str]
+        :keyword minutes_to_expire: The expire time of the generated token.
+        :paramtype minutes_to_expire: int
+        :returns: ~dict containing the web socket endpoint, the token and a url with the generated access token.
+        :rtype: ~dict
+
+        Example:
+        >>> get_client_access_token(hub='theHub')
+        {
+            'baseUrl': 'wss://contoso.com/api/webpubsub/client/hubs/theHub',
+            'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...',
+            'url': 'wss://contoso.com/api/webpubsub/client/hubs/theHub?access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...'
+        }
+        """
+        endpoint = self._config.endpoint.lower()
+        if not endpoint.startswith("http://") and not endpoint.startswith("https://"):
+            raise ValueError(
+                "Invalid endpoint: '{}' has unknown scheme - expected 'http://' or 'https://'".format(
+                    endpoint
+                )
+            )
+
+        # Ensure endpoint has no trailing slash
+        endpoint = endpoint.rstrip("/")
+
+        # Switch from http(s) to ws(s) scheme
+        client_endpoint = "ws" + endpoint[4:]
+        client_url = "{}/client/hubs/{}".format(client_endpoint, hub)
+        if isinstance(self._config.credential, AzureKeyCredential):
+            token = _get_token_by_key(endpoint, hub, self._config.credential.key, **kwargs)
+        else:
+            access_token = await super().get_client_access_token(hub, **kwargs)
+            token = access_token.get('token')
+
+        return {
+            "baseUrl": client_url,
+            "token": token,
+            "url": "{}?access_token={}".format(client_url, token),
+        }
+    get_client_access_token.metadata = {'url': '/api/hubs/{hub}/:generateToken'}  # type: ignore
+
 
 def patch_sdk():
-    pass
+    curr_package = importlib.import_module("azure.messaging.webpubsubservice.aio")
+    curr_package.WebPubSubServiceClient = WebPubSubServiceClient

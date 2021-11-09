@@ -86,9 +86,9 @@ from azure.schemaregistry import SchemaRegistryClient
 token_credential = DefaultAzureCredential()
 fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
 group_name = os.environ['SCHEMA_REGISTRY_GROUP']
-schema_name = "your-schema-name"
+name = "your-schema-name"
 format = "Avro"
-schema_definition = """
+definition = """
 {"namespace": "example.avro",
  "type": "record",
  "name": "User",
@@ -102,7 +102,7 @@ schema_definition = """
 
 schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=fully_qualified_namespace, credential=token_credential)
 with schema_registry_client:
-    schema_properties = schema_registry_client.register_schema(group_name, schema_name, schema_definition, format)
+    schema_properties = schema_registry_client.register_schema(group_name, name, definition, format)
     id = schema_properties.id
 ```
 
@@ -140,9 +140,9 @@ from azure.schemaregistry import SchemaRegistryClient
 token_credential = DefaultAzureCredential()
 fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
 group_name = os.environ['SCHEMA_REGISTRY_GROUP']
-schema_name = "your-schema-name"
+name = "your-schema-name"
 format = "Avro"
-schema_definition = """
+definition = """
 {"namespace": "example.avro",
  "type": "record",
  "name": "User",
@@ -156,7 +156,7 @@ schema_definition = """
 
 schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=fully_qualified_namespace, credential=token_credential)
 with schema_registry_client:
-    schema_properties = schema_registry_client.register_schema(group_name, schema_name, schema_definition, format)
+    schema_properties = schema_registry_client.register_schema(group_name, name, definition, format)
     id = schema_properties.id
 ```
 
@@ -196,7 +196,7 @@ schema_registry_client = SchemaRegistryClient("your_fully_qualified_namespace", 
 Similarly, `logging_enable` can enable detailed logging for a single operation,
 even when it isn't enabled for the client:
 ```py
-schema_registry_client.get_schema(id, logging_enable=True)
+schema_registry_client.get_schema(schema_id, logging_enable=True)
 ```
 
 ## Next steps

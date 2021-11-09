@@ -121,6 +121,9 @@ class CommunicationIdentityClientSamples(object):
         print(user.properties.get('id') + " deleted")
 
     def get_token_for_teams_user(self):
+        if (os.getenv("SKIP_INT_IDENTITY_EXCHANGE_TOKEN_TEST") == "true"):
+            print("Skipping the Get Access Token for Teams User sample")
+            return
         from azure.communication.identity import CommunicationIdentityClient
 
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
