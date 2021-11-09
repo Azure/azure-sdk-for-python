@@ -363,9 +363,9 @@ async def test_remove_participant_failed(
         raised = True
     assert raised == True
 
-@parameterized.expand(CallConnectionUnitTestUtils.data_source_test_get_participants())
+@parameterized.expand(CallConnectionUnitTestUtils.data_source_test_list_participants())
 @pytest.mark.asyncio
-async def test_get_participants_succeed(
+async def test_list_participants_succeed(
     test_name, # type: str
     call_connection_id, # type: str
     use_managed_identity = False # type: bool
@@ -378,12 +378,12 @@ async def test_get_participants_succeed(
         use_managed_identity=use_managed_identity
         )
 
-    await call_connection.get_participants()
+    await call_connection.list_participants()
     assert call_connection.call_connection_id == _test_constants.CALL_ID
 
-@parameterized.expand(CallConnectionUnitTestUtils.data_source_test_get_participants())
+@parameterized.expand(CallConnectionUnitTestUtils.data_source_test_list_participants())
 @pytest.mark.asyncio
-async def test_get_participants_failed(
+async def test_list_participants_failed(
     test_name, # type: str
     call_connection_id, # type: str
     use_managed_identity = False # type: bool
@@ -398,7 +398,7 @@ async def test_get_participants_failed(
 
     raised = False
     try:
-        await call_connection.get_participants()
+        await call_connection.list_participants()
     except:
         raised = True
     assert raised == True

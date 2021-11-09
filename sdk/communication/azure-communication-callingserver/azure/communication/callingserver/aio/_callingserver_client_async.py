@@ -392,7 +392,7 @@ class CallingServerClient:
         )
 
     @distributed_trace_async()
-    async def get_participants(
+    async def list_participants(
             self,
             call_locator: CallLocator,
             **kwargs: Any

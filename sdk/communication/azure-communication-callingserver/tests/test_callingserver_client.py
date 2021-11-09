@@ -485,8 +485,8 @@ class TestCallingServerClient(unittest.TestCase):
             raised = True
         assert raised == True
 
-    @parameterized.expand(CallingServerUnitTestUtils.data_source_test_get_participants_with_call_locator())
-    def test_get_participants_succeed(
+    @parameterized.expand(CallingServerUnitTestUtils.data_source_test_list_participants_with_call_locator())
+    def test_list_participants_succeed(
         self,
         test_name, # type: str
         call_locator, # type: CallLocator
@@ -499,13 +499,13 @@ class TestCallingServerClient(unittest.TestCase):
             use_managed_identity=use_managed_identity
             )
 
-        result = calling_server_client.get_participants(
+        result = calling_server_client.list_participants(
             call_locator
             )
-        CallingServerUnitTestUtils.verify_get_participants_result(result)
+        CallingServerUnitTestUtils.verify_list_participants_result(result)
 
-    @parameterized.expand(CallingServerUnitTestUtils.data_source_test_get_participants_with_call_locator())
-    def test_get_participants_failed(
+    @parameterized.expand(CallingServerUnitTestUtils.data_source_test_list_participants_with_call_locator())
+    def test_list_participants_failed(
         self,
         test_name, # type: str
         call_locator, # type: CallLocator
@@ -520,7 +520,7 @@ class TestCallingServerClient(unittest.TestCase):
 
         raised = False
         try:
-            calling_server_client.get_participants(
+            calling_server_client.list_participants(
                 call_locator
                 )
         except:

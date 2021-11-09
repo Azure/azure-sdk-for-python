@@ -412,8 +412,8 @@ class TestCallConnection(unittest.TestCase):
             raised = True
         assert raised == True
 
-    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_get_participants())
-    def test_get_participants_succeed(
+    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_list_participants())
+    def test_list_participants_succeed(
         self,
         test_name, # type: str
         call_connection_id, # type: str
@@ -427,11 +427,11 @@ class TestCallConnection(unittest.TestCase):
             use_managed_identity=use_managed_identity
             )
 
-        call_connection.get_participants()
+        call_connection.list_participants()
         assert call_connection.call_connection_id == _test_constants.CALL_ID
 
-    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_get_participants())
-    def test_get_participants_failed(
+    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_list_participants())
+    def test_list_participants_failed(
         self,
         test_name, # type: str
         call_connection_id, # type: str
@@ -447,7 +447,7 @@ class TestCallConnection(unittest.TestCase):
 
         raised = False
         try:
-            call_connection.get_participants()
+            call_connection.list_participants()
         except:
             raised = True
         assert raised == True

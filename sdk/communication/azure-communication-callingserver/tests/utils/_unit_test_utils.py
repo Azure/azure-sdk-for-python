@@ -332,7 +332,7 @@ class CallingServerUnitTestUtils:
         return parameters
 
     @staticmethod
-    def data_source_test_get_participants_with_call_locator():
+    def data_source_test_list_participants_with_call_locator():
         parameters = []
         parameters.append((
             _test_constants.ClientType_ConnectionString,
@@ -600,7 +600,7 @@ class CallingServerUnitTestUtils:
         assert result.call_connection_id == _test_constants.CALL_ID
 
     @staticmethod
-    def verify_get_participants_result(result):
+    def verify_list_participants_result(result):
         # type: (List[CallParticipant]) -> None
         target_identifier_01 = deserialize_identifier(result[0].identifier)
         assert _test_constants.COMMUNICATION_USER_Id_01 == target_identifier_01.properties['id']
@@ -830,7 +830,7 @@ class CallConnectionUnitTestUtils:
         return parameters
 
     @staticmethod
-    def data_source_test_get_participants():
+    def data_source_test_list_participants():
         parameters = []
         parameters.append((
             _test_constants.ClientType_ConnectionString,

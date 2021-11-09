@@ -193,7 +193,7 @@ class CallConnection(object):
         )
 
     @distributed_trace()
-    def get_participants(
+    def list_participants(
             self,
             **kwargs  # type: Any
         ): # type: (...) -> List[CallParticipant]

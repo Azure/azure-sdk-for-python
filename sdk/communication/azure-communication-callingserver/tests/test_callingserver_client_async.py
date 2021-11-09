@@ -483,9 +483,9 @@ async def test_remove_participant_failed(
         raised = True
     assert raised == True
 
-@parameterized.expand(CallingServerUnitTestUtils.data_source_test_get_participants_with_call_locator())
+@parameterized.expand(CallingServerUnitTestUtils.data_source_test_list_participants_with_call_locator())
 @pytest.mark.asyncio
-async def test_get_participants_succeed(
+async def test_list_participants_succeed(
     test_name, # type: str
     call_locator, # type: CallLocator
     use_managed_identity = False # type: bool
@@ -497,14 +497,14 @@ async def test_get_participants_succeed(
         use_managed_identity=use_managed_identity
         )
 
-    result = await calling_server_client.get_participants(
+    result = await calling_server_client.list_participants(
         call_locator
         )
-    CallingServerUnitTestUtils.verify_get_participants_result(result)
+    CallingServerUnitTestUtils.verify_list_participants_result(result)
 
-@parameterized.expand(CallingServerUnitTestUtils.data_source_test_get_participants_with_call_locator())
+@parameterized.expand(CallingServerUnitTestUtils.data_source_test_list_participants_with_call_locator())
 @pytest.mark.asyncio
-async def test_get_participants_failed(
+async def test_list_participants_failed(
     test_name, # type: str
     call_locator, # type: CallLocator
     use_managed_identity = False # type: bool
@@ -518,7 +518,7 @@ async def test_get_participants_failed(
 
     raised = False
     try:
-        await calling_server_client.get_participants(
+        await calling_server_client.list_participants(
             call_locator
             )
     except:

@@ -172,7 +172,7 @@ class CallConnection:
         )
 
     @distributed_trace_async()
-    async def get_participants(
+    async def list_participants(
             self,
             **kwargs: Any
         )-> List[CallParticipant]:

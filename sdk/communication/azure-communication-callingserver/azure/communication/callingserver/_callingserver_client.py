@@ -386,7 +386,7 @@ class CallingServerClient(object):
         )
 
     @distributed_trace()
-    def get_participants(
+    def list_participants(
             self,
             call_locator,  # type: CallLocator
             **kwargs  # type: Any
