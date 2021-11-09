@@ -729,9 +729,9 @@ async def test_resume_participant_meeting_audio_failed(
         raised = True
     assert raised == True
 
-@parameterized.expand(CallConnectionUnitTestUtils.data_source_test_transfer_call())
+@parameterized.expand(CallConnectionUnitTestUtils.data_source_test_transfer())
 @pytest.mark.asyncio
-async def test_transfer_call_succeed(
+async def test_transfer_succeed(
     test_name, # type: str
     call_connection_id, # type: str
     target_participant, # type: CommunicationIdentifier
@@ -749,7 +749,7 @@ async def test_transfer_call_succeed(
         use_managed_identity=use_managed_identity
         )
 
-    await call_connection.transfer_call(
+    await call_connection.transfer(
         target_participant = target_participant,
         target_call_connection_id = target_call_connection_id,
         user_to_user_information = user_to_user_information,
@@ -758,9 +758,9 @@ async def test_transfer_call_succeed(
         )
     assert call_connection.call_connection_id == _test_constants.CALL_ID
 
-@parameterized.expand(CallConnectionUnitTestUtils.data_source_test_transfer_call())
+@parameterized.expand(CallConnectionUnitTestUtils.data_source_test_transfer())
 @pytest.mark.asyncio
-async def test_transfer_call_failed(
+async def test_transfer_failed(
     test_name, # type: str
     call_connection_id, # type: str
     target_participant, # type: CommunicationIdentifier
@@ -780,7 +780,7 @@ async def test_transfer_call_failed(
 
     raised = False
     try:
-        await call_connection.transfer_call(
+        await call_connection.transfer(
             target_participant = target_participant,
             target_call_connection_id = target_call_connection_id,
             user_to_user_information = user_to_user_information,

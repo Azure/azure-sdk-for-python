@@ -36,10 +36,10 @@ class CallLocator(Protocol):
     :ivar Mapping[str, Any] properties: The properties of the locator.
     """
     id = str  # type: str
-    kind = None  # type: Optional[Union[CallLocatorKind, str]]
+    kind = None  # type: Union[CallLocatorKind, str]
     properties = {}  # type: Mapping[str, Any]
 
-class GroupCallLocator(object):
+class GroupCallLocator(CallLocator):
     """The group call locator.
 
     :ivar kind: The type of locator.
@@ -62,7 +62,7 @@ class GroupCallLocator(object):
         self.id = id
         self.properties = {}
 
-class ServerCallLocator(object):
+class ServerCallLocator(CallLocator):
     """The server call locator.
 
     :ivar kind: The type of locator.

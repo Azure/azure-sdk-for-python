@@ -733,8 +733,8 @@ class TestCallConnection(unittest.TestCase):
             raised = True
         assert raised == True
 
-    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_transfer_call())
-    def test_transfer_call_succeed(
+    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_transfer())
+    def test_transfer_succeed(
         self,
         test_name, # type: str
         call_connection_id, # type: str
@@ -753,7 +753,7 @@ class TestCallConnection(unittest.TestCase):
             use_managed_identity=use_managed_identity
             )
 
-        call_connection.transfer_call(
+        call_connection.transfer(
             target_participant = target_participant,
             target_call_connection_id = target_call_connection_id,
             user_to_user_information = user_to_user_information,
@@ -762,8 +762,8 @@ class TestCallConnection(unittest.TestCase):
             )
         assert call_connection.call_connection_id == _test_constants.CALL_ID
 
-    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_transfer_call())
-    def test_transfer_call_failed(
+    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_transfer())
+    def test_transfer_failed(
         self,
         test_name, # type: str
         call_connection_id, # type: str
@@ -784,7 +784,7 @@ class TestCallConnection(unittest.TestCase):
 
         raised = False
         try:
-            call_connection.transfer_call(
+            call_connection.transfer(
                 target_participant = target_participant,
                 target_call_connection_id = target_call_connection_id,
                 user_to_user_information = user_to_user_information,
@@ -845,7 +845,7 @@ class TestCallConnection(unittest.TestCase):
             raised = True
         assert raised == True
 
-    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_get_audio_routing_group())
+    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_list_audio_routing_groups())
     def test_list_audio_routing_groups_succeed(
         self,
         test_name, # type: str
@@ -866,7 +866,7 @@ class TestCallConnection(unittest.TestCase):
             )
         CallConnectionUnitTestUtils.verify_get_audio_routing_group(result)
 
-    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_get_audio_routing_group())
+    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_list_audio_routing_groups())
     def test_list_audio_routing_groups_failed(
         self,
         test_name, # type: str

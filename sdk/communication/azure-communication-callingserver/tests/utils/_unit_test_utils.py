@@ -786,7 +786,7 @@ class CallConnectionUnitTestUtils:
         return parameters
 
     @staticmethod
-    def data_source_test_transfer_call():
+    def data_source_test_transfer():
         parameters = []
         parameters.append((
             _test_constants.ClientType_ConnectionString,
@@ -976,7 +976,7 @@ class CallConnectionUnitTestUtils:
         return parameters
 
     @staticmethod
-    def data_source_test_get_audio_routing_groups():
+    def data_source_test_list_audio_routing_groups():
         parameters = []
         parameters.append((
             _test_constants.ClientType_ConnectionString,

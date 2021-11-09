@@ -308,7 +308,7 @@ class CallConnection:
         )
 
     @distributed_trace_async()
-    async def transfer_call(
+    async def transfer(
             self,
             target_participant: CommunicationIdentifier,
             target_call_connection_id: str,

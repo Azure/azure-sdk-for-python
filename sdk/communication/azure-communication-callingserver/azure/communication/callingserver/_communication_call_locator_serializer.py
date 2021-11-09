@@ -26,12 +26,11 @@ def serialize_call_locator(call_locator):
     :return: CallLocatorModel
     """
     try:
+        request_model = {'kind': call_locator.kind}
         if call_locator.kind and call_locator.kind == CallLocatorKind.GROUP_CALL_LOCATOR:
-            request_model = {'group_call_id': call_locator.id}
-            request_model['kind'] = call_locator.kind
+            request_model['group_call_id'] = call_locator.id
         elif call_locator.kind and call_locator.kind == CallLocatorKind.SERVER_CALL_LOCATOR:
-            request_model = {'server_call_id': call_locator.id}
-            request_model['kind'] = call_locator.kind
+            request_model['server_call_id'] = call_locator.id
         return request_model
     except AttributeError:
         raise TypeError("Unsupported call locator type " + call_locator.__class__.__name__)

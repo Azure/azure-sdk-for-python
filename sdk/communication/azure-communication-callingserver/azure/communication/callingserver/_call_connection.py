@@ -329,7 +329,7 @@ class CallConnection(object):
         )
 
     @distributed_trace()
-    def transfer_call(
+    def transfer(
             self,
             target_participant,  # type: CommunicationIdentifier
             target_call_connection_id,  # type: str
