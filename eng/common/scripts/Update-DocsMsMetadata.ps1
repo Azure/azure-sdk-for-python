@@ -120,6 +120,8 @@ function RetrieveCodeOwners($targetDirectory) {
   $author = "ramya-rao-a"
   $msauthor = "ramyar"
   $docCodeOwner = "$env:CODEOWNERS"
+  Write-Host "$docCodeOwner"
+  Write-Host "$(CodeOwners)"
   if ($docCodeOwner) {
     $author = $docCodeOwner
     $msauthor = $author
