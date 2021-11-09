@@ -1,6 +1,6 @@
 # Release History
 
-## 12.2.0b1 (x-x-x)
+## 12.2.0b1 (Unreleased)
 
 ## 12.1.6 (2021-04-20)
 **Fixes**

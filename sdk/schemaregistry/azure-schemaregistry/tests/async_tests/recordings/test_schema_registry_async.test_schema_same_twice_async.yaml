@@ -17,7 +17,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 05 Nov 2021 23:19:24 GMT
+      date: Mon, 08 Nov 2021 19:21:43 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-twice-async7bfd16a1/versions/1?api-version=2021-10
       schema-group-name: swathip-test-schema
       schema-id: 3ad6620ea8f240059625d5922a912de0
@@ -49,7 +49,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 05 Nov 2021 23:19:25 GMT
+      date: Mon, 08 Nov 2021 19:21:44 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-twice-async7bfd16a1/versions/1?api-version=2021-10
       schema-group-name: swathip-test-schema
       schema-id: 3ad6620ea8f240059625d5922a912de0

@@ -52,6 +52,7 @@ The following section provides several code snippets covering some of the most c
 - [Creating a user and a token in a single request](#creating-a-user-and-a-token-in-a-single-request)
 - [Revoking a user's access tokens](#revoking-a-users-access-tokens)
 - [Deleting a user](#deleting-a-user)
+- [Exchanging AAD access token of a Teams User for a Communication Identity access token](#exchanging-aad-access-token-of-a-teams-user-for-a-communication-identity-access-token)
 
 ### Creating a new user
 
