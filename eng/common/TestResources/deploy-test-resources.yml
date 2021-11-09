@@ -4,12 +4,12 @@ parameters:
   DeleteAfterHours: 8
   Location: ''
   SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-  - name: ResourceType
-    type: string
-    default: test
-    values:
-      - test
-      - perf
+- name: ResourceType
+  type: string
+  default: test
+  values:
+    - test
+    - perf
 
 # SubscriptionConfiguration will be splatted into the parameters of the test
 # resources script. It should be JSON in the form:
