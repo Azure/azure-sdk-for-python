@@ -37,9 +37,9 @@ from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import (
     ServiceRequestError,
     ServiceResponseError,
-    DecodeError
     IncompleteReadError,
     HttpResponseError,
+    DecodeError
 )
 from . import HttpRequest # pylint: disable=unused-import
 
