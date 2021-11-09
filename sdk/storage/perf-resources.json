@@ -23,5 +23,27 @@
             },
             "kind": "BlockBlobStorage"
         }
-    ]
+    ],
+    "outputs": {
+        "AZURE_STORAGE_ACCOUNT_NAME": {
+            "type": "string",
+            "value": "[variables('blobAccountName')]"
+        },
+        "AZURE_STORAGE_ACCOUNT_KEY": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('blobAccountName')), variables('mgmtApiVersion')).keys[0].value]"
+        },
+        "AZURE_STORAGE_CONNECTION_STRING": {
+          "type": "string",
+          "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('blobAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('blobAccountName')), variables('mgmtApiVersion')).keys[0].value)]"
+        },
+        "STANDARD_STORAGE_CONNECTION_STRING": {
+            "type": "string",
+            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('blobAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('blobAccountName')), variables('mgmtApiVersion')).keys[0].value)]"
+        },
+        "STORAGE_CONNECTION_STRING": {
+            "type": "string",
+            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('blobAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('blobAccountName')), variables('mgmtApiVersion')).keys[0].value)]"
+        }
+    }
 }
