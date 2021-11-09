@@ -281,6 +281,10 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
+        if kwargs.get("port") and endpoint:
+            if endpoint[-1] == "/":
+                endpoint = endpoint[:len(endpoint) - 1]
+            endpoint = endpoint + ":{}".format(kwargs.pop('port'))
         kwargs['origin_endpoint'] = endpoint
         _endpoint = '{Endpoint}'
         self._config = WebPubSubServiceClientConfiguration(endpoint, credential, **kwargs)

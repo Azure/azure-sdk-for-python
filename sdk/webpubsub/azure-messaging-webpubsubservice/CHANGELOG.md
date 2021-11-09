@@ -11,6 +11,9 @@
 - rename operation `check_permission` to `has_permission`
 - operations `connection_exists`, `group_exists`, `user_exists`, and `has_permission` now return boolean values instead of raising
 
+### Bug Fixes
+
+- add port to client's endpoint if included in connection string for `WebPubSubServiceClient.from_connection_string`
 
 ## 1.0.0b2 (2021-10-14)
 
