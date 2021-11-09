@@ -2445,6 +2445,9 @@ class EventHubDataConnection(DataConnection):
     :ivar provisioning_state: The provisioned state of the resource. Possible values include:
      "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving", "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.synapse.models.ResourceProvisioningState
+    :param managed_identity_resource_id: The resource ID of a managed identity (system or user
+     assigned) to be used to authenticate with event hub.
+    :type managed_identity_resource_id: str
     """
 
     _validation = {
@@ -2471,6 +2474,7 @@ class EventHubDataConnection(DataConnection):
         'event_system_properties': {'key': 'properties.eventSystemProperties', 'type': '[str]'},
         'compression': {'key': 'properties.compression', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'managed_identity_resource_id': {'key': 'properties.managedIdentityResourceId', 'type': 'str'},
     }
 
     def __init__(
@@ -2484,6 +2488,7 @@ class EventHubDataConnection(DataConnection):
         data_format: Optional[Union[str, "EventHubDataFormat"]] = None,
         event_system_properties: Optional[List[str]] = None,
         compression: Optional[Union[str, "Compression"]] = None,
+        managed_identity_resource_id: Optional[str] = None,
         **kwargs
     ):
         super(EventHubDataConnection, self).__init__(location=location, **kwargs)
@@ -2496,6 +2501,7 @@ class EventHubDataConnection(DataConnection):
         self.event_system_properties = event_system_properties
         self.compression = compression
         self.provisioning_state = None
+        self.managed_identity_resource_id = managed_identity_resource_id
 
 
 class ExtendedServerBlobAuditingPolicy(ProxyResource):
