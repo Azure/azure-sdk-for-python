@@ -35,7 +35,8 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
             # Note that if the vault has moved to a new tenant since our last request for it, this request will fail.
             await self._handle_challenge(request, challenge)
             response = await self.next.send(request)
-            return await self._handle_response(request, response)
+            await self._handle_response(request, response)
+            return
 
         # else: discover authentication information by eliciting a challenge from Key Vault. Remove any request data,
         # saving it for later. Key Vault will reject the request as unauthorized and respond with a challenge.
