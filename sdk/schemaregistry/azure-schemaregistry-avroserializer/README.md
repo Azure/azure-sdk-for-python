@@ -113,7 +113,7 @@ from azure.identity import DefaultAzureCredential
 token_credential = DefaultAzureCredential()
 fully_qualified_namespace = os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
 group_name = "<your-group-name>"
-schema_name = "example.avro.User"
+name = "example.avro.User"
 format = "Avro"
 
 schema_string = """
@@ -128,7 +128,7 @@ schema_string = """
 }"""
 
 schema_registry_client = SchemaRegistryClient(fully_qualified_namespace, token_credential)
-schema_register_client.register(group_name, schema_name, schema_string, format)
+schema_register_client.register(group_name, name, schema_string, format)
 serializer = AvroSerializer(client=schema_registry_client, group_name=group_name)
 
 with serializer:
