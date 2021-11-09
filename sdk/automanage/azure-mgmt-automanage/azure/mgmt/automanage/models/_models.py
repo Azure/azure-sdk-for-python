@@ -11,17 +11,17 @@ import msrest.serialization
 
 
 class Resource(msrest.serialization.Model):
-    """Resource.
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     """
 
@@ -48,19 +48,19 @@ class Resource(msrest.serialization.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
@@ -99,13 +99,13 @@ class Account(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
@@ -235,18 +235,52 @@ class AccountUpdate(UpdateResource):
         self.identity = kwargs.get('identity', None)
 
 
-class ConfigurationProfileAssignment(Resource):
-    """Configuration profile assignment is an association between a VM and automanage profile configuration.
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class ConfigurationProfileAssignment(ProxyResource):
+    """Configuration profile assignment is an association between a VM and automanage profile configuration.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :param properties: Properties of the configuration profile assignment.
     :type properties: ~automanage_client.models.ConfigurationProfileAssignmentProperties
@@ -334,15 +368,15 @@ class ConfigurationProfileAssignmentProperties(msrest.serialization.Model):
     :param configuration_profile_preference_id: The configuration profile custom preferences ARM
      resource URI.
     :type configuration_profile_preference_id: str
-    :ivar provisioning_status: The state of onboarding, which only appears in the response.
-     Possible values include: "Succeeded", "Failed", "Created".
-    :vartype provisioning_status: str or ~automanage_client.models.ProvisioningStatus
+    :ivar provisioning_state: The state of onboarding, which only appears in the response. Possible
+     values include: "Succeeded", "Failed", "Created".
+    :vartype provisioning_state: str or ~automanage_client.models.ProvisioningState
     :param compliance: The configuration setting for the configuration profile.
     :type compliance: ~automanage_client.models.ConfigurationProfileAssignmentCompliance
     """
 
     _validation = {
-        'provisioning_status': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -350,7 +384,7 @@ class ConfigurationProfileAssignmentProperties(msrest.serialization.Model):
         'target_id': {'key': 'targetId', 'type': 'str'},
         'account_id': {'key': 'accountId', 'type': 'str'},
         'configuration_profile_preference_id': {'key': 'configurationProfilePreferenceId', 'type': 'str'},
-        'provisioning_status': {'key': 'provisioningStatus', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'compliance': {'key': 'compliance', 'type': 'ConfigurationProfileAssignmentCompliance'},
     }
 
@@ -363,7 +397,7 @@ class ConfigurationProfileAssignmentProperties(msrest.serialization.Model):
         self.target_id = kwargs.get('target_id', None)
         self.account_id = kwargs.get('account_id', None)
         self.configuration_profile_preference_id = kwargs.get('configuration_profile_preference_id', None)
-        self.provisioning_status = None
+        self.provisioning_state = None
         self.compliance = kwargs.get('compliance', None)
 
 
@@ -374,13 +408,13 @@ class ConfigurationProfilePreference(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
@@ -421,7 +455,7 @@ class ConfigurationProfilePreferenceAntiMalware(msrest.serialization.Model):
      include: "True", "False".
     :type enable_real_time_protection: str or ~automanage_client.models.EnableRealTimeProtection
     :param exclusions: Extensions, Paths and Processes that must be excluded from scan.
-    :type exclusions: object
+    :type exclusions: any
     :param run_scheduled_scan: Enables or disables a periodic scan for antimalware. Possible values
      include: "True", "False".
     :type run_scheduled_scan: str or ~automanage_client.models.RunScheduledScan
@@ -558,7 +592,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {
@@ -580,27 +614,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self.info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
-    """The resource management error response.
-
-    :param error: The error object.
-    :type error: ~automanage_client.models.ErrorResponseError
-    """
-
-    _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponseError'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorResponse, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
-
-
-class ErrorResponseError(msrest.serialization.Model):
-    """The error object.
+class ErrorDetail(msrest.serialization.Model):
+    """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -611,7 +626,7 @@ class ErrorResponseError(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~automanage_client.models.ErrorResponse]
+    :vartype details: list[~automanage_client.models.ErrorDetail]
     :ivar additional_info: The error additional info.
     :vartype additional_info: list[~automanage_client.models.ErrorAdditionalInfo]
     """
@@ -628,7 +643,7 @@ class ErrorResponseError(msrest.serialization.Model):
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorResponse]'},
+        'details': {'key': 'details', 'type': '[ErrorDetail]'},
         'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
     }
 
@@ -636,12 +651,31 @@ class ErrorResponseError(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(ErrorResponseError, self).__init__(**kwargs)
+        super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
         self.details = None
         self.additional_info = None
+
+
+class ErrorResponse(msrest.serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+
+    :param error: The error object.
+    :type error: ~automanage_client.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorDetail'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
 
 
 class Operation(msrest.serialization.Model):
@@ -724,37 +758,3 @@ class OperationList(msrest.serialization.Model):
     ):
         super(OperationList, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
-
-
-class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource Id for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)

@@ -9,14 +9,14 @@ from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVa
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class ConfigurationProfileAssignmentsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,21 +48,24 @@ class ConfigurationProfileAssignmentsOperations:
         configuration_profile_assignment_name: str,
         resource_group_name: str,
         vm_name: str,
-        parameters: "models.ConfigurationProfileAssignment",
-        **kwargs
-    ) -> "models.ConfigurationProfileAssignment":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigurationProfileAssignment"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        parameters: "_models.ConfigurationProfileAssignment",
+        **kwargs: Any
+    ) -> "_models.ConfigurationProfileAssignment":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigurationProfileAssignment"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-06-30-preview"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self._create_or_update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'configurationProfileAssignmentName': self._serialize.url("configuration_profile_assignment_name", configuration_profile_assignment_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'vmName': self._serialize.url("vm_name", vm_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -74,19 +77,18 @@ class ConfigurationProfileAssignmentsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'ConfigurationProfileAssignment')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -106,25 +108,25 @@ class ConfigurationProfileAssignmentsOperations:
         configuration_profile_assignment_name: str,
         resource_group_name: str,
         vm_name: str,
-        parameters: "models.ConfigurationProfileAssignment",
-        **kwargs
-    ) -> AsyncLROPoller["models.ConfigurationProfileAssignment"]:
+        parameters: "_models.ConfigurationProfileAssignment",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.ConfigurationProfileAssignment"]:
         """Creates an association between a VM and Automanage configuration profile.
 
         :param configuration_profile_assignment_name: Name of the configuration profile assignment.
-     Only default is supported.
+         Only default is supported.
         :type configuration_profile_assignment_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine.
         :type vm_name: str
         :param parameters: Parameters supplied to the create or update configuration profile
-     assignment.
+         assignment.
         :type parameters: ~automanage_client.models.ConfigurationProfileAssignment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ConfigurationProfileAssignment or the result of cls(response)
@@ -132,7 +134,7 @@ class ConfigurationProfileAssignmentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigurationProfileAssignment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigurationProfileAssignment"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -158,7 +160,14 @@ class ConfigurationProfileAssignmentsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'configurationProfileAssignmentName': self._serialize.url("configuration_profile_assignment_name", configuration_profile_assignment_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'vmName': self._serialize.url("vm_name", vm_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -177,8 +186,8 @@ class ConfigurationProfileAssignmentsOperations:
         resource_group_name: str,
         configuration_profile_assignment_name: str,
         vm_name: str,
-        **kwargs
-    ) -> "models.ConfigurationProfileAssignment":
+        **kwargs: Any
+    ) -> "_models.ConfigurationProfileAssignment":
         """Get information about a configuration profile assignment.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -192,15 +201,18 @@ class ConfigurationProfileAssignmentsOperations:
         :rtype: ~automanage_client.models.ConfigurationProfileAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigurationProfileAssignment"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigurationProfileAssignment"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-06-30-preview"
+        accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'configurationProfileAssignmentName': self._serialize.url("configuration_profile_assignment_name", configuration_profile_assignment_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'vmName': self._serialize.url("vm_name", vm_name, 'str'),
@@ -213,7 +225,7 @@ class ConfigurationProfileAssignmentsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -221,7 +233,7 @@ class ConfigurationProfileAssignmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ConfigurationProfileAssignment', pipeline_response)
@@ -237,7 +249,7 @@ class ConfigurationProfileAssignmentsOperations:
         resource_group_name: str,
         configuration_profile_assignment_name: str,
         vm_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a configuration profile assignment.
 
@@ -253,14 +265,17 @@ class ConfigurationProfileAssignmentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-06-30-preview"
+        accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'configurationProfileAssignmentName': self._serialize.url("configuration_profile_assignment_name", configuration_profile_assignment_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'vmName': self._serialize.url("vm_name", vm_name, 'str'),
@@ -273,6 +288,7 @@ class ConfigurationProfileAssignmentsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -280,7 +296,7 @@ class ConfigurationProfileAssignmentsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -291,8 +307,8 @@ class ConfigurationProfileAssignmentsOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.ConfigurationProfileAssignmentList"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.ConfigurationProfileAssignmentList"]:
         """Get list of configuration profile assignments.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -302,21 +318,24 @@ class ConfigurationProfileAssignmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~automanage_client.models.ConfigurationProfileAssignmentList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigurationProfileAssignmentList"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigurationProfileAssignmentList"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-06-30-preview"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -345,7 +364,7 @@ class ConfigurationProfileAssignmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -358,8 +377,8 @@ class ConfigurationProfileAssignmentsOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
-    ) -> AsyncIterable["models.ConfigurationProfileAssignmentList"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.ConfigurationProfileAssignmentList"]:
         """Get list of configuration profile assignments under a given subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -367,15 +386,18 @@ class ConfigurationProfileAssignmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~automanage_client.models.ConfigurationProfileAssignmentList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigurationProfileAssignmentList"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigurationProfileAssignmentList"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-06-30-preview"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
@@ -409,7 +431,7 @@ class ConfigurationProfileAssignmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
