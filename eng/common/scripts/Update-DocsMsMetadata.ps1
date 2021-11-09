@@ -89,7 +89,7 @@ function GetAdjustedReadmeContent($ReadmeContent, $PackageInfo, $PackageMetadata
     $ReadmeContent = $ReadmeContent -replace $releaseReplaceRegex, $replacementPattern
   }
   
-  $author, $msauthor = RetrieveCodeOwners -targetDirectory $packageInfo.DirectoryPath
+  $author, $msauthor = RetrieveCodeOwners -targetDirectory "$($packageInfo.DirectoryPath)"
   Write-Host "The author is: $author"
   Write-Host "The ms alias is: $msauthor"
   $header = @"
@@ -112,6 +112,7 @@ ms.service: $service
 }
 
 function RetrieveCodeOwners($targetDirectory) {
+  Write-Host "$targetDirectory"
   & "$ToolPath/retrieve-codeowners" --target-directory "$targetDirectory" `
     --root-directory "$WorkingDirectory" `
     --vso-owning-users "CodeOwners"
