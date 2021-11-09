@@ -484,7 +484,7 @@ async with CosmosClient(url, credential=key) as client:
 
 ### Queries with the asynchronous client
 
-Queries work the same way for the most part, and results can be directly iterated on, but because queries made by the asynchronous client return AsyncIterable objects, results can't be cast into lists directly; instead, if you need to create lists from your results, use Python's list comprehension to populate a list:
+Queries work the same way for the most part, with one exception being the absence of the `enable_cross_partition` flag in the request; queries without a specified partition key value will now by default atempt to do a cross partition query. Results can be directly iterated on, but because queries made by the asynchronous client return AsyncIterable objects, results can't be cast into lists directly; instead, if you need to create lists from your results, use Python's list comprehension to populate a list:
 
 ```Python
 from azure.cosmos.aio import CosmosClient
@@ -500,8 +500,7 @@ container = database.get_container_client(container_name)
 
 async def create_lists():
     results = await container.query_items(
-            query='SELECT * FROM products p WHERE p.productModel = "Model 2"',
-            enable_cross_partition_query=True)
+            query='SELECT * FROM products p WHERE p.productModel = "Model 2"')
 
     # Iterating directly on results
     async for item in results:

@@ -619,7 +619,6 @@ class ContainerProxy(object):
         self,
         query,  # type: str
         parameters=None,  # type: Optional[List[str]]
-        enable_cross_partition_query=None,  # type: Optional[bool]
         partition_key=None,  # type: Optional[Any]
         max_item_count=None,  # type: Optional[int]
         **kwargs  # type: Any
@@ -629,10 +628,8 @@ class ContainerProxy(object):
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
-        :param enable_cross_partition_query: Allows sending of more than one request to execute
-            the query in the Azure Cosmos DB service.
-            More than one request is necessary if the query is not scoped to single partition key value.
-        :param partition_key: Specifies the partition key value for the item.
+        :param partition_key: Specifies the partition key value for the item. If none is passed in, a 
+            cross partition query will be executed.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of conflicts (dicts).
@@ -642,10 +639,10 @@ class ContainerProxy(object):
         response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        if enable_cross_partition_query is not None:
-            feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
         if partition_key is not None:
             feed_options["partitionKey"] = await self._set_partition_key(partition_key)
+        else:
+            feed_options["enableCrossPartitionQuery"] = True
 
         result = self.client_connection.QueryConflicts(
             collection_link=self.container_link,
