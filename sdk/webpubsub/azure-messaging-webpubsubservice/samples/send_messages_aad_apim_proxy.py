@@ -36,12 +36,12 @@ logging.basicConfig(level=logging.DEBUG)
 LOG = logging.getLogger()
 
 # Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
-# AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, WEBPUBSUB_ENDPOINT
+# AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, WEBPUBSUB_ENDPOINT, WEBPUBSUB_REVERSE_PROXY_ENDPOINT
 try:
     endpoint = os.environ["WEBPUBSUB_ENDPOINT"]
     reverse_proxy_endpoint = os.environ["WEBPUBSUB_REVERSE_PROXY_ENDPOINT"]
 except KeyError:
-    LOG.error("Missing environment variable 'WEBPUBSUB_ENDPOINT' or 'WEBPUBSUB_REVERSE_RPOXY_ENDPOINT' - please set if before running the example")
+    LOG.error("Missing environment variable 'WEBPUBSUB_ENDPOINT' or 'WEBPUBSUB_REVERSE_PROXY_ENDPOINT' - please set if before running the example")
     exit()
 
 # Build a client through AAD

@@ -46,18 +46,18 @@ async def main():
         exit()
 
     # Build a client through AAD(async)
-    client_aad_async = WebPubSubServiceClientAsync(credential=DefaultAzureCredential(), endpoint=endpoint)
+    async with DefaultAzureCredential() as credential:
+        async with WebPubSubServiceClientAsync(credential=credential, endpoint=endpoint) as client_aad_async:
+            # Build authentication token(async)
+            token_aad_async = await client_aad_async.get_client_access_token(hub='hub')
+            print('token by AAD(async): {}'.format(token_aad_async))
 
-    # Build authentication token(async)
-    token_aad_async = await client_aad_async.get_client_access_token(hub='hub')
-    print('token by AAD(async): {}'.format(token_aad_async))
+            # Build a client through connection string(async)
+            client_key_async = WebPubSubServiceClientAsync.from_connection_string(connection_string)
 
-    # Build a client through connection string(async)
-    client_key_async = WebPubSubServiceClientAsync.from_connection_string(connection_string)
-
-    # Build authentication token(async)
-    token_key_async = await client_key_async.get_client_access_token(hub='hub')
-    print('token by access key(async): {}'.format(token_key_async))
+            # Build authentication token(async)
+            token_key_async = await client_key_async.get_client_access_token(hub='hub')
+            print('token by access key(async): {}'.format(token_key_async))
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
