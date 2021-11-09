@@ -22,7 +22,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {

@@ -55,6 +55,9 @@ parameters:
   - name: ValidateFormatting
     type: boolean
     default: false
+  - name: UnsupportedToxEnvironments
+    type: string
+    default: ''
 
 jobs:
   - job: 'Build'
@@ -67,10 +70,13 @@ jobs:
       vmImage: MMSUbuntu20.04
 
     steps:
+    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+      parameters:
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
     - template: ../steps/build-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         BuildDocs: ${{ parameters.BuildDocs }}
         TestPipeline: ${{ parameters.TestPipeline }}
@@ -95,6 +101,10 @@ jobs:
       vmImage: MMSUbuntu20.04
 
     steps:
+    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+      parameters:
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
     - template: /eng/common/pipelines/templates/steps/check-spelling.yml
 
     - template: /eng/common/pipelines/templates/steps/verify-links.yml
@@ -109,7 +119,6 @@ jobs:
     - template: ../steps/analyze.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
         TestPipeline: ${{ parameters.TestPipeline }}
@@ -137,6 +146,7 @@ jobs:
         TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: ${{ parameters.InjectedPackages }}
+        UnsupportedToxEnvironments: ${{ parameters.UnsupportedToxEnvironments }}
 
   - ${{ if gt(length(parameters.CondaArtifacts), 0) }}:
     - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
@@ -164,7 +174,7 @@ jobs:
   - job: 'RunRegression'
     condition: and(succeededOrFailed(), or(eq(variables['Run.Regression'], 'true'), and(eq(variables['Build.Reason'], 'Schedule'), eq(variables['System.TeamProject'],'internal'))))
     displayName: 'Run Regression'
-    timeoutInMinutes: 120
+    timeoutInMinutes: 180
     variables:
     - template: ../variables/globals.yml
 
@@ -176,7 +186,10 @@ jobs:
       vmImage: MMSUbuntu20.04
 
     steps:
+    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+      parameters:
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
     - template: ../steps/test_regression.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}

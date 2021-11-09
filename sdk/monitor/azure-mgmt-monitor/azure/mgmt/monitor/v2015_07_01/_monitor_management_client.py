@@ -16,9 +16,13 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._configuration import MonitorManagementClientConfiguration
 from .operations import ServiceDiagnosticSettingsOperations
+from .operations import MetricDefinitionsOperations
+from .operations import AlertRulesOperations
+from .operations import Operations
 from . import models
 
 
@@ -27,21 +31,30 @@ class MonitorManagementClient(object):
 
     :ivar service_diagnostic_settings: ServiceDiagnosticSettingsOperations operations
     :vartype service_diagnostic_settings: $(python-base-namespace).v2015_07_01.operations.ServiceDiagnosticSettingsOperations
+    :ivar metric_definitions: MetricDefinitionsOperations operations
+    :vartype metric_definitions: $(python-base-namespace).v2015_07_01.operations.MetricDefinitionsOperations
+    :ivar alert_rules: AlertRulesOperations operations
+    :vartype alert_rules: $(python-base-namespace).v2015_07_01.operations.AlertRulesOperations
+    :ivar operations: Operations operations
+    :vartype operations: $(python-base-namespace).v2015_07_01.operations.Operations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
+    :param subscription_id: The ID of the target subscription.
+    :type subscription_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
         self,
         credential,  # type: "TokenCredential"
+        subscription_id,  # type: str
         base_url=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         if not base_url:
             base_url = 'https://management.azure.com'
-        self._config = MonitorManagementClientConfiguration(credential, **kwargs)
+        self._config = MonitorManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -51,6 +64,30 @@ class MonitorManagementClient(object):
 
         self.service_diagnostic_settings = ServiceDiagnosticSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.metric_definitions = MetricDefinitionsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.alert_rules = AlertRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize)
+
+    def _send_request(self, http_request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     def close(self):
         # type: () -> None

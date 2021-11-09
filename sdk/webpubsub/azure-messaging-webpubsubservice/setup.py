@@ -61,9 +61,9 @@ setup(
         ]
     ),
     install_requires=[
-        "azure-core<2.0.0,>=1.10.0",
-        "msrest>=0.6.18",
-        "cryptography>=2.1.4",
+        "azure-core<2.0.0,>=1.20.1",
+        "msrest>=0.6.21",
+        "cryptography>=2.8.0",
         "pyjwt>=1.7.1",
         "six>=1.12.0",
     ],

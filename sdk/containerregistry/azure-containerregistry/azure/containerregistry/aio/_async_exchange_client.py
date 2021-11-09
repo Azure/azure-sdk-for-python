@@ -81,11 +81,11 @@ class ACRExchangeClient(object):
         return access_token.access_token
 
     async def __aenter__(self):
-        self._client.__aenter__()
+        await self._client.__aenter__()
         return self
 
     async def __aexit__(self, *args):
-        self._client.__aexit__(*args)
+        await self._client.__aexit__(*args)
 
     async def close(self) -> None:
         """Close sockets opened by the client.

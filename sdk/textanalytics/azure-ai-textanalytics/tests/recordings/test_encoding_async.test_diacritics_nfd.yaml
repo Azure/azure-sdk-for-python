@@ -10,9 +10,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: "{\"documents\":[{\"redactedText\":\"an\u0303o SSN: ***********\",\"\
@@ -20,10 +20,10 @@ interactions:
         ,\"offset\":10,\"length\":11,\"confidenceScore\":0.65}],\"warnings\":[]}],\"\
         errors\":[],\"modelVersion\":\"2021-01-15\"}"
     headers:
-      apim-request-id: eb951022-2ef2-49d5-b733-7dbc93298aaa
+      apim-request-id: c87ad575-cd67-4931-85b3-819c3ab6075c
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1
-      date: Wed, 23 Jun 2021 01:54:27 GMT
+      date: Wed, 06 Oct 2021 21:04:26 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -31,5 +31,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com//text/analytics/v3.1/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
 version: 1

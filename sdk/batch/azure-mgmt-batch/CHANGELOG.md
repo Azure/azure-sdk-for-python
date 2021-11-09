@@ -1,5 +1,29 @@
 # Release History
 
+## 16.0.0 (2021-07-30)
+
+**Features**
+
+  - Model BatchAccount has a new parameter allowed_authentication_modes
+  - Model AutoStorageBaseProperties has a new parameter node_identity_reference
+  - Model AutoStorageBaseProperties has a new parameter authentication_mode
+  - Model AzureBlobFileSystemConfiguration has a new parameter identity_reference
+  - Model BatchAccountUpdateParameters has a new parameter allowed_authentication_modes
+  - Model ContainerRegistry has a new parameter identity_reference
+  - Model Operation has a new parameter is_data_action
+  - Model BatchAccountCreateParameters has a new parameter allowed_authentication_modes
+  - Model AutoStorageProperties has a new parameter node_identity_reference
+  - Model AutoStorageProperties has a new parameter authentication_mode
+  - Model ResourceFile has a new parameter identity_reference
+  - Model VirtualMachineConfiguration has a new parameter os_disk
+  - Added operation BatchAccountOperations.list_outbound_network_dependencies_endpoints
+  - Added operation LocationOperations.list_supported_cloud_service_skus
+  - Added operation LocationOperations.list_supported_virtual_machine_skus
+
+**Breaking changes**
+
+  - Rename `BatchManagement` to `BatchManagementClient`
+
 ## 15.0.0 (2021-02-01)
 
 - Fix changelog

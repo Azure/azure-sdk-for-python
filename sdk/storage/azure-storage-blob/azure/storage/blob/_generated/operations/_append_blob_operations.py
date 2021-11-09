@@ -67,8 +67,9 @@ class AppendBlobOperations(object):
         :param content_length: The length of the request.
         :type content_length: long
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param metadata: Optional. Specifies a user-defined name-value pair associated with the blob.
          If no name-value pairs are specified, the operation will copy the metadata from the source blob
@@ -266,8 +267,9 @@ class AppendBlobOperations(object):
         :param body: Initial data.
         :type body: IO
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param transactional_content_md5: Specify the transactional md5 for the body, to be validated
          by the service.
@@ -423,6 +425,7 @@ class AppendBlobOperations(object):
         timeout=None,  # type: Optional[int]
         transactional_content_md5=None,  # type: Optional[bytearray]
         request_id_parameter=None,  # type: Optional[str]
+        copy_source_authorization=None,  # type: Optional[str]
         cpk_info=None,  # type: Optional["_models.CpkInfo"]
         cpk_scope_info=None,  # type: Optional["_models.CpkScopeInfo"]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
@@ -450,8 +453,9 @@ class AppendBlobOperations(object):
          read from the copy source.
         :type source_contentcrc64: bytearray
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param transactional_content_md5: Specify the transactional md5 for the body, to be validated
          by the service.
@@ -459,6 +463,9 @@ class AppendBlobOperations(object):
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
+        :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
+         OAuth access token to copy source.
+        :type copy_source_authorization: str
         :param cpk_info: Parameter group.
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param cpk_scope_info: Parameter group.
@@ -583,6 +590,8 @@ class AppendBlobOperations(object):
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
+        if copy_source_authorization is not None:
+            header_parameters['x-ms-copy-source-authorization'] = self._serialize.header("copy_source_authorization", copy_source_authorization, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
@@ -627,8 +636,9 @@ class AppendBlobOperations(object):
         version 2019-12-12 version or later.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.

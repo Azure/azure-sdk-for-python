@@ -1,5 +1,10 @@
 # Release History
 
+## 1.1.0b1 (2021-11-09)
+### Features Added
+- Added support for Microsoft 365 Teams identities
+  - `CommunicationIdentityClient` added a new method `get_token_for_teams_user` that provides the ability to exchange an AAD access token of a Teams user for a Communication Identity access token
+
 ## 1.0.1 (2021-06-08)
 ### Bug Fixes
 - Fixed async client to use async bearer token credential policy instead of sync policy.

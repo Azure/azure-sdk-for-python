@@ -16,22 +16,22 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/keyPhrases?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/keyPhrases?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["good
         food","restaurant"],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}'
     headers:
       apim-request-id:
-      - e3f7eea8-32ba-4376-8fa6-076cb37bfeb4
+      - 387fd780-aaf6-4c25-b17d-1723f4ff8112
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
       date:
-      - Wed, 23 Jun 2021 01:54:56 GMT
+      - Wed, 06 Oct 2021 21:04:36 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -39,7 +39,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '15'
+      - '10'
     status:
       code: 200
       message: OK
@@ -60,9 +60,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/keyPhrases?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/keyPhrases?showStats=false
   response:
     body:
       string: '{"error":{"code":"401","message":"Access denied due to invalid subscription
@@ -70,13 +70,13 @@ interactions:
         subscription and use a correct regional API endpoint for your resource."}}'
     headers:
       apim-request-id:
-      - 7b2ffadd-7286-41b9-95bc-4b57a87a4bca
+      - 0a0a17e2-44dd-4758-814e-2751ae561b70
       content-length:
       - '224'
       content-type:
       - application/json
       date:
-      - Wed, 23 Jun 2021 01:54:56 GMT
+      - Wed, 06 Oct 2021 21:04:36 GMT
     status:
       code: 401
       message: PermissionDenied
@@ -97,22 +97,22 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/keyPhrases?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/keyPhrases?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["good
         food","restaurant"],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}'
     headers:
       apim-request-id:
-      - 9543423e-1894-43df-a7c1-0f856a293198
+      - 665e0d95-c0ae-445a-9ae0-be65b8fdd1c7
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
       date:
-      - Wed, 23 Jun 2021 01:54:56 GMT
+      - Wed, 06 Oct 2021 21:04:36 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -120,7 +120,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '17'
+      - '11'
     status:
       code: 200
       message: OK

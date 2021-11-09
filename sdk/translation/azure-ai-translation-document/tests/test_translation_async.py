@@ -6,14 +6,20 @@
 
 import functools
 import pytest
+import json
+import os
 from testcase import Document
 from asynctestcase import AsyncDocumentTranslationTest
 from preparer import DocumentTranslationPreparer, \
     DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
 from azure.core.exceptions import HttpResponseError
-from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
+from azure.storage.blob import ContainerClient
+from azure.ai.translation.document._generated.models import StartTranslationDetails as _StartTranslationDetails
+from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget, TranslationGlossary
 from azure.ai.translation.document.aio import DocumentTranslationClient
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
+
+GLOSSARY_FILE_NAME = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./glossaries-valid.csv"))
 
 
 class TestTranslation(AsyncDocumentTranslationTest):
@@ -346,7 +352,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
 
         async for doc in result:
             assert doc.status == "Failed"
-            assert doc.error.code == "WrongDocumentEncoding"
+            assert doc.error.code == "NoTranslatableText"
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -442,3 +448,104 @@ class TestTranslation(AsyncDocumentTranslationTest):
         async for doc in result:
             self._validate_doc_status(doc, target_language="es")
         await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+
+    @DocumentTranslationPreparer()
+    @DocumentTranslationClientPreparer()
+    async def test_single_input_with_kwargs(self, client):
+        # prepare containers and test data
+        source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'))
+        target_container_sas_url = self.create_target_container()
+
+        def callback(request):
+            req = _StartTranslationDetails.deserialize(json.loads(request.http_request.body))
+            input = req.inputs[0]
+            assert input.source.source_url == source_container_sas_url
+            assert input.source.language == "en"
+            assert input.source.filter.prefix == ""
+            assert input.source.filter.suffix == ".txt"
+            assert input.storage_type == "File"
+            assert input.targets[0].category == "fake"
+            assert input.targets[0].glossaries[0].format == "txt"
+            assert input.targets[0].glossaries[0].glossary_url == "https://glossaryfile.txt"
+            assert input.targets[0].language == "es"
+            assert input.targets[0].target_url == target_container_sas_url
+
+        async with client:
+            try:
+                poller = await client.begin_translation(
+                    source_container_sas_url,
+                    target_container_sas_url,
+                    "es",
+                    storage_type="File",
+                    source_language_code="en",
+                    prefix="",
+                    suffix=".txt",
+                    category_id="fake",
+                    glossaries=[TranslationGlossary(
+                        glossary_url="https://glossaryfile.txt",
+                        file_format="txt"
+                    )],
+                    raw_response_hook=callback
+                )
+                await poller.result()
+            except HttpResponseError as e:
+                pass
+
+    @DocumentTranslationPreparer()
+    @DocumentTranslationClientPreparer()
+    async def test_single_input_with_kwarg_successful(self, client):
+        # prepare containers and test data
+        source_container_sas_url = self.create_source_container(data=[Document(data=b'hello world', prefix="kwargs"),
+                                                                      Document(data=b'hello world')])
+        target_container_sas_url = self.create_target_container()
+
+        async with client:
+            poller = await client.begin_translation(
+                source_container_sas_url,
+                target_container_sas_url,
+                "fr",
+                prefix="kwargs"
+            )
+            result = await poller.result()
+            self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+            async for doc in result:
+                self._validate_doc_status(doc, target_language="fr")
+
+    @pytest.mark.live_test_only
+    @DocumentTranslationPreparer()
+    @DocumentTranslationClientPreparer()
+    async def test_translation_with_glossary(self, client):
+        doc = Document(data=b'testing')
+        source_container_sas_url = self.create_source_container(data=[doc])
+        target_container_sas_url = self.create_target_container()
+
+        container_client = ContainerClient(self.storage_endpoint, self.source_container_name,
+                                           self.storage_key)
+        with open(GLOSSARY_FILE_NAME, "rb") as fd:
+            container_client.upload_blob(name=GLOSSARY_FILE_NAME, data=fd.read())
+
+        prefix, suffix = source_container_sas_url.split("?")
+        glossary_file_sas_url = prefix + "/" + GLOSSARY_FILE_NAME + "?" + suffix
+        async with client:
+            poller = await client.begin_translation(
+                source_container_sas_url,
+                target_container_sas_url,
+                "es",
+                glossaries=[TranslationGlossary(glossary_url=glossary_file_sas_url, file_format="csv")]
+            )
+            result = await poller.result()
+
+        container_client = ContainerClient(self.storage_endpoint, self.target_container_name,
+                                           self.storage_key)
+
+        # download translated file and assert that translation reflects glossary changes
+        document = doc.name + doc.suffix
+        with open(document, "wb") as my_blob:
+            download_stream = container_client.download_blob(document)
+            my_blob.write(download_stream.readall())
+
+        with open(document, "rb") as fd:
+            translated = fd.readline()
+
+        assert b'essai' in translated  # glossary worked
+        os.remove(document)

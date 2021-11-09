@@ -45,7 +45,7 @@ class CassandraClustersOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListClusters"]:
         """List all managed Cassandra clusters in this subscription.
 
@@ -59,7 +59,7 @@ class CassandraClustersOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-10-15"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -112,7 +112,7 @@ class CassandraClustersOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListClusters"]:
         """List all managed Cassandra clusters in this resource group.
 
@@ -128,7 +128,7 @@ class CassandraClustersOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-10-15"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -141,7 +141,7 @@ class CassandraClustersOperations:
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -183,7 +183,7 @@ class CassandraClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ClusterResource":
         """Get the properties of a managed Cassandra cluster.
 
@@ -201,15 +201,15 @@ class CassandraClustersOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-10-15"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -241,22 +241,22 @@ class CassandraClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-10-15"
         accept = "application/json"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -285,7 +285,7 @@ class CassandraClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a managed Cassandra cluster.
 
@@ -295,8 +295,8 @@ class CassandraClustersOperations:
         :type cluster_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -327,8 +327,8 @@ class CassandraClustersOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$'),
         }
 
         if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -350,14 +350,14 @@ class CassandraClustersOperations:
         resource_group_name: str,
         cluster_name: str,
         body: "_models.ClusterResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ClusterResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ClusterResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-10-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -365,8 +365,8 @@ class CassandraClustersOperations:
         url = self._create_update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -407,7 +407,7 @@ class CassandraClustersOperations:
         resource_group_name: str,
         cluster_name: str,
         body: "_models.ClusterResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ClusterResource"]:
         """Create or update a managed Cassandra cluster. When updating, you must specify all writable
         properties. To update only some properties, use PATCH.
@@ -420,8 +420,8 @@ class CassandraClustersOperations:
         :type body: ~azure.mgmt.cosmosdb.models.ClusterResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ClusterResource or the result of cls(response)
@@ -456,8 +456,8 @@ class CassandraClustersOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$'),
         }
 
         if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -479,14 +479,14 @@ class CassandraClustersOperations:
         resource_group_name: str,
         cluster_name: str,
         body: "_models.ClusterResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ClusterResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ClusterResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-10-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -494,8 +494,8 @@ class CassandraClustersOperations:
         url = self._update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -536,7 +536,7 @@ class CassandraClustersOperations:
         resource_group_name: str,
         cluster_name: str,
         body: "_models.ClusterResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ClusterResource"]:
         """Updates some of the properties of a managed Cassandra cluster.
 
@@ -548,8 +548,8 @@ class CassandraClustersOperations:
         :type body: ~azure.mgmt.cosmosdb.models.ClusterResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ClusterResource or the result of cls(response)
@@ -584,8 +584,8 @@ class CassandraClustersOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$'),
         }
 
         if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -602,28 +602,28 @@ class CassandraClustersOperations:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/cassandraClusters/{clusterName}'}  # type: ignore
 
-    async def _request_repair_initial(
+    async def _invoke_command_initial(
         self,
         resource_group_name: str,
         cluster_name: str,
-        body: "_models.RepairPostBody",
-        **kwargs
-    ) -> None:
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        body: "_models.CommandPostBody",
+        **kwargs: Any
+    ) -> "_models.CommandOutput":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CommandOutput"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-10-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
-        url = self._request_repair_initial.metadata['url']  # type: ignore
+        url = self._invoke_command_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -637,55 +637,58 @@ class CassandraClustersOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(body, 'RepairPostBody')
+        body_content = self._serialize.body(body, 'CommandPostBody')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = self._deserialize('CommandOutput', pipeline_response)
+
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, deserialized, {})
 
-    _request_repair_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/cassandraClusters/{clusterName}/repair'}  # type: ignore
+        return deserialized
+    _invoke_command_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/cassandraClusters/{clusterName}/invokeCommand'}  # type: ignore
 
-    async def begin_request_repair(
+    async def begin_invoke_command(
         self,
         resource_group_name: str,
         cluster_name: str,
-        body: "_models.RepairPostBody",
-        **kwargs
-    ) -> AsyncLROPoller[None]:
-        """Request that repair begin on this cluster as soon as possible.
+        body: "_models.CommandPostBody",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.CommandOutput"]:
+        """Invoke a command like nodetool for cassandra maintenance.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param cluster_name: Managed Cassandra cluster name.
         :type cluster_name: str
-        :param body: Specification of what keyspaces and tables to run repair on.
-        :type body: ~azure.mgmt.cosmosdb.models.RepairPostBody
+        :param body: Specification which command to run where.
+        :type body: ~azure.mgmt.cosmosdb.models.CommandPostBody
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns either CommandOutput or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.CommandOutput]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CommandOutput"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = await self._request_repair_initial(
+            raw_result = await self._invoke_command_initial(
                 resource_group_name=resource_group_name,
                 cluster_name=cluster_name,
                 body=body,
@@ -697,13 +700,16 @@ class CassandraClustersOperations:
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('CommandOutput', pipeline_response)
+
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$'),
         }
 
         if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -718,28 +724,28 @@ class CassandraClustersOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_request_repair.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/cassandraClusters/{clusterName}/repair'}  # type: ignore
+    begin_invoke_command.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/cassandraClusters/{clusterName}/invokeCommand'}  # type: ignore
 
-    async def _fetch_node_status_initial(
+    async def _deallocate_initial(
         self,
         resource_group_name: str,
         cluster_name: str,
-        **kwargs
-    ) -> Optional["_models.ClusterNodeStatus"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ClusterNodeStatus"]]
+        **kwargs: Any
+    ) -> None:
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-10-15"
         accept = "application/json"
 
         # Construct URL
-        url = self._fetch_node_status_initial.metadata['url']  # type: ignore
+        url = self._deallocate_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -755,27 +761,24 @@ class CassandraClustersOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('ClusterNodeStatus', pipeline_response)
-
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, None, {})
 
-        return deserialized
-    _fetch_node_status_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/cassandraClusters/{clusterName}/fetchNodeStatus'}  # type: ignore
+    _deallocate_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/cassandraClusters/{clusterName}/deallocate'}  # type: ignore
 
-    async def begin_fetch_node_status(
+    async def begin_deallocate(
         self,
         resource_group_name: str,
         cluster_name: str,
-        **kwargs
-    ) -> AsyncLROPoller["_models.ClusterNodeStatus"]:
-        """Request the status of all nodes in the cluster (as returned by 'nodetool status').
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Deallocate the Managed Cassandra Cluster and Associated Data Centers. Deallocation will
+        deallocate the host virtual machine of this cluster, and reserved the data disk. This won't do
+        anything on an already deallocated cluster. Use Start to restart the cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -783,23 +786,23 @@ class CassandraClustersOperations:
         :type cluster_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either ClusterNodeStatus or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.ClusterNodeStatus]
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ClusterNodeStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = await self._fetch_node_status_initial(
+            raw_result = await self._deallocate_initial(
                 resource_group_name=resource_group_name,
                 cluster_name=cluster_name,
                 cls=lambda x,y,z: x,
@@ -810,16 +813,13 @@ class CassandraClustersOperations:
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('ClusterNodeStatus', pipeline_response)
-
             if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
+                return cls(pipeline_response, None, {})
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$'),
         }
 
         if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -834,117 +834,149 @@ class CassandraClustersOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_fetch_node_status.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/cassandraClusters/{clusterName}/fetchNodeStatus'}  # type: ignore
+    begin_deallocate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/cassandraClusters/{clusterName}/deallocate'}  # type: ignore
 
-    def list_backups(
+    async def _start_initial(
         self,
         resource_group_name: str,
         cluster_name: str,
-        **kwargs
-    ) -> AsyncIterable["_models.ListBackups"]:
-        """List the backups of this cluster that are available to restore.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param cluster_name: Managed Cassandra cluster name.
-        :type cluster_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ListBackups or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.ListBackups]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListBackups"]
+        **kwargs: Any
+    ) -> None:
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
-        accept = "application/json"
-
-        def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-            if not next_link:
-                # Construct URL
-                url = self.list_backups.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-                request = self._client.get(url, query_parameters, header_parameters)
-            else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize('ListBackups', pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_backups.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/cassandraClusters/{clusterName}/backups'}  # type: ignore
-
-    async def get_backup(
-        self,
-        resource_group_name: str,
-        cluster_name: str,
-        backup_id: str,
-        **kwargs
-    ) -> "_models.BackupResource":
-        """Get the properties of an individual backup of this cluster that is available to restore.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param cluster_name: Managed Cassandra cluster name.
-        :type cluster_name: str
-        :param backup_id: Id of a restorable backup of a Cassandra cluster.
-        :type backup_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: BackupResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.cosmosdb.models.BackupResource
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupResource"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-10-15"
         accept = "application/json"
 
         # Construct URL
-        url = self.get_backup.metadata['url']  # type: ignore
+        url = self._start_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*'),
-            'backupId': self._serialize.url("backup_id", backup_id, 'str', max_length=15, min_length=1, pattern=r'^[0-9]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.post(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    _start_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/cassandraClusters/{clusterName}/start'}  # type: ignore
+
+    async def begin_start(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Start the Managed Cassandra Cluster and Associated Data Centers. Start will start the host
+        virtual machine of this cluster with reserved data disk. This won't do anything on an already
+        running cluster. Use Deallocate to deallocate the cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param cluster_name: Managed Cassandra cluster name.
+        :type cluster_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._start_initial(
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_start.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/cassandraClusters/{clusterName}/start'}  # type: ignore
+
+    async def status(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        **kwargs: Any
+    ) -> "_models.CassandraClusterPublicStatus":
+        """Gets the CPU, memory, and disk usage statistics for each Cassandra node in a cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param cluster_name: Managed Cassandra cluster name.
+        :type cluster_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: CassandraClusterPublicStatus, or the result of cls(response)
+        :rtype: ~azure.mgmt.cosmosdb.models.CassandraClusterPublicStatus
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CassandraClusterPublicStatus"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-10-15"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.status.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -964,10 +996,10 @@ class CassandraClustersOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('BackupResource', pipeline_response)
+        deserialized = self._deserialize('CassandraClusterPublicStatus', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_backup.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/cassandraClusters/{clusterName}/backups/{backupId}'}  # type: ignore
+    status.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/cassandraClusters/{clusterName}/status'}  # type: ignore

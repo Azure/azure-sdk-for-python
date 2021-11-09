@@ -45,7 +45,7 @@ class NotificationRecipientEmailOperations:
         resource_group_name: str,
         service_name: str,
         notification_name: Union[str, "_models.NotificationName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RecipientEmailCollection":
         """Gets the list of the Notification Recipient Emails subscribed to a notification.
 
@@ -92,7 +92,7 @@ class NotificationRecipientEmailOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RecipientEmailCollection', pipeline_response)
@@ -109,7 +109,7 @@ class NotificationRecipientEmailOperations:
         service_name: str,
         notification_name: Union[str, "_models.NotificationName"],
         email: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Determine if Notification Recipient Email subscribed to the notification.
 
@@ -159,7 +159,7 @@ class NotificationRecipientEmailOperations:
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -174,7 +174,7 @@ class NotificationRecipientEmailOperations:
         service_name: str,
         notification_name: Union[str, "_models.NotificationName"],
         email: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RecipientEmailContract":
         """Adds the Email address to the list of Recipients for the Notification.
 
@@ -224,7 +224,7 @@ class NotificationRecipientEmailOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -245,7 +245,7 @@ class NotificationRecipientEmailOperations:
         service_name: str,
         notification_name: Union[str, "_models.NotificationName"],
         email: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Removes the email from the list of Notification.
 
@@ -295,7 +295,7 @@ class NotificationRecipientEmailOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

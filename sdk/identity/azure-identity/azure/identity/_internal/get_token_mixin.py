@@ -7,6 +7,7 @@ import logging
 import time
 from typing import TYPE_CHECKING
 
+from . import within_credential_chain
 from .._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
 
 try:
@@ -56,8 +57,7 @@ class GetTokenMixin(ABC):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
-        :keyword str tenant_id: optional tenant to include in the token request. If **allow_multitenant_authentication**
-            is False, specifying a tenant with this argument may raise an exception.
+        :keyword str tenant_id: optional tenant to include in the token request.
 
         :rtype: :class:`azure.core.credentials.AccessToken`
 
@@ -80,11 +80,19 @@ class GetTokenMixin(ABC):
                     token = self._request_token(*scopes, **kwargs)
                 except Exception:  # pylint:disable=broad-except
                     pass
-            _LOGGER.info("%s.get_token succeeded", self.__class__.__name__)
+            _LOGGER.log(
+                logging.DEBUG if within_credential_chain.get() else logging.INFO,
+                "%s.get_token succeeded",
+                self.__class__.__name__,
+            )
             return token
 
         except Exception as ex:
-            _LOGGER.warning(
-                "%s.get_token failed: %s", self.__class__.__name__, ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG)
+            _LOGGER.log(
+                logging.DEBUG if within_credential_chain.get() else logging.WARNING,
+                "%s.get_token failed: %s",
+                self.__class__.__name__,
+                ex,
+                exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
             )
             raise

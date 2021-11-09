@@ -33,9 +33,6 @@ NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])
 all_api_versions = get_decorator()
 only_hsm = get_decorator(only_hsm=True)
 no_get = get_decorator(permissions=NO_GET)
-no_get_exclude_7_3_preview = get_decorator(
-    api_versions=[v for v in ApiVersion if v != ApiVersion.V7_3_PREVIEW], permissions=NO_GET
-)
 
 
 class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
@@ -177,7 +174,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         crypto_client.verify(SignatureAlgorithm.rs256, hashlib.sha256(self.plaintext).digest(), self.plaintext)
         crypto_client.wrap_key(KeyWrapAlgorithm.rsa_oaep, self.plaintext)
 
-    @no_get_exclude_7_3_preview()
+    @no_get()
     @client_setup
     def test_encrypt_and_decrypt(self, key_client, is_hsm, **kwargs):
         key_name = self.get_resource_name("keycrypt")
@@ -193,7 +190,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         self.assertEqual(EncryptionAlgorithm.rsa_oaep, result.algorithm)
         self.assertEqual(self.plaintext, result.plaintext)
 
-    @no_get_exclude_7_3_preview()
+    @no_get()
     @client_setup
     def test_sign_and_verify(self, key_client, is_hsm, **kwargs):
         key_name = self.get_resource_name("keysign")

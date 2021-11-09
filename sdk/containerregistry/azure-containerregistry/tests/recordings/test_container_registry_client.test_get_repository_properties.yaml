@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/library%2Falpine
   response:
@@ -30,7 +30,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 19 May 2021 21:03:11 GMT
+      - Mon, 30 Aug 2021 20:30:51 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -55,11 +55,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1343'
+      - '1337'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/exchange
   response:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 19 May 2021 21:03:12 GMT
+      - Mon, 30 Aug 2021 20:30:52 GMT
       server:
       - openresty
       strict-transport-security:
@@ -79,7 +79,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.65'
+      - '165.983333'
     status:
       code: 200
       message: OK
@@ -93,11 +93,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1146'
+      - '1156'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -109,7 +109,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 19 May 2021 21:03:13 GMT
+      - Mon, 30 Aug 2021 20:30:52 GMT
       server:
       - openresty
       strict-transport-security:
@@ -117,7 +117,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.633333'
+      - '165.866667'
     status:
       code: 200
       message: OK
@@ -131,14 +131,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/library%2Falpine
   response:
     body:
-      string: '{"registry": "fake_url.azurecr.io", "imageName": "library/alpine",
-        "createdTime": "2021-04-13T15:11:45.5428414Z", "lastUpdateTime": "2021-04-15T18:49:49.3963093Z",
-        "manifestCount": 16, "tagCount": 1, "changeableAttributes": {"deleteEnabled":
+      string: '{"registry": "yalinlitests.azurecr.io", "imageName": "library/alpine",
+        "createdTime": "2021-08-30T10:55:28.7695998Z", "lastUpdateTime": "2021-08-30T10:55:27.2388907Z",
+        "manifestCount": 8, "tagCount": 1, "changeableAttributes": {"deleteEnabled":
         true, "writeEnabled": true, "readEnabled": true, "listEnabled": true, "teleportEnabled":
         false}}'
     headers:
@@ -150,11 +150,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '317'
+      - '320'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 19 May 2021 21:03:14 GMT
+      - Mon, 30 Aug 2021 20:30:52 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

@@ -40,9 +40,6 @@ class CertificateCredential(AsyncContextManager, GetTokenMixin):
     :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
           will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
-    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
-        the application is registered in. When False, which is the default, the credential will acquire tokens only from
-        the tenant specified by **tenant_id**.
     """
 
     def __init__(self, tenant_id, client_id, certificate_path=None, **kwargs):

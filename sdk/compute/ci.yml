@@ -34,3 +34,5 @@ extends:
       safeName: azuremgmtimagebuilder
     - name: azure-mgmt-vmwarecloudsimple
       safeName: azuremgmtvmwarecloudsimple
+    - name: azure-mgmt-avs
+      safeName: azuremgmtavs

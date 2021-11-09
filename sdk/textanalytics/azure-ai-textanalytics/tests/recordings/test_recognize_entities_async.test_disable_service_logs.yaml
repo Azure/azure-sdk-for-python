@@ -10,23 +10,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/entities/recognition/general?showStats=false&loggingOptOut=true&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/recognition/general?showStats=false&loggingOptOut=true&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"id":"0","entities":[{"text":"logging","category":"Skill","offset":9,"length":7,"confidenceScore":0.61}],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}'
     headers:
-      apim-request-id: 9b40863d-e033-483e-afc0-f5eb6648489d
+      apim-request-id: 8043fdac-7977-4827-8681-e633e29f33a9
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1
-      date: Wed, 23 Jun 2021 01:56:19 GMT
+      date: Wed, 06 Oct 2021 21:05:02 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '20'
+      x-envoy-upstream-service-time: '21'
     status:
       code: 200
       message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com//text/analytics/v3.1/entities/recognition/general?showStats=false&loggingOptOut=true&stringIndexType=UnicodeCodePoint
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/entities/recognition/general?showStats=false&loggingOptOut=true&stringIndexType=UnicodeCodePoint
 version: 1

@@ -48,6 +48,7 @@ class SecurityPINsOperations(object):
         self,
         vault_name,  # type: str
         resource_group_name,  # type: str
+        parameters=None,  # type: Optional["_models.SecurityPinBase"]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.TokenInformation"
@@ -58,6 +59,8 @@ class SecurityPINsOperations(object):
         :param resource_group_name: The name of the resource group where the recovery services vault is
          present.
         :type resource_group_name: str
+        :param parameters: security pin request.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.SecurityPinBase
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TokenInformation, or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.models.TokenInformation
@@ -68,7 +71,8 @@ class SecurityPINsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-08-01"
+        content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
@@ -86,9 +90,16 @@ class SecurityPINsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        request = self._client.post(url, query_parameters, header_parameters)
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        if parameters is not None:
+            body_content = self._serialize.body(parameters, 'SecurityPinBase')
+        else:
+            body_content = None
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 

@@ -23,6 +23,12 @@
                 "description": "The client OID to grant access to test resources."
             }
         },
+        "provisionerApplicationOid": {
+            "type": "string",
+            "metadata": {
+                "description": "The provisioner OID to grant access to test resources."
+            }
+        },
         "location": {
             "type": "string",
             "defaultValue": "[resourceGroup().location]",
@@ -73,9 +79,17 @@
             "metadata": {
                 "description": "Key Vault SKU to deploy. The default is 'premium'"
             }
+        },
+        "attestationUri": {
+            "type": "string",
+            "defaultValue": "https://skrattestation.azurewebsites.net/",
+            "metadata": {
+                "description": "Test attestation service for Secure Key Release."
+            }
         }
     },
     "variables": {
+        "kvApiVersion": "2019-09-01",
         "azureKeyVaultUrl": "[format('https://{0}{1}', parameters('baseName'), parameters('keyVaultDomainSuffix'))]",
         "hsmApiVersion": "2021-04-01-preview",
         "hsmName": "[concat(parameters('baseName'), 'hsm')]",
@@ -100,7 +114,7 @@
     "resources": [
         {
             "type": "Microsoft.KeyVault/vaults",
-            "apiVersion": "2016-10-01",
+            "apiVersion": "[variables('kvApiVersion')]",
             "name": "[parameters('baseName')]",
             "location": "[parameters('location')]",
             "properties": {
@@ -130,7 +144,9 @@
                                 "wrapKey",
                                 "verify",
                                 "sign",
-                                "purge"
+                                "purge",
+                                "rotate",
+                                "release"
                             ],
                             "secrets": [
                                 "get",
@@ -181,13 +197,12 @@
             },
             "properties": {
                 "tenantId": "[parameters('tenantId')]",
-                "initialAdminObjectIds": [
-                    "[parameters('testApplicationOid')]"
-                ],
+                "initialAdminObjectIds": "[union(array(parameters('testApplicationOid')), array(parameters('provisionerApplicationOid')))]",
                 "enablePurgeProtection": false,
                 "enableSoftDelete": true,
                 "publicNetworkAccess": "Enabled",
-                "networkAcls": "[variables('networkAcls')]"
+                "networkAcls": "[variables('networkAcls')]",
+                "softDeleteRetentionInDays": 7
             }
         },
         {
@@ -269,6 +284,11 @@
         "BLOB_CONTAINER_NAME" : {
             "type": "string",
             "value": "[variables('blobContainerName')]"
+        },
+        "AZURE_KEYVAULT_ATTESTATION_URI": {
+            "type": "string",
+            "condition": "[parameters('enableHsm')]",
+            "value": "[parameters('attestationUri')]"
         }
     }
 }

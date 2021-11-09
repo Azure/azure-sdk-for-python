@@ -1,464 +1,136 @@
 interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [], "entityRecognitionPiiTasks": [{"parameters":
-      {"model-version": "latest", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}}],
-      "keyPhraseExtractionTasks": [], "entityLinkingTasks": [], "sentimentAnalysisTasks":
-      [{"parameters": {"model-version": "latest", "loggingOptOut": false, "opinionMining":
-      false}}]}, "analysisInput": {"documents": [{"id": "1", "text": "I did not like
-      the hotel we stayed at.", "language": "tr"}, {"id": "2", "text": "I did not
-      like the hotel we stayed at.", "language": "en"}]}}'
+      {"model-version": "latest", "loggingOptOut": true, "stringIndexType": "UnicodeCodePoint"},
+      "taskName": "1"}], "keyPhraseExtractionTasks": [], "entityLinkingTasks": [],
+      "sentimentAnalysisTasks": [{"parameters": {"model-version": "latest", "loggingOptOut":
+      false, "opinionMining": false}, "taskName": "0"}], "extractiveSummarizationTasks":
+      [], "customEntityRecognitionTasks": [], "customSingleClassificationTasks": [],
+      "customMultiClassificationTasks": []}, "analysisInput": {"documents": [{"id":
+      "1", "text": "I did not like the hotel we stayed at.", "language": "tr"}, {"id":
+      "2", "text": "I did not like the hotel we stayed at.", "language": "en"}]}}'
     headers:
       Accept:
       - application/json, text/json
       Content-Length:
-      - '555'
+      - '737'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 61226cfa-0306-46b0-b467-eecf42775afb
-      date: Mon, 28 Jun 2021 19:25:12 GMT
-      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
+      apim-request-id: 69aa1b1b-83c3-42fb-bf39-bdcc1f50a66d
+      date: Thu, 07 Oct 2021 23:57:22 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/c600d945-94d3-4db6-821b-42d33eff12c6
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '255'
+      x-envoy-upstream-service-time: '243'
     status:
       code: 202
       message: Accepted
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com//text/analytics/v3.1/analyze
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/analyze
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/c600d945-94d3-4db6-821b-42d33eff12c6
   response:
     body:
-      string: '{"jobId":"aa2f2093-1f06-4217-b837-f7ef4b4a6939","lastUpdateDateTime":"2021-06-28T19:25:13Z","createdDateTime":"2021-06-28T19:25:12Z","expirationDateTime":"2021-06-29T19:25:12Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":2,"total":2}}'
+      string: '{"jobId":"c600d945-94d3-4db6-821b-42d33eff12c6","lastUpdateDateTime":"2021-10-07T23:57:22Z","createdDateTime":"2021-10-07T23:57:22Z","expirationDateTime":"2021-10-08T23:57:22Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":2,"total":2}}'
     headers:
-      apim-request-id: 21fa727e-a1ef-4d52-b14f-657e8b8e9545
+      apim-request-id: 938ac093-efff-48a4-be30-4e5fdd6230d4
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Jun 2021 19:25:17 GMT
+      date: Thu, 07 Oct 2021 23:57:27 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '8'
+      x-envoy-upstream-service-time: '39'
     status:
       code: 200
       message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/c600d945-94d3-4db6-821b-42d33eff12c6
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/c600d945-94d3-4db6-821b-42d33eff12c6
   response:
     body:
-      string: '{"jobId":"aa2f2093-1f06-4217-b837-f7ef4b4a6939","lastUpdateDateTime":"2021-06-28T19:25:21Z","createdDateTime":"2021-06-28T19:25:12Z","expirationDateTime":"2021-06-29T19:25:12Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":2,"total":2}}'
+      string: '{"jobId":"c600d945-94d3-4db6-821b-42d33eff12c6","lastUpdateDateTime":"2021-10-07T23:57:28Z","createdDateTime":"2021-10-07T23:57:22Z","expirationDateTime":"2021-10-08T23:57:22Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":2,"total":2}}'
     headers:
-      apim-request-id: 9d37b0a2-0614-4da1-97b4-1fd4862d8b9f
+      apim-request-id: 26ca24e1-50e5-4b1b-8979-cdb28b297c66
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Jun 2021 19:25:22 GMT
+      date: Thu, 07 Oct 2021 23:57:32 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '8'
+      x-envoy-upstream-service-time: '11'
     status:
       code: 200
       message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/c600d945-94d3-4db6-821b-42d33eff12c6
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/c600d945-94d3-4db6-821b-42d33eff12c6
   response:
     body:
-      string: '{"jobId":"aa2f2093-1f06-4217-b837-f7ef4b4a6939","lastUpdateDateTime":"2021-06-28T19:25:21Z","createdDateTime":"2021-06-28T19:25:12Z","expirationDateTime":"2021-06-29T19:25:12Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":2,"total":2}}'
-    headers:
-      apim-request-id: e81c373e-c007-46ad-93e6-ebb13efbf1ff
-      content-type: application/json; charset=utf-8
-      date: Mon, 28 Jun 2021 19:25:27 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '8'
-    status:
-      code: 200
-      message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-  response:
-    body:
-      string: '{"jobId":"aa2f2093-1f06-4217-b837-f7ef4b4a6939","lastUpdateDateTime":"2021-06-28T19:25:21Z","createdDateTime":"2021-06-28T19:25:12Z","expirationDateTime":"2021-06-29T19:25:12Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":2,"total":2}}'
-    headers:
-      apim-request-id: 1afd00f2-e5e5-4e7b-bb03-0314aa1cad81
-      content-type: application/json; charset=utf-8
-      date: Mon, 28 Jun 2021 19:25:32 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '7'
-    status:
-      code: 200
-      message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-  response:
-    body:
-      string: '{"jobId":"aa2f2093-1f06-4217-b837-f7ef4b4a6939","lastUpdateDateTime":"2021-06-28T19:25:34Z","createdDateTime":"2021-06-28T19:25:12Z","expirationDateTime":"2021-06-29T19:25:12Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":1,"total":2,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-06-28T19:25:34.2634134Z","taskName":"PersonallyIdentifiableInformation_latest","state":"succeeded","results":{"documents":[{"redactedText":"I
+      string: '{"jobId":"c600d945-94d3-4db6-821b-42d33eff12c6","lastUpdateDateTime":"2021-10-07T23:57:36Z","createdDateTime":"2021-10-07T23:57:22Z","expirationDateTime":"2021-10-08T23:57:22Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":1,"total":2,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-10-07T23:57:36.3576004Z","taskName":"1","state":"succeeded","results":{"documents":[{"redactedText":"I
         did not like the hotel we stayed at.","id":"2","entities":[],"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
         language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
         For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}]}}'
     headers:
-      apim-request-id: 15384809-ab0f-4140-93c4-00a07625189c
+      apim-request-id: b6edafd9-fa99-4af3-9da8-9b74facc8634
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Jun 2021 19:25:37 GMT
+      date: Thu, 07 Oct 2021 23:57:37 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '65'
+      x-envoy-upstream-service-time: '240'
     status:
       code: 200
       message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/c600d945-94d3-4db6-821b-42d33eff12c6
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/c600d945-94d3-4db6-821b-42d33eff12c6
   response:
     body:
-      string: '{"jobId":"aa2f2093-1f06-4217-b837-f7ef4b4a6939","lastUpdateDateTime":"2021-06-28T19:25:34Z","createdDateTime":"2021-06-28T19:25:12Z","expirationDateTime":"2021-06-29T19:25:12Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":1,"total":2,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-06-28T19:25:34.2634134Z","taskName":"PersonallyIdentifiableInformation_latest","state":"succeeded","results":{"documents":[{"redactedText":"I
+      string: '{"jobId":"c600d945-94d3-4db6-821b-42d33eff12c6","lastUpdateDateTime":"2021-10-07T23:57:39Z","createdDateTime":"2021-10-07T23:57:22Z","expirationDateTime":"2021-10-08T23:57:22Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":2,"failed":0,"inProgress":0,"total":2,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-10-07T23:57:36.3576004Z","taskName":"1","state":"succeeded","results":{"documents":[{"redactedText":"I
         did not like the hotel we stayed at.","id":"2","entities":[],"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
         language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}]}}'
-    headers:
-      apim-request-id: 3a293ebe-0745-484e-b1ba-0edbc1337e22
-      content-type: application/json; charset=utf-8
-      date: Mon, 28 Jun 2021 19:25:42 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '71'
-    status:
-      code: 200
-      message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-  response:
-    body:
-      string: '{"jobId":"aa2f2093-1f06-4217-b837-f7ef4b4a6939","lastUpdateDateTime":"2021-06-28T19:25:34Z","createdDateTime":"2021-06-28T19:25:12Z","expirationDateTime":"2021-06-29T19:25:12Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":1,"total":2,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-06-28T19:25:34.2634134Z","taskName":"PersonallyIdentifiableInformation_latest","state":"succeeded","results":{"documents":[{"redactedText":"I
-        did not like the hotel we stayed at.","id":"2","entities":[],"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}]}}'
-    headers:
-      apim-request-id: 1baa9f96-aad2-4904-a1bb-662e55b530af
-      content-type: application/json; charset=utf-8
-      date: Mon, 28 Jun 2021 19:25:48 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '57'
-    status:
-      code: 200
-      message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-  response:
-    body:
-      string: '{"jobId":"aa2f2093-1f06-4217-b837-f7ef4b4a6939","lastUpdateDateTime":"2021-06-28T19:25:34Z","createdDateTime":"2021-06-28T19:25:12Z","expirationDateTime":"2021-06-29T19:25:12Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":1,"total":2,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-06-28T19:25:34.2634134Z","taskName":"PersonallyIdentifiableInformation_latest","state":"succeeded","results":{"documents":[{"redactedText":"I
-        did not like the hotel we stayed at.","id":"2","entities":[],"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}]}}'
-    headers:
-      apim-request-id: 4799f672-496a-4abc-b3b6-79b407872ddb
-      content-type: application/json; charset=utf-8
-      date: Mon, 28 Jun 2021 19:25:53 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '72'
-    status:
-      code: 200
-      message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-  response:
-    body:
-      string: '{"jobId":"aa2f2093-1f06-4217-b837-f7ef4b4a6939","lastUpdateDateTime":"2021-06-28T19:25:34Z","createdDateTime":"2021-06-28T19:25:12Z","expirationDateTime":"2021-06-29T19:25:12Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":1,"total":2,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-06-28T19:25:34.2634134Z","taskName":"PersonallyIdentifiableInformation_latest","state":"succeeded","results":{"documents":[{"redactedText":"I
-        did not like the hotel we stayed at.","id":"2","entities":[],"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}]}}'
-    headers:
-      apim-request-id: 6a579ec0-204d-49e3-87a6-2570d3b20a6e
-      content-type: application/json; charset=utf-8
-      date: Mon, 28 Jun 2021 19:25:58 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '241'
-    status:
-      code: 200
-      message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-  response:
-    body:
-      string: '{"jobId":"aa2f2093-1f06-4217-b837-f7ef4b4a6939","lastUpdateDateTime":"2021-06-28T19:25:34Z","createdDateTime":"2021-06-28T19:25:12Z","expirationDateTime":"2021-06-29T19:25:12Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":1,"total":2,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-06-28T19:25:34.2634134Z","taskName":"PersonallyIdentifiableInformation_latest","state":"succeeded","results":{"documents":[{"redactedText":"I
-        did not like the hotel we stayed at.","id":"2","entities":[],"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}]}}'
-    headers:
-      apim-request-id: 6d6b9964-8389-46a9-adcc-692e0c2ae6e8
-      content-type: application/json; charset=utf-8
-      date: Mon, 28 Jun 2021 19:26:03 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '63'
-    status:
-      code: 200
-      message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-  response:
-    body:
-      string: '{"jobId":"aa2f2093-1f06-4217-b837-f7ef4b4a6939","lastUpdateDateTime":"2021-06-28T19:25:34Z","createdDateTime":"2021-06-28T19:25:12Z","expirationDateTime":"2021-06-29T19:25:12Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":1,"total":2,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-06-28T19:25:34.2634134Z","taskName":"PersonallyIdentifiableInformation_latest","state":"succeeded","results":{"documents":[{"redactedText":"I
-        did not like the hotel we stayed at.","id":"2","entities":[],"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}]}}'
-    headers:
-      apim-request-id: 7d914371-eeb7-4726-a41a-9f0293b42ea2
-      content-type: application/json; charset=utf-8
-      date: Mon, 28 Jun 2021 19:26:08 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '103'
-    status:
-      code: 200
-      message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-  response:
-    body:
-      string: '{"jobId":"aa2f2093-1f06-4217-b837-f7ef4b4a6939","lastUpdateDateTime":"2021-06-28T19:25:34Z","createdDateTime":"2021-06-28T19:25:12Z","expirationDateTime":"2021-06-29T19:25:12Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":1,"total":2,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-06-28T19:25:34.2634134Z","taskName":"PersonallyIdentifiableInformation_latest","state":"succeeded","results":{"documents":[{"redactedText":"I
-        did not like the hotel we stayed at.","id":"2","entities":[],"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}]}}'
-    headers:
-      apim-request-id: 341dba88-86f5-46f9-a602-0a5063c60aa5
-      content-type: application/json; charset=utf-8
-      date: Mon, 28 Jun 2021 19:26:13 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '71'
-    status:
-      code: 200
-      message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-  response:
-    body:
-      string: '{"jobId":"aa2f2093-1f06-4217-b837-f7ef4b4a6939","lastUpdateDateTime":"2021-06-28T19:25:34Z","createdDateTime":"2021-06-28T19:25:12Z","expirationDateTime":"2021-06-29T19:25:12Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":1,"total":2,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-06-28T19:25:34.2634134Z","taskName":"PersonallyIdentifiableInformation_latest","state":"succeeded","results":{"documents":[{"redactedText":"I
-        did not like the hotel we stayed at.","id":"2","entities":[],"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}]}}'
-    headers:
-      apim-request-id: 70ed833f-890d-40cd-b36d-86973097c581
-      content-type: application/json; charset=utf-8
-      date: Mon, 28 Jun 2021 19:26:19 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '58'
-    status:
-      code: 200
-      message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-  response:
-    body:
-      string: '{"jobId":"aa2f2093-1f06-4217-b837-f7ef4b4a6939","lastUpdateDateTime":"2021-06-28T19:25:34Z","createdDateTime":"2021-06-28T19:25:12Z","expirationDateTime":"2021-06-29T19:25:12Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":1,"total":2,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-06-28T19:25:34.2634134Z","taskName":"PersonallyIdentifiableInformation_latest","state":"succeeded","results":{"documents":[{"redactedText":"I
-        did not like the hotel we stayed at.","id":"2","entities":[],"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}]}}'
-    headers:
-      apim-request-id: 7c68562e-cb1a-428a-a298-f78b434f014f
-      content-type: application/json; charset=utf-8
-      date: Mon, 28 Jun 2021 19:26:24 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '77'
-    status:
-      code: 200
-      message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-  response:
-    body:
-      string: '{"jobId":"aa2f2093-1f06-4217-b837-f7ef4b4a6939","lastUpdateDateTime":"2021-06-28T19:25:34Z","createdDateTime":"2021-06-28T19:25:12Z","expirationDateTime":"2021-06-29T19:25:12Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":1,"total":2,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-06-28T19:25:34.2634134Z","taskName":"PersonallyIdentifiableInformation_latest","state":"succeeded","results":{"documents":[{"redactedText":"I
-        did not like the hotel we stayed at.","id":"2","entities":[],"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}]}}'
-    headers:
-      apim-request-id: 8aed1d3f-34b7-46ef-8349-78667ce43f79
-      content-type: application/json; charset=utf-8
-      date: Mon, 28 Jun 2021 19:26:29 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '51'
-    status:
-      code: 200
-      message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-  response:
-    body:
-      string: '{"jobId":"aa2f2093-1f06-4217-b837-f7ef4b4a6939","lastUpdateDateTime":"2021-06-28T19:25:34Z","createdDateTime":"2021-06-28T19:25:12Z","expirationDateTime":"2021-06-29T19:25:12Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":1,"total":2,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-06-28T19:25:34.2634134Z","taskName":"PersonallyIdentifiableInformation_latest","state":"succeeded","results":{"documents":[{"redactedText":"I
-        did not like the hotel we stayed at.","id":"2","entities":[],"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}]}}'
-    headers:
-      apim-request-id: d2e0a9a8-bd41-40cb-b650-79f3221f21b0
-      content-type: application/json; charset=utf-8
-      date: Mon, 28 Jun 2021 19:26:34 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '54'
-    status:
-      code: 200
-      message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
-  response:
-    body:
-      string: '{"jobId":"aa2f2093-1f06-4217-b837-f7ef4b4a6939","lastUpdateDateTime":"2021-06-28T19:26:35Z","createdDateTime":"2021-06-28T19:25:12Z","expirationDateTime":"2021-06-29T19:25:12Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":2,"failed":0,"inProgress":0,"total":2,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-06-28T19:25:34.2634134Z","taskName":"PersonallyIdentifiableInformation_latest","state":"succeeded","results":{"documents":[{"redactedText":"I
-        did not like the hotel we stayed at.","id":"2","entities":[],"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-06-28T19:26:35.6132719Z","taskName":"SentimentAnalysis_latest","state":"succeeded","results":{"documents":[{"id":"1","sentiment":"neutral","confidenceScores":{"positive":0.06,"neutral":0.55,"negative":0.39},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.06,"neutral":0.55,"negative":0.39},"offset":0,"length":38,"text":"I
+        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-10-07T23:57:39.896461Z","taskName":"0","state":"succeeded","results":{"documents":[{"id":"1","sentiment":"neutral","confidenceScores":{"positive":0.06,"neutral":0.55,"negative":0.39},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.06,"neutral":0.55,"negative":0.39},"offset":0,"length":38,"text":"I
         did not like the hotel we stayed at."}],"warnings":[]},{"id":"2","sentiment":"negative","confidenceScores":{"positive":0.01,"neutral":0.45,"negative":0.54},"sentences":[{"sentiment":"negative","confidenceScores":{"positive":0.01,"neutral":0.45,"negative":0.54},"offset":0,"length":38,"text":"I
         did not like the hotel we stayed at."}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}]}}'
     headers:
-      apim-request-id: 723a8429-eca1-4b75-8e7a-ce307d921c39
+      apim-request-id: d3d0a485-37da-4eec-a31a-6c6a4334ea3d
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Jun 2021 19:26:39 GMT
+      date: Thu, 07 Oct 2021 23:57:42 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '117'
+      x-envoy-upstream-service-time: '250'
     status:
       code: 200
       message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/aa2f2093-1f06-4217-b837-f7ef4b4a6939
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/c600d945-94d3-4db6-821b-42d33eff12c6
 version: 1

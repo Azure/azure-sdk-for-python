@@ -32,7 +32,12 @@ from ._models import (
     RecognizePiiEntitiesResult,
     PiiEntity,
     AnalyzeHealthcareEntitiesResult,
+    ExtractSummaryResult,
     _AnalyzeActionsType,
+    RecognizeCustomEntitiesResult,
+    SingleCategoryClassifyResult,
+    MultiCategoryClassifyResult,
+    ActionPointerKind
 )
 
 
@@ -100,7 +105,10 @@ def prepare_result(func):
             for idx, item in enumerate(results):
                 if hasattr(item, "error"):
                     results[idx] = DocumentError(
-                        id=item.id, error=TextAnalyticsError._from_generated(item.error)  # pylint: disable=protected-access
+                        id=item.id,
+                        error=TextAnalyticsError._from_generated(  # pylint: disable=protected-access
+                            item.error
+                        ),
                     )
                 else:
                     results[idx] = func(item, results)
@@ -123,7 +131,8 @@ def language_result(language, results):  # pylint: disable=unused-argument
             language.detected_language
         ),
         warnings=[
-            TextAnalyticsWarning._from_generated(w) for w in language.warnings  # pylint: disable=protected-access
+            TextAnalyticsWarning._from_generated(w)  # pylint: disable=protected-access
+            for w in language.warnings
         ],
         statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
             language.statistics
@@ -138,10 +147,12 @@ def entities_result(
     return RecognizeEntitiesResult(
         id=entity.id,
         entities=[
-            CategorizedEntity._from_generated(e) for e in entity.entities  # pylint: disable=protected-access
+            CategorizedEntity._from_generated(e)  # pylint: disable=protected-access
+            for e in entity.entities
         ],
         warnings=[
-            TextAnalyticsWarning._from_generated(w) for w in entity.warnings  # pylint: disable=protected-access
+            TextAnalyticsWarning._from_generated(w)  # pylint: disable=protected-access
+            for w in entity.warnings
         ],
         statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
             entity.statistics
@@ -156,10 +167,12 @@ def linked_entities_result(
     return RecognizeLinkedEntitiesResult(
         id=entity.id,
         entities=[
-            LinkedEntity._from_generated(e) for e in entity.entities  # pylint: disable=protected-access
+            LinkedEntity._from_generated(e)  # pylint: disable=protected-access
+            for e in entity.entities
         ],
         warnings=[
-            TextAnalyticsWarning._from_generated(w) for w in entity.warnings  # pylint: disable=protected-access
+            TextAnalyticsWarning._from_generated(w)  # pylint: disable=protected-access
+            for w in entity.warnings
         ],
         statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
             entity.statistics
@@ -175,7 +188,8 @@ def key_phrases_result(
         id=phrases.id,
         key_phrases=phrases.key_phrases,
         warnings=[
-            TextAnalyticsWarning._from_generated(w) for w in phrases.warnings  # pylint: disable=protected-access
+            TextAnalyticsWarning._from_generated(w)  # pylint: disable=protected-access
+            for w in phrases.warnings
         ],
         statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
             phrases.statistics
@@ -191,7 +205,8 @@ def sentiment_result(
         id=sentiment.id,
         sentiment=sentiment.sentiment,
         warnings=[
-            TextAnalyticsWarning._from_generated(w) for w in sentiment.warnings  # pylint: disable=protected-access
+            TextAnalyticsWarning._from_generated(w)  # pylint: disable=protected-access
+            for w in sentiment.warnings
         ],
         statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
             sentiment.statistics
@@ -200,7 +215,9 @@ def sentiment_result(
             sentiment.confidence_scores
         ),
         sentences=[
-            SentenceSentiment._from_generated(s, results, sentiment)  # pylint: disable=protected-access
+            SentenceSentiment._from_generated(  # pylint: disable=protected-access
+                s, results, sentiment
+            )
             for s in sentiment.sentences
         ],
     )
@@ -213,13 +230,15 @@ def pii_entities_result(
     return RecognizePiiEntitiesResult(
         id=entity.id,
         entities=[
-            PiiEntity._from_generated(e) for e in entity.entities  # pylint: disable=protected-access
+            PiiEntity._from_generated(e)  # pylint: disable=protected-access
+            for e in entity.entities
         ],
         redacted_text=entity.redacted_text
         if hasattr(entity, "redacted_text")
         else None,
         warnings=[
-            TextAnalyticsWarning._from_generated(w) for w in entity.warnings  # pylint: disable=protected-access
+            TextAnalyticsWarning._from_generated(w)  # pylint: disable=protected-access
+            for w in entity.warnings
         ],
         statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
             entity.statistics
@@ -236,6 +255,41 @@ def healthcare_result(
     )
 
 
+@prepare_result
+def summary_result(
+    summary, results, *args, **kwargs
+):  # pylint: disable=unused-argument
+    return ExtractSummaryResult._from_generated(  # pylint: disable=protected-access
+        summary
+    )
+
+
+@prepare_result
+def custom_entities_result(
+    custom_entities, results, *args, **kwargs
+):  # pylint: disable=unused-argument
+    return RecognizeCustomEntitiesResult._from_generated(  # pylint: disable=protected-access
+        custom_entities
+    )
+
+
+@prepare_result
+def single_category_classify_result(
+    custom_category, results, *args, **kwargs
+):  # pylint: disable=unused-argument
+    return SingleCategoryClassifyResult._from_generated(  # pylint: disable=protected-access
+        custom_category
+    )
+
+@prepare_result
+def multi_category_classify_result(
+    custom_categories, results, *args, **kwargs
+):  # pylint: disable=unused-argument
+    return MultiCategoryClassifyResult._from_generated(  # pylint: disable=protected-access
+        custom_categories
+    )
+
+
 def healthcare_extract_page_data(
     doc_id_order, obj, response_headers, health_job_state
 ):  # pylint: disable=unused-argument
@@ -247,7 +301,7 @@ def healthcare_extract_page_data(
     )
 
 
-def _get_deserialization_callback_from_task_type(task_type):
+def _get_deserialization_callback_from_task_type(task_type):  # pylint: disable=too-many-return-statements
     if task_type == _AnalyzeActionsType.RECOGNIZE_ENTITIES:
         return entities_result
     if task_type == _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES:
@@ -256,10 +310,18 @@ def _get_deserialization_callback_from_task_type(task_type):
         return linked_entities_result
     if task_type == _AnalyzeActionsType.ANALYZE_SENTIMENT:
         return sentiment_result
+    if task_type == _AnalyzeActionsType.EXTRACT_SUMMARY:
+        return summary_result
+    if task_type == _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES:
+        return custom_entities_result
+    if task_type == _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY:
+        return single_category_classify_result
+    if task_type == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY:
+        return multi_category_classify_result
     return key_phrases_result
 
 
-def _get_property_name_from_task_type(task_type):
+def _get_property_name_from_task_type(task_type):  # pylint: disable=too-many-return-statements
     if task_type == _AnalyzeActionsType.RECOGNIZE_ENTITIES:
         return "entity_recognition_tasks"
     if task_type == _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES:
@@ -268,23 +330,90 @@ def _get_property_name_from_task_type(task_type):
         return "entity_linking_tasks"
     if task_type == _AnalyzeActionsType.ANALYZE_SENTIMENT:
         return "sentiment_analysis_tasks"
+    if task_type == _AnalyzeActionsType.EXTRACT_SUMMARY:
+        return "extractive_summarization_tasks"
+    if task_type == _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES:
+        return "custom_entity_recognition_tasks"
+    if task_type == _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY:
+        return "custom_single_classification_tasks"
+    if task_type == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY:
+        return "custom_multi_classification_tasks"
     return "key_phrase_extraction_tasks"
 
 
-def _get_good_result(
-    current_task_type,
-    index_of_task_result,
-    doc_id_order,
-    response_headers,
-    returned_tasks_object,
-):
+def get_task_from_pointer(task_type):  # pylint: disable=too-many-return-statements
+    if task_type == ActionPointerKind.RECOGNIZE_ENTITIES:
+        return "entity_recognition_tasks"
+    if task_type == ActionPointerKind.RECOGNIZE_PII_ENTITIES:
+        return "entity_recognition_pii_tasks"
+    if task_type == ActionPointerKind.RECOGNIZE_LINKED_ENTITIES:
+        return "entity_linking_tasks"
+    if task_type == ActionPointerKind.ANALYZE_SENTIMENT:
+        return "sentiment_analysis_tasks"
+    if task_type == ActionPointerKind.EXTRACT_SUMMARY:
+        return "extractive_summarization_tasks"
+    if task_type == ActionPointerKind.RECOGNIZE_CUSTOM_ENTITIES:
+        return "custom_entity_recognition_tasks"
+    if task_type == ActionPointerKind.SINGLE_CATEGORY_CLASSIFY:
+        return "custom_single_classification_tasks"
+    if task_type == ActionPointerKind.MULTI_CATEGORY_CLASSIFY:
+        return "custom_multi_classification_tasks"
+    return "key_phrase_extraction_tasks"
+
+
+def resolve_action_pointer(pointer):
+    import re
+    pointer_union = "|".join(value for value in ActionPointerKind)
+    found = re.search(r"#/tasks/({})/\d+".format(pointer_union), pointer)
+    if found:
+        index = int(pointer[-1])
+        task = pointer.split("#/tasks/")[1].split("/")[0]
+        property_name = get_task_from_pointer(task)
+        return property_name, index
+    raise ValueError(
+        "Unexpected response from service - action pointer '{}' is not a valid action pointer.".format(pointer)
+    )
+
+
+def get_ordered_errors(tasks_obj, task_name, doc_id_order):
+    # throw exception if error missing a target
+    missing_target = any([error for error in tasks_obj.errors if error.target is None])
+    if missing_target:
+        message = "".join(["({}) {}".format(err.code, err.message) for err in tasks_obj.errors])
+        raise HttpResponseError(message=message)
+
+    # create a DocumentError per input doc with the action error details
+    for err in tasks_obj.errors:
+        property_name, index = resolve_action_pointer(err.target)
+        actions = getattr(tasks_obj.tasks, property_name)
+        action = actions[index]
+        if action.task_name == task_name:
+            errors = [
+                DocumentError(
+                    id=doc_id,
+                    error=TextAnalyticsError(code=err.code, message=err.message)
+                ) for doc_id in doc_id_order
+            ]
+            return errors
+    raise ValueError("Unexpected response from service - no errors for missing action results.")
+
+
+def _get_doc_results(task, doc_id_order, response_headers, returned_tasks_object):
+    returned_tasks = returned_tasks_object.tasks
+    current_task_type, task_name = task
     deserialization_callback = _get_deserialization_callback_from_task_type(
         current_task_type
     )
     property_name = _get_property_name_from_task_type(current_task_type)
-    response_task_to_deserialize = getattr(returned_tasks_object, property_name)[
-        index_of_task_result
-    ]
+    try:
+        response_task_to_deserialize = \
+            next(task for task in getattr(returned_tasks, property_name) if task.task_name == task_name)
+    except StopIteration:
+        raise ValueError("Unexpected response from service - unable to deserialize result.")
+
+    # if no results present, check for action errors
+    if response_task_to_deserialize.results is None:
+        return get_ordered_errors(returned_tasks_object, task_name, doc_id_order)
     return deserialization_callback(
         doc_id_order, response_task_to_deserialize.results, response_headers, lro=True
     )
@@ -292,15 +421,10 @@ def _get_good_result(
 
 def get_iter_items(doc_id_order, task_order, response_headers, analyze_job_state):
     iter_items = defaultdict(list)  # map doc id to action results
-    task_type_to_index = defaultdict(
-        int
-    )  # need to keep track of how many of each type of tasks we've seen
-    returned_tasks_object = analyze_job_state.tasks
-    for current_task_type in task_order:
-        index_of_task_result = task_type_to_index[current_task_type]
-        results = _get_good_result(
-            current_task_type,
-            index_of_task_result,
+    returned_tasks_object = analyze_job_state
+    for task in task_order:
+        results = _get_doc_results(
+            task,
             doc_id_order,
             response_headers,
             returned_tasks_object,
@@ -308,7 +432,6 @@ def get_iter_items(doc_id_order, task_order, response_headers, analyze_job_state
         for result in results:
             iter_items[result.id].append(result)
 
-        task_type_to_index[current_task_type] += 1
     return [iter_items[doc_id] for doc_id in doc_id_order if doc_id in iter_items]
 
 

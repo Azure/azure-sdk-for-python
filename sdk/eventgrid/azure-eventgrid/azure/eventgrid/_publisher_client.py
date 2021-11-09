@@ -31,6 +31,7 @@ from ._helpers import (
     _eventgrid_data_typecheck,
     _build_request,
     _cloud_event_to_generated,
+    _from_cncf_events,
 )
 from ._generated._event_grid_publisher_client import (
     EventGridPublisherClient as EventGridPublisherClientImpl,
@@ -40,7 +41,11 @@ from ._version import VERSION
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials import AzureKeyCredential, AzureSasCredential
+    from azure.core.credentials import (
+        AzureKeyCredential,
+        AzureSasCredential,
+        TokenCredential,
+    )
 
     SendType = Union[
         CloudEvent,
@@ -60,8 +65,9 @@ class EventGridPublisherClient(object):
 
     :param str endpoint: The topic endpoint to send the events to.
     :param credential: The credential object used for authentication which
-     implements SAS key authentication or SAS token authentication.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential
+     implements SAS key authentication or SAS token authentication or a TokenCredential.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential or
+     ~azure.core.credentials.TokenCredential
     :rtype: None
 
     .. admonition:: Example:
@@ -82,7 +88,7 @@ class EventGridPublisherClient(object):
     """
 
     def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, AzureSasCredential], Any) -> None
+        # type: (str, Union[AzureKeyCredential, AzureSasCredential, TokenCredential], Any) -> None
         self._endpoint = endpoint
         self._client = EventGridPublisherClientImpl(
             policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs
@@ -90,7 +96,7 @@ class EventGridPublisherClient(object):
 
     @staticmethod
     def _policies(credential, **kwargs):
-        # type: (Union[AzureKeyCredential, AzureSasCredential], Any) -> List[Any]
+        # type: (Union[AzureKeyCredential, AzureSasCredential, TokenCredential], Any) -> List[Any]
         auth_policy = _get_authentication_policy(credential)
         sdk_moniker = "eventgrid/{}".format(VERSION)
         policies = [
@@ -183,17 +189,20 @@ class EventGridPublisherClient(object):
         if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
                 events = [
-                    _cloud_event_to_generated(e, **kwargs) for e in events # pylint: disable=protected-access
+                    _cloud_event_to_generated(e, **kwargs)
+                    for e in events  # pylint: disable=protected-access
                 ]
             except AttributeError:
-                pass  # means it's a dictionary
+                ## this is either a dictionary or a CNCF cloud event
+                events = [
+                    _from_cncf_events(e) for e in events
+                ]
             content_type = "application/cloudevents-batch+json; charset=utf-8"
         elif isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
             for event in events:
                 _eventgrid_data_typecheck(event)
-        self._client._send_request( # pylint: disable=protected-access
-            _build_request(self._endpoint, content_type, events),
-            **kwargs
+        self._client.send_request(  # pylint: disable=protected-access
+            _build_request(self._endpoint, content_type, events), **kwargs
         )
 
     def close(self):

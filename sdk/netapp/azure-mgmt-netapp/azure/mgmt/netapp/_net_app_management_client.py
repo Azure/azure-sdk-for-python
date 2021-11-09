@@ -21,6 +21,7 @@ if TYPE_CHECKING:
 from ._configuration import NetAppManagementClientConfiguration
 from .operations import Operations
 from .operations import NetAppResourceOperations
+from .operations import NetAppResourceQuotaLimitsOperations
 from .operations import AccountsOperations
 from .operations import PoolsOperations
 from .operations import VolumesOperations
@@ -40,6 +41,8 @@ class NetAppManagementClient(object):
     :vartype operations: azure.mgmt.netapp.operations.Operations
     :ivar net_app_resource: NetAppResourceOperations operations
     :vartype net_app_resource: azure.mgmt.netapp.operations.NetAppResourceOperations
+    :ivar net_app_resource_quota_limits: NetAppResourceQuotaLimitsOperations operations
+    :vartype net_app_resource_quota_limits: azure.mgmt.netapp.operations.NetAppResourceQuotaLimitsOperations
     :ivar accounts: AccountsOperations operations
     :vartype accounts: azure.mgmt.netapp.operations.AccountsOperations
     :ivar pools: PoolsOperations operations
@@ -87,6 +90,8 @@ class NetAppManagementClient(object):
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
         self.net_app_resource = NetAppResourceOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.net_app_resource_quota_limits = NetAppResourceQuotaLimitsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.accounts = AccountsOperations(
             self._client, self._config, self._serialize, self._deserialize)

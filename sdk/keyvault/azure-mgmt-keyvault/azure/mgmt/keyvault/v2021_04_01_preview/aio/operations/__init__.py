@@ -13,7 +13,6 @@ from ._managed_hsms_operations import ManagedHsmsOperations
 from ._mhsm_private_endpoint_connections_operations import MHSMPrivateEndpointConnectionsOperations
 from ._mhsm_private_link_resources_operations import MHSMPrivateLinkResourcesOperations
 from ._operations import Operations
-from ._secrets_operations import SecretsOperations
 
 __all__ = [
     'VaultsOperations',
@@ -23,5 +22,4 @@ __all__ = [
     'MHSMPrivateEndpointConnectionsOperations',
     'MHSMPrivateLinkResourcesOperations',
     'Operations',
-    'SecretsOperations',
 ]

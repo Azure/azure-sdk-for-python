@@ -3,8 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import functools
+import json
 import os
 
+from azure.core.pipeline import Pipeline
+from azure.core.pipeline.transport import HttpRequest, RequestsTransport
+from azure.keyvault.keys import KeyReleasePolicy
 from azure.keyvault.keys._shared import HttpChallengeCache
 from azure.keyvault.keys._shared.client_base import ApiVersion, DEFAULT_VERSION
 from devtools_testutils import AzureTestCase
@@ -34,6 +38,13 @@ def client_setup(testcase_func):
     return wrapper
 
 
+def get_attestation_token(attestation_uri):
+    request = HttpRequest("GET", "{}/generate-test-token".format(attestation_uri))
+    with Pipeline(transport=RequestsTransport()) as pipeline:
+        response = pipeline.run(request)
+        return json.loads(response.http_response.text())["token"]
+
+
 def get_decorator(only_hsm=False, only_vault=False, api_versions=None, **kwargs):
     """returns a test decorator for test parameterization"""
     params = [
@@ -41,6 +52,25 @@ def get_decorator(only_hsm=False, only_vault=False, api_versions=None, **kwargs)
         for p in get_test_parameters(only_hsm, only_vault, api_versions=api_versions)
     ]
     return functools.partial(parameterized.expand, params, name_func=suffixed_test_name)
+
+
+def get_release_policy(attestation_uri):
+    release_policy_json = {
+        "anyOf": [
+            {
+                "anyOf": [
+                    {
+                        "claim": "sdk-test",
+                        "equals": True
+                    }
+                ],
+                "authority": attestation_uri.rstrip("/") + "/"
+            }
+        ],
+        "version": "1.0.0"
+    }
+    policy_string = json.dumps(release_policy_json).encode()
+    return KeyReleasePolicy(policy_string)
 
 
 def get_test_parameters(only_hsm=False, only_vault=False, api_versions=None):
@@ -110,6 +140,16 @@ class KeysTestCase(AzureTestCase):
 
             credential = self.get_credential(CryptographyClient)
         return self.create_client_from_credential(CryptographyClient, credential=credential, key=key, **kwargs)
+
+    def _get_attestation_uri(self):
+        playback_uri = "https://fakeattestation.azurewebsites.net"
+        if self.is_live:
+            real_uri = os.environ.get("AZURE_KEYVAULT_ATTESTATION_URI")
+            if real_uri is None:
+                pytest.skip("No AZURE_KEYVAULT_ATTESTATION_URI environment variable")
+            self._scrub_url(real_uri, playback_uri)
+            return real_uri
+        return playback_uri
 
     def _scrub_url(self, real_url, playback_url):
         real = urlparse(real_url)

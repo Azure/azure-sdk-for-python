@@ -10,24 +10,24 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/entities/recognition/pii?showStats=false&domain=phi&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/recognition/pii?showStats=false&domain=phi&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"redactedText":"I work at ********* and my phone number
         is ************","id":"0","entities":[{"text":"Microsoft","category":"Organization","offset":10,"length":9,"confidenceScore":0.95},{"text":"333-333-3333","category":"PhoneNumber","offset":43,"length":12,"confidenceScore":0.8}],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}'
     headers:
-      apim-request-id: 727c9f67-a5f5-42a0-8cc8-14014161bf59
+      apim-request-id: 3d2c020a-5272-4b4d-b799-dc368b7c0f22
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1
-      date: Wed, 23 Jun 2021 01:57:33 GMT
+      date: Wed, 06 Oct 2021 21:05:47 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '27'
+      x-envoy-upstream-service-time: '25'
     status:
       code: 200
       message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com//text/analytics/v3.1/entities/recognition/pii?showStats=false&domain=phi&stringIndexType=UnicodeCodePoint
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/entities/recognition/pii?showStats=false&domain=phi&stringIndexType=UnicodeCodePoint
 version: 1

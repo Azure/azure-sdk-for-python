@@ -1,0 +1,174 @@
+{
+    "chosen_version": "2020-12-01",
+    "total_api_version_list": ["2020-12-01"],
+    "client": {
+        "name": "ApiManagementClient",
+        "filename": "_api_management_client",
+        "description": "ApiManagement Client.",
+        "base_url": "\u0027https://management.azure.com\u0027",
+        "custom_base_url": null,
+        "azure_arm": true,
+        "has_lro_operations": true,
+        "client_side_validation": false,
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"ApiManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"ApiManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}}}"
+    },
+    "global_parameters": {
+        "sync": {
+            "credential": {
+                "signature": "credential,  # type: \"TokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id,  # type: str",
+                "description": "Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "async": {
+            "credential": {
+                "signature": "credential: \"AsyncTokenCredential\",",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id: str,",
+                "description": "Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "constant": {
+        },
+        "call": "credential, subscription_id",
+        "service_client_specific": {
+            "sync": {
+                "api_version": {
+                    "signature": "api_version=None, # type: Optional[str]",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "base_url": {
+                    "signature": "base_url=None,  # type: Optional[str]",
+                    "description": "Service URL",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile=KnownProfiles.default, # type: KnownProfiles",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            },
+            "async": {
+                "api_version": {
+                    "signature": "api_version: Optional[str] = None,",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "base_url": {
+                    "signature": "base_url: Optional[str] = None,",
+                    "description": "Service URL",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile: KnownProfiles = KnownProfiles.default,",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            }
+        }
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "credential_default_policy_type": "BearerTokenCredentialPolicy",
+        "credential_default_policy_type_has_async_version": true,
+        "credential_key_header_name": null,
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+    },
+    "operation_groups": {
+        "api": "ApiOperations",
+        "api_revision": "ApiRevisionOperations",
+        "api_release": "ApiReleaseOperations",
+        "api_operation": "ApiOperationOperations",
+        "api_operation_policy": "ApiOperationPolicyOperations",
+        "tag": "TagOperations",
+        "api_product": "ApiProductOperations",
+        "api_policy": "ApiPolicyOperations",
+        "api_schema": "ApiSchemaOperations",
+        "api_diagnostic": "ApiDiagnosticOperations",
+        "api_issue": "ApiIssueOperations",
+        "api_issue_comment": "ApiIssueCommentOperations",
+        "api_issue_attachment": "ApiIssueAttachmentOperations",
+        "api_tag_description": "ApiTagDescriptionOperations",
+        "operation": "OperationOperations",
+        "api_export": "ApiExportOperations",
+        "api_version_set": "ApiVersionSetOperations",
+        "authorization_server": "AuthorizationServerOperations",
+        "backend": "BackendOperations",
+        "cache": "CacheOperations",
+        "certificate": "CertificateOperations",
+        "content_type": "ContentTypeOperations",
+        "content_item": "ContentItemOperations",
+        "deleted_services": "DeletedServicesOperations",
+        "api_management_operations": "ApiManagementOperationsOperations",
+        "api_management_service_skus": "ApiManagementServiceSkusOperations",
+        "api_management_service": "ApiManagementServiceOperations",
+        "diagnostic": "DiagnosticOperations",
+        "email_template": "EmailTemplateOperations",
+        "gateway": "GatewayOperations",
+        "gateway_hostname_configuration": "GatewayHostnameConfigurationOperations",
+        "gateway_api": "GatewayApiOperations",
+        "gateway_certificate_authority": "GatewayCertificateAuthorityOperations",
+        "group": "GroupOperations",
+        "group_user": "GroupUserOperations",
+        "identity_provider": "IdentityProviderOperations",
+        "issue": "IssueOperations",
+        "logger": "LoggerOperations",
+        "named_value": "NamedValueOperations",
+        "network_status": "NetworkStatusOperations",
+        "notification": "NotificationOperations",
+        "notification_recipient_user": "NotificationRecipientUserOperations",
+        "notification_recipient_email": "NotificationRecipientEmailOperations",
+        "open_id_connect_provider": "OpenIdConnectProviderOperations",
+        "policy": "PolicyOperations",
+        "policy_description": "PolicyDescriptionOperations",
+        "portal_revision": "PortalRevisionOperations",
+        "portal_settings": "PortalSettingsOperations",
+        "sign_in_settings": "SignInSettingsOperations",
+        "sign_up_settings": "SignUpSettingsOperations",
+        "delegation_settings": "DelegationSettingsOperations",
+        "product": "ProductOperations",
+        "product_api": "ProductApiOperations",
+        "product_group": "ProductGroupOperations",
+        "product_subscriptions": "ProductSubscriptionsOperations",
+        "product_policy": "ProductPolicyOperations",
+        "quota_by_counter_keys": "QuotaByCounterKeysOperations",
+        "quota_by_period_keys": "QuotaByPeriodKeysOperations",
+        "region": "RegionOperations",
+        "reports": "ReportsOperations",
+        "tenant_settings": "TenantSettingsOperations",
+        "api_management_skus": "ApiManagementSkusOperations",
+        "subscription": "SubscriptionOperations",
+        "tag_resource": "TagResourceOperations",
+        "tenant_access": "TenantAccessOperations",
+        "tenant_access_git": "TenantAccessGitOperations",
+        "tenant_configuration": "TenantConfigurationOperations",
+        "user": "UserOperations",
+        "user_group": "UserGroupOperations",
+        "user_subscription": "UserSubscriptionOperations",
+        "user_identities": "UserIdentitiesOperations",
+        "user_confirmation_password": "UserConfirmationPasswordOperations"
+    }
+}

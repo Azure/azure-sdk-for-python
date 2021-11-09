@@ -25,9 +25,9 @@ import pytest
 from six.moves.urllib_parse import urlparse
 
 try:
-    from unittest.mock import Mock, patch
+    from unittest.mock import MagicMock, Mock, patch
 except ImportError:  # python < 3.3
-    from mock import Mock, patch  # type: ignore
+    from mock import MagicMock, Mock, patch  # type: ignore
 
 from helpers import (
     build_aad_response,
@@ -39,6 +39,37 @@ from helpers import (
     Request,
     validating_transport,
 )
+
+
+def test_close():
+    transport = MagicMock()
+    credential = SharedTokenCacheCredential(transport=transport, _cache=TokenCache())
+    with pytest.raises(CredentialUnavailableError):
+        credential.get_token('scope')
+
+    assert not transport.__enter__.called
+    assert not transport.__exit__.called
+
+    credential.close()
+    assert not transport.__enter__.called
+    assert transport.__exit__.call_count == 1
+
+
+def test_context_manager():
+    transport = MagicMock()
+    credential = SharedTokenCacheCredential(transport=transport, _cache=TokenCache())
+    with pytest.raises(CredentialUnavailableError):
+        credential.get_token('scope')
+
+    assert not transport.__enter__.called
+    assert not transport.__exit__.called
+
+    with credential:
+        assert transport.__enter__.call_count == 1
+        assert not transport.__exit__.called
+
+    assert transport.__enter__.call_count == 1
+    assert transport.__exit__.call_count == 1
 
 
 def test_tenant_id_validation():
@@ -752,7 +783,7 @@ def test_client_capabilities():
     transport = Mock(send=send)
     credential = SharedTokenCacheCredential(transport=transport, authentication_record=record, _cache=TokenCache())
 
-    with patch(SharedTokenCacheCredential.__module__ + ".PublicClientApplication") as PublicClientApplication:
+    with patch("azure.identity._credentials.silent.PublicClientApplication") as PublicClientApplication:
         with pytest.raises(ClientAuthenticationError):  # (cache is empty)
             credential.get_token("scope")
 
@@ -761,7 +792,7 @@ def test_client_capabilities():
     assert kwargs["client_capabilities"] == ["CP1"]
 
     credential = SharedTokenCacheCredential(transport=transport, authentication_record=record, _cache=TokenCache())
-    with patch(SharedTokenCacheCredential.__module__ + ".PublicClientApplication") as PublicClientApplication:
+    with patch("azure.identity._credentials.silent.PublicClientApplication") as PublicClientApplication:
         with patch.dict("os.environ", {"AZURE_IDENTITY_DISABLE_CP1": "true"}):
             with pytest.raises(ClientAuthenticationError):  # (cache is empty)
                 credential.get_token("scope")
@@ -786,7 +817,7 @@ def test_claims_challenge():
 
     transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
     credential = SharedTokenCacheCredential(transport=transport, authentication_record=record, _cache=TokenCache())
-    with patch(SharedTokenCacheCredential.__module__ + ".PublicClientApplication", lambda *_, **__: msal_app):
+    with patch("azure.identity._credentials.silent.PublicClientApplication", lambda *_, **__: msal_app):
         credential.get_token("scope", claims=expected_claims)
 
     assert msal_app.acquire_token_silent_with_error.call_count == 1
@@ -794,9 +825,7 @@ def test_claims_challenge():
     assert kwargs["claims_challenge"] == expected_claims
 
 
-def test_allow_multitenant_authentication():
-    """When allow_multitenant_authentication is True, the credential should respect get_token(tenant_id=...)"""
-
+def test_multitenant_authentication():
     default_tenant = "organizations"
     first_token = "***"
     second_tenant = "second-tenant"
@@ -820,7 +849,7 @@ def test_allow_multitenant_authentication():
     cache = populated_cache(expected_account)
 
     credential = SharedTokenCacheCredential(
-        allow_multitenant_authentication=True, authority=authority, transport=Mock(send=send), _cache=cache
+        authority=authority, transport=Mock(send=send), _cache=cache
     )
     token = credential.get_token("scope")
     assert token.token == first_token
@@ -836,56 +865,7 @@ def test_allow_multitenant_authentication():
     assert token.token == first_token
 
 
-def test_multitenant_authentication_not_allowed():
-    """get_token(tenant_id=...) should raise when allow_multitenant_authentication is False (the default)"""
-
-    default_tenant = "organizations"
-    expected_token = "***"
-
-    def send(request, **_):
-        parsed = urlparse(request.url)
-        tenant_id = parsed.path.split("/")[1]
-        assert tenant_id == default_tenant
-        return mock_response(
-            json_payload=build_aad_response(
-                access_token=expected_token,
-                id_token_claims=id_token_claims(aud="...", iss="...", sub="..."),
-            )
-        )
-
-    tenant_id = "tenant-id"
-    client_id = "client-id"
-    authority = "localhost"
-    object_id = "object-id"
-    username = "me"
-
-    expected_account = get_account_event(
-        username, object_id, tenant_id, authority=authority, client_id=client_id, refresh_token="**"
-    )
-    cache = populated_cache(expected_account)
-
-    credential = SharedTokenCacheCredential(authority=authority, transport=Mock(send=send), _cache=cache)
-
-    token = credential.get_token("scope")
-    assert token.token == expected_token
-
-    # explicitly specifying the configured tenant is okay
-    token = credential.get_token("scope", tenant_id=default_tenant)
-    assert token.token == expected_token
-
-    # but any other tenant should get an error
-    with pytest.raises(ClientAuthenticationError, match="allow_multitenant_authentication"):
-        credential.get_token("scope", tenant_id="some tenant")
-
-    # ...unless the compat switch is enabled
-    with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_ENABLE_LEGACY_TENANT_SELECTION: "true"}):
-        token = credential.get_token("scope", tenant_id="some tenant")
-    assert token.token == expected_token, "credential should ignore tenant_id kwarg when the compat switch is enabled"
-
-
-def test_allow_multitenant_authentication_auth_record():
-    """When allow_multitenant_authentication is True, the credential should respect get_token(tenant_id=...)"""
-
+def test_multitenant_authentication_auth_record():
     default_tenant = "organizations"
     first_token = "***"
     second_tenant = "second-tenant"
@@ -916,7 +896,6 @@ def test_allow_multitenant_authentication_auth_record():
     cache = populated_cache(expected_account)
 
     credential = SharedTokenCacheCredential(
-        allow_multitenant_authentication=True,
         authority=authority,
         transport=Mock(send=send),
         authentication_record=record,
@@ -934,64 +913,6 @@ def test_allow_multitenant_authentication_auth_record():
     # should still default to the first tenant
     token = credential.get_token("scope")
     assert token.token == first_token
-
-
-def test_multitenant_authentication_not_allowed_authentication_record():
-    """get_token(tenant_id=...) should raise when allow_multitenant_authentication is False (the default)"""
-
-    default_tenant = "organizations"
-    expected_token = "***"
-
-    authority = AzureAuthorityHosts.AZURE_PUBLIC_CLOUD
-    object_id = "object-id"
-    home_account_id = object_id + "." + default_tenant
-    record = AuthenticationRecord(default_tenant, "client-id", authority, home_account_id, "user")
-
-    def send(request, **_):
-        parsed = urlparse(request.url)
-        tenant_id = parsed.path.split("/")[1]
-        if "/oauth2/v2.0/token" not in request.url:
-            return get_discovery_response("https://{}/{}".format(parsed.netloc, tenant_id))
-
-        assert tenant_id == default_tenant
-        return mock_response(
-            json_payload=build_aad_response(
-                access_token=expected_token,
-                id_token_claims=id_token_claims(aud="...", iss="...", sub="..."),
-            )
-        )
-
-    expected_account = get_account_event(
-        record.username,
-        object_id,
-        record.tenant_id,
-        authority=record.authority,
-        client_id=record.client_id,
-        refresh_token="**",
-    )
-    cache = populated_cache(expected_account)
-
-    credential = SharedTokenCacheCredential(
-        authority=authority, transport=Mock(send=send), authentication_record=record, _cache=cache
-    )
-
-    token = credential.get_token("scope")
-    assert token.token == expected_token
-
-    # explicitly specifying the configured tenant is okay
-    token = credential.get_token("scope", tenant_id=default_tenant)
-    assert token.token == expected_token
-
-    # but any other tenant should get an error
-    with pytest.raises(ClientAuthenticationError, match="allow_multitenant_authentication"):
-        credential.get_token("scope", tenant_id="some tenant")
-
-    # ...unless the compat switch is enabled
-    with patch.dict(
-        "os.environ", {EnvironmentVariables.AZURE_IDENTITY_ENABLE_LEGACY_TENANT_SELECTION: "true"}, clear=True
-    ):
-        token = credential.get_token("scope", tenant_id="some tenant")
-    assert token.token == expected_token, "credential should ignore tenant_id kwarg when the compat switch is enabled"
 
 
 def get_account_event(
@@ -1023,3 +944,41 @@ def populated_cache(*accounts):
         cache.add(account)
     cache.add = lambda *_, **__: None  # prevent anything being added to the cache
     return cache
+
+def test_multitenant_authentication_not_allowed():
+    default_tenant = "organizations"
+    expected_token = "***"
+
+    def send(request, **_):
+        parsed = urlparse(request.url)
+        tenant_id = parsed.path.split("/")[1]
+        assert tenant_id == default_tenant
+        return mock_response(
+            json_payload=build_aad_response(
+                access_token=expected_token,
+                id_token_claims=id_token_claims(aud="...", iss="...", sub="..."),
+            )
+        )
+
+    tenant_id = "tenant-id"
+    client_id = "client-id"
+    authority = "localhost"
+    object_id = "object-id"
+    username = "me"
+
+    expected_account = get_account_event(
+        username, object_id, tenant_id, authority=authority, client_id=client_id, refresh_token="**"
+    )
+    cache = populated_cache(expected_account)
+
+    credential = SharedTokenCacheCredential(authority=authority, transport=Mock(send=send), _cache=cache)
+
+    token = credential.get_token("scope")
+    assert token.token == expected_token
+
+    token = credential.get_token("scope", tenant_id=default_tenant)
+    assert token.token == expected_token
+
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
+        token = credential.get_token("scope", tenant_id="some tenant")
+        assert token.token == expected_token

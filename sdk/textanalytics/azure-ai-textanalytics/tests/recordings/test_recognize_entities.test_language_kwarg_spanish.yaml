@@ -14,22 +14,22 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/entities/recognition/general?model-version=latest&showStats=true&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/recognition/general?model-version=latest&showStats=true&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","statistics":{"charactersCount":35,"transactionsCount":1},"entities":[{"text":"Bill
         Gates","category":"Person","offset":0,"length":10,"confidenceScore":1.0},{"text":"CEO","category":"PersonType","offset":18,"length":3,"confidenceScore":0.97},{"text":"Microsoft","category":"Organization","offset":25,"length":9,"confidenceScore":0.99}],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}'
     headers:
       apim-request-id:
-      - 532461aa-8a70-405b-a26e-327f55419651
+      - f6a04245-8b94-4dc9-a246-ff5d751678ed
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1
       date:
-      - Wed, 23 Jun 2021 01:55:49 GMT
+      - Wed, 06 Oct 2021 21:04:54 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -37,7 +37,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '26'
+      - '23'
     status:
       code: 200
       message: OK

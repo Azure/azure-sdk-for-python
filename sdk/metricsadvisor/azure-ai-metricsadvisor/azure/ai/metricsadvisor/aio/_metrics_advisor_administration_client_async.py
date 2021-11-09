@@ -19,7 +19,9 @@ import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
-from .._generated.aio import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2 as _ClientAsync
+from .._generated.aio import (
+    MetricsAdvisor as _ClientAsync,
+)
 from .._generated.models import (
     AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,
     AnomalyDetectionConfiguration as _AnomalyDetectionConfiguration,
@@ -57,13 +59,17 @@ from .._metrics_advisor_administration_client import (
     DATA_FEED,
     DATA_FEED_PATCH,
     DataFeedSourceUnion,
-    DatasourceCredentialUnion
+    DatasourceCredentialUnion,
 )
+
 if TYPE_CHECKING:
     from .._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
     from azure.core.credentials_async import AsyncTokenCredential
 
-class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-public-methods
+
+class MetricsAdvisorAdministrationClient(
+    object
+):  # pylint:disable=too-many-public-methods
     """MetricsAdvisorAdministrationClient is used to create and manage data feeds.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
@@ -82,10 +88,11 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             :dedent: 4
             :caption: Authenticate MetricsAdvisorAdministrationClient with a MetricsAdvisorKeyCredential
     """
+
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, Union[MetricsAdvisorKeyCredential, AsyncTokenCredential], **Any) -> None
         try:
-            if not endpoint.lower().startswith('http'):
+            if not endpoint.lower().startswith("http"):
                 endpoint = "https://" + endpoint
         except AttributeError:
             raise ValueError("Base URL must be a string.")
@@ -114,16 +121,16 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         await self._client.__aexit__(*args)
 
     async def close(self) -> None:
-        """Close the :class:`~azure.ai.metricsadvisor.aio.MetricsAdvisorAdministrationClient` session.
-        """
+        """Close the :class:`~azure.ai.metricsadvisor.aio.MetricsAdvisorAdministrationClient` session."""
         await self._client.__aexit__()
 
     @distributed_trace_async
     async def create_alert_configuration(
-            self, name: str,
-            metric_alert_configurations: List[MetricAlertConfiguration],
-            hook_ids: List[str],
-            **kwargs: Any
+        self,
+        name: str,
+        metric_alert_configurations: List[MetricAlertConfiguration],
+        hook_ids: List[str],
+        **kwargs: Any
     ) -> AnomalyAlertConfiguration:
         """Create an anomaly alert configuration.
 
@@ -159,7 +166,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 ],
                 hook_ids=hook_ids,
                 cross_metrics_operator=cross_metrics_operator,
-                description=kwargs.pop("description", None)
+                description=kwargs.pop("description", None),
             ),
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
@@ -170,12 +177,13 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
     @distributed_trace_async
     async def create_data_feed(
-            self, name: str,
-            source: DataFeedSourceUnion,
-            granularity: Union[str, DataFeedGranularityType, DataFeedGranularity],
-            schema: Union[List[str], DataFeedSchema],
-            ingestion_settings: Union[datetime.datetime, DataFeedIngestionSettings],
-            **kwargs: Any
+        self,
+        name: str,
+        source: DataFeedSourceUnion,
+        granularity: Union[str, DataFeedGranularityType, DataFeedGranularity],
+        schema: Union[List[str], DataFeedSchema],
+        ingestion_settings: Union[datetime.datetime, DataFeedIngestionSettings],
+        **kwargs: Any
     ) -> DataFeed:
         """Create a new data feed.
 
@@ -221,13 +229,15 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :caption: Create a data feed
         """
 
-        admins = kwargs.pop('admins', None)
-        data_feed_description = kwargs.pop('data_feed_description', None)
-        missing_data_point_fill_settings = kwargs.pop('missing_data_point_fill_settings', None)
-        rollup_settings = kwargs.pop('rollup_settings', None)
-        viewers = kwargs.pop('viewers', None)
-        access_mode = kwargs.pop('access_mode', "Private")
-        action_link_template = kwargs.pop('action_link_template', None)
+        admins = kwargs.pop("admins", None)
+        data_feed_description = kwargs.pop("data_feed_description", None)
+        missing_data_point_fill_settings = kwargs.pop(
+            "missing_data_point_fill_settings", None
+        )
+        rollup_settings = kwargs.pop("rollup_settings", None)
+        viewers = kwargs.pop("viewers", None)
+        access_mode = kwargs.pop("access_mode", "Private")
+        action_link_template = kwargs.pop("action_link_template", None)
         data_feed_type = DATA_FEED[source.data_source_type]
         data_feed_detail = convert_to_generated_data_feed_type(
             generated_feed_type=data_feed_type,
@@ -242,7 +252,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             rollup_settings=rollup_settings,
             viewers=viewers,
             access_mode=access_mode,
-            action_link_template=action_link_template
+            action_link_template=action_link_template,
         )
 
         response_headers = await self._client.create_data_feed(
@@ -256,8 +266,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
     @distributed_trace_async
     async def create_hook(
-            self, hook: Union[EmailNotificationHook, WebNotificationHook],
-            **kwargs: Any
+        self, hook: Union[EmailNotificationHook, WebNotificationHook], **kwargs: Any
     ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
         """Create a new email or web hook.
 
@@ -298,10 +307,11 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
     @distributed_trace_async
     async def create_detection_configuration(
-            self, name: str,
-            metric_id: str,
-            whole_series_detection_condition: MetricDetectionCondition,
-            **kwargs: Any
+        self,
+        name: str,
+        metric_id: str,
+        whole_series_detection_condition: MetricDetectionCondition,
+        **kwargs: Any
     ) -> AnomalyDetectionConfiguration:
         """Create anomaly detection configuration.
 
@@ -332,7 +342,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         """
 
         description = kwargs.pop("description", None)
-        series_group_detection_conditions = kwargs.pop("series_group_detection_conditions", None)
+        series_group_detection_conditions = kwargs.pop(
+            "series_group_detection_conditions", None
+        )
         series_detection_conditions = kwargs.pop("series_detection_conditions", None)
         config = _AnomalyDetectionConfiguration(
             name=name,
@@ -341,10 +353,14 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             whole_metric_configuration=whole_series_detection_condition._to_generated(),
             dimension_group_override_configurations=[
                 group._to_generated() for group in series_group_detection_conditions
-            ] if series_group_detection_conditions else None,
+            ]
+            if series_group_detection_conditions
+            else None,
             series_override_configurations=[
-                series._to_generated() for series in series_detection_conditions]
-            if series_detection_conditions else None,
+                series._to_generated() for series in series_detection_conditions
+            ]
+            if series_detection_conditions
+            else None,
         )
 
         response_headers = await self._client.create_anomaly_detection_configuration(
@@ -376,16 +392,12 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :caption: Get a data feed by its ID
         """
 
-        data_feed = await self._client.get_data_feed_by_id(
-            data_feed_id,
-            **kwargs
-        )
+        data_feed = await self._client.get_data_feed_by_id(data_feed_id, **kwargs)
         return DataFeed._from_generated(data_feed)
 
     @distributed_trace_async
     async def get_alert_configuration(
-            self, alert_configuration_id: str,
-            **kwargs: Any
+        self, alert_configuration_id: str, **kwargs: Any
     ) -> AnomalyAlertConfiguration:
         """Get a single anomaly alert configuration.
 
@@ -405,13 +417,14 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :caption: Get a single anomaly alert configuration by its ID
         """
 
-        config = await self._client.get_anomaly_alerting_configuration(alert_configuration_id, **kwargs)
+        config = await self._client.get_anomaly_alerting_configuration(
+            alert_configuration_id, **kwargs
+        )
         return AnomalyAlertConfiguration._from_generated(config)
 
     @distributed_trace_async
     async def get_detection_configuration(
-            self, detection_configuration_id: str,
-            **kwargs: Any
+        self, detection_configuration_id: str, **kwargs: Any
     ) -> AnomalyDetectionConfiguration:
         """Get a single anomaly detection configuration.
 
@@ -431,14 +444,14 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :caption: Get a single anomaly detection configuration by its ID
         """
 
-        config = await self._client.get_anomaly_detection_configuration(detection_configuration_id, **kwargs)
+        config = await self._client.get_anomaly_detection_configuration(
+            detection_configuration_id, **kwargs
+        )
         return AnomalyDetectionConfiguration._from_generated(config)
 
     @distributed_trace_async
     async def get_hook(
-        self,
-        hook_id: str,
-        **kwargs: Any
+        self, hook_id: str, **kwargs: Any
     ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
         """Get a web or email hook by its id.
 
@@ -467,9 +480,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
     @distributed_trace_async
     async def get_data_feed_ingestion_progress(
-        self,
-        data_feed_id: str,
-        **kwargs: Any
+        self, data_feed_id: str, **kwargs: Any
     ) -> DataFeedIngestionProgress:
         """Get last successful data ingestion job timestamp by data feed.
 
@@ -489,7 +500,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :dedent: 4
                 :caption: Get the progress of data feed ingestion
         """
-        ingestion_process = await self._client.get_ingestion_progress(data_feed_id, **kwargs)
+        ingestion_process = await self._client.get_ingestion_progress(
+            data_feed_id, **kwargs
+        )
         return DataFeedIngestionProgress._from_generated(ingestion_process)
 
     @distributed_trace_async
@@ -526,14 +539,15 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         await self._client.reset_data_feed_ingestion_status(
             data_feed_id,
             body=_IngestionProgressResetOptions(
-                start_time=converted_start_time,
-                end_time=converted_end_time
+                start_time=converted_start_time, end_time=converted_end_time
             ),
             **kwargs
         )
 
     @distributed_trace_async
-    async def delete_alert_configuration(self, *alert_configuration_id: str, **kwargs: Any) -> None:
+    async def delete_alert_configuration(
+        self, *alert_configuration_id: str, **kwargs: Any
+    ) -> None:
         """Delete an anomaly alert configuration by its ID.
 
         :param str alert_configuration_id: anomaly alert configuration unique id.
@@ -553,12 +567,13 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         if len(alert_configuration_id) != 1:
             raise TypeError("Alert configuration requires exactly one id.")
 
-        await self._client.delete_anomaly_alerting_configuration(alert_configuration_id[0], **kwargs)
+        await self._client.delete_anomaly_alerting_configuration(
+            alert_configuration_id[0], **kwargs
+        )
 
     @distributed_trace_async
     async def delete_detection_configuration(
-            self, *detection_configuration_id: str,
-            **kwargs: Any
+        self, *detection_configuration_id: str, **kwargs: Any
     ) -> None:
         """Delete an anomaly detection configuration by its ID.
 
@@ -579,7 +594,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         if len(detection_configuration_id) != 1:
             raise TypeError("Detection configuration requires exactly one id.")
 
-        await self._client.delete_anomaly_detection_configuration(detection_configuration_id[0], **kwargs)
+        await self._client.delete_anomaly_detection_configuration(
+            detection_configuration_id[0], **kwargs
+        )
 
     @distributed_trace_async
     async def delete_data_feed(self, *data_feed_id: str, **kwargs: Any) -> None:
@@ -629,8 +646,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
     @distributed_trace_async
     async def update_data_feed(
-            self, data_feed: Union[str, DataFeed],
-            **kwargs: Any
+        self, data_feed: Union[str, DataFeed], **kwargs: Any
     ) -> DataFeed:
         """Update a data feed. Either pass the entire DataFeed object with the chosen updates
         or the ID to your data feed with updates passed via keyword arguments. If you pass both
@@ -693,17 +709,29 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         unset = object()
         update_kwargs = {}
         update_kwargs["dataFeedName"] = kwargs.pop("name", unset)
-        update_kwargs["dataFeedDescription"] = kwargs.pop("data_feed_description", unset)
+        update_kwargs["dataFeedDescription"] = kwargs.pop(
+            "data_feed_description", unset
+        )
         update_kwargs["timestampColumn"] = kwargs.pop("timestamp_column", unset)
         update_kwargs["dataStartFrom"] = kwargs.pop("ingestion_begin_time", unset)
-        update_kwargs["startOffsetInSeconds"] = kwargs.pop("ingestion_start_offset", unset)
-        update_kwargs["maxConcurrency"] = kwargs.pop("data_source_request_concurrency", unset)
-        update_kwargs["minRetryIntervalInSeconds"] = kwargs.pop("ingestion_retry_delay", unset)
+        update_kwargs["startOffsetInSeconds"] = kwargs.pop(
+            "ingestion_start_offset", unset
+        )
+        update_kwargs["maxConcurrency"] = kwargs.pop(
+            "data_source_request_concurrency", unset
+        )
+        update_kwargs["minRetryIntervalInSeconds"] = kwargs.pop(
+            "ingestion_retry_delay", unset
+        )
         update_kwargs["stopRetryAfterInSeconds"] = kwargs.pop("stop_retry_after", unset)
         update_kwargs["needRollup"] = kwargs.pop("rollup_type", unset)
         update_kwargs["rollUpMethod"] = kwargs.pop("rollup_method", unset)
-        update_kwargs["rollUpColumns"] = kwargs.pop("auto_rollup_group_by_column_names", unset)
-        update_kwargs["allUpIdentification"] = kwargs.pop("rollup_identification_value", unset)
+        update_kwargs["rollUpColumns"] = kwargs.pop(
+            "auto_rollup_group_by_column_names", unset
+        )
+        update_kwargs["allUpIdentification"] = kwargs.pop(
+            "rollup_identification_value", unset
+        )
         update_kwargs["fillMissingPointType"] = kwargs.pop("fill_type", unset)
         update_kwargs["fillMissingPointValue"] = kwargs.pop("custom_fill_value", unset)
         update_kwargs["viewMode"] = kwargs.pop("access_mode", unset)
@@ -722,16 +750,18 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         else:
             data_feed_id = data_feed.id
             data_feed_patch_type = DATA_FEED_PATCH[data_feed.source.data_source_type]
-            data_feed_patch = data_feed._to_generated_patch(data_feed_patch_type, update)
+            data_feed_patch = data_feed._to_generated_patch(
+                data_feed_patch_type, update
+            )
 
-        data_feed_detail = await self._client.update_data_feed(data_feed_id, data_feed_patch, **kwargs)
+        data_feed_detail = await self._client.update_data_feed(
+            data_feed_id, data_feed_patch, **kwargs
+        )
         return DataFeed._from_generated(data_feed_detail)
 
     @distributed_trace_async
     async def update_alert_configuration(
-        self,
-        alert_configuration: Union[str, AnomalyAlertConfiguration],
-        **kwargs: Any
+        self, alert_configuration: Union[str, AnomalyAlertConfiguration], **kwargs: Any
     ) -> AnomalyAlertConfiguration:
         """Update anomaly alerting configuration. Either pass the entire AnomalyAlertConfiguration object
         with the chosen updates or the ID to your alert configuration with updates passed via keyword arguments.
@@ -766,8 +796,12 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         update_kwargs = {}
         update_kwargs["name"] = kwargs.pop("name", unset)
         update_kwargs["hookIds"] = kwargs.pop("hook_ids", unset)
-        update_kwargs["crossMetricsOperator"] = kwargs.pop("cross_metrics_operator", unset)
-        update_kwargs["metricAlertingConfigurations"] = kwargs.pop("metric_alert_configurations", unset)
+        update_kwargs["crossMetricsOperator"] = kwargs.pop(
+            "cross_metrics_operator", unset
+        )
+        update_kwargs["metricAlertingConfigurations"] = kwargs.pop(
+            "metric_alert_configurations", unset
+        )
         update_kwargs["description"] = kwargs.pop("description", unset)
 
         update = {key: value for key, value in update_kwargs.items() if value != unset}
@@ -779,15 +813,15 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             alert_configuration_id = alert_configuration.id
             alert_configuration_patch = alert_configuration._to_generated_patch(
                 name=update.pop("name", None),
-                metric_alert_configurations=update.pop("metricAlertingConfigurations", None),
+                metric_alert_configurations=update.pop(
+                    "metricAlertingConfigurations", None
+                ),
                 hook_ids=update.pop("hookIds", None),
                 cross_metrics_operator=update.pop("crossMetricsOperator", None),
                 description=update.pop("description", None),
             )
         alerting_config = await self._client.update_anomaly_alerting_configuration(
-            alert_configuration_id,
-            alert_configuration_patch,
-            **kwargs
+            alert_configuration_id, alert_configuration_patch, **kwargs
         )
 
         return AnomalyAlertConfiguration._from_generated(alerting_config)
@@ -835,9 +869,15 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         unset = object()
         update_kwargs = {}
         update_kwargs["name"] = kwargs.pop("name", unset)
-        update_kwargs["wholeMetricConfiguration"] = kwargs.pop("whole_series_detection_condition", unset)
-        update_kwargs["dimensionGroupOverrideConfigurations"] = kwargs.pop("series_group_detection_conditions", unset)
-        update_kwargs["seriesOverrideConfigurations"] = kwargs.pop("series_detection_conditions", unset)
+        update_kwargs["wholeMetricConfiguration"] = kwargs.pop(
+            "whole_series_detection_condition", unset
+        )
+        update_kwargs["dimensionGroupOverrideConfigurations"] = kwargs.pop(
+            "series_group_detection_conditions", unset
+        )
+        update_kwargs["seriesOverrideConfigurations"] = kwargs.pop(
+            "series_detection_conditions", unset
+        )
         update_kwargs["description"] = kwargs.pop("description", unset)
 
         update = {key: value for key, value in update_kwargs.items() if value != unset}
@@ -850,14 +890,18 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             detection_config_patch = detection_configuration._to_generated_patch(
                 name=update.pop("name", None),
                 description=update.pop("description", None),
-                whole_series_detection_condition=update.pop("wholeMetricConfiguration", None),
-                series_group_detection_conditions=update.pop("dimensionGroupOverrideConfigurations", None),
-                series_detection_conditions=update.pop("seriesOverrideConfigurations", None)
+                whole_series_detection_condition=update.pop(
+                    "wholeMetricConfiguration", None
+                ),
+                series_group_detection_conditions=update.pop(
+                    "dimensionGroupOverrideConfigurations", None
+                ),
+                series_detection_conditions=update.pop(
+                    "seriesOverrideConfigurations", None
+                ),
             )
         detection_config = await self._client.update_anomaly_detection_configuration(
-            detection_configuration_id,
-            detection_config_patch,
-            **kwargs
+            detection_configuration_id, detection_config_patch, **kwargs
         )
 
         return AnomalyDetectionConfiguration._from_generated(detection_config)
@@ -911,11 +955,11 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         update_kwargs["description"] = kwargs.pop("description", unset)
         update_kwargs["externalLink"] = kwargs.pop("external_link", unset)
         update_kwargs["toList"] = kwargs.pop("emails_to_alert", unset)
-        update_kwargs["endpoint"] = kwargs.pop('endpoint', unset)
-        update_kwargs["username"] = kwargs.pop('username', unset)
-        update_kwargs["password"] = kwargs.pop('password', unset)
-        update_kwargs["certificateKey"] = kwargs.pop('certificate_key', unset)
-        update_kwargs["certificatePassword"] = kwargs.pop('certificate_password', unset)
+        update_kwargs["endpoint"] = kwargs.pop("endpoint", unset)
+        update_kwargs["username"] = kwargs.pop("username", unset)
+        update_kwargs["password"] = kwargs.pop("password", unset)
+        update_kwargs["certificateKey"] = kwargs.pop("certificate_key", unset)
+        update_kwargs["certificatePassword"] = kwargs.pop("certificate_password", unset)
 
         update = {key: value for key, value in update_kwargs.items() if value != unset}
         if isinstance(hook, six.string_types):
@@ -946,23 +990,20 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                     password=update.pop("password", None),
                     username=update.pop("username", None),
                     certificate_key=update.pop("certificateKey", None),
-                    certificate_password=update.pop("certificatePassword", None)
+                    certificate_password=update.pop("certificatePassword", None),
                 )
 
-        updated_hook = await self._client.update_hook(
-            hook_id,
-            hook_patch,
-            **kwargs
-        )
+        updated_hook = await self._client.update_hook(hook_id, hook_patch, **kwargs)
         if updated_hook.hook_type == "Email":
             return EmailNotificationHook._from_generated(updated_hook)
         return WebNotificationHook._from_generated(updated_hook)
 
     @distributed_trace
     def list_hooks(
-        self,
-        **kwargs: Any
-    ) -> AsyncItemPaged[Union[NotificationHook, EmailNotificationHook, WebNotificationHook]]:
+        self, **kwargs: Any
+    ) -> AsyncItemPaged[
+        Union[NotificationHook, EmailNotificationHook, WebNotificationHook]
+    ]:
         """List all hooks.
 
         :keyword str hook_name: filter hook by its name.
@@ -981,8 +1022,8 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :dedent: 4
                 :caption: List all the notification hooks under an account
         """
-        hook_name = kwargs.pop('hook_name', None)
-        skip = kwargs.pop('skip', None)
+        hook_name = kwargs.pop("hook_name", None)
+        skip = kwargs.pop("skip", None)
 
         def _convert_to_hook_type(hook):
             if hook.hook_type == "Email":
@@ -992,15 +1033,14 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         return self._client.list_hooks(  # type: ignore
             hook_name=hook_name,
             skip=skip,
-            cls=kwargs.pop("cls", lambda hooks: [_convert_to_hook_type(hook) for hook in hooks]),
+            cls=kwargs.pop(
+                "cls", lambda hooks: [_convert_to_hook_type(hook) for hook in hooks]
+            ),
             **kwargs
         )
 
     @distributed_trace
-    def list_data_feeds(
-        self,
-        **kwargs: Any
-    ) -> AsyncItemPaged[DataFeed]:
+    def list_data_feeds(self, **kwargs: Any) -> AsyncItemPaged[DataFeed]:
         """List all data feeds.
 
         :keyword str data_feed_name: filter data feed by its name.
@@ -1040,15 +1080,15 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             status=status,
             creator=creator,
             skip=skip,
-            cls=kwargs.pop("cls", lambda feeds: [DataFeed._from_generated(feed) for feed in feeds]),
+            cls=kwargs.pop(
+                "cls", lambda feeds: [DataFeed._from_generated(feed) for feed in feeds]
+            ),
             **kwargs
         )
 
     @distributed_trace
     def list_alert_configurations(
-        self,
-        detection_configuration_id: str,
-        **kwargs: Any
+        self, detection_configuration_id: str, **kwargs: Any
     ) -> AsyncItemPaged[AnomalyAlertConfiguration]:
         """Query all anomaly alert configurations for specific anomaly detection configuration.
 
@@ -1069,17 +1109,18 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         """
         return self._client.get_anomaly_alerting_configurations_by_anomaly_detection_configuration(  # type: ignore
             detection_configuration_id,
-            cls=kwargs.pop("cls", lambda confs: [
-                AnomalyAlertConfiguration._from_generated(conf) for conf in confs
-            ]),
+            cls=kwargs.pop(
+                "cls",
+                lambda confs: [
+                    AnomalyAlertConfiguration._from_generated(conf) for conf in confs
+                ],
+            ),
             **kwargs
         )
 
     @distributed_trace
     def list_detection_configurations(
-        self,
-        metric_id: str,
-        **kwargs: Any
+        self, metric_id: str, **kwargs: Any
     ) -> AsyncItemPaged[AnomalyDetectionConfiguration]:
         """Query all anomaly detection configurations for specific metric.
 
@@ -1100,9 +1141,13 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         """
         return self._client.get_anomaly_detection_configurations_by_metric(  # type: ignore
             metric_id,
-            cls=kwargs.pop("cls", lambda confs: [
-                AnomalyDetectionConfiguration._from_generated(conf) for conf in confs
-            ]),
+            cls=kwargs.pop(
+                "cls",
+                lambda confs: [
+                    AnomalyDetectionConfiguration._from_generated(conf)
+                    for conf in confs
+                ],
+            ),
             **kwargs
         )
 
@@ -1144,8 +1189,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         return self._client.get_data_feed_ingestion_status(  # type: ignore
             data_feed_id=data_feed_id,
             body=_IngestionStatusQueryOptions(
-                start_time=converted_start_time,
-                end_time=converted_end_time
+                start_time=converted_start_time, end_time=converted_end_time
             ),
             skip=skip,
             **kwargs
@@ -1179,13 +1223,16 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :caption: Get a datasource credential by its ID
         """
 
-        datasource_credential = await self._client.get_credential(credential_id, **kwargs)
+        datasource_credential = await self._client.get_credential(
+            credential_id, **kwargs
+        )
         return convert_to_datasource_credential(datasource_credential)
 
     @distributed_trace_async
     async def create_datasource_credential(
-            self, datasource_credential,        # type: DatasourceCredentialUnion
-            **kwargs  # type: Any
+        self,
+        datasource_credential,  # type: DatasourceCredentialUnion
+        **kwargs  # type: Any
     ):
         # type: (...) -> DatasourceCredentialUnion
         """Create a new datasource credential.
@@ -1213,8 +1260,12 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         """
 
         datasource_credential_request = None
-        if datasource_credential.credential_type in ["AzureSQLConnectionString",
-            "DataLakeGen2SharedKey", "ServicePrincipal", "ServicePrincipalInKV"]:
+        if datasource_credential.credential_type in [
+            "AzureSQLConnectionString",
+            "DataLakeGen2SharedKey",
+            "ServicePrincipal",
+            "ServicePrincipalInKV",
+        ]:
             datasource_credential_request = datasource_credential._to_generated()
 
         response_headers = await self._client.create_credential(  # type: ignore
@@ -1222,13 +1273,12 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
-        credential_id = response_headers["Location"].split("credentials/")[1]    # type: ignore
+        credential_id = response_headers["Location"].split("credentials/")[1]  # type: ignore
         return await self.get_datasource_credential(credential_id)
 
     @distributed_trace
     def list_datasource_credentials(
-        self,
-        **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[DatasourceCredentialUnion]
         """List all datasource credential.
@@ -1256,14 +1306,18 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         return self._client.list_credentials(  # type: ignore
             cls=kwargs.pop(
                 "cls",
-                lambda credentials: [convert_to_datasource_credential(credential) for credential in credentials]),
+                lambda credentials: [
+                    convert_to_datasource_credential(credential)
+                    for credential in credentials
+                ],
+            ),
             **kwargs
         )
 
     @distributed_trace_async
     async def update_datasource_credential(
         self,
-        datasource_credential,    # type: DatasourceCredentialUnion
+        datasource_credential,  # type: DatasourceCredentialUnion
         **kwargs  # type: Any
     ):
         # type: (...) -> DatasourceCredentialUnion
@@ -1291,11 +1345,15 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         """
 
         datasource_credential_request = None
-        if datasource_credential.credential_type in ["AzureSQLConnectionString",
-            "DataLakeGen2SharedKey", "ServicePrincipal", "ServicePrincipalInKV"]:
+        if datasource_credential.credential_type in [
+            "AzureSQLConnectionString",
+            "DataLakeGen2SharedKey",
+            "ServicePrincipal",
+            "ServicePrincipalInKV",
+        ]:
             datasource_credential_request = datasource_credential._to_generated_patch()
 
-        updated_datasource_credential = await self._client.update_credential(   # type: ignore
+        updated_datasource_credential = await self._client.update_credential(  # type: ignore
             datasource_credential.id,
             datasource_credential_request,  # type: ignore
             **kwargs
@@ -1304,7 +1362,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         return convert_to_datasource_credential(updated_datasource_credential)
 
     @distributed_trace_async
-    async def delete_datasource_credential(self, *credential_id: str, **kwargs: Any) -> None:
+    async def delete_datasource_credential(
+        self, *credential_id: str, **kwargs: Any
+    ) -> None:
         """Delete a datasource credential by its ID.
 
         ::param str credential_id: Datasource credential unique ID.

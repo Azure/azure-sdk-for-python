@@ -1,0 +1,27 @@
+interactions:
+- request:
+    body: '{"hello": "test_webpubsub_send_to_all"}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Content-Length:
+      - '39'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-messaging-webpubsubservice/1.0.0b3 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://myservice.webpubsub.azure.com/api/hubs/Hub/:send?api-version=2021-10-01
+  response:
+    body:
+      string: ''
+    headers:
+      connection: keep-alive
+      content-length: '0'
+      date: Fri, 05 Nov 2021 05:03:57 GMT
+      strict-transport-security: max-age=15724800; includeSubDomains
+    status:
+      code: 202
+      message: Accepted
+    url: https://webpubsub-yyc.webpubsub.azure.com/api/hubs/Hub/:send?api-version=2021-10-01
+version: 1

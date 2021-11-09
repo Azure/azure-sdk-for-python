@@ -68,8 +68,8 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         an instance of a AzureSasCredential from azure.core.credentials or an account
         shared access key.
     :keyword str api_version:
-        The Storage API version to use for requests. Default value is '2019-07-07'.
-        Setting to an older version may result in reduced feature compatibility.
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
         .. versionadded:: 12.1.0
 
@@ -118,8 +118,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             sas_token, credential, share_snapshot=self.snapshot)
         super(ShareDirectoryClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
         self._client = AzureFileStorage(url=self.url, pipeline=self._pipeline)
-        default_api_version = self._client._config.version  # pylint: disable=protected-access
-        self._client._config.version = get_api_version(kwargs, default_api_version)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
     @classmethod
     def from_directory_url(cls, directory_url,  # type: str
@@ -231,7 +230,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
         return ShareFileClient(
-            self.url, file_path=file_name, share_name=self.share_name, napshot=self.snapshot,
+            self.url, file_path=file_name, share_name=self.share_name, snapshot=self.snapshot,
             credential=self.credential, api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, **kwargs)
@@ -335,6 +334,19 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         :param str name_starts_with:
             Filters the results to return only entities whose names
             begin with the specified prefix.
+        :keyword list[str] include:
+            Include this parameter to specify one or more datasets to include in the response.
+            Possible str values are "timestamps", "Etag", "Attributes", "PermissionKey".
+
+            .. versionadded:: 12.6.0
+            This keyword argument was introduced in API version '2020-10-02'.
+
+        :keyword bool include_extended_info:
+            If this is set to true, file id will be returned in listed results.
+
+            .. versionadded:: 12.6.0
+            This keyword argument was introduced in API version '2020-10-02'.
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties

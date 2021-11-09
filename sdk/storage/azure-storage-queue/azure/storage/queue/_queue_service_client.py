@@ -17,6 +17,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
+from ._serialize import get_api_version
 from ._shared.models import LocationMode
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.response_handlers import process_storage_error
@@ -65,8 +66,8 @@ class QueueServiceClient(StorageAccountHostsMixin):
         an instance of a AzureSasCredential from azure.core.credentials, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
     :keyword str api_version:
-        The Storage API version to use for requests. Default value is '2019-07-07'.
-        Setting to an older version may result in reduced feature compatibility.
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
 
@@ -108,8 +109,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(QueueServiceClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
         self._client = AzureQueueStorage(self.url, pipeline=self._pipeline)
-        default_api_version = self._client._config.version  # pylint: disable=protected-access
-        self._client._config.version = kwargs.get('api_version', default_api_version)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location

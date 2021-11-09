@@ -45,7 +45,7 @@ class SecureScoreControlsOperations:
         self,
         secure_score_name: str,
         expand: Optional[Union[str, "_models.ExpandControlsEnum"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SecureScoreControlList"]:
         """Get all security controls for a specific initiative within a scope.
 
@@ -120,7 +120,7 @@ class SecureScoreControlsOperations:
     def list(
         self,
         expand: Optional[Union[str, "_models.ExpandControlsEnum"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SecureScoreControlList"]:
         """Get all security controls within a scope.
 

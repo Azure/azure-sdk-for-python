@@ -583,6 +583,22 @@ async def test_send_typing_notification():
     assert raised == False
 
 @pytest.mark.asyncio
+async def test_send_typing_notification_with_sender_display_name():
+    thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
+    raised = False
+
+    async def mock_send(*_, **__):
+        return mock_response(status_code=200)
+    chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
+
+    try:
+        await chat_thread_client.send_typing_notification(sender_display_name="John")
+    except:
+        raised = True
+
+    assert raised == False
+
+@pytest.mark.asyncio
 async def test_send_read_receipt():
     thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
     message_id="1596823919339"

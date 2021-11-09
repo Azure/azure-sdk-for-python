@@ -250,6 +250,12 @@ class ChatThreadClientTest(CommunicationTestCase):
         self.chat_thread_client.send_typing_notification()
 
     @pytest.mark.live_test_only
+    def test_send_typing_notification_with_display_name(self):
+        self._create_thread()
+
+        self.chat_thread_client.send_typing_notification(sender_display_name="John")
+
+    @pytest.mark.live_test_only
     def test_send_read_receipt(self):
         self._create_thread()
         message_id = self._send_message()

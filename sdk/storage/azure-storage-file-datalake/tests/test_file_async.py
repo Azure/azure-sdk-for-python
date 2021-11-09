@@ -20,11 +20,9 @@ from azure.storage.filedatalake import ContentSettings, generate_account_sas, ge
     ResourceTypes, AccountSasPermissions, FileSasPermissions
 from azure.storage.filedatalake.aio import DataLakeServiceClient, FileSystemClient, DataLakeDirectoryClient, \
     DataLakeFileClient
-from asynctestcase import (
-    StorageTestCase)
-
+from devtools_testutils.storage.aio import AsyncStorageTestCase as StorageTestCase
+from settings.testcase import DataLakePreparer
 # ------------------------------------------------------------------------------
-from testcase import DataLakePreparer
 
 TEST_DIRECTORY_PREFIX = 'directory'
 TEST_FILE_PREFIX = 'file'
@@ -36,7 +34,7 @@ FILE_PATH = 'file_output.temp.dat'
 
 class FileTest(StorageTestCase):
     async def _setUp(self, account_name, account_key):
-        url = self._get_account_url(account_name)
+        url = self.account_url(account_name, 'dfs')
         self.dsc = DataLakeServiceClient(url, credential=account_key)
 
         self.config = self.dsc._config
@@ -417,7 +415,7 @@ class FileTest(StorageTestCase):
 
         # Get user delegation key
         token_credential = self.generate_oauth_token()
-        service_client = DataLakeServiceClient(self._get_oauth_account_url(datalake_storage_account_name), credential=token_credential)
+        service_client = DataLakeServiceClient(self.account_url(datalake_storage_account_name, 'dfs'), credential=token_credential)
         user_delegation_key = await service_client.get_user_delegation_key(datetime.utcnow(),
                                                                            datetime.utcnow() + timedelta(hours=1))
 
@@ -431,7 +429,7 @@ class FileTest(StorageTestCase):
                                       )
 
         # doanload the data and make sure it is the same as uploaded data
-        new_file_client = DataLakeFileClient(self._get_account_url(datalake_storage_account_name),
+        new_file_client = DataLakeFileClient(self.account_url(datalake_storage_account_name, 'dfs'),
                                              file_client.file_system_name,
                                              file_client.path_name,
                                              credential=sas_token)

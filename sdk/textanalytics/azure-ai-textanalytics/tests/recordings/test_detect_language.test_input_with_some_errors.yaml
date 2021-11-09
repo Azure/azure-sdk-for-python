@@ -17,12 +17,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/languages?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/languages?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"2","detectedLanguage":{"name":"Spanish","iso6391Name":"es","confidenceScore":0.75},"warnings":[]},{"id":"4","detectedLanguage":{"name":"German","iso6391Name":"de","confidenceScore":0.99},"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
+      string: '{"documents":[{"id":"2","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"4","detectedLanguage":{"name":"German","iso6391Name":"de","confidenceScore":0.99},"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         Country Hint.","innererror":{"code":"InvalidCountryHint","message":"Country
         hint is not valid. Please specify an ISO 3166-1 alpha-2 two letter country
         code."}}},{"id":"3","error":{"code":"InvalidArgument","message":"Invalid document
@@ -30,13 +30,13 @@ interactions:
         is empty."}}}],"modelVersion":"2021-01-05"}'
     headers:
       apim-request-id:
-      - 513b8783-f827-48e1-91d8-94e1a7ee4d3d
+      - 2ce869ae-ff93-41fe-896d-6e1aafe1de07
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=2,CognitiveServices.TextAnalytics.TextRecords=2
       date:
-      - Wed, 23 Jun 2021 01:53:18 GMT
+      - Wed, 06 Oct 2021 21:04:09 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -44,7 +44,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '10'
+      - '8'
     status:
       code: 200
       message: OK

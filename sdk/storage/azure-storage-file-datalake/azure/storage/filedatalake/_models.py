@@ -23,9 +23,11 @@ from azure.storage.blob._generated.models import Logging as GenLogging, Metrics 
 from ._shared.models import DictMixin
 
 
-class FileSystemProperties(object):
+class FileSystemProperties(DictMixin):
     """File System properties class.
 
+    :ivar str name:
+        Name of the filesystem.
     :ivar ~datetime.datetime last_modified:
         A datetime object representing the last time the file system was modified.
     :ivar str etag:
@@ -184,7 +186,7 @@ class FileProperties(DictMixin):
         self.content_settings = ContentSettings(**kwargs)
 
 
-class PathProperties(object):
+class PathProperties(DictMixin):
     """Path properties listed by get_paths api.
 
     :ivar str name: the full path for a file or directory.
@@ -719,6 +721,14 @@ class ArrowDialect(BlobArrowDialect):
     :keyword int precision: The precision of the field.
     :keyword int scale: The scale of the field.
     """
+
+
+class QuickQueryDialect(str, Enum):
+    """Specifies the quick query input/output dialect."""
+
+    DelimitedText = 'DelimitedTextDialect'
+    DelimitedJson = 'DelimitedJsonDialect'
+    Parquet = 'ParquetDialect'
 
 
 class ArrowType(str, Enum):

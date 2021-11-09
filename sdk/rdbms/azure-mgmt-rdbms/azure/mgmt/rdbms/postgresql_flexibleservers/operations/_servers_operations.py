@@ -32,7 +32,7 @@ class ServersOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~postgre_sql_management_client.models
+    :type models: ~azure.mgmt.rdbms.postgresql_flexibleservers.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -104,7 +104,7 @@ class ServersOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _create_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}'}  # type: ignore
+    _create_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}'}  # type: ignore
 
     def begin_create(
         self,
@@ -121,7 +121,7 @@ class ServersOperations(object):
         :param server_name: The name of the server.
         :type server_name: str
         :param parameters: The required parameters for creating or updating a server.
-        :type parameters: ~postgre_sql_management_client.models.Server
+        :type parameters: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.Server
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling.
@@ -129,7 +129,7 @@ class ServersOperations(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either Server or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~postgre_sql_management_client.models.Server]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.rdbms.postgresql_flexibleservers.models.Server]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -176,7 +176,7 @@ class ServersOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}'}  # type: ignore
+    begin_create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}'}  # type: ignore
 
     def _update_initial(
         self,
@@ -232,7 +232,7 @@ class ServersOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}'}  # type: ignore
+    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}'}  # type: ignore
 
     def begin_update(
         self,
@@ -250,7 +250,7 @@ class ServersOperations(object):
         :param server_name: The name of the server.
         :type server_name: str
         :param parameters: The required parameters for updating a server.
-        :type parameters: ~postgre_sql_management_client.models.ServerForUpdate
+        :type parameters: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.ServerForUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling.
@@ -258,7 +258,7 @@ class ServersOperations(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either Server or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~postgre_sql_management_client.models.Server]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.rdbms.postgresql_flexibleservers.models.Server]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -305,7 +305,7 @@ class ServersOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}'}  # type: ignore
+    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}'}  # type: ignore
 
     def _delete_initial(
         self,
@@ -350,7 +350,7 @@ class ServersOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}'}  # type: ignore
+    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}'}  # type: ignore
 
     def begin_delete(
         self,
@@ -415,7 +415,7 @@ class ServersOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}'}  # type: ignore
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}'}  # type: ignore
 
     def get(
         self,
@@ -432,7 +432,7 @@ class ServersOperations(object):
         :type server_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Server, or the result of cls(response)
-        :rtype: ~postgre_sql_management_client.models.Server
+        :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.Server
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Server"]
@@ -474,7 +474,7 @@ class ServersOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}'}  # type: ignore
 
     def list_by_resource_group(
         self,
@@ -488,7 +488,7 @@ class ServersOperations(object):
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ServerListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~postgre_sql_management_client.models.ServerListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.rdbms.postgresql_flexibleservers.models.ServerListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerListResult"]
@@ -545,7 +545,7 @@ class ServersOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers'}  # type: ignore
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers'}  # type: ignore
 
     def list(
         self,
@@ -556,7 +556,7 @@ class ServersOperations(object):
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ServerListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~postgre_sql_management_client.models.ServerListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.rdbms.postgresql_flexibleservers.models.ServerListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerListResult"]
@@ -612,7 +612,7 @@ class ServersOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBForPostgreSql/flexibleServers'}  # type: ignore
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBforPostgreSQL/flexibleServers'}  # type: ignore
 
     def _restart_initial(
         self,
@@ -666,7 +666,7 @@ class ServersOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    _restart_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/restart'}  # type: ignore
+    _restart_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/restart'}  # type: ignore
 
     def begin_restart(
         self,
@@ -683,7 +683,7 @@ class ServersOperations(object):
         :param server_name: The name of the server.
         :type server_name: str
         :param parameters: The parameters for restarting a server.
-        :type parameters: ~postgre_sql_management_client.models.RestartParameter
+        :type parameters: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.RestartParameter
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling.
@@ -735,7 +735,7 @@ class ServersOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_restart.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/restart'}  # type: ignore
+    begin_restart.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/restart'}  # type: ignore
 
     def _start_initial(
         self,
@@ -780,7 +780,7 @@ class ServersOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    _start_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/start'}  # type: ignore
+    _start_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/start'}  # type: ignore
 
     def begin_start(
         self,
@@ -845,7 +845,7 @@ class ServersOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_start.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/start'}  # type: ignore
+    begin_start.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/start'}  # type: ignore
 
     def _stop_initial(
         self,
@@ -890,7 +890,7 @@ class ServersOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    _stop_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/stop'}  # type: ignore
+    _stop_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/stop'}  # type: ignore
 
     def begin_stop(
         self,
@@ -955,4 +955,4 @@ class ServersOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_stop.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/stop'}  # type: ignore
+    begin_stop.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/stop'}  # type: ignore

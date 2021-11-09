@@ -114,4 +114,4 @@ class LocationBasedPerformanceTierOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBForPostgreSQL/locations/{locationName}/performanceTiers'}  # type: ignore
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBforPostgreSQL/locations/{locationName}/performanceTiers'}  # type: ignore

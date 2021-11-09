@@ -17,6 +17,13 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration import RecoveryServicesBackupClientConfiguration
+from .operations import BackupResourceStorageConfigsNonCRROperations
+from .operations import ProtectionIntentOperations
+from .operations import BackupStatusOperations
+from .operations import FeatureSupportOperations
+from .operations import BackupProtectionIntentOperations
+from .operations import BackupUsageSummariesOperations
+from .operations import Operations
 from .operations import BackupResourceVaultConfigsOperations
 from .operations import BackupResourceEncryptionConfigsOperations
 from .operations import PrivateEndpointConnectionOperations
@@ -54,6 +61,8 @@ from .operations import BackupProtectableItemsOperations
 from .operations import BackupProtectionContainersOperations
 from .operations import SecurityPINsOperations
 from .operations import RecoveryPointsRecommendedForMoveOperations
+from .operations import ResourceGuardProxiesOperations
+from .operations import ResourceGuardProxyOperations
 from .operations import BackupUsageSummariesCRROperations
 from .operations import AadPropertiesOperations
 from .operations import CrossRegionRestoreOperations
@@ -64,18 +73,26 @@ from .operations import CrrOperationStatusOperations
 from .operations import BackupResourceStorageConfigsOperations
 from .operations import RecoveryPointsCrrOperations
 from .operations import BackupProtectedItemsCrrOperations
-from .operations import ProtectionIntentOperations
-from .operations import BackupStatusOperations
-from .operations import FeatureSupportOperations
-from .operations import BackupProtectionIntentOperations
-from .operations import BackupUsageSummariesOperations
-from .operations import Operations
 from .. import models
 
 
 class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin):
     """Open API 2.0 Specs for Azure RecoveryServices Backup service.
 
+    :ivar backup_resource_storage_configs_non_crr: BackupResourceStorageConfigsNonCRROperations operations
+    :vartype backup_resource_storage_configs_non_crr: azure.mgmt.recoveryservicesbackup.aio.operations.BackupResourceStorageConfigsNonCRROperations
+    :ivar protection_intent: ProtectionIntentOperations operations
+    :vartype protection_intent: azure.mgmt.recoveryservicesbackup.aio.operations.ProtectionIntentOperations
+    :ivar backup_status: BackupStatusOperations operations
+    :vartype backup_status: azure.mgmt.recoveryservicesbackup.aio.operations.BackupStatusOperations
+    :ivar feature_support: FeatureSupportOperations operations
+    :vartype feature_support: azure.mgmt.recoveryservicesbackup.aio.operations.FeatureSupportOperations
+    :ivar backup_protection_intent: BackupProtectionIntentOperations operations
+    :vartype backup_protection_intent: azure.mgmt.recoveryservicesbackup.aio.operations.BackupProtectionIntentOperations
+    :ivar backup_usage_summaries: BackupUsageSummariesOperations operations
+    :vartype backup_usage_summaries: azure.mgmt.recoveryservicesbackup.aio.operations.BackupUsageSummariesOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.recoveryservicesbackup.aio.operations.Operations
     :ivar backup_resource_vault_configs: BackupResourceVaultConfigsOperations operations
     :vartype backup_resource_vault_configs: azure.mgmt.recoveryservicesbackup.aio.operations.BackupResourceVaultConfigsOperations
     :ivar backup_resource_encryption_configs: BackupResourceEncryptionConfigsOperations operations
@@ -148,6 +165,10 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin):
     :vartype security_pins: azure.mgmt.recoveryservicesbackup.aio.operations.SecurityPINsOperations
     :ivar recovery_points_recommended_for_move: RecoveryPointsRecommendedForMoveOperations operations
     :vartype recovery_points_recommended_for_move: azure.mgmt.recoveryservicesbackup.aio.operations.RecoveryPointsRecommendedForMoveOperations
+    :ivar resource_guard_proxies: ResourceGuardProxiesOperations operations
+    :vartype resource_guard_proxies: azure.mgmt.recoveryservicesbackup.aio.operations.ResourceGuardProxiesOperations
+    :ivar resource_guard_proxy: ResourceGuardProxyOperations operations
+    :vartype resource_guard_proxy: azure.mgmt.recoveryservicesbackup.aio.operations.ResourceGuardProxyOperations
     :ivar backup_usage_summaries_crr: BackupUsageSummariesCRROperations operations
     :vartype backup_usage_summaries_crr: azure.mgmt.recoveryservicesbackup.aio.operations.BackupUsageSummariesCRROperations
     :ivar aad_properties: AadPropertiesOperations operations
@@ -168,18 +189,6 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin):
     :vartype recovery_points_crr: azure.mgmt.recoveryservicesbackup.aio.operations.RecoveryPointsCrrOperations
     :ivar backup_protected_items_crr: BackupProtectedItemsCrrOperations operations
     :vartype backup_protected_items_crr: azure.mgmt.recoveryservicesbackup.aio.operations.BackupProtectedItemsCrrOperations
-    :ivar protection_intent: ProtectionIntentOperations operations
-    :vartype protection_intent: azure.mgmt.recoveryservicesbackup.aio.operations.ProtectionIntentOperations
-    :ivar backup_status: BackupStatusOperations operations
-    :vartype backup_status: azure.mgmt.recoveryservicesbackup.aio.operations.BackupStatusOperations
-    :ivar feature_support: FeatureSupportOperations operations
-    :vartype feature_support: azure.mgmt.recoveryservicesbackup.aio.operations.FeatureSupportOperations
-    :ivar backup_protection_intent: BackupProtectionIntentOperations operations
-    :vartype backup_protection_intent: azure.mgmt.recoveryservicesbackup.aio.operations.BackupProtectionIntentOperations
-    :ivar backup_usage_summaries: BackupUsageSummariesOperations operations
-    :vartype backup_usage_summaries: azure.mgmt.recoveryservicesbackup.aio.operations.BackupUsageSummariesOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.recoveryservicesbackup.aio.operations.Operations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The subscription Id.
@@ -205,6 +214,20 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
+        self.backup_resource_storage_configs_non_crr = BackupResourceStorageConfigsNonCRROperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.protection_intent = ProtectionIntentOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.backup_status = BackupStatusOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.feature_support = FeatureSupportOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.backup_protection_intent = BackupProtectionIntentOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.backup_usage_summaries = BackupUsageSummariesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.backup_resource_vault_configs = BackupResourceVaultConfigsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.backup_resource_encryption_configs = BackupResourceEncryptionConfigsOperations(
@@ -277,6 +300,10 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin):
             self._client, self._config, self._serialize, self._deserialize)
         self.recovery_points_recommended_for_move = RecoveryPointsRecommendedForMoveOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.resource_guard_proxies = ResourceGuardProxiesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.resource_guard_proxy = ResourceGuardProxyOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.backup_usage_summaries_crr = BackupUsageSummariesCRROperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.aad_properties = AadPropertiesOperations(
@@ -296,18 +323,6 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin):
         self.recovery_points_crr = RecoveryPointsCrrOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.backup_protected_items_crr = BackupProtectedItemsCrrOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.protection_intent = ProtectionIntentOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.backup_status = BackupStatusOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.feature_support = FeatureSupportOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.backup_protection_intent = BackupProtectionIntentOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.backup_usage_summaries = BackupUsageSummariesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
 
     async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:

@@ -50,7 +50,7 @@ class ApiIssueCommentOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.IssueCommentCollection"]:
         """Lists all comments for the Issue associated with the specified API.
 
@@ -132,7 +132,7 @@ class ApiIssueCommentOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -150,7 +150,7 @@ class ApiIssueCommentOperations:
         api_id: str,
         issue_id: str,
         comment_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Gets the entity state (Etag) version of the issue Comment for an API specified by its
         identifier.
@@ -205,7 +205,7 @@ class ApiIssueCommentOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -224,7 +224,7 @@ class ApiIssueCommentOperations:
         api_id: str,
         issue_id: str,
         comment_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IssueCommentContract":
         """Gets the details of the issue Comment for an API specified by its identifier.
 
@@ -278,7 +278,7 @@ class ApiIssueCommentOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -300,7 +300,7 @@ class ApiIssueCommentOperations:
         comment_id: str,
         parameters: "_models.IssueCommentContract",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IssueCommentContract":
         """Creates a new Comment for the Issue in an API or updates an existing one.
 
@@ -366,7 +366,7 @@ class ApiIssueCommentOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -392,7 +392,7 @@ class ApiIssueCommentOperations:
         issue_id: str,
         comment_id: str,
         if_match: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the specified comment from an Issue.
 
@@ -450,7 +450,7 @@ class ApiIssueCommentOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

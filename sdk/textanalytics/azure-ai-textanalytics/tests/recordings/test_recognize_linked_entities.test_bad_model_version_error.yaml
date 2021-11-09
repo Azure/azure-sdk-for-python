@@ -14,9 +14,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/entities/linking?model-version=bad&showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/linking?model-version=bad&showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid Request.","innererror":{"code":"ModelVersionIncorrect","message":"Invalid
@@ -24,11 +24,11 @@ interactions:
         For additional details see https://aka.ms/text-analytics-model-versioning"}}}'
     headers:
       apim-request-id:
-      - 8e8614ce-105d-45eb-b63f-994b1d8b594a
+      - fb24721c-0a60-4d72-b060-6b5e26a11ba5
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 23 Jun 2021 01:56:38 GMT
+      - Wed, 06 Oct 2021 21:05:10 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -36,7 +36,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '14'
+      - '5'
     status:
       code: 400
       message: Bad Request

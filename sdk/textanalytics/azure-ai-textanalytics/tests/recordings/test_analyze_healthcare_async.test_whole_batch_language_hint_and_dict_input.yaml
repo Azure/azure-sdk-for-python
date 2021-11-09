@@ -12,44 +12,44 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 13862950-3f53-43ae-94d0-863a6ff44812
-      date: Wed, 23 Jun 2021 01:48:11 GMT
-      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/entities/health/jobs/5d1109f6-accd-4618-a266-a6e0dbb474f6
+      apim-request-id: 5f32ef7c-fa1b-48d5-aba8-f5e8e384e39c
+      date: Wed, 06 Oct 2021 21:03:25 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs/d8506888-791b-4e23-983b-85775cd7f2a4
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '210'
+      x-envoy-upstream-service-time: '176'
     status:
       code: 202
       message: Accepted
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com//text/analytics/v3.1/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/entities/health/jobs?stringIndexType=UnicodeCodePoint
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/entities/health/jobs/5d1109f6-accd-4618-a266-a6e0dbb474f6
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs/d8506888-791b-4e23-983b-85775cd7f2a4
   response:
     body:
-      string: '{"jobId":"5d1109f6-accd-4618-a266-a6e0dbb474f6","lastUpdateDateTime":"2021-06-23T01:48:13Z","createdDateTime":"2021-06-23T01:48:12Z","expirationDateTime":"2021-06-24T01:48:12Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"1","entities":[],"relations":[],"warnings":[]},{"id":"2","entities":[],"relations":[],"warnings":[]},{"id":"3","entities":[],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2021-05-15"}}'
+      string: '{"jobId":"d8506888-791b-4e23-983b-85775cd7f2a4","lastUpdateDateTime":"2021-10-06T21:03:26Z","createdDateTime":"2021-10-06T21:03:25Z","expirationDateTime":"2021-10-07T21:03:25Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"1","entities":[],"relations":[],"warnings":[]},{"id":"2","entities":[],"relations":[],"warnings":[]},{"id":"3","entities":[],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2021-05-15"}}'
     headers:
-      apim-request-id: 38174586-e705-4240-a28b-112cbae1826d
+      apim-request-id: 3b08f5d5-b6f8-459e-b355-95bd0c8af05c
       content-type: application/json; charset=utf-8
-      date: Wed, 23 Jun 2021 01:48:16 GMT
+      date: Wed, 06 Oct 2021 21:03:30 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '138'
+      x-envoy-upstream-service-time: '85'
     status:
       code: 200
       message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs/5d1109f6-accd-4618-a266-a6e0dbb474f6
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.1/entities/health/jobs/d8506888-791b-4e23-983b-85775cd7f2a4
 version: 1

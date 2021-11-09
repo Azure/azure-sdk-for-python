@@ -23,4 +23,4 @@ steps:
     displayName: 'Pip Authenticate to feed'
     inputs:
       artifactFeeds: $(DevFeedName)
-      onlyAddExtraIndex: true
+      onlyAddExtraIndex: false

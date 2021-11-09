@@ -44,7 +44,7 @@ class DeviceSecurityGroupsOperations:
     def list(
         self,
         resource_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DeviceSecurityGroupList"]:
         """Use this method get the list of device security groups for the specified IoT Hub resource.
 
@@ -114,7 +114,7 @@ class DeviceSecurityGroupsOperations:
         self,
         resource_id: str,
         device_security_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeviceSecurityGroup":
         """Use this method to get the device security group for the specified IoT Hub resource.
 
@@ -173,7 +173,7 @@ class DeviceSecurityGroupsOperations:
         resource_id: str,
         device_security_group_name: str,
         device_security_group: "_models.DeviceSecurityGroup",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeviceSecurityGroup":
         """Use this method to creates or updates the device security group on a specified IoT Hub
         resource.
@@ -243,7 +243,7 @@ class DeviceSecurityGroupsOperations:
         self,
         resource_id: str,
         device_security_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """User this method to deletes the device security group.
 

@@ -462,29 +462,29 @@ interactions:
       Content-Length:
       - '25662'
       Content-Type:
-      - application/pdf
+      - application/octet-stream
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - ddc0d5fb-cdd1-40a5-a870-68b39eff231a
+      - 8e9d1875-c70a-48cb-b1cd-8ba2c855615a
       content-length:
       - '0'
       date:
-      - Tue, 11 May 2021 03:06:17 GMT
+      - Tue, 14 Sep 2021 22:16:19 GMT
       operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/receipt/analyzeResults/ddc0d5fb-cdd1-40a5-a870-68b39eff231a
+      - https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/8e9d1875-c70a-48cb-b1cd-8ba2c855615a?api-version=2021-09-30-preview
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '53'
+      - '204'
     status:
       code: 202
       message: Accepted
@@ -498,31 +498,32 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/receipt/analyzeResults/ddc0d5fb-cdd1-40a5-a870-68b39eff231a
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/8e9d1875-c70a-48cb-b1cd-8ba2c855615a?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-05-11T03:06:18Z",
-        "lastUpdatedDateTime": "2021-05-11T03:06:20Z", "analyzeResult": {"version":
-        "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
-        "unit": "inch"}], "documentResults": [{"docType": "prebuilt:receipt", "pageRange":
-        [1, 1], "fields": {}}]}}'
+      string: '{"status": "succeeded", "createdDateTime": "2021-09-14T22:16:19Z",
+        "lastUpdatedDateTime": "2021-09-14T22:16:22Z", "analyzeResult": {"apiVersion":
+        "2021-09-30-preview", "modelId": "prebuilt-receipt", "stringIndexType": "unicodeCodePoint",
+        "content": "", "pages": [{"pageNumber": 1, "angle": 0, "width": 8.5, "height":
+        11, "unit": "inch", "words": [], "lines": [], "spans": [{"offset": 0, "length":
+        0}]}], "documents": []}}'
     headers:
       apim-request-id:
-      - 180b34ff-1d4a-4a7b-886c-7b154a82661b
-      content-length:
-      - '300'
+      - 4583b2f3-fbb7-431f-bd01-cd74f2b2ae4a
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 11 May 2021 03:06:23 GMT
+      - Tue, 14 Sep 2021 22:16:24 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '21'
+      - '158'
     status:
       code: 200
       message: OK

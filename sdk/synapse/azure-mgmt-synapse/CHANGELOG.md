@@ -1,5 +1,51 @@
 # Release History
 
+## 2.1.0b3 (2021-11-08)
+
+**Features**
+
+  - Model EventHubDataConnection has a new parameter managed_identity_resource_id
+  - Added operation KustoPoolsOperations.list_skus
+
+**Breaking changes**
+
+  - Removed operation group KustoPoolOperations
+
+## 2.1.0b2 (2021-10-09)
+
+**Features**
+
+  - Added operation group KustoPoolOperations
+  - Added operation group KustoPoolChildResourceOperations
+  - Added operation group KustoPoolsOperations
+  - Added operation group KustoPoolAttachedDatabaseConfigurationsOperations
+  - Added operation group KustoOperationsOperations
+  - Added operation group KustoPoolDatabasesOperations
+  - Added operation group KustoPoolDataConnectionsOperations
+  - Added operation group KustoPoolPrincipalAssignmentsOperations
+  - Added operation group KustoPoolDatabasePrincipalAssignmentsOperations
+
+## 2.1.0b1 (2021-09-06)
+
+**Features**
+
+  - Model IntegrationRuntimeVNetProperties has a new parameter subnet_id
+  - Model Workspace has a new parameter csp_workspace_admin_properties
+  - Model Workspace has a new parameter settings
+  - Model Workspace has a new parameter azure_ad_only_authentication
+  - Model SqlPoolPatchInfo has a new parameter source_database_deletion_date
+  - Model CustomerManagedKeyDetails has a new parameter kek_identity
+  - Model DataLakeStorageAccountDetails has a new parameter resource_id
+  - Model DataLakeStorageAccountDetails has a new parameter create_managed_private_endpoint
+  - Model SqlPool has a new parameter source_database_deletion_date
+  - Model ManagedIdentity has a new parameter user_assigned_identities
+  - Model IntegrationRuntimeDataFlowProperties has a new parameter cleanup
+  - Added operation IntegrationRuntimesOperations.list_outbound_network_dependencies_endpoints
+  - Added operation PrivateEndpointConnectionsPrivateLinkHubOperations.get
+  - Added operation group AzureADOnlyAuthenticationsOperations
+  - Added operation group SparkConfigurationsOperations
+  - Added operation group SparkConfigurationOperations
+
 ## 2.0.0 (2021-04-07)
 
 **Features**

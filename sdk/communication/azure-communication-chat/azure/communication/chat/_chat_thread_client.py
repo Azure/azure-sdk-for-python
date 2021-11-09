@@ -20,6 +20,7 @@ from ._generated.models import (
     AddChatParticipantsRequest,
     SendReadReceiptRequest,
     SendChatMessageRequest,
+    SendTypingNotificationRequest,
     UpdateChatMessageRequest,
     UpdateChatThreadRequest,
     ChatMessageType,
@@ -249,6 +250,8 @@ class ChatThreadClient(object):
         # type: (...) -> None
         """Posts a typing event to a thread, on behalf of a user.
 
+        :keyword str sender_display_name: The display name of the typing notification sender. This property
+         is used to populate sender name for push notifications.
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -262,7 +265,13 @@ class ChatThreadClient(object):
                 :dedent: 8
                 :caption: Send typing notification.
         """
-        return self._client.chat_thread.send_typing_notification(self._thread_id, **kwargs)
+
+        sender_display_name = kwargs.pop("sender_display_name", None)
+        send_typing_notification_request = SendTypingNotificationRequest(sender_display_name=sender_display_name)
+        return self._client.chat_thread.send_typing_notification(
+            chat_thread_id=self._thread_id,
+            send_typing_notification_request=send_typing_notification_request,
+            **kwargs)
 
     @distributed_trace
     def send_message(
@@ -280,7 +289,7 @@ class ChatThreadClient(object):
         :paramtype chat_message_type: Union[str, ~azure.communication.chat.ChatMessageType]
         :keyword str sender_display_name: The display name of the message sender. This property is used to
             populate sender name for push notifications.
-        :keyword dict[str, str] metadata : Message metadata.
+        :keyword dict[str, str] metadata: Message metadata.
         :return: SendChatMessageResult
         :rtype: ~azure.communication.chat.SendChatMessageResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -406,7 +415,7 @@ class ChatThreadClient(object):
         :type message_id: str
         :param content: Chat message content.
         :type content: str
-        :keyword dict[str, str] metadata : Message metadata.
+        :keyword dict[str, str] metadata: Message metadata.
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError

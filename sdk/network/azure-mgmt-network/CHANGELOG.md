@@ -1,5 +1,84 @@
 # Release History
 
+## 19.3.0 (2021-11-05)
+
+**Features**
+
+  - Model LoadBalancerBackendAddress has a new parameter inbound_nat_rules_port_mapping
+  - Model VpnNatRuleMapping has a new parameter port_range
+  - Model OwaspCrsExclusionEntry has a new parameter exclusion_managed_rule_sets
+  - Model VirtualNetworkPeering has a new parameter remote_virtual_network_encryption
+  - Model NetworkInterface has a new parameter vnet_encryption_supported
+  - Model VirtualNetworkGateway has a new parameter disable_ip_sec_replay_protection
+  - Model VirtualNetwork has a new parameter encryption
+  - Model BackendAddressPool has a new parameter inbound_nat_rules
+  - Added operation LoadBalancersOperations.begin_list_inbound_nat_rule_port_mappings
+  - Added operation group FirewallPolicyIdpsSignaturesOverridesOperations
+  - Added operation group RoutingIntentOperations
+  - Added operation group FirewallPolicyIdpsSignaturesOperations
+  - Added operation group FirewallPolicyIdpsSignaturesFilterValuesOperations
+
+## 19.2.0 (2021-10-21)
+
+**Features**
+
+  - Added operation group AdminRuleCollectionsOperations
+  - Added operation group SecurityUserConfigurationsOperations
+  - Added operation group ConnectivityConfigurationsOperations
+  - Added operation group ActiveSecurityUserRulesOperations
+  - Added operation group NetworkManagerCommitsOperations
+  - Added operation group NetworkManagersOperations
+  - Added operation group NetworkManagerDeploymentStatusOperations
+  - Added operation group ActiveConnectivityConfigurationsOperations
+  - Added operation group NetworkManagerEffectiveSecurityAdminRulesOperations
+  - Added operation group UserRuleCollectionsOperations
+  - Added operation group ActiveSecurityAdminRulesOperations
+  - Added operation group UserRulesOperations
+  - Added operation group NetworkGroupsOperations
+  - Added operation group EffectiveVirtualNetworksOperations
+  - Added operation group NetworkSecurityPerimetersOperations
+  - Added operation group PerimeterAssociableResourceTypesOperations
+  - Added operation group AdminRulesOperations
+  - Added operation group SecurityAdminConfigurationsOperations
+  - Added operation group EffectiveConnectivityConfigurationsOperations
+  - Removed old api-version `2017-08-01`
+
+## 19.1.0 (2021-10-09)
+
+**Features**
+
+  - Model ServiceEndpointPolicy has a new parameter service_alias
+  - Model ServiceEndpointPolicy has a new parameter contextual_service_endpoint_policies
+  - Model ApplicationGatewayRequestRoutingRule has a new parameter load_distribution_policy
+  - Model BgpConnection has a new parameter hub_virtual_network_connection
+  - Model BastionHost has a new parameter enable_ip_connect
+  - Model BastionHost has a new parameter disable_copy_paste
+  - Model BastionHost has a new parameter enable_tunneling
+  - Model BastionHost has a new parameter scale_units
+  - Model BastionHost has a new parameter enable_file_copy
+  - Model BastionHost has a new parameter enable_shareable_link
+  - Model DscpConfiguration has a new parameter qos_definition_collection
+  - Model ServiceTagInformation has a new parameter service_tag_change_number
+  - Model VnetRoute has a new parameter bgp_connections
+  - Model VpnGateway has a new parameter enable_bgp_route_translation_for_nat
+  - Model ServiceEndpointPolicyDefinition has a new parameter type
+  - Model ApplicationGateway has a new parameter global_configuration
+  - Model ApplicationGateway has a new parameter load_distribution_policies
+  - Model InboundNatRule has a new parameter frontend_port_range_end
+  - Model InboundNatRule has a new parameter frontend_port_range_start
+  - Model InboundNatRule has a new parameter backend_address_pool
+  - Model PrivateEndpoint has a new parameter ip_configurations
+  - Model PrivateEndpoint has a new parameter application_security_groups
+  - Model PrivateEndpoint has a new parameter custom_network_interface_name
+  - Model NetworkVirtualAppliance has a new parameter ssh_public_key
+  - Model ApplicationGatewayUrlPathMap has a new parameter default_load_distribution_policy
+  - Model FirewallPolicy has a new parameter sql
+  - Model FirewallPolicy has a new parameter explicit_proxy_settings
+  - Model VirtualHub has a new parameter kind
+  - Model ApplicationGatewayPathRule has a new parameter load_distribution_policy
+  - Added operation BastionHostsOperations.begin_update_tags
+  - Added operation group ServiceTagInformationOperations
+
 ## 19.0.0 (2021-05-14)
 
 **Features**

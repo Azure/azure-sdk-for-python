@@ -15,27 +15,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/16.0.0 Python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/SHA1-cff2ab63c8c955aaf71989efa641b906558d9fb7?api-version=2021-01-01
+    uri: https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/SHA1-cff2ab63c8c955aaf71989efa641b906558d9fb7?api-version=2021-06-01
   response:
     body:
-      string: '{"name":"sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","type":"Microsoft.Batch/batchAccounts/certificates","etag":"W/\"0x8D8C3651E868712\"","properties":{"thumbprintAlgorithm":"sha1","thumbprint":"cff2ab63c8c955aaf71989efa641b906558d9fb7","provisioningState":"Succeeded","provisioningStateTransitionTime":"2021-01-28T08:17:14.4151117Z","format":"Pfx","publicData":"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78"}}'
+      string: '{"name":"sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","type":"Microsoft.Batch/batchAccounts/certificates","etag":"W/\"0x8D9496F42224ADA\"","properties":{"thumbprintAlgorithm":"sha1","thumbprint":"cff2ab63c8c955aaf71989efa641b906558d9fb7","provisioningState":"Succeeded","provisioningStateTransitionTime":"2021-07-17T22:07:24.9312871Z","format":"Pfx","publicData":"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1189'
+      - '1194'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 08:17:13 GMT
+      - Sat, 17 Jul 2021 22:07:24 GMT
       etag:
-      - W/"0x8D8C3651E868712"
+      - W/"0x8D9496F42224ADA"
       expires:
       - '-1'
       last-modified:
-      - Thu, 28 Jan 2021 08:17:14 GMT
+      - Sat, 17 Jul 2021 22:07:24 GMT
       pragma:
       - no-cache
       server:
@@ -49,7 +49,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1195'
     status:
       code: 200
       message: OK
@@ -63,21 +63,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/16.0.0 Python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates?api-version=2021-01-01
+    uri: https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates?api-version=2021-06-01
   response:
     body:
-      string: '{"value":[{"name":"sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","type":"Microsoft.Batch/batchAccounts/certificates","etag":"W/\"0x8D8C3651E868712\"","properties":{"thumbprintAlgorithm":"sha1","thumbprint":"cff2ab63c8c955aaf71989efa641b906558d9fb7","provisioningState":"Succeeded","provisioningStateTransitionTime":"2021-01-28T08:17:14.4151117Z","format":"Pfx","publicData":"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78"}}]}'
+      string: '{"value":[{"name":"sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","type":"Microsoft.Batch/batchAccounts/certificates","etag":"W/\"0x8D9496F42224ADA\"","properties":{"thumbprintAlgorithm":"sha1","thumbprint":"cff2ab63c8c955aaf71989efa641b906558d9fb7","provisioningState":"Succeeded","provisioningStateTransitionTime":"2021-07-17T22:07:24.9312871Z","format":"Pfx","publicData":"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78"}}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1201'
+      - '1206'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 08:17:13 GMT
+      - Sat, 17 Jul 2021 22:07:24 GMT
       expires:
       - '-1'
       pragma:
@@ -105,27 +105,27 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/16.0.0 Python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/SHA1-cff2ab63c8c955aaf71989efa641b906558d9fb7?api-version=2021-01-01
+    uri: https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/SHA1-cff2ab63c8c955aaf71989efa641b906558d9fb7?api-version=2021-06-01
   response:
     body:
-      string: '{"name":"sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","type":"Microsoft.Batch/batchAccounts/certificates","etag":"W/\"0x8D8C3651E868712\"","properties":{"thumbprintAlgorithm":"sha1","thumbprint":"cff2ab63c8c955aaf71989efa641b906558d9fb7","provisioningState":"Succeeded","provisioningStateTransitionTime":"2021-01-28T08:17:14.4151117Z","format":"Pfx","publicData":"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78"}}'
+      string: '{"name":"sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","type":"Microsoft.Batch/batchAccounts/certificates","etag":"W/\"0x8D9496F42224ADA\"","properties":{"thumbprintAlgorithm":"sha1","thumbprint":"cff2ab63c8c955aaf71989efa641b906558d9fb7","provisioningState":"Succeeded","provisioningStateTransitionTime":"2021-07-17T22:07:24.9312871Z","format":"Pfx","publicData":"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1189'
+      - '1194'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 08:17:14 GMT
+      - Sat, 17 Jul 2021 22:07:24 GMT
       etag:
-      - W/"0x8D8C3651E868712"
+      - W/"0x8D9496F42224ADA"
       expires:
       - '-1'
       last-modified:
-      - Thu, 28 Jan 2021 08:17:14 GMT
+      - Sat, 17 Jul 2021 22:07:24 GMT
       pragma:
       - no-cache
       server:
@@ -156,27 +156,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/16.0.0 Python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/SHA1-cff2ab63c8c955aaf71989efa641b906558d9fb7?api-version=2021-01-01
+    uri: https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/SHA1-cff2ab63c8c955aaf71989efa641b906558d9fb7?api-version=2021-06-01
   response:
     body:
-      string: '{"name":"sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","type":"Microsoft.Batch/batchAccounts/certificates","etag":"W/\"0x8D8C3651E868712\"","properties":{"thumbprintAlgorithm":"sha1","thumbprint":"cff2ab63c8c955aaf71989efa641b906558d9fb7","provisioningState":"Succeeded","provisioningStateTransitionTime":"2021-01-28T08:17:14.4151117Z","format":"Pfx","publicData":"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78"}}'
+      string: '{"name":"sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","type":"Microsoft.Batch/batchAccounts/certificates","etag":"W/\"0x8D9496F42224ADA\"","properties":{"thumbprintAlgorithm":"sha1","thumbprint":"cff2ab63c8c955aaf71989efa641b906558d9fb7","provisioningState":"Succeeded","provisioningStateTransitionTime":"2021-07-17T22:07:24.9312871Z","format":"Pfx","publicData":"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1189'
+      - '1194'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 08:17:14 GMT
+      - Sat, 17 Jul 2021 22:07:25 GMT
       etag:
-      - W/"0x8D8C3651E868712"
+      - W/"0x8D9496F42224ADA"
       expires:
       - '-1'
       last-modified:
-      - Thu, 28 Jan 2021 08:17:14 GMT
+      - Sat, 17 Jul 2021 22:07:24 GMT
       pragma:
       - no-cache
       server:
@@ -190,7 +190,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1194'
     status:
       code: 200
       message: OK
@@ -206,27 +206,27 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/16.0.0 Python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/SHA1-cff2ab63c8c955aaf71989efa641b906558d9fb7/cancelDelete?api-version=2021-01-01
+    uri: https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/SHA1-cff2ab63c8c955aaf71989efa641b906558d9fb7/cancelDelete?api-version=2021-06-01
   response:
     body:
-      string: '{"name":"sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","type":"Microsoft.Batch/batchAccounts/certificates","etag":"W/\"0x8D8C3651E868712\"","properties":{"thumbprintAlgorithm":"sha1","thumbprint":"cff2ab63c8c955aaf71989efa641b906558d9fb7","provisioningState":"Succeeded","provisioningStateTransitionTime":"2021-01-28T08:17:14.4151117Z","format":"Pfx","publicData":"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78"}}'
+      string: '{"name":"sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","type":"Microsoft.Batch/batchAccounts/certificates","etag":"W/\"0x8D9496F42224ADA\"","properties":{"thumbprintAlgorithm":"sha1","thumbprint":"cff2ab63c8c955aaf71989efa641b906558d9fb7","provisioningState":"Succeeded","provisioningStateTransitionTime":"2021-07-17T22:07:24.9312871Z","format":"Pfx","publicData":"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1189'
+      - '1194'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 08:17:15 GMT
+      - Sat, 17 Jul 2021 22:07:25 GMT
       etag:
-      - W/"0x8D8C3651E868712"
+      - W/"0x8D9496F42224ADA"
       expires:
       - '-1'
       last-modified:
-      - Thu, 28 Jan 2021 08:17:14 GMT
+      - Sat, 17 Jul 2021 22:07:24 GMT
       pragma:
       - no-cache
       server:
@@ -240,7 +240,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1197'
     status:
       code: 200
       message: OK
@@ -256,9 +256,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/16.0.0 Python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/SHA1-cff2ab63c8c955aaf71989efa641b906558d9fb7?api-version=2021-01-01
+    uri: https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/SHA1-cff2ab63c8c955aaf71989efa641b906558d9fb7?api-version=2021-06-01
   response:
     body:
       string: ''
@@ -268,11 +268,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 28 Jan 2021 08:17:15 GMT
+      - Sat, 17 Jul 2021 22:07:25 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8D8C3651FB2EB60?api-version=2021-01-01
+      - https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8D9496F428D88BD?api-version=2021-06-01
       pragma:
       - no-cache
       server:
@@ -282,7 +282,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14996'
     status:
       code: 202
       message: Accepted
@@ -296,9 +296,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/16.0.0 Python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8D8C3651FB2EB60?api-version=2021-01-01
+    uri: https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8D9496F428D88BD?api-version=2021-06-01
   response:
     body:
       string: ''
@@ -308,11 +308,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 28 Jan 2021 08:17:31 GMT
+      - Sat, 17 Jul 2021 22:07:40 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d8c3651fb2eb60?api-version=2021-01-01
+      - https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d9496f428d88bd?api-version=2021-06-01
       pragma:
       - no-cache
       server:
@@ -334,9 +334,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/16.0.0 Python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d8c3651fb2eb60?api-version=2021-01-01
+    uri: https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d9496f428d88bd?api-version=2021-06-01
   response:
     body:
       string: ''
@@ -346,11 +346,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 28 Jan 2021 08:17:47 GMT
+      - Sat, 17 Jul 2021 22:07:54 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d8c3651fb2eb60?api-version=2021-01-01
+      - https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d9496f428d88bd?api-version=2021-06-01
       pragma:
       - no-cache
       server:
@@ -372,9 +372,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/16.0.0 Python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d8c3651fb2eb60?api-version=2021-01-01
+    uri: https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d9496f428d88bd?api-version=2021-06-01
   response:
     body:
       string: ''
@@ -384,11 +384,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 28 Jan 2021 08:18:02 GMT
+      - Sat, 17 Jul 2021 22:08:11 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d8c3651fb2eb60?api-version=2021-01-01
+      - https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d9496f428d88bd?api-version=2021-06-01
       pragma:
       - no-cache
       server:
@@ -410,9 +410,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/16.0.0 Python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d8c3651fb2eb60?api-version=2021-01-01
+    uri: https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d9496f428d88bd?api-version=2021-06-01
   response:
     body:
       string: ''
@@ -422,11 +422,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 28 Jan 2021 08:18:17 GMT
+      - Sat, 17 Jul 2021 22:08:26 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d8c3651fb2eb60?api-version=2021-01-01
+      - https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d9496f428d88bd?api-version=2021-06-01
       pragma:
       - no-cache
       server:
@@ -448,9 +448,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/16.0.0 Python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d8c3651fb2eb60?api-version=2021-01-01
+    uri: https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d9496f428d88bd?api-version=2021-06-01
   response:
     body:
       string: ''
@@ -460,7 +460,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 28 Jan 2021 08:18:32 GMT
+      - Sat, 17 Jul 2021 22:08:40 GMT
       expires:
       - '-1'
       pragma:

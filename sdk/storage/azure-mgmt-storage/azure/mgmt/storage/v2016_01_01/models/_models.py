@@ -88,8 +88,8 @@ class Encryption(msrest.serialization.Model):
 
     :param services: List of services which support encryption.
     :type services: ~azure.mgmt.storage.v2016_01_01.models.EncryptionServices
-    :ivar key_source: Required. The encryption keySource (provider). Possible values
-     (case-insensitive):  Microsoft.Storage. Default value: "Microsoft.Storage".
+    :ivar key_source: The encryption keySource (provider). Possible values (case-insensitive):
+     Microsoft.Storage. Has constant value: "Microsoft.Storage".
     :vartype key_source: str
     """
 
@@ -414,7 +414,7 @@ class StorageAccountCheckNameAvailabilityParameters(msrest.serialization.Model):
 
     :param name: Required.
     :type name: str
-    :ivar type: Required.  Default value: "Microsoft.Storage/storageAccounts".
+    :ivar type:  Has constant value: "Microsoft.Storage/storageAccounts".
     :vartype type: str
     """
 
