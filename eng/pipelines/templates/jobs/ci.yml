@@ -88,33 +88,33 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         CondaArtifacts: ${{ parameters.CondaArtifacts }}
 
-  - job: 'Analyze'
-    condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
-    variables:
-    - template: ../variables/globals.yml
+  # - job: 'Analyze'
+  #   condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
+  #   variables:
+  #   - template: ../variables/globals.yml
 
-    dependsOn:
-      - 'Build'
+  #   dependsOn:
+  #     - 'Build'
 
-    pool:
-      name: azsdk-pool-mms-ubuntu-2004-general
-      vmImage: MMSUbuntu20.04
+  #   pool:
+  #     name: azsdk-pool-mms-ubuntu-2004-general
+  #     vmImage: MMSUbuntu20.04
 
-    steps:
-    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-      parameters:
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+  #   steps:
+  #   - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+  #     parameters:
+  #       BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
-    - template: /eng/common/pipelines/templates/steps/check-spelling.yml
+  #   - template: /eng/common/pipelines/templates/steps/check-spelling.yml
 
-    - template: /eng/common/pipelines/templates/steps/verify-links.yml
-      parameters:
-        ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-          Directory: ''
-          Urls: (eng/common/scripts/get-markdown-files-from-changed-files.ps1)
-        ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
-          Directory: sdk/${{ parameters.ServiceDirectory }}
-        CheckLinkGuidance: $true
+  #   - template: /eng/common/pipelines/templates/steps/verify-links.yml
+  #     parameters:
+  #       ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+  #         Directory: ''
+  #         Urls: (eng/common/scripts/get-markdown-files-from-changed-files.ps1)
+  #       ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+  #         Directory: sdk/${{ parameters.ServiceDirectory }}
+  #       CheckLinkGuidance: $true
 
     # - template: ../steps/analyze.yml
     #   parameters:
