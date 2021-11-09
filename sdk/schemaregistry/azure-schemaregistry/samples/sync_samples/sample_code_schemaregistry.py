@@ -60,7 +60,7 @@ def create_client():
 def register_schema(schema_registry_client):
     # [START register_schema_sync]
     GROUP_NAME = os.environ["SCHEMAREGISTRY_GROUP"]
-    SCHEMA_NAME = "your-schema-name"
+    NAME = "your-schema-name"
     FORMAT = "Avro"
     SCHEMA_JSON = {
         "namespace": "example.avro",
@@ -72,9 +72,9 @@ def register_schema(schema_registry_client):
             {"name": "favorite_color", "type": ["string", "null"]},
         ],
     }
-    SCHEMA_DEFINITION = json.dumps(SCHEMA_JSON, separators=(",", ":"))
+    DEFINTION = json.dumps(SCHEMA_JSON, separators=(",", ":"))
     schema_properties = schema_registry_client.register_schema(
-        GROUP_NAME, SCHEMA_NAME, SCHEMA_DEFINITION, FORMAT
+        GROUP_NAME, NAME, DEFINTION, FORMAT
     )
     schema_id = schema_properties.id
     # [END register_schema_sync]
@@ -95,7 +95,7 @@ def get_schema(schema_registry_client, schema_id):
 def get_schema_id(schema_registry_client):
     # [START get_schema_id_sync]
     group_name = os.environ["SCHEMAREGISTRY_GROUP"]
-    schema_name = "your-schema-name"
+    name = "your-schema-name"
     format = "Avro"
     schema_json = {
         "namespace": "example.avro",
@@ -107,9 +107,9 @@ def get_schema_id(schema_registry_client):
             {"name": "favorite_color", "type": ["string", "null"]},
         ],
     }
-    schema_definition = json.dumps(schema_json, separators=(",", ":"))
+    definition = json.dumps(schema_json, separators=(",", ":"))
     schema_properties = schema_registry_client.get_schema_properties(
-        group_name, schema_name, schema_definition, format
+        group_name, name, definition, format
     )
     schema_id = schema_properties.id
     # [END get_schema_id_sync]
