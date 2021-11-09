@@ -20,7 +20,7 @@ steps:
   - checkout: self
   - checkout: azure-sdk-tools
 
-  - template: ../../common/TestResources/deploy-test-resources.yml
+  - template: ../../eng/common/TestResources/deploy-test-resources.yml
     parameters:
       ServiceDirectory: storage
       ResourceType: perf
@@ -53,7 +53,7 @@ steps:
   #     STORAGE_CONNECTION_STRING: $(storage-connection-string)
   #   displayName: Run perf tests
 
-  # - template: ../../common/TestResources/remove-test-resources.yml
+  # - template: ../../eng/common/TestResources/remove-test-resources.yml
   #   parameters:
   #     ServiceDirectory: storage
   #     ResourceType: perf
