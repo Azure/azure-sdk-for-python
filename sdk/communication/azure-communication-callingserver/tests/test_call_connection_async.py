@@ -841,9 +841,9 @@ async def test_create_audio_routing_group_failed(
         raised = True
     assert raised == True
 
-@parameterized.expand(CallConnectionUnitTestUtils.data_source_test_get_audio_routing_group())
+@parameterized.expand(CallConnectionUnitTestUtils.data_source_test_list_audio_routing_groups())
 @pytest.mark.asyncio
-async def test_get_audio_routing_groups_succeed(
+async def test_list_audio_routing_groups_succeed(
     test_name, # type: str
     call_connection_id, # type: str
     audio_routing_group_id, # type: str
@@ -857,14 +857,14 @@ async def test_get_audio_routing_groups_succeed(
         use_managed_identity=use_managed_identity
         )
 
-    result = await call_connection.get_audio_routing_groups(
+    result = await call_connection.list_audio_routing_groups(
         audio_routing_group_id = audio_routing_group_id
         )
     CallConnectionUnitTestUtils.verify_get_audio_routing_group(result)
 
-@parameterized.expand(CallConnectionUnitTestUtils.data_source_test_get_audio_routing_group())
+@parameterized.expand(CallConnectionUnitTestUtils.data_source_test_list_audio_routing_groups())
 @pytest.mark.asyncio
-async def test_get_audio_routing_groups_failed(
+async def test_list_audio_routing_groups_failed(
     test_name, # type: str
     call_connection_id, # type: str
     audio_routing_group_id, # type: str
@@ -880,7 +880,7 @@ async def test_get_audio_routing_groups_failed(
 
     raised = False
     try:
-        await call_connection.get_audio_routing_groups(
+        await call_connection.list_audio_routing_groups(
             audio_routing_group_id = audio_routing_group_id
             )
     except:

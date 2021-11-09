@@ -352,7 +352,7 @@ class CallConnection:
         )
 
     @distributed_trace_async()
-    async def get_audio_routing_groups(
+    async def list_audio_routing_groups(
             self,
             audio_routing_group_id: str,
             **kwargs: Any

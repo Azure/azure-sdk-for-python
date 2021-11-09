@@ -373,7 +373,7 @@ class CallConnection(object):
         )
 
     @distributed_trace()
-    def get_audio_routing_groups(
+    def list_audio_routing_groups(
             self,
             audio_routing_group_id,  # type: str
             **kwargs  # type: Any
