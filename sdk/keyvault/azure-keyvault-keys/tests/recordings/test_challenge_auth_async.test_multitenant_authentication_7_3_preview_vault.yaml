@@ -20,7 +20,7 @@ interactions:
       cache-control: no-cache
       content-length: '97'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Nov 2021 18:13:12 GMT
+      date: Tue, 09 Nov 2021 00:03:53 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
@@ -50,12 +50,12 @@ interactions:
     uri: https://vaultname.vault.azure.net/keys/livekvtestmultitenant-key8ff41ea6/create?api-version=7.3-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestmultitenant-key8ff41ea6/63e1215f659f423b9e2f74b1f645802b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"5ibXDBzD5GIADx1Te_WJaLx2LQppykGOCC5Ici8SsLtAtmvRlCqhrzhCqlT1AQDp142JOv53j8iaBP_OWJ2QuUcn-1J_OwTW-bRroUdsr0UdDoSpKb7SgL-4O9ZWUMQZQCVVbUpqYhbVBE_faPskABG96XgwmMI6pdOTIkRAtu0eIgd5BhYre_O0eLGWImjNf8ICitAHC80xZ-sDF3Ckj5P3WU8T-nA64xzix62bw5WNBLD3LqRol1un9bxClEJyEwtPTwrk-SUrIhebdErzPafDRQlqVTIS1SDfvSSvViSC6EDuLhXMT6HDJOrcB9tI1hZRW0KvFeMJMyNRpnUzEQ","e":"AQAB"},"attributes":{"enabled":true,"created":1636135993,"updated":1636135993,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestmultitenant-key8ff41ea6/f875421ae9684ee89ffa78d33c4b917c","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"uh7LV8qFwSDSazU05d4aArOVG7HK72oX8Qvdlq-5FJwPRbbCTU9ZX7BJcI7dnhvQHHpYnvZ54aHaNX4nrqYRJRKv9fgte_ZyGaaBqnUVd_sjf3f8US7O6ayPzhzV-F8x2ML12yeRuXbsquxG05D3_e7OtAm5aSwqHxPoIYKIjh4hI3FtpryM7ECA3op1M9QH4e-_3CGCSbLEomih0_FZ-WkebiHNryYJi2l02p-b-CNAEYlcRpRlZUm8Gt6ZtKJ-YvaT1uvPw83DSW6Q_LDjhojmswJBUYCtWszDjBbcUsi5dKD0Zo7--ANcC-66H-CnTM5cF5RRygj1N5l2DU8xyQ","e":"AQAB"},"attributes":{"enabled":true,"created":1636416233,"updated":1636416233,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
       content-length: '701'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Nov 2021 18:13:12 GMT
+      date: Tue, 09 Nov 2021 00:03:53 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
@@ -68,4 +68,62 @@ interactions:
       code: 200
       message: OK
     url: https://mcpatinotest.vault.azure.net/keys/livekvtestmultitenant-key8ff41ea6/create?api-version=7.3-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: GET
+    uri: https://vaultname.vault.azure.net/keys/livekvtestmultitenant-key8ff41ea6/?api-version=7.3-preview
+  response:
+    body:
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestmultitenant-key8ff41ea6/f875421ae9684ee89ffa78d33c4b917c","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"uh7LV8qFwSDSazU05d4aArOVG7HK72oX8Qvdlq-5FJwPRbbCTU9ZX7BJcI7dnhvQHHpYnvZ54aHaNX4nrqYRJRKv9fgte_ZyGaaBqnUVd_sjf3f8US7O6ayPzhzV-F8x2ML12yeRuXbsquxG05D3_e7OtAm5aSwqHxPoIYKIjh4hI3FtpryM7ECA3op1M9QH4e-_3CGCSbLEomih0_FZ-WkebiHNryYJi2l02p-b-CNAEYlcRpRlZUm8Gt6ZtKJ-YvaT1uvPw83DSW6Q_LDjhojmswJBUYCtWszDjBbcUsi5dKD0Zo7--ANcC-66H-CnTM5cF5RRygj1N5l2DU8xyQ","e":"AQAB"},"attributes":{"enabled":true,"created":1636416233,"updated":1636416233,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+    headers:
+      cache-control: no-cache
+      content-length: '701'
+      content-type: application/json; charset=utf-8
+      date: Tue, 09 Nov 2021 00:03:54 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.9.150.1
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestmultitenant-key8ff41ea6/?api-version=7.3-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: GET
+    uri: https://vaultname.vault.azure.net/keys/livekvtestmultitenant-key8ff41ea6/?api-version=7.3-preview
+  response:
+    body:
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestmultitenant-key8ff41ea6/f875421ae9684ee89ffa78d33c4b917c","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"uh7LV8qFwSDSazU05d4aArOVG7HK72oX8Qvdlq-5FJwPRbbCTU9ZX7BJcI7dnhvQHHpYnvZ54aHaNX4nrqYRJRKv9fgte_ZyGaaBqnUVd_sjf3f8US7O6ayPzhzV-F8x2ML12yeRuXbsquxG05D3_e7OtAm5aSwqHxPoIYKIjh4hI3FtpryM7ECA3op1M9QH4e-_3CGCSbLEomih0_FZ-WkebiHNryYJi2l02p-b-CNAEYlcRpRlZUm8Gt6ZtKJ-YvaT1uvPw83DSW6Q_LDjhojmswJBUYCtWszDjBbcUsi5dKD0Zo7--ANcC-66H-CnTM5cF5RRygj1N5l2DU8xyQ","e":"AQAB"},"attributes":{"enabled":true,"created":1636416233,"updated":1636416233,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+    headers:
+      cache-control: no-cache
+      content-length: '701'
+      content-type: application/json; charset=utf-8
+      date: Tue, 09 Nov 2021 00:03:54 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.9.150.1
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestmultitenant-key8ff41ea6/?api-version=7.3-preview
 version: 1

@@ -61,6 +61,12 @@ class ChallengeAuthTests(KeysTestCase, KeyVaultTestCase):
         key = await client.create_rsa_key(key_name)
         assert key.id
 
+        # try making another request with the credential's token revoked
+        # the challenge policy should correctly request a new token for the correct tenant when a challenge is cached
+        client._client._config.authentication_policy._token = None
+        fetched_key = await client.get_key(key_name)
+        assert key.id == fetched_key.id
+
 
 @pytest.mark.asyncio
 @empty_challenge_cache
