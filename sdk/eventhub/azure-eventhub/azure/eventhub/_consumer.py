@@ -153,7 +153,7 @@ class EventHubConsumer(
             auth=auth,
             idle_timeout=self._idle_timeout,
             network_trace=self._client._config.network_tracing,  # pylint:disable=protected-access
-            #prefetch=self._prefetch,
+            link_credit=self._prefetch,
             #link_properties=self._link_properties,
             #timeout=self._timeout,
             ##error_policy=self._retry_policy,   # TODO: finish

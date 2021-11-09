@@ -10,6 +10,7 @@ from enum import Enum
 from ._transport_async import AsyncTransport
 from ..types import AMQPTypes, TYPE, VALUE
 from ..constants import FIELD, SASLCode, SASL_HEADER_FRAME
+from .._transport import AMQPS_PORT
 from ..performatives import (
     SASLOutcome,
     SASLResponse,
@@ -71,10 +72,10 @@ class SASLExternalCredential(object):
 
 class SASLTransport(AsyncTransport):
 
-    def __init__(self, host, credential, connect_timeout=None, ssl=None, **kwargs):
+    def __init__(self, host, credential, port=AMQPS_PORT, connect_timeout=None, ssl=None, **kwargs):
         self.credential = credential
         ssl = ssl or True
-        super(SASLTransport, self).__init__(host, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
+        super(SASLTransport, self).__init__(host, port=port, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
 
     async def negotiate(self):
         await self.write(SASL_HEADER_FRAME)
@@ -83,8 +84,8 @@ class SASLTransport(AsyncTransport):
             raise ValueError("Mismatching AMQP header protocol. Excpected: {}, received: {}".format(
                 SASL_HEADER_FRAME, returned_header[1]))
 
-        _, supported_mechansisms = await self.receive_frame(verify_frame_type=1)
-        if self.credential.mechanism not in supported_mechansisms[1][0]:  # sasl_server_mechanisms
+        _, supported_mechanisms = await self.receive_frame(verify_frame_type=1)
+        if self.credential.mechanism not in supported_mechanisms[1][0]:  # sasl_server_mechanisms
             raise ValueError("Unsupported SASL credential type: {}".format(self.credential.mechanism))
         sasl_init = SASLInit(
             mechanism=self.credential.mechanism,

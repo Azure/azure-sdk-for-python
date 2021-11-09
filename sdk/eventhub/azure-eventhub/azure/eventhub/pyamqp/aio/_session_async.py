@@ -7,8 +7,9 @@
 import uuid
 import logging
 import time
+import asyncio
+from typing import Optional, Union
 
-from ._anyio import create_task_group, sleep
 from ..constants import (
     INCOMING_WINDOW,
     OUTGOING_WIDNOW,
@@ -18,6 +19,7 @@ from ..constants import (
     Role
 )
 from ..endpoints import Source, Target
+from ._management_link_async import ManagementLink
 from ._sender_async import SenderLink
 from ._receiver_async import ReceiverLink
 from ..performatives import (
@@ -29,6 +31,7 @@ from ..performatives import (
     TransferFrame,
     DispositionFrame
 )
+from .._encode import encode_frame
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -94,9 +97,11 @@ class Session(object):
         previous_state = self.state
         self.state = new_state
         _LOGGER.info("Session state changed: %r -> %r", previous_state, new_state, extra=self.network_trace_params)
-        async with create_task_group() as tg:
-            for link in self.links.values():
-                await tg.spawn(link._on_session_state_change)
+
+        futures = []
+        for link in self.links.values():
+            futures.append(asyncio.create_task(link._on_session_state_change()))
+        await asyncio.gather(*futures)
 
     async def _on_connection_state_change(self):
         if self._connection.state in [ConnectionState.CLOSE_RCVD, ConnectionState.END]:
@@ -204,10 +209,11 @@ class Session(object):
         if frame[4] is not None:
             await self._input_handles[frame[4]]._incoming_flow(frame)
         else:
-            async with create_task_group() as tg:
-                for link in self._output_handles.values():
-                    if self.remote_incoming_window > 0 and not link._is_closed:
-                        await tg.spawn(link._incoming_flow, frame)
+            futures = []
+            for link in self._output_handles.values():
+                if self.remote_incoming_window > 0 and not link._is_closed:
+                    futures.append(link._incoming_flow(frame))
+            await asyncio.gather(*futures)
 
     async def _outgoing_transfer(self, delivery):
         if self.state != SessionState.MAPPED:
@@ -215,13 +221,63 @@ class Session(object):
         if self.remote_incoming_window <= 0:
             delivery.transfer_state = SessionTransferState.Busy
         else:
+
+            payload = delivery.frame['payload']
+            payload_size = len(payload)
+
             delivery.frame['delivery_id'] = self.next_outgoing_id
-            await self._connection._process_outgoing_frame(self.channel, TransferFrame(**delivery.frame))
+            # calculate the transfer frame encoding size excluding the payload
+            delivery.frame['payload'] = b""
+            # TODO: encoding a frame would be expensive, we might want to improve depending on the perf test results
+            encoded_frame = encode_frame(TransferFrame(**delivery.frame))[1]
+            transfer_overhead_size = len(encoded_frame)
+
+            # available size for payload per frame is calculated as following:
+            # remote max frame size - transfer overhead (calculated) - header (8 bytes)
+            available_frame_size = self._connection._remote_max_frame_size - transfer_overhead_size - 8
+
+            start_idx = 0
+            remaining_payload_cnt = payload_size
+            # encode n-1 frames if payload_size > available_frame_size
+            while remaining_payload_cnt > available_frame_size:
+                tmp_delivery_frame = {
+                    'handle': delivery.frame['handle'],
+                    'delivery_tag': delivery.frame['delivery_tag'],
+                    'message_format': delivery.frame['message_format'],
+                    'settled': delivery.frame['settled'],
+                    'more': True,
+                    'rcv_settle_mode': delivery.frame['rcv_settle_mode'],
+                    'state': delivery.frame['state'],
+                    'resume': delivery.frame['resume'],
+                    'aborted': delivery.frame['aborted'],
+                    'batchable': delivery.frame['batchable'],
+                    'payload': payload[start_idx:start_idx+available_frame_size],
+                    'delivery_id': self.next_outgoing_id
+                }
+                await self._connection._process_outgoing_frame(self.channel, TransferFrame(**tmp_delivery_frame))
+                start_idx += available_frame_size
+                remaining_payload_cnt -= available_frame_size
+
+            # encode the last frame
+            tmp_delivery_frame = {
+                'handle': delivery.frame['handle'],
+                'delivery_tag': delivery.frame['delivery_tag'],
+                'message_format': delivery.frame['message_format'],
+                'settled': delivery.frame['settled'],
+                'more': False,
+                'rcv_settle_mode': delivery.frame['rcv_settle_mode'],
+                'state': delivery.frame['state'],
+                'resume': delivery.frame['resume'],
+                'aborted': delivery.frame['aborted'],
+                'batchable': delivery.frame['batchable'],
+                'payload': payload[start_idx:],
+                'delivery_id': self.next_outgoing_id
+            }
+            await self._connection._process_outgoing_frame(self.channel, TransferFrame(**tmp_delivery_frame))
             self.next_outgoing_id += 1
             self.remote_incoming_window -= 1
             self.outgoing_window -= 1
             delivery.transfer_state = SessionTransferState.Okay
-            # TODO validate max frame size and break into multipl deliveries
 
     async def _incoming_transfer(self, frame):
         self.next_incoming_id += 1
@@ -239,9 +295,10 @@ class Session(object):
         await self._connection._process_outgoing_frame(self.channel, frame)
 
     async def _incoming_disposition(self, frame):
-        async with create_task_group() as tg:
-            for link in self._input_handles.values():
-                await tg.spawn(link._incoming_disposition, frame)
+        futures = []
+        for link in self._input_handles.values():
+            asyncio.create_task(link._incoming_disposition(frame))
+        await asyncio.gather(*futures)
 
     async def _outgoing_detach(self, frame):
         await self._connection._process_outgoing_frame(self.channel, frame)
@@ -262,7 +319,7 @@ class Session(object):
         if wait == True:
             await self._connection.listen(wait=False)
             while self.state != end_state:
-                await sleep(self.idle_wait_time)
+                await asyncio.sleep(self.idle_wait_time)
                 await self._connection.listen(wait=False)
         elif wait:
             await self._connection.listen(wait=False)
@@ -270,7 +327,7 @@ class Session(object):
             while self.state != end_state:
                 if time.time() >= timeout:
                     break
-                await sleep(self.idle_wait_time)
+                await asyncio.sleep(self.idle_wait_time)
                 await self._connection.listen(wait=False)
 
     async def begin(self, wait=False):
@@ -315,3 +372,10 @@ class Session(object):
         self._output_handles[assigned_handle] = link
         self.links[link.name] = link
         return link
+
+    def create_request_response_link_pair(self, endpoint, **kwargs):
+        return ManagementLink(
+            self,
+            endpoint,
+            network_trace=kwargs.pop('network_trace', self.network_trace),
+            **kwargs)

@@ -28,7 +28,8 @@ from .._transport import (
     IPV6_LITERAL,
     SIGNED_INT_MAX,
     _UNAVAIL,
-    set_cloexec
+    set_cloexec,
+    AMQP_PORT
 )
 
 
@@ -38,7 +39,7 @@ _LOGGER = logging.getLogger(__name__)
 class AsyncTransport(object):
     """Common superclass for TCP and SSL transports."""
 
-    def __init__(self, host, connect_timeout=None,
+    def __init__(self, host, port=AMQP_PORT, connect_timeout=None,
                  read_timeout=None, write_timeout=None, ssl=False,
                  socket_settings=None, raise_on_initial_eintr=True, **kwargs):
         self.connected = False
@@ -47,7 +48,7 @@ class AsyncTransport(object):
         self.writer = None
         self.raise_on_initial_eintr = raise_on_initial_eintr
         self._read_buffer = BytesIO()
-        self.host, self.port = to_host_port(host)
+        self.host, self.port = to_host_port(host, port)
 
         self.connect_timeout = connect_timeout
         self.read_timeout = read_timeout
@@ -102,8 +103,7 @@ class AsyncTransport(object):
             self.reader, self.writer = await asyncio.open_connection(
                 sock=self.sock,
                 ssl=self.sslopts,
-                server_hostname=self.host if self.sslopts else None,
-                loop=self.loop
+                server_hostname=self.host if self.sslopts else None
             )
             # we've sent the banner; signal connect
             # EINTR, EAGAIN, EWOULDBLOCK would signal that the banner
@@ -175,16 +175,17 @@ class AsyncTransport(object):
         self._set_socket_options(socket_settings)
 
         # set socket timeouts
-        for timeout, interval in ((socket.SO_SNDTIMEO, write_timeout),
-                                  (socket.SO_RCVTIMEO, read_timeout)):
-            if interval is not None:
-                sec = int(interval)
-                usec = int((interval - sec) * 1000000)
-                self.sock.setsockopt(
-                    socket.SOL_SOCKET, timeout,
-                    pack('ll', sec, usec),
-                )
-        self.sock.settimeout(0.1)  # set socket back to non-blocking mode
+        # for timeout, interval in ((socket.SO_SNDTIMEO, write_timeout),
+        #                           (socket.SO_RCVTIMEO, read_timeout)):
+        #     if interval is not None:
+        #         sec = int(interval)
+        #         usec = int((interval - sec) * 1000000)
+        #         self.sock.setsockopt(
+        #             socket.SOL_SOCKET, timeout,
+        #             pack('ll', sec, usec),
+        #         )
+
+        self.sock.settimeout(1)  # set socket back to non-blocking mode
 
     def _get_tcp_socket_defaults(self, sock):
         tcp_opts = {}
@@ -261,6 +262,9 @@ class AsyncTransport(object):
 
     def close(self):
         if self.writer is not None:
+            if self.sslopts:
+                # see issue: https://github.com/encode/httpx/issues/914
+                self.writer.transport.abort()
             self.writer.close()
             self.writer, self.reader = None, None
         self.sock = None
@@ -324,7 +328,7 @@ class AsyncTransport(object):
             else:
                 decoded = decode_frame(payload)
             # TODO: Catch decode error and return amqp:decode-error
-            _LOGGER.info("ICH%d <- %r", channel, decoded)
+            #_LOGGER.info("ICH%d <- %r", channel, decoded)
             return channel, decoded
         except (socket.timeout, asyncio.IncompleteReadError):
             return None, None
@@ -350,7 +354,7 @@ class AsyncTransport(object):
             data = header + encoded_channel + performative
 
         await self.write(data)
-        _LOGGER.info("OCH%d -> %r", channel, frame)
+        #_LOGGER.info("OCH%d -> %r", channel, frame)
 
     async def negotiate(self):
         if not self.sslopts:

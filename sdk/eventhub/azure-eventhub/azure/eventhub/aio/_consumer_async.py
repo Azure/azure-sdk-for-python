@@ -8,10 +8,12 @@ import uuid
 import logging
 from collections import deque
 from typing import TYPE_CHECKING, Callable, Awaitable, cast, Dict, Optional, Union, List
+from urllib.parse import urlparse
 
-import uamqp
-from uamqp import errors, types, utils
-from uamqp import ReceiveClientAsync, Source
+from ..pyamqp.aio import ReceiveClient
+from ..pyamqp import types, utils, error as errors, constants as pyamqp_constants
+from ..pyamqp.endpoints import Source, ApacheFilters
+from ..pyamqp.message import Message
 
 from ._client_base_async import ConsumerProducerMixin
 from .._common import EventData
@@ -91,9 +93,10 @@ class EventHubConsumer(
         self._owner_level = owner_level
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
-        self._retry_policy = errors.ErrorPolicy(
-            max_retries=self._client._config.max_retries, on_error=_error_handler  # pylint:disable=protected-access
-        )
+        # TODO: FIND ErrorPolicy replacement
+        # self._retry_policy = errors.ErrorPolicy(
+        #     max_retries=self._client._config.max_retries, on_error=_error_handler  # pylint:disable=protected-access
+        # )
         self._reconnect_backoff = 1
         self._timeout = 0
         self._idle_timeout = (idle_timeout * 1000) if idle_timeout else None
@@ -102,15 +105,15 @@ class EventHubConsumer(
         self._partition = partition
         self._name = "EHReceiver-{}-partition{}".format(uuid.uuid4(), partition)
         if owner_level is not None:
-            self._link_properties[types.AMQPSymbol(EPOCH_SYMBOL)] = types.AMQPLong(
-                int(owner_level)
-            )
+            # TODO: feature parity with uamqp needs to be handled
+            self._link_properties[EPOCH_SYMBOL] = int(owner_level)
         link_property_timeout_ms = (
             self._client._config.receive_timeout or self._timeout  # pylint:disable=protected-access
         ) * 1000
-        self._link_properties[types.AMQPSymbol(TIMEOUT_SYMBOL)] = types.AMQPLong(
-            int(link_property_timeout_ms)
-        )
+        # TODO: feature parity with uamqp needs to be handled
+        #self._link_properties[types.AMQPSymbol(TIMEOUT_SYMBOL)] = types.AMQPLong(
+        #    int(link_property_timeout_ms)
+        #)
         self._handler = None  # type: Optional[ReceiveClientAsync]
         self._track_last_enqueued_event_properties = (
             track_last_enqueued_event_properties
@@ -119,38 +122,42 @@ class EventHubConsumer(
         self._last_received_event = None  # type: Optional[EventData]
 
     def _create_handler(self, auth: "JWTTokenAsync") -> None:
-        source = Source(self._source)
+        source = Source(address=self._source, filters={})
         if self._offset is not None:
-            source.set_filter(
-                event_position_selector(self._offset, self._offset_inclusive)
-            )
+            # TODO: implement setting filter on offset
+            filter_key = ApacheFilters.selector_filter
+            source.filters[filter_key] = event_position_selector(self._offset, self._offset_inclusive)
         desired_capabilities = None
-        if self._track_last_enqueued_event_properties:
-            symbol_array = [types.AMQPSymbol(RECEIVER_RUNTIME_METRIC_SYMBOL)]
-            desired_capabilities = utils.data_factory(types.AMQPArray(symbol_array))
+        # TODO: not basic receive function - off by default - reimplement for more complexity
+        #if self._track_last_enqueued_event_properties:
+        #    symbol_array = [types.AMQPSymbol(RECEIVER_RUNTIME_METRIC_SYMBOL)]
+        #    desired_capabilities = utils.data_factory(types.AMQPArray(symbol_array))
 
         properties = create_properties(
             self._client._config.user_agent  # pylint:disable=protected-access
         )
-        self._handler = ReceiveClientAsync(
-            source,
+        self._handler = ReceiveClient(
+            urlparse(source.address).hostname,
+            source.address,
             auth=auth,
-            debug=self._client._config.network_tracing,  # pylint:disable=protected-access
-            prefetch=self._prefetch,
-            link_properties=self._link_properties,
-            timeout=self._timeout,
             idle_timeout=self._idle_timeout,
-            error_policy=self._retry_policy,
-            keep_alive_interval=self._keep_alive,
-            client_name=self._name,
-            receive_settle_mode=uamqp.constants.ReceiverSettleMode.ReceiveAndDelete,
-            auto_complete=False,
-            properties=properties,
-            desired_capabilities=desired_capabilities,
-            loop=self._loop,
+            network_trace=self._client._config.network_tracing,  # pylint:disable=protected-access
+            link_credit=self._prefetch,
+            #link_properties=self._link_properties,
+            #timeout=self._timeout,
+            ##error_policy=self._retry_policy,   # TODO: finish
+            #keep_alive_interval=self._keep_alive,
+            #client_name=self._name,
+            #receive_settle_mode=pyamqp_constants.ReceiverSettleMode.Second, # ask if same as RAndD
+            #auto_complete=False,
+            #settled=False,
+            #properties=properties,
+            #desired_capabilities=desired_capabilities
         )
 
-        self._handler._streaming_receive = True  # pylint:disable=protected-access
+        # TODO: the below should be True, but not working - figure out why
+        #  streaming == True works with callback modes only
+        self._handler._streaming_receive = False  # pylint:disable=protected-access
         self._handler._message_received_callback = (  # pylint:disable=protected-access
             self._message_received
         )
@@ -158,7 +165,7 @@ class EventHubConsumer(
     async def _open_with_retry(self) -> None:
         await self._do_retryable_operation(self._open, operation_need_param=False)
 
-    def _message_received(self, message: uamqp.Message) -> None:
+    def _message_received(self, message) -> None:
         self._message_buffer.appendleft(message)
 
     def _next_message_in_buffer(self):
@@ -181,14 +188,20 @@ class EventHubConsumer(
             while retried_times <= max_retries:
                 try:
                     await self._open()
-                    await cast(ReceiveClientAsync, self._handler).do_work_async()  # uamqp sleeps 0.05 if none received
+                    messages = await self._handler.receive_message_batch_async(
+                        max_batch_size=max_batch_size
+                    )
+                    for message in messages:
+                        uamqp_message = Message(**message)
+                        self._message_buffer.appendleft(uamqp_message)
+                    #await cast(ReceiveClientAsync, self._handler).do_work_async()  # uamqp sleeps 0.05 if none received
                     break
                 except asyncio.CancelledError:  # pylint: disable=try-except-raise
                     raise
                 except Exception as exception:  # pylint: disable=broad-except
                     if (
-                        isinstance(exception, uamqp.errors.LinkDetach)
-                        and exception.condition == uamqp.constants.ErrorCodes.LinkStolen  # pylint: disable=no-member
+                        isinstance(exception, errors.LinkErrorCondition.DetachForced)
+                        and exception.condition == pyamqp_constants.ErrorCodes.LinkStolen  # pylint: disable=no-member
                     ):
                         raise await self._handle_exception(exception)
                     if not self.running:  # exit by close

@@ -11,4 +11,5 @@ from ._sasl_async import SASLPlainCredential, SASLTransport
 from ._sender_async import SenderLink
 from ._session_async import Session, SessionState
 from ._transport_async import AsyncTransport
-from ._client_async import ReceiveClient
+from ._client_async import ReceiveClient, SendClient
+from ._authentication_async import SASTokenAuthAsync

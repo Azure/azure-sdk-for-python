@@ -63,7 +63,7 @@ class SenderLink(Link):
 
     async def _incoming_attach(self, frame):
         await super(SenderLink, self)._incoming_attach(frame)
-        self.current_link_credit = 0
+        self.current_link_credit = self.link_credit
         await self._outgoing_flow()
         await self._update_pending_delivery_status()
 
@@ -81,6 +81,8 @@ class SenderLink(Link):
             await self._send_unsent_messages()
 
     async def _outgoing_transfer(self, delivery):
+        output = bytearray()
+        encode_payload(output, delivery.message)
         delivery_count = self.delivery_count + 1
         delivery.frame = {
             'handle': self.handle,
@@ -93,7 +95,7 @@ class SenderLink(Link):
             'resume': None,
             'aborted': None,
             'batchable': None,
-            'payload': encode_payload(b"", delivery.message)
+            'payload': output
         }
         if self.network_trace:
             _LOGGER.info("-> %r", TransferFrame(delivery_id='<pending>', **delivery.frame), extra=self.network_trace_params)

@@ -121,7 +121,7 @@ class EventHubProducerClient(ClientBaseAsync):
                 self._max_message_size_on_link = (
                     cast(  # type: ignore
                         EventHubProducer, self._producers[ALL_PARTITIONS]
-                    )._handler.message_handler._link.peer_max_message_size
+                    )._handler._link.remote_max_message_size
                     or constants.MAX_MESSAGE_LENGTH_BYTES
                 )
 

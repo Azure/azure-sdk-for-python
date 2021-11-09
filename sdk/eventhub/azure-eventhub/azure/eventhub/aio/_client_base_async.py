@@ -11,6 +11,15 @@ import functools
 from typing import TYPE_CHECKING, Any, Dict, List, Callable, Optional, Union, cast
 
 import six
+
+from ..pyamqp.aio._client_async import AMQPClientAsync as PyAMQPClient
+from ..pyamqp.authentication import _generate_sas_token as Py_generate_sas_token
+from ..pyamqp.message import Message as PyMessage, Properties as PyMessageProperties
+from uamqp import authentication
+from ..pyamqp import constants, error as errors, utils
+from ..pyamqp.aio._authentication_async import JWTTokenAuthAsync as PyJWTTokenAuth
+
+
 from uamqp import (
     authentication,
     constants,
@@ -172,20 +181,7 @@ class ClientBaseAsync(ClientBase):
         except AttributeError:
             token_type = b"jwt"
         if token_type == b"servicebus.windows.net:sastoken":
-            auth = authentication.JWTTokenAsync(
-                self._auth_uri,
-                self._auth_uri,
-                functools.partial(self._credential.get_token, self._auth_uri),
-                token_type=token_type,
-                timeout=self._config.auth_timeout,
-                http_proxy=self._config.http_proxy,
-                transport_type=self._config.transport_type,
-                custom_endpoint_hostname=self._config.custom_endpoint_hostname,
-                port=self._config.connection_port,
-                verify=self._config.connection_verify
-            )
-            await auth.update_token()
-            return auth
+            return PyJWTTokenAuth(self._auth_uri, self._auth_uri, functools.partial(self._credential.get_token, self._auth_uri))
         return authentication.JWTTokenAsync(
             self._auth_uri,
             self._auth_uri,
@@ -292,21 +288,26 @@ class ClientBaseAsync(ClientBase):
                 await mgmt_client.close_async()
 
     async def _get_eventhub_properties_async(self) -> Dict[str, Any]:
-        mgmt_msg = Message(application_properties={"name": self.eventhub_name})
-        response = await self._management_request_async(
-            mgmt_msg, op_type=MGMT_OPERATION
-        )
-        output = {}
-        eh_info = response.get_data()  # type: Dict[bytes, Any]
-        if eh_info:
-            output["eventhub_name"] = eh_info[b"name"].decode("utf-8")
-            output["created_at"] = utc_from_timestamp(
-                float(eh_info[b"created_at"]) / 1000
-            )
-            output["partition_ids"] = [
-                p.decode("utf-8") for p in eh_info[b"partition_ids"]
-            ]
+        output = {
+             # 32 is the max allowed partition count on azure portal
+            "partition_ids": [str(i) for i in range(32)]
+        }
         return output
+        # mgmt_msg = Message(application_properties={"name": self.eventhub_name})
+        # response = await self._management_request_async(
+        #     mgmt_msg, op_type=MGMT_OPERATION
+        # )
+        # output = {}
+        # eh_info = response.get_data()  # type: Dict[bytes, Any]
+        # if eh_info:
+        #     output["eventhub_name"] = eh_info[b"name"].decode("utf-8")
+        #     output["created_at"] = utc_from_timestamp(
+        #         float(eh_info[b"created_at"]) / 1000
+        #     )
+        #     output["partition_ids"] = [
+        #         p.decode("utf-8") for p in eh_info[b"partition_ids"]
+        #     ]
+        # return output
 
     async def _get_partition_ids_async(self) -> List[str]:
         return (await self._get_eventhub_properties_async())["partition_ids"]
@@ -441,7 +442,7 @@ class ConsumerProducerMixin(_MIXIN_BASE):
             while not await self._handler.client_ready_async():
                 await asyncio.sleep(0.05, loop=self._loop)
             self._max_message_size_on_link = (
-                self._handler.message_handler._link.peer_max_message_size
+                self._handler._link.remote_max_message_size
                 or constants.MAX_MESSAGE_LENGTH_BYTES
             )
             self.running = True

@@ -25,6 +25,7 @@ from .._utils import (
 )
 from .._constants import TIMEOUT_SYMBOL
 from ._client_base_async import ConsumerProducerMixin
+from ..pyamqp.aio import SendClient as PySendClient
 
 if TYPE_CHECKING:
     from uamqp.authentication import JWTTokenAsync  # pylint: disable=ungrouped-imports
@@ -98,21 +99,28 @@ class EventHubProducer(
         }
 
     def _create_handler(self, auth: "JWTTokenAsync") -> None:
-        self._handler = SendClientAsync(
+        self._handler = PySendClient(
+            self._client._address.hostname,
             self._target,
             auth=auth,
-            debug=self._client._config.network_tracing,  # pylint:disable=protected-access
-            msg_timeout=self._timeout * 1000,
-            idle_timeout=self._idle_timeout,
-            error_policy=self._retry_policy,
-            keep_alive_interval=self._keep_alive,
-            client_name=self._name,
-            link_properties=self._link_properties,
-            properties=create_properties(
-                self._client._config.user_agent  # pylint:disable=protected-access
-            ),
-            loop=self._loop,
+            idle_timeout=10,
+            network_trace=self._client._config.network_tracing
         )
+        # self._handler = SendClientAsync(
+        #     self._target,
+        #     auth=auth,
+        #     debug=self._client._config.network_tracing,  # pylint:disable=protected-access
+        #     msg_timeout=self._timeout * 1000,
+        #     idle_timeout=self._idle_timeout,
+        #     error_policy=self._retry_policy,
+        #     keep_alive_interval=self._keep_alive,
+        #     client_name=self._name,
+        #     link_properties=self._link_properties,
+        #     properties=create_properties(
+        #         self._client._config.user_agent  # pylint:disable=protected-access
+        #     ),
+        #     loop=self._loop,
+        # )
 
     async def _open_with_retry(self) -> Any:
         return await self._do_retryable_operation(
@@ -143,14 +151,16 @@ class EventHubProducer(
         if self._unsent_events:
             await self._open()
             self._set_msg_timeout(timeout_time, last_exception)
-            self._handler.queue_message(*self._unsent_events)  # type: ignore
-            await self._handler.wait_async()  # type: ignore
-            self._unsent_events = self._handler.pending_messages  # type: ignore
-            if self._outcome != constants.MessageSendResult.Ok:
-                if self._outcome == constants.MessageSendResult.Timeout:
-                    self._condition = OperationTimeoutError("Send operation timed out")
-                if self._condition:
-                    raise self._condition
+            await self._handler.send_message_async(self._unsent_events[0])
+            self._unsent_events = None
+            # self._handler.queue_message(*self._unsent_events)  # type: ignore
+            # await self._handler.wait_async()  # type: ignore
+            # self._unsent_events = self._handler.pending_messages  # type: ignore
+            # if self._outcome != constants.MessageSendResult.Ok:
+            #     if self._outcome == constants.MessageSendResult.Timeout:
+            #         self._condition = OperationTimeoutError("Send operation timed out")
+            #     if self._condition:
+            #         raise self._condition
 
     async def _send_event_data_with_retry(
         self, timeout: Optional[float] = None
@@ -193,7 +203,7 @@ class EventHubProducer(
                     raise ValueError(
                         "The partition_key does not match the one of the EventDataBatch"
                     )
-                for event in event_data.message._body_gen: # pylint: disable=protected-access
+                for event in event_data.message.data:  # pylint: disable=protected-access
                     trace_message(event, span)
                 wrapper_event_data = event_data  # type:ignore
             else:

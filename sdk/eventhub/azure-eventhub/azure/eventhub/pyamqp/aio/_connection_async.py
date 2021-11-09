@@ -11,8 +11,8 @@ import logging
 import time
 from urllib.parse import urlparse
 from enum import Enum
+import asyncio
 
-from ._anyio import create_task_group, sleep
 from ._transport_async import AsyncTransport
 from ._sasl_async import SASLTransport
 from ._session_async import Session
@@ -73,9 +73,9 @@ class Connection(object):
             )
         else:
             self.transport = AsyncTransport(parsed_url.netloc, **kwargs)
-        self.container_id = kwargs.get('container_id') or str(uuid.uuid4())
+        self._container_id = kwargs.get('container_id') or str(uuid.uuid4())
         self.max_frame_size = kwargs.get('max_frame_size', MAX_FRAME_SIZE_BYTES)
-        self.remote_max_frame_size = None
+        self._remote_max_frame_size = None
         self.channel_max = kwargs.get('channel_max', MAX_CHANNELS)
         self.idle_timeout = kwargs.get('idle_timeout')
         self.outgoing_locales = kwargs.get('outgoing_locales')
@@ -93,7 +93,7 @@ class Connection(object):
         self.idle_wait_time = kwargs.get('idle_wait_time', 0.1)
         self.network_trace = kwargs.get('network_trace', False)
         self.network_trace_params = {
-            'connection': self.container_id,
+            'connection': self._container_id,
             'session': None,
             'link': None
         }
@@ -115,10 +115,11 @@ class Connection(object):
             return
         previous_state = self.state
         self.state = new_state
-        _LOGGER.info("Connection '%s' state changed: %r -> %r", self.container_id, previous_state, new_state)
-        async with create_task_group() as tg:
-            for session in self.outgoing_endpoints.values():
-                await tg.spawn(session._on_connection_state_change)
+        _LOGGER.info("Connection '%s' state changed: %r -> %r", self._container_id, previous_state, new_state)
+        futures = []
+        for session in self.outgoing_endpoints.values():
+            futures.append(asyncio.create_task(session._on_connection_state_change()))
+        await asyncio.gather(*futures)
 
     async def _connect(self):
         if not self.state:
@@ -199,11 +200,11 @@ class Connection(object):
 
     async def _outgoing_open(self):
         open_frame = OpenFrame(
-            container_id=self.container_id,
+            container_id=self._container_id,
             hostname=self.hostname,
             max_frame_size=self.max_frame_size,
             channel_max=self.channel_max,
-            idle_timeout=None,#self.idle_timeout * 1000 if self.idle_timeout else None,  # Convert to milliseconds
+            idle_timeout=self.idle_timeout * 1000 if self.idle_timeout else None,  # Convert to milliseconds
             outgoing_locales=self.outgoing_locales,
             incoming_locales=self.incoming_locales,
             offered_capabilities=self.offered_capabilities if self.state == ConnectionState.OPEN_RCVD else None,
@@ -211,7 +212,7 @@ class Connection(object):
             properties=self.properties,
         )
         if self.network_trace:
-            _LOGGER.info("<- %r", open_frame, extra=self.network_trace_params)
+            _LOGGER.info("-> %r", open_frame, extra=self.network_trace_params)
         await self._send_frame(0, open_frame)
 
     async def _incoming_open(self, channel, frame):
@@ -230,7 +231,7 @@ class Connection(object):
 
         if frame[2] < 512:
             pass  # TODO: error
-        self.remote_max_frame_size = frame[2]
+        self._remote_max_frame_size = frame[2]
         if self.state == ConnectionState.OPEN_SENT:
             await self._set_state(ConnectionState.OPENED)
         elif self.state == ConnectionState.HDR_EXCH:
@@ -357,7 +358,7 @@ class Connection(object):
         if wait == True:
             await self.listen(wait=False)
             while self.state != end_state:
-                await sleep(self.idle_wait_time)
+                await asyncio.sleep(self.idle_wait_time)
                 await self.listen(wait=False)
         elif wait:
             await self.listen(wait=False)
@@ -365,7 +366,7 @@ class Connection(object):
             while self.state != end_state:
                 if time.time() >= timeout:
                     break
-                await sleep(self.idle_wait_time)
+                await asyncio.sleep(self.idle_wait_time)
                 await self.listen(wait=False)
     
     async def _listen_one_frame(self, **kwargs):
@@ -378,10 +379,10 @@ class Connection(object):
     async def listen(self, wait=False, batch=1, **kwargs):
         if self.state == ConnectionState.END:
             raise ValueError("Connection closed.")
-        async with create_task_group() as tg:
-            for _ in range(batch):
-                await tg.spawn(self._listen_one_frame, **kwargs)  # TODO: Close on first exception
-
+        futures = []
+        for _ in range(batch):
+            futures.append(asyncio.create_task(self._listen_one_frame(**kwargs)))
+        await asyncio.gather(*futures)   # TODO: Close on first exception
 
         if self.state not in _CLOSING_STATES:
             now = time.time()

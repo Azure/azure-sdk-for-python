@@ -7,6 +7,7 @@ import logging
 from typing import TYPE_CHECKING, Union, cast
 
 from ..pyamqp import error
+from uamqp import errors
 
 from ..exceptions import (
     _create_eventhub_exception,

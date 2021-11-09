@@ -266,12 +266,15 @@ class EventProcessor(
             event_received_callback = partial(
                 self._on_event_received, partition_context
             )
-            self._consumers[partition_id] = self.create_consumer(  # type: ignore
-                partition_id,
-                initial_event_position,
-                event_position_inclusive,
-                event_received_callback,  # type: ignore
-            )
+            try:
+                self._consumers[partition_id] = self.create_consumer(  # type: ignore
+                    partition_id,
+                    initial_event_position,
+                    event_position_inclusive,
+                    event_received_callback,  # type: ignore
+                )
+            except Exception as e:
+                print(e)
 
             if self._partition_initialize_handler:
                 try:
