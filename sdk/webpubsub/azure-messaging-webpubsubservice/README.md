@@ -83,7 +83,7 @@ When the client is connected, it can send messages to the upstream application, 
 
 ## Examples
 
-### Broadcast messages 
+### Broadcast messages
 
 ```python
 >>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
@@ -93,7 +93,7 @@ When the client is connected, it can send messages to the upstream application, 
 >>> service = WebPubSubServiceClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 >>> with open('file.json', 'r') as f:
     try:
-        service.send_to_all('ahub', content=f, content_type='application/json')
+        service.send_to_all('ahub', content=f)
     except HttpResponseError as e:
         print('service responds error: {}'.format(e.response.json()))
 
