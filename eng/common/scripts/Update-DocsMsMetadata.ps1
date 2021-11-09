@@ -106,7 +106,6 @@ ms.service: $service
 }
 
 function RetrieveCodeOwners($targetDirectory) {
-  Write-Host "$ToolPath"
   & "$ToolPath/retrieve-codeowners" --target-directory "$targetDirectory" `
     --root-directory "$env:BUILD_SOURCESREPOSITORY" `
     --vso-owning-users "CodeOwners"
