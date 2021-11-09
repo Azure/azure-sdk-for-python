@@ -48,7 +48,7 @@ client = WebPubSubServiceClient.from_connection_string(connection_string, loggin
 
 try:
     # Raise an exception if the service rejected the call
-    client.send_to_all('Hub', message={'Hello': 'connection_string_reverse_proxy!'}, content_type='application/json')
+    client.send_to_all('Hub', message={'Hello': 'connection_string_reverse_proxy!'})
     print('Successfully sent a JSON message')
 except HttpResponseError as e:
     print('Failed to send JSON message: {}'.format(e.response.json()))
