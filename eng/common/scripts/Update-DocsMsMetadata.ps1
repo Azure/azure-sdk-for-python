@@ -28,8 +28,11 @@ Programming language to supply to metadata
 .PARAMETER RepoId
 GitHub repository ID of the SDK. Typically of the form: 'Azure/azure-sdk-for-js'
 
-.PARAMETER CodeOwners
-GitHub identities of the code owners. 
+.PARAMETER ToolPath
+Directory path of retrieve code owner tool. 
+
+.PARAMETER WorkingDirectory
+Working directory of source code.
 #>
 
 param(
@@ -46,7 +49,10 @@ param(
   [string]$RepoId,
 
   [Parameter(Mandatory = $false)]
-  [string]$ToolPath = "$env:AGENT_TOOLSDIRECTORY"
+  [string]$ToolPath = "$env:AGENT_TOOLSDIRECTORY",
+
+  [Parameter(Mandatory = $false)]
+  [string]$WorkingDirectory = "$env:SYSTEM_DEFAULTWORKINGDIRECTORY"
 )
 
 . (Join-Path $PSScriptRoot common.ps1)
@@ -107,7 +113,7 @@ ms.service: $service
 
 function RetrieveCodeOwners($targetDirectory) {
   & "$ToolPath/retrieve-codeowners" --target-directory "$targetDirectory" `
-    --root-directory "$env:BUILD_SOURCESREPOSITORY" `
+    --root-directory "$WorkingDirectory" `
     --vso-owning-users "CodeOwners"
   
   $author = "ramya-rao-a"
