@@ -34,8 +34,6 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
         if challenge:
             # Note that if the vault has moved to a new tenant since our last request for it, this request will fail.
             await self._handle_challenge(request, challenge)
-            response = await self.next.send(request)
-            await self._handle_response(request, response)
             return
 
         # else: discover authentication information by eliciting a challenge from Key Vault. Remove any request data,
@@ -66,24 +64,10 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
     async def _handle_challenge(self, request: "PipelineRequest", challenge: "HttpChallenge") -> None:
         """Authenticate according to challenge, add Authorization header to request"""
 
-        scope = challenge.get_scope() or challenge.get_resource() + "/.default"
-        await self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
+        if self._need_new_token():
+            # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
+            scope = challenge.get_scope() or challenge.get_resource() + "/.default"
+            self._token = await self._credential.get_token(scope, tenant_id=challenge.tenant_id)
 
-    async def _handle_response(self, request: "PipelineRequest", response: "PipelineResponse") -> "PipelineResponse":
-        """Return a response and attempt to handle any authentication challenges"""
-
-        if response.http_response.status_code == 401:
-            # any cached token must be invalid
-            self._token = None
-
-            # cached challenge could be outdated; maybe this response has a new one?
-            try:
-                challenge = _update_challenge(request, response)
-            except ValueError:
-                # 401 with no legible challenge -> nothing more this policy can do
-                return response
-
-            await self._handle_challenge(request, challenge)
-            response = await self.next.send(request)
-
-        return response
+        # ignore mypy's warning because although self._token is Optional, get_token raises when it fails to get a token
+        request.http_request.headers["Authorization"] = "Bearer {}".format(self._token.token)  # type: ignore

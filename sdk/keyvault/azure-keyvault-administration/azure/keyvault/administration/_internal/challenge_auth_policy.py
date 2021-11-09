@@ -61,8 +61,6 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
         if challenge:
             # Note that if the vault has moved to a new tenant since our last request for it, this request will fail.
             self._handle_challenge(request, challenge)
-            response = self.next.send(request)
-            self._handle_response(request, response)
             return
 
         # else: discover authentication information by eliciting a challenge from Key Vault. Remove any request data,
@@ -94,25 +92,10 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
         # type: (PipelineRequest, HttpChallenge) -> None
         """Authenticate according to challenge, add Authorization header to request"""
 
-        scope = challenge.get_scope() or challenge.get_resource() + "/.default"
-        self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
+        if self._need_new_token:
+            # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
+            scope = challenge.get_scope() or challenge.get_resource() + "/.default"
+            self._token = self._credential.get_token(scope, tenant_id=challenge.tenant_id)
 
-    def _handle_response(self, request, response):
-        # type: (PipelineRequest, PipelineResponse) -> PipelineResponse
-        """Return a response and attempt to handle any authentication challenges"""
-
-        if response.http_response.status_code == 401:
-            # any cached token must be invalid
-            self._token = None
-
-            # cached challenge could be outdated; maybe this response has a new one?
-            try:
-                challenge = _update_challenge(request, response)
-            except ValueError:
-                # 401 with no legible challenge -> nothing more this policy can do
-                return response
-
-            self._handle_challenge(request, challenge)
-            response = self.next.send(request)
-
-        return response
+        # ignore mypy's warning because although self._token is Optional, get_token raises when it fails to get a token
+        request.http_request.headers["Authorization"] = "Bearer {}".format(self._token.token)  # type: ignore
