@@ -1,6 +1,6 @@
 # Release History
 
-## 12.10.0b1 (2021-11-5)
+## 12.10.0b1 (2021-11-08)
 **New Features**
 - Account level SAS tokens now support two new permissions:
     - `permanent_delete`

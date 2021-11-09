@@ -23,15 +23,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 05 Nov 2021 00:45:47 GMT
+      - Mon, 08 Nov 2021 19:21:14 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic31c70f88/versions/1?api-version=2021-10
       schema-group-name:
       - swathip-test-schema
       schema-id:
-      - 5ac5faa3522a4dacbe1fb7be60f05abf
+      - 5eb8476d1f6f46f09bee600d88839a9f
       schema-id-location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/$schemas/5ac5faa3522a4dacbe1fb7be60f05abf?api-version=2021-10
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/$schemas/5eb8476d1f6f46f09bee600d88839a9f?api-version=2021-10
       schema-name:
       - test-schema-basic31c70f88
       schema-version:
@@ -49,7 +49,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json; serialization=avro
+      - application/json; serialization=Avro
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -57,7 +57,7 @@ interactions:
       User-Agent:
       - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/5ac5faa3522a4dacbe1fb7be60f05abf?api-version=2021-10
+    uri: https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/5eb8476d1f6f46f09bee600d88839a9f?api-version=2021-10
   response:
     body:
       string: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}'
@@ -65,15 +65,15 @@ interactions:
       content-type:
       - application/json;serialization=Avro
       date:
-      - Fri, 05 Nov 2021 00:45:48 GMT
+      - Mon, 08 Nov 2021 19:21:15 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic31c70f88/versions/1?api-version=2021-10
       schema-group-name:
       - swathip-test-schema
       schema-id:
-      - 5ac5faa3522a4dacbe1fb7be60f05abf
+      - 5eb8476d1f6f46f09bee600d88839a9f
       schema-id-location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/$schemas/5ac5faa3522a4dacbe1fb7be60f05abf?api-version=2021-10
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/$schemas/5eb8476d1f6f46f09bee600d88839a9f?api-version=2021-10
       schema-name:
       - test-schema-basic31c70f88
       schema-version:
@@ -113,15 +113,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 05 Nov 2021 00:45:48 GMT
+      - Mon, 08 Nov 2021 19:21:15 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic31c70f88/versions/1?api-version=2021-10
       schema-group-name:
       - swathip-test-schema
       schema-id:
-      - 5ac5faa3522a4dacbe1fb7be60f05abf
+      - 5eb8476d1f6f46f09bee600d88839a9f
       schema-id-location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/$schemas/5ac5faa3522a4dacbe1fb7be60f05abf?api-version=2021-10
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/$schemas/5eb8476d1f6f46f09bee600d88839a9f?api-version=2021-10
       schema-name:
       - test-schema-basic31c70f88
       schema-version:

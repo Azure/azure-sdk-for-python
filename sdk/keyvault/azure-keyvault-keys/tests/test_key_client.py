@@ -30,6 +30,7 @@ all_api_versions = get_decorator()
 only_hsm = get_decorator(only_hsm=True)
 only_hsm_7_3_preview = get_decorator(only_hsm=True, api_versions=[ApiVersion.V7_3_PREVIEW])
 only_vault_7_3_preview = get_decorator(only_vault=True, api_versions=[ApiVersion.V7_3_PREVIEW])
+only_7_3_preview = get_decorator(api_versions=[ApiVersion.V7_3_PREVIEW])
 logging_enabled = get_decorator(logging_enable=True)
 logging_disabled = get_decorator(logging_enable=False)
 
@@ -141,7 +142,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         assert key.properties.updated_on != key_bundle.properties.updated_on
         assert sorted(key_ops) == sorted(key_bundle.key_operations)
         if release_policy:
-            assert key.properties.release_policy.data != key_bundle.properties.release_policy.data
+            assert key.properties.release_policy.encoded_policy != key_bundle.properties.release_policy.encoded_policy
         return key_bundle
 
     def _import_test_key(self, client, name, hardware_protected=False, **kwargs):
@@ -488,7 +489,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
             assert all(random_bytes != rb for rb in generated_random_bytes)
             generated_random_bytes.append(random_bytes)
 
-    @only_hsm_7_3_preview()
+    @only_7_3_preview()
     @client_setup
     def test_key_release(self, client, **kwargs):
         attestation_uri = self._get_attestation_uri()
@@ -500,7 +501,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
             client, rsa_key_name, hardware_protected=True, exportable=True, release_policy=release_policy
         )
         assert key.properties.release_policy
-        assert key.properties.release_policy.data
+        assert key.properties.release_policy.encoded_policy
         assert key.properties.exportable
 
         release_result = client.release_key(rsa_key_name, attestation)
@@ -518,7 +519,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
             client, imported_key_name, hardware_protected=True, exportable=True, release_policy=release_policy
         )
         assert key.properties.release_policy
-        assert key.properties.release_policy.data
+        assert key.properties.release_policy.encoded_policy
         assert key.properties.exportable
 
         release_result = client.release_key(imported_key_name, attestation)
@@ -533,7 +534,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         key = self._create_rsa_key(
             client, key_name, hardware_protected=True, exportable=True, release_policy=release_policy
         )
-        assert key.properties.release_policy.data
+        assert key.properties.release_policy.encoded_policy
 
         new_release_policy_json = {
             "anyOf": [
