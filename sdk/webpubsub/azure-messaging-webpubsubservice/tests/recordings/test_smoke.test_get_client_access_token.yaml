@@ -1,0 +1,38 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-messaging-webpubsubservice/1.0.0 Python/3.9.5 (macOS-11.6-x86_64-i386-64bit)
+    method: POST
+    uri: https://myservice.webpubsub.azure.com/api/hubs/hub/:generateToken?minutesToExpire=60&api-version=2021-10-01
+  response:
+    body:
+      string: '{"token":"eyJhbGciOiJIUzI1NiIsImtpZCI6InMtYTdhODUzZjMtZGE1NS00MGU5LWE0OGEtZTVhNTcxN2U4Yjk4IiwidHlwIjoiSldUIn0.eyJuYmYiOjE2MzY0MDczMjIsImV4cCI6MTYzNjQxMDkyMiwiaWF0IjoxNjM2NDA3MzIyLCJhdWQiOiJodHRwczovL3dlYnB1YnN1Yi15eWMud2VicHVic3ViLmF6dXJlLmNvbS9jbGllbnQvaHVicy9odWIifQ.MXXNoxwYlH5LVLeyWkPQU8E_Y0m1WXIBE5JWy2xFyXs"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '314'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 08 Nov 2021 21:35:22 GMT
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

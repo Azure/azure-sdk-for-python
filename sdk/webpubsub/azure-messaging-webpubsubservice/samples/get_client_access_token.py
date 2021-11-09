@@ -24,49 +24,34 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import io
 import logging
 import os
 
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
 from azure.identity import DefaultAzureCredential
-from azure.core.exceptions import HttpResponseError
 
 logging.basicConfig(level=logging.DEBUG)
 LOG = logging.getLogger()
 
 # Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
-# AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, WEBPUBSUB_ENDPOINT
+# AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, WEBPUBSUB_ENDPOINT, WEBPUBSUB_CONNECTION_STRING
 try:
     endpoint = os.environ["WEBPUBSUB_ENDPOINT"]
+    connection_string = os.environ['WEBPUBSUB_CONNECTION_STRING']
 except KeyError:
-    LOG.error("Missing environment variable 'WEBPUBSUB_ENDPOINT' - please set if before running the example")
+    LOG.error("Missing environment variable 'WEBPUBSUB_ENDPOINT' or 'WEBPUBSUB_CONNECTION_STRING' - please set if before running the example")
     exit()
 
 # Build a client through AAD
-client = WebPubSubServiceClient(credential=DefaultAzureCredential(), endpoint=endpoint)
+client_aad = WebPubSubServiceClient(credential=DefaultAzureCredential(), endpoint=endpoint)
 
-# Send a json message to everybody on the given hub...
-try:
-    # Raise an exception if the service rejected the call
-    client.send_to_all('Hub', message={'Hello': 'all'})
-    print('Successfully sent a JSON message')
-except HttpResponseError as e:
-    print('Failed to send JSON message: {}'.format(e.response.json()))
+# Build authentication token
+token_aad = client_aad.get_client_access_token(hub='hub')
+print('token by AAD: {}'.format(token_aad))
 
-# Send a text message to everybody on the given hub...
-try:
-    # Raise an exception if the service rejected the call
-    client.send_to_all('Hub', message='hello, text!', content_type='text/plain')
-    print('Successfully sent a text message')
-except HttpResponseError as e:
-    print('Failed to send text message: {}'.format(e.response.json()))
+# Build a client through connection string
+client_key = WebPubSubServiceClient.from_connection_string(connection_string)
 
-
-# Send a json message from a stream to everybody on the given hub...
-try:
-    # Raise an exception if the service rejected the call
-    client.send_to_all('Hub', message=io.BytesIO(b'{ "hello": "world" }'), content_type='application/octet-stream')
-    print('Successfully sent a JSON message')
-except HttpResponseError as e:
-    print('Failed to send JSON message: {}'.format(e.response.json()))
+# Build authentication token
+token_key = client_key.get_client_access_token(hub='hub')
+print('token by access key: {}'.format(token_key))
