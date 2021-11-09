@@ -30,9 +30,6 @@ GitHub repository ID of the SDK. Typically of the form: 'Azure/azure-sdk-for-js'
 
 .PARAMETER CodeOwners
 GitHub identities of the code owners. 
-
-.PARAMETER DefaultCodeOwnerFile
-The file path of default-code-owner.json.
 #>
 
 param(
@@ -49,10 +46,7 @@ param(
   [string]$RepoId,
 
   [Parameter(Mandatory = $false)]
-  [string]$CodeOwners = "",
-
-  [Parameter(Mandatory = $false)]
-  [string]$DefaultCodeOwnerFile = "$PSScriptRoot/default-code-owner.txt"
+  [string]$CodeOwners = ""
 )
 
 . (Join-Path $PSScriptRoot common.ps1)
@@ -91,17 +85,10 @@ function GetAdjustedReadmeContent($ReadmeContent, $PackageInfo, $PackageMetadata
   
   $author = "ramya-rao-a"
   $msauthor = "ramyar"
-  Write-Host $DefaultCodeOwnerFile
   # We are currently lack of the ability to get ms alias from github identity. Use github identity as placeholder for now.
   if ($CodeOwners) {
-    $author = $CodeOwners.Split(",")[0]
+    $author = $CodeOwners.Split(",")[0].trim()
     $msauthor = $author 
-  }
-  elseif (Test-Path $DefaultCodeOwnerFile) {
-    # Json file is in a format of '{ "author":"value1", "msauthor":"value2" }' 
-    $authorFromJson = Get-Content $DefaultCodeOwnerFile | ConvertFrom-Json
-    $author = $authorFromJson.author
-    $msauthor = $authorFromJson.msauthor 
   }
   Write-Host "The author is: $author"
   Write-Host "The ms alias is: $msauthor"

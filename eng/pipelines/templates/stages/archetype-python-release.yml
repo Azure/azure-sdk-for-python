@@ -288,12 +288,6 @@ stages:
             TargetUserVariable: "CodeOwners"
             ServiceDirectory: ${{parameters.ServiceDirectory}}
 
-        - pwsh: |
-            $a = '$(CodeOwners)'
-            Write-Host $a
-            Write-Host $a.GetType()
-          displayName: Check variable type
-
         - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
           parameters:
             PackageInfoLocations:
