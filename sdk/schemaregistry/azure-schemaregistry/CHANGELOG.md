@@ -22,6 +22,7 @@
 - `schema_definition` instance variable in `Schema` has been renamed `definition`.
 - `id` parameter in `get_schema` method on sync and async `SchemaRegistryClient` has been renamed `schema_id`.
 - `schema_definition` parameter in `register_schema` and `get_schema_properties` methods on sync and async `SchemaRegistryClient` has been renamed `definition`.
+- `serializer` namespace has been removed from `azure.schemaregistry`.
 
 ## 1.0.0b3 (2021-10-05)
 

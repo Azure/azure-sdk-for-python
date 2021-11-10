@@ -43,7 +43,7 @@ except KeyError:
     exit()
 
 # Build a client through AAD
-client_aad = WebPubSubServiceClient(credential=DefaultAzureCredential(), endpoint=endpoint, hub='hub')
+client_aad = WebPubSubServiceClient(endpoint=endpoint, hub='hub', credential=DefaultAzureCredential())
 
 # Build authentication token
 token_aad = client_aad.get_client_access_token()
