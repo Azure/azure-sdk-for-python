@@ -44,7 +44,7 @@ except KeyError:
     exit()
 
 # Build a client through AAD
-client = WebPubSubServiceClient(credential=DefaultAzureCredential(), endpoint=endpoint, hub='hub')
+client = WebPubSubServiceClient(endpoint=endpoint, hub='hub', credential=DefaultAzureCredential())
 
 # Send a json message to everybody on the given hub...
 try:

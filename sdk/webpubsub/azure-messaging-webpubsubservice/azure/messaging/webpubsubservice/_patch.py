@@ -50,6 +50,7 @@ from msrest import Serializer
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Optional, TypeVar, Union
+    from ._operations._operations import JSONType
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -111,7 +112,7 @@ def _get_token_by_key(endpoint, hub, key, **kwargs):
 
 
 def _parse_connection_string(connection_string, **kwargs):
-    # type: (str, Any) -> Dict[Any]
+    # type: (str, Any) -> JSONType
     for segment in connection_string.split(";"):
         if "=" in segment:
             key, value = segment.split("=", maxsplit=1)
@@ -277,7 +278,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
      alpha-numeric characters or underscore.
     :type hub: str
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential or ~azure.core.credentials.TokenCredential
     :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -319,7 +320,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
 
     @distributed_trace
     def get_client_access_token(self, **kwargs):
-        # type: (str, Any) -> Dict[Any]
+        # type: (Any) -> JSONType
         """Build an authentication token.
 
         :keyword user_id: User Id.
@@ -328,8 +329,8 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         :paramtype roles: list[str]
         :keyword minutes_to_expire: The expire time of the generated token.
         :paramtype minutes_to_expire: int
-        :returns: ~dict containing the web socket endpoint, the token and a url with the generated access token.
-        :rtype: ~dict
+        :returns: JSON response containing the web socket endpoint, the token and a url with the generated access token.
+        :rtype: JSONType
 
         Example:
         >>> get_client_access_token()

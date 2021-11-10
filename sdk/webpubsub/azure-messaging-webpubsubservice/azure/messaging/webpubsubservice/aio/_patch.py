@@ -53,6 +53,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Dict, TypeVar, Type
     ClientType = TypeVar("ClientType", bound="WebPubSubServiceClient")
+    from ._operations._operations import JSONType
 
     from azure.core.credentials_async import AsyncTokenCredential
 
@@ -127,7 +128,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
      alpha-numeric characters or underscore.
     :type hub: str
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential or ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -167,7 +168,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
 
     @distributed_trace_async
     async def get_client_access_token(self, **kwargs):
-        # type: (str, Any) -> Dict[Any]
+        # type: (Any) -> JSONType
         """Build an authentication token.
 
         :keyword user_id: User Id.
@@ -176,8 +177,8 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         :paramtype roles: list[str]
         :keyword minutes_to_expire: The expire time of the generated token.
         :paramtype minutes_to_expire: int
-        :returns: ~dict containing the web socket endpoint, the token and a url with the generated access token.
-        :rtype: ~dict
+        :returns: JSON response containing the web socket endpoint, the token and a url with the generated access token.
+        :rtype: JSONType
 
         Example:
         >>> get_client_access_token()
