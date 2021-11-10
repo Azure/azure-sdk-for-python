@@ -10,6 +10,7 @@
 - remove the `operations` namespace from `azure.messaging.webpubsubservice`
 - rename operation `check_permission` to `has_permission`
 - operations `connection_exists`, `group_exists`, `user_exists`, and `has_permission` now return boolean values instead of raising
+- move parameter 'hub' from operation to client
 
 
 ## 1.0.0b2 (2021-10-14)
