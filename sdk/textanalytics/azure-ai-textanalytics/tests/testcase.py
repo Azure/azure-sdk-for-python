@@ -22,8 +22,7 @@ from azure.ai.textanalytics import (
     ExtractSummaryResult,
     _AnalyzeActionsType
 )
-from devtools_testutils import PowerShellPreparer
-from azure_devtools.scenario_tests import ReplayableTest
+from devtools_testutils import PowerShellPreparer, AzureRecordedTestCase
 
 
 TextAnalyticsPreparer = functools.partial(
@@ -78,11 +77,7 @@ class FakeTokenCredential(object):
         return self.token
 
 
-class TextAnalyticsTest(AzureTestCase):
-    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key']
-
-    def __init__(self, method_name):
-        super(TextAnalyticsTest, self).__init__(method_name)
+class TextAnalyticsTest(AzureRecordedTestCase):
 
     def get_oauth_endpoint(self):
         return os.getenv("TEXTANALYTICS_TEST_ENDPOINT")
@@ -101,22 +96,20 @@ class TextAnalyticsTest(AzureTestCase):
         return FakeTokenCredential()
 
     def assertOpinionsEqual(self, opinion_one, opinion_two):
-        self.assertEqual(opinion_one.sentiment, opinion_two.sentiment)
-        self.assertEqual(opinion_one.confidence_scores.positive, opinion_two.confidence_scores.positive)
-        self.assertEqual(opinion_one.confidence_scores.neutral, opinion_two.confidence_scores.neutral)
-        self.assertEqual(opinion_one.confidence_scores.negative, opinion_two.confidence_scores.negative)
+        assert opinion_one.sentiment == opinion_two.sentiment
+        assert opinion_one.confidence_scores.positive == opinion_two.confidence_scores.positive
+        assert opinion_one.confidence_scores.neutral == opinion_two.confidence_scores.neutral
+        assert opinion_one.confidence_scores.negative == opinion_two.confidence_scores.negative
         self.validateConfidenceScores(opinion_one.confidence_scores)
-        self.assertEqual(opinion_one.offset, opinion_two.offset)
-        self.assertEqual(opinion_one.text, opinion_two.text)
-        self.assertEqual(opinion_one.is_negated, opinion_two.is_negated)
+        assert opinion_one.offset == opinion_two.offset
+        assert opinion_one.text == opinion_two.text
+        assert opinion_one.is_negated == opinion_two.is_negated
 
     def validateConfidenceScores(self, confidence_scores):
-        self.assertIsNotNone(confidence_scores.positive)
-        self.assertIsNotNone(confidence_scores.neutral)
-        self.assertIsNotNone(confidence_scores.negative)
-        self.assertEqual(
-            confidence_scores.positive + confidence_scores.neutral + confidence_scores.negative, 1
-        )
+        assert confidence_scores.positive is not None
+        assert confidence_scores.neutral is not None
+        assert confidence_scores.negative is not None
+        assert confidence_scores.positive + confidence_scores.neutral + confidence_scores.negative == 1
 
     def assert_healthcare_data_sources_equal(self, data_sources_a, data_sources_b):
         assert len(data_sources_a) == len(data_sources_b)

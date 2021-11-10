@@ -26,20 +26,20 @@ class TestAuth(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     def test_empty_credentials(self, textanalytics_test_endpoint, textanalytics_test_api_key):
-        with self.assertRaises(TypeError):
+        with pytest.raises(TypeError):
             text_analytics = TextAnalyticsClient(textanalytics_test_endpoint, "")
 
     @TextAnalyticsPreparer()
     def test_bad_type_for_credentials(self, textanalytics_test_endpoint, textanalytics_test_api_key):
-        with self.assertRaises(TypeError):
+        with pytest.raises(TypeError):
             text_analytics = TextAnalyticsClient(textanalytics_test_endpoint, [])
 
     @TextAnalyticsPreparer()
     def test_none_credentials(self, textanalytics_test_endpoint, textanalytics_test_api_key):
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             text_analytics = TextAnalyticsClient(textanalytics_test_endpoint, None)
 
     @TextAnalyticsPreparer()
     def test_none_endpoint(self, textanalytics_test_endpoint, textanalytics_test_api_key):
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             text_analytics = TextAnalyticsClient(None, AzureKeyCredential(textanalytics_test_api_key))
