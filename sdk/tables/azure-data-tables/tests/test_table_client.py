@@ -6,7 +6,7 @@
 import pytest
 import platform
 
-from devtools_testutils import AzureRecordedTestCase, RecordedByProxy
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables import __version__ as VERSION
@@ -31,7 +31,7 @@ _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint', 'cosmos': 
 
 class TestTableClient(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
-    @RecordedByProxy
+    @recorded_by_proxy
     def test_user_agent_custom(self, tables_storage_account_name, tables_primary_storage_account_key):
         custom_app = "TestApp/v1.0"
         service = TableServiceClient(
@@ -68,7 +68,7 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
             count += 1
 
     @tables_decorator
-    @RecordedByProxy
+    @recorded_by_proxy
     def test_user_agent_append(self, tables_storage_account_name, tables_primary_storage_account_key):
         service = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
 
@@ -85,7 +85,7 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
             count += 1
 
     @tables_decorator
-    @RecordedByProxy
+    @recorded_by_proxy
     def test_user_agent_default(self, tables_storage_account_name, tables_primary_storage_account_key):
         service = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
 

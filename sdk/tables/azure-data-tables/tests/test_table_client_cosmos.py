@@ -7,7 +7,7 @@ import pytest
 import platform
 import sys
 
-from devtools_testutils import AzureRecordedTestCase, RecordedByProxy
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables import __version__ as  VERSION
@@ -32,7 +32,7 @@ _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint', 'cosmos': 
 class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Malformed string")
     @cosmos_decorator
-    @RecordedByProxy
+    @recorded_by_proxy
     def test_user_agent_default(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         service = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
 
@@ -52,7 +52,7 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
-    @RecordedByProxy
+    @recorded_by_proxy
     def test_user_agent_custom(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         custom_app = "TestApp/v1.0"
         service = TableServiceClient(
@@ -90,7 +90,7 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
-    @RecordedByProxy
+    @recorded_by_proxy
     def test_user_agent_append(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         service = TableServiceClient(
             self.account_url(tables_cosmos_account_name, "cosmos"),

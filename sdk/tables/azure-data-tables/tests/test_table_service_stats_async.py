@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from devtools_testutils import AzureRecordedTestCase
-from devtools_testutils.aio import RecordedByProxyAsync
+from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.data.tables.aio import TableServiceClient
 
@@ -32,7 +32,7 @@ class TestTableServiceStatsAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     # --Test cases per service ---------------------------------------
     @tables_decorator_async
-    @RecordedByProxyAsync
+    @recorded_by_proxy_async
     async def test_table_service_stats_f(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
@@ -43,7 +43,7 @@ class TestTableServiceStatsAsync(AzureRecordedTestCase, AsyncTableTestCase):
         self._assert_stats_default(stats)
 
     @tables_decorator_async
-    @RecordedByProxyAsync
+    @recorded_by_proxy_async
     async def test_table_service_stats_when_unavailable(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)

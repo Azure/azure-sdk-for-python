@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import pytest
 
-from devtools_testutils import AzureRecordedTestCase, RecordedByProxy, ResponseCallback
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, ResponseCallback
 
 from azure.core.exceptions import (
     HttpResponseError,
@@ -69,7 +69,7 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
 
     # --Test Cases --------------------------------------------
     @tables_decorator
-    @RecordedByProxy
+    @recorded_by_proxy
     def test_retry_on_server_error(self, tables_storage_account_name, tables_primary_storage_account_key):
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key, default_table=False)
         try:
@@ -85,7 +85,7 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
             self._tear_down()
 
     @tables_decorator
-    @RecordedByProxy
+    @recorded_by_proxy
     def test_retry_on_timeout(self, tables_storage_account_name, tables_primary_storage_account_key):
         self._set_up(
             tables_storage_account_name,
@@ -124,7 +124,7 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
         assert 'read timeout' in str(error.value), 'Expected socket timeout but got different exception.'
 
     @tables_decorator
-    @RecordedByProxy
+    @recorded_by_proxy
     def test_no_retry(self, tables_storage_account_name, tables_primary_storage_account_key):
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key, retry_total=0, default_table=False)
 

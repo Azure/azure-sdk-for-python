@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import pytest
 
-from devtools_testutils import AzureRecordedTestCase, RecordedByProxy
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 from azure.data.tables import TableServiceClient
 from _shared.testcase import TableTestCase, SLEEP_DELAY
@@ -34,7 +34,7 @@ class TestTableServiceStatsCosmos(AzureRecordedTestCase, TableTestCase):
     # --Test cases per service ---------------------------------------
     @pytest.mark.skip("JSON is invalid for cosmos")
     @cosmos_decorator
-    @RecordedByProxy
+    @recorded_by_proxy
     def test_table_service_stats_f(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         stats = tsc.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
@@ -42,7 +42,7 @@ class TestTableServiceStatsCosmos(AzureRecordedTestCase, TableTestCase):
 
     @pytest.mark.skip("JSON is invalid for cosmos")
     @cosmos_decorator
-    @RecordedByProxy
+    @recorded_by_proxy
     def test_table_service_stats_when_unavailable(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         stats = tsc.get_service_stats(raw_response_hook=self.override_response_body_with_unavailable_status)

@@ -6,7 +6,7 @@
 import pytest
 
 from devtools_testutils import AzureRecordedTestCase
-from devtools_testutils.aio import RecordedByProxyAsync
+from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import ResourceExistsError
@@ -22,7 +22,7 @@ TEST_TABLE_PREFIX = 'pytableasync'
 
 class TestTableCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
-    @RecordedByProxyAsync
+    @recorded_by_proxy_async
     async def test_create_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
@@ -38,7 +38,7 @@ class TestTableCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
         await ts.delete_table(table_name=table_name)
 
     @cosmos_decorator_async
-    @RecordedByProxyAsync
+    @recorded_by_proxy_async
     async def test_create_table_fail_on_exist(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
@@ -54,7 +54,7 @@ class TestTableCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
         await ts.delete_table(table_name=table_name)
 
     @cosmos_decorator_async
-    @RecordedByProxyAsync
+    @recorded_by_proxy_async
     async def test_query_tables_per_page(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
@@ -82,7 +82,7 @@ class TestTableCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
         await self._delete_all_tables(tables_cosmos_account_name, tables_primary_cosmos_account_key)
 
     @cosmos_decorator_async
-    @RecordedByProxyAsync
+    @recorded_by_proxy_async
     async def test_list_tables(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
@@ -99,7 +99,7 @@ class TestTableCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
         assert tables[0] is not None
 
     @cosmos_decorator_async
-    @RecordedByProxyAsync
+    @recorded_by_proxy_async
     async def test_query_tables_with_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
@@ -117,7 +117,7 @@ class TestTableCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
         await ts.delete_table(table.table_name)
 
     @cosmos_decorator_async
-    @RecordedByProxyAsync
+    @recorded_by_proxy_async
     async def test_list_tables_with_num_results(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._delete_all_tables(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -144,7 +144,7 @@ class TestTableCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
         assert all_tables == 4
 
     @cosmos_decorator_async
-    @RecordedByProxyAsync
+    @recorded_by_proxy_async
     async def test_list_tables_with_marker(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
@@ -177,7 +177,7 @@ class TestTableCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
         assert tables1 != tables2
 
     @cosmos_decorator_async
-    @RecordedByProxyAsync
+    @recorded_by_proxy_async
     async def test_delete_table_with_existing_table(self, tables_cosmos_account_name,
                                                     tables_primary_cosmos_account_key):
         # Arrange
@@ -191,7 +191,7 @@ class TestTableCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
         assert deleted is None
 
     @cosmos_decorator_async
-    @RecordedByProxyAsync
+    @recorded_by_proxy_async
     async def test_delete_table_with_non_existing_table_fail_not_exist(self, tables_cosmos_account_name,
                                                                        tables_primary_cosmos_account_key):
         # Arrange

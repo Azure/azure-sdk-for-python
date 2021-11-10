@@ -8,7 +8,7 @@ import pytest
 import platform
 
 from devtools_testutils import AzureRecordedTestCase
-from devtools_testutils.aio import RecordedByProxyAsync
+from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.data.tables.aio import TableServiceClient, TableClient
 from azure.data.tables import __version__ as VERSION
@@ -32,7 +32,7 @@ _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint', 'cosmos': 
 class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
-    @RecordedByProxyAsync
+    @recorded_by_proxy_async
     async def test_user_agent_default_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         service = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
 
@@ -52,7 +52,7 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             count += 1
 
     @cosmos_decorator_async
-    @RecordedByProxyAsync
+    @recorded_by_proxy_async
     async def test_user_agent_custom_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         custom_app = "TestApp/v1.0"
         service = TableServiceClient(
@@ -86,7 +86,7 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             count += 1
 
     @cosmos_decorator_async
-    @RecordedByProxyAsync
+    @recorded_by_proxy_async
     async def test_user_agent_append(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         service = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
 

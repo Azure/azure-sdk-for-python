@@ -6,7 +6,7 @@
 import pytest
 
 from devtools_testutils import AzureRecordedTestCase, ResponseCallback
-from devtools_testutils.aio import RecordedByProxyAsync
+from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.core.exceptions import (
     HttpResponseError,
@@ -58,7 +58,7 @@ class TestStorageRetryAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     # --Test Cases --------------------------------------------
     @tables_decorator_async
-    @RecordedByProxyAsync
+    @recorded_by_proxy_async
     async def test_retry_on_server_error_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key, default_table=False)
         try:
@@ -74,7 +74,7 @@ class TestStorageRetryAsync(AzureRecordedTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
-    @RecordedByProxyAsync
+    @recorded_by_proxy_async
     async def test_retry_on_timeout_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         await self._set_up(
             tables_storage_account_name,

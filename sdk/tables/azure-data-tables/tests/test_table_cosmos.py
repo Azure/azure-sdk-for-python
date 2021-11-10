@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 import pytest
 
-from devtools_testutils import AzureRecordedTestCase, RecordedByProxy
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import ResourceExistsError
@@ -21,7 +21,7 @@ TEST_TABLE_PREFIX = 'pytablesync'
 
 class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
     @cosmos_decorator
-    @RecordedByProxy
+    @recorded_by_proxy
     def test_create_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
@@ -37,7 +37,7 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
         ts.delete_table(table_name)
 
     @cosmos_decorator
-    @RecordedByProxy
+    @recorded_by_proxy
     def test_create_table_fail_on_exist(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
@@ -53,7 +53,7 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
         ts.delete_table(table_name)
 
     @cosmos_decorator
-    @RecordedByProxy
+    @recorded_by_proxy
     def test_query_tables_per_page(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
@@ -81,7 +81,7 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
         self._delete_all_tables(ts)
 
     @cosmos_decorator
-    @RecordedByProxy
+    @recorded_by_proxy
     def test_query_tables(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
@@ -97,7 +97,7 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
         ts.delete_table(table.table_name)
 
     @cosmos_decorator
-    @RecordedByProxy
+    @recorded_by_proxy
     def test_query_tables_with_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
@@ -115,7 +115,7 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
         self._delete_all_tables(ts)
 
     @cosmos_decorator
-    @RecordedByProxy
+    @recorded_by_proxy
     def test_query_tables_with_num_results(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         prefix = 'listtable'
@@ -141,7 +141,7 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
         self._delete_all_tables(ts)
 
     @cosmos_decorator
-    @RecordedByProxy
+    @recorded_by_proxy
     def test_query_tables_with_marker(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
@@ -170,7 +170,7 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
         self._delete_all_tables(ts)
 
     @cosmos_decorator
-    @RecordedByProxy
+    @recorded_by_proxy
     def test_delete_table_with_existing_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
@@ -184,7 +184,7 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
         assert len(existing) == 0
 
     @cosmos_decorator
-    @RecordedByProxy
+    @recorded_by_proxy
     def test_delete_table_with_non_existing_table_fail_not_exist(self, tables_cosmos_account_name,
                                                                  tables_primary_cosmos_account_key):
         # Arrange
