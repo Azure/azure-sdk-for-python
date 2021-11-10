@@ -20,7 +20,7 @@ from typing import TYPE_CHECKING
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 
 from . import http_challenge_cache as ChallengeCache
-from .challenge_auth_policy import _enforce_tls, _get_challenge_scope, _update_challenge
+from .challenge_auth_policy import _enforce_tls, _update_challenge
 
 if TYPE_CHECKING:
     from typing import Any, Optional
@@ -43,7 +43,8 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
         if challenge:
             # Note that if the vault has moved to a new tenant since our last request for it, this request will fail.
             if self._need_new_token:
-                scope = _get_challenge_scope(challenge)
+                # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
+                scope = challenge.get_scope() or challenge.get_resource() + "/.default"
                 self._token = await self._credential.get_token(scope, tenant_id=challenge.tenant_id)
 
             # ignore mypy's warning -- although self._token is Optional, get_token raises when it fails to get a token
@@ -63,7 +64,8 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
     async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
         try:
             challenge = _update_challenge(request, response)
-            scope = _get_challenge_scope(challenge)
+            # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
+            scope = challenge.get_scope() or challenge.get_resource() + "/.default"
         except ValueError:
             return False
 

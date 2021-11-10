@@ -3,8 +3,7 @@
 ## 4.4.0b2 (Unreleased)
 
 ### Features Added
-- Added support for multi-tenant authentication against Managed HSM when using
-  `azure-identity` 1.7.1 or newer
+- Added support for multi-tenant authentication when using `azure-identity` 1.7.1 or newer
   ([#20698](https://github.com/Azure/azure-sdk-for-python/issues/20698))
 
 ### Breaking Changes
