@@ -1,5 +1,15 @@
 # Release History
 
+## 3.2.0b3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 3.2.0b2 (2021-11-09)
 
 ### Features Added
