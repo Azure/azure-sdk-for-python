@@ -36,7 +36,7 @@ You can authenticate the `WebPubSubServiceClient` using [connection string][conn
 ```python
 >>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
 
->>> service = WebPubSubServiceClient.from_connection_string(connection_string='<connection_string>')
+>>> service = WebPubSubServiceClient.from_connection_string(connection_string='<connection_string>', hub='hub')
 ```
 
 Or using the service endpoint and the access key:
@@ -45,7 +45,7 @@ Or using the service endpoint and the access key:
 >>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
 >>> from azure.core.credentials import AzureKeyCredential
 
->>> service = WebPubSubServiceClient(endpoint='<endpoint>', credential=AzureKeyCredential("<access_key>"))
+>>> service = WebPubSubServiceClient(endpoint='<endpoint>', hub='hub', credential=AzureKeyCredential("<access_key>"))
 ```
 
 Or using [Azure Active Directory][aad_doc]:
@@ -56,7 +56,7 @@ Or using [Azure Active Directory][aad_doc]:
     ```python
     >>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
     >>> from azure.identity import DefaultAzureCredential
-    >>> service = WebPubSubServiceClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+    >>> service = WebPubSubServiceClient(endpoint='<endpoint>', hub='hub', credential=DefaultAzureCredential())
     ```
 
 ## Key concepts
@@ -83,21 +83,39 @@ When the client is connected, it can send messages to the upstream application, 
 
 ## Examples
 
-### Broadcast messages
+### Broadcast messages in JSON format
 
 ```python
 >>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
->>> from azure.identity import DefaultAzureCredential
->>> from azure.core.exceptions import HttpResponseError
 
->>> service = WebPubSubServiceClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
->>> with open('file.json', 'r') as f:
-    try:
-        service.send_to_all('ahub', content=f)
-    except HttpResponseError as e:
-        print('service responds error: {}'.format(e.response.json()))
-
+>>> service = WebPubSubServiceClient.from_connection_string('<connection_string>', hub='hub1')
+>>> service.send_to_all(message = {
+        'from': 'user1',
+        'data': 'Hello world'
+    })
 ```
+
+The WebSocket client will receive JSON serialized text: `{"from": "user1", "data": "Hello world"}`.
+
+### Broadcast messages in plain-text format
+
+```python
+>>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
+>>> service = WebPubSubServiceClient.from_connection_string('<connection_string>', hub='hub1')
+>>> service.send_to_all(message = 'Hello world', content_type='text/plain')
+```
+
+The WebSocket client will receive text: `Hello world`.
+
+### Broadcast messages in binary format
+
+```python
+>>> import io
+>>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
+>>> service = WebPubSubServiceClient.from_connection_string('<connection_string>', hub='hub')
+>>> service.send_to_all(message=io.StringIO('Hello World'), content_type='application/octet-stream')
+```
+The WebSocket client will receive binary text: `b'Hello world'`.
 
 ## Troubleshooting
 
@@ -124,7 +142,7 @@ endpoint = "<endpoint>"
 credential = DefaultAzureCredential()
 
 # This WebPubSubServiceClient will log detailed information about its HTTP sessions, at DEBUG level
-service = WebPubSubServiceClient(endpoint=endpoint, credential=credential, logging_enable=True)
+service = WebPubSubServiceClient(endpoint=endpoint, hub='hub', credential=credential, logging_enable=True)
 ```
 
 Similarly, `logging_enable` can enable detailed logging for a single call,
@@ -138,7 +156,7 @@ Http request and response details are printed to stdout with this logging config
 
 ## Next steps
 
-Check [more samples here][awps_samples].
+Check [more samples here][samples].
 
 ## Contributing
 
@@ -178,4 +196,4 @@ additional questions or comments.
 [azure_portal]: https://docs.microsoft.com/azure/azure-web-pubsub/howto-develop-create-instance
 [azure-key-credential]: https://aka.ms/azsdk-python-core-azurekeycredential
 [aad_doc]: https://aka.ms/awps/aad
-[awps_samples]: https://github.com/Azure/azure-webpubsub/tree/main/samples/python
+[samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/webpubsub/azure-messaging-webpubsubservice/samples

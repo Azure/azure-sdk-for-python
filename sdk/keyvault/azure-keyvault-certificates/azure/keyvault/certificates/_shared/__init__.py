@@ -9,7 +9,7 @@ except ImportError:
     import urlparse as parse  # type: ignore
 
 from typing import TYPE_CHECKING
-from .challenge_auth_policy import ChallengeAuthPolicy, ChallengeAuthPolicyBase
+from .challenge_auth_policy import ChallengeAuthPolicy
 from .client_base import KeyVaultClientBase
 from .http_challenge import HttpChallenge
 from . import http_challenge_cache as HttpChallengeCache
@@ -21,7 +21,6 @@ if TYPE_CHECKING:
 
 __all__ = [
     "ChallengeAuthPolicy",
-    "ChallengeAuthPolicyBase",
     "HttpChallenge",
     "HttpChallengeCache",
     "KeyVaultClientBase",

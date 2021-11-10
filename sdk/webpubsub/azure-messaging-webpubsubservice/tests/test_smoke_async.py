@@ -5,25 +5,25 @@
 # license information.
 # -------------------------------------------------------------------------
 from testcase import WebpubsubPowerShellPreparer
-from testcase_async import WebpubsubTestAsync
+from testcase_async import WebpubsubAsyncTest
 
 
-class WebpubsubSmokeTestAsync(WebpubsubTestAsync):
+class WebpubsubSmokeAsyncTest(WebpubsubAsyncTest):
 
     @WebpubsubPowerShellPreparer()
     async def test_webpubsub_send_to_all(self, webpubsub_endpoint):
-        client = self.create_client(endpoint=webpubsub_endpoint)
-        await client.send_to_all('Hub', {'hello': 'test_webpubsub_send_to_all'})
+        client = self.create_client(endpoint=webpubsub_endpoint, hub='hub')
+        await client.send_to_all({'hello': 'test_webpubsub_send_to_all'})
 
     @WebpubsubPowerShellPreparer()
     async def test_webpubsub_send_to_all_apim_proxy(self, webpubsub_endpoint, webpubsub_reverse_proxy_endpoint=None):
-        client = self.create_client(endpoint=webpubsub_endpoint, reverse_proxy_endpoint=webpubsub_reverse_proxy_endpoint)
-        await client.send_to_all('Hub', {'hello': 'test_webpubsub_send_to_all_apim_proxy'})
+        client = self.create_client(endpoint=webpubsub_endpoint, hub='hub', reverse_proxy_endpoint=webpubsub_reverse_proxy_endpoint)
+        await client.send_to_all({'hello': 'test_webpubsub_send_to_all_apim_proxy'})
 
     @WebpubsubPowerShellPreparer()
     async def test_get_client_access_token(self, webpubsub_endpoint):
-        client = self.create_client(endpoint=webpubsub_endpoint)
-        access_token = await client.get_client_access_token(hub='hub')
+        client = self.create_client(endpoint=webpubsub_endpoint, hub='hub')
+        access_token = await client.get_client_access_token()
         assert len(access_token) == 3
         assert access_token['baseUrl'][:3] == "wss"
         assert access_token['token']

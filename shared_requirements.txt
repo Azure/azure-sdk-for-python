@@ -141,6 +141,10 @@ backports.functools-lru-cache >= 1.6.4; python_version == "2.7"
 #override azure-data-tables msrest>=0.6.21
 #override azure-eventhub azure-core<2.0.0,>=1.14.0
 #override azure-identity azure-core<2.0.0,>=1.11.0
+#override azure-keyvault-administration azure-core<2.0.0,>=1.15.0
+#override azure-keyvault-certificates azure-core<2.0.0,>=1.15.0
+#override azure-keyvault-keys azure-core<2.0.0,>=1.15.0
+#override azure-keyvault-secrets azure-core<2.0.0,>=1.15.0
 #override azure-identity cryptography>=2.5
 #override azure-keyvault-administration msrest>=0.6.21
 #override azure-keyvault-administration azure-core<2.0.0,>=1.11.0
