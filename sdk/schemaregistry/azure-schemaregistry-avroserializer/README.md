@@ -306,7 +306,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [azure_sub]: https://azure.microsoft.com/free/
 [python_logging]: https://docs.python.org/3/library/logging.html
 [sr_avro_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroserializer/samples
-[api_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-schemaregistry-avroserializer/latest/index.html
+[api_reference]: https://docs.microsoft.com/python/api/overview/azure/schemaregistry-avroserializer-readme
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroserializer
 [change_log]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroserializer/CHANGELOG.md
 [schemaregistry_client]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry
