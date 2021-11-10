@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- Sync stream downloading now raises `azure.core.exceptions.DecodeError` rather than `requests.exceptions.ContentDecodingError`
+
 ### Bugs Fixed
 
 ### Other Changes
