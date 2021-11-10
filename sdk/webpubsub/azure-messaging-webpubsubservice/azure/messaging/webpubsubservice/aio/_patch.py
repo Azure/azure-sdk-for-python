@@ -39,7 +39,7 @@ from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 from azure.core.credentials import AzureKeyCredential
 from msrest import Serializer
-from typing import Any, Callable, Dict, Optional, TypeVar, Union
+from typing import Any, Callable, Dict, Optional, TypeVar, Union, List
 
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
@@ -48,13 +48,9 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+from ._operations._operations import JSONType
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Dict, TypeVar, Type
-    ClientType = TypeVar("ClientType", bound="WebPubSubServiceClient")
-    from ._operations._operations import JSONType
-
     from azure.core.credentials_async import AsyncTokenCredential
 
 
@@ -153,8 +149,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         self._serialize.client_side_validation = False
 
     @classmethod
-    def from_connection_string(cls, connection_string, hub, **kwargs):
-        # type: (Type[ClientType], str, str, Any) -> ClientType
+    def from_connection_string(cls, connection_string: str, hub: str, **kwargs: Any) -> "WebPubSubServiceClient":
         """Create a new WebPubSubServiceClient from a connection string.
         :param connection_string: Connection string
         :type connection_string: ~str
@@ -169,9 +164,18 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         return cls(hub=hub, credential=credential, **kwargs)
 
     @distributed_trace_async
-    async def get_client_access_token(self, **kwargs):
-        # type: (Any) -> JSONType
-        """Build an authentication token.
+    async def get_client_access_token(
+        self,
+        *,
+        user_id: Optional[str] = None,
+        roles: Optional[List[str]] = None,
+        minutes_to_expire: Optional[int] = 60,
+        jwt_headers: Dict[str, Any] = None,
+        **kwargs: Any
+    ) -> JSONType:
+        """Generate token for the client to connect Azure Web PubSub service.
+
+        Generate token for the client to connect Azure Web PubSub service.
 
         :keyword user_id: User Id.
         :paramtype user_id: str
@@ -180,16 +184,22 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         :keyword minutes_to_expire: The expire time of the generated token.
         :paramtype minutes_to_expire: int
         :keyword dict[str, any] jwt_headers: Any headers you want to pass to jwt encoding.
-        :returns: JSON response containing the web socket endpoint, the token and a url with the generated access token.
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
+        :return: JSON object
         :rtype: JSONType
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
-        >>> get_client_access_token()
-        {
-            'baseUrl': 'wss://contoso.com/api/webpubsub/client/hubs/theHub',
-            'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...',
-            'url': 'wss://contoso.com/api/webpubsub/client/hubs/theHub?access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...'
-        }
+            .. code-block:: python
+
+                >>> get_client_access_token()
+                {
+                    'baseUrl': 'wss://contoso.com/api/webpubsub/client/hubs/theHub',
+                    'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...',
+                    'url': 'wss://contoso.com/api/webpubsub/client/hubs/theHub?access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...'
+                }
         """
         endpoint = self._config.endpoint.lower()
         if not endpoint.startswith("http://") and not endpoint.startswith("https://"):
@@ -206,11 +216,24 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         client_endpoint = "ws" + endpoint[4:]
         hub = self._config.hub
         client_url = "{}/client/hubs/{}".format(client_endpoint, hub)
-        jwt_headers = kwargs.pop("jwt_headers", {})
         if isinstance(self._config.credential, AzureKeyCredential):
-            token = _get_token_by_key(endpoint, hub, self._config.credential.key, jwt_headers=jwt_headers, **kwargs)
+            token = _get_token_by_key(
+                endpoint,
+                hub,
+                self._config.credential.key,
+                user_id=user_id,
+                roles=roles,
+                minutes_to_expire=minutes_to_expire,
+                jwt_headers=jwt_headers or {},
+                **kwargs
+            )
         else:
-            access_token = await super().get_client_access_token(**kwargs)
+            access_token = await super().get_client_access_token(
+                user_id=user_id,
+                roles=roles,
+                minutes_to_expire=minutes_to_expire,
+                **kwargs
+            )
             token = access_token.get('token')
 
         return {
