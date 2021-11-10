@@ -74,6 +74,8 @@ client = LogsQueryClient(credential=credential)
 
 ### Send a single query request
 
+In version 1.0 of the Monitor Query library:
+
 - The `QueryBody` is flattened. Users are expected to pass the Kusto query directly to the API.
 - The `timespan` attribute is now required, which helped to avoid querying over the entire data set.
 
