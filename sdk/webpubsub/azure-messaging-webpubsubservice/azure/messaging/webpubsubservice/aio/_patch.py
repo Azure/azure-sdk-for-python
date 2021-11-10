@@ -39,7 +39,7 @@ from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 from azure.core.credentials import AzureKeyCredential
 from msrest import Serializer
-from typing import Any, Callable, Dict, Optional, TypeVar, Union
+from typing import Any, Callable, Dict, Optional, TypeVar, Union, List
 
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
@@ -162,8 +162,17 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         return cls(hub=hub, credential=credential, **kwargs)
 
     @distributed_trace_async
-    async def get_client_access_token(self, **kwargs: Any) -> JSONType:
-        """Build an authentication token.
+    async def get_client_access_token(
+        self,
+        *,
+        user_id: Optional[str] = None,
+        roles: Optional[List[str]] = None,
+        minutes_to_expire: Optional[int] = 60,
+        **kwargs: Any
+    ) -> JSONType:
+        """Generate token for the client to connect Azure Web PubSub service.
+
+        Generate token for the client to connect Azure Web PubSub service.
 
         :keyword user_id: User Id.
         :paramtype user_id: str
@@ -171,16 +180,22 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         :paramtype roles: list[str]
         :keyword minutes_to_expire: The expire time of the generated token.
         :paramtype minutes_to_expire: int
-        :returns: JSON response containing the web socket endpoint, the token and a url with the generated access token.
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
+        :return: JSON object
         :rtype: JSONType
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
-        >>> get_client_access_token()
-        {
-            'baseUrl': 'wss://contoso.com/api/webpubsub/client/hubs/theHub',
-            'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...',
-            'url': 'wss://contoso.com/api/webpubsub/client/hubs/theHub?access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...'
-        }
+            .. code-block:: python
+
+                >>> get_client_access_token()
+                {
+                    'baseUrl': 'wss://contoso.com/api/webpubsub/client/hubs/theHub',
+                    'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...',
+                    'url': 'wss://contoso.com/api/webpubsub/client/hubs/theHub?access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...'
+                }
         """
         endpoint = self._config.endpoint.lower()
         if not endpoint.startswith("http://") and not endpoint.startswith("https://"):
@@ -198,9 +213,22 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         hub = self._config.hub
         client_url = "{}/client/hubs/{}".format(client_endpoint, hub)
         if isinstance(self._config.credential, AzureKeyCredential):
-            token = _get_token_by_key(endpoint, hub, self._config.credential.key, **kwargs)
+            token = _get_token_by_key(
+                endpoint,
+                hub,
+                self._config.credential.key,
+                user_id=user_id,
+                roles=roles,
+                minutes_to_expire=minutes_to_expire,
+                **kwargs
+            )
         else:
-            access_token = await super().get_client_access_token(**kwargs)
+            access_token = await super().get_client_access_token(
+                user_id=user_id,
+                roles=roles,
+                minutes_to_expire=minutes_to_expire,
+                **kwargs
+            )
             token = access_token.get('token')
 
         return {
