@@ -79,21 +79,21 @@ class CommunicationCloudEnvironmentModel(with_metaclass(CaseInsensitiveEnumMeta,
     GCCH = "gcch"
 
 class RecordingChannelType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Channel type of call recording.
+    """The channel type of call recording.
     """
 
     MIXED = "mixed"
     UNMIXED = "unmixed"
 
 class RecordingContentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Content type of call recording.
+    """The content type of call recording.
     """
 
     AUDIO = "audio"
     AUDIO_VIDEO = "audioVideo"
 
 class RecordingFormatType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Format type of call recording.
+    """The format type of call recording.
     """
 
     WAV = "wav"

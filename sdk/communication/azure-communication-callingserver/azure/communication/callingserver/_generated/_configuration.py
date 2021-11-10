@@ -25,6 +25,8 @@ class AzureCommunicationCallingServerServiceConfiguration(Configuration):
 
     :param endpoint: The endpoint of the Azure Communication resource.
     :type endpoint: str
+    :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -33,12 +35,14 @@ class AzureCommunicationCallingServerServiceConfiguration(Configuration):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
+        super(AzureCommunicationCallingServerServiceConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
+
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        super(AzureCommunicationCallingServerServiceConfiguration, self).__init__(**kwargs)
 
         self.endpoint = endpoint
-        self.api_version = "2021-11-15-preview"
+        self.api_version = api_version
         kwargs.setdefault('sdk_moniker', 'azurecommunicationcallingserverservice/{}'.format(VERSION))
         self._configure(**kwargs)
 
