@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-public-methods
-from typing import TYPE_CHECKING, Any, List, Optional  # pylint: disable=unused-import
+from typing import TYPE_CHECKING, Any, List  # pylint: disable=unused-import
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.exceptions import (
@@ -28,14 +28,8 @@ from ._generated.models import (
     CallRecordingProperties,
     StartCallRecordingWithCallLocatorRequest,
     StartCallRecordingResult,
-    RecordingContentType,
-    RecordingChannelType,
-    RecordingFormatType,
     CallParticipant,
-    CallMediaType,
-    CallingEventSubscriptionType,
-    AnswerCallResult,
-    CallRejectReason
+    AnswerCallResult
     )
 
 from ._shared.models import CommunicationIdentifier
@@ -52,11 +46,7 @@ from ._converters import (
     CancelMediaOperationWithCallLocatorRequestConverter,
     CancelParticipantMediaOperationWithCallLocatorRequestConverter,
     GetAllParticipantsWithCallLocatorRequestConverter,
-    GetParticipantWithCallLocatorRequestConverter,
-    MuteParticipantWithCallLocatorRequestConverter,
-    UnmuteParticipantWithCallLocatorRequestConverter,
-    HoldMeetingAudioWithCallLocatorRequestConverter,
-    ResumeMeetingAudioWithCallLocatorRequestConverter
+    GetParticipantWithCallLocatorRequestConverter
     )
 from ._shared.utils import get_authentication_policy, get_host_header_policy, parse_connection_str
 from ._version import SDK_MONIKER
@@ -216,7 +206,6 @@ class CallingServerClient(object):
         :returns: CallConnection for a successful join request.
         :rtype: ~azure.communication.callingserver.CallConnection
         """
-
         join_call_request = JoinCallRequestConverter.convert(
             call_locator=serialize_call_locator(call_locator),
             source=serialize_identifier(source),
@@ -237,11 +226,28 @@ class CallingServerClient(object):
     def answer_call(
         self,
         incoming_call_context,  # type: str
-        callback_uri=None,  # type: str
-        requested_media_types=None,  # type: List[CallMediaType]
-        requested_call_events=None,  # type: List[CallingEventSubscriptionType]
         **kwargs  # type: Any
     ):  # type: (...) -> AnswerCallResult
+        """Answer the call.
+
+        :param incoming_call_context: Required. The context associated with the call.
+        :type incoming_call_context: str
+        :keyword callback_uri:  The callback uri.
+        :paramtype callback_uri: str
+        :keyword requested_media_types: The requested modalities.
+        :paramtype requested_media_types: list[str or
+         ~azure.communication.callingserver.models.CallMediaType]
+        :keyword requested_call_events: The requested call events to subscribe to.
+        :paramtype requested_call_events: list[str or
+         ~azure.communication.callingserver.models.CallingEventSubscriptionType]
+        :return: AnswerCallResult
+        :rtype: ~azure.communication.callingserver.AnswerCallResult
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        """
+        callback_uri = kwargs.pop("callback_uri", None)
+        requested_media_types = kwargs.pop("requested_media_types", None)
+        requested_call_events = kwargs.pop("requested_call_events", None)
 
         answer_call_request = AnswerCallRequestConverter.convert(
             incoming_call_context=incoming_call_context,
@@ -259,10 +265,23 @@ class CallingServerClient(object):
     def reject_call(
         self,
         incoming_call_context,  # type: str
-        call_reject_reason=None,  # type: CallRejectReason
-        callback_uri=None,  # type: str
         **kwargs  # type: Any
     ):  # type: (...) -> None
+        """Answer the call.
+
+        :param incoming_call_context: Required. The context associated with the call.
+        :type incoming_call_context: str
+        :keyword call_reject_reason:  The rejection reason. Possible values include: "none", "busy",
+         "forbidden".
+        :paramtype call_reject_reason: str or ~azure.communication.callingserver.models.CallRejectReason
+        :keyword callback_uri: The callback uri.
+        :paramtype callback_uri: str
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
+        call_reject_reason = kwargs.pop("call_reject_reason", None)
+        callback_uri = kwargs.pop("callback_uri", None)
 
         reject_call_request = RejectCallRequestConverter.convert(
             incoming_call_context=incoming_call_context,
@@ -345,10 +364,27 @@ class CallingServerClient(object):
         call_locator,  # type: CallLocator
         participant,  # type: CommunicationIdentifier
         callback_uri,  # type: str
-        alternate_caller_id=None,  # type: Optional[str]
-        operation_context=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):  # type: (...) -> AddParticipantResult
+        """Answer the call.
+
+        :param call_locator: Required. The call locator.
+        :type call_locator: ~azure.communication.callingserver.models.CallLocator
+        :param participant: Required. The participant to be added to the call.
+        :type participant: ~azure.communication.callingserver.models.CommunicationIdentifier
+        :param callback_uri: Required. The callback URI.
+        :type callback_uri: str
+        :keyword alternate_caller_id: The alternate caller id.
+        :paramtype alternate_caller_id: str
+        :keyword operation_context: The operation context.
+        :paramtype operation_context: str
+        :return: AddParticipantResult
+        :rtype: ~azure.communication.callingserver.AddParticipantResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
+        alternate_caller_id = kwargs.pop("alternate_caller_id", None)
+        operation_context = kwargs.pop("operation_context", None)
 
         alternate_caller_id = (None
             if alternate_caller_id is None
@@ -420,42 +456,6 @@ class CallingServerClient(object):
         )
 
     @distributed_trace()
-    def mute_participant(
-            self,
-            call_locator,  # type: CallLocator
-            participant,  # type: CommunicationIdentifier
-            **kwargs  # type: Any
-        ):  # type: (...) -> None
-
-        mute_participant_with_call_locator_request = MuteParticipantWithCallLocatorRequestConverter.convert(
-            serialize_call_locator(call_locator),
-            serialize_identifier(participant)
-            )
-
-        return self._server_call_client.mute_participant(
-            mute_participant_with_call_locator_request=mute_participant_with_call_locator_request,
-            **kwargs
-        )
-
-    @distributed_trace()
-    def unmute_participant(
-            self,
-            call_locator,  # type: CallLocator
-            participant,  # type: CommunicationIdentifier
-            **kwargs  # type: Any
-        ):  # type: (...) -> None
-
-        unmute_participant_with_call_locator_request = UnmuteParticipantWithCallLocatorRequestConverter.convert(
-            serialize_call_locator(call_locator),
-            serialize_identifier(participant)
-            )
-
-        return self._server_call_client.unmute_participant(
-            unmute_participant_with_call_locator_request=unmute_participant_with_call_locator_request,
-            **kwargs
-        )
-
-    @distributed_trace()
     def cancel_media_operation(
         self,
         call_locator,  # type: CallLocator
@@ -495,51 +495,38 @@ class CallingServerClient(object):
             )
 
     @distributed_trace()
-    def hold_participant_meeting_audio(
-            self,
-            call_locator,  # type: CallLocator
-            participant,  # type: CommunicationIdentifier
-            **kwargs  # type: Any
-        ):  # type: (...) -> None
-
-        hold_meeting_audio_with_call_locator_request = HoldMeetingAudioWithCallLocatorRequestConverter.convert(
-            serialize_call_locator(call_locator),
-            serialize_identifier(participant)
-            )
-
-        return self._server_call_client.hold_participant_meeting_audio(
-            hold_meeting_audio_with_call_locator_request=hold_meeting_audio_with_call_locator_request,
-            **kwargs
-        )
-
-    @distributed_trace()
-    def resume_participant_meeting_audio(
-            self,
-            call_locator,  # type: CallLocator
-            participant,  # type: CommunicationIdentifier
-            **kwargs  # type: Any
-        ):  # type: (...) -> None
-
-        resume_meeting_audio_with_call_locator_request = ResumeMeetingAudioWithCallLocatorRequestConverter.convert(
-            serialize_call_locator(call_locator),
-            serialize_identifier(participant)
-            )
-
-        return self._server_call_client.resume_participant_meeting_audio(
-            resume_meeting_audio_with_call_locator_request=resume_meeting_audio_with_call_locator_request,
-            **kwargs
-        )
-
-    @distributed_trace()
     def start_recording( # pylint: disable=too-many-arguments
         self,
         call_locator,  # type: CallLocator
         recording_state_callback_uri,  # type: str
-        recording_content_type=None, # type: Optional[RecordingContentType]
-        recording_channel_type=None, # type: Optional[RecordingChannelType]
-        recording_format_type=None, # type: Optional[RecordingFormatType]
         **kwargs  # type: Any
     ):  # type: (...) -> StartCallRecordingResult
+        """Start recording the call.
+
+        :param call_locator: Required. The call locator.
+        :type call_locator: ~azure.communication.callingserver.models.CallLocator
+        :param recording_state_callback_uri: Required. The uri to send notifications to.
+        :type recording_state_callback_uri: str
+        :keyword recording_content_type: The content type of call recording. Possible values include:
+         "audio", "audioVideo".
+        :paramtype recording_content_type: str or
+         ~azure.communication.callingserver.models.RecordingContentType
+        :keyword recording_channel_type: The channel type of call recording. Possible values include:
+        "mixed", "unmixed".
+        :paramtype recording_channel_type: str or
+         ~azure.communication.callingserver.models.RecordingChannelType
+        :keyword recording_format_type: The format type of call recording. Possible values include: "wav",
+         "mp3", "mp4".
+        :paramtype recording_format_type: str or
+         ~azure.communication.callingserver.models.RecordingFormatType
+        :return: StartCallRecordingResult
+        :rtype: ~azure.communication.callingserver.StartCallRecordingResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
+        recording_content_type = kwargs.pop("recording_content_type", None)
+        recording_channel_type = kwargs.pop("recording_channel_type", None)
+        recording_format_type = kwargs.pop("recording_format_type", None)
 
         start_call_recording_with_calllocator_request = StartCallRecordingWithCallLocatorRequest(
             call_locator=serialize_call_locator(call_locator),

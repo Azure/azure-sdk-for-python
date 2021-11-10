@@ -177,12 +177,29 @@ AUDIO_FILE_ID = "sampleAudioFileId"
 PlayAudioResponsePayload = {
     "operationId": OPERATION_ID,
     "status": "running",
-    "operationContext": OPERATION_CONTEXT
+    "operationContext": OPERATION_CONTEXT,
+    "resultInfo": {
+        "code": 202,
+        "subcode": 202,
+        "message": "Good."
+        }
     }
 
 # AddParticipantPayload
 AddParticipantResultPayload = {
     "participantId": PARTICIPANT_ID_01
+    }
+
+# TransferPayload
+TransferResultPayload = {
+    "operationId": OPERATION_ID,
+    "status": "completed",
+    "operationContext": OPERATION_CONTEXT,
+    "resultInfo": {
+        "code": 202,
+        "subcode": 202,
+        "message": "Good."
+        }
     }
 
 # CreateAudioRoutingGroupPayload

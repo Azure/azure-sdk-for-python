@@ -4,9 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-public-methods
-from typing import TYPE_CHECKING, List, Any, Optional  # pylint: disable=unused-import
+from typing import TYPE_CHECKING, List, Any  # pylint: disable=unused-import
 from azure.core.tracing.decorator import distributed_trace
-from .utils._utils import CallingServerUtils
 from ._communication_identifier_serializer import serialize_identifier
 from ._converters import (
     AddParticipantRequestConverter,
@@ -30,6 +29,7 @@ from ._generated.models import (
     PlayAudioResult,
     AudioRoutingGroupResult,
     CreateAudioRoutingGroupResult,
+    TransferCallResult,
     CallParticipant,
     AudioRoutingMode
     )
@@ -132,7 +132,7 @@ class CallConnection(object):
 
         return self._call_connection_client.play_audio(
             call_connection_id=self.call_connection_id,
-            request=play_audio_request,
+            play_audio_request=play_audio_request,
             **kwargs
         )
 
@@ -140,24 +140,24 @@ class CallConnection(object):
     def add_participant(
             self,
             participant,  # type: CommunicationIdentifier
-            alternate_caller_id=None,  # type: Optional[str]
-            operation_context=None,  # type: Optional[str]
             **kwargs  # type: Any
         ): # type: (...) -> AddParticipantResult
         """
         Add participant to the call connection.
 
         :param participant: Required. The participant identity.
-        :type participant: CommunicationIdentifier
-        :param alternate_caller_id: The alternate caller id.
-        :type alternate_caller_id: str
-        :param operation_context: The operation context.
-        :type operation_context: str
+        :type participant: ~azure.communication.callingserver.models.CommunicationIdentifier
+        :keyword alternate_caller_id: The alternate caller id.
+        :paramtype alternate_caller_id: str
+        :keyword operation_context: The operation context.
+        :paramtype operation_context: str
         :return: AddParticipantResult
         :rtype: ~azure.communication.callingserver.AddParticipantResult
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         """
+        alternate_caller_id = kwargs.pop("alternate_caller_id", None)
+        operation_context = kwargs.pop("operation_context", None)
 
         alternate_caller_id = (None
             if alternate_caller_id is None
@@ -333,18 +333,41 @@ class CallConnection(object):
             self,
             target_participant,  # type: CommunicationIdentifier
             target_call_connection_id,  # type: str
-            user_to_user_information=None,  # type: Optional[str]
-            operation_context=None,  # type: str
-            callback_uri=None,  # type: str
             **kwargs  # type: Any
-        ):  # type: (...) -> None
+        ):  # type: (...) -> TransferCallResult
+        """
+        Transfer the call.
+
+        :param target_participant: Required. The target participant.
+        :type target_participant: ~azure.communication.callingserver.models.CommunicationIdentifier
+        :param target_call_connection_id: The target call connection id to transfer to.
+        :type target_call_connection_id: str
+        :keyword alternate_caller_id: The alternate identity of the transferor if transferring to a pstn
+         number.
+        :paramtype alternate_caller_id: str
+        :keyword user_to_user_information: The user to user information.
+        :paramtype user_to_user_information: str
+        :keyword operation_context: The operation context.
+        :paramtype operation_context: str
+        :return: TransferCallResult
+        :rtype: ~azure.communication.callingserver.TransferCallResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
+        alternate_caller_id = kwargs.pop("alternate_caller_id", None)
+        user_to_user_information = kwargs.pop("user_to_user_information", None)
+        operation_context = kwargs.pop("operation_context", None)
+
+        alternate_caller_id = (None
+            if alternate_caller_id is None
+            else PhoneNumberIdentifierModel(value=alternate_caller_id))
 
         transfer_call_request = TransferCallRequestConverter.convert(
             target_participant=serialize_identifier(target_participant),
             target_call_connection_id=target_call_connection_id,
+            alternate_caller_id=alternate_caller_id,
             user_to_user_information=user_to_user_information,
-            operation_context=operation_context,
-            callback_uri=callback_uri
+            operation_context=operation_context
             )
 
         return self._call_connection_client.transfer(

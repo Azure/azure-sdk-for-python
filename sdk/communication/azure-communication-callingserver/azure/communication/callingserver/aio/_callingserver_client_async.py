@@ -56,11 +56,7 @@ from .._converters import (
     CancelMediaOperationWithCallLocatorRequestConverter,
     CancelParticipantMediaOperationWithCallLocatorRequestConverter,
     GetAllParticipantsWithCallLocatorRequestConverter,
-    GetParticipantWithCallLocatorRequestConverter,
-    MuteParticipantWithCallLocatorRequestConverter,
-    UnmuteParticipantWithCallLocatorRequestConverter,
-    HoldMeetingAudioWithCallLocatorRequestConverter,
-    ResumeMeetingAudioWithCallLocatorRequestConverter
+    GetParticipantWithCallLocatorRequestConverter
     )
 from .._shared.utils import get_authentication_policy, get_host_header_policy, parse_connection_str
 from .._version import SDK_MONIKER
@@ -238,6 +234,7 @@ class CallingServerClient:
     async def answer_call(
         self,
         incoming_call_context: str,
+        *,
         callback_uri: Optional[str] = None,
         requested_media_types: Optional[List[CallMediaType]] = None,
         requested_call_events: Optional[List[CallingEventSubscriptionType]] = None,
@@ -259,6 +256,7 @@ class CallingServerClient:
     @distributed_trace_async()
     async def reject_call(
         self,
+        *,
         incoming_call_context: Optional[str] = None,
         call_reject_reason: Optional[CallRejectReason] = None,
         callback_uri: Optional[str] = None,
@@ -346,6 +344,7 @@ class CallingServerClient:
         call_locator: 'CallLocator',
         participant: 'CommunicationIdentifier',
         callback_uri: str,
+        *,
         alternate_caller_id: Optional[str] = None,
         operation_context: Optional[str] = None,
         **kwargs: Any
@@ -426,42 +425,6 @@ class CallingServerClient:
         )
 
     @distributed_trace_async()
-    async def mute_participant(
-            self,
-            call_locator,  # type: CallLocator
-            participant,  # type: CommunicationIdentifier
-            **kwargs  # type: Any
-        ):  # type: (...) -> None
-
-        mute_participant_with_call_locator_request = MuteParticipantWithCallLocatorRequestConverter.convert(
-            serialize_call_locator(call_locator),
-            serialize_identifier(participant)
-            )
-
-        return await self._server_call_client.mute_participant(
-            mute_participant_with_call_locator_request=mute_participant_with_call_locator_request,
-            **kwargs
-        )
-
-    @distributed_trace_async()
-    async def unmute_participant(
-            self,
-            call_locator,  # type: CallLocator
-            participant,  # type: CommunicationIdentifier
-            **kwargs  # type: Any
-        ):  # type: (...) -> None
-
-        unmute_participant_with_call_locator_request = UnmuteParticipantWithCallLocatorRequestConverter.convert(
-            serialize_call_locator(call_locator),
-            serialize_identifier(participant)
-            )
-
-        return await self._server_call_client.unmute_participant(
-            unmute_participant_with_call_locator_request=unmute_participant_with_call_locator_request,
-            **kwargs
-        )
-
-    @distributed_trace_async()
     async def cancel_media_operation(
         self,
         call_locator: 'CallLocator',
@@ -501,46 +464,11 @@ class CallingServerClient:
             )
 
     @distributed_trace_async()
-    async def hold_participant_meeting_audio(
-            self,
-            call_locator,  # type: CallLocator
-            participant,  # type: CommunicationIdentifier
-            **kwargs  # type: Any
-        ):  # type: (...) -> None
-
-        hold_meeting_audio_with_call_locator_request = HoldMeetingAudioWithCallLocatorRequestConverter.convert(
-            serialize_call_locator(call_locator),
-            serialize_identifier(participant)
-            )
-
-        return await self._server_call_client.hold_participant_meeting_audio(
-            hold_meeting_audio_with_call_locator_request=hold_meeting_audio_with_call_locator_request,
-            **kwargs
-        )
-
-    @distributed_trace_async()
-    async def resume_participant_meeting_audio(
-            self,
-            call_locator,  # type: CallLocator
-            participant,  # type: CommunicationIdentifier
-            **kwargs  # type: Any
-        ):  # type: (...) -> None
-
-        resume_meeting_audio_with_call_locator_request = ResumeMeetingAudioWithCallLocatorRequestConverter.convert(
-            serialize_call_locator(call_locator),
-            serialize_identifier(participant)
-            )
-
-        return await self._server_call_client.resume_participant_meeting_audio(
-            resume_meeting_audio_with_call_locator_request=resume_meeting_audio_with_call_locator_request,
-            **kwargs
-        )
-
-    @distributed_trace_async()
     async def start_recording( # pylint: disable=too-many-arguments
         self,
         call_locator: CallLocator,
         recording_state_callback_uri: str,
+        *,
         recording_content_type: Optional[RecordingContentType] = None,
         recording_channel_type: Optional[RecordingChannelType] = None,
         recording_format_type: Optional[RecordingFormatType] = None,

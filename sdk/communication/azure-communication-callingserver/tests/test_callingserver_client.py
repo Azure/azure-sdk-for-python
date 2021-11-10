@@ -131,7 +131,7 @@ class TestCallingServerClient(unittest.TestCase):
         ):
 
         calling_server_client = _mock_utils.create_mock_calling_server_client(
-            status_code=201,
+            status_code=202,
             payload=_test_constants.AnswerCallResponsePayload,
             use_managed_identity = use_managed_identity
             )
@@ -573,96 +573,6 @@ class TestCallingServerClient(unittest.TestCase):
             raised = True
         assert raised == True
 
-    @parameterized.expand(CallingServerUnitTestUtils.data_source_test_mute_participant_with_call_locator())
-    def test_mute_participant_succeed(
-        self,
-        test_name, # type: str
-        call_locator, # type: CallLocator
-        participant, # type: CommunicationIdentifier
-        use_managed_identity = False # type: bool
-        ):
-
-        calling_server_client = _mock_utils.create_mock_calling_server_client(
-            status_code=200,
-            payload=None,
-            use_managed_identity=use_managed_identity
-            )
-
-        calling_server_client.mute_participant(
-            call_locator,
-            participant=participant
-            )
-
-    @parameterized.expand(CallingServerUnitTestUtils.data_source_test_mute_participant_with_call_locator())
-    def test_mute_participant_failed(
-        self,
-        test_name, # type: str
-        call_locator, # type: CallLocator
-        participant, # type: CommunicationIdentifier
-        use_managed_identity = False # type: bool
-        ):
-
-        calling_server_client = _mock_utils.create_mock_calling_server_client(
-            status_code=404,
-            payload=_test_constants.ErrorPayload,
-            use_managed_identity = use_managed_identity
-            )
-
-        raised = False
-        try:
-            calling_server_client.mute_participant(
-                call_locator,
-                participant=participant
-                )
-        except:
-            raised = True
-        assert raised == True
-
-    @parameterized.expand(CallingServerUnitTestUtils.data_source_test_unmute_participant_with_call_locator())
-    def test_unmute_participant_succeed(
-        self,
-        test_name, # type: str
-        call_locator, # type: CallLocator
-        participant, # type: CommunicationIdentifier
-        use_managed_identity = False # type: bool
-        ):
-
-        calling_server_client = _mock_utils.create_mock_calling_server_client(
-            status_code=200,
-            payload=None,
-            use_managed_identity=use_managed_identity
-            )
-
-        calling_server_client.unmute_participant(
-            call_locator,
-            participant=participant
-            )
-
-    @parameterized.expand(CallingServerUnitTestUtils.data_source_test_unmute_participant_with_call_locator())
-    def test_unmute_participant_failed(
-        self,
-        test_name, # type: str
-        call_locator, # type: CallLocator
-        participant, # type: CommunicationIdentifier
-        use_managed_identity = False # type: bool
-        ):
-
-        calling_server_client = _mock_utils.create_mock_calling_server_client(
-            status_code=404,
-            payload=_test_constants.ErrorPayload,
-            use_managed_identity = use_managed_identity
-            )
-
-        raised = False
-        try:
-            calling_server_client.unmute_participant(
-                call_locator,
-                participant=participant
-                )
-        except:
-            raised = True
-        assert raised == True
-
     @parameterized.expand(CallingServerUnitTestUtils.data_source_test_cancel_media_operation())
     def test_cancel_media_operation_succeed(
         self,
@@ -752,96 +662,6 @@ class TestCallingServerClient(unittest.TestCase):
                 call_locator,
                 participant,
                 media_operation_id
-                )
-        except:
-            raised = True
-        assert raised == True
-
-    @parameterized.expand(CallingServerUnitTestUtils.data_source_test_hold_participant_meeting_audio_with_callLocator())
-    def test_hold_participant_meeting_audio(
-        self,
-        test_name, # type: str
-        call_locator, # type: CallLocator
-        participant, # type: CommunicationIdentifier
-        use_managed_identity = False # type: bool
-        ):
-
-        calling_server_client = _mock_utils.create_mock_calling_server_client(
-            status_code=200,
-            payload=None,
-            use_managed_identity=use_managed_identity
-            )
-
-        calling_server_client.hold_participant_meeting_audio(
-            call_locator,
-            participant
-            )
-
-    @parameterized.expand(CallingServerUnitTestUtils.data_source_test_hold_participant_meeting_audio_with_callLocator())
-    def test_hold_participant_meeting_audio_failed(
-        self,
-        test_name, # type: str
-        call_locator, # type: CallLocator
-        participant, # type: CommunicationIdentifier
-        use_managed_identity = False # type: bool
-        ):
-
-        calling_server_client = _mock_utils.create_mock_calling_server_client(
-            status_code=404,
-            payload=_test_constants.ErrorPayload,
-            use_managed_identity = use_managed_identity
-            )
-
-        raised = False
-        try:
-            calling_server_client.hold_participant_meeting_audio(
-                call_locator,
-                participant
-                )
-        except:
-            raised = True
-        assert raised == True
-
-    @parameterized.expand(CallingServerUnitTestUtils.data_source_test_resume_participant_meeting_audio_with_callLocator())
-    def test_resume_participant_meeting_audio(
-        self,
-        test_name, # type: str
-        call_locator, # type: CallLocator
-        participant, # type: CommunicationIdentifier
-        use_managed_identity = False # type: bool
-        ):
-
-        calling_server_client = _mock_utils.create_mock_calling_server_client(
-            status_code=200,
-            payload=None,
-            use_managed_identity=use_managed_identity
-            )
-
-        calling_server_client.resume_participant_meeting_audio(
-            call_locator,
-            participant
-            )
-
-    @parameterized.expand(CallingServerUnitTestUtils.data_source_test_resume_participant_meeting_audio_with_callLocator())
-    def test_resume_participant_meeting_audio_failed(
-        self,
-        test_name, # type: str
-        call_locator, # type: CallLocator
-        participant, # type: CommunicationIdentifier
-        use_managed_identity = False # type: bool
-        ):
-
-        calling_server_client = _mock_utils.create_mock_calling_server_client(
-            status_code=404,
-            payload=_test_constants.ErrorPayload,
-            use_managed_identity = use_managed_identity
-            )
-
-        raised = False
-        try:
-            calling_server_client.resume_participant_meeting_audio(
-                call_locator,
-                participant
                 )
         except:
             raised = True

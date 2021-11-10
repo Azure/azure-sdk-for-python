@@ -129,13 +129,13 @@ async def test_answer_call_succeed(
     ):
 
     calling_server_client = _mock_utils_async.create_mock_calling_server_client(
-        status_code=201,
+        status_code=202,
         payload=_test_constants.AnswerCallResponsePayload,
         use_managed_identity = use_managed_identity
         )
 
     result = await calling_server_client.answer_call(
-        incoming_call_context=incoming_call_context,
+        incoming_call_context,
         callback_uri=callback_uri,
         requested_media_types=requested_media_types,
         requested_call_events=requested_call_events
@@ -571,96 +571,6 @@ async def test_get_participant_failed(
         raised = True
     assert raised == True
 
-@parameterized.expand(CallingServerUnitTestUtils.data_source_test_mute_participant_with_call_locator())
-@pytest.mark.asyncio
-async def test_mute_participant_succeed(
-    test_name, # type: str
-    call_locator, # type: CallLocator
-    participant, # type: CommunicationIdentifier
-    use_managed_identity = False # type: bool
-    ):
-
-    calling_server_client = _mock_utils_async.create_mock_calling_server_client(
-        status_code=200,
-        payload=None,
-        use_managed_identity=use_managed_identity
-        )
-
-    await calling_server_client.mute_participant(
-        call_locator,
-        participant=participant
-        )
-
-@parameterized.expand(CallingServerUnitTestUtils.data_source_test_mute_participant_with_call_locator())
-@pytest.mark.asyncio
-async def test_mute_participant_failed(
-    test_name, # type: str
-    call_locator, # type: CallLocator
-    participant, # type: CommunicationIdentifier
-    use_managed_identity = False # type: bool
-    ):
-
-    calling_server_client = _mock_utils_async.create_mock_calling_server_client(
-        status_code=404,
-        payload=_test_constants.ErrorPayload,
-        use_managed_identity = use_managed_identity
-        )
-
-    raised = False
-    try:
-        await calling_server_client.mute_participant(
-            call_locator,
-            participant=participant
-            )
-    except:
-        raised = True
-    assert raised == True
-
-@parameterized.expand(CallingServerUnitTestUtils.data_source_test_unmute_participant_with_call_locator())
-@pytest.mark.asyncio
-async def test_unmute_participant_succeed(
-    test_name, # type: str
-    call_locator, # type: CallLocator
-    participant, # type: CommunicationIdentifier
-    use_managed_identity = False # type: bool
-    ):
-
-    calling_server_client = _mock_utils_async.create_mock_calling_server_client(
-        status_code=200,
-        payload=None,
-        use_managed_identity=use_managed_identity
-        )
-
-    await calling_server_client.unmute_participant(
-        call_locator,
-        participant=participant
-        )
-
-@parameterized.expand(CallingServerUnitTestUtils.data_source_test_unmute_participant_with_call_locator())
-@pytest.mark.asyncio
-async def test_unmute_participant_failed(
-    test_name, # type: str
-    call_locator, # type: CallLocator
-    participant, # type: CommunicationIdentifier
-    use_managed_identity = False # type: bool
-    ):
-
-    calling_server_client = _mock_utils_async.create_mock_calling_server_client(
-        status_code=404,
-        payload=_test_constants.ErrorPayload,
-        use_managed_identity = use_managed_identity
-        )
-
-    raised = False
-    try:
-        await calling_server_client.unmute_participant(
-            call_locator,
-            participant=participant
-            )
-    except:
-        raised = True
-    assert raised == True
-
 @parameterized.expand(CallingServerUnitTestUtils.data_source_test_cancel_media_operation())
 @pytest.mark.asyncio
 async def test_cancel_media_operation_succeed(
@@ -750,96 +660,6 @@ async def test_cancel_participant_media_operation_failed(
             call_locator,
             participant,
             media_operation_id
-            )
-    except:
-        raised = True
-    assert raised == True
-
-@parameterized.expand(CallingServerUnitTestUtils.data_source_test_hold_participant_meeting_audio_with_callLocator())
-@pytest.mark.asyncio
-async def test_hold_participant_meeting_audio(
-    test_name, # type: str
-    call_locator, # type: CallLocator
-    participant, # type: CommunicationIdentifier
-    use_managed_identity = False # type: bool
-    ):
-
-    calling_server_client = _mock_utils_async.create_mock_calling_server_client(
-        status_code=200,
-        payload=None,
-        use_managed_identity=use_managed_identity
-        )
-
-    await calling_server_client.hold_participant_meeting_audio(
-        call_locator,
-        participant
-        )
-
-@parameterized.expand(CallingServerUnitTestUtils.data_source_test_hold_participant_meeting_audio_with_callLocator())
-@pytest.mark.asyncio
-async def test_hold_participant_meeting_audio_failed(
-    test_name, # type: str
-    call_locator, # type: CallLocator
-    participant, # type: CommunicationIdentifier
-    use_managed_identity = False # type: bool
-    ):
-
-    calling_server_client = _mock_utils_async.create_mock_calling_server_client(
-        status_code=404,
-        payload=_test_constants.ErrorPayload,
-        use_managed_identity = use_managed_identity
-        )
-
-    raised = False
-    try:
-        await calling_server_client.hold_participant_meeting_audio(
-            call_locator,
-            participant
-            )
-    except:
-        raised = True
-    assert raised == True
-
-@parameterized.expand(CallingServerUnitTestUtils.data_source_test_resume_participant_meeting_audio_with_callLocator())
-@pytest.mark.asyncio
-async def test_resume_participant_meeting_audio(
-    test_name, # type: str
-    call_locator, # type: CallLocator
-    participant, # type: CommunicationIdentifier
-    use_managed_identity = False # type: bool
-    ):
-
-    calling_server_client = _mock_utils_async.create_mock_calling_server_client(
-        status_code=200,
-        payload=None,
-        use_managed_identity=use_managed_identity
-        )
-
-    await calling_server_client.resume_participant_meeting_audio(
-        call_locator,
-        participant
-        )
-
-@parameterized.expand(CallingServerUnitTestUtils.data_source_test_resume_participant_meeting_audio_with_callLocator())
-@pytest.mark.asyncio
-async def test_resume_participant_meeting_audio_failed(
-    test_name, # type: str
-    call_locator, # type: CallLocator
-    participant, # type: CommunicationIdentifier
-    use_managed_identity = False # type: bool
-    ):
-
-    calling_server_client = _mock_utils_async.create_mock_calling_server_client(
-        status_code=404,
-        payload=_test_constants.ErrorPayload,
-        use_managed_identity = use_managed_identity
-        )
-
-    raised = False
-    try:
-        await calling_server_client.resume_participant_meeting_audio(
-            call_locator,
-            participant
             )
     except:
         raised = True

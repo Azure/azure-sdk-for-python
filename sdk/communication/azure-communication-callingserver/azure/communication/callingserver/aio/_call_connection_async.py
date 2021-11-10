@@ -10,7 +10,6 @@
 
 from typing import TYPE_CHECKING, List, Any, Optional  # pylint: disable=unused-import
 from azure.core.tracing.decorator_async import distributed_trace_async
-from ..utils._utils import CallingServerUtils
 from .._communication_identifier_serializer import serialize_identifier
 from .._converters import (
     AddParticipantRequestConverter,
@@ -34,6 +33,7 @@ from .._generated.models import (
     PlayAudioResult,
     AudioRoutingGroupResult,
     CreateAudioRoutingGroupResult,
+    TransferCallResult,
     CallParticipant,
     AudioRoutingMode
     )
@@ -125,7 +125,7 @@ class CallConnection:
 
         return await self._call_connection_client.play_audio(
             call_connection_id=self.call_connection_id,
-            request=play_audio_request,
+            play_audio_request=play_audio_request,
             **kwargs
         )
 
@@ -133,6 +133,7 @@ class CallConnection:
     async def add_participant(
             self,
             participant: CommunicationIdentifier,
+            *,
             alternate_caller_id: Optional[str] = None,
             operation_context: Optional[str] = None,
             **kwargs: Any
@@ -312,18 +313,23 @@ class CallConnection:
             self,
             target_participant: CommunicationIdentifier,
             target_call_connection_id: str,
+            *,
+            alternate_caller_id: Optional[str] = None,
             user_to_user_information: Optional[str] = None,
             operation_context: Optional[str] = None,
-            callback_uri: Optional[str] = None,
             **kwargs: Any
-        )-> None:
+        )-> TransferCallResult:
+
+        alternate_caller_id = (None
+            if alternate_caller_id is None
+            else PhoneNumberIdentifierModel(value=alternate_caller_id))
 
         transfer_call_request = TransferCallRequestConverter.convert(
             target_participant=serialize_identifier(target_participant),
             target_call_connection_id=target_call_connection_id,
+            alternate_caller_id=alternate_caller_id,
             user_to_user_information=user_to_user_information,
-            operation_context=operation_context,
-            callback_uri=callback_uri
+            operation_context=operation_context
             )
 
         return await self._call_connection_client.transfer(

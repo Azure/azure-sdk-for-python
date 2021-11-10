@@ -36,11 +36,7 @@ from .._generated.models import (
     ResumeMeetingAudioRequest,
     UpdateAudioRoutingGroupRequest,
     GetAllParticipantsWithCallLocatorRequest,
-    GetParticipantWithCallLocatorRequest,
-    MuteParticipantWithCallLocatorRequest,
-    UnmuteParticipantWithCallLocatorRequest,
-    HoldMeetingAudioWithCallLocatorRequest,
-    ResumeMeetingAudioWithCallLocatorRequest
+    GetParticipantWithCallLocatorRequest
     )
 
 class JoinCallRequestConverter(object):
@@ -138,7 +134,7 @@ class PlayAudioRequestConverter(object):
 
         return PlayAudioRequest(
             audio_file_uri=audio_url,
-            loop=play_audio_options.loop,
+            loop=play_audio_options.is_looped,
             operation_context=play_audio_options,
             audio_file_id=play_audio_options.audio_file_id,
             callback_uri=play_audio_options.callback_uri
@@ -162,7 +158,7 @@ class PlayAudioWithCallLocatorRequestConverter(object):
         return PlayAudioWithCallLocatorRequest(
             call_locator=call_locator,
             audio_file_uri=audio_url,
-            loop=play_audio_options.loop,
+            loop=play_audio_options.is_looped,
             operation_context=play_audio_options.operation_context,
             audio_file_id=play_audio_options.audio_file_id,
             callback_uri=play_audio_options.callback_uri
@@ -184,7 +180,7 @@ class PlayAudioToParticipantRequestConverter(object):
         return PlayAudioToParticipantRequest(
             identifier=identifier,
             audio_file_uri=audio_url,
-            loop=play_audio_options.loop,
+            loop=play_audio_options.is_looped,
             operation_context=play_audio_options,
             audio_file_id=play_audio_options.audio_file_id,
             callback_uri=play_audio_options.callback_uri
@@ -210,7 +206,7 @@ class PlayAudioToParticipantWithCallLocatorRequestConverter(object):
             call_locator=call_locator,
             identifier=identifier,
             audio_file_uri=audio_url,
-            loop=play_audio_options.loop,
+            loop=play_audio_options.is_looped,
             operation_context=play_audio_options,
             audio_file_id=play_audio_options.audio_file_id,
             callback_uri=play_audio_options.callback_uri
@@ -252,12 +248,10 @@ class AddParticipantWithCallLocatorRequestConverter(object):
 
         return AddParticipantWithCallLocatorRequest(
             call_locator=call_locator,
-            add_participant_request=AddParticipantRequestConverter.convert(
-                alternate_caller_id=alternate_caller_id,
-                participant=participant,
-                operation_context=operation_context,
-                callback_uri=callback_uri
-                )
+            alternate_caller_id=alternate_caller_id,
+            participant=participant,
+            operation_context=operation_context,
+            callback_uri=callback_uri
             )
 
 class GetParticipantRequestConverter(object):
@@ -333,40 +327,6 @@ class RemoveParticipantWithCallLocatorRequestConverter(object):
             identifier=identifier
             )
 
-class MuteParticipantWithCallLocatorRequestConverter(object):
-    @staticmethod
-    def convert(
-        call_locator, # type: CallLocatorModel
-        identifier # type: CommunicationIdentifierModel
-        ): # type: (...) -> RemoveParticipantWithCallLocatorRequest
-
-        if not call_locator:
-            raise ValueError("call_locator can not be None")
-        if not identifier:
-            raise ValueError("identifier can not be None")
-
-        return MuteParticipantWithCallLocatorRequest(
-            call_locator=call_locator,
-            identifier=identifier
-            )
-
-class UnmuteParticipantWithCallLocatorRequestConverter(object):
-    @staticmethod
-    def convert(
-        call_locator, # type: CallLocatorModel
-        identifier # type: CommunicationIdentifierModel
-        ): # type: (...) -> UnmuteParticipantWithCallLocatorRequest
-
-        if not call_locator:
-            raise ValueError("call_locator can not be None")
-        if not identifier:
-            raise ValueError("identifier can not be None")
-
-        return UnmuteParticipantWithCallLocatorRequest(
-            call_locator=call_locator,
-            identifier=identifier
-            )
-
 class CancelMediaOperationWithCallLocatorRequestConverter(object):
     @staticmethod
     def convert(
@@ -427,9 +387,9 @@ class TransferCallRequestConverter(object):
     def convert(
         target_participant, # type: CommunicationIdentifierModel
         target_call_connection_id, # type: str
+        alternate_caller_id=None, # type: PhoneNumberIdentifierModel
         user_to_user_information=None, # type: str
-        operation_context=None, # type: str
-        callback_uri=None, # type: str
+        operation_context=None # type: str
         ): # type: (...) -> TransferCallRequest
 
         if not target_participant:
@@ -438,9 +398,9 @@ class TransferCallRequestConverter(object):
         return TransferCallRequest(
             target_participant=target_participant,
             target_call_connection_id=target_call_connection_id,
+            alternate_caller_id=alternate_caller_id,
             user_to_user_information=user_to_user_information,
-            operation_context=operation_context,
-            callback_uri=callback_uri
+            operation_context=operation_context
         )
 
 class MuteParticipantRequestConverter(object):
@@ -492,40 +452,6 @@ class ResumeMeetingAudioRequestConverter(object):
             raise ValueError("identifier can not be None")
 
         return ResumeMeetingAudioRequest(
-            identifier=identifier
-        )
-
-class HoldMeetingAudioWithCallLocatorRequestConverter(object):
-    @staticmethod
-    def convert(
-        call_locator, # type: CallLocatorModel
-        identifier # type: CommunicationIdentifierModel
-        ): # type: (...) -> HoldMeetingAudioWithCallLocatorRequest
-
-        if not call_locator:
-            raise ValueError("call_locator can not be None")
-        if not identifier:
-            raise ValueError("identifier can not be None")
-
-        return HoldMeetingAudioWithCallLocatorRequest(
-            call_locator=call_locator,
-            identifier=identifier
-            )
-
-class ResumeMeetingAudioWithCallLocatorRequestConverter(object):
-    @staticmethod
-    def convert(
-        call_locator, # type: CallLocatorModel
-        identifier # type: CommunicationIdentifierModel
-        ): # type: (...) -> ResumeMeetingAudioWithCallLocatorRequest
-
-        if not identifier:
-            raise ValueError("identifier can not be None")
-        if not identifier:
-            raise ValueError("identifier can not be None")
-
-        return ResumeMeetingAudioWithCallLocatorRequest(
-            call_locator=call_locator,
             identifier=identifier
         )
 

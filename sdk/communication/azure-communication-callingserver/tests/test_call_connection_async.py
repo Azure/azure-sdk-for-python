@@ -282,7 +282,7 @@ async def test_add_participant_succeed(
         )
 
     result = await call_connection.add_participant(
-        participant = participant,
+        participant,
         alternate_caller_id = alternate_caller_id,
         operation_context = operation_context
         )
@@ -309,7 +309,7 @@ async def test_add_participant_failed(
     raised = False
     try:
         await call_connection.add_participant(
-            participant = participant,
+            participant,
             alternate_caller_id = alternate_caller_id,
             operation_context = operation_context
             )
@@ -736,27 +736,27 @@ async def test_transfer_succeed(
     call_connection_id, # type: str
     target_participant, # type: CommunicationIdentifier
     target_call_connection_id, # type: str
+    alternate_caller_id, # type: str
     user_to_user_information, # type: str
     operation_context, # type: str
-    callback_uri, # type: str
     use_managed_identity = False # type: bool
     ):
 
     call_connection = _mock_utils_async.create_mock_call_connection(
         call_connection_id,
         status_code=202,
-        payload=None,
+        payload=_test_constants.TransferResultPayload,
         use_managed_identity=use_managed_identity
         )
 
-    await call_connection.transfer(
-        target_participant = target_participant,
-        target_call_connection_id = target_call_connection_id,
+    result = await call_connection.transfer(
+        target_participant,
+        target_call_connection_id,
+        alternate_caller_id = alternate_caller_id,
         user_to_user_information = user_to_user_information,
-        operation_context = operation_context,
-        callback_uri = callback_uri
+        operation_context = operation_context
         )
-    assert call_connection.call_connection_id == _test_constants.CALL_ID
+    CallConnectionUnitTestUtils.verify_transfer_result(result)
 
 @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_transfer())
 @pytest.mark.asyncio
@@ -765,9 +765,9 @@ async def test_transfer_failed(
     call_connection_id, # type: str
     target_participant, # type: CommunicationIdentifier
     target_call_connection_id, # type: str
+    alternate_caller_id, # type: str
     user_to_user_information, # type: str
     operation_context, # type: str
-    callback_uri, # type: str
     use_managed_identity = False # type: bool
     ):
 
@@ -781,11 +781,11 @@ async def test_transfer_failed(
     raised = False
     try:
         await call_connection.transfer(
-            target_participant = target_participant,
-            target_call_connection_id = target_call_connection_id,
+            target_participant,
+            target_call_connection_id,
+            alternate_caller_id = alternate_caller_id,
             user_to_user_information = user_to_user_information,
             operation_context = operation_context,
-            callback_uri = callback_uri
             )
     except:
         raised = True

@@ -331,7 +331,7 @@ class TestCallConnection(unittest.TestCase):
             )
 
         result = call_connection.add_participant(
-            participant = participant,
+            participant,
             alternate_caller_id = alternate_caller_id,
             operation_context = operation_context
             )
@@ -358,7 +358,7 @@ class TestCallConnection(unittest.TestCase):
         raised = False
         try:
             call_connection.add_participant(
-                participant = participant,
+                participant,
                 alternate_caller_id = alternate_caller_id,
                 operation_context = operation_context
                 )
@@ -589,7 +589,6 @@ class TestCallConnection(unittest.TestCase):
         try:
             call_connection.mute_participant(
                 participant = participant,
-                media_operation_id = media_operation_id
                 )
         except:
             raised = True
@@ -740,27 +739,28 @@ class TestCallConnection(unittest.TestCase):
         call_connection_id, # type: str
         target_participant, # type: CommunicationIdentifier
         target_call_connection_id, # type: str
+        alternate_caller_id, # type: str
         user_to_user_information, # type: str
         operation_context, # type: str
-        callback_uri, # type: str
         use_managed_identity = False # type: bool
         ):
 
         call_connection = _mock_utils.create_mock_call_connection(
             call_connection_id,
             status_code=202,
-            payload=None,
+            payload=_test_constants.TransferResultPayload,
             use_managed_identity=use_managed_identity
             )
 
-        call_connection.transfer(
-            target_participant = target_participant,
-            target_call_connection_id = target_call_connection_id,
+        result = call_connection.transfer(
+            target_participant,
+            target_call_connection_id,
+            alternate_caller_id = alternate_caller_id,
             user_to_user_information = user_to_user_information,
-            operation_context = operation_context,
-            callback_uri = callback_uri
+            operation_context = operation_context
             )
-        assert call_connection.call_connection_id == _test_constants.CALL_ID
+        CallConnectionUnitTestUtils.verify_transfer_result(result)
+
 
     @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_transfer())
     def test_transfer_failed(
@@ -769,9 +769,9 @@ class TestCallConnection(unittest.TestCase):
         call_connection_id, # type: str
         target_participant, # type: CommunicationIdentifier
         target_call_connection_id, # type: str
+        alternate_caller_id, # type: str
         user_to_user_information, # type: str
         operation_context, # type: str
-        callback_uri, # type: str
         use_managed_identity = False # type: bool
         ):
 
@@ -785,11 +785,11 @@ class TestCallConnection(unittest.TestCase):
         raised = False
         try:
             call_connection.transfer(
-                target_participant = target_participant,
-                target_call_connection_id = target_call_connection_id,
+                target_participant,
+                target_call_connection_id,
+                alternate_caller_id = alternate_caller_id,
                 user_to_user_information = user_to_user_information,
-                operation_context = operation_context,
-                callback_uri = callback_uri
+                operation_context = operation_context
                 )
         except:
             raised = True

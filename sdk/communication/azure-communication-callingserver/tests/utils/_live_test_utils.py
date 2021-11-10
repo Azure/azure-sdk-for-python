@@ -22,7 +22,6 @@ from azure.communication.callingserver import (
     CallingOperationStatus,
     CallMediaType,
     CallingEventSubscriptionType,
-    ServerCallLocator,
     GroupCallLocator
     )
 
