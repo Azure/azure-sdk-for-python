@@ -48,13 +48,9 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+from ._operations._operations import JSONType
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Dict, TypeVar, Type
-    ClientType = TypeVar("ClientType", bound="WebPubSubServiceClient")
-    from ._operations._operations import JSONType
-
     from azure.core.credentials_async import AsyncTokenCredential
 
 
@@ -151,8 +147,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         self._serialize.client_side_validation = False
 
     @classmethod
-    def from_connection_string(cls, connection_string, hub, **kwargs):
-        # type: (Type[ClientType], str, str, Any) -> ClientType
+    def from_connection_string(cls, connection_string: str, hub: str, **kwargs: Any) -> "WebPubSubServiceClient":
         """Create a new WebPubSubServiceClient from a connection string.
         :param connection_string: Connection string
         :type connection_string: ~str
@@ -167,8 +162,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         return cls(hub=hub, credential=credential, **kwargs)
 
     @distributed_trace_async
-    async def get_client_access_token(self, **kwargs):
-        # type: (Any) -> JSONType
+    async def get_client_access_token(self, **kwargs: Any) -> JSONType:
         """Build an authentication token.
 
         :keyword user_id: User Id.
