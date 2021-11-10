@@ -5,6 +5,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import pytest
+from requests.packages.urllib3.connection import connection
 from testcase import WebpubsubTest, WebpubsubPowerShellPreparer
 from azure.messaging.webpubsubservice._operations._operations import build_send_to_all_request
 from azure.core.exceptions import ServiceRequestError
@@ -44,3 +45,28 @@ class WebpubsubSmokeTest(WebpubsubTest):
         assert access_token['baseUrl'][:3] == "wss"
         assert access_token['token']
         assert access_token['url'][:3] == "wss"
+
+    @WebpubsubPowerShellPreparer()
+    def test_hello_world_with_connection_string(self, webpubsub_connection_string):
+        client = self.create_client(connection_string=webpubsub_connection_string)
+        client.send_to_all(hub="hub", message="Hello, World!", content_type="text/plain")
+
+    @WebpubsubPowerShellPreparer()
+    def test_hello_world_with_connection_string_json(self, webpubsub_connection_string):
+        client = self.create_client(connection_string=webpubsub_connection_string)
+        client.send_to_all(hub="hub", message={"hello": "world!"})
+
+    @WebpubsubPowerShellPreparer()
+    def test_hello_world_with_connection_string_binary(self, webpubsub_connection_string):
+        client = self.create_client(connection_string=webpubsub_connection_string)
+        client.send_to_all(hub="hub", message=b"Hello, World!", content_type="application/octet-stream")
+
+    @WebpubsubPowerShellPreparer()
+    def test_add_user_to_group(self, webpubsub_connection_string):
+        client = self.create_client(connection_string=webpubsub_connection_string)
+        client.add_user_to_group(hub="hub", group="some_group", user_id="some_user")
+
+        if client.user_exists(hub="hub", user_id="some_user"):
+            client.send_to_user(hub="hub", user_id="some_user", message="Hi, I am glad you exist!")
+            client.remove_user_from_group(hub="hub", group="some_group", user_id="some_user")
+        assert not client.user_exists(hub="hub", user_id="some_user")
