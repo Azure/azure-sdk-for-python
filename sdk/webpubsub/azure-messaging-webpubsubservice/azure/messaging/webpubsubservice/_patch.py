@@ -116,7 +116,7 @@ def _parse_connection_string(connection_string, **kwargs):
     # type: (str, Any) -> JSONType
     for segment in connection_string.split(";"):
         if "=" in segment:
-            key, value = segment.split("=", maxsplit=1)
+            key, value = segment.split("=", 1)
             key = key.lower()
             if key not in ("version",):
                 kwargs.setdefault(key, value)
@@ -295,9 +295,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
     ):
         # type: (...) -> None
         if kwargs.get("port") and endpoint:
-            if endpoint[-1] == "/":
-                endpoint = endpoint[:len(endpoint) - 1]
-            endpoint = endpoint + ":{}".format(kwargs.pop('port'))
+            endpoint = endpoint.rstrip("/") + ":{}".format(kwargs.pop('port'))
         kwargs['origin_endpoint'] = endpoint
         _endpoint = '{Endpoint}'
         self._config = WebPubSubServiceClientConfiguration(hub=hub, endpoint=endpoint, credential=credential, **kwargs)
