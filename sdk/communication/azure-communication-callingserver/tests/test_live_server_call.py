@@ -85,7 +85,7 @@ class ServerCallTest(CommunicationTestCase):
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
             OperationContext = str(uuid.uuid4())
             options = PlayAudioOptions(
-                loop = True,
+                is_looped = True,
                 audio_file_id = str(uuid.uuid4()),
                 callback_uri = CONST.AppCallbackUrl,
                 operation_context = OperationContext

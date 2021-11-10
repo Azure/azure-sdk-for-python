@@ -228,8 +228,8 @@ class PlayAudioOptions(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar loop: Required. The flag indicating whether audio file needs to be played in loop or not.
-    :type loop: bool
+    :ivar is_looped: Required. The flag indicating whether audio file needs to be played in loop or not.
+    :type is_looped: bool
     :ivar operation_context: Required. The value to identify context of the operation.
     :type operation_context: str
     :ivar audio_file_id: Required. An id for the media in the AudioFileUri, using which we cache the media resource.
@@ -239,12 +239,12 @@ class PlayAudioOptions(object):
     """
     def __init__(
         self,
-        loop,  # type: bool
+        is_looped,  # type: bool
         operation_context,  # type: str
         audio_file_id,  # type: str
         callback_uri  # type: str
     ):  # type: (...) -> None
-        self.loop = loop
+        self.is_looped = is_looped
         self.operation_context = operation_context
         self.audio_file_id = audio_file_id
         self.callback_uri = callback_uri

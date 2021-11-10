@@ -88,7 +88,7 @@ class CallConnectionTest(CommunicationTestCase):
             OperationContext = str(uuid.uuid4())
             AudioFileId = str(uuid.uuid4())
             options = PlayAudioOptions(
-                loop = True,
+                is_looped = True,
                 audio_file_id = AudioFileId,
                 callback_uri = CONST.AppCallbackUrl,
                 operation_context = OperationContext

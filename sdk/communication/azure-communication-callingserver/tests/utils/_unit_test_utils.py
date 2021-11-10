@@ -172,7 +172,7 @@ class CallingServerUnitTestUtils:
     @staticmethod
     def data_source_test_play_audio():
         options = PlayAudioOptions(
-                loop = True,
+                is_looped = True,
                 audio_file_id=_test_constants.AUDIO_FILE_ID,
                 callback_uri=_test_constants.CALLBACK_URI,
                 operation_context=_test_constants.OPERATION_CONTEXT
@@ -214,7 +214,7 @@ class CallingServerUnitTestUtils:
     @staticmethod
     def data_source_test_play_audio_to_participant():
         play_audio_options = PlayAudioOptions(
-                loop = True,
+                is_looped = True,
                 audio_file_id = _test_constants.AUDIO_FILE_ID,
                 callback_uri = _test_constants.CALLBACK_URI,
                 operation_context = _test_constants.OPERATION_CONTEXT
@@ -712,7 +712,7 @@ class CallConnectionUnitTestUtils:
     @staticmethod
     def data_source_test_play_audio():
         options = PlayAudioOptions(
-                loop = True,
+                is_looped = True,
                 audio_file_id = _test_constants.AUDIO_FILE_ID,
                 callback_uri = _test_constants.CALLBACK_URI,
                 operation_context = _test_constants.OPERATION_CONTEXT
@@ -738,7 +738,7 @@ class CallConnectionUnitTestUtils:
     @staticmethod
     def data_source_test_play_audio_to_participant():
         options = PlayAudioOptions(
-                loop = True,
+                is_looped = True,
                 audio_file_id = _test_constants.AUDIO_FILE_ID,
                 callback_uri = _test_constants.CALLBACK_URI,
                 operation_context = _test_constants.OPERATION_CONTEXT
