@@ -38,7 +38,7 @@ from msrest import Deserializer, Serializer
 from azure.core.pipeline import policies
 from azure.core import PipelineClient
 from azure.core.configuration import Configuration
-from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.pipeline.policies import SansIOHTTPPolicy, ProxyPolicy
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
@@ -181,7 +181,7 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
         return six.ensure_str(encoded)
 
 
-class ApiManagementProxy(SansIOHTTPPolicy):
+class ApiManagementProxy(ProxyPolicy):
 
     def __init__(self, **kwargs):
         # type: (Any) -> None
@@ -192,6 +192,7 @@ class ApiManagementProxy(SansIOHTTPPolicy):
         :param proxy_endpoint: proxy endpoint
         :type proxy_endpoint: str
         """
+        super(ApiManagementProxy, self).__init__(**kwargs)
         self._endpoint = kwargs.pop('origin_endpoint', None)
         self._reverse_proxy_endpoint = kwargs.pop('reverse_proxy_endpoint', None)
 
