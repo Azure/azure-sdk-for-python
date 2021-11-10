@@ -18,8 +18,8 @@ async def test_reverse_proxy_endpoint_redirection():
     wps_endpoint = "https://wps.contoso.com/"
     apim_endpoint = "https://apim.contoso.com/"
     credential = AzureKeyCredential("abcdabcdabcdabcdabcdabcdabcdabcd")
-    request = build_send_to_all_request('Hub', content='test_webpubsub_send_request', content_type='text/plain')
-    async with WebPubSubServiceClient(wps_endpoint, credential, reverse_proxy_endpoint=apim_endpoint) as client:
+    request = build_send_to_all_request("Hub", content='test_webpubsub_send_request', content_type='text/plain')
+    async with WebPubSubServiceClient(wps_endpoint, "Hub", credential, reverse_proxy_endpoint=apim_endpoint) as client:
         with pytest.raises(ValueError) as ex:
             await client.send_request(request, raw_request_hook=_callback)
         assert "Success!" in str(ex.value)
@@ -33,7 +33,7 @@ async def test_reverse_proxy_endpoint_redirection_identity():
     apim_endpoint = "https://apim.contoso.com/"
     credential = AsyncFakeCredential()
     request = build_send_to_all_request('Hub', content='test_webpubsub_send_request', content_type='text/plain')
-    async with WebPubSubServiceClient(wps_endpoint, credential, reverse_proxy_endpoint=apim_endpoint) as client:
+    async with WebPubSubServiceClient(wps_endpoint, "Hub", credential, reverse_proxy_endpoint=apim_endpoint) as client:
         with pytest.raises(ValueError) as ex:
             await client.send_request(request, raw_request_hook=_callback)
         assert "Success!" in str(ex.value)

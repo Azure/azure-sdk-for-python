@@ -77,9 +77,9 @@ async def test_generate_uri_contains_expected_payloads_dto(user_id, roles):
         assert not decoded_token.get('role')
 
 test_cases = [
-    (f"Endpoint=http://localhost;Port=8080;AccessKey={access_key};Version=1.0;", "hub", "ws://localhost:8080/client/hubs/hub"),
-    (f"Endpoint=https://a;AccessKey={access_key};Version=1.0;", "hub", "wss://a/client/hubs/hub"),
-    (f"Endpoint=http://a;AccessKey={access_key};Version=1.0;", "hub", "ws://a/client/hubs/hub")
+    ("Endpoint=http://localhost;Port=8080;AccessKey={};Version=1.0;".format(access_key), "hub", "ws://localhost:8080/client/hubs/hub"),
+    ("Endpoint=https://a;AccessKey={};Version=1.0;".format(access_key), "hub", "wss://a/client/hubs/hub"),
+    ("Endpoint=http://a;AccessKey={};Version=1.0;".format(access_key), "hub", "ws://a/client/hubs/hub")
 ]
 @pytest.mark.parametrize("connection_string,hub,expected_url", test_cases)
 @pytest.mark.asyncio
@@ -96,4 +96,20 @@ async def test_generate_url_use_same_kid_with_same_key(connection_string, hub, e
     decoded_token_1 = _decode_token(client, token_1)
     decoded_token_2 = _decode_token(client, token_2)
 
-    assert decoded_token_1['header']['kid'] == decoded_token_2['header']['kid']
+    assert len(decoded_token_1) == len(decoded_token_2) == 3
+    assert decoded_token_1['aud'] == decoded_token_2['aud'] == expected_url.replace('ws', 'http')
+    assert abs(decoded_token_1['iat'] - decoded_token_2['iat']) < 5
+    assert abs(decoded_token_1['exp'] - decoded_token_2['exp']) < 5
+
+test_cases = [
+    ("Endpoint=http://localhost;Port=8080;AccessKey={};Version=1.0;".format(access_key)),
+    ("Endpoint=https://a;AccessKey={};Version=1.0;".format(access_key)),
+    ("Endpoint=http://a;AccessKey={};Version=1.0;".format(access_key))
+]
+@pytest.mark.parametrize("connection_string", test_cases)
+@pytest.mark.asyncio
+async def test_pass_in_jwt_headers(connection_string):
+    client = WebPubSubServiceClient.from_connection_string(connection_string, "hub")
+    kid = '1234567890'
+    token = (await client.get_client_access_token(jwt_headers={"kid":kid }))['token']
+    assert jwt.get_unverified_header(token)['kid'] == kid

@@ -17,7 +17,7 @@ def test_reverse_proxy_endpoint_redirection_azure_key_credential():
     wps_endpoint = "https://wps.contoso.com/"
     apim_endpoint = "https://apim.contoso.com/"
     credential = AzureKeyCredential("abcdabcdabcdabcdabcdabcdabcdabcd")
-    client = WebPubSubServiceClient(wps_endpoint, credential, reverse_proxy_endpoint=apim_endpoint)
+    client = WebPubSubServiceClient(wps_endpoint, "Hub", credential, reverse_proxy_endpoint=apim_endpoint)
     request = build_send_to_all_request('Hub', content='test_webpubsub_send_request', content_type='text/plain')
 
     with pytest.raises(ValueError) as ex:
@@ -31,7 +31,7 @@ def test_reverse_proxy_endpoint_redirection_identity():
     wps_endpoint = "https://wps.contoso.com/"
     apim_endpoint = "https://apim.contoso.com/"
     credential = FakeTokenCredential()
-    client = WebPubSubServiceClient(wps_endpoint, credential, reverse_proxy_endpoint=apim_endpoint)
+    client = WebPubSubServiceClient(wps_endpoint, "Hub", credential, reverse_proxy_endpoint=apim_endpoint)
     request = build_send_to_all_request('Hub', content='test_webpubsub_send_request', content_type='text/plain')
 
     with pytest.raises(ValueError) as ex:

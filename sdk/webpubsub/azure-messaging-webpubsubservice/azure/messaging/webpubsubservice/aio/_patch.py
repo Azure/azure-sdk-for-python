@@ -180,6 +180,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         :paramtype roles: list[str]
         :keyword minutes_to_expire: The expire time of the generated token.
         :paramtype minutes_to_expire: int
+        :keyword dict[str, any] jwt_headers: Any headers you want to pass to jwt encoding.
         :returns: ~dict containing the web socket endpoint, the token and a url with the generated access token.
         :rtype: ~dict
 
@@ -206,8 +207,9 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         client_endpoint = "ws" + endpoint[4:]
         hub = self._config.hub
         client_url = "{}/client/hubs/{}".format(client_endpoint, hub)
+        jwt_headers = kwargs.pop("jwt_headers", {})
         if isinstance(self._config.credential, AzureKeyCredential):
-            token = _get_token_by_key(endpoint, hub, self._config.credential.key, **kwargs)
+            token = _get_token_by_key(endpoint, hub, self._config.credential.key, jwt_headers=jwt_headers, **kwargs)
         else:
             access_token = await super().get_client_access_token(**kwargs)
             token = access_token.get('token')

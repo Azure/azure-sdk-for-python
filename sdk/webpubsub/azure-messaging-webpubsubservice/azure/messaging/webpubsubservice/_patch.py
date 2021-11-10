@@ -89,6 +89,7 @@ def _get_token_by_key(endpoint, hub, key, **kwargs):
     :type hub: str
     :param key: The access key
     :type hub: str
+    :keyword dict[str, any] jwt_headers: Any headers you want to pass to jwt encoding.
     :returns: token
     :rtype: str
     """
@@ -107,7 +108,7 @@ def _get_token_by_key(endpoint, hub, key, **kwargs):
     if roles:
         payload["role"] = roles
 
-    return six.ensure_str(jwt.encode(payload, key, algorithm="HS256"))
+    return six.ensure_str(jwt.encode(payload, key, algorithm="HS256", headers=kwargs.pop("jwt_headers", {})))
 
 
 def _parse_connection_string(connection_string, **kwargs):
@@ -332,6 +333,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         :paramtype roles: list[str]
         :keyword minutes_to_expire: The expire time of the generated token.
         :paramtype minutes_to_expire: int
+        :keyword dict[str, any] jwt_headers: Any headers you want to pass to jwt encoding.
         :returns: ~dict containing the web socket endpoint, the token and a url with the generated access token.
         :rtype: ~dict
 
@@ -358,8 +360,9 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         client_endpoint = "ws" + endpoint[4:]
         hub = self._config.hub
         client_url = "{}/client/hubs/{}".format(client_endpoint, hub)
+        jwt_headers = kwargs.pop("jwt_headers", {})
         if isinstance(self._config.credential, AzureKeyCredential):
-            token = _get_token_by_key(endpoint, hub, self._config.credential.key, **kwargs)
+            token = _get_token_by_key(endpoint, hub, self._config.credential.key, jwt_headers=jwt_headers, **kwargs)
         else:
             token = super(WebPubSubServiceClient, self).get_client_access_token(**kwargs).get('token')
 

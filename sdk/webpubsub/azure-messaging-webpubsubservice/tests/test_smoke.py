@@ -48,25 +48,25 @@ class WebpubsubSmokeTest(WebpubsubTest):
 
     @WebpubsubPowerShellPreparer()
     def test_hello_world_with_connection_string(self, webpubsub_connection_string):
-        client = self.create_client(connection_string=webpubsub_connection_string)
-        client.send_to_all(hub="hub", message="Hello, World!", content_type="text/plain")
+        client = self.create_client(connection_string=webpubsub_connection_string, hub="hub")
+        client.send_to_all(message="Hello, World!", content_type="text/plain")
 
     @WebpubsubPowerShellPreparer()
     def test_hello_world_with_connection_string_json(self, webpubsub_connection_string):
-        client = self.create_client(connection_string=webpubsub_connection_string)
-        client.send_to_all(hub="hub", message={"hello": "world!"})
+        client = self.create_client(connection_string=webpubsub_connection_string, hub="hub")
+        client.send_to_all(message={"hello": "world!"})
 
     @WebpubsubPowerShellPreparer()
     def test_hello_world_with_connection_string_binary(self, webpubsub_connection_string):
-        client = self.create_client(connection_string=webpubsub_connection_string)
-        client.send_to_all(hub="hub", message=b"Hello, World!", content_type="application/octet-stream")
+        client = self.create_client(connection_string=webpubsub_connection_string, hub="hub")
+        client.send_to_all(message=b"Hello, World!", content_type="application/octet-stream")
 
     @WebpubsubPowerShellPreparer()
     def test_add_user_to_group(self, webpubsub_connection_string):
-        client = self.create_client(connection_string=webpubsub_connection_string)
-        client.add_user_to_group(hub="hub", group="some_group", user_id="some_user")
+        client = self.create_client(connection_string=webpubsub_connection_string, hub="hub")
+        client.add_user_to_group(group="some_group", user_id="some_user")
 
-        if client.user_exists(hub="hub", user_id="some_user"):
-            client.send_to_user(hub="hub", user_id="some_user", message="Hi, I am glad you exist!")
-            client.remove_user_from_group(hub="hub", group="some_group", user_id="some_user")
-        assert not client.user_exists(hub="hub", user_id="some_user")
+        if client.user_exists(user_id="some_user"):
+            client.send_to_user(user_id="some_user", message="Hi, I am glad you exist!")
+            client.remove_user_from_group(group="some_group", user_id="some_user")
+        assert not client.user_exists(user_id="some_user")

@@ -35,7 +35,7 @@ test_cases = [
 
 @pytest.mark.parametrize("connection_string,endpoint", test_cases)
 def test_parse_connection_string(connection_string, endpoint):
-    client = WebPubSubServiceClient.from_connection_string(connection_string)
+    client = WebPubSubServiceClient.from_connection_string(connection_string, "hub")
     assert client._config.endpoint == endpoint
     assert isinstance(client._config.credential, AzureKeyCredential)
     assert client._config.credential.key == access_key
@@ -51,9 +51,10 @@ test_cases = [
 def test_generate_uri_contains_expected_payloads_dto(user_id, roles):
     client = WebPubSubServiceClient.from_connection_string(
         "Endpoint=http://localhost;Port=8080;AccessKey={};Version=1.0;".format(access_key),
+        "hub"
     )
     minutes_to_expire = 5
-    token = client.get_client_access_token(hub="hub", user_id=user_id, roles=roles, minutes_to_expire=minutes_to_expire)
+    token = client.get_client_access_token(user_id=user_id, roles=roles, minutes_to_expire=minutes_to_expire)
     assert token
     assert len(token) == 3
     assert set(token.keys()) == set(["baseUrl", "url", "token"])
@@ -82,9 +83,9 @@ test_cases = [
 ]
 @pytest.mark.parametrize("connection_string,hub,expected_url", test_cases)
 def test_generate_url_use_same_kid_with_same_key(connection_string, hub, expected_url):
-    client = WebPubSubServiceClient.from_connection_string(connection_string)
-    url_1 = client.get_client_access_token(hub=hub)['url']
-    url_2 = client.get_client_access_token(hub=hub)['url']
+    client = WebPubSubServiceClient.from_connection_string(connection_string, hub)
+    url_1 = client.get_client_access_token()['url']
+    url_2 = client.get_client_access_token()['url']
 
     assert url_1.split("?")[0] == url_2.split("?")[0] == expected_url
 
@@ -94,4 +95,19 @@ def test_generate_url_use_same_kid_with_same_key(connection_string, hub, expecte
     decoded_token_1 = _decode_token(client, token_1)
     decoded_token_2 = _decode_token(client, token_2)
 
-    assert decoded_token_1['header']['kid'] == decoded_token_2['header']['kid']
+    assert len(decoded_token_1) == len(decoded_token_2) == 3
+    assert decoded_token_1['aud'] == decoded_token_2['aud'] == expected_url.replace('ws', 'http')
+    assert abs(decoded_token_1['iat'] - decoded_token_2['iat']) < 5
+    assert abs(decoded_token_1['exp'] - decoded_token_2['exp']) < 5
+
+test_cases = [
+    ("Endpoint=http://localhost;Port=8080;AccessKey={};Version=1.0;".format(access_key)),
+    ("Endpoint=https://a;AccessKey={};Version=1.0;".format(access_key)),
+    ("Endpoint=http://a;AccessKey={};Version=1.0;".format(access_key))
+]
+@pytest.mark.parametrize("connection_string", test_cases)
+def test_pass_in_jwt_headers(connection_string):
+    client = WebPubSubServiceClient.from_connection_string(connection_string, "hub")
+    kid = '1234567890'
+    token = client.get_client_access_token(jwt_headers={"kid":kid })['token']
+    assert jwt.get_unverified_header(token)['kid'] == kid
