@@ -105,8 +105,7 @@ class CommunicationIceServer(msrest.serialization.Model):
     :vartype credential: str
     :ivar route_type: Required. The routing methodology to where the ICE server will be located
      from the client. Possible values include: "any", "nearest".
-    :vartype route_type: str or
-     ~azure.communication.networktraversal.models.CommunicationIceServerRouteType
+    :vartype route_type: str or ~azure.communication.networktraversal.models.RouteType
     """
 
     _validation = {
@@ -136,8 +135,7 @@ class CommunicationIceServer(msrest.serialization.Model):
         :paramtype credential: str
         :keyword route_type: Required. The routing methodology to where the ICE server will be located
          from the client. Possible values include: "any", "nearest".
-        :paramtype route_type: str or
-         ~azure.communication.networktraversal.models.CommunicationIceServerRouteType
+        :paramtype route_type: str or ~azure.communication.networktraversal.models.RouteType
         """
         super(CommunicationIceServer, self).__init__(**kwargs)
         self.urls = kwargs['urls']
@@ -194,8 +192,7 @@ class CommunicationRelayConfigurationRequest(msrest.serialization.Model):
     :vartype id: str
     :ivar route_type: The routing methodology to where the ICE server will be located from the
      client. Possible values include: "any", "nearest".
-    :vartype route_type: str or
-     ~azure.communication.networktraversal.models.CommunicationRelayConfigurationRequestRouteType
+    :vartype route_type: str or ~azure.communication.networktraversal.models.RouteType
     """
 
     _attribute_map = {
@@ -212,8 +209,7 @@ class CommunicationRelayConfigurationRequest(msrest.serialization.Model):
         :paramtype id: str
         :keyword route_type: The routing methodology to where the ICE server will be located from the
          client. Possible values include: "any", "nearest".
-        :paramtype route_type: str or
-         ~azure.communication.networktraversal.models.CommunicationRelayConfigurationRequestRouteType
+        :paramtype route_type: str or ~azure.communication.networktraversal.models.RouteType
         """
         super(CommunicationRelayConfigurationRequest, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)

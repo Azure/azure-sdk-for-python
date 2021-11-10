@@ -22,20 +22,20 @@ from .._vendor import _convert_request
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
-
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 # fmt: off
 
 def build_issue_relay_configuration_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-10-08-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-10-08-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/networktraversal/:issueRelayConfiguration')
@@ -85,7 +85,7 @@ class CommunicationNetworkTraversalOperations(object):
     def issue_relay_configuration(
         self,
         id=None,  # type: Optional[str]
-        route_type=None,  # type: Optional[Union[str, "_models.CommunicationRelayConfigurationRequestRouteType"]]
+        route_type=None,  # type: Optional[Union[str, "_models.RouteType"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.CommunicationRelayConfiguration"
@@ -97,8 +97,10 @@ class CommunicationNetworkTraversalOperations(object):
         :type id: str
         :param route_type: The routing methodology to where the ICE server will be located from the
          client.
-        :type route_type: str or
-         ~azure.communication.networktraversal.models.CommunicationRelayConfigurationRequestRouteType
+        :type route_type: str or ~azure.communication.networktraversal.models.RouteType
+        :keyword api_version: Api Version. The default value is "2021-10-08-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CommunicationRelayConfiguration, or the result of cls(response)
         :rtype: ~azure.communication.networktraversal.models.CommunicationRelayConfiguration
@@ -110,6 +112,7 @@ class CommunicationNetworkTraversalOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-10-08-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _body = _models.CommunicationRelayConfigurationRequest(id=id, route_type=route_type)
@@ -119,6 +122,7 @@ class CommunicationNetworkTraversalOperations(object):
             json = None
 
         request = build_issue_relay_configuration_request(
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.issue_relay_configuration.metadata['url'],

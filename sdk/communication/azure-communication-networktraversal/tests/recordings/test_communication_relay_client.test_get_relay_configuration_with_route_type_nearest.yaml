@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.1.0b2 Python/3.7.4 (Windows-10-10.0.22494-SP0)
       x-ms-date:
-      - Wed, 10 Nov 2021 22:11:50 GMT
+      - Wed, 10 Nov 2021 22:11:51 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -32,9 +32,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 10 Nov 2021 22:11:50 GMT
+      - Wed, 10 Nov 2021 22:11:51 GMT
       ms-cv:
-      - vug3lSbrLUeWHAoTQF9K8A.0
+      - qh9OWFVE6UivRoo1YLvO0w.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,12 +42,12 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 44ms
+      - 24ms
     status:
       code: 201
       message: Created
 - request:
-    body: '{"id": "sanitized"}'
+    body: '{"id": "sanitized", "routeType": "nearest"}'
     headers:
       Accept:
       - application/json
@@ -56,35 +56,33 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '89'
+      - '113'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-communication-networktraversal/1.0.0b1 Python/3.7.4 (Windows-10-10.0.22494-SP0)
       x-ms-date:
-      - Wed, 10 Nov 2021 22:11:50 GMT
+      - Wed, 10 Nov 2021 22:11:51 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/networktraversal/:issueRelayConfiguration?api-version=2021-10-08-preview
   response:
     body:
-      string: '{"iceServers": [{"routeType": "any", "urls": ["turn.skype.com", "turn:world.relay.skype.com:3478"],
-        "username": "sanitized", "credential": "sanitized"}, {"routeType": "nearest",
-        "urls": ["stun:13.107.17.41:3478", "turn:13.107.17.41:3478"], "username":
-        "BQAANksGVt4B19gS8Lb+vxW6oP1nmVTKtyyuY+TSztUAAAAMARCsgNlqhd5IsZldo6P6NifI1W7m/58vAl5NNuX7wFldw/QrbrI=",
-        "credential": "qXWLvJMJvz1ERUrh2Rgbq5W7/rg="}], "expiresOn": "2021-11-10T22:11:51.0590396+00:00"}'
+      string: '{"iceServers": [{"routeType": "nearest", "urls": ["turn.skype.com",
+        "turn:13.107.17.41:3478"], "username": "sanitized", "credential": "sanitized"}],
+        "expiresOn": "2021-11-10T22:11:51.8649696+00:00"}'
     headers:
       api-supported-versions:
       - 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview
       content-length:
-      - '560'
+      - '305'
       content-type:
       - application/json; charset=utf-8
       date:
       - Wed, 10 Nov 2021 22:11:51 GMT
       ms-cv:
-      - Z5bc4Wnyz0+tCw6tOOvbNQ.0
+      - RC7pSMciR0GK77B71fTqjw.0
       request-context:
       - appId=
       strict-transport-security:
@@ -92,7 +90,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 23ms
+      - 21ms
     status:
       code: 200
       message: OK

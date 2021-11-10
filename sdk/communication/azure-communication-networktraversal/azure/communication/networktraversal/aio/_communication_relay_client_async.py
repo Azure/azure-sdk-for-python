@@ -84,6 +84,7 @@ class CommunicationRelayClient:
     async def get_relay_configuration(
             self,
             user: 'CommunicationUserIdentifier' = None,
+            route_type: 'CommunicationRelayConfigurationRequestRouteType' = None,
             **kwargs # type: Any
         ) -> 'CommunicationRelayConfiguration':
         """get a Communication Relay configuration.
@@ -93,9 +94,10 @@ class CommunicationRelayClient:
         """
         if user is None:
             return await self._network_traversal_service_client.communication_network_traversal. \
-                issue_relay_configuration(None, **kwargs)
+                issue_relay_configuration(None, route_type, **kwargs)
         return await self._network_traversal_service_client.communication_network_traversal.issue_relay_configuration(
             user.properties['id'],
+            route_type,
             **kwargs)
 
     async def __aenter__(self) -> "CommunicationRelayClient":

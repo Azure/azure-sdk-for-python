@@ -11,14 +11,7 @@ from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CommunicationIceServerRouteType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The routing methodology to where the ICE server will be located from the client.
-    """
-
-    ANY = "any"
-    NEAREST = "nearest"
-
-class CommunicationRelayConfigurationRequestRouteType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class RouteType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The routing methodology to where the ICE server will be located from the client.
     """
 

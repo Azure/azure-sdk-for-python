@@ -86,6 +86,7 @@ class CommunicationRelayClient(object):
     def get_relay_configuration(
             self,
             user=None, # type: CommunicationUserIdentifier
+            route_type=None, #type: RouteType
             **kwargs # type: Any
     ):
         # type: (Any) -> CommunicationRelayConfiguration
@@ -96,7 +97,8 @@ class CommunicationRelayClient(object):
         """
         if user is None:
             return self._network_traversal_service_client.communication_network_traversal.issue_relay_configuration(
-                None, **kwargs)
+                None, route_type, **kwargs)
         return self._network_traversal_service_client.communication_network_traversal.issue_relay_configuration(
             user.properties['id'],
+            route_type,
             **kwargs)

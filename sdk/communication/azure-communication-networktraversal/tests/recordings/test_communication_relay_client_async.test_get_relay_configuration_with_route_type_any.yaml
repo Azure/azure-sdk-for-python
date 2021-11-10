@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.1.0b2 Python/3.7.4 (Windows-10-10.0.22494-SP0)
       x-ms-date:
-      - Wed, 10 Nov 2021 22:11:51 GMT
+      - Wed, 10 Nov 2021 22:11:52 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -25,28 +25,28 @@ interactions:
       content-length: '101'
       content-type: application/json; charset=utf-8
       date: Wed, 10 Nov 2021 22:11:51 GMT
-      ms-cv: GynjuQm1oUuxQMqmcjtgyg.0
+      ms-cv: 7N/qTH9boE2H1wsmfTEtqA.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 27ms
+      x-processing-time: 23ms
     status:
       code: 201
       message: Created
     url: https://smstestapp.communication.azure.com/identities?api-version=2021-10-31-preview
 - request:
-    body: '{"id": "sanitized"}'
+    body: '{"id": "sanitized", "routeType": "any"}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '89'
+      - '109'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-communication-networktraversal/1.0.0b1 Python/3.7.4 (Windows-10-10.0.22494-SP0)
       x-ms-date:
-      - Wed, 10 Nov 2021 22:11:51 GMT
+      - Wed, 10 Nov 2021 22:11:52 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -54,20 +54,17 @@ interactions:
   response:
     body:
       string: '{"iceServers": [{"routeType": "any", "urls": ["turn.skype.com", "turn:world.relay.skype.com:3478"],
-        "username": "sanitized", "credential": "sanitized"}, {"routeType": "nearest",
-        "urls": ["stun:13.107.17.41:3478", "turn:13.107.17.41:3478"], "username":
-        "BQAANkukXQMB19gSYdXtLqhi7A41dwQPkLVlfAK8wZ8AAAAMARCsgNlqhd5IsZldo6P6NifIM3HjmLwECvQ6BTJYFW5n/fzu2Gg=",
-        "credential": "5caHpuagc1m5x9BvsVMcbC2D+EQ="}], "expiresOn": "2021-11-10T22:11:52.0851966+00:00"}'
+        "username": "sanitized", "credential": "sanitized"}], "expiresOn": "2021-11-10T22:11:52.3668579+00:00"}'
     headers:
       api-supported-versions: 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview
-      content-length: '560'
+      content-length: '319'
       content-type: application/json; charset=utf-8
-      date: Wed, 10 Nov 2021 22:11:51 GMT
-      ms-cv: rTN2hcJ8DE65nzciBzPGfA.0
+      date: Wed, 10 Nov 2021 22:11:52 GMT
+      ms-cv: drPQHdOrqk+qbrxWVnPsPg.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 20ms
+      x-processing-time: 22ms
     status:
       code: 200
       message: OK

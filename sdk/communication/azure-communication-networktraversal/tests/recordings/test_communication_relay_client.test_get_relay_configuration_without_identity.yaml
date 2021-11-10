@@ -13,27 +13,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-networktraversal/1.0.0b1 Python/3.7.4 (Windows-10-10.0.22454-SP0)
+      - azsdk-python-communication-networktraversal/1.0.0b1 Python/3.7.4 (Windows-10-10.0.22494-SP0)
       x-ms-date:
-      - Fri, 01 Oct 2021 23:03:08 GMT
+      - Wed, 10 Nov 2021 02:43:46 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/networktraversal/:issueRelayConfiguration?api-version=2021-06-21-preview
+    uri: https://sanitized.communication.azure.com/networktraversal/:issueRelayConfiguration?api-version=2021-10-08-preview
   response:
     body:
-      string: '{"expiresOn": "2021-10-01T23:03:09.2274327+00:00", "iceServers": [{"urls":
-        ["turn.skype.com", "turn:world.relay.skype.com:3478"], "username": "sanitized",
-        "credential": "sanitized"}]}'
+      string: '{"error": {"code": "Denied", "message": "Denied by the resource provider."}}'
     headers:
-      api-supported-versions:
-      - 2021-02-22-preview1, 2021-06-21-preview
       content-type:
-      - application/json; charset=utf-8
+      - application/json
       date:
-      - Fri, 01 Oct 2021 23:03:08 GMT
+      - Wed, 10 Nov 2021 02:43:46 GMT
       ms-cv:
-      - c1XdV0vrhEOnOWF2LrDjGQ.0
+      - oDaiaJ5PkUq9TNTsJyP6Sg.0
       request-context:
       - appId=
       strict-transport-security:
@@ -43,8 +39,8 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 311ms
+      - 9ms
     status:
-      code: 200
-      message: OK
+      code: 401
+      message: Unauthorized
 version: 1
