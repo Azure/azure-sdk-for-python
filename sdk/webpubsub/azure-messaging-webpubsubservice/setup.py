@@ -39,7 +39,7 @@ setup(
     license="MIT License",
     author="Microsoft Corporation",
     author_email="azpysdkhelp@microsoft.com",
-    url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/signalr/azure-messaging-webpubsubservice",
+    url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/webpubsub/azure-messaging-webpubsubservice",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",

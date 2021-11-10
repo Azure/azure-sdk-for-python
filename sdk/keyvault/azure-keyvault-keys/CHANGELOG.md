@@ -3,6 +3,8 @@
 ## 4.5.0b5 (Unreleased)
 
 ### Features Added
+- Added support for multi-tenant authentication when using `azure-identity` 1.7.1 or newer
+  ([#20698](https://github.com/Azure/azure-sdk-for-python/issues/20698))
 
 ### Breaking Changes
 > These changes do not impact the API of stable versions such as 4.4.0.
@@ -15,6 +17,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Updated minimum `azure-core` version to 1.15.0
 
 ## 4.5.0b4 (2021-10-07)
 

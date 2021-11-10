@@ -162,18 +162,43 @@ function Get-python-GithubIoDocIndex()
 }
 
 function ValidatePackage($packageName, $packageVersion, $workingDirectory) {
-  $packageExpression = "$packageName$packageVersion"
-  Write-Host "Validating $packageExpression"
-
-  $installTargetFolder = Join-Path $workingDirectory $packageName
-  New-Item -ItemType Directory -Force -Path $installTargetFolder | Out-Null
-
   # Add more validation by replicating as much of the docs CI process as
   # possible
   # https://github.com/Azure/azure-sdk-for-python/issues/20109
+  if (!$ImageId) {
+    Write-Host "Validating using pip command directly on $packageName."
+    FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $workingDirectory
+  } 
+  else {
+    Write-Host "Validating using $ImageId on $packageName."
+    DockerValidation -packageName "$packageName" -packageVersion "$packageVersion"
+  }
+}
+function DockerValidation($packageName, $packageVersion) {
+  $packageExpression = "$packageName==$packageVersion"
+  docker run -e TARGET_PACKAGE=$packageExpression -t $ImageId
+  # The docker exit codes: https://docs.docker.com/engine/reference/run/#exit-status
+  # If the docker failed because of docker itself instead of the application, 
+  # we should skip the validation and keep the packages. 
+  if ($LASTEXITCODE -eq 125 -Or $LASTEXITCODE -eq 126 -Or $LASTEXITCODE -eq 127) { 
+    Write-Host $commandLine
+    LogWarning "The `docker` command does not work with exit code $LASTEXITCODE. Fall back to npm install $packageName directly."
+    FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion"
+  }
+  elseif ($LASTEXITCODE -ne 0) { 
+    Write-Host $commandLine
+    LogWarning "Package $($Package.name) ref docs validation failed."
+    return $false
+  }
+  return $true
+}
+
+function FallbackValidation($packageName, $packageVersion, $workingDirectory) {
+  $installTargetFolder = Join-Path $workingDirectory $packageName
+  New-Item -ItemType Directory -Force -Path $installTargetFolder | Out-Null
+  $packageExpression = "$packageName$packageVersion"
   try {
     $pipInstallOutput = ""
-    $extraIndexUrl = " --extra-index-url=$PackageSourceOverride"
     if ($PackageSourceOverride) {
       Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder --extra-index-url=$PackageSourceOverride"
       $pipInstallOutput = pip `

@@ -35,7 +35,7 @@ test_cases = [
 
 @pytest.mark.parametrize("connection_string,endpoint", test_cases)
 def test_parse_connection_string(connection_string, endpoint):
-    client = WebPubSubServiceClient.from_connection_string(connection_string)
+    client = WebPubSubServiceClient.from_connection_string(connection_string, "hub")
     assert client._config.endpoint == endpoint
     assert isinstance(client._config.credential, AzureKeyCredential)
     assert client._config.credential.key == access_key
@@ -51,10 +51,10 @@ test_cases = [
 @pytest.mark.asyncio
 async def test_generate_uri_contains_expected_payloads_dto(user_id, roles):
     client = WebPubSubServiceClient.from_connection_string(
-        f"Endpoint=http://localhost;Port=8080;AccessKey={access_key};Version=1.0;",
+        f"Endpoint=http://localhost;Port=8080;AccessKey={access_key};Version=1.0;", "hub"
     )
     minutes_to_expire = 5
-    token = await client.get_client_access_token(hub="hub", user_id=user_id, roles=roles, minutes_to_expire=minutes_to_expire)
+    token = await client.get_client_access_token(user_id=user_id, roles=roles, minutes_to_expire=minutes_to_expire)
     assert token
     assert len(token) == 3
     assert set(token.keys()) == set(["baseUrl", "url", "token"])
@@ -84,9 +84,9 @@ test_cases = [
 @pytest.mark.parametrize("connection_string,hub,expected_url", test_cases)
 @pytest.mark.asyncio
 async def test_generate_url_use_same_kid_with_same_key(connection_string, hub, expected_url):
-    client = WebPubSubServiceClient.from_connection_string(connection_string)
-    url_1 = (await client.get_client_access_token(hub=hub))['url']
-    url_2 = (await client.get_client_access_token(hub=hub))['url']
+    client = WebPubSubServiceClient.from_connection_string(connection_string, hub)
+    url_1 = (await client.get_client_access_token())['url']
+    url_2 = (await client.get_client_access_token())['url']
 
     assert url_1.split("?")[0] == url_2.split("?")[0] == expected_url
 

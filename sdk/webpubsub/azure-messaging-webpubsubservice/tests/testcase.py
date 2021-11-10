@@ -13,14 +13,15 @@ class WebpubsubTest(AzureTestCase):
     def __init__(self, method_name, **kwargs):
         super(WebpubsubTest, self).__init__(method_name, **kwargs)
 
-    def create_client(self, endpoint=None, reverse_proxy_endpoint=None, **kwargs):
+    def create_client(self, endpoint=None, hub=None, reverse_proxy_endpoint=None, **kwargs):
         if kwargs.get("connection_string"):
-            return WebPubSubServiceClient.from_connection_string(kwargs.pop("connection_string"))
+            return WebPubSubServiceClient.from_connection_string(kwargs.pop("connection_string"), hub)
         credential = self.get_credential(WebPubSubServiceClient)
         return self.create_client_from_credential(
             WebPubSubServiceClient,
             credential=credential,
             endpoint=endpoint,
+            hub=hub,
             reverse_proxy_endpoint=reverse_proxy_endpoint
         )
 
