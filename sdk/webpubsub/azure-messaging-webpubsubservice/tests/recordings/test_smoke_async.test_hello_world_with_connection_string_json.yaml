@@ -1,11 +1,11 @@
 interactions:
 - request:
-    body: '{"hello": "test_webpubsub_send_to_all"}'
+    body: '{"hello": "world!"}'
     headers:
       Accept:
       - application/json, text/json
       Content-Length:
-      - '39'
+      - '19'
       Content-Type:
       - application/json
       User-Agent:
@@ -19,7 +19,7 @@ interactions:
       api-supported-versions: '2021-10-01'
       connection: keep-alive
       content-length: '0'
-      date: Wed, 10 Nov 2021 19:28:29 GMT
+      date: Wed, 10 Nov 2021 19:28:28 GMT
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 202

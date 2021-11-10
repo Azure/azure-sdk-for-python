@@ -62,11 +62,7 @@ class WebpubsubSmokeTest(WebpubsubTest):
         client.send_to_all(message=b"Hello, World!", content_type="application/octet-stream")
 
     @WebpubsubPowerShellPreparer()
-    def test_add_user_to_group(self, webpubsub_connection_string):
+    def test_no_users_groups(self, webpubsub_connection_string):
         client = self.create_client(connection_string=webpubsub_connection_string, hub="hub")
-        client.add_user_to_group(group="some_group", user_id="some_user")
-
-        if client.user_exists(user_id="some_user"):
-            client.send_to_user(user_id="some_user", message="Hi, I am glad you exist!")
-            client.remove_user_from_group(group="some_group", user_id="some_user")
-        assert not client.user_exists(user_id="some_user")
+        assert not client.user_exists(user_id="fake user")
+        assert not client.group_exists(group="fake group")

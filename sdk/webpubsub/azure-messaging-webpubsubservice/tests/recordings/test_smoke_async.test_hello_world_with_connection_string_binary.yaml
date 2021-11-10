@@ -1,13 +1,13 @@
 interactions:
 - request:
-    body: '{"hello": "test_webpubsub_send_to_all"}'
+    body: Hello, World!
     headers:
       Accept:
       - application/json, text/json
       Content-Length:
-      - '39'
+      - '13'
       Content-Type:
-      - application/json
+      - application/octet-stream
       User-Agent:
       - azsdk-python-messaging-webpubsubservice/1.0.0 Python/3.9.5 (macOS-11.6-x86_64-i386-64bit)
     method: POST
@@ -19,7 +19,7 @@ interactions:
       api-supported-versions: '2021-10-01'
       connection: keep-alive
       content-length: '0'
-      date: Wed, 10 Nov 2021 19:28:29 GMT
+      date: Wed, 10 Nov 2021 19:28:28 GMT
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 202

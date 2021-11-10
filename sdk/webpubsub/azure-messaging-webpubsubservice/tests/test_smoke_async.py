@@ -28,3 +28,24 @@ class WebpubsubSmokeAsyncTest(WebpubsubAsyncTest):
         assert access_token['baseUrl'][:3] == "wss"
         assert access_token['token']
         assert access_token['url'][:3] == "wss"
+
+    @WebpubsubPowerShellPreparer()
+    async def test_hello_world_with_connection_string(self, webpubsub_connection_string):
+        client = self.create_client(connection_string=webpubsub_connection_string, hub="hub")
+        await client.send_to_all(message="Hello, World!", content_type="text/plain")
+
+    @WebpubsubPowerShellPreparer()
+    async def test_hello_world_with_connection_string_json(self, webpubsub_connection_string):
+        client = self.create_client(connection_string=webpubsub_connection_string, hub="hub")
+        await client.send_to_all(message={"hello": "world!"})
+
+    @WebpubsubPowerShellPreparer()
+    async def test_hello_world_with_connection_string_binary(self, webpubsub_connection_string):
+        client = self.create_client(connection_string=webpubsub_connection_string, hub="hub")
+        await client.send_to_all(message=b"Hello, World!", content_type="application/octet-stream")
+
+    @WebpubsubPowerShellPreparer()
+    async def test_no_users_groups(self, webpubsub_connection_string):
+        client = self.create_client(connection_string=webpubsub_connection_string, hub="hub")
+        assert not await client.user_exists(user_id="fake user")
+        assert not await client.group_exists(group="fake group")
