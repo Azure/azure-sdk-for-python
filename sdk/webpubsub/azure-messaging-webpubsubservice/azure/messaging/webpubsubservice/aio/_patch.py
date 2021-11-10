@@ -83,9 +83,7 @@ class WebPubSubServiceClientConfiguration(Configuration):
     ) -> None:
         super(WebPubSubServiceClientConfiguration, self).__init__(**kwargs)
         if kwargs.get("port") and endpoint:
-            if endpoint[-1] == "/":
-                endpoint = endpoint[:len(endpoint) - 1]
-            endpoint = endpoint + ":{}".format(kwargs.pop('port'))
+            endpoint = endpoint.rstrip("/") + ":{}".format(kwargs.pop('port'))
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
         if hub is None:
