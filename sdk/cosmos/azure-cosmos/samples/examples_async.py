@@ -23,7 +23,7 @@ async def examples_async():
     try:
         database = await client.create_database(id=database_name)
     except exceptions.CosmosResourceExistsError:
-        database = client.get_database_client(database=database_name)
+        database = client.get_database_client(database_id=database_name)
     # [END create_database]
 
     # Create a container, handling the exception if a container with the

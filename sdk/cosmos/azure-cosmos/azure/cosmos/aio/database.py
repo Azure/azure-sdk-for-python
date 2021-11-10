@@ -316,7 +316,7 @@ class DatabaseProxy(object):
         self,
         max_item_count=None,
         **kwargs
-        ):
+    ):
         # type: (Optional[int], Optional[bool], Any) -> Iterable[Dict[str, Any]]
         """List the containers in the database.
 
@@ -353,7 +353,7 @@ class DatabaseProxy(object):
     def query_containers(
         self,
         query=None,  # type: Optional[str]
-        parameters=None,  # type: Optional[List[str]]
+        parameters=None,  # type: Optional[List[Dict[str, Any]]]
         max_item_count=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
@@ -361,7 +361,9 @@ class DatabaseProxy(object):
         """List the properties for containers in the current database.
 
         :param query: The Azure Cosmos DB SQL query to execute.
-        :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
+        :param parameters: Optional array of parameters to the query.
+            Each parameter is a dict() with 'name' and 'value' keys.
+            Ignored if no query is provided.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
@@ -523,24 +525,16 @@ class DatabaseProxy(object):
             client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
         )
 
-    def get_user_client(self, user):
-        # type: (Union[str, UserProxy, Dict[str, Any]]) -> UserProxy
+    def get_user_client(self, user_id):
+        # type: (str) -> UserProxy
         """Get a `UserProxy` for a user with specified ID.
 
-        :param user: The ID (name), dict representing the properties or :class:`UserProxy`
-            instance of the user to be retrieved.
+        :param user: The ID (name) of the user to be retrieved.
         :returns: A `UserProxy` instance representing the retrieved user.
         :rtype: ~azure.cosmos.UserProxy
         """
-        if isinstance(user, UserProxy):
-            id_value = user.id
-        else:
-            try:
-                id_value = user["id"]
-            except TypeError:
-                id_value = user
 
-        return UserProxy(client_connection=self.client_connection, id=id_value, database_link=self.database_link)
+        return UserProxy(client_connection=self.client_connection, id=user_id, database_link=self.database_link)
 
     @distributed_trace
     def list_users(self, max_item_count=None, **kwargs):
@@ -565,12 +559,20 @@ class DatabaseProxy(object):
         return result
 
     @distributed_trace
-    def query_users(self, query, parameters=None, max_item_count=None, **kwargs):
-        # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
+    def query_users(
+        self,
+        query=None,  # type: Optional[str]
+        parameters=None,  # type: Optional[List[Dict[str, Any]]]
+        max_item_count=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable[Dict[str, Any]]
         """Return all users matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
-        :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
+        :param parameters: Optional array of parameters to the query.
+            Each parameter is a dict() with 'name' and 'value' keys.
+            Ignored if no query is provided.
         :param max_item_count: Max number of users to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of user properties (dicts).

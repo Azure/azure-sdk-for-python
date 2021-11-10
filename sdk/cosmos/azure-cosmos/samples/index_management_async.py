@@ -654,6 +654,7 @@ async def run_sample():
         # 8. Perform Multi Orderby queries using composite indexes
         await perform_multi_orderby_query(created_db)
 
+        print('Sample done, cleaning up sample-generated data')
         await client.delete_database(DATABASE_ID)
         await client.close()
 

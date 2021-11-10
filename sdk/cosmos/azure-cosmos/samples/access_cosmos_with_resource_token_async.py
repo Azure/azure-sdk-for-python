@@ -24,6 +24,7 @@ import json
 # Each time a Container is created the account will be billed for 1 hour of usage based on
 # the provisioned throughput (RU/s) of that account.
 # ----------------------------------------------------------------------------------------------------------
+
 HOST = config.settings["host"]
 MASTER_KEY = config.settings["master_key"]
 DATABASE_ID = config.settings["database_id"]
@@ -51,7 +52,7 @@ async def create_permission_if_not_exists(user, permission_definition):
     try:
         permission = await user.create_permission(permission_definition)
     except exceptions.CosmosResourceExistsError:
-        permission = await user.get_permission(permission_definition["id"])
+        permission = await user.read_permission(permission_definition["id"])
 
     return permission
 
@@ -233,7 +234,8 @@ async def run_sample():
             await token_client_read_item(token_container, USERNAME_2, ITEM_3_ID)
             await token_client_delete(token_container, USERNAME_2, ITEM_3_ID)
 
-            # Closing current token client
+            # Cleaning up and closing current token client
+            await token_client.delete_database(DATABASE_ID)
             await token_client.close()  
 
         except exceptions.CosmosHttpResponseError as e:

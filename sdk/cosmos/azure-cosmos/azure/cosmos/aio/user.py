@@ -146,11 +146,12 @@ class UserProxy(object):
         return result
 
     @distributed_trace_async
-    async def read_permission(self, permission_id, **kwargs):
-        # type: (str, Any) -> Permission
+    async def read_permission(self, permission, **kwargs):
+        # type: (Union[str, Dict[str, Any], Permission], Any) -> Permission
         """Get the permission identified by `id`.
 
-        :param permission: The ID (name) of the permission to be retrieved.
+        :param permission: The ID (name), dict representing the properties or :class:`Permission`
+            instance of the permission to be retrieved.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A dict representing the retrieved permission.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given permission couldn't be retrieved.
@@ -160,7 +161,7 @@ class UserProxy(object):
         response_hook = kwargs.pop('response_hook', None)
 
         permission_resp = await self.client_connection.ReadPermission(
-            permission_link=self._get_permission_link(permission_id), options=request_options, **kwargs
+            permission_link=self._get_permission_link(permission), options=request_options, **kwargs
         )  # type: Dict[str, str]
 
         if response_hook:
@@ -239,7 +240,7 @@ class UserProxy(object):
 
     @distributed_trace_async
     async def replace_permission(self, permission, body, **kwargs):
-        # type: (str, Dict[str, Any], Any) -> Permission
+        # type: (str, Union[str, Dict[str, Any], Permission], Any) -> Permission
         """Replaces the specified permission if it exists for the user.
 
         If the permission does not already exist, an exception is raised.
@@ -272,13 +273,14 @@ class UserProxy(object):
         )
 
     @distributed_trace_async
-    async def delete_permission(self, permission_id, **kwargs):
-        # type: (str, Any) -> None
+    async def delete_permission(self, permission, **kwargs):
+        # type: (Union[str, Dict[str, Any], Permission], Any) -> None
         """Delete the specified permission from the user.
 
         If the permission does not already exist, an exception is raised.
 
-        :param permission: The ID (name) of the permission to be replaced.
+        :param permission: The ID (name), dict representing the properties or :class:`Permission`
+            instance of the permission to be deleted.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The permission wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The permission does not exist for the user.
@@ -288,7 +290,7 @@ class UserProxy(object):
         response_hook = kwargs.pop('response_hook', None)
 
         result = await self.client_connection.DeletePermission(
-            permission_link=self._get_permission_link(permission_id), options=request_options, **kwargs
+            permission_link=self._get_permission_link(permission), options=request_options, **kwargs
         )
 
         if response_hook:

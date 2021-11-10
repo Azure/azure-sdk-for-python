@@ -298,7 +298,7 @@ class CosmosClient(object):
     def query_databases(
         self,
         query=None,  # type: Optional[str]
-        parameters=None,  # type: Optional[List[str]]
+        parameters=None,  # type: Optional[List[Dict[str, Any]]]
         max_item_count=None,  # type:  Optional[int]
         **kwargs  # type: Any
     ):
@@ -306,7 +306,9 @@ class CosmosClient(object):
         """Query the databases in a Cosmos DB SQL database account.
 
         :param str query: The Azure Cosmos DB SQL query to execute.
-        :param list[str] parameters: Optional array of parameters to the query. Ignored if no query is provided.
+        :param list[dict[str, any]] parameters: Optional array of parameters to the query.
+            Each parameter is a dict() with 'name' and 'value' keys.
+            Ignored if no query is provided.
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.

@@ -198,7 +198,7 @@ class ContainerProxy(object):
     @distributed_trace_async
     async def read_item(
         self,
-        item_id,  # type: str
+        item,  # type: Union[str, Dict[str, Any]]
         partition_key,  # type: Any
         **kwargs  # type: Any
     ):
@@ -224,7 +224,7 @@ class ContainerProxy(object):
                 :caption: Get an item from the database and update one of its properties:
                 :name: update_item
         """
-        doc_link = self._get_document_link(item_id)
+        doc_link = self._get_document_link(item)
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if partition_key is not None:
@@ -270,7 +270,7 @@ class ContainerProxy(object):
     async def query_items(
         self,
         query,  # type: str
-        parameters=None,  # type: Optional[List[Dict[str, object]]]
+        parameters=None,  # type: Optional[List[Dict[str, Any]]]
         partition_key=None,  # type: Optional[Any]
         max_item_count=None,  # type: Optional[int]
         enable_scan_in_query=None,  # type: Optional[bool]
@@ -487,7 +487,7 @@ class ContainerProxy(object):
     @distributed_trace_async
     async def delete_item(
         self,
-        item_id,  # type: str
+        item,  # type: Union[str, Dict[str, Any]]
         partition_key,  # type: Any
         pre_trigger_include=None,  # type: Optional[str]
         post_trigger_include=None,  # type: Optional[str]
@@ -521,7 +521,7 @@ class ContainerProxy(object):
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
 
-        document_link = self._get_document_link(item_id)
+        document_link = self._get_document_link(item)
         result = await self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
@@ -618,7 +618,7 @@ class ContainerProxy(object):
     async def query_conflicts(
         self,
         query,  # type: str
-        parameters=None,  # type: Optional[List[str]]
+        parameters=None,  # type: Optional[List[Dict[str, Any]]]
         partition_key=None,  # type: Optional[Any]
         max_item_count=None,  # type: Optional[int]
         **kwargs  # type: Any
@@ -686,7 +686,7 @@ class ContainerProxy(object):
     @distributed_trace_async
     async def delete_conflict(
         self,
-        conflict_id,
+        conflict,
         partition_key,
         **kwargs
     ):
@@ -695,7 +695,7 @@ class ContainerProxy(object):
 
         If the conflict does not already exist in the container, an exception is raised.
 
-        :param conflict: The ID (name) representing the conflict to be deleted.
+        :param conflict: The ID (name) or dict representing the conflict to be deleted.
         :param partition_key: Partition key for the conflict to delete.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The conflict wasn't deleted successfully.
@@ -708,7 +708,7 @@ class ContainerProxy(object):
             request_options["partitionKey"] = await self._set_partition_key(partition_key)
 
         result = await self.client_connection.DeleteConflict(
-            conflict_link=self._get_conflict_link(conflict_id), options=request_options, **kwargs
+            conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)

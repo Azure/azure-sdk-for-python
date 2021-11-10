@@ -178,7 +178,7 @@ class ScriptsProxy(object):
 
     async def execute_stored_procedure(
         self,
-        sproc_id,  # type: str
+        sproc,  # type: Union[str, Dict[str, Any]]
         partition_key=None,  # type: Optional[str]
         params=None,  # type: Optional[List[Any]]
         enable_script_logging=None,  # type: Optional[bool]
@@ -189,7 +189,7 @@ class ScriptsProxy(object):
 
         If the stored procedure does not already exist in the container, an exception is raised.
 
-        :param sproc: The ID (name) representing the stored procedure to be executed.
+        :param sproc: The ID (name) or dict representing the stored procedure to be executed.
         :param partition_key: Specifies the partition key to indicate which partition the sproc should execute on.
         :param params: List of parameters to be passed to the stored procedure to be executed.
         :param bool enable_script_logging: Enables or disables script logging for the current request.
@@ -210,7 +210,7 @@ class ScriptsProxy(object):
             request_options["enableScriptLogging"] = enable_script_logging
 
         return await self.client_connection.ExecuteStoredProcedure(
-            sproc_link=self._get_resource_link(sproc_id, ScriptType.StoredProcedure),
+            sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure),
             params=params,
             options=request_options,
             **kwargs
