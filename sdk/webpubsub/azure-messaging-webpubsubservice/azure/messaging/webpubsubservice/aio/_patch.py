@@ -63,6 +63,8 @@ class WebPubSubServiceClientConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
+    :param hub: Target hub name, which should start with alphabetic characters and only contain alpha-numeric characters or underscore.
+    :type hub: str
     :param endpoint: HTTP or HTTPS endpoint for the Web PubSub service instance.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
@@ -73,6 +75,7 @@ class WebPubSubServiceClientConfiguration(Configuration):
 
     def __init__(
         self,
+        hub: str,
         endpoint: str,
         credential: Union["AsyncTokenCredential", "AzureKeyCredential"],
         **kwargs: Any
@@ -80,11 +83,14 @@ class WebPubSubServiceClientConfiguration(Configuration):
         super(WebPubSubServiceClientConfiguration, self).__init__(**kwargs)
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
+        if hub is None:
+            raise ValueError("Parameter 'hub' must not be None.")
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
 
+        self.hub = hub
         self.endpoint = endpoint
         self.credential = credential
         self.api_version = api_version
@@ -117,6 +123,9 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
 
     :param endpoint: HTTP or HTTPS endpoint for the Web PubSub service instance.
     :type endpoint: str
+    :param hub: Target hub name, which should start with alphabetic characters and only contain
+     alpha-numeric characters or underscore.
+    :type hub: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
@@ -127,12 +136,13 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
     def __init__(
         self,
         endpoint: str,
+        hub: str,
         credential: Union["AsyncTokenCredential", "AzureKeyCredential"],
         **kwargs: Any
     ) -> None:
         kwargs['origin_endpoint'] = endpoint
         _endpoint = '{Endpoint}'
-        self._config = WebPubSubServiceClientConfiguration(endpoint, credential, **kwargs)
+        self._config = WebPubSubServiceClientConfiguration(hub=hub, endpoint=endpoint, credential=credential, **kwargs)
         self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -140,25 +150,26 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         self._serialize.client_side_validation = False
 
     @classmethod
-    def from_connection_string(cls, connection_string, **kwargs):
-        # type: (Type[ClientType], str, Any) -> ClientType
+    def from_connection_string(cls, connection_string, hub, **kwargs):
+        # type: (Type[ClientType], str, str, Any) -> ClientType
         """Create a new WebPubSubServiceClient from a connection string.
         :param connection_string: Connection string
         :type connection_string: ~str
+        :param hub: Target hub name, which should start with alphabetic characters and only contain
+         alpha-numeric characters or underscore.
+        :type hub: str
         :rtype: WebPubSubServiceClient
         """
         kwargs = _parse_connection_string(connection_string, **kwargs)
 
         credential = AzureKeyCredential(kwargs.pop("accesskey"))
-        return cls(credential=credential, **kwargs)
+        return cls(hub=hub, credential=credential, **kwargs)
 
     @distributed_trace_async
-    async def get_client_access_token(self, hub, **kwargs):
+    async def get_client_access_token(self, **kwargs):
         # type: (str, Any) -> Dict[Any]
         """Build an authentication token.
 
-        :keyword hub: The hub to give access to.
-        :type hub: str
         :keyword user_id: User Id.
         :paramtype user_id: str
         :keyword roles: Roles that the connection with the generated token will have.
@@ -169,7 +180,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         :rtype: ~dict
 
         Example:
-        >>> get_client_access_token(hub='theHub')
+        >>> get_client_access_token()
         {
             'baseUrl': 'wss://contoso.com/api/webpubsub/client/hubs/theHub',
             'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...',
@@ -189,11 +200,12 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
 
         # Switch from http(s) to ws(s) scheme
         client_endpoint = "ws" + endpoint[4:]
+        hub = self._config.hub
         client_url = "{}/client/hubs/{}".format(client_endpoint, hub)
         if isinstance(self._config.credential, AzureKeyCredential):
             token = _get_token_by_key(endpoint, hub, self._config.credential.key, **kwargs)
         else:
-            access_token = await super().get_client_access_token(hub, **kwargs)
+            access_token = await super().get_client_access_token(**kwargs)
             token = access_token.get('token')
 
         return {
