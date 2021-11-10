@@ -85,8 +85,8 @@ test_cases = [
 @pytest.mark.asyncio
 async def test_generate_url_use_same_kid_with_same_key(connection_string, hub, expected_url):
     client = WebPubSubServiceClient.from_connection_string(connection_string)
-    url_1 = await client.get_client_access_token(hub=hub)['url']
-    url_2 = await client.get_client_access_token(hub=hub)['url']
+    url_1 = (await client.get_client_access_token(hub=hub))['url']
+    url_2 = (await client.get_client_access_token(hub=hub))['url']
 
     assert url_1.split("?")[0] == url_2.split("?")[0] == expected_url
 
