@@ -44,7 +44,7 @@ For more new features, changes, and bug fixes, see the [change log](https://gith
 
 ### The client
 
-In the interest of providing a more intuitive experience, we've renamed the top level client to query logs to `LogsQueryClient` from `LogAnalyticsDataClient` which can be authenticated using Azure Active Directory(AAD). This client is the single entry point to both query a single query or a batch query.
+To provide a more intuitive experience, the top-level client to query logs was renamed to `LogsQueryClient` from `LogAnalyticsDataClient`. `LogsQueryClient` can be authenticated using Azure AD. This client is the single entry point to execute a single query or a batch of queries.
 
 #### Consistency
 
