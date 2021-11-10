@@ -6,14 +6,14 @@ Familiarity with the `azure-loganalytics` v0.1.0 package is assumed. If you're n
 
 ## Table of contents
 
-* [Migration benefits](#migration-benefits)
+- [Migration benefits](#migration-benefits)
     - [Cross-service SDK improvements](#cross-service-sdk-improvements)
     - [New features](#new-features)
-* [Important changes](#important-changes)
+- [Important changes](#important-changes)
     - [The client](#the-client)
     - [Client constructors and authentication](#client-constructors-and-authentication)
     - [Send a single query request](#sending-a-single-query-request)
-* [Additional samples](#additional-samples)
+- [Additional samples](#additional-samples)
 
 ## Migration benefits
 
@@ -21,11 +21,11 @@ A natural question to ask when considering whether to adopt a new version or lib
 
 Several areas of consistent feedback were expressed across the Azure client library ecosystem. One of the most important is that the client libraries for different Azure services haven't had a consistent approach to organization, naming, and API structure. Additionally, many developers have felt that the learning curve was too steep. The APIs didn't offer an approachable and consistent onboarding story for those learning Azure or exploring a specific Azure service.
 
-To improve the development experience across Azure services, a set of uniform [design guidelines](https://azure.github.io/azure-sdk/general_introduction.html) was created for all languages to drive a consistent experience with established API patterns for all services. A set of [Python-specific guidelines](https://azure.github.io/azure-sdk/python/guidelines/index.html) was also introduced to ensure that Python clients have a natural and idiomatic feel with respect to the Python ecosystem. Further details are available in the guidelines for those interested.
+To improve the development experience across Azure services, a set of uniform [design guidelines](https://azure.github.io/azure-sdk/general_introduction.html) was created for all languages to drive a consistent experience with established API patterns for all services. A set of [Python-specific guidelines](https://azure.github.io/azure-sdk/python/guidelines/index.html) was also introduced to ensure that Python clients have a natural and idiomatic feel with respect to the Python ecosystem. Further details are available in the guidelines.
 
 ### Cross-service SDK improvements
 
-The Azure Monitor Query client library also provides the ability to share in some of the cross-service improvements made to the Azure development experience. Examples include:
+The Azure Monitor Query client library also takes advantage of the cross-service improvements made to the Azure development experience. Examples include:
 
 - Using the new [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md) library to share a single authentication approach between clients.
 - A unified logging and diagnostics pipeline offering a common view of the activities across each of the client libraries.
@@ -34,7 +34,7 @@ The Azure Monitor Query client library also provides the ability to share in som
 
 There are a variety of new features in version 1.0 of the Monitor Query library. Some include:
 
-- The ability to query a batch of queries with the `LogsQueryClient.query_batch()` API.
+- The ability to execute a batch of queries with the `LogsQueryClient.query_batch()` API.
 - The ability to configure the retry policy used by the operations on the client.
 - Authentication with Azure Active Directory (Azure AD) credentials using [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md).
 
@@ -48,7 +48,7 @@ To provide a more intuitive experience, the top-level client to query logs was r
 
 #### Consistency
 
-We now have methods with similar names, signatures, and locations to create senders and receivers. The result is consistency and predictability on the various features of the library.
+There are now methods with similar names, signatures, and locations to create senders and receivers. The result is consistency and predictability on the various features of the library.
 
 ### Client constructors and authentication
 
