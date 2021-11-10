@@ -1,5 +1,15 @@
 # Release History
 
+## 12.10.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 12.10.0b1 (2021-11-08)
 **New Features**
 - Account level SAS tokens now support two new permissions:
