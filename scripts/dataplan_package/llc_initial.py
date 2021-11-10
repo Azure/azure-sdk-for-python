@@ -97,10 +97,10 @@ def build_package(**kwargs) -> None:
                 fd.write(result)
 
     # generate test framework
-    generate_test_sample(_TEMPLATE_TESTS, work_path / 'tests', **kwargs)
+    generate_test_sample(_TEMPLATE_TESTS, work_path / Path('tests'), **kwargs)
 
     # generate sample framework
-    generate_test_sample(_TEMPLATE_SAMPLES, work_path / 'samples', **kwargs)
+    generate_test_sample(_TEMPLATE_SAMPLES, work_path / Path('samples'), **kwargs)
 
     _LOGGER.info("Build complete: %s", package_name)
 
@@ -125,7 +125,7 @@ if __name__ == "__main__":
         "--input-file", "-f",
         dest="input_file",
         required=True,
-        help="abslute path of swagger input file. For example: `https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/webpubsub/data-plane/WebPubSub/stable/2021-10-01/webpubsub.json`"
+        help="absolute path of swagger input file. For example: `https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/webpubsub/data-plane/WebPubSub/stable/2021-10-01/webpubsub.json`"
              " or `D:\\azure-rest-api-specs\\specification\\webpubsub\\data-plane\\WebPubSub\\stable\\2021-10-01\\webpubsub.json`",
     )
     parser.add_argument(
@@ -154,5 +154,9 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
+    main_logger = logging.getLogger()
+    logging.basicConfig()
+    main_logger.setLevel(logging.INFO)
+
     parameters = vars(args)
     main(**parameters)
