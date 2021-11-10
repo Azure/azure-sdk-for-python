@@ -10,12 +10,6 @@
   - `SchemaParseError` and `SchemaDeserializationError` may be raised for errors when calling `deserialize` on `AvroSerializer`.
   - Depends on `azure-schemaregistry>=1.0.0,<2.0.0`.
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
-
 ## 1.0.0b3 (2021-10-06)
 
 ### Features Added
