@@ -46,7 +46,7 @@ except KeyError:
 
 # Build a client through AAD
 # If you want to know more about the effect of `reverse_proxy_endpoint`, please reference: https://github.com/Azure/azure-webpubsub/issues/194
-client = WebPubSubServiceClient(credential=DefaultAzureCredential(), endpoint=endpoint, hub='hub', reverse_proxy_endpoint=reverse_proxy_endpoint)
+client = WebPubSubServiceClient(endpoint=endpoint, hub='hub', credential=DefaultAzureCredential(), reverse_proxy_endpoint=reverse_proxy_endpoint)
 
 # Send a json message to everybody on the given hub...
 try:

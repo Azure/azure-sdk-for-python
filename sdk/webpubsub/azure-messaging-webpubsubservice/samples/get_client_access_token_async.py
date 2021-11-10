@@ -47,7 +47,7 @@ async def main():
 
     # Build a client through AAD(async)
     async with DefaultAzureCredential() as credential:
-        async with WebPubSubServiceClientAsync(credential=credential, endpoint=endpoint, hub='hub') as client_aad_async:
+        async with WebPubSubServiceClientAsync(endpoint=endpoint, hub='hub', credential=credential) as client_aad_async:
             # Build authentication token(async)
             token_aad_async = await client_aad_async.get_client_access_token()
             print('token by AAD(async): {}'.format(token_aad_async))
