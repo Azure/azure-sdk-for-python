@@ -23,6 +23,9 @@ from .operations import DirectLineOperations
 from .operations import Operations
 from .operations import BotConnectionOperations
 from .operations import HostSettingsOperations
+from .operations import OperationResultsOperations
+from .operations import PrivateEndpointConnectionsOperations
+from .operations import PrivateLinkResourcesOperations
 from .. import models
 
 
@@ -41,11 +44,18 @@ class AzureBotService(object):
     :vartype bot_connection: azure.mgmt.botservice.aio.operations.BotConnectionOperations
     :ivar host_settings: HostSettingsOperations operations
     :vartype host_settings: azure.mgmt.botservice.aio.operations.HostSettingsOperations
+    :ivar operation_results: OperationResultsOperations operations
+    :vartype operation_results: azure.mgmt.botservice.aio.operations.OperationResultsOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
+    :vartype private_endpoint_connections: azure.mgmt.botservice.aio.operations.PrivateEndpointConnectionsOperations
+    :ivar private_link_resources: PrivateLinkResourcesOperations operations
+    :vartype private_link_resources: azure.mgmt.botservice.aio.operations.PrivateLinkResourcesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
     :param str base_url: Service URL
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
@@ -76,6 +86,12 @@ class AzureBotService(object):
         self.bot_connection = BotConnectionOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.host_settings = HostSettingsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.operation_results = OperationResultsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
