@@ -18,7 +18,10 @@ resources:
 
 steps:
   - checkout: self
+    path: s
+
   - checkout: azure-sdk-tools
+    path: s/azure-sdk-tools
 
   - template: ../../eng/common/TestResources/deploy-test-resources.yml
     parameters:
