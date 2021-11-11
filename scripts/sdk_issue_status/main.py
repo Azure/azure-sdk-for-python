@@ -11,7 +11,7 @@ _NULL = ' '
 _BASE_ASSIGNEE = 'msyyc'
 _BASE_LABEL = 'Mgmt'
 _EPIC = 'Epic'
-_FILE_OUT_PYTHON = 'sdk_python_status.md'
+_FILE_OUT_PYTHON = 'sdk_issue_status.md'
 issue_no = 1
 _ASSIGNEES = ['msyyc', 'BigCat20196', 'RAY-316']
 
@@ -29,8 +29,6 @@ def output_python_md(issue_status):
         file_out.write(
             '| No. | issue | title | labels | assignee | bot advice | created date |\n')
         file_out.write('| ------ | ------ | ------ | ------ | ------ | ------ | ------ |\n')
-        # for item in issue_status:
-        #     file_out.writelines(item.output_python())
         file_out.writelines([item.output_python() for item in issue_status])
 
 
@@ -59,11 +57,14 @@ class IssueStatus:
 
     def output_python(self):
         labels = self.labels
+        title = self.title
+        if len(self.title) > 25:
+            title = '-<br/>'.join(self.title[t*23:t*23+23] for t in range(len(self.title)//23+1))
         create_date = str(date.fromtimestamp(self.create_date).strftime('%m-%d'))
         return '| {} | [#{}]({}) | {} | {} | {} | {} | {}  |\n'.format(self.no, self.link.split('/')[-1], self.link,
-                                                                  self.title, labels, self.is_assignee_null(),
-                                                                  self.bot_advice, create_date,
-                                                                  )
+                                                                       title, labels, self.is_assignee_null(),
+                                                                       self.bot_advice, create_date,
+                                                                       )
 
 
 def main():
