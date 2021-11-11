@@ -25,8 +25,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class AddonsOperations(object):
-    """AddonsOperations operations.
+class VirtualMachinesOperations(object):
+    """VirtualMachinesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -51,23 +51,26 @@ class AddonsOperations(object):
         self,
         resource_group_name,  # type: str
         private_cloud_name,  # type: str
+        cluster_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.AddonList"]
-        """List addons in a private cloud.
+        # type: (...) -> Iterable["_models.VirtualMachinesList"]
+        """List of virtual machines in a private cloud cluster.
 
-        List addons in a private cloud.
+        List of virtual machines in a private cloud cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud.
         :type private_cloud_name: str
+        :param cluster_name: Name of the cluster in the private cloud.
+        :type cluster_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either AddonList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.avs.models.AddonList]
+        :return: An iterator like instance of either VirtualMachinesList or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.avs.models.VirtualMachinesList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AddonList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachinesList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -87,6 +90,7 @@ class AddonsOperations(object):
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
+                    'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -101,7 +105,7 @@ class AddonsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('AddonList', pipeline_response)
+            deserialized = self._deserialize('VirtualMachinesList', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -122,32 +126,35 @@ class AddonsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/addons'}  # type: ignore
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}/virtualMachines'}  # type: ignore
 
     def get(
         self,
         resource_group_name,  # type: str
         private_cloud_name,  # type: str
-        addon_name,  # type: str
+        cluster_name,  # type: str
+        virtual_machine_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.Addon"
-        """Get an addon by name in a private cloud.
+        # type: (...) -> "_models.VirtualMachine"
+        """Get a virtual machine by id in a private cloud cluster.
 
-        Get an addon by name in a private cloud.
+        Get a virtual machine by id in a private cloud cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud.
         :type private_cloud_name: str
-        :param addon_name: Name of the addon for the private cloud.
-        :type addon_name: str
+        :param cluster_name: Name of the cluster in the private cloud.
+        :type cluster_name: str
+        :param virtual_machine_id: Virtual Machine identifier.
+        :type virtual_machine_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Addon, or the result of cls(response)
-        :rtype: ~azure.mgmt.avs.models.Addon
+        :return: VirtualMachine, or the result of cls(response)
+        :rtype: ~azure.mgmt.avs.models.VirtualMachine
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Addon"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachine"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -161,7 +168,8 @@ class AddonsOperations(object):
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
-            'addonName': self._serialize.url("addon_name", addon_name, 'str'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'virtualMachineId': self._serialize.url("virtual_machine_id", virtual_machine_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -181,24 +189,25 @@ class AddonsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Addon', pipeline_response)
+        deserialized = self._deserialize('VirtualMachine', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/addons/{addonName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}/virtualMachines/{virtualMachineId}'}  # type: ignore
 
-    def _create_or_update_initial(
+    def _restrict_movement_initial(
         self,
         resource_group_name,  # type: str
         private_cloud_name,  # type: str
-        addon_name,  # type: str
-        addon,  # type: "_models.Addon"
+        cluster_name,  # type: str
+        virtual_machine_id,  # type: str
+        restrict_movement,  # type: "_models.VirtualMachineRestrictMovement"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.Addon"
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Addon"]
+        # type: (...) -> None
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -208,12 +217,13 @@ class AddonsOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self._create_or_update_initial.metadata['url']  # type: ignore
+        url = self._restrict_movement_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
-            'addonName': self._serialize.url("addon_name", addon_name, 'str'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'virtualMachineId': self._serialize.url("virtual_machine_id", virtual_machine_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -227,172 +237,46 @@ class AddonsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(addon, 'Addon')
+        body_content = self._serialize.body(restrict_movement, 'VirtualMachineRestrictMovement')
         body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('Addon', pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize('Addon', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/addons/{addonName}'}  # type: ignore
-
-    def begin_create_or_update(
-        self,
-        resource_group_name,  # type: str
-        private_cloud_name,  # type: str
-        addon_name,  # type: str
-        addon,  # type: "_models.Addon"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.Addon"]
-        """Create or update a addon in a private cloud.
-
-        Create or update a addon in a private cloud.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param private_cloud_name: The name of the private cloud.
-        :type private_cloud_name: str
-        :param addon_name: Name of the addon for the private cloud.
-        :type addon_name: str
-        :param addon: A addon in the private cloud.
-        :type addon: ~azure.mgmt.avs.models.Addon
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either Addon or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.avs.models.Addon]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Addon"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = self._create_or_update_initial(
-                resource_group_name=resource_group_name,
-                private_cloud_name=private_cloud_name,
-                addon_name=addon_name,
-                addon=addon,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-
-        kwargs.pop('error_map', None)
-        kwargs.pop('content_type', None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('Addon', pipeline_response)
-
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
-            'addonName': self._serialize.url("addon_name", addon_name, 'str'),
-        }
-
-        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        else:
-            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/addons/{addonName}'}  # type: ignore
-
-    def _delete_initial(
-        self,
-        resource_group_name,  # type: str
-        private_cloud_name,  # type: str
-        addon_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-12-01"
-        accept = "application/json"
-
-        # Construct URL
-        url = self._delete_initial.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
-            'addonName': self._serialize.url("addon_name", addon_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202, 204]:
+        if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/addons/{addonName}'}  # type: ignore
+    _restrict_movement_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}/virtualMachines/{virtualMachineId}/restrictMovement'}  # type: ignore
 
-    def begin_delete(
+    def begin_restrict_movement(
         self,
         resource_group_name,  # type: str
         private_cloud_name,  # type: str
-        addon_name,  # type: str
+        cluster_name,  # type: str
+        virtual_machine_id,  # type: str
+        restrict_movement,  # type: "_models.VirtualMachineRestrictMovement"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
-        """Delete a addon in a private cloud.
+        """Enable or disable DRS-driven VM movement restriction.
 
-        Delete a addon in a private cloud.
+        Enable or disable DRS-driven VM movement restriction.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud.
         :type private_cloud_name: str
-        :param addon_name: Name of the addon for the private cloud.
-        :type addon_name: str
+        :param cluster_name: Name of the cluster in the private cloud.
+        :type cluster_name: str
+        :param virtual_machine_id: Virtual Machine identifier.
+        :type virtual_machine_id: str
+        :param restrict_movement: Whether VM DRS-driven movement is restricted (Enabled) or not
+         (Disabled).
+        :type restrict_movement: ~azure.mgmt.avs.models.VirtualMachineRestrictMovement
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling.
@@ -411,10 +295,12 @@ class AddonsOperations(object):
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._delete_initial(
+            raw_result = self._restrict_movement_initial(
                 resource_group_name=resource_group_name,
                 private_cloud_name=private_cloud_name,
-                addon_name=addon_name,
+                cluster_name=cluster_name,
+                virtual_machine_id=virtual_machine_id,
+                restrict_movement=restrict_movement,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -430,7 +316,8 @@ class AddonsOperations(object):
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
-            'addonName': self._serialize.url("addon_name", addon_name, 'str'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'virtualMachineId': self._serialize.url("virtual_machine_id", virtual_machine_id, 'str'),
         }
 
         if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -445,4 +332,4 @@ class AddonsOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/addons/{addonName}'}  # type: ignore
+    begin_restrict_movement.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}/virtualMachines/{virtualMachineId}/restrictMovement'}  # type: ignore

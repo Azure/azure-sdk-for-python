@@ -12,15 +12,17 @@ from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
+from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class HcxEnterpriseSitesOperations:
-    """HcxEnterpriseSitesOperations async operations.
+class VirtualMachinesOperations:
+    """VirtualMachinesOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -45,22 +47,25 @@ class HcxEnterpriseSitesOperations:
         self,
         resource_group_name: str,
         private_cloud_name: str,
+        cluster_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.HcxEnterpriseSiteList"]:
-        """List HCX Enterprise Sites in a private cloud.
+    ) -> AsyncIterable["_models.VirtualMachinesList"]:
+        """List of virtual machines in a private cloud cluster.
 
-        List HCX Enterprise Sites in a private cloud.
+        List of virtual machines in a private cloud cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud.
         :type private_cloud_name: str
+        :param cluster_name: Name of the cluster in the private cloud.
+        :type cluster_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either HcxEnterpriseSiteList or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.avs.models.HcxEnterpriseSiteList]
+        :return: An iterator like instance of either VirtualMachinesList or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.avs.models.VirtualMachinesList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HcxEnterpriseSiteList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachinesList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -80,6 +85,7 @@ class HcxEnterpriseSitesOperations:
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
+                    'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -94,7 +100,7 @@ class HcxEnterpriseSitesOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('HcxEnterpriseSiteList', pipeline_response)
+            deserialized = self._deserialize('VirtualMachinesList', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -115,31 +121,34 @@ class HcxEnterpriseSitesOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/hcxEnterpriseSites'}  # type: ignore
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}/virtualMachines'}  # type: ignore
 
     async def get(
         self,
         resource_group_name: str,
         private_cloud_name: str,
-        hcx_enterprise_site_name: str,
+        cluster_name: str,
+        virtual_machine_id: str,
         **kwargs: Any
-    ) -> "_models.HcxEnterpriseSite":
-        """Get an HCX Enterprise Site by name in a private cloud.
+    ) -> "_models.VirtualMachine":
+        """Get a virtual machine by id in a private cloud cluster.
 
-        Get an HCX Enterprise Site by name in a private cloud.
+        Get a virtual machine by id in a private cloud cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud.
         :type private_cloud_name: str
-        :param hcx_enterprise_site_name: Name of the HCX Enterprise Site in the private cloud.
-        :type hcx_enterprise_site_name: str
+        :param cluster_name: Name of the cluster in the private cloud.
+        :type cluster_name: str
+        :param virtual_machine_id: Virtual Machine identifier.
+        :type virtual_machine_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: HcxEnterpriseSite, or the result of cls(response)
-        :rtype: ~azure.mgmt.avs.models.HcxEnterpriseSite
+        :return: VirtualMachine, or the result of cls(response)
+        :rtype: ~azure.mgmt.avs.models.VirtualMachine
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HcxEnterpriseSite"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachine"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -153,7 +162,8 @@ class HcxEnterpriseSitesOperations:
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
-            'hcxEnterpriseSiteName': self._serialize.url("hcx_enterprise_site_name", hcx_enterprise_site_name, 'str'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'virtualMachineId': self._serialize.url("virtual_machine_id", virtual_machine_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -173,40 +183,24 @@ class HcxEnterpriseSitesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('HcxEnterpriseSite', pipeline_response)
+        deserialized = self._deserialize('VirtualMachine', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/hcxEnterpriseSites/{hcxEnterpriseSiteName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}/virtualMachines/{virtualMachineId}'}  # type: ignore
 
-    async def create_or_update(
+    async def _restrict_movement_initial(
         self,
         resource_group_name: str,
         private_cloud_name: str,
-        hcx_enterprise_site_name: str,
-        hcx_enterprise_site: "_models.HcxEnterpriseSite",
+        cluster_name: str,
+        virtual_machine_id: str,
+        restrict_movement: "_models.VirtualMachineRestrictMovement",
         **kwargs: Any
-    ) -> "_models.HcxEnterpriseSite":
-        """Create or update an HCX Enterprise Site in a private cloud.
-
-        Create or update an HCX Enterprise Site in a private cloud.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param private_cloud_name: The name of the private cloud.
-        :type private_cloud_name: str
-        :param hcx_enterprise_site_name: Name of the HCX Enterprise Site in the private cloud.
-        :type hcx_enterprise_site_name: str
-        :param hcx_enterprise_site: The HCX Enterprise Site.
-        :type hcx_enterprise_site: ~azure.mgmt.avs.models.HcxEnterpriseSite
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: HcxEnterpriseSite, or the result of cls(response)
-        :rtype: ~azure.mgmt.avs.models.HcxEnterpriseSite
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HcxEnterpriseSite"]
+    ) -> None:
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -216,12 +210,13 @@ class HcxEnterpriseSitesOperations:
         accept = "application/json"
 
         # Construct URL
-        url = self.create_or_update.metadata['url']  # type: ignore
+        url = self._restrict_movement_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
-            'hcxEnterpriseSiteName': self._serialize.url("hcx_enterprise_site_name", hcx_enterprise_site_name, 'str'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'virtualMachineId': self._serialize.url("virtual_machine_id", virtual_machine_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -235,85 +230,98 @@ class HcxEnterpriseSitesOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(hcx_enterprise_site, 'HcxEnterpriseSite')
+        body_content = self._serialize.body(restrict_movement, 'VirtualMachineRestrictMovement')
         body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('HcxEnterpriseSite', pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize('HcxEnterpriseSite', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/hcxEnterpriseSites/{hcxEnterpriseSiteName}'}  # type: ignore
-
-    async def delete(
-        self,
-        resource_group_name: str,
-        private_cloud_name: str,
-        hcx_enterprise_site_name: str,
-        **kwargs: Any
-    ) -> None:
-        """Delete an HCX Enterprise Site in a private cloud.
-
-        Delete an HCX Enterprise Site in a private cloud.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param private_cloud_name: Name of the private cloud.
-        :type private_cloud_name: str
-        :param hcx_enterprise_site_name: Name of the HCX Enterprise Site in the private cloud.
-        :type hcx_enterprise_site_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-12-01"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.delete.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
-            'hcxEnterpriseSiteName': self._serialize.url("hcx_enterprise_site_name", hcx_enterprise_site_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/hcxEnterpriseSites/{hcxEnterpriseSiteName}'}  # type: ignore
+    _restrict_movement_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}/virtualMachines/{virtualMachineId}/restrictMovement'}  # type: ignore
+
+    async def begin_restrict_movement(
+        self,
+        resource_group_name: str,
+        private_cloud_name: str,
+        cluster_name: str,
+        virtual_machine_id: str,
+        restrict_movement: "_models.VirtualMachineRestrictMovement",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Enable or disable DRS-driven VM movement restriction.
+
+        Enable or disable DRS-driven VM movement restriction.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param private_cloud_name: Name of the private cloud.
+        :type private_cloud_name: str
+        :param cluster_name: Name of the cluster in the private cloud.
+        :type cluster_name: str
+        :param virtual_machine_id: Virtual Machine identifier.
+        :type virtual_machine_id: str
+        :param restrict_movement: Whether VM DRS-driven movement is restricted (Enabled) or not
+         (Disabled).
+        :type restrict_movement: ~azure.mgmt.avs.models.VirtualMachineRestrictMovement
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._restrict_movement_initial(
+                resource_group_name=resource_group_name,
+                private_cloud_name=private_cloud_name,
+                cluster_name=cluster_name,
+                virtual_machine_id=virtual_machine_id,
+                restrict_movement=restrict_movement,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'virtualMachineId': self._serialize.url("virtual_machine_id", virtual_machine_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_restrict_movement.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}/virtualMachines/{virtualMachineId}/restrictMovement'}  # type: ignore
