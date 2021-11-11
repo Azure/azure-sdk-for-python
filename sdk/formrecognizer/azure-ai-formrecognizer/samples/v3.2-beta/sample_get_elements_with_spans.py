@@ -107,21 +107,6 @@ def get_elements_with_spans():
                     line.bounding_box,
                 )
             )
-        for cell in table.cells:
-            print(
-                "...Cell[{}][{}] has content '{}'".format(
-                    cell.row_index,
-                    cell.column_index,
-                    cell.content,
-                )
-            )
-            for region in cell.bounding_regions:
-                print(
-                    "...content on page {} is within bounding box '{}'".format(
-                        region.page_number,
-                        region.bounding_box,
-                    )
-                )
 
     # Below is a method to search for the style of a particular element by using spans.
     # This example uses DocumentEntity, but other elements that also have a `spans` field
