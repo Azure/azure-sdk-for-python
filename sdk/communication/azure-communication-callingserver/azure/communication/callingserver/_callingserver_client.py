@@ -138,9 +138,9 @@ class CallingServerClient(object):
         """Initializes a new instance of CallConnection.
 
         :param str call_connection_id:
-           The thread id for the ChatThreadClient instance.
+           The call connection id for the CallConnection instance.
         :returns: Instance of CallConnection.
-        :rtype: ~azure.communication..callingserver.CallConnection
+        :rtype: ~azure.communication.callingserver.CallConnection
         """
 
         if not call_connection_id:
@@ -338,8 +338,6 @@ class CallingServerClient(object):
         self,
         incoming_call_context,  # type: str
         targets,  # type: List[CommunicationIdentifier]
-        callback_uri=None,  # type: str
-        timeout_in_seconds=None,  # type: int
         **kwargs  # type: Any
     ):  # type: (...) -> None
         """Redirect the call.
@@ -435,6 +433,8 @@ class CallingServerClient(object):
 
         :param call_locator: Required. The call locator.
         :type call_locator: ~azure.communication.callingserver.models.CallLocator
+        :param participant: Required. The identifier of the play audio target participant.
+        :type participant: ~azure.communication.callingserver.models.CommunicationIdentifier
         :param audio_url: Required. The media resource uri of the play audio request.
          Currently only Wave file (.wav) format audio prompts are supported.
          More specifically, the audio content in the wave file must be mono (single-channel),
@@ -443,7 +443,6 @@ class CallingServerClient(object):
         :param is_looped: The flag indicating whether audio file needs to be played in loop or
          not.
         :type is_looped: bool
-
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
         :keyword audio_file_id: An id for the media in the AudioFileUri, using which we cache the media
@@ -482,7 +481,7 @@ class CallingServerClient(object):
         callback_uri,  # type: str
         **kwargs  # type: Any
     ):  # type: (...) -> AddParticipantResult
-        """Answer the call.
+        """Add a participant to the call.
 
         :param call_locator: Required. The call locator.
         :type call_locator: ~azure.communication.callingserver.models.CallLocator
@@ -577,7 +576,7 @@ class CallingServerClient(object):
             call_locator,  # type: CallLocator
             participant,  # type: CommunicationIdentifier
             **kwargs  # type: Any
-        ): # type: (...) -> List["CallParticipant"]
+        ): # type: (...) -> List[CallParticipant]
         """Get participant from the call using identifier.
 
         :param call_locator: Required. The call locator.
@@ -585,7 +584,7 @@ class CallingServerClient(object):
         :param participant: Required. The identifier of the target participant.
         :type participant: ~azure.communication.callingserver.models.CommunicationIdentifier
         :return: list of CallParticipant
-        :rtype: list[~azure.communication.callingserver.models.CallParticipant]
+        :rtype: List[~azure.communication.callingserver.models.CallParticipant]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
@@ -714,7 +713,15 @@ class CallingServerClient(object):
         recording_id,  # type: str
         **kwargs  # type: Any
     ):  # type: (...) -> HttpResponse
+        """Pause recording the call.
 
+        :param recording_id: Required. The recording id.
+        :type recording_id: str
+        :return: The response of the operation.
+        :rtype: ~azure.core.rest.HttpResponse
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
         return self._server_call_client.pause_recording(
             recording_id=recording_id,
             **kwargs
@@ -726,7 +733,15 @@ class CallingServerClient(object):
         recording_id,  # type: str
         **kwargs  # type: Any
     ):  # type: (...) -> HttpResponse
+        """Resume recording the call.
 
+        :param recording_id: Required. The recording id.
+        :type recording_id: str
+        :return: The response of the operation.
+        :rtype: ~azure.core.rest.HttpResponse
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
         return self._server_call_client.resume_recording(
             recording_id=recording_id,
             **kwargs
@@ -738,7 +753,15 @@ class CallingServerClient(object):
         recording_id,  # type: str
         **kwargs  # type: Any
     ):  # type: (...) -> HttpResponse
+        """Stop recording the call.
 
+        :param recording_id: Required. The recording id.
+        :type recording_id: str
+        :return: The response of the operation.
+        :rtype: ~azure.core.rest.HttpResponse
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
         return self._server_call_client.stop_recording(
             recording_id=recording_id,
             **kwargs
@@ -768,9 +791,6 @@ class CallingServerClient(object):
     def download(
         self,
         content_url,  # type: str
-        start_range=None,  # type: int
-        end_range=None,  # type: int
-        parallel_download_options=None,  # type: ParallelDownloadOptions
         **kwargs  # type: Any
     ):  # type: (...) -> ContentStreamDownloader
         """Download using content url.
@@ -818,8 +838,8 @@ class CallingServerClient(object):
 
         :param content_delete_url: Required. The content delete url.
         :type content_delete_url: str
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: The response of the operation.
+        :rtype: ~azure.core.rest.HttpResponse
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """

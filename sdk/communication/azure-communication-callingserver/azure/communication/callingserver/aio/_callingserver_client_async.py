@@ -113,13 +113,13 @@ class CallingServerClient:
         cls,
         conn_str: str,
         **kwargs: Any
-    ) -> 'CallingServerClient':
+    ):  # type: (...) -> CallingServerClient
         """Create CallingServerClient from a Connection String.
 
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
         :returns: Instance of CallingServerClient.
-        :rtype: ~azure.communication.callingserver.CallingServerClient
+        :rtype:  ~azure.communication.phonenumbers.aio.CallingServerClient
 
         .. admonition:: Example:
 
@@ -137,13 +137,14 @@ class CallingServerClient:
     def get_call_connection(
         self,
         call_connection_id: str,
+        **kwargs: Any
     ) -> CallConnection:
         """Initializes a new instance of CallConnection.
 
         :param str call_connection_id:
-           The thread id for the ChatThreadClient instance.
+           The call connection id for the CallConnection instance.
         :returns: Instance of CallConnection.
-        :rtype: ~azure.communication..callingserver.CallConnection
+        :rtype: ~azure.communication.callingserver.aio.CallConnection
         """
         if not call_connection_id:
             raise ValueError("call_connection_id can not be None")
@@ -439,10 +440,8 @@ class CallingServerClient:
 
         :param call_locator: Required. The call locator.
         :type call_locator: ~azure.communication.callingserver.models.CallLocator
-        :param participant: Required. The identifier of the participant.
+        :param participant: Required. The identifier of the play audio target participant.
         :type participant: ~azure.communication.callingserver.models.CommunicationIdentifier
-
-
         :param audio_url: Required. The media resource uri of the play audio request.
          Currently only Wave file (.wav) format audio prompts are supported.
          More specifically, the audio content in the wave file must be mono (single-channel),
@@ -451,7 +450,6 @@ class CallingServerClient:
         :param is_looped: The flag indicating whether audio file needs to be played in loop or
          not.
         :type is_looped: bool
-
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
         :keyword audio_file_id: An id for the media in the AudioFileUri, using which we cache the media
@@ -490,7 +488,23 @@ class CallingServerClient:
         operation_context: Optional[str] = None,
         **kwargs: Any
     ) -> AddParticipantResult:
+        """Add a participant to the call.
 
+        :param call_locator: Required. The call locator.
+        :type call_locator: ~azure.communication.callingserver.models.CallLocator
+        :param participant: Required. The participant to be added to the call.
+        :type participant: ~azure.communication.callingserver.models.CommunicationIdentifier
+        :param callback_uri: Required. The callback URI.
+        :type callback_uri: str
+        :keyword alternate_caller_id: The alternate caller id.
+        :paramtype alternate_caller_id: str
+        :keyword operation_context: The operation context.
+        :paramtype operation_context: str
+        :return: AddParticipantResult
+        :rtype: ~azure.communication.callingserver.AddParticipantResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
         alternate_caller_id = (None
             if alternate_caller_id is None
             else PhoneNumberIdentifierModel(value=alternate_caller_id))
@@ -579,7 +593,7 @@ class CallingServerClient:
         :param participant: Required. The identifier of the target participant.
         :type participant: ~azure.communication.callingserver.models.CommunicationIdentifier
         :return: list of CallParticipant
-        :rtype: list[~azure.communication.callingserver.models.CallParticipant]
+        :rtype: List[~azure.communication.callingserver.models.CallParticipant]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
@@ -708,7 +722,15 @@ class CallingServerClient:
         recording_id: str,
         **kwargs: Any
     ) -> HttpResponse:
+        """Pause recording the call.
 
+        :param recording_id: Required. The recording id.
+        :type recording_id: str
+        :return: The response of the operation.
+        :rtype: ~azure.core.rest.HttpResponse
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
         return await self._server_call_client.pause_recording(
             recording_id=recording_id,
             **kwargs
@@ -720,7 +742,15 @@ class CallingServerClient:
         recording_id: str,
         **kwargs: Any
     ) -> HttpResponse:
+        """Resume recording the call.
 
+        :param recording_id: Required. The recording id.
+        :type recording_id: str
+        :return: The response of the operation.
+        :rtype: ~azure.core.rest.HttpResponse
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
         return await self._server_call_client.resume_recording(
             recording_id=recording_id,
             **kwargs
@@ -732,7 +762,15 @@ class CallingServerClient:
         recording_id: str,
         **kwargs: Any
     ) -> HttpResponse:
+        """Stop recording the call.
 
+        :param recording_id: Required. The recording id.
+        :type recording_id: str
+        :return: The response of the operation.
+        :rtype: ~azure.core.rest.HttpResponse
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
         return await self._server_call_client.stop_recording(
             recording_id=recording_id,
             **kwargs
@@ -812,8 +850,8 @@ class CallingServerClient:
 
         :param content_delete_url: Required. The content delete url.
         :type content_delete_url: str
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: The response of the operation.
+        :rtype: ~azure.core.rest.HttpResponse
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
