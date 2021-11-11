@@ -78,6 +78,8 @@ class WebPubSubServiceClientConfiguration(Configuration):
         **kwargs: Any
     ) -> None:
         super(WebPubSubServiceClientConfiguration, self).__init__(**kwargs)
+        if kwargs.get("port") and endpoint:
+            endpoint = endpoint.rstrip("/") + ":{}".format(kwargs.pop('port'))
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
         if hub is None:
@@ -101,11 +103,11 @@ class WebPubSubServiceClientConfiguration(Configuration):
     ) -> None:
         self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
+        self.proxy_policy = kwargs.get('proxy_policy') or ApiManagementProxy(**kwargs)
         self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
         self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
         self.retry_policy = kwargs.get('retry_policy') or policies.AsyncRetryPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get('custom_hook_policy') or ApiManagementProxy(**kwargs)
+        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get('authentication_policy')
         if self.credential and not self.authentication_policy:
@@ -168,6 +170,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         user_id: Optional[str] = None,
         roles: Optional[List[str]] = None,
         minutes_to_expire: Optional[int] = 60,
+        jwt_headers: Dict[str, Any] = None,
         **kwargs: Any
     ) -> JSONType:
         """Generate token for the client to connect Azure Web PubSub service.
@@ -180,6 +183,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         :paramtype roles: list[str]
         :keyword minutes_to_expire: The expire time of the generated token.
         :paramtype minutes_to_expire: int
+        :keyword dict[str, any] jwt_headers: Any headers you want to pass to jwt encoding.
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
@@ -220,6 +224,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
                 user_id=user_id,
                 roles=roles,
                 minutes_to_expire=minutes_to_expire,
+                jwt_headers=jwt_headers or {},
                 **kwargs
             )
         else:

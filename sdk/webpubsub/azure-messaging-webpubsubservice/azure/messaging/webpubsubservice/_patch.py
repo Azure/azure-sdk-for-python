@@ -38,7 +38,7 @@ from msrest import Deserializer, Serializer
 from azure.core.pipeline import policies
 from azure.core import PipelineClient
 from azure.core.configuration import Configuration
-from azure.core.pipeline.policies import SansIOHTTPPolicy, CustomHookPolicy
+from azure.core.pipeline.policies import SansIOHTTPPolicy, ProxyPolicy
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
@@ -90,6 +90,7 @@ def _get_token_by_key(endpoint, hub, key, **kwargs):
     :type hub: str
     :param key: The access key
     :type hub: str
+    :keyword dict[str, any] jwt_headers: Any headers you want to pass to jwt encoding.
     :returns: token
     :rtype: str
     """
@@ -108,14 +109,14 @@ def _get_token_by_key(endpoint, hub, key, **kwargs):
     if roles:
         payload["role"] = roles
 
-    return six.ensure_str(jwt.encode(payload, key, algorithm="HS256"))
+    return six.ensure_str(jwt.encode(payload, key, algorithm="HS256", headers=kwargs.pop("jwt_headers", {})))
 
 
 def _parse_connection_string(connection_string, **kwargs):
     # type: (str, Any) -> JSONType
     for segment in connection_string.split(";"):
         if "=" in segment:
-            key, value = segment.split("=", maxsplit=1)
+            key, value = segment.split("=", 1)
             key = key.lower()
             if key not in ("version",):
                 kwargs.setdefault(key, value)
@@ -180,10 +181,10 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
         return six.ensure_str(encoded)
 
 
-class ApiManagementProxy(CustomHookPolicy):
+class ApiManagementProxy(ProxyPolicy):
 
     def __init__(self, **kwargs):
-        # type: (typing.Optional[str], typing.Optional[str]) -> None
+        # type: (Any) -> None
         """Create a new instance of the policy.
 
         :param endpoint: endpoint to be replaced
@@ -191,9 +192,10 @@ class ApiManagementProxy(CustomHookPolicy):
         :param proxy_endpoint: proxy endpoint
         :type proxy_endpoint: str
         """
+        super(ApiManagementProxy, self).__init__(**kwargs)
         self._endpoint = kwargs.pop('origin_endpoint', None)
         self._reverse_proxy_endpoint = kwargs.pop('reverse_proxy_endpoint', None)
-        super(ApiManagementProxy, self).__init__(**kwargs)
+
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None
@@ -255,11 +257,11 @@ class WebPubSubServiceClientConfiguration(Configuration):
         # type: (...) -> None
         self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
+        self.proxy_policy = kwargs.get('proxy_policy') or ApiManagementProxy(**kwargs)
         self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
         self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
         self.retry_policy = kwargs.get('retry_policy') or policies.RetryPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get('custom_hook_policy') or ApiManagementProxy(**kwargs)
+        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get('authentication_policy')
         if self.credential and not self.authentication_policy:
@@ -292,6 +294,8 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
+        if kwargs.get("port") and endpoint:
+            endpoint = endpoint.rstrip("/") + ":{}".format(kwargs.pop('port'))
         kwargs['origin_endpoint'] = endpoint
         _endpoint = '{Endpoint}'
         self._config = WebPubSubServiceClientConfiguration(hub=hub, endpoint=endpoint, credential=credential, **kwargs)
@@ -329,6 +333,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         :paramtype roles: list[str]
         :keyword minutes_to_expire: The expire time of the generated token.
         :paramtype minutes_to_expire: int
+        :keyword dict[str, any] jwt_headers: Any headers you want to pass to jwt encoding.
         :returns: JSON response containing the web socket endpoint, the token and a url with the generated access token.
         :rtype: JSONType
 
@@ -355,8 +360,9 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         client_endpoint = "ws" + endpoint[4:]
         hub = self._config.hub
         client_url = "{}/client/hubs/{}".format(client_endpoint, hub)
+        jwt_headers = kwargs.pop("jwt_headers", {})
         if isinstance(self._config.credential, AzureKeyCredential):
-            token = _get_token_by_key(endpoint, hub, self._config.credential.key, **kwargs)
+            token = _get_token_by_key(endpoint, hub, self._config.credential.key, jwt_headers=jwt_headers, **kwargs)
         else:
             token = super(WebPubSubServiceClient, self).get_client_access_token(**kwargs).get('token')
 
