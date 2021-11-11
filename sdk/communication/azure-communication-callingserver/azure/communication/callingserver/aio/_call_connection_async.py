@@ -86,7 +86,7 @@ class CallConnection:
             self,
             **kwargs: Any
         ) -> None:
-        """Delete the call.
+        """Terminates the conversation for all participants in the call.
 
         :return: None
         :rtype: None
@@ -137,7 +137,7 @@ class CallConnection:
             self,
             **kwargs: Any
         ) -> None:
-        """Cancel all media operations.
+        """Cancels all the currently active and pending PlayAudio operations in the call.
 
         :return: None
         :rtype: None
@@ -389,7 +389,7 @@ class CallConnection:
             participant: CommunicationIdentifier,
             **kwargs: Any
         ) -> None:
-        """Mute participant in the call.
+        """Mutes the participant
 
         :param participant: Required. The identifier of the participant to be muted in the call.
         :type participant: ~azure.communication.callingserver.models.CommunicationIdentifier
@@ -439,7 +439,8 @@ class CallConnection:
             participant: CommunicationIdentifier,
             **kwargs: Any
         ) -> None:
-        """Hold meeting audio of a participant in the call.
+        """Removes the participant from the meeting's default audio mix so the participant
+         does not hear anything from the meeting and cannot add audio into the meeting.
 
         :param participant: Required. The identifier of the participant.
         :type participant: ~azure.communication.callingserver.models.CommunicationIdentifier
@@ -464,7 +465,8 @@ class CallConnection:
             participant: CommunicationIdentifier,
             **kwargs: Any
         )  -> None:
-        """Resume meeting audio of a participant in the call.
+        """Adds the participant back into the meeting's default audio mix so the participant
+         begins to hear everything from the meeting and can add audio into the meeting.
 
         :param participant: Required. The identifier of the participant.
         :type participant: ~azure.communication.callingserver.models.CommunicationIdentifier
