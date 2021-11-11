@@ -657,9 +657,9 @@ class ContainerProxy(object):
     @distributed_trace_async
     async def read_conflict(
         self,
-        conflict,
-        partition_key,
-        **kwargs
+        conflict, # type: Union[str, Dict[str, Any]]
+        partition_key, # type: Any
+        **kwargs # type: Any
     ):
         # type: (Union[str, Dict[str, Any]], Any, Any) -> Dict[str, Any]
         """Get the conflict identified by `conflict`.
@@ -686,9 +686,9 @@ class ContainerProxy(object):
     @distributed_trace_async
     async def delete_conflict(
         self,
-        conflict,
-        partition_key,
-        **kwargs
+        conflict, # type: Union[str, Dict[str, Any]]
+        partition_key, # type: Any
+        **kwargs # type: Any
     ):
         # type: (Union[str, Dict[str, Any]], Any, Any) -> None
         """Delete a specified conflict from the container.
