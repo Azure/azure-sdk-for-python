@@ -889,7 +889,8 @@ class ImageTemplateVmProfile(msrest.serialization.Model):
     """Describes the virtual machine used to build, customize and capture images.
 
     :param vm_size: Size of the virtual machine used to build, customize and capture images. Omit
-     or specify empty string to use the default (Standard_D1_v2).
+     or specify empty string to use the default (Standard_D1_v2 for Gen1 images and Standard_D2ds_v4
+     for Gen2 images).
     :type vm_size: str
     :param os_disk_size_gb: Size of the OS disk in GB. Omit or specify 0 to use Azure's default OS
      disk size.
