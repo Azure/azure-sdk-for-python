@@ -106,6 +106,7 @@ class JsonWebKeyOperation(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     WRAP_KEY = "wrapKey"
     UNWRAP_KEY = "unwrapKey"
     IMPORT_ENUM = "import"
+    RELEASE = "release"
 
 class JsonWebKeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of the key. For valid values, see JsonWebKeyType.
@@ -135,8 +136,10 @@ class KeyPermissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RESTORE = "restore"
     RECOVER = "recover"
     PURGE = "purge"
-    RELEASE = "release"
     ROTATE = "rotate"
+    GETROTATIONPOLICY = "getrotationpolicy"
+    SETROTATIONPOLICY = "setrotationpolicy"
+    RELEASE = "release"
 
 class KeyRotationPolicyActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of action.
