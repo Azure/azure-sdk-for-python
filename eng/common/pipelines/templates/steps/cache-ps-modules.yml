@@ -1,6 +1,6 @@
 steps:
 - pwsh: |
-    . ../../../scripts/Helpers/PSModule-Helpers.ps1
+    . ./eng/common/scripts/Helpers/PSModule-Helpers.ps1
     Write-Host "##vso[task.setvariable variable=CachedPSModulePath]$global:CurrentUserModulePath"
   displayName: Set PS Modules Cache Directory
   # Containers should bake modules into the image to save on pipeline time
