@@ -1,6 +1,6 @@
 # Release History
 
-## 4.5.0b5 (Unreleased)
+## 4.5.0b5 (2021-11-11)
 
 ### Features Added
 - Added support for multi-tenant authentication when using `azure-identity` 1.7.1 or newer
@@ -13,8 +13,6 @@
   has been removed.
 - Renamed the `version` keyword-only argument in `KeyClient.get_cryptography_client` to
   `key_version`.
-
-### Bugs Fixed
 
 ### Other Changes
 - Updated minimum `azure-core` version to 1.15.0
