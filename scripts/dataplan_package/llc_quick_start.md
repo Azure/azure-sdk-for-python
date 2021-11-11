@@ -72,11 +72,12 @@ After [Create](#Create), there will be `READMD.md` under `swagger` folder of `ou
 autorest --version=3.6.2 --python --track2 --use=@autorest/python@5.11.1 --use=@autorest/modelerfour@4.19.2 --python-mode=update D:\azure-sdk-for-python\sdk\llcexample\azure-messaging-webpubsubserviceexample\swagger\README.md
 ```
 
-If you want to try latest autorest, run the following command:
+(If you want to try latest autorest, run the following command instead:
 
 ```
 autorest --python --track2 --use=@autorest/python@latest --use=@autorest/modelerfour@latest --python-mode=update D:\azure-sdk-for-python\sdk\llcexample\azure-messaging-webpubsubserviceexample\swagger\README.md
 ```
+)
 
 
 
