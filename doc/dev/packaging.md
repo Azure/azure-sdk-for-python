@@ -1,26 +1,25 @@
 # Azure packaging
 
-This article describes how to declare setup.py and all packaging information for packages inside the `azure` namespace
+This article describes the recommendation on how to define namespace packaging to release a package inside the `azure` namespace. Being inside the `azure` namespace meaning you have a service `myservice` that you want to import using:
+```python
+import azure.myservice
+```
 
 Namespace packaging is complicated in Python, here's a few reading if you still doubt it:
 - https://packaging.python.org/guides/packaging-namespace-packages/
 - https://www.python.org/dev/peps/pep-0420/
 - https://github.com/pypa/sample-namespace-packages
 
-This article describes the recommendation on how to define namespace packaging to release a package inside the `azure` namespace. Being inside the `azure` namespace meaning you have a service `myservice` that you want to import using:
-```python
-import azure.myservice
-```
-
 Note:
-- This article is not about setup.py or setup.cfg or the right way to *write* the packaging, it's about what instructions you should use to achieve this. If you are fluent in setuptools, and prefer to write the suggestions in setup.cfg and not in setup.py, this is not a concern.
+While this article provides example using setup.py, there is no problem with achieving it with setup.cfg or other methods, as long as the constraints on the final wheels/sdist are met.
+
+*This page has been updated to be Python 3 only packages as we do not recommend to support Python 2 after January 1st 2022.* If you still want to support Python 2 for some reasons, there is a section at the bottom with some details (or you have the Github history, to read the page as it was on November 1st 2021).
 
 # What are the constraints?
 
 We want to build sdist and wheels in order to follow the following constraints:
 - Solution should work with *recent* versions of pip and setuptools (not the very latest only, but not archaeology either)
-- Wheels must work with Python 2.7 and 3.6+
-- easy-install scenario is a plus, but cannot be considered critical anymore
+- Wheels must work with Python 3.6+
 - mixed dev installation and PyPI installation should be explicitly addressed
 
 # What do I do in my files to achieve that
@@ -55,13 +54,9 @@ The "packages" section MUST EXCLUDE the `azure` package. Example:
     ]),
 ```
 
-The "extras_requires" section MUST include a conditional dependency on "azure-nspkg" for Python 2. There is also a conditional dependency on "typing" for Python 3.5 because of the type-hinting for Python 3.5 and above. Example:
-
+Since the package is Python 3 only, you must notify it in the setup.py as well:
 ```python
-    extras_require={
-        ":python_version<'3.0'": ['azure-nspkg'],
-        ":python_version<'3.5'": ['typing'],
-    }
+    python_requires=">=3.6",
 ```
 
 Example of a full setup.py
@@ -113,16 +108,15 @@ setup(
     classifiers=[
         'Development Status :: 4 - Beta',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'License :: OSI Approved :: MIT License',
     ],
+    python_requires=">=3.6",
     zip_safe=False,
     packages=find_packages(exclude=[
         'tests',
@@ -134,17 +128,24 @@ setup(
         'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1',
     ],
-    extras_require={
-        ":python_version<'3.0'": ['azure-nspkg'],
-        ":python_version<'3.5'": ['typing'],
-    }
 )
 ```
 
-This syntax works with setuptools >= 17.1 and pip >= 6.0, which is considered enough to support in 2019.
+This syntax works with setuptools >= 24.2.0 (July 2016) and pip >= 9.0 (Nov 2016), which is considered enough to support in 2021.
 
 # How can I check if my packages are built correctly?
 
 - wheels must NOT contain a `azure/__init__.py` file (you can open it with a zip util to check)
-- wheels installs `azure-nskpg` ONLY on Python 2.
 - sdist must contain a `azure/__init__.py` file that declares `azure` as a namespace package using the `pkgutil` syntax
+
+# Note on Python 2
+
+The "extras_requires" section MUST include a conditional dependency on "azure-nspkg" for Python 2. Example:
+
+```python
+    extras_require={
+        ":python_version<'3.0'": ['azure-nspkg'],
+    }
+```
+
+An additional verification is that wheels installs `azure-nskpg` ONLY on Python 2.
