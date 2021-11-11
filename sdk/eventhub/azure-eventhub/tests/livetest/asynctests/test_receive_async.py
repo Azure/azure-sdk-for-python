@@ -103,8 +103,6 @@ async def test_receive_with_event_position_async(connstr_senders, position, incl
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_owner_level_async(connstr_senders):
-    app_prop = {"raw_prop": "raw_value"}
-
     async def on_event(partition_context, event):
         pass
     async def on_error(partition_context, error):
@@ -128,7 +126,7 @@ async def test_receive_owner_level_async(connstr_senders):
         for i in range(5):
             ed = EventData("Event Number {}".format(i))
             senders[0].send(ed)
-        await asyncio.sleep(10)
+        await asyncio.sleep(20)
     await task1
     await task2
     assert isinstance(on_error.error, EventHubError)
