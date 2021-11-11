@@ -10,10 +10,8 @@ from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.identity import CommunicationTokenScope
 from azure.core.credentials import AccessToken
 from _shared.helper import URIIdentityReplacer
-from _shared.testcase import (
-    CommunicationTestCase,
-    BodyReplacerProcessor
-)
+from _shared.testcase import BodyReplacerProcessor
+from testcase import CommunicationIdentityTestCase
 from _shared.communication_service_preparer import CommunicationPreparer
 from _shared.utils import get_http_logging_policy
 from azure.identity import DefaultAzureCredential
@@ -26,7 +24,7 @@ class FakeTokenCredential(object):
     def get_token(self, *args):
         return self.token
 
-class CommunicationIdentityClientTest(CommunicationTestCase):
+class CommunicationIdentityClientTest(CommunicationIdentityTestCase):
     def setUp(self):
         super(CommunicationIdentityClientTest, self).setUp()
         self.recording_processors.extend([
