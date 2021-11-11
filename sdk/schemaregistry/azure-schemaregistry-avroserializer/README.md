@@ -52,7 +52,7 @@ from azure.schemaregistry.serializer.avroserializer import AvroSerializer
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-# Namespace should be similar to: '<your-eventhub-namespace>.servicebus.windows.net/'
+# Namespace should be similar to: '<your-eventhub-namespace>.servicebus.windows.net'
 fully_qualified_namespace = '<< FULLY QUALIFIED NAMESPACE OF THE SCHEMA REGISTRY >>'
 group_name = '<< GROUP NAME OF THE SCHEMA >>'
 schema_registry_client = SchemaRegistryClient(fully_qualified_namespace, credential)
@@ -102,7 +102,7 @@ The following sections provide several code snippets covering some of the most c
 ### Serialization
 
 Use `AvroSerializer.serialize` method to serialize dict data with the given avro schema.
-The method would use a schema previously registered to the Schema Registry service and keep the schema cached for future serialization usage. It is also possible to avoid pre-registering the schema to the service and automatically register with the `serialize` method by passing in the keyword argument `auto_register_schemas=True`.
+The method would use a schema previously registered to the Schema Registry service and keep the schema cached for future serialization usage. It is also possible to avoid pre-registering the schema to the service and automatically register with the `serialize` method by instantiating the `AvroSerializer` with the keyword argument `auto_register_schemas=True`.
 
 ```python
 import os
