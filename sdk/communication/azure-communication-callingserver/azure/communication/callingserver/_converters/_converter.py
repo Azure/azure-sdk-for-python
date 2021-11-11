@@ -4,7 +4,6 @@
 # license information.
 # -------------------------------------------------------------------------
 from typing import List
-from .._models import JoinCallOptions, PlayAudioOptions
 from .._generated.models import (
     CallMediaType,
     AudioRoutingMode,
@@ -44,23 +43,24 @@ class JoinCallRequestConverter(object):
     def convert(
         call_locator, # type: CallLocatorModel
         source, # type: CommunicationIdentifierModel
-        join_call_options # type: JoinCallOptions
+        callback_uri=None,  # type: str
+        requested_media_types=None,  # type: List[CallMediaType]
+        requested_call_events=None,  # type: List[CallingEventSubscriptionType]
+        subject=None,  # type: str
         ): # type: (...) -> JoinCallRequest
 
         if not call_locator:
             raise ValueError("call_locator can not be None")
         if not source:
             raise ValueError("source can not be None")
-        if not join_call_options:
-            raise ValueError("join_call_options can not be None")
 
         return JoinCallRequest(
             call_locator=call_locator,
             source=source,
-            callback_uri=join_call_options.callback_uri,
-            requested_media_types=join_call_options.requested_media_types,
-            requested_call_events=join_call_options.requested_call_events,
-            subject=join_call_options.subject
+            callback_uri=callback_uri,
+            requested_media_types=requested_media_types,
+            requested_call_events=requested_call_events,
+            subject=subject
             )
 
 class AnswerCallRequestConverter(object):
@@ -124,20 +124,21 @@ class PlayAudioRequestConverter(object):
     @staticmethod
     def convert(
         audio_url, # type: str
-        play_audio_options # type: PlayAudioOptions
+        loop,  # type: bool
+        operation_context,  # type: str
+        audio_file_id,  # type: str
+        callback_uri  # type: str
         ): # type: (...) -> PlayAudioRequest
 
         if not audio_url:
             raise ValueError("audio_url can not be None")
-        if not play_audio_options:
-            raise ValueError("playaudio_options can not be None")
 
         return PlayAudioRequest(
             audio_file_uri=audio_url,
-            loop=play_audio_options.is_looped,
-            operation_context=play_audio_options,
-            audio_file_id=play_audio_options.audio_file_id,
-            callback_uri=play_audio_options.callback_uri
+            loop=loop,
+            operation_context=operation_context,
+            audio_file_id=audio_file_id,
+            callback_uri=callback_uri
             )
 
 class PlayAudioWithCallLocatorRequestConverter(object):
@@ -145,23 +146,24 @@ class PlayAudioWithCallLocatorRequestConverter(object):
     def convert(
         call_locator, # type: CallLocatorModel
         audio_url, # type: str
-        play_audio_options # type: PlayAudioOptions
+        loop,  # type: bool
+        operation_context,  # type: str
+        audio_file_id,  # type: str
+        callback_uri  # type: str
         ): # type: (...) -> PlayAudioWithCallLocatorRequest
 
         if not call_locator:
             raise ValueError("call_locator can not be None")
         if not audio_url:
             raise ValueError("audio_url can not be None")
-        if not play_audio_options:
-            raise ValueError("play_audio_options can not be None")
 
         return PlayAudioWithCallLocatorRequest(
             call_locator=call_locator,
             audio_file_uri=audio_url,
-            loop=play_audio_options.is_looped,
-            operation_context=play_audio_options.operation_context,
-            audio_file_id=play_audio_options.audio_file_id,
-            callback_uri=play_audio_options.callback_uri
+            loop=loop,
+            operation_context=operation_context,
+            audio_file_id=audio_file_id,
+            callback_uri=callback_uri
             )
 
 class PlayAudioToParticipantRequestConverter(object):
@@ -169,21 +171,22 @@ class PlayAudioToParticipantRequestConverter(object):
     def convert(
         identifier, # type: CommunicationIdentifierModel
         audio_url, # type: str
-        play_audio_options # type: PlayAudioOptions
+        loop,  # type: bool
+        operation_context,  # type: str
+        audio_file_id,  # type: str
+        callback_uri  # type: str
         ): # type: (...) -> PlayAudioToParticipantRequest
 
         if not audio_url:
             raise ValueError("audio_url can not be None")
-        if not play_audio_options:
-            raise ValueError("playaudio_options can not be None")
 
         return PlayAudioToParticipantRequest(
             identifier=identifier,
             audio_file_uri=audio_url,
-            loop=play_audio_options.is_looped,
-            operation_context=play_audio_options,
-            audio_file_id=play_audio_options.audio_file_id,
-            callback_uri=play_audio_options.callback_uri
+            loop=loop,
+            operation_context=operation_context,
+            audio_file_id=audio_file_id,
+            callback_uri=callback_uri
             )
 
 class PlayAudioToParticipantWithCallLocatorRequestConverter(object):
@@ -192,24 +195,25 @@ class PlayAudioToParticipantWithCallLocatorRequestConverter(object):
         call_locator, # type: CallLocatorModel
         identifier, # type: CommunicationIdentifierModel
         audio_url, # type: str
-        play_audio_options # type: PlayAudioOptions
+        loop,  # type: bool
+        operation_context,  # type: str
+        audio_file_id,  # type: str
+        callback_uri  # type: str
         ): # type: (...) -> PlayAudioToParticipantWithCallLocatorRequest
 
         if not call_locator:
             raise ValueError("call_locator can not be None")
         if not audio_url:
             raise ValueError("audio_url can not be None")
-        if not play_audio_options:
-            raise ValueError("playaudio_options can not be None")
 
         return PlayAudioToParticipantWithCallLocatorRequest(
             call_locator=call_locator,
             identifier=identifier,
             audio_file_uri=audio_url,
-            loop=play_audio_options.is_looped,
-            operation_context=play_audio_options,
-            audio_file_id=play_audio_options.audio_file_id,
-            callback_uri=play_audio_options.callback_uri
+            loop=loop,
+            operation_context=operation_context,
+            audio_file_id=audio_file_id,
+            callback_uri=callback_uri
             )
 
 class AddParticipantRequestConverter(object):

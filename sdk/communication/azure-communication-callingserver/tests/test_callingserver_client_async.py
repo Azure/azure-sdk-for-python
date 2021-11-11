@@ -10,9 +10,6 @@ import utils._test_constants as _test_constants
 from typing import List
 from parameterized import parameterized
 from azure.communication.callingserver import (
-    CreateCallOptions,
-    JoinCallOptions,
-    PlayAudioOptions,
     CommunicationIdentifier,
     CallLocator,
     ServerCallLocator,
@@ -28,7 +25,9 @@ async def test_create_connection_succeed(
     test_name, # type: str
     source_user, # type: CommunicationIdentifier
     target_users, # type: List[CommunicationIdentifier]
-    options, # type: CreateCallOptions
+    callback_uri, # type: str
+    requested_media_types, # type: List[CallMediaType]
+    requested_call_events, # type: List[CallingEventSubscriptionType]
     use_managed_identity = False # type: bool
     ):
 
@@ -38,8 +37,13 @@ async def test_create_connection_succeed(
         use_managed_identity = use_managed_identity
         )
 
-    call_connection = await calling_server_client.create_call_connection(source_user,
-        target_users, options)
+    call_connection = await calling_server_client.create_call_connection(
+        source_user,
+        target_users,
+        callback_uri,
+        requested_media_types,
+        requested_call_events
+        )
 
     assert call_connection.call_connection_id == _test_constants.CALL_ID
 
@@ -49,7 +53,9 @@ async def test_create_connection_failed(
     test_name, # type: str
     source_user, # type: CommunicationIdentifier
     target_users, # type: List[CommunicationIdentifier]
-    options, # type: CreateCallOptions
+    callback_uri, # type: str
+    requested_media_types, # type: List[CallMediaType]
+    requested_call_events, # type: List[CallingEventSubscriptionType]
     use_managed_identity = False # type: bool
     ):
 
@@ -61,7 +67,13 @@ async def test_create_connection_failed(
 
     raised = False
     try:
-        await calling_server_client.create_call_connection(source_user, target_users, options)
+        await calling_server_client.create_call_connection(
+            source_user,
+            target_users,
+            callback_uri,
+            requested_media_types,
+            requested_call_events
+            )
     except:
         raised = True
     assert raised == True
@@ -72,7 +84,9 @@ async def test_join_call_succeed(
     test_name, # type: str
     call_locator, # type: CallLocator
     source_user, # type: CommunicationIdentifier
-    options, # type: JoinCallOptions
+    callback_uri, # type: str
+    requested_media_types, # type: List[CallMediaType]
+    requested_call_events, # type: List[CallingEventSubscriptionType]
     use_managed_identity = False # type: bool
     ):
 
@@ -85,7 +99,9 @@ async def test_join_call_succeed(
     call_connection = await calling_server_client.join_call(
         call_locator,
         source_user,
-        options
+        callback_uri,
+        requested_media_types,
+        requested_call_events
         )
 
     assert call_connection.call_connection_id == _test_constants.CALL_ID
@@ -96,7 +112,9 @@ async def test_join_call_failed(
     test_name, # type: str
     call_locator, # type: CallLocator
     source_user, # type: CommunicationIdentifier
-    options, # type: JoinCallOptions
+    callback_uri, # type: str
+    requested_media_types, # type: List[CallMediaType]
+    requested_call_events, # type: List[CallingEventSubscriptionType]
     use_managed_identity = False # type: bool
     ):
 
@@ -111,7 +129,9 @@ async def test_join_call_failed(
         await calling_server_client.join_call(
             call_locator,
             source_user,
-            options
+            callback_uri,
+            requested_media_types,
+            requested_call_events
             )
     except:
         raised = True
@@ -280,7 +300,10 @@ async def test_play_audio_succeed(
     test_name, # type: str
     call_locator, # type: CallLocator
     audio_url, # type: str
-    options, # type: PlayAudioOptions
+    is_looped, # type: bool
+    audio_file_id, # type: str
+    callback_uri, # type: str
+    operation_context, # type: str
     use_managed_identity = False # type: bool
     ):
 
@@ -293,7 +316,10 @@ async def test_play_audio_succeed(
     result = await calling_server_client.play_audio(
         call_locator,
         audio_url,
-        options
+        is_looped,
+        audio_file_id = audio_file_id,
+        callback_uri = callback_uri,
+        operation_context = operation_context
         )
 
     CallingServerUnitTestUtils.verify_play_audio_result(result)
@@ -304,7 +330,10 @@ async def test_play_audio_failed(
     test_name, # type: str
     call_locator, # type: CallLocator
     audio_url, # type: str
-    options, # type: PlayAudioOptions
+    is_looped, # type: bool
+    audio_file_id, # type: str
+    callback_uri, # type: str
+    operation_context, # type: str
     use_managed_identity = False # type: bool
     ):
 
@@ -319,7 +348,10 @@ async def test_play_audio_failed(
         await calling_server_client.play_audio(
             call_locator,
             audio_url,
-            options
+            is_looped,
+            audio_file_id = audio_file_id,
+            callback_uri = callback_uri,
+            operation_context = operation_context
             )
     except:
         raised = True
@@ -332,7 +364,10 @@ async def test_play_audio_to_participant_succeed(
     call_locator, # type: CallLocator
     participant, # type: CommunicationIdentifier
     audio_url, # type: str
-    play_audio_options, # type: PlayAudioOptions
+    is_looped, # type: bool
+    audio_file_id, # type: str
+    callback_uri, # type: str
+    operation_context, # type: str
     use_managed_identity = False # type: bool
     ):
 
@@ -346,7 +381,10 @@ async def test_play_audio_to_participant_succeed(
         call_locator,
         participant,
         audio_url,
-        play_audio_options
+        is_looped,
+        audio_file_id = audio_file_id,
+        callback_uri = callback_uri,
+        operation_context = operation_context
         )
     CallingServerUnitTestUtils.verify_play_audio_result(result)
 
@@ -357,7 +395,10 @@ async def test_play_audio_to_participant_failed(
     call_locator, # type: CallLocator
     participant, # type: CommunicationIdentifier
     audio_url, # type: str
-    play_audio_options, # type: PlayAudioOptions
+    is_looped, # type: bool
+    audio_file_id, # type: str
+    callback_uri, # type: str
+    operation_context, # type: str
     use_managed_identity = False # type: bool
     ):
 
@@ -373,7 +414,10 @@ async def test_play_audio_to_participant_failed(
             call_locator,
             participant,
             audio_url,
-            play_audio_options
+            is_looped,
+            audio_file_id = audio_file_id,
+            callback_uri = callback_uri,
+            operation_context = operation_context
             )
     except:
         raised = True

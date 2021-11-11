@@ -10,9 +10,7 @@ import utils._test_constants as CONST
 
 from azure.communication.callingserver import (
     CallingServerClient,
-    PlayAudioOptions,
     PhoneNumberIdentifier,
-    CreateCallOptions,
     CallMediaType,
     CallingEventSubscriptionType,
     CommunicationUserIdentifier
@@ -65,19 +63,14 @@ class CallConnectionTest(CommunicationTestCase):
         )
 
     def test_create_play_cancel_hangup_scenario(self):
-        # create call option
-        options = CreateCallOptions(
-            callback_uri=CONST.AppCallbackUrl,
-            requested_media_types=[CallMediaType.AUDIO],
-            requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED, CallingEventSubscriptionType.TONE_RECEIVED]
-        )
-        options.alternate_Caller_Id = PhoneNumberIdentifier(self.from_phone_number)
-
-        # Establish a call
+        # create call option and establish a call
         call_connection = self.callingserver_client.create_call_connection(
                     source=CommunicationUserIdentifier(self.from_user),
                     targets=[PhoneNumberIdentifier(self.to_phone_number)],
-                    options=options
+                    callback_uri=CONST.AppCallbackUrl,
+                    requested_media_types=[CallMediaType.AUDIO],
+                    requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED, CallingEventSubscriptionType.TONE_RECEIVED],
+                    alternate_Caller_Id = PhoneNumberIdentifier(self.from_phone_number)
                     )
 
         CallingServerLiveTestUtils.validate_callconnection(call_connection)
@@ -87,15 +80,12 @@ class CallConnectionTest(CommunicationTestCase):
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
             OperationContext = str(uuid.uuid4())
             AudioFileId = str(uuid.uuid4())
-            options = PlayAudioOptions(
+            play_audio_result = call_connection.play_audio(
+                CONST.AudioFileUrl,
                 is_looped = True,
                 audio_file_id = AudioFileId,
                 callback_uri = CONST.AppCallbackUrl,
                 operation_context = OperationContext
-                )
-            play_audio_result = call_connection.play_audio(
-                CONST.AudioFileUrl,
-                options
                 )
             CallingServerLiveTestUtils.validate_play_audio_result(play_audio_result)
 
@@ -108,19 +98,14 @@ class CallConnectionTest(CommunicationTestCase):
             call_connection.hang_up()
 
     def test_create_add_remove_hangup_scenario(self):
-        # create option
-        options = CreateCallOptions(
-            callback_uri=CONST.AppCallbackUrl,
-            requested_media_types=[CallMediaType.AUDIO],
-            requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED, CallingEventSubscriptionType.TONE_RECEIVED]
-        )
-        options.alternate_Caller_Id = PhoneNumberIdentifier(self.from_phone_number)
-
-        # Establish a call
+        # create option and establish a call
         call_connection = self.callingserver_client.create_call_connection(
                     source=CommunicationUserIdentifier(self.from_user),
                     targets=[PhoneNumberIdentifier(self.to_phone_number)],
-                    options=options,
+                    callback_uri=CONST.AppCallbackUrl,
+                    requested_media_types=[CallMediaType.AUDIO],
+                    requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED, CallingEventSubscriptionType.TONE_RECEIVED],
+                    alternate_Caller_Id = PhoneNumberIdentifier(self.from_phone_number)
                     )
         CallingServerLiveTestUtils.validate_callconnection(call_connection)
 

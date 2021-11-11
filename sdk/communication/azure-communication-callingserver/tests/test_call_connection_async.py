@@ -12,8 +12,7 @@ from typing import List
 
 from azure.communication.callingserver import (
     AudioRoutingMode,
-    CommunicationIdentifier,
-    PlayAudioOptions
+    CommunicationIdentifier
     )
 
 from utils._unit_test_utils import CallConnectionUnitTestUtils
@@ -225,7 +224,10 @@ async def test_play_audio_succeed(
     test_name, # type: str
     call_connection_id, # type: str
     audio_url, # type: str
-    options, # type: PlayAudioOptions
+    is_looped, # type: bool
+    audio_file_id, # type: str
+    callback_uri, # type: str
+    operation_context, # type: str
     use_managed_identity = False # type: bool
     ):
 
@@ -236,7 +238,13 @@ async def test_play_audio_succeed(
         use_managed_identity=use_managed_identity
         )
 
-    result = await call_connection.play_audio(audio_url, options)
+    result = await call_connection.play_audio(
+        audio_url,
+        is_looped,
+        audio_file_id = audio_file_id,
+        callback_uri = callback_uri,
+        operation_context = operation_context
+        )
     CallConnectionUnitTestUtils.verify_play_audio_result(result)
 
 @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_play_audio())
@@ -245,7 +253,10 @@ async def test_play_audio_failed(
     test_name, # type: str
     call_connection_id, # type: str
     audio_url, # type: str
-    options, # type: PlayAudioOptions
+    is_looped, # type: bool
+    audio_file_id, # type: str
+    callback_uri, # type: str
+    operation_context, # type: str
     use_managed_identity = False # type: bool
     ):
 
@@ -258,7 +269,13 @@ async def test_play_audio_failed(
 
     raised = False
     try:
-        await call_connection.play_audio(audio_url, options)
+        await call_connection.play_audio(
+            audio_url,
+            is_looped,
+            audio_file_id = audio_file_id,
+            callback_uri = callback_uri,
+            operation_context = operation_context
+            )
     except:
         raised = True
     assert raised == True
@@ -456,7 +473,10 @@ async def test_play_audio_to_participant_succeed(
     call_connection_id, # type: str
     participant, # type: CommunicationIdentifier
     audio_url, # type: str
-    options, # type: PlayAudioOptions
+    is_looped, # type: bool
+    audio_file_id, # type: str
+    callback_uri, # type: str
+    operation_context, # type: str
     use_managed_identity = False # type: bool
     ):
 
@@ -467,7 +487,14 @@ async def test_play_audio_to_participant_succeed(
         use_managed_identity=use_managed_identity
         )
 
-    result = await call_connection.play_audio_to_participant(participant, audio_url, options)
+    result = await call_connection.play_audio_to_participant(
+        participant,
+        audio_url,
+        is_looped,
+        audio_file_id = audio_file_id,
+        callback_uri = callback_uri,
+        operation_context = operation_context
+        )
     CallConnectionUnitTestUtils.verify_play_audio_result(result)
 
 @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_play_audio_to_participant())
@@ -477,7 +504,10 @@ async def test_play_audio_to_participant_failed(
     call_connection_id, # type: str
     participant, # type: CommunicationIdentifier
     audio_url, # type: str
-    options, # type: PlayAudioOptions
+    is_looped, # type: bool
+    audio_file_id, # type: str
+    callback_uri, # type: str
+    operation_context, # type: str
     use_managed_identity = False # type: bool
     ):
 
@@ -490,7 +520,14 @@ async def test_play_audio_to_participant_failed(
 
     raised = False
     try:
-        await call_connection.play_audio_to_participant(participant, audio_url, options)
+        await call_connection.play_audio_to_participant(
+            participant,
+            audio_url,
+            is_looped,
+            audio_file_id = audio_file_id,
+            callback_uri = callback_uri,
+            operation_context = operation_context
+            )
     except:
         raised = True
     assert raised == True
