@@ -11,10 +11,12 @@ FILE: sample_single_category_classify.py
 
 DESCRIPTION:
     This sample demonstrates how to classify documents into a single custom category. For example,
-    movie plot summaries can be categorized into a single movie genre like Sci-Fi, Horror, Comedy, Romance, etc.
-    Classifying documents is available as an action type through the begin_analyze_actions API.
+    movie plot summaries can be categorized into a single movie genre like "Mystery", "Drama", "Thriller",
+    "Comedy", "Action", etc. Classifying documents is available as an action type through
+    the begin_analyze_actions API.
 
-    To train a model to classify your documents, see https://aka.ms/azsdk/textanalytics/customfunctionalities
+    For information on regional support of custom features and how to train a model to
+    classify your documents, see https://aka.ms/azsdk/textanalytics/customfunctionalities
 
 USAGE:
     python sample_single_category_classify.py

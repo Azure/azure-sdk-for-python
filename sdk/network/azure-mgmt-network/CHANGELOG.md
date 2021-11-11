@@ -1,5 +1,23 @@
 # Release History
 
+## 19.3.0 (2021-11-05)
+
+**Features**
+
+  - Model LoadBalancerBackendAddress has a new parameter inbound_nat_rules_port_mapping
+  - Model VpnNatRuleMapping has a new parameter port_range
+  - Model OwaspCrsExclusionEntry has a new parameter exclusion_managed_rule_sets
+  - Model VirtualNetworkPeering has a new parameter remote_virtual_network_encryption
+  - Model NetworkInterface has a new parameter vnet_encryption_supported
+  - Model VirtualNetworkGateway has a new parameter disable_ip_sec_replay_protection
+  - Model VirtualNetwork has a new parameter encryption
+  - Model BackendAddressPool has a new parameter inbound_nat_rules
+  - Added operation LoadBalancersOperations.begin_list_inbound_nat_rule_port_mappings
+  - Added operation group FirewallPolicyIdpsSignaturesOverridesOperations
+  - Added operation group RoutingIntentOperations
+  - Added operation group FirewallPolicyIdpsSignaturesOperations
+  - Added operation group FirewallPolicyIdpsSignaturesFilterValuesOperations
+
 ## 19.2.0 (2021-10-21)
 
 **Features**

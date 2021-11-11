@@ -1,14 +1,10 @@
 # Release History
 
-## 4.6.1 (Unreleased)
+## 4.7.0 (2021-11-09)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added support for publishing native CNCF cloudevents (https://pypi.org/project/cloudevents/).
 
 ## 4.6.0 (2021-10-05)
 
