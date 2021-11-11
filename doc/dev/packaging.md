@@ -137,6 +137,28 @@ This syntax works with setuptools >= 24.2.0 (July 2016) and pip >= 9.0 (Nov 2016
 - wheels must NOT contain a `azure/__init__.py` file (you can open it with a zip util to check)
 - sdist must contain a `azure/__init__.py` file that declares `azure` as a namespace package using the `pkgutil` syntax
 
+# Note on checking old Azure packages
+
+You may see code looking like this:
+```python
+# azure v0.x is not compatible with this package
+# azure v0.x used to have a __version__ attribute (newer versions don't)
+try:
+    import azure
+
+    try:
+        VER = azure.__version__  # type: ignore
+        raise Exception(
+            "This package is incompatible with azure=={}. ".format(VER) + 'Uninstall it with "pip uninstall azure".'
+        )
+    except AttributeError:
+        pass
+except ImportError:
+    pass
+```
+
+This was to prevent some difficult update scenario 6 years ago, and can be safely removed from your setup.py
+
 # Note on Python 2
 
 The "extras_requires" section MUST include a conditional dependency on "azure-nspkg" for Python 2. Example:
