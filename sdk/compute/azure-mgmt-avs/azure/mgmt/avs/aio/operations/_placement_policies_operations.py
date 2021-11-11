@@ -21,8 +21,8 @@ from ... import models as _models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class ClustersOperations:
-    """ClustersOperations async operations.
+class PlacementPoliciesOperations:
+    """PlacementPoliciesOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -47,22 +47,25 @@ class ClustersOperations:
         self,
         resource_group_name: str,
         private_cloud_name: str,
+        cluster_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ClusterList"]:
-        """List clusters in a private cloud.
+    ) -> AsyncIterable["_models.PlacementPoliciesList"]:
+        """List placement policies in a private cloud cluster.
 
-        List clusters in a private cloud.
+        List placement policies in a private cloud cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud.
         :type private_cloud_name: str
+        :param cluster_name: Name of the cluster in the private cloud.
+        :type cluster_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ClusterList or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.avs.models.ClusterList]
+        :return: An iterator like instance of either PlacementPoliciesList or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.avs.models.PlacementPoliciesList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ClusterList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PlacementPoliciesList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -82,6 +85,7 @@ class ClustersOperations:
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
+                    'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -96,7 +100,7 @@ class ClustersOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('ClusterList', pipeline_response)
+            deserialized = self._deserialize('PlacementPoliciesList', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -117,18 +121,19 @@ class ClustersOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters'}  # type: ignore
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}/placementPolicies'}  # type: ignore
 
     async def get(
         self,
         resource_group_name: str,
         private_cloud_name: str,
         cluster_name: str,
+        placement_policy_name: str,
         **kwargs: Any
-    ) -> "_models.Cluster":
-        """Get a cluster by name in a private cloud.
+    ) -> "_models.PlacementPolicy":
+        """Get a placement policy by name in a private cloud cluster.
 
-        Get a cluster by name in a private cloud.
+        Get a placement policy by name in a private cloud cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -136,12 +141,15 @@ class ClustersOperations:
         :type private_cloud_name: str
         :param cluster_name: Name of the cluster in the private cloud.
         :type cluster_name: str
+        :param placement_policy_name: Name of the VMware vSphere Distributed Resource Scheduler (DRS)
+         placement policy.
+        :type placement_policy_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Cluster, or the result of cls(response)
-        :rtype: ~azure.mgmt.avs.models.Cluster
+        :return: PlacementPolicy, or the result of cls(response)
+        :rtype: ~azure.mgmt.avs.models.PlacementPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Cluster"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PlacementPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -156,6 +164,7 @@ class ClustersOperations:
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'placementPolicyName': self._serialize.url("placement_policy_name", placement_policy_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -175,23 +184,24 @@ class ClustersOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Cluster', pipeline_response)
+        deserialized = self._deserialize('PlacementPolicy', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}/placementPolicies/{placementPolicyName}'}  # type: ignore
 
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         private_cloud_name: str,
         cluster_name: str,
-        cluster: "_models.Cluster",
+        placement_policy_name: str,
+        placement_policy: "_models.PlacementPolicy",
         **kwargs: Any
-    ) -> "_models.Cluster":
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Cluster"]
+    ) -> "_models.PlacementPolicy":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PlacementPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -207,6 +217,7 @@ class ClustersOperations:
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'placementPolicyName': self._serialize.url("placement_policy_name", placement_policy_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -220,7 +231,7 @@ class ClustersOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(cluster, 'Cluster')
+        body_content = self._serialize.body(placement_policy, 'PlacementPolicy')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -231,49 +242,53 @@ class ClustersOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Cluster', pipeline_response)
+            deserialized = self._deserialize('PlacementPolicy', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('Cluster', pipeline_response)
+            deserialized = self._deserialize('PlacementPolicy', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}'}  # type: ignore
+    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}/placementPolicies/{placementPolicyName}'}  # type: ignore
 
     async def begin_create_or_update(
         self,
         resource_group_name: str,
         private_cloud_name: str,
         cluster_name: str,
-        cluster: "_models.Cluster",
+        placement_policy_name: str,
+        placement_policy: "_models.PlacementPolicy",
         **kwargs: Any
-    ) -> AsyncLROPoller["_models.Cluster"]:
-        """Create or update a cluster in a private cloud.
+    ) -> AsyncLROPoller["_models.PlacementPolicy"]:
+        """Create or update a placement policy in a private cloud cluster.
 
-        Create or update a cluster in a private cloud.
+        Create or update a placement policy in a private cloud cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param private_cloud_name: The name of the private cloud.
+        :param private_cloud_name: Name of the private cloud.
         :type private_cloud_name: str
         :param cluster_name: Name of the cluster in the private cloud.
         :type cluster_name: str
-        :param cluster: A cluster in the private cloud.
-        :type cluster: ~azure.mgmt.avs.models.Cluster
+        :param placement_policy_name: Name of the VMware vSphere Distributed Resource Scheduler (DRS)
+         placement policy.
+        :type placement_policy_name: str
+        :param placement_policy: A placement policy in the private cloud cluster.
+        :type placement_policy: ~azure.mgmt.avs.models.PlacementPolicy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling.
          Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either Cluster or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.Cluster]
+        :return: An instance of AsyncLROPoller that returns either PlacementPolicy or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.PlacementPolicy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Cluster"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PlacementPolicy"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -284,7 +299,8 @@ class ClustersOperations:
                 resource_group_name=resource_group_name,
                 private_cloud_name=private_cloud_name,
                 cluster_name=cluster_name,
-                cluster=cluster,
+                placement_policy_name=placement_policy_name,
+                placement_policy=placement_policy,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -293,7 +309,7 @@ class ClustersOperations:
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('Cluster', pipeline_response)
+            deserialized = self._deserialize('PlacementPolicy', pipeline_response)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -304,6 +320,7 @@ class ClustersOperations:
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'placementPolicyName': self._serialize.url("placement_policy_name", placement_policy_name, 'str'),
         }
 
         if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -318,17 +335,18 @@ class ClustersOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}'}  # type: ignore
+    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}/placementPolicies/{placementPolicyName}'}  # type: ignore
 
     async def _update_initial(
         self,
         resource_group_name: str,
         private_cloud_name: str,
         cluster_name: str,
-        cluster_update: "_models.ClusterUpdate",
+        placement_policy_name: str,
+        placement_policy_update: "_models.PlacementPolicyUpdate",
         **kwargs: Any
-    ) -> "_models.Cluster":
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Cluster"]
+    ) -> "_models.PlacementPolicy":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PlacementPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -344,6 +362,7 @@ class ClustersOperations:
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'placementPolicyName': self._serialize.url("placement_policy_name", placement_policy_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -357,39 +376,40 @@ class ClustersOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(cluster_update, 'ClusterUpdate')
+        body_content = self._serialize.body(placement_policy_update, 'PlacementPolicyUpdate')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Cluster', pipeline_response)
+            deserialized = self._deserialize('PlacementPolicy', pipeline_response)
 
-        if response.status_code == 201:
-            deserialized = self._deserialize('Cluster', pipeline_response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('PlacementPolicy', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}'}  # type: ignore
+    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}/placementPolicies/{placementPolicyName}'}  # type: ignore
 
     async def begin_update(
         self,
         resource_group_name: str,
         private_cloud_name: str,
         cluster_name: str,
-        cluster_update: "_models.ClusterUpdate",
+        placement_policy_name: str,
+        placement_policy_update: "_models.PlacementPolicyUpdate",
         **kwargs: Any
-    ) -> AsyncLROPoller["_models.Cluster"]:
-        """Update a cluster in a private cloud.
+    ) -> AsyncLROPoller["_models.PlacementPolicy"]:
+        """Update a placement policy in a private cloud cluster.
 
-        Update a cluster in a private cloud.
+        Update a placement policy in a private cloud cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -397,20 +417,23 @@ class ClustersOperations:
         :type private_cloud_name: str
         :param cluster_name: Name of the cluster in the private cloud.
         :type cluster_name: str
-        :param cluster_update: The cluster properties to be updated.
-        :type cluster_update: ~azure.mgmt.avs.models.ClusterUpdate
+        :param placement_policy_name: Name of the VMware vSphere Distributed Resource Scheduler (DRS)
+         placement policy.
+        :type placement_policy_name: str
+        :param placement_policy_update: The placement policy properties that may be updated.
+        :type placement_policy_update: ~azure.mgmt.avs.models.PlacementPolicyUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling.
          Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either Cluster or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.Cluster]
+        :return: An instance of AsyncLROPoller that returns either PlacementPolicy or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.PlacementPolicy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Cluster"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PlacementPolicy"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -421,7 +444,8 @@ class ClustersOperations:
                 resource_group_name=resource_group_name,
                 private_cloud_name=private_cloud_name,
                 cluster_name=cluster_name,
-                cluster_update=cluster_update,
+                placement_policy_name=placement_policy_name,
+                placement_policy_update=placement_policy_update,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -430,7 +454,7 @@ class ClustersOperations:
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('Cluster', pipeline_response)
+            deserialized = self._deserialize('PlacementPolicy', pipeline_response)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -441,6 +465,7 @@ class ClustersOperations:
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'placementPolicyName': self._serialize.url("placement_policy_name", placement_policy_name, 'str'),
         }
 
         if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -455,13 +480,14 @@ class ClustersOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}'}  # type: ignore
+    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}/placementPolicies/{placementPolicyName}'}  # type: ignore
 
     async def _delete_initial(
         self,
         resource_group_name: str,
         private_cloud_name: str,
         cluster_name: str,
+        placement_policy_name: str,
         **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -479,6 +505,7 @@ class ClustersOperations:
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'placementPolicyName': self._serialize.url("placement_policy_name", placement_policy_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -501,18 +528,19 @@ class ClustersOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}'}  # type: ignore
+    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}/placementPolicies/{placementPolicyName}'}  # type: ignore
 
     async def begin_delete(
         self,
         resource_group_name: str,
         private_cloud_name: str,
         cluster_name: str,
+        placement_policy_name: str,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Delete a cluster in a private cloud.
+        """Delete a placement policy in a private cloud cluster.
 
-        Delete a cluster in a private cloud.
+        Delete a placement policy in a private cloud cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -520,6 +548,9 @@ class ClustersOperations:
         :type private_cloud_name: str
         :param cluster_name: Name of the cluster in the private cloud.
         :type cluster_name: str
+        :param placement_policy_name: Name of the VMware vSphere Distributed Resource Scheduler (DRS)
+         placement policy.
+        :type placement_policy_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling.
@@ -542,6 +573,7 @@ class ClustersOperations:
                 resource_group_name=resource_group_name,
                 private_cloud_name=private_cloud_name,
                 cluster_name=cluster_name,
+                placement_policy_name=placement_policy_name,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -558,6 +590,7 @@ class ClustersOperations:
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'placementPolicyName': self._serialize.url("placement_policy_name", placement_policy_name, 'str'),
         }
 
         if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -572,4 +605,4 @@ class ClustersOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}'}  # type: ignore
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}/placementPolicies/{placementPolicyName}'}  # type: ignore
