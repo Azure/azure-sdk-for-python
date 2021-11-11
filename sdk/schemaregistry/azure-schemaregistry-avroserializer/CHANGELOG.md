@@ -5,13 +5,13 @@
 ### Features Added
 
 - Async version of `AvroSerializer` has been added under `azure.schemaregistry.serializer.avroserializer.aio`.
+- Depends on `azure-schemaregistry>=1.0.0,<2.0.0`.
 
 ### Breaking Changes
 
 - `SchemaParseError`, `SchemaSerializationError`, and `SchemaDeserializationError` have been introduced under `azure.schemaregistry.serializer.avroserializer.exceptions` and will be raised for corresponding operations.
   - `SchemaParseError` and `SchemaSerializationError` may be raised for errors when calling `serialize` on `AvroSerializer`.
   - `SchemaParseError` and `SchemaDeserializationError` may be raised for errors when calling `deserialize` on `AvroSerializer`.
-  - Depends on `azure-schemaregistry>=1.0.0,<2.0.0`.
 
 ## 1.0.0b3 (2021-10-06)
 
