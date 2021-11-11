@@ -19,7 +19,7 @@ While this article provides example using setup.py, there is no problem with ach
 
 We want to build sdist and wheels in order to follow the following constraints:
 - Solution should work with *recent* versions of pip and setuptools (not the very latest only, but not archaeology either)
-- Wheels must work with Python 3.6+
+- Wheels must work with Python 3.7+
 - mixed dev installation and PyPI installation should be explicitly addressed
 
 # What do I do in my files to achieve that
@@ -56,7 +56,7 @@ The "packages" section MUST EXCLUDE the `azure` package. Example:
 
 Since the package is Python 3 only, you must notify it in the setup.py as well:
 ```python
-    python_requires=">=3.6",
+    python_requires=">=3.7",
 ```
 
 Example of a full setup.py
@@ -109,14 +109,13 @@ setup(
         'Development Status :: 4 - Beta',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'License :: OSI Approved :: MIT License',
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     zip_safe=False,
     packages=find_packages(exclude=[
         'tests',
