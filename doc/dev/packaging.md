@@ -132,17 +132,22 @@ setup(
 
 This syntax works with setuptools >= 24.2.0 (July 2016) and pip >= 9.0 (Nov 2016), which is considered enough to support in 2021.
 
+Since the package is Python 3 only, do NOT make this wheel universal. This usually means you should NOT have `universal=1` in the `setup.cfg`. It may mean you can completely remove the file if `universal` was the only configuration option inside.
+
 # How can I check if my packages are built correctly?
 
-- wheels must NOT contain a `azure/__init__.py` file (you can open it with a zip util to check)
+- wheel file must NOT contain a `azure/__init__.py` file (you can open it with a zip util to check)
+- wheel file name finishes with `py3-none-any`, and NOT by `py2.py3-none-any`.
 - sdist must contain a `azure/__init__.py` file that declares `azure` as a namespace package using the `pkgutil` syntax
 
-# I already have a package thatn supports Python 2, can I get short version on how to udpate to Python 3
+# I already have a package that supports Python 2, can I get short version on how to udpate to Python 3 only?
 
-- Remove `extra_requires`
-- Add `python_requires=">=3.7",`
-- Remove the Python 2 and 3.5/3.6 classifiers
-- Remove the "azure" check if applicable (see next note)
+- Remove "universal" from setup.cfg, or remove completly the file if it was the only option
+- In setup.py:
+  - Remove `extra_requires`
+  - Add `python_requires=">=3.7",`
+  - Remove the Python 2 and 3.5/3.6 classifiers
+  - Remove the "azure" check if applicable (see next note)
 
 # Note on checking old Azure packages
 
