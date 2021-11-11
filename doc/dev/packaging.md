@@ -108,6 +108,7 @@ setup(
     classifiers=[
         'Development Status :: 4 - Beta',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
@@ -147,6 +148,7 @@ Since the package is Python 3 only, do NOT make this wheel universal. This usual
   - Remove `extra_requires`
   - Add `python_requires=">=3.7",`
   - Remove the Python 2 and 3.5/3.6 classifiers
+  - Add classifier `Programming Language :: Python :: 3 :: Only`
   - Remove the "azure" check if applicable (see next note)
 
 # Note on checking old Azure packages
