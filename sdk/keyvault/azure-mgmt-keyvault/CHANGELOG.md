@@ -1,7 +1,10 @@
 # Release History
 
-## 0.0.0 (2021-11-11)
+## 9.3.0 (2021-11-11)
 
+**Features**
+
+  - Added some enum value
 
 
 ## 9.2.0 (2021-10-15)
