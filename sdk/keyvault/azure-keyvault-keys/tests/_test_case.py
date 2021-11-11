@@ -95,6 +95,10 @@ def suffixed_test_name(testcase_func, param_num, param):
     )
 
 
+def is_public_cloud():
+    return (".microsoftonline.com" in os.getenv('AZURE_AUTHORITY_HOST', ''))
+
+    
 class KeysTestCase(AzureTestCase):
     def setUp(self, *args, **kwargs):
         vault_playback_url = "https://vaultname.vault.azure.net"
