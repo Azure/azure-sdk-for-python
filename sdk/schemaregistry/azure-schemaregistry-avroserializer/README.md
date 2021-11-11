@@ -113,10 +113,10 @@ from azure.identity import DefaultAzureCredential
 token_credential = DefaultAzureCredential()
 fully_qualified_namespace = os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
 group_name = "<your-group-name>"
-schema_name = "example.avro.User"
+name = "example.avro.User"
 format = "Avro"
 
-schema_string = """
+definition = """
 {"namespace": "example.avro",
  "type": "record",
  "name": "User",
@@ -128,12 +128,12 @@ schema_string = """
 }"""
 
 schema_registry_client = SchemaRegistryClient(fully_qualified_namespace, token_credential)
-schema_register_client.register(group_name, schema_name, schema_string, format)
+schema_register_client.register(group_name, name, definition, format)
 serializer = AvroSerializer(client=schema_registry_client, group_name=group_name)
 
 with serializer:
     dict_data = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
-    encoded_bytes = serializer.serialize(dict_data, schema=schema_string)
+    encoded_bytes = serializer.serialize(dict_data, schema=definition)
 ```
 
 ### Deserialization
@@ -176,7 +176,7 @@ group_name = "<your-group-name>"
 eventhub_connection_str = os.environ['EVENT_HUB_CONN_STR']
 eventhub_name = os.environ['EVENT_HUB_NAME']
 
-schema_string = """
+definition = """
 {"namespace": "example.avro",
  "type": "record",
  "name": "User",
@@ -198,7 +198,7 @@ eventhub_producer = EventHubProducerClient.from_connection_string(
 with eventhub_producer, avro_serializer:
     event_data_batch = eventhub_producer.create_batch()
     dict_data = {"name": "Bob", "favorite_number": 7, "favorite_color": "red"}
-    payload_bytes = avro_serializer.serialize(dict_data, schema=schema_string)
+    payload_bytes = avro_serializer.serialize(dict_data, schema=definition)
     event_data_batch.add(EventData(body=payload_bytes))
     eventhub_producer.send_batch(event_data_batch)
 ```
@@ -306,7 +306,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [azure_sub]: https://azure.microsoft.com/free/
 [python_logging]: https://docs.python.org/3/library/logging.html
 [sr_avro_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroserializer/samples
-[api_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-schemaregistry-avroserializer/latest/index.html
+[api_reference]: https://docs.microsoft.com/python/api/overview/azure/schemaregistry-avroserializer-readme
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroserializer
 [change_log]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroserializer/CHANGELOG.md
 [schemaregistry_client]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry

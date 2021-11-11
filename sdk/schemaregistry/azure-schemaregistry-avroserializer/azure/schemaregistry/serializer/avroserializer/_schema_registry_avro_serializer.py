@@ -117,7 +117,7 @@ class AvroSerializer(object):
         """
         schema_str = self._schema_registry_client.get_schema(
             schema_id, **kwargs
-        ).schema_definition
+        ).definition
         return schema_str
 
     def serialize(self, value, **kwargs):

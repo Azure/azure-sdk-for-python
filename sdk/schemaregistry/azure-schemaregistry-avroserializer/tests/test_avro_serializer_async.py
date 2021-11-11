@@ -194,7 +194,7 @@ class AvroSerializerAsyncTests(AzureTestCase):
         encoded_schema = await sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_name_has_dot) 
         schema_id = encoded_schema[4:36].decode("utf-8")
         registered_schema = await sr_client.get_schema(schema_id)
-        decoded_registered_schema = json.loads(registered_schema.schema_definition)
+        decoded_registered_schema = json.loads(registered_schema.definition)
 
         assert decoded_registered_schema["name"] == "User.avro"
         assert decoded_registered_schema["namespace"] == "thrownaway"
@@ -207,7 +207,7 @@ class AvroSerializerAsyncTests(AzureTestCase):
         encoded_schema = await sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_name_no_namespace) 
         schema_id = encoded_schema[4:36].decode("utf-8")
         registered_schema = await sr_client.get_schema(schema_id)
-        decoded_registered_schema = json.loads(registered_schema.schema_definition)
+        decoded_registered_schema = json.loads(registered_schema.definition)
 
         assert decoded_registered_schema["name"] == "User"
         assert "namespace" not in decoded_registered_schema
@@ -268,7 +268,7 @@ class AvroSerializerAsyncTests(AzureTestCase):
         encoded_data = await sr_avro_serializer.serialize({"name": u"Ben"}, schema=schema_error_type) 
         schema_id = encoded_data[4:36].decode("utf-8")
         registered_schema = await sr_client.get_schema(schema_id)
-        decoded_registered_schema = json.loads(registered_schema.schema_definition)
+        decoded_registered_schema = json.loads(registered_schema.definition)
         assert decoded_registered_schema["type"] == "error"
 
     @SchemaRegistryPowerShellPreparer()
