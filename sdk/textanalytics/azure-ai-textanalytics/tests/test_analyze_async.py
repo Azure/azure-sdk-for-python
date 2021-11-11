@@ -796,7 +796,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             documents=["Test for logging disable"],
             actions=actions,
             polling_interval=self._interval(),
-        )).result(timeout=360)
+        )).result()
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()

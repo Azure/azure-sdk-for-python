@@ -734,6 +734,123 @@ class TestAnalyze(TextAnalyticsTest):
         ).result(timeout=360)
 
     @TextAnalyticsPreparer()
+    def test_disable_service_logs_single(
+            self,
+            textanalytics_custom_text_endpoint,
+            textanalytics_custom_text_key,
+            textanalytics_single_category_classify_project_name,
+            textanalytics_single_category_classify_deployment_name,
+            textanalytics_multi_category_classify_project_name,
+            textanalytics_multi_category_classify_deployment_name,
+            textanalytics_custom_entities_project_name,
+            textanalytics_custom_entities_deployment_name
+    ):
+
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key), logging_enable=True)
+        actions = [
+            SingleCategoryClassifyAction(
+                project_name=textanalytics_single_category_classify_project_name,
+                deployment_name=textanalytics_single_category_classify_deployment_name,
+                disable_service_logs=True
+            ),
+        ]
+
+        for action in actions:
+            assert action.disable_service_logs
+
+        def callback(resp):
+            tasks = json.loads(resp.http_request.body)["tasks"]
+            assert len(tasks) == len(actions)
+            for task in tasks.values():
+                assert task[0]["parameters"]["loggingOptOut"]
+
+        client.begin_analyze_actions(
+            documents=["Test for logging disable"],
+            actions=actions,
+            polling_interval=self._interval(),
+            raw_response_hook=callback,
+        ).result(timeout=360)
+
+
+
+    @TextAnalyticsPreparer()
+    def test_disable_service_logs_multi(
+            self,
+            textanalytics_custom_text_endpoint,
+            textanalytics_custom_text_key,
+            textanalytics_single_category_classify_project_name,
+            textanalytics_single_category_classify_deployment_name,
+            textanalytics_multi_category_classify_project_name,
+            textanalytics_multi_category_classify_deployment_name,
+            textanalytics_custom_entities_project_name,
+            textanalytics_custom_entities_deployment_name
+    ):
+
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key), logging_enable=True)
+        actions = [
+            MultiCategoryClassifyAction(
+                project_name=textanalytics_multi_category_classify_project_name,
+                deployment_name=textanalytics_multi_category_classify_deployment_name,
+                disable_service_logs=True
+            ),
+        ]
+
+        for action in actions:
+            assert action.disable_service_logs
+
+        def callback(resp):
+            tasks = json.loads(resp.http_request.body)["tasks"]
+            assert len(tasks) == len(actions)
+            for task in tasks.values():
+                assert task[0]["parameters"]["loggingOptOut"]
+
+        client.begin_analyze_actions(
+            documents=["Test for logging disable"],
+            actions=actions,
+            polling_interval=self._interval(),
+            raw_response_hook=callback,
+        ).result(timeout=360)
+
+
+    @TextAnalyticsPreparer()
+    def test_disable_service_logs_entities(
+            self,
+            textanalytics_custom_text_endpoint,
+            textanalytics_custom_text_key,
+            textanalytics_single_category_classify_project_name,
+            textanalytics_single_category_classify_deployment_name,
+            textanalytics_multi_category_classify_project_name,
+            textanalytics_multi_category_classify_deployment_name,
+            textanalytics_custom_entities_project_name,
+            textanalytics_custom_entities_deployment_name
+    ):
+
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key), logging_enable=True)
+        actions = [
+            RecognizeCustomEntitiesAction(
+                project_name=textanalytics_custom_entities_project_name,
+                deployment_name=textanalytics_custom_entities_deployment_name,
+                disable_service_logs=True
+            )
+        ]
+
+        for action in actions:
+            assert action.disable_service_logs
+
+        def callback(resp):
+            tasks = json.loads(resp.http_request.body)["tasks"]
+            assert len(tasks) == len(actions)
+            for task in tasks.values():
+                assert task[0]["parameters"]["loggingOptOut"]
+
+        client.begin_analyze_actions(
+            documents=["Test for logging disable"],
+            actions=actions,
+            polling_interval=self._interval(),
+            raw_response_hook=callback,
+        ).result(timeout=360)
+
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_pii_action_categories_filter(self, client):
 
