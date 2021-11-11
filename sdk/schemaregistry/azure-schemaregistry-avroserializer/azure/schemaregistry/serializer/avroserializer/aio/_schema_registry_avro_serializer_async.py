@@ -111,7 +111,7 @@ class AvroSerializer(object):
         schema = await self._schema_registry_client.get_schema(
             schema_id, **kwargs
         )
-        return schema.schema_definition
+        return schema.definition
 
     async def serialize(self, value, **kwargs):
         # type: (Mapping[str, Any], Any) -> bytes

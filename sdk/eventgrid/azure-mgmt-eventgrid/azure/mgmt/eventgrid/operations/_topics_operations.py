@@ -72,7 +72,7 @@ class TopicsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-15-preview"
+        api_version = "2021-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -121,7 +121,7 @@ class TopicsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-15-preview"
+        api_version = "2021-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -248,7 +248,7 @@ class TopicsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-15-preview"
+        api_version = "2021-12-01"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -359,7 +359,7 @@ class TopicsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-15-preview"
+        api_version = "2021-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -508,7 +508,7 @@ class TopicsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-15-preview"
+        api_version = "2021-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -597,7 +597,7 @@ class TopicsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-15-preview"
+        api_version = "2021-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -677,7 +677,7 @@ class TopicsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-15-preview"
+        api_version = "2021-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -720,13 +720,13 @@ class TopicsOperations(object):
         regenerate_key_request,  # type: "_models.TopicRegenerateKeyRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["_models.TopicSharedAccessKeys"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TopicSharedAccessKeys"]]
+        # type: (...) -> "_models.TopicSharedAccessKeys"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TopicSharedAccessKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-15-preview"
+        api_version = "2021-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -755,13 +755,11 @@ class TopicsOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('TopicSharedAccessKeys', pipeline_response)
+        deserialized = self._deserialize('TopicSharedAccessKeys', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -874,7 +872,7 @@ class TopicsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-15-preview"
+        api_version = "2021-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):

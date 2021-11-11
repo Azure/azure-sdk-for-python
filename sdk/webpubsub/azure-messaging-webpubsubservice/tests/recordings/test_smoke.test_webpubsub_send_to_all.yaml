@@ -11,21 +11,23 @@ interactions:
       Content-Length:
       - '39'
       Content-Type:
-      - text/plain
+      - application/json
       User-Agent:
-      - azsdk-python-messaging-webpubsubservice/1.0.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-messaging-webpubsubservice/1.0.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://myservice.webpubsub.azure.com/api/hubs/Hub/:send?api-version=2021-10-01
+    uri: https://myservice.webpubsub.azure.com/api/hubs/hub/:send?api-version=2021-10-01
   response:
     body:
       string: ''
     headers:
+      api-supported-versions:
+      - '2021-10-01'
       connection:
       - keep-alive
       content-length:
       - '0'
       date:
-      - Wed, 13 Oct 2021 06:05:53 GMT
+      - Wed, 10 Nov 2021 03:51:17 GMT
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:

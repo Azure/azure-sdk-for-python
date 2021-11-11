@@ -73,24 +73,24 @@ async def register_schema(schema_registry_client):
             {"name": "favorite_color", "type": ["string", "null"]},
         ],
     }
-    SCHEMA_DEFINITION = json.dumps(SCHEMA_JSON, separators=(",", ":"))
+    DEFINITION = json.dumps(SCHEMA_JSON, separators=(",", ":"))
     schema_properties = await schema_registry_client.register_schema(
-        GROUP_NAME, NAME, SCHEMA_DEFINITION, FORMAT
+        GROUP_NAME, NAME, DEFINITION, FORMAT
     )
     schema_id = schema_properties.id
     # [END register_schema_async]
     return schema_id
 
 
-async def get_schema(schema_registry_client, id):
+async def get_schema(schema_registry_client, schema_id):
     # [START get_schema_async]
-    schema = await schema_registry_client.get_schema(id)
-    schema_definition = schema.schema_definition
+    schema = await schema_registry_client.get_schema(schema_id)
+    definition = schema.definition
     properties = schema.properties
     # [END get_schema_async]
-    print(schema_definition)
+    print(definition)
     print(properties)
-    return schema_definition
+    return definition
 
 
 async def get_schema_id(schema_registry_client):
@@ -108,9 +108,9 @@ async def get_schema_id(schema_registry_client):
             {"name": "favorite_color", "type": ["string", "null"]},
         ],
     }
-    schema_definition = json.dumps(schema_json, separators=(",", ":"))
+    definition = json.dumps(schema_json, separators=(",", ":"))
     schema_properties = await schema_registry_client.get_schema_properties(
-        group_name, name, schema_definition, format
+        group_name, name, definition, format
     )
     schema_id = schema_properties.id
     # [END get_schema_id_async]
@@ -120,9 +120,9 @@ async def get_schema_id(schema_registry_client):
 async def main():
     client, credential = create_client()
     async with client, credential:
-        id = await register_schema(client)
-        schema = await get_schema(client, id)
-        id = await get_schema_id(client)
+        schema_id = await register_schema(client)
+        schema = await get_schema(client, schema_id)
+        schema_id = await get_schema_id(client)
 
 
 if __name__ == "__main__":

@@ -37,7 +37,7 @@ class NetworkManagementClientOperationsMixin(object):
         :param bastion_host_name: The name of the Bastion Host.
         :type bastion_host_name: str
         :param bsl_request: Post request for all the Bastion Shareable Link endpoints.
-        :type bsl_request: ~azure.mgmt.network.v2021_03_01.models.BastionShareableLinkListRequest
+        :type bsl_request: ~azure.mgmt.network.v2021_05_01.models.BastionShareableLinkListRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling.
@@ -71,8 +71,8 @@ class NetworkManagementClientOperationsMixin(object):
             from ..v2020_11_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from ..v2021_02_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2021-05-01':
+            from ..v2021_05_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_delete_bastion_shareable_link'".format(api_version))
         mixin_instance = OperationClass()
@@ -100,7 +100,7 @@ class NetworkManagementClientOperationsMixin(object):
         :type virtual_wan_name: str
         :param vpn_client_params: Parameters supplied to the generate VirtualWan VPN profile generation
          operation.
-        :type vpn_client_params: ~azure.mgmt.network.v2021_03_01.models.VirtualWanVpnProfileParameters
+        :type vpn_client_params: ~azure.mgmt.network.v2021_05_01.models.VirtualWanVpnProfileParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling.
@@ -108,7 +108,7 @@ class NetworkManagementClientOperationsMixin(object):
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VpnProfileResponse or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2021_03_01.models.VpnProfileResponse]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2021_05_01.models.VpnProfileResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_generatevirtualwanvpnserverconfigurationvpnprofile')
@@ -136,8 +136,8 @@ class NetworkManagementClientOperationsMixin(object):
             from ..v2020_11_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from ..v2021_02_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2021-05-01':
+            from ..v2021_05_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_generatevirtualwanvpnserverconfigurationvpnprofile'".format(api_version))
         mixin_instance = OperationClass()
@@ -167,7 +167,7 @@ class NetworkManagementClientOperationsMixin(object):
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns an iterator like instance of either BastionActiveSessionListResult or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_03_01.models.BastionActiveSessionListResult]]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_05_01.models.BastionActiveSessionListResult]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_get_active_sessions')
@@ -193,8 +193,8 @@ class NetworkManagementClientOperationsMixin(object):
             from ..v2020_11_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from ..v2021_02_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2021-05-01':
+            from ..v2021_05_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_get_active_sessions'".format(api_version))
         mixin_instance = OperationClass()
@@ -219,7 +219,7 @@ class NetworkManagementClientOperationsMixin(object):
         :param bastion_host_name: The name of the Bastion Host.
         :type bastion_host_name: str
         :param bsl_request: Post request for all the Bastion Shareable Link endpoints.
-        :type bsl_request: ~azure.mgmt.network.v2021_03_01.models.BastionShareableLinkListRequest
+        :type bsl_request: ~azure.mgmt.network.v2021_05_01.models.BastionShareableLinkListRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling.
@@ -227,7 +227,7 @@ class NetworkManagementClientOperationsMixin(object):
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns an iterator like instance of either BastionShareableLinkListResult or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_03_01.models.BastionShareableLinkListResult]]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_05_01.models.BastionShareableLinkListResult]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_put_bastion_shareable_link')
@@ -253,8 +253,8 @@ class NetworkManagementClientOperationsMixin(object):
             from ..v2020_11_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from ..v2021_02_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2021-05-01':
+            from ..v2021_05_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_put_bastion_shareable_link'".format(api_version))
         mixin_instance = OperationClass()
@@ -280,7 +280,7 @@ class NetworkManagementClientOperationsMixin(object):
         :type domain_name_label: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DnsNameAvailabilityResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2021_03_01.models.DnsNameAvailabilityResult
+        :rtype: ~azure.mgmt.network.v2021_05_01.models.DnsNameAvailabilityResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('check_dns_name_availability')
@@ -294,12 +294,8 @@ class NetworkManagementClientOperationsMixin(object):
             from ..v2017_03_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2017-09-01':
-            from ..v2017_09_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2017-10-01':
             from ..v2017_10_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2017-11-01':
-            from ..v2017_11_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-01-01':
             from ..v2018_01_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
@@ -350,8 +346,8 @@ class NetworkManagementClientOperationsMixin(object):
             from ..v2020_11_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from ..v2021_02_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2021-05-01':
+            from ..v2021_05_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'check_dns_name_availability'".format(api_version))
         mixin_instance = OperationClass()
@@ -376,10 +372,10 @@ class NetworkManagementClientOperationsMixin(object):
         :param bastion_host_name: The name of the Bastion Host.
         :type bastion_host_name: str
         :param session_ids: The list of sessionids to disconnect.
-        :type session_ids: ~azure.mgmt.network.v2021_03_01.models.SessionIds
+        :type session_ids: ~azure.mgmt.network.v2021_05_01.models.SessionIds
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either BastionSessionDeleteResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_03_01.models.BastionSessionDeleteResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_05_01.models.BastionSessionDeleteResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('disconnect_active_sessions')
@@ -405,8 +401,8 @@ class NetworkManagementClientOperationsMixin(object):
             from ..v2020_11_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from ..v2021_02_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2021-05-01':
+            from ..v2021_05_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'disconnect_active_sessions'".format(api_version))
         mixin_instance = OperationClass()
@@ -431,10 +427,10 @@ class NetworkManagementClientOperationsMixin(object):
         :param bastion_host_name: The name of the Bastion Host.
         :type bastion_host_name: str
         :param bsl_request: Post request for all the Bastion Shareable Link endpoints.
-        :type bsl_request: ~azure.mgmt.network.v2021_03_01.models.BastionShareableLinkListRequest
+        :type bsl_request: ~azure.mgmt.network.v2021_05_01.models.BastionShareableLinkListRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either BastionShareableLinkListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_03_01.models.BastionShareableLinkListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_05_01.models.BastionShareableLinkListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_bastion_shareable_link')
@@ -460,8 +456,8 @@ class NetworkManagementClientOperationsMixin(object):
             from ..v2020_11_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from ..v2021_02_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2021-05-01':
+            from ..v2021_05_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_bastion_shareable_link'".format(api_version))
         mixin_instance = OperationClass()
@@ -487,7 +483,7 @@ class NetworkManagementClientOperationsMixin(object):
         :type virtual_wan_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualWanSecurityProviders, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2021_03_01.models.VirtualWanSecurityProviders
+        :rtype: ~azure.mgmt.network.v2021_05_01.models.VirtualWanSecurityProviders
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('supported_security_providers')
@@ -531,8 +527,8 @@ class NetworkManagementClientOperationsMixin(object):
             from ..v2020_11_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from ..v2021_02_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2021-05-01':
+            from ..v2021_05_01.aio.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'supported_security_providers'".format(api_version))
         mixin_instance = OperationClass()

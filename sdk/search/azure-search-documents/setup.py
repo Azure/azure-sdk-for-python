@@ -82,7 +82,7 @@ setup(
         "azure-core<2.0.0,>=1.19.0",
         "msrest>=0.6.21",
         "azure-common~=1.1",
-        "typing-extensions"
+        "typing-extensions>=3.7.4.3"
     ],
     extras_require={
         ":python_version<'3.0'": ['futures', 'azure-search-nspkg'],
