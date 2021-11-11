@@ -7,13 +7,17 @@ You can use this library in your app server side to manage the WebSocket client 
 ![overflow](https://user-images.githubusercontent.com/668244/140014067-25a00959-04dc-47e8-ac25-6957bd0a71ce.png)
 
 Use this library to:
-- Send messages to hubs and groups. 
+- Send messages to hubs and groups.
 - Send messages to particular users and connections.
 - Organize users and connections into groups.
 - Close connections
 - Grant, revoke, and check permissions for an existing connection
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubservice) | [Package (Pypi)][package] | [API reference documentation](https://aka.ms/awps/sdk/python) | [Product documentation][webpubsubservice_docs]
+
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 
