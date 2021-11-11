@@ -52,7 +52,7 @@ from azure.schemaregistry.serializer.avroserializer import AvroSerializer
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-# Namespace should be similar to: '<your-eventhub-namespace>.servicebus.windows.net/'
+# Namespace should be similar to: '<your-eventhub-namespace>.servicebus.windows.net'
 fully_qualified_namespace = '<< FULLY QUALIFIED NAMESPACE OF THE SCHEMA REGISTRY >>'
 group_name = '<< GROUP NAME OF THE SCHEMA >>'
 schema_registry_client = SchemaRegistryClient(fully_qualified_namespace, credential)
@@ -102,7 +102,7 @@ The following sections provide several code snippets covering some of the most c
 ### Serialization
 
 Use `AvroSerializer.serialize` method to serialize dict data with the given avro schema.
-The method would automatically register the schema to the Schema Registry Service and keep the schema cached for future serialization usage.
+The method would use a schema previously registered to the Schema Registry service and keep the schema cached for future serialization usage. It is also possible to avoid pre-registering the schema to the service and automatically register with the `serialize` method by instantiating the `AvroSerializer` with the keyword argument `auto_register_schemas=True`.
 
 ```python
 import os
@@ -139,7 +139,7 @@ with serializer:
 ### Deserialization
 
 Use `AvroSerializer.deserialize` method to deserialize raw bytes into dict data.
-The method would automatically retrieve the schema from the Schema Registry Service and keep the schema cached for future deserialization usage.
+The method automatically retrieves the schema from the Schema Registry Service and keeps the schema cached for future deserialization usage.
 
 ```python
 import os
@@ -312,3 +312,5 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [schemaregistry_client]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry
 [schemaregistry_service]: https://aka.ms/schemaregistry
 [eventhubs_repo]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub
+[token_credential_interface]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core/azure/core/credentials.py
+[pypi_azure_identity]: https://pypi.org/project/azure-identity/
