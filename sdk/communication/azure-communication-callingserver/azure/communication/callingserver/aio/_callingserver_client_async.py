@@ -134,7 +134,7 @@ class CallingServerClient:
 
         return cls(endpoint, access_key, **kwargs)
 
-    def get_call_connection(
+    def get_call_connection( # pylint: disable=unused-argument
         self,
         call_connection_id: str,
         **kwargs: Any

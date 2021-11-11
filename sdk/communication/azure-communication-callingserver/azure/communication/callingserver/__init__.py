@@ -9,13 +9,11 @@ from ._version import VERSION
 from ._call_connection import CallConnection
 from ._callingserver_client import CallingServerClient
 from ._generated.models import (AudioRoutingMode, AddParticipantResult, CallConnectionProperties,
-                                CallRejectReason, CreateCallRequest, PhoneNumberIdentifierModel,
-                                PlayAudioRequest, PlayAudioResult, CallParticipant,
+                                CallRejectReason, PlayAudioResult, CallParticipant,
                                 CallMediaType, CallingEventSubscriptionType,
                                 CallingOperationStatus, CallConnectionStateChangedEvent,
                                 ToneReceivedEvent, ToneInfo,
-                                PlayAudioResultEvent, CommunicationIdentifierModel,
-                                CommunicationUserIdentifierModel, AddParticipantResultEvent,
+                                PlayAudioResultEvent, AddParticipantResultEvent,
                                 CallConnectionState, ToneValue, AnswerCallResult, AudioRoutingGroupResult,
                                 CreateAudioRoutingGroupResult, TransferCallResult)
 from ._models import (
@@ -36,13 +34,10 @@ __all__ = [
     'CallingServerClient',
     'CommunicationIdentifier',
     'CommunicationUserIdentifier',
-    'CreateCallRequest',
     'CallingEventSubscriptionType',
     'CallMediaType',
     'CallingOperationStatus',
     'PhoneNumberIdentifier',
-    'PhoneNumberIdentifierModel',
-    'PlayAudioRequest',
     'PlayAudioResult',
     'CallLocator',
     'GroupCallLocator',
@@ -51,8 +46,6 @@ __all__ = [
     'ToneReceivedEvent',
     'ToneInfo',
     'PlayAudioResultEvent',
-    'CommunicationIdentifierModel',
-    'CommunicationUserIdentifierModel',
     'AddParticipantResultEvent',
     'CallConnectionState',
     'ToneValue',
