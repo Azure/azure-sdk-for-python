@@ -12,6 +12,11 @@
 - operations `connection_exists`, `group_exists`, `user_exists`, and `has_permission` now return boolean values instead of raising
 - move parameter 'hub' from operation to client
 
+### Bug Fixes
+
+- add port to client's endpoint if included in connection string for `WebPubSubServiceClient.from_connection_string`
+- fix proxy redirection to the endpoint specified in kwarg `reverse_proxy_endpoint` to run in correct policy placement and to not be overridden by `CustomHookPolicy`.
+- fix bug that prevented users from calling `WebPubSubServiceClient.from_connection_string` with python 2.7
 
 ## 1.0.0b2 (2021-10-14)
 
@@ -23,4 +28,3 @@
 ## 1.0.0b1 (2021-04-27)
 
 - Initial version
-
