@@ -137,6 +137,13 @@ This syntax works with setuptools >= 24.2.0 (July 2016) and pip >= 9.0 (Nov 2016
 - wheels must NOT contain a `azure/__init__.py` file (you can open it with a zip util to check)
 - sdist must contain a `azure/__init__.py` file that declares `azure` as a namespace package using the `pkgutil` syntax
 
+# I already have a package thatn supports Python 2, can I get short version on how to udpate to Python 3
+
+- Remove `extra_requires`
+- Add `python_requires=">=3.7",`
+- Remove the Python 2 and 3.5/3.6 classifiers
+- Remove the "azure" check if applicable (see next note)
+
 # Note on checking old Azure packages
 
 You may see code looking like this:
