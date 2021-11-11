@@ -1,5 +1,15 @@
 # Release History
 
+## 12.2.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 12.2.0 (2021-11-10)
 
 **Warning** This release involves a bug fix that may change the behaviour for some users. Partition and Row keys that contain a single quote character (`'`) will now be automatically escaped for upsert, update and delete entity operations. Partition and Row keys that were already escaped, or contained duplicate single quote char (`''`) will now be treated as unescaped values.
