@@ -51,7 +51,7 @@ def get_page(page_number, pages):
     for page in pages:
         if page.page_number == page_number:
             return page
-    return None
+    raise ValueError("could not find the requested page")
 
 def get_elements_with_spans():
     path_to_sample_documents = os.path.abspath(
@@ -79,8 +79,10 @@ def get_elements_with_spans():
     result = poller.result()
 
     # Below is a method to search for the lines of a particular element by using spans.
-    # This example uses DocumentTable, but other elements that also have a `spans` field
+    # This example uses DocumentTable, but other elements that also have a `spans` or `span` field
     # can also be used to search for related elements, such as lines in this case.
+    # To see an example for searching for words which have a `span` field, see
+    # `sample_get_words_on_document_line.py` under the samples v3.2-beta directory.
     for table_idx, table in enumerate(result.tables):
         print(
             "Table # {} has {} rows and {} columns".format(
@@ -109,8 +111,8 @@ def get_elements_with_spans():
             )
 
     # Below is a method to search for the style of a particular element by using spans.
-    # This example uses DocumentEntity, but other elements that also have a `spans` field
-    # can also be used to search for document text style.
+    # This example uses DocumentEntity, but other elements that also have a `spans` or `span`
+    # field can also be used to search for document text style.
     for entity in result.entities:
         styles = get_styles(entity.spans, result.styles)
         print(

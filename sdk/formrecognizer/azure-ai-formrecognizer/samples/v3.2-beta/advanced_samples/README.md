@@ -11,7 +11,7 @@ All of these samples need the endpoint to your Form Recognizer resource ([instru
 
 |**File Name**|**Description**|
 |----------------|-------------|
-|sample_get_elements_with_spans.py and sample_get_elements_with_spans_async.py|Get elements that are contained in the spans of another element|
+|sample_get_elements_with_spans.py and sample_get_elements_with_spans_async.py|Get elements, such as lines, words, and/or styles, that are contained in the spans of another element|
 
 ## Next steps
 
