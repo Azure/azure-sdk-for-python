@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
@@ -19,11 +18,11 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from msrest import Serializer
 
 from .. import models as _models
-from .._vendor import _convert_request
+from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -31,7 +30,8 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 # fmt: off
 
-def build_list_request(
+def build_get_policy_request(
+    billing_account_id,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -39,7 +39,12 @@ def build_list_request(
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/providers/Microsoft.Subscription/operations')
+    url = kwargs.pop("template_url", '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Subscription/policies/default')
+    path_format_arguments = {
+        "billingAccountId": _SERIALIZER.url("billing_account_id", billing_account_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -58,8 +63,8 @@ def build_list_request(
     )
 
 # fmt: on
-class Operations(object):
-    """Operations operations.
+class BillingAccountOperations(object):
+    """BillingAccountOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -81,71 +86,55 @@ class Operations(object):
         self._config = config
 
     @distributed_trace
-    def list(
+    def get_policy(
         self,
+        billing_account_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.OperationListResult"]
-        """Lists all of the available Microsoft.Subscription API operations.
+        # type: (...) -> "_models.BillingAccountPoliciesResponse"
+        """Get Billing Account Policy.
 
+        :param billing_account_id: Billing Account Id.
+        :type billing_account_id: str
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either OperationListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.subscription.models.OperationListResult]
+        :return: BillingAccountPoliciesResponse, or the result of cls(response)
+        :rtype: ~azure.mgmt.subscription.models.BillingAccountPoliciesResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BillingAccountPoliciesResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        def prepare_request(next_link=None):
-            if not next_link:
-                
-                request = build_list_request(
-                    api_version=api_version,
-                    template_url=self.list.metadata['url'],
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
 
-            else:
-                
-                request = build_list_request(
-                    api_version=api_version,
-                    template_url=next_link,
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize("OperationListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponseBody, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-
-        return ItemPaged(
-            get_next, extract_data
+        
+        request = build_get_policy_request(
+            billing_account_id=billing_account_id,
+            api_version=api_version,
+            template_url=self.get_policy.metadata['url'],
         )
-    list.metadata = {'url': '/providers/Microsoft.Subscription/operations'}  # type: ignore
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponseBody, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('BillingAccountPoliciesResponse', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get_policy.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Subscription/policies/default'}  # type: ignore
+
