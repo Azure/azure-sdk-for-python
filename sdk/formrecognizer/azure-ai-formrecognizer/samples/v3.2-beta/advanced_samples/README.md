@@ -19,12 +19,8 @@ Check out the [API reference documentation][python-fr-ref-docs] to learn more ab
 what you can do with the Azure Form Recognizer client library.
 
 
-[pip]: https://pypi.org/project/pip/
-[azure_subscription]: https://azure.microsoft.com/free/
-[azure_form_recognizer_account]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=singleservice%2Cwindows
 [python-fr-ref-docs]: https://aka.ms/azsdk/python/formrecognizer/docs
 [get-endpoint-instructions]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/README.md#get-the-endpoint
 [get-key-instructions]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/README.md#get-the-api-key
-[changelog]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/CHANGELOG.md
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/advanced_samples/README.png)
