@@ -9,16 +9,22 @@ parameters:
   BeforeTestSteps: []
   AfterTestSteps: []
   CoverageArg: ''
-  BuildTargetingString: 'azure-*'
   ToxTestEnv: ""
   RunCoverage: ne(variables['CoverageArg'], '--disablecov')
   ToxEnvParallel: ''
   InjectedPackages: ''
   DevFeedName: 'public/azure-sdk-for-python'
 
+# The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
+#     eng/pipelines/templates/jobs/ci.tests.yml
+#     eng/pipelines/templates/jobs/ci.yml
+#     eng/pipelines/templates/jobs/live.test.yml
+
+# Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
 steps:
   - pwsh: |
       gci -r $(Build.ArtifactStagingDirectory)
+    displayName: Dump Artifact Directory
 
   - template: /eng/pipelines/templates/steps/use-python-version.yml
     parameters:
@@ -43,7 +49,7 @@ steps:
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
-        "${{ parameters.BuildTargetingString }}"
+        "$(TargetingString)"
         ${{ parameters.AdditionalTestArgs }}
         ${{ parameters.CoverageArg }}
         --mark_arg="${{ parameters.TestMarkArgument }}"
@@ -94,7 +100,7 @@ steps:
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
-        "${{ parameters.BuildTargetingString }}"
+        "$(TargetingString)"
         --service="${{ parameters.ServiceDirectory }}"
         --toxenv="samples"
     env: ${{ parameters.EnvVars }}

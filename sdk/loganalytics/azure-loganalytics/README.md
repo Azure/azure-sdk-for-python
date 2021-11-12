@@ -1,40 +1,7 @@
 ## Microsoft Azure SDK for Python
 
-This is the Microsoft Azure Log Analytics Client Library.
+This package is no longer being maintained. Please use our latest package [azure-monitor-query](https://pypi.org/project/azure-monitor-query/).
 
-This package has been tested with Python 2.7, 3.4, 3.5, 3.6 and 3.7.
-
-For a more complete set of Azure libraries, see the
-[azure sdk python release](https://aka.ms/azsdk/python/all).
-
-## Compatibility
-
-**IMPORTANT**: If you have an earlier version of the azure package
-(version < 1.0), you should uninstall it before installing this
-package.
-
-You can check the version using pip:
-
-``` shell
-pip freeze
-```
-
-If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
-
-``` shell
-pip uninstall azure
-```
-
-## Usage
-
-For code examples, see [Log
-Analytics](https://docs.microsoft.com/python/api/overview/azure/) on
-docs.microsoft.com.
-
-## Provide Feedback
-
-If you encounter any bugs or have suggestions, please file an issue in
-the [Issues](https://github.com/Azure/azure-sdk-for-python/issues)
-section of the project.
+A [migration guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/migration_guide.md) has been provided for the same.
 
 ![image](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-loganalytics%2FREADME.png)

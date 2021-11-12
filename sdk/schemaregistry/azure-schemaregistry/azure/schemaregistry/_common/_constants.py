@@ -27,4 +27,21 @@ from enum import Enum
 
 
 class SchemaFormat(str, Enum):
-    AVRO = "avro"
+    """
+    Represents the format of the schema to be stored by the Schema Registry service.
+    """
+
+    AVRO = "Avro"
+    """Represents the Apache Avro schema format."""
+
+
+class ApiVersion(str, Enum):
+    """
+    Represents the Schema Registry API version to use for requests.
+    """
+
+    V2021_10 = "2021-10"
+    """This is the default version."""
+
+
+DEFAULT_VERSION = ApiVersion.V2021_10

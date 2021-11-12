@@ -30,9 +30,13 @@ except ImportError:
 from io import BytesIO
 from typing import Any, Dict, Mapping
 
+from .exceptions import (
+    SchemaParseError,
+    SchemaSerializationError,
+    SchemaDeserializationError,
+)
+from ._apache_avro_serializer import ApacheAvroObjectSerializer as AvroObjectSerializer
 from ._constants import SCHEMA_ID_START_INDEX, SCHEMA_ID_LENGTH, DATA_START_INDEX
-from ._avro_serializer import AvroObjectSerializer
-from ._utils import parse_schema
 
 
 class AvroSerializer(object):
@@ -53,19 +57,21 @@ class AvroSerializer(object):
         # type: (Any) -> None
         try:
             self._schema_group = kwargs.pop("group_name")
-            self._schema_registry_client = kwargs.pop("client") # type: "SchemaRegistryClient"
+            self._schema_registry_client = kwargs.pop(
+                "client"
+            )  # type: "SchemaRegistryClient"
         except KeyError as e:
             raise TypeError("'{}' is a required keyword.".format(e.args[0]))
         self._avro_serializer = AvroObjectSerializer(codec=kwargs.get("codec"))
         self._auto_register_schemas = kwargs.get("auto_register_schemas", False)
         self._auto_register_schema_func = (
-                self._schema_registry_client.register_schema
-                if self._auto_register_schemas
-                else self._schema_registry_client.get_schema_properties
-            )
+            self._schema_registry_client.register_schema
+            if self._auto_register_schemas
+            else self._schema_registry_client.get_schema_properties
+        )
 
     def __enter__(self):
-        # type: () -> SchemaRegistryAvroSerializer
+        # type: () -> AvroSerializer
         self._schema_registry_client.__enter__()
         return self
 
@@ -107,10 +113,11 @@ class AvroSerializer(object):
 
         :param str schema_id: Schema id
         :return: Schema content
+        :rtype: str
         """
         schema_str = self._schema_registry_client.get_schema(
             schema_id, **kwargs
-        ).schema_definition
+        ).definition
         return schema_str
 
     def serialize(self, value, **kwargs):
@@ -120,21 +127,45 @@ class AvroSerializer(object):
         denoting record format identifier. The following 32 bytes denoting schema id returned by schema registry
         service. The remaining bytes are the real data payload.
 
+        Schema must be an Avro RecordSchema:
+        https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
+
         :param value: The data to be encoded.
         :type value: Mapping[str, Any]
         :keyword schema: Required. The schema used to encode the data.
         :paramtype schema: str
         :rtype: bytes
+        :raises ~azure.schemaregistry.serializer.avroserializer.exceptions.SchemaParseError:
+            Indicates an issue with parsing schema.
+        :raises ~azure.schemaregistry.serializer.avroserializer.exceptions.SchemaSerializationError:
+            Indicates an issue with serializing data for provided schema.
         """
         try:
             raw_input_schema = kwargs.pop("schema")
         except KeyError as e:
             raise TypeError("'{}' is a required keyword.".format(e.args[0]))
 
-        cached_schema = parse_schema(raw_input_schema)
         record_format_identifier = b"\0\0\0\0"
-        schema_id = self._get_schema_id(cached_schema.fullname, str(cached_schema), **kwargs)
-        data_bytes = self._avro_serializer.serialize(value, cached_schema)
+
+        try:
+            schema_fullname = self._avro_serializer.get_schema_fullname(
+                raw_input_schema
+            )
+        except Exception as e:  # pylint:disable=broad-except
+            SchemaParseError(
+                "Cannot parse schema: {}".format(raw_input_schema), error=e
+            ).raise_with_traceback()
+
+        schema_id = self._get_schema_id(schema_fullname, raw_input_schema, **kwargs)
+        try:
+            data_bytes = self._avro_serializer.serialize(value, raw_input_schema)
+        except Exception as e:  # pylint:disable=broad-except
+            SchemaSerializationError(
+                "Cannot serialize value '{}' for schema: {}".format(
+                    value, raw_input_schema
+                ),
+                error=e,
+            ).raise_with_traceback()
 
         stream = BytesIO()
 
@@ -152,8 +183,15 @@ class AvroSerializer(object):
         """
         Decode bytes data.
 
+        Data must follow format of associated Avro RecordSchema:
+        https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
+
         :param bytes value: The bytes data needs to be decoded.
         :rtype: Dict[str, Any]
+        :raises ~azure.schemaregistry.serializer.avroserializer.exceptions.SchemaParseError:
+            Indicates an issue with parsing schema.
+        :raises ~azure.schemaregistry.serializer.avroserializer.exceptions.SchemaDeserializationError:
+            Indicates an issue with deserializing value.
         """
         # record_format_identifier = data[0:4]  # The first 4 bytes are retained for future record format identifier.
         schema_id = value[
@@ -161,7 +199,15 @@ class AvroSerializer(object):
         ].decode("utf-8")
         schema_definition = self._get_schema(schema_id, **kwargs)
 
-        dict_value = self._avro_serializer.deserialize(
-            value[DATA_START_INDEX:], schema_definition
-        )
+        try:
+            dict_value = self._avro_serializer.deserialize(
+                value[DATA_START_INDEX:], schema_definition
+            )
+        except Exception as e:  # pylint:disable=broad-except
+            SchemaDeserializationError(
+                "Cannot deserialize value '{}' for schema: {}".format(
+                    value[DATA_START_INDEX], schema_definition
+                ),
+                error=e,
+            ).raise_with_traceback()
         return dict_value

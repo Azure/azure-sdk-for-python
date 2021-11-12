@@ -53,8 +53,8 @@ class TestToDict(FormRecognizerTest):
         }
         assert d == final
 
-    def test_document_element_to_dict(self):
-        model = _models.DocumentElement(
+    def test_document_content_element_to_dict(self):
+        model = _models.DocumentContentElement(
             content="sample",
             bounding_box=[
                 _models.Point(1427.0, 1669.0),
@@ -62,7 +62,12 @@ class TestToDict(FormRecognizerTest):
                 _models.Point(1527.0, 1698.0),
                 _models.Point(1427.0, 1698.0),
             ],
+            span=_models.DocumentSpan(
+                offset=5,
+                length=2,
+            ),
             kind="word",
+            confidence=0.99,
         )
 
         d = model.to_dict()
@@ -74,6 +79,11 @@ class TestToDict(FormRecognizerTest):
                 {"x": 1527.0, "y": 1698.0},
                 {"x": 1427.0, "y": 1698.0},
             ],
+            "span": {
+                "offset": 5,
+                "length": 2,
+            },
+            "confidence": 0.99,
             "kind": "word",
         }
         assert d == final

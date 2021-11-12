@@ -20,7 +20,13 @@ class ErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UNAUTHORIZED = "Unauthorized"
     FORBIDDEN = "Forbidden"
     NOT_FOUND = "NotFound"
+    PROJECT_NOT_FOUND = "ProjectNotFound"
+    OPERATION_NOT_FOUND = "OperationNotFound"
+    AZURE_COGNITIVE_SEARCH_NOT_FOUND = "AzureCognitiveSearchNotFound"
+    AZURE_COGNITIVE_SEARCH_INDEX_NOT_FOUND = "AzureCognitiveSearchIndexNotFound"
     TOO_MANY_REQUESTS = "TooManyRequests"
+    AZURE_COGNITIVE_SEARCH_THROTTLING = "AzureCognitiveSearchThrottling"
+    AZURE_COGNITIVE_SEARCH_INDEX_LIMIT_REACHED = "AzureCognitiveSearchIndexLimitReached"
     INTERNAL_SERVER_ERROR = "InternalServerError"
     SERVICE_UNAVAILABLE = "ServiceUnavailable"
 
@@ -42,17 +48,11 @@ class ProjectKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     CONVERSATION = "conversation"
     WORKFLOW = "workflow"
 
-class ResolutionKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of an entity resolution.
-    """
-
-    #: Dictionary normalized entities.
-    DICTIONARY_NORMALIZED_VALUE = "DictionaryNormalizedValue"
-
 class TargetKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of a target service.
     """
 
     LUIS = "luis"
-    LUIS_DEEPSTACK = "luis_deepstack"
+    CONVERSATION = "conversation"
     QUESTION_ANSWERING = "question_answering"
+    NON_LINKED = "non_linked"

@@ -1,6 +1,6 @@
 # Release History
 
-## 0.10.0 (Unreleased)
+## 0.10.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 0.10.0 (2021-11-09)
+
+### Other Changes
+
+- Internal bugfixes (re-generated with latest generator)
 
 ## 0.9.0 (2021-10-05)
 

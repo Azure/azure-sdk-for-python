@@ -91,7 +91,7 @@ except (SyntaxError, ImportError):
     from ._models import TargetTypeListResult  # type: ignore
     from ._models import TrackedResource  # type: ignore
 
-from ._microsoft_azure_chaos_enums import (
+from ._chaos_management_client_enums import (
     ActionType,
     CreatedByType,
     Origin,

@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 from azure.core.credentials import AccessToken
 from azure.communication.identity.aio import CommunicationIdentityClient
+from azure.communication.identity._api_versions import ApiVersion
 from azure.communication.networktraversal.aio import CommunicationRelayClient
 from _shared.helper import URIIdentityReplacer
 from _shared.testcase import (
@@ -35,6 +36,7 @@ class CommunicationRelayClientTestAsync(AsyncCommunicationTestCase):
     async def test_get_relay_configuration(self, communication_livetest_dynamic_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
             communication_livetest_dynamic_connection_string,
+            api_version=ApiVersion.V2021_03_07,
             http_logging_policy=get_http_logging_policy()
         )
 
