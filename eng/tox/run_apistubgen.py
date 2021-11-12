@@ -47,6 +47,14 @@ if __name__ == "__main__":
         help="Working directory to run apistubgen",
         required=True,
     )
+    
+    parser.add_argument(
+        "-o",
+        "--out",
+        dest="out",
+        help="Output directory to create apistub file",
+        required=True,
+    )
 
     args = parser.parse_args()
 
@@ -56,4 +64,4 @@ if __name__ == "__main__":
     if not pkg_path:
         pkg_path = args.target_package
 
-    check_call(["apistubgen", "--pkg-path", pkg_path,], cwd=args.work_dir)
+    check_call(["apistubgen", "--pkg-path", pkg_path, "--out-path", args.out], cwd=args.work_dir)

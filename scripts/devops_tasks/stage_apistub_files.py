@@ -8,27 +8,25 @@
 import argparse
 import sys
 import os
+import glob
+import shutil
 
 from common_tasks import process_glob_string, run_check_call
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 
-def build_stub(targeted_packages, dest_directory):
+def stage_apistubs(targeted_packages, dest_directory):
     # run the apistubgen for each package
     for package_root in targeted_packages:
-        service_hierarchy = os.path.join(os.path.basename(package_root))
-        print("Generating Package API stub file Using apistubgen")
-        run_check_call(
-            [
-                "apistubgen",
-                "--pkg-path",
-                package_root,
-                "--out-path",
-                os.path.join(dest_directory, service_hierarchy),
-                "--hide-report"
-            ],
-            root_dir,
-        )
-
+        path_to_search = os.path.join(package_root, ".tox", "dist", "*python.json")
+        globs = glob.glob(path_to_search)
+        if globs:
+            json_file_path = globs[0]
+            target_path = os.path.join(dest_directory, os.path.basename(package_root))
+            print("Copying Package API stub file from path {0} to {1}".format(json_file_path, target_path))
+            shutil.copy(json_file_path, target_path)
+        else:
+            print("APIView stub file is not present at {}.".format(path_to_search))
+        
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -81,6 +79,6 @@ if __name__ == "__main__":
     targeted_packages = process_glob_string(
         args.glob_string, target_dir, args.package_filter_string
     )
-    build_stub(
+    stage_apistubs(
         targeted_packages, args.dest_dir
     )
