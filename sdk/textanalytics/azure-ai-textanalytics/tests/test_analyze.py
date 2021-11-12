@@ -1422,7 +1422,7 @@ class TestAnalyze(TextAnalyticsTest):
             headers={"Content-Type": "application/json", "operation-location": "https://fakeurl.com"}
         )
 
-        # a mix of action errors to translate to doc errors, regular doc errors, and a successful response
+        # action job failure with status=="failed", no partial results so we raise an exception in this case
         path_to_mock_json_response = os.path.abspath(
             os.path.join(
                 os.path.abspath(__file__),
