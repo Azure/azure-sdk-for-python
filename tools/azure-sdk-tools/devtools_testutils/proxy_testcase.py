@@ -84,12 +84,13 @@ def start_record_or_playback(test_id):
             headers={"x-recording-file": test_id, "x-recording-sha": current_sha},
         )
         recording_id = result.headers["x-recording-id"]
-        try:
-            variables = result.json()
-        except ValueError as ex:  # would be a JSONDecodeError on Python 3, which subclasses ValueError
-            six.raise_from(
-                ValueError("The response body returned from starting playback did not contain valid JSON"), ex
-            )
+        if result.text:
+            try:
+                variables = result.json()
+            except ValueError as ex:  # would be a JSONDecodeError on Python 3, which subclasses ValueError
+                six.raise_from(
+                    ValueError("The response body returned from starting playback did not contain valid JSON"), ex
+                )
 
     return (recording_id, variables)
 
