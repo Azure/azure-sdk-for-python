@@ -28,7 +28,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
         # list docs statuses
         doc_statuses = list(client.list_document_statuses(poller.id)) # convert from generic iterator to list
-        self.assertEqual(len(doc_statuses), docs_count)
+        assert len(doc_statuses) == docs_count
 
         for document in doc_statuses:
             self._validate_doc_status(document, target_language)
@@ -46,12 +46,12 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
         # check doc statuses
         doc_statuses_pages = list(client.list_document_statuses(translation_id=poller.id, results_per_page=results_per_page).by_page())
-        self.assertEqual(len(doc_statuses_pages), no_of_pages)
+        assert len(doc_statuses_pages) == no_of_pages
 
         # iterate by page
         for page in doc_statuses_pages:
             page_items = list(page)
-            self.assertLessEqual(len(page_items), results_per_page)
+            assert len(page_items) <=  results_per_page
             for document in page_items:
                 self._validate_doc_status(document, target_language)
 
@@ -68,7 +68,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
         # check doc statuses
         doc_statuses = list(client.list_document_statuses(translation_id=poller.id, skip=skip))
-        self.assertEqual(len(doc_statuses), docs_count - skip)
+        assert len(doc_statuses) == docs_count - skip
 
         # iterate over docs
         for document in doc_statuses:
@@ -109,13 +109,13 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
         # filter ids
         doc_statuses = list(client.list_document_statuses(poller.id)) # convert from generic iterator to list
-        self.assertEqual(len(doc_statuses), docs_count)
+        assert len(doc_statuses) == docs_count
         ids = [doc.id for doc in doc_statuses]
         ids = ids[:docs_count//2]
 
         # do the testing
         doc_statuses = list(client.list_document_statuses(poller.id, document_ids=ids))
-        self.assertEqual(len(doc_statuses), len(ids))
+        assert len(doc_statuses) == len(ids)
         for document in doc_statuses:
             self._validate_doc_status(document, target_language, ids=ids)
 
@@ -131,7 +131,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
         # check doc statuses
         doc_statuses = list(client.list_document_statuses(poller.id, order_by=["created_on asc"])) # convert from generic iterator to list
-        self.assertEqual(len(doc_statuses), docs_count)
+        assert len(doc_statuses) == docs_count
 
         curr = datetime.min
         for document in doc_statuses:
@@ -150,7 +150,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
         # check doc statuses
         doc_statuses = list(client.list_document_statuses(poller.id, order_by=["created_on desc"])) # convert from generic iterator to list
-        self.assertEqual(len(doc_statuses), docs_count)
+        assert len(doc_statuses) == docs_count
 
         curr = datetime.max
         for document in doc_statuses:
@@ -171,7 +171,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
         # get ids
         doc_statuses = list(client.list_document_statuses(poller.id)) # convert from generic iterator to list
-        self.assertEqual(len(doc_statuses), docs_count)
+        assert len(doc_statuses) == docs_count
         ids = [doc.id for doc in doc_statuses]
         ids = ids[:docs_count//2]
 
@@ -186,21 +186,21 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
             skip=skip,
             results_per_page=results_per_page
         ).by_page()
-        self.assertIsNotNone(filtered_docs)
+        assert filtered_docs is not None
 
         # check statuses
         counter = 0
         curr_time = datetime.min
         for page in filtered_docs:
             page_docs = list(page)
-            self.assertLessEqual(len(page_docs), results_per_page) # assert paging
+            assert len(page_docs) <=  results_per_page # assert paging
             for doc in page_docs:
                 counter += 1
                 # assert ordering
                 assert(doc.created_on.replace(tzinfo=None) >= curr_time.replace(tzinfo=None))
                 curr_time = doc.created_on
                 # assert filters
-                self.assertIn(doc.status, statuses)
-                self.assertIn(doc.id, ids)
+                assert doc.status in statuses
+                assert doc.id in ids
 
         assert(counter == len(ids) - skip)

@@ -42,11 +42,11 @@ class DocumentStatus(AsyncDocumentTranslationTest):
 
         # get doc statuses
         doc_statuses = client.list_document_statuses(translation_id)
-        self.assertIsNotNone(doc_statuses)
+        assert doc_statuses is not None
 
         # get first doc
         first_doc = await doc_statuses.__anext__()
-        self.assertIsNotNone(first_doc.id)
+        assert first_doc.id is not None
 
         # get doc details
         doc_status = await client.get_document_status(translation_id=translation_id, document_id=first_doc.id)

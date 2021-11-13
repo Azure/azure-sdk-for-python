@@ -25,8 +25,8 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
     async def _begin_and_validate_translation_async(self, async_client, translation_inputs, total_docs_count, language=None):
         # submit operation
         poller = await async_client.begin_translation(translation_inputs)
-        self.assertIsNotNone(poller.id)
-        self.assertIsNotNone(poller.details.id)
+        assert poller.id is not None
+        assert poller.details.id is not None
         # wait for result
         doc_statuses = await poller.result()
         # validate
@@ -68,7 +68,7 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
 
             # submit multiple operations
             poller = await async_client.begin_translation(translation_inputs)
-            self.assertIsNotNone(poller.id)
+            assert poller.id is not None
             if wait_for_operation:
                 await poller.result()
             else:
@@ -102,7 +102,7 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
 
         # submit operation
         poller = await async_client.begin_translation(translation_inputs)
-        self.assertIsNotNone(poller.id)
+        assert poller.id is not None
         # wait for result
         if wait_for_operation:
             result = await poller.result()

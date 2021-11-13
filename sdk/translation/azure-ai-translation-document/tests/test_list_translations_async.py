@@ -29,7 +29,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
 
         # list translations
         submitted_translations = client.list_translation_statuses()
-        self.assertIsNotNone(submitted_translations)
+        assert submitted_translations is not None
 
         # check statuses
         async for translation in submitted_translations:
@@ -49,7 +49,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
 
         # list translations
         submitted_translations_pages = client.list_translation_statuses(results_per_page=results_per_page).by_page()
-        self.assertIsNotNone(submitted_translations_pages)
+        assert submitted_translations_pages is not None
 
         # iterate by page
         async for page in submitted_translations_pages:
@@ -58,7 +58,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
                 page_translations.append(translation)
                 self._validate_translations(translation)
 
-            self.assertLessEqual(len(page_translations), results_per_page)
+            assert len(page_translations) <=  results_per_page
 
 
     @DocumentTranslationPreparer()
@@ -107,8 +107,8 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
 
         # check statuses
         async for translation in submitted_translations:
-            self.assertIn(translation.status, statuses)
-            self.assertNotIn(translation.id, completed_translation_ids)
+            assert translation.status in statuses
+            assert translation.id not in  completed_translation_ids
 
 
     @DocumentTranslationPreparer()
@@ -122,11 +122,11 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
 
         # list translations
         submitted_translations = client.list_translation_statuses(translation_ids=translation_ids)
-        self.assertIsNotNone(submitted_translations)
+        assert submitted_translations is not None
 
         # check statuses
         async for translation in submitted_translations:
-            self.assertIn(translation.id, translation_ids)
+            assert translation.id in translation_ids
 
 
     @pytest.mark.live_test_only
@@ -143,11 +143,11 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
 
         # list translations
         submitted_translations = client.list_translation_statuses(created_after=start)
-        self.assertIsNotNone(submitted_translations)
+        assert submitted_translations is not None
 
         # check statuses
         async for translation in submitted_translations:
-            self.assertIn(translation.id, translation_ids)
+            assert translation.id in translation_ids
             assert(translation.created_on.replace(tzinfo=None) >= start.replace(tzinfo=None))
 
 
@@ -169,12 +169,12 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
 
         # list translations
         submitted_translations = client.list_translation_statuses(created_before=end)
-        self.assertIsNotNone(submitted_translations)
+        assert submitted_translations is not None
 
         # check statuses
         async for translation in submitted_translations:
-            self.assertLessEqual(translation.created_on.replace(tzinfo=None), end.replace(tzinfo=None))
-            self.assertNotIn(translation.id, translation_ids)
+            assert translation.created_on.replace(tzinfo=None) <=  end.replace(tzinfo=None)
+            assert translation.id not in  translation_ids
 
 
     @DocumentTranslationPreparer()
@@ -188,7 +188,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
 
         # list translations
         submitted_translations = client.list_translation_statuses(order_by=["created_on asc"])
-        self.assertIsNotNone(submitted_translations)
+        assert submitted_translations is not None
 
         # check statuses
         curr = datetime.min
@@ -208,7 +208,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
 
         # list translations
         submitted_translations = client.list_translation_statuses(order_by=["created_on desc"])
-        self.assertIsNotNone(submitted_translations)
+        assert submitted_translations is not None
 
         # check statuses
         curr = datetime.max
@@ -252,13 +252,13 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
             async for translation in page:
                 counter += 1
                 # assert id
-                self.assertIn(translation.id, successful_translation_ids)
+                assert translation.id in successful_translation_ids
                 # assert ordering
                 assert(translation.created_on.replace(tzinfo=None) >= curr_time.replace(tzinfo=None))
                 curr_time = translation.created_on
                 # assert filters
                 assert(translation.created_on.replace(tzinfo=None) <= end.replace(tzinfo=None))
                 assert(translation.created_on.replace(tzinfo=None) >= start.replace(tzinfo=None))
-                self.assertIn(translation.status, statuses)
+                assert translation.status in statuses
 
-            self.assertLessEqual(counter, results_per_page) # assert paging
+            assert counter <=  results_per_page # assert paging

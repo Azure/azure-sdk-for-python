@@ -18,7 +18,7 @@ class TestSupportedFormats(DocumentTranslationTest):
     def test_supported_document_formats(self, client):
         # get supported formats
         supported_doc_formats = client.get_supported_document_formats()
-        self.assertIsNotNone(supported_doc_formats)
+        assert supported_doc_formats is not None
         # validate
         for doc_format in supported_doc_formats:
             self._validate_format(doc_format)
@@ -28,7 +28,7 @@ class TestSupportedFormats(DocumentTranslationTest):
     def test_supported_glossary_formats(self, client):
         # get supported formats
         supported_glossary_formats = client.get_supported_glossary_formats()
-        self.assertIsNotNone(supported_glossary_formats)
+        assert supported_glossary_formats is not None
         # validate
         for glossary_format in supported_glossary_formats:
             self._validate_format(glossary_format)

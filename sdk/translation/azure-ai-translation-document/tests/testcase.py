@@ -152,18 +152,21 @@ class DocumentTranslationTest(AzureTestCase):
         status = kwargs.pop("statuses", ["Succeeded"])
         ids = kwargs.pop("ids", None)
         # specific assertions
-        self.assertIn(doc_details.status, status)
+        assert doc_details.status in status
         if target_language:
-            self.assertEqual(doc_details.translated_to, target_language)
+            assert doc_details.translated_to == target_language
         # generic assertions
-        self.assertIn(doc_details.id, ids) if ids else self.assertIsNotNone(doc_details.id)
-        self.assertIsNotNone(doc_details.id)
-        self.assertIsNotNone(doc_details.source_document_url)
-        self.assertIsNotNone(doc_details.translated_document_url)
-        self.assertIsNotNone(doc_details.translation_progress)
-        self.assertIsNotNone(doc_details.characters_charged)
-        self.assertIsNotNone(doc_details.created_on)
-        self.assertIsNotNone(doc_details.last_updated_on)
+        if ids:
+            assert doc_details.id in ids
+        else:
+            assert doc_details.id is not None
+        assert doc_details.id is not None
+        assert doc_details.source_document_url is not None
+        assert doc_details.translated_document_url is not None
+        assert doc_details.translation_progress is not None
+        assert doc_details.characters_charged is not None
+        assert doc_details.created_on is not None
+        assert doc_details.last_updated_on is not None
 
     def _validate_translation_metadata(self, poller, **kwargs):
         status = kwargs.pop("status", None)
@@ -176,21 +179,41 @@ class DocumentTranslationTest(AzureTestCase):
         
         # status
         p = poller.status()
-        self.assertEqual(poller.status(), status) if status else self.assertIsNotNone(poller.status())
+        if status:
+            assert poller.status() == status
         # docs count
 
         if poller.done():
-            self.assertEqual(poller.details.documents_total_count, total) if total else self.assertIsNotNone(poller.details.documents_total_count)
-            self.assertEqual(poller.details.documents_failed_count, failed) if failed else self.assertIsNotNone(poller.details.documents_failed_count)
-            self.assertEqual(poller.details.documents_succeeded_count, succeeded) if succeeded else self.assertIsNotNone(poller.details.documents_succeeded_count)
-            self.assertEqual(poller.details.documents_in_progress_count, inprogress) if inprogress else self.assertIsNotNone(poller.details.documents_in_progress_count)
-            self.assertEqual(poller.details.documents_not_yet_started_count, notstarted) if notstarted else self.assertIsNotNone(poller.details.documents_not_yet_started_count)
-            self.assertEqual(poller.details.documents_canceled_count, canceled) if canceled else self.assertIsNotNone(poller.details.documents_canceled_count)
+            if total:
+                assert poller.details.documents_total_count == total
+            else:
+                assert poller.details.documents_total_count is not None
+            if failed:
+                assert poller.details.documents_failed_count == failed
+            else:
+                assert poller.details.documents_failed_count is not None
+            if succeeded:
+                assert poller.details.documents_succeeded_count == succeeded
+            else:
+                assert poller.details.documents_succeeded_count is not None
+            if inprogress:
+                assert poller.details.documents_in_progress_count == inprogress
+            else:
+                assert poller.details.documents_in_progress_count is not None
+            if notstarted:
+                assert poller.details.documents_not_yet_started_count == notstarted
+            else:
+                assert poller.details.documents_not_yet_started_count is not None
+            if canceled:
+                assert poller.details.documents_canceled_count == canceled
+            else:
+                assert poller.details.documents_canceled_count is not None
+
             # generic assertions
-            self.assertIsNotNone(poller.details.id)
-            self.assertIsNotNone(poller.details.created_on)
-            self.assertIsNotNone(poller.details.last_updated_on)
-            self.assertIsNotNone(poller.details.total_characters_charged)
+            assert poller.details.id is not None
+            assert poller.details.created_on is not None
+            assert poller.details.last_updated_on is not None
+            assert poller.details.total_characters_charged is not None
 
     def _validate_translations(self, job_details, **kwargs):
         status = kwargs.pop("status", None)
@@ -202,41 +225,55 @@ class DocumentTranslationTest(AzureTestCase):
         canceled = kwargs.pop('canceled', None)
 
         # status
-        self.assertEqual(job_details.status, status) if status else self.assertIsNotNone(job_details.status)
+        if status:
+            assert job_details.status == status
+        else:
+            assert job_details.status is not None
         # docs count
 
-        self.assertEqual(job_details.documents_total_count, total) if total else self.assertIsNotNone(
-            job_details.documents_total_count)
-        self.assertEqual(job_details.documents_failed_count, failed) if failed else self.assertIsNotNone(
-            job_details.documents_failed_count)
-        self.assertEqual(job_details.documents_succeeded_count,
-                         succeeded) if succeeded else self.assertIsNotNone(job_details.documents_succeeded_count)
-        self.assertEqual(job_details.documents_in_progress_count,
-                         inprogress) if inprogress else self.assertIsNotNone(
-            job_details.documents_in_progress_count)
-        self.assertEqual(job_details.documents_not_yet_started_count,
-                         notstarted) if notstarted else self.assertIsNotNone(
-            job_details.documents_not_yet_started_count)
-        self.assertEqual(job_details.documents_canceled_count,
-                         canceled) if canceled else self.assertIsNotNone(job_details.documents_canceled_count)
+        if total:
+            assert job_details.documents_total_count == total
+        else:
+            assert job_details.documents_total_count is not None
+        if failed:
+            assert job_details.documents_failed_count == failed
+        else:
+            assert job_details.documents_failed_count is not None
+        if succeeded:
+            assert job_details.documents_succeeded_count == succeeded
+        else:
+            assert job_details.documents_succeeded_count is not None
+        if inprogress:
+            assert job_details.documents_in_progress_count == inprogress
+        else:
+            assert job_details.documents_in_progress_count is not None
+        if notstarted:
+            assert job_details.documents_not_yet_started_count == notstarted
+        else:
+            assert job_details.documents_not_yet_started_count is not None
+        if canceled:
+            assert job_details.documents_canceled_count == canceled
+        else:
+            assert job_details.documents_canceled_count is not None
+
         # generic assertions
-        self.assertIsNotNone(job_details.id)
-        self.assertIsNotNone(job_details.created_on)
-        self.assertIsNotNone(job_details.last_updated_on)
-        self.assertIsNotNone(job_details.total_characters_charged)
+        assert job_details.id is not None
+        assert job_details.created_on is not None
+        assert job_details.last_updated_on is not None
+        assert job_details.total_characters_charged is not None
 
     def _validate_format(self, format):
-        self.assertIsNotNone(format.file_format)
-        self.assertIsNotNone(format.file_extensions)
-        self.assertIsNotNone(format.content_types)
+        assert format.file_format is not None
+        assert format.file_extensions is not None
+        assert format.content_types is not None
 
 
     # client helpers
     def _begin_and_validate_translation(self, client, translation_inputs, total_docs_count, language=None):
         # submit job
         poller = client.begin_translation(translation_inputs)
-        self.assertIsNotNone(poller.id)
-        self.assertIsNotNone(poller.details.id)
+        assert poller.id is not None
+        assert poller.details.id is not None
         # wait for result
         result = poller.result()
         # validate
@@ -272,7 +309,7 @@ class DocumentTranslationTest(AzureTestCase):
 
             # submit multiple jobs
             poller = client.begin_translation(translation_inputs)
-            self.assertIsNotNone(poller.id)
+            assert poller.id is not None
             if wait_for_operation:
                 result = poller.result()
             else:
@@ -306,7 +343,7 @@ class DocumentTranslationTest(AzureTestCase):
 
         # submit job
         poller = client.begin_translation(translation_inputs)
-        self.assertIsNotNone(poller.id)
+        assert poller.id is not None
         # wait for result
         if wait_for_operation:
             result = poller.result()

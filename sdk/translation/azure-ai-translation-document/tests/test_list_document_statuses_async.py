@@ -34,7 +34,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
             doc_statuses_list.append(document)
             self._validate_doc_status(document, target_language)
 
-        self.assertEqual(len(doc_statuses_list), docs_count)
+        assert len(doc_statuses_list) == docs_count
 
 
     @DocumentTranslationPreparer()
@@ -59,9 +59,9 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
             async for document in page:
                 page_docs_list.append(document)
                 self._validate_doc_status(document, target_language)
-            self.assertLessEqual(len(page_docs_list), results_per_page)
+            assert len(page_docs_list) <=  results_per_page
 
-        self.assertEqual(len(pages_list), no_of_pages)
+        assert len(pages_list) == no_of_pages
 
 
     @DocumentTranslationPreparer()
@@ -83,7 +83,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
             doc_statuses_list.append(document)
             self._validate_doc_status(document, target_language)
 
-        self.assertEqual(len(doc_statuses_list), docs_count - skip)
+        assert len(doc_statuses_list) == docs_count - skip
 
 
     @DocumentTranslationPreparer()
@@ -130,7 +130,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
         # filter ids
         doc_statuses = client.list_document_statuses(poller.id)
         ids = [document.id async for document in doc_statuses]
-        self.assertEqual(len(ids), docs_count)
+        assert len(ids) == docs_count
         ids = ids[:docs_count//2]
 
         # do the testing
@@ -162,7 +162,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
             assert(document.created_on.replace(tzinfo=None) >= curr.replace(tzinfo=None))
             curr = document.created_on
 
-        self.assertEqual(len(docs), docs_count)
+        assert len(docs) == docs_count
 
 
     @DocumentTranslationPreparer()
@@ -184,7 +184,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
             assert(document.created_on.replace(tzinfo=None) <= curr.replace(tzinfo=None))
             curr = document.created_on
 
-        self.assertEqual(len(docs), docs_count)
+        assert len(docs) == docs_count
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -201,7 +201,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
         # get ids
         doc_statuses = client.list_document_statuses(poller.id)
         ids = [document.id async for document in doc_statuses]
-        self.assertEqual(len(ids), docs_count)
+        assert len(ids) == docs_count
         ids = ids[:docs_count//2]
 
         filtered_docs = client.list_document_statuses(
@@ -228,10 +228,10 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
                 assert(doc.created_on.replace(tzinfo=None) >= curr_time.replace(tzinfo=None))
                 curr_time = doc.created_on
                 # assert filters
-                self.assertIn(doc.status, statuses)
-                self.assertIn(doc.id, ids)
+                assert doc.status in statuses
+                assert doc.id in ids
                 
-            self.assertLessEqual(len(page_docs), results_per_page) # assert paging
+            assert len(page_docs) <=  results_per_page # assert paging
 
         assert(counter == len(ids) - skip)
 
