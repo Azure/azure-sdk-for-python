@@ -5,7 +5,7 @@ variables:
   System.Debug: 'true'
 
 pool:
-  name: "azsdk-pool-mms-ubuntu-2004-general"
+  name: "azsdk-pool-mms-ubuntu-2004-perf"
   vmImage: "MMSUbuntu20.04"
 
 resources:
