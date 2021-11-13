@@ -27,43 +27,48 @@ class ContentDownloadTestsAsync(AsyncCommunicationTestCase):
     @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_download_content_to_stream(self):
-        stream = await self._execute_test_async()
+        downloader = await self._calling_server_client.download(self._metadata_url)
+        stream = await self._downloadToStream(downloader)
         metadata = stream.getvalue()
         self._verify_metadata(metadata)
 
     @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_download_content_to_stream_on_chunks(self):
-        stream = await self._execute_test_async(ParallelDownloadOptions(block_size=400))
+        downloader = await self._calling_server_client.download(
+            self._metadata_url,
+            block_size=400
+        )
+        stream = await self._downloadToStream(downloader)
         metadata = stream.getvalue()
         self._verify_metadata(metadata)
 
     @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_download_content_to_stream_on_chunks_parallel(self):
-        stream = await self._execute_test_async(
-                ParallelDownloadOptions(
-                    max_concurrency=3,
-                    block_size=100)
-            )
+        downloader = await self._calling_server_client.download(
+            self._metadata_url,
+            max_concurrency=3,
+            block_size=100
+        )
+        stream = await self._downloadToStream(downloader)
         metadata = stream.getvalue()
         self._verify_metadata(metadata)
 
     @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_download_content_to_stream_with_redirection(self):
-        stream = await self._execute_test_async()
+        downloader = await self._calling_server_client.download(self._metadata_url)
+        stream = await self._downloadToStream(downloader)
         metadata = stream.getvalue()
         self._verify_metadata(metadata)
 
-    async def _execute_test_async(self, download_options=None):
-        downloader_async = await self._calling_server_client.download(self._metadata_url,
-            parallel_download_options=download_options)
+    async def _downloadToStream(self, downloader):
         stream = BytesIO()
-
-        await downloader_async.readinto(stream)
+        await downloader.readinto(stream)
         return stream
 
     def _verify_metadata(self, metadata):
         self.assertIsNotNone(metadata)
+        print(metadata)
         self.assertTrue(metadata.__contains__(bytes(self._document_id, 'utf-8')))

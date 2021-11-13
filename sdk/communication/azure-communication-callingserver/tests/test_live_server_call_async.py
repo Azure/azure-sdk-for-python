@@ -209,9 +209,7 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
     async def test_delete_success(self):
         delete_url = CallingServerLiveTestUtilsAsync.get_delete_url()       
         async with self.callingserver_client:
-            delete_response = await self.callingserver_client.delete_recording(delete_url)
-            assert delete_response is not None
-            assert delete_response.status_code == 200
+            await self.callingserver_client.delete_recording(delete_url)
 
     @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
     @AsyncCommunicationTestCase.await_prepared_test

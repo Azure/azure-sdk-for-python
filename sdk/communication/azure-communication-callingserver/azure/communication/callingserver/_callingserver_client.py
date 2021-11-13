@@ -633,8 +633,8 @@ class CallingServerClient(object):
         :keyword format_type:
             The Recording's content type.
         :paramtype format_type: ~RecordingFormatType
-        :returns: The properties of the recording.
-        :rtype ~CallRecordingProperties
+        :returns: The response payload of start call recording operation.
+        :rtype ~StartCallRecordingResult
         """
 
         start_call_recording_with_calllocator_request = StartCallRecordingWithCallLocatorRequest(
@@ -772,9 +772,6 @@ class CallingServerClient(object):
         
         :param str content_delete_url:
             The location URL where the recording to be deleted exists.
-        
-        :returns: The http response from the backend server.
-        :rtype: ~HttpResponse
         """
         # pylint: disable=protected-access
         if not content_delete_url:

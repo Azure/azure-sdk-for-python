@@ -619,11 +619,31 @@ class CallingServerClient:
         self,
         call_locator: CallLocator,
         recording_state_callback_uri: str,
+        *,
         content_type: Optional[RecordingContentType] = None,
         channel_type: Optional[RecordingChannelType] = None,
         format_type: Optional[RecordingFormatType] = None,
         **kwargs: Any
     ) -> StartCallRecordingResult:
+        """ Starts a recording on the call located by the call_locator parameter.
+        
+        :param call_locator:
+            The call locator.
+        :paramtype call_locator: ~CallLocator
+        :param str recording_state_callback_uri:
+            Callback's URL.
+        :keyword content_type:
+            The Recording's content type.
+        :paramtype content_type: ~RecordingContentType
+        :keyword channel_type:
+            The Recording's content type.
+        :paramtype channel_type: ~RecordingChannelType
+        :keyword format_type:
+            The Recording's content type.
+        :paramtype format_type: ~RecordingFormatType
+        :returns: The response payload of start call recording operation.
+        :rtype ~StartCallRecordingResult
+        """
 
         start_call_recording_request = StartCallRecordingWithCallLocatorRequest(
             call_locator=serialize_call_locator(call_locator),
@@ -645,6 +665,11 @@ class CallingServerClient:
         recording_id: str,
         **kwargs: Any
     ) -> None:
+        """ Pauses the recording
+        
+        :param str recording_id:
+            The recording id to pause.
+        """
 
         if not recording_id:
             raise ValueError("recording_id cannot be None")
@@ -660,6 +685,11 @@ class CallingServerClient:
         recording_id: str,
         **kwargs: Any
     ) -> None:
+        """ Resumes the recording
+        
+        :param str recording_id:
+            The recording id to resume.
+        """
 
         if not recording_id:
             raise ValueError("recording_id cannot be None")
@@ -675,6 +705,11 @@ class CallingServerClient:
         recording_id: str,
         **kwargs: Any
     ) -> None:
+        """ Stops the recording
+        
+        :param str recording_id:
+            The recording id to stop.
+        """
 
         if not recording_id:
             raise ValueError("recording_id cannot be None")
@@ -690,6 +725,14 @@ class CallingServerClient:
         recording_id: str,
         **kwargs: Any
     ) -> CallRecordingProperties:
+        """ Get the Recording properties
+        
+        :param str recording_id:
+            The recording id to get properties from.
+
+        :returns: The properties of the recording.
+        :rtype ~CallRecordingProperties
+        """
 
         if not recording_id:
             raise ValueError("recording_id cannot be None")
@@ -703,11 +746,28 @@ class CallingServerClient:
     async def download(
             self,
             content_url: str,
-            start_range: int = None,
-            end_range: int = None,
-            parallel_download_options: ParallelDownloadOptions = None,
+            *,
+            start_range: Optional[int] = None,
+            end_range: Optional[int] = None,
+            max_concurrency: Optional[int] = 1,
+            block_size: Optional[int] = 4*1024*1024,
             **kwargs: Any
         ) -> ContentStreamDownloader:
+        """Download using content url.
+
+        :param str content_url:
+            The content url.
+        :keyword int start_range:
+            To download a range, this is the starting byte.
+        :keyword int end_range:
+            To download a range, this is the last byte to download.
+        :keyword int max_concurrency:
+            Max number of threads used to download.
+        :keyword int block_size:
+            Block size to download on each request.
+        :returns: ContentStreamDownloader for a successful download request.
+        :rtype: ~ContentStreamDownloader
+        """
 
         #pylint: disable=protected-access
         content_downloader = ContentDownloader(
@@ -717,12 +777,13 @@ class CallingServerClient:
             self._callingserver_service_client._deserialize
         )
         stream_downloader = ContentStreamDownloader(
+            content_url,
             content_downloader,
             self._callingserver_service_client._config,
-            start_range,
-            end_range,
-            endpoint=content_url,
-            parallel_download_options=parallel_download_options,
+            start_range=start_range,
+            end_range=end_range,
+            max_concurrency=max_concurrency,
+            block_size=block_size,
             **kwargs
         )
         await stream_downloader._setup()
@@ -734,7 +795,12 @@ class CallingServerClient:
         content_delete_url: str,
         **kwargs: Any
 
-    ): # type: (...) -> HttpResponse
+    ) -> None:
+        """Deletes the recording located on the URL passed as parameter.
+        
+        :param str content_delete_url:
+            The location URL where the recording to be deleted exists.
+        """
         # pylint: disable=protected-access
         if not content_delete_url:
             raise ValueError("content_delete_url can not be None")
@@ -760,8 +826,6 @@ class CallingServerClient:
             map_error(status_code=response.status_code,
                         response=response, error_map=error_map)
             raise HttpResponseError(response=response)
-
-        return response
 
     async def close(self) -> None:
         """Close the :class:

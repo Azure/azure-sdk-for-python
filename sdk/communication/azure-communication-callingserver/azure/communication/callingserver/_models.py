@@ -271,10 +271,6 @@ class CallingServerEventType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum))
 
 class ParallelDownloadOptions(object):
     """The options to configure parallel downloads.
-    :ivar max_concurrency: Max number of threads used to download.
-    :type max_concurrency: int
-    :ivar block_size: Block size to download on each request.
-    :type block_size: int
     """
     def __init__(
         self,
