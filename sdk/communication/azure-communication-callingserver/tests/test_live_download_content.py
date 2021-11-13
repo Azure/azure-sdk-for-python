@@ -32,17 +32,17 @@ class ContentDownloadTests(CommunicationTestCase):
 
     @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
     def test_download_content_to_stream_on_chunks(self):
-        stream = self._execute_test(ParallelDownloadOptions(block_size=400))
+        stream = self._execute_test({'block_size': 400})
         metadata = stream.getvalue()
         self._verify_metadata(metadata)
 
     @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
     def test_download_content_to_stream_on_chunks_parallel(self):
         stream = self._execute_test(
-                ParallelDownloadOptions(
-                    max_concurrency=3,
-                    block_size=400)
-            )
+                {
+                    'max_concurrency': 3,
+                    'block_size': 400
+                })
         metadata = stream.getvalue()
         self._verify_metadata(metadata)
 
@@ -52,9 +52,8 @@ class ContentDownloadTests(CommunicationTestCase):
         metadata = stream.getvalue()
         self._verify_metadata(metadata)
 
-    def _execute_test(self, download_options=None):
-        downloader = self._calling_server_client.download(self._metadata_url,
-                parallel_download_options=download_options)
+    def _execute_test(self, download_options={}):
+        downloader = self._calling_server_client.download(self._metadata_url, **download_options)
 
         stream = BytesIO()
         downloader.readinto(stream)

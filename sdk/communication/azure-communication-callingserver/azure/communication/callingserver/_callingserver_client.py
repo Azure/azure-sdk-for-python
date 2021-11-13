@@ -615,18 +615,34 @@ class CallingServerClient(object):
         self,
         call_locator,  # type: CallLocator
         recording_state_callback_uri,  # type: str
-        content_type=None, # type: Optional[RecordingContentType]
-        channel_type=None, # type: Optional[RecordingChannelType]
-        format_type=None, # type: Optional[RecordingFormatType]
         **kwargs  # type: Any
     ):  # type: (...) -> StartCallRecordingResult
+        """ Starts a recording on the call located by the call_locator parameter.
+        
+        :param call_locator:
+            The call locator.
+        :paramtype call_locator: ~CallLocator
+        :param str recording_state_callback_uri:
+            Callback's URL.
+        :keyword content_type:
+            The Recording's content type.
+        :paramtype content_type: ~RecordingContentType
+        :keyword channel_type:
+            The Recording's content type.
+        :paramtype channel_type: ~RecordingChannelType
+        :keyword format_type:
+            The Recording's content type.
+        :paramtype format_type: ~RecordingFormatType
+        :returns: The properties of the recording.
+        :rtype ~CallRecordingProperties
+        """
 
         start_call_recording_with_calllocator_request = StartCallRecordingWithCallLocatorRequest(
             call_locator=serialize_call_locator(call_locator),
             recording_state_callback_uri=recording_state_callback_uri,
-            recording_content_type=content_type,
-            recording_channel_type=channel_type,
-            recording_format_type=format_type,
+            recording_content_type=kwargs.pop("content_type", None),
+            recording_channel_type=kwargs.pop("channel_type", None),
+            recording_format_type=kwargs.pop("format_type", None),
             **kwargs
         )
 
@@ -641,6 +657,11 @@ class CallingServerClient(object):
         recording_id,  # type: str
         **kwargs  # type: Any
     ):  # type: (...) -> None
+        """ Pauses the recording
+        
+        :param str recording_id:
+            The recording id to pause.
+        """
 
         self._server_call_client.pause_recording(
             recording_id=recording_id,
@@ -653,6 +674,11 @@ class CallingServerClient(object):
         recording_id,  # type: str
         **kwargs  # type: Any
     ):  # type: (...) -> None
+        """ Resumes the recording
+        
+        :param str recording_id:
+            The recording id to resume.
+        """
 
         self._server_call_client.resume_recording(
             recording_id=recording_id,
@@ -665,7 +691,11 @@ class CallingServerClient(object):
         recording_id,  # type: str
         **kwargs  # type: Any
     ):  # type: (...) -> None
-
+        """ Stops the recording
+        
+        :param str recording_id:
+            The recording id to stop.
+        """
         self._server_call_client.stop_recording(
             recording_id=recording_id,
             **kwargs
@@ -677,7 +707,14 @@ class CallingServerClient(object):
         recording_id,  # type: str
         **kwargs  # type: Any
     ):  # type: (...) -> CallRecordingProperties
+        """ Get the Recording properties
+        
+        :param str recording_id:
+            The recording id to get properties from.
 
+        :returns: The properties of the recording.
+        :rtype ~CallRecordingProperties
+        """
         return self._server_call_client.get_recording_properties(
             recording_id=recording_id,
             **kwargs
@@ -687,15 +724,20 @@ class CallingServerClient(object):
     def download(
         self,
         content_url,  # type: str
-        start_range=None,  # type: int
-        end_range=None,  # type: int
-        parallel_download_options=None,  # type: ParallelDownloadOptions
         **kwargs  # type: Any
     ):  # type: (...) -> ContentStreamDownloader
         """Download using content url.
 
         :param str content_url:
             The content url.
+        :keyword int start_range:
+            To download a range, this is the starting byte.
+        :keyword int end_range:
+            To download a range, this is the last byte to download.
+        :keyword int max_concurrency:
+            Max number of threads used to download.
+        :keyword int block_size:
+            Block size to download on each request.
         :returns: ContentStreamDownloader for a successful download request.
         :rtype: ~ContentStreamDownloader
         """
@@ -713,12 +755,9 @@ class CallingServerClient(object):
             self._callingserver_service_client._config)
 
         return ContentStreamDownloader(
+            content_url,
             content_downloader,
             self._callingserver_service_client._config,
-            start_range,
-            end_range,
-            endpoint=content_url,
-            parallel_download_options=parallel_download_options,
             **kwargs
         )
 
@@ -728,7 +767,15 @@ class CallingServerClient(object):
         content_delete_url, # type: str
         **kwargs # type: Any
 
-    ): # type: (...) -> HttpResponse
+    ): # type: (...) -> None
+        """Deletes the recording located on the URL passed as parameter.
+        
+        :param str content_delete_url:
+            The location URL where the recording to be deleted exists.
+        
+        :returns: The http response from the backend server.
+        :rtype: ~HttpResponse
+        """
         # pylint: disable=protected-access
         if not content_delete_url:
             raise ValueError("content_delete_url can not be None")
@@ -754,5 +801,3 @@ class CallingServerClient(object):
             map_error(status_code=response.status_code,
                         response=response, error_map=error_map)
             raise HttpResponseError(response=response)
-
-        return response
