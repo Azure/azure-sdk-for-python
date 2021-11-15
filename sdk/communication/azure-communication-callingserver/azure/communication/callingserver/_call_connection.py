@@ -4,9 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-public-methods
-from typing import TYPE_CHECKING, List, Any, Optional  # pylint: disable=unused-import
+from typing import TYPE_CHECKING, List, Any  # pylint: disable=unused-import
 from azure.core.tracing.decorator import distributed_trace
-from .utils._utils import CallingServerUtils
 from ._communication_identifier_serializer import serialize_identifier
 from ._converters import (
     AddParticipantRequestConverter,
@@ -30,6 +29,7 @@ from ._generated.models import (
     PlayAudioResult,
     AudioRoutingGroupResult,
     CreateAudioRoutingGroupResult,
+    TransferCallResult,
     CallParticipant,
     AudioRoutingMode
     )
@@ -37,13 +37,21 @@ from ._shared.models import CommunicationIdentifier
 
 if TYPE_CHECKING:
     from ._generated.operations import CallConnectionsOperations
-    from ._models import PlayAudioOptions
 
 class CallConnection(object):
+    """An client to interact with the AzureCommunicationService Callingserver gateway.
+
+    This client provides operations on top of a established call connection.
+
+    :param str call_connection_id:
+        The id of this call connection.
+    :param CallConnectionsOperations call_connection_client:
+        The call connection client.
+    """
     def __init__(
             self,
             call_connection_id,  # type: str
-            call_connection_client  # type: CallConnectionsOperations
+            call_connection_client,  # type: CallConnectionsOperations
         ): # type: (...) -> None
 
         self.call_connection_id = call_connection_id
@@ -54,7 +62,12 @@ class CallConnection(object):
             self,
             **kwargs  # type: Any
         ): # type: (...) -> CallConnectionProperties
+        """Get CallConnectionProperties of this CallConnection.
 
+        :return: CallConnectionProperties
+        :rtype: ~azure.communication.callingserver.CallConnectionProperties
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
         return self._call_connection_client.get_call(
             call_connection_id=self.call_connection_id,
             **kwargs
@@ -65,7 +78,13 @@ class CallConnection(object):
             self,
             **kwargs  # type: Any
         ): # type: (...) -> None
+        """Terminates the conversation for all participants in the call.
 
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
         return self._call_connection_client.delete_call(
             call_connection_id=self.call_connection_id,
             **kwargs
@@ -76,7 +95,13 @@ class CallConnection(object):
             self,
             **kwargs  # type: Any
         ): # type: (...) -> None
+        """Hangup the call.
 
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
         return self._call_connection_client.hangup_call(
             call_connection_id=self.call_connection_id,
             **kwargs
@@ -87,7 +112,13 @@ class CallConnection(object):
             self,
             **kwargs  # type: Any
         ): # type: (...) -> None
+        """Keep the call alive.
 
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
         return self._call_connection_client.keep_alive(
             call_connection_id=self.call_connection_id,
             **kwargs
@@ -98,7 +129,13 @@ class CallConnection(object):
             self,
             **kwargs  # type: Any
         ): # type: (...) -> None
+        """Cancels all the currently active and pending PlayAudio operations in the call.
 
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
         return self._call_connection_client.cancel_all_media_operations(
             call_connection_id=self.call_connection_id,
             **kwargs
@@ -107,31 +144,47 @@ class CallConnection(object):
     @distributed_trace()
     def play_audio(
             self,
-            audio_file_uri,  # type: str
-            play_audio_options,  # type: PlayAudioOptions
+            audio_url,  # type: str
+            is_looped=False,  # type: bool
             **kwargs  # type: Any
         ): # type: (...) -> PlayAudioResult
+        """Play audio in the call.
 
-        if not audio_file_uri:
-            raise ValueError("audio_file_uri can not be None")
+        :param audio_url: Required. The media resource uri of the play audio request.
+         Currently only Wave file (.wav) format audio prompts are supported.
+         More specifically, the audio content in the wave file must be mono (single-channel),
+         16-bit samples with a 16,000 (16KHz) sampling rate.
+        :type audio_url: str
+        :param is_looped: The flag indicating whether audio file needs to be played in loop or
+         not.
+        :type is_looped: bool
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
+        :keyword audio_file_id: An id for the media in the AudioFileUri, using which we cache the media
+         resource.
+        :paramtype audio_file_id: str
+        :keyword callback_uri: The callback Uri to receive PlayAudio status notifications.
+        :paramtype callback_uri: str
+        :return: PlayAudioResult
+        :rtype: ~azure.communication.callingserver.PlayAudioResult
+        :raises: ~azure.core.exceptions.HttpResponseError
 
-        if not CallingServerUtils.is_valid_url(audio_file_uri):
-            raise ValueError("audio_file_uri is invalid")
+        """
+        operation_context = kwargs.pop("operation_context", None)
+        audio_file_id = kwargs.pop("audio_file_id", None)
+        callback_uri = kwargs.pop("callback_uri", None)
 
-        if not play_audio_options:
-            raise ValueError("options can not be None")
-
-        if not play_audio_options.audio_file_id:
-            raise ValueError("audio_file_id can not be None")
-
-        if not CallingServerUtils.is_valid_url(play_audio_options.callback_uri):
-            raise ValueError("callback_uri is invalid")
-
-        play_audio_request = PlayAudioRequestConverter.convert(audio_file_uri, play_audio_options)
+        play_audio_request = PlayAudioRequestConverter.convert(
+            audio_url=audio_url,
+            loop=is_looped,
+            operation_context=operation_context,
+            audio_file_id=audio_file_id,
+            callback_uri=callback_uri
+            )
 
         return self._call_connection_client.play_audio(
             call_connection_id=self.call_connection_id,
-            request=play_audio_request,
+            play_audio_request=play_audio_request,
             **kwargs
         )
 
@@ -139,13 +192,23 @@ class CallConnection(object):
     def add_participant(
             self,
             participant,  # type: CommunicationIdentifier
-            alternate_caller_id=None,  # type: Optional[str]
-            operation_context=None,  # type: Optional[str]
             **kwargs  # type: Any
         ): # type: (...) -> AddParticipantResult
+        """Add participant to the call connection.
 
-        if not participant:
-            raise ValueError("participant can not be None")
+        :param participant: Required. The participant identity.
+        :type participant: ~azure.communication.callingserver.models.CommunicationIdentifier
+        :keyword alternate_caller_id: The alternate caller id.
+        :paramtype alternate_caller_id: str
+        :keyword operation_context: The operation context.
+        :paramtype operation_context: str
+        :return: AddParticipantResult
+        :rtype: ~azure.communication.callingserver.AddParticipantResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
+        alternate_caller_id = kwargs.pop("alternate_caller_id", None)
+        operation_context = kwargs.pop("operation_context", None)
 
         alternate_caller_id = (None
             if alternate_caller_id is None
@@ -169,7 +232,15 @@ class CallConnection(object):
             participant,  # type: CommunicationIdentifier
             **kwargs  # type: Any
         ): # type: (...) -> None
+        """Remove participant from the call using identifier.
 
+        :param participant: Required. The identifier of the participant to be removed from the call.
+        :type participant: ~azure.communication.callingserver.models.CommunicationIdentifier
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
         remove_participant_request = RemoveParticipantRequestConverter.convert(
             identifier=serialize_identifier(participant)
             )
@@ -181,11 +252,17 @@ class CallConnection(object):
         )
 
     @distributed_trace()
-    def get_participants(
+    def list_participants(
             self,
             **kwargs  # type: Any
         ): # type: (...) -> List[CallParticipant]
+        """Get participants from a call.
 
+        :return: List[CallParticipant]
+        :rtype: List[~azure.communication.callingserver.models.CallParticipant]
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
         return self._call_connection_client.get_participants(
             call_connection_id=self.call_connection_id,
             **kwargs
@@ -197,7 +274,15 @@ class CallConnection(object):
             participant,  # type: CommunicationIdentifier
             **kwargs  # type: Any
         ): # type: (...) -> List[CallParticipant]
+        """Get participant from the call using identifier.
 
+        :param participant: Required. The identifier of the target participant.
+        :type participant: ~azure.communication.callingserver.models.CommunicationIdentifier
+        :return: List[CallParticipant]
+        :rtype: List[~azure.communication.callingserver.models.CallParticipant]
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
         get_participant_request = GetParticipantRequestConverter.convert(
             identifier=serialize_identifier(participant)
             )
@@ -212,30 +297,45 @@ class CallConnection(object):
     def play_audio_to_participant(
             self,
             participant,  # type: CommunicationIdentifier
-            audio_file_uri,  # type: str
-            play_audio_options,  # type: PlayAudioOptions
+            audio_url,  # type: str
+            is_looped=False,  # type: bool
             **kwargs  # type: Any
         ): # type: (...) -> PlayAudioResult
+        """Play audio to a participant.
 
-        if not participant:
-            raise ValueError("participant can not be None")
+        :param participant: Required. The media resource uri of the play audio request.
+        :type participant: str
+        :param audio_url: Required. The media resource uri of the play audio request.
+         Currently only Wave file (.wav) format audio prompts are supported.
+         More specifically, the audio content in the wave file must be mono (single-channel),
+         16-bit samples with a 16,000 (16KHz) sampling rate.
+        :type audio_url: str
+        :param is_looped: The flag indicating whether audio file needs to be played in loop or
+         not.
+        :type is_looped: bool
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
+        :keyword audio_file_id: An id for the media in the AudioFileUri, using which we cache the media
+         resource.
+        :paramtype audio_file_id: str
+        :keyword callback_uri: The callback Uri to receive PlayAudio status notifications.
+        :paramtype callback_uri: str
+        :return: PlayAudioResult
+        :rtype: ~azure.communication.callingserver.PlayAudioResult
+        :raises: ~azure.core.exceptions.HttpResponseError
 
-        if not audio_file_uri:
-            raise ValueError("audio_file_uri can not be None")
-
-        if not CallingServerUtils.is_valid_url(audio_file_uri):
-            raise ValueError("audio_file_uri is invalid")
-
-        if not play_audio_options:
-            raise ValueError("play_audio_options can not be None")
-
-        if not CallingServerUtils.is_valid_url(play_audio_options.callback_uri):
-            raise ValueError("callback_uri is invalid")
+        """
+        operation_context = kwargs.pop("operation_context", None)
+        audio_file_id = kwargs.pop("audio_file_id", None)
+        callback_uri = kwargs.pop("callback_uri", None)
 
         play_audio_to_participant_request = PlayAudioToParticipantRequestConverter.convert(
             identifier=serialize_identifier(participant),
-            audio_file_uri=audio_file_uri,
-            play_audio_options=play_audio_options
+            audio_url=audio_url,
+            loop=is_looped,
+            operation_context=operation_context,
+            audio_file_id=audio_file_id,
+            callback_uri=callback_uri
             )
 
         return self._call_connection_client.participant_play_audio(
@@ -251,13 +351,17 @@ class CallConnection(object):
             media_operation_id,  # type: str
             **kwargs  # type: Any
         ):  # type: (...) -> None
+        """Cancel media operation for a participant.
 
-        if not participant:
-            raise ValueError("participant can not be None")
+        :param participant: Required. The identifier of the participant.
+        :type participant: ~azure.communication.callingserver.models.CommunicationIdentifier
+        :param media_operation_id: Required. The operationId of the media operation to cancel.
+        :type media_operation_id: str
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
 
-        if not media_operation_id:
-            raise ValueError("media_operation_id can not be None")
-
+        """
         cancel_media_operation_request = CancelParticipantMediaOperationRequestConverter.convert(
             identifier=serialize_identifier(participant),
             media_operation_id=media_operation_id
@@ -275,10 +379,15 @@ class CallConnection(object):
             participant,  # type: CommunicationIdentifier
             **kwargs  # type: Any
         ):  # type: (...) -> None
+        """Mutes the participant.
 
-        if not participant:
-            raise ValueError("participant can not be None")
+        :param participant: Required. The identifier of the participant to be muted in the call.
+        :type participant: ~azure.communication.callingserver.models.CommunicationIdentifier
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
 
+        """
         mute_participant_request = MuteParticipantRequestConverter.convert(
             identifier=serialize_identifier(participant)
             )
@@ -295,10 +404,15 @@ class CallConnection(object):
             participant,  # type: CommunicationIdentifier
             **kwargs  # type: Any
         ):  # type: (...) -> None
+        """Unmute participant in the call.
 
-        if not participant:
-            raise ValueError("participant can not be None")
+        :param participant: Required. The identifier of the participant to be unmute in the call.
+        :type participant: ~azure.communication.callingserver.models.CommunicationIdentifier
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
 
+        """
         unmute_participant_request = UnmuteParticipantRequestConverter.convert(
             identifier=serialize_identifier(participant)
             )
@@ -315,10 +429,16 @@ class CallConnection(object):
             participant,  # type: CommunicationIdentifier
             **kwargs  # type: Any
         ):  # type: (...) -> None
+        """Removes the participant from the meeting's default audio mix so the participant
+         does not hear anything from the meeting and cannot add audio into the meeting.
 
-        if not participant:
-            raise ValueError("participant can not be None")
+        :param participant: Required. The identifier of the participant.
+        :type participant: ~azure.communication.callingserver.models.CommunicationIdentifier
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
 
+        """
         hold_meeting_audio_request = HoldMeetingAudioRequestConverter.convert(
             identifier=serialize_identifier(participant)
             )
@@ -335,10 +455,16 @@ class CallConnection(object):
             participant,  # type: CommunicationIdentifier
             **kwargs  # type: Any
         ):  # type: (...) -> None
+        """Adds the participant back into the meeting's default audio mix so the participant
+         begins to hear everything from the meeting and can add audio into the meeting.
 
-        if not participant:
-            raise ValueError("participant can not be None")
+        :param participant: Required. The identifier of the participant.
+        :type participant: ~azure.communication.callingserver.models.CommunicationIdentifier
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
 
+        """
         resume_participant_meeting_audio_request = ResumeMeetingAudioRequestConverter.convert(
             identifier=serialize_identifier(participant)
             )
@@ -350,27 +476,44 @@ class CallConnection(object):
         )
 
     @distributed_trace()
-    def transfer_call(
+    def transfer(
             self,
             target_participant,  # type: CommunicationIdentifier
             target_call_connection_id,  # type: str
-            user_to_user_information=None,  # type: Optional[str]
-            operation_context=None,  # type: str
-            callback_uri=None,  # type: str
             **kwargs  # type: Any
-        ):  # type: (...) -> None
+        ):  # type: (...) -> TransferCallResult
+        """Transfer the call.
 
-        if not target_participant:
-            raise ValueError("target_participant can not be None")
-        if not target_call_connection_id:
-            raise ValueError("target_call_connection_id can not be None")
+        :param target_participant: Required. The target participant.
+        :type target_participant: ~azure.communication.callingserver.models.CommunicationIdentifier
+        :param target_call_connection_id: The target call connection id to transfer to.
+        :type target_call_connection_id: str
+        :keyword alternate_caller_id: The alternate identity of the transferor if transferring to a pstn
+         number.
+        :paramtype alternate_caller_id: str
+        :keyword user_to_user_information: The user to user information.
+        :paramtype user_to_user_information: str
+        :keyword operation_context: The operation context.
+        :paramtype operation_context: str
+        :return: TransferCallResult
+        :rtype: ~azure.communication.callingserver.TransferCallResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
+        alternate_caller_id = kwargs.pop("alternate_caller_id", None)
+        user_to_user_information = kwargs.pop("user_to_user_information", None)
+        operation_context = kwargs.pop("operation_context", None)
+
+        alternate_caller_id = (None
+            if alternate_caller_id is None
+            else PhoneNumberIdentifierModel(value=alternate_caller_id))
 
         transfer_call_request = TransferCallRequestConverter.convert(
             target_participant=serialize_identifier(target_participant),
             target_call_connection_id=target_call_connection_id,
+            alternate_caller_id=alternate_caller_id,
             user_to_user_information=user_to_user_information,
-            operation_context=operation_context,
-            callback_uri=callback_uri
+            operation_context=operation_context
             )
 
         return self._call_connection_client.transfer(
@@ -386,12 +529,19 @@ class CallConnection(object):
             targets, # type: List[CommunicationIdentifier]
             **kwargs  # type: Any
         ):  # type: (...) -> CreateAudioRoutingGroupResult
+        """Create audio routing group in a call.
 
-        if not audio_routing_mode:
-            raise ValueError("audio_routing_mode can not be None")
-        if not targets:
-            raise ValueError("targets can not be None")
+        :param audio_routing_mode: Required. The audio routing mode. Possible values include:
+         "oneToOne", "multicast".
+        :type audio_routing_mode: str or ~azure.communication.callingserver.models.AudioRoutingMode
+        :param targets: Required. The target identities that would be receivers in the audio routing
+         group.
+        :type targets: list[~azure.communication.callingserver.models.CommunicationIdentifier]
+        :return: CreateAudioRoutingGroupResult
+        :rtype: ~azure.communication.callingserver.models.CreateAudioRoutingGroupResult
+        :raises: ~azure.core.exceptions.HttpResponseError
 
+        """
         audio_routing_group_request = AudioRoutingGroupRequestConverter.convert(
             audio_routing_mode=audio_routing_mode,
             target_identities=[serialize_identifier(m) for m in targets]
@@ -404,15 +554,20 @@ class CallConnection(object):
         )
 
     @distributed_trace()
-    def get_audio_routing_groups(
+    def list_audio_routing_groups(
             self,
             audio_routing_group_id,  # type: str
             **kwargs  # type: Any
         ):  # type: (...) -> AudioRoutingGroupResult
+        """List audio routing group in a call.
 
-        if not audio_routing_group_id:
-            raise ValueError("audio_routing_group_id can not be None")
+        :param audio_routing_group_id: Required. The audio routing group id.
+        :type audio_routing_group_id: str
+        :return: AudioRoutingGroupResult
+        :rtype: ~azure.communication.callingserver.models.AudioRoutingGroupResult
+        :raises: ~azure.core.exceptions.HttpResponseError
 
+        """
         return self._call_connection_client.get_audio_routing_groups(
             call_connection_id=self.call_connection_id,
             audio_routing_group_id=audio_routing_group_id,
@@ -425,10 +580,15 @@ class CallConnection(object):
             audio_routing_group_id,  # type: str
             **kwargs  # type: Any
         ):  # type: (...) -> None
+        """Delete audio routing group from a call.
 
-        if not audio_routing_group_id:
-            raise ValueError("audio_routing_group_id can not be None")
+        :param audio_routing_group_id: Required. The audio routing group id.
+        :type audio_routing_group_id: str
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
 
+        """
         return self._call_connection_client.delete_audio_routing_group(
             call_connection_id=self.call_connection_id,
             audio_routing_group_id=audio_routing_group_id,
@@ -442,12 +602,18 @@ class CallConnection(object):
             targets, # type: List[CommunicationIdentifier]
             **kwargs  # type: Any
         ):  # type: (...) -> None
+        """Update audio routing group.
 
-        if not audio_routing_group_id:
-            raise ValueError("audio_routing_group_id can not be None")
-        if not targets:
-            raise ValueError("targets can not be None")
+        :param audio_routing_group_id: Required. The audio routing group id.
+        :type audio_routing_group_id: str
+        :param targets: Required. The target identities that would be receivers in the audio routing
+         group.
+        :type targets: list[~azure.communication.callingserver.models.CommunicationIdentifier]
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
 
+        """
         update_audio_routing_group_request = UpdateAudioRoutingGroupRequestConverter.convert(
             target_identities=[serialize_identifier(m) for m in targets]
             )

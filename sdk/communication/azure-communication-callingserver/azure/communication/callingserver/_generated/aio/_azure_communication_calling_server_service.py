@@ -27,6 +27,9 @@ class AzureCommunicationCallingServerService:
     :vartype server_calls: azure.communication.callingserver.aio.operations.ServerCallsOperations
     :param endpoint: The endpoint of the Azure Communication resource.
     :type endpoint: str
+    :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+     overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -35,7 +38,7 @@ class AzureCommunicationCallingServerService:
         **kwargs: Any
     ) -> None:
         _base_url = '{endpoint}'
-        self._config = AzureCommunicationCallingServerServiceConfiguration(endpoint, **kwargs)
+        self._config = AzureCommunicationCallingServerServiceConfiguration(endpoint=endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=_base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
