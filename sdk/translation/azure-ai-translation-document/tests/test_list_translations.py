@@ -10,6 +10,7 @@ from datetime import datetime
 import functools
 from testcase import DocumentTranslationTest
 from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
+from devtools_testutils import recorded_by_proxy
 from azure.ai.translation.document import DocumentTranslationClient
 
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
@@ -19,6 +20,7 @@ class TestListTranslations(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_list_translations(self, client):
         # create some translations
         operations_count = 5
@@ -36,6 +38,7 @@ class TestListTranslations(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_list_translations_with_pagination(self, client):
         # prepare data
         operations_count = 5
@@ -59,6 +62,7 @@ class TestListTranslations(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_list_translations_with_skip(self, client):
         # prepare data
         operations_count = 10
@@ -76,6 +80,7 @@ class TestListTranslations(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_list_translations_filter_by_status(self, client):
         operations_count = 5
         docs_per_operation = 1
@@ -101,6 +106,7 @@ class TestListTranslations(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_list_translations_filter_by_ids(self, client):
         operations_count = 3
         docs_per_operation = 2
@@ -120,6 +126,7 @@ class TestListTranslations(DocumentTranslationTest):
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_list_translations_filter_by_created_after(self, client):
         # create some translations
         operations_count = 3
@@ -142,6 +149,7 @@ class TestListTranslations(DocumentTranslationTest):
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_list_translations_filter_by_created_before(self, client):
         '''
             NOTE: test is dependent on 'end' to be specific/same as time zone of the service! 
@@ -167,6 +175,7 @@ class TestListTranslations(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_list_translations_order_by_creation_time_asc(self, client):
         operations_count = 3
         docs_per_operation = 2
@@ -187,6 +196,7 @@ class TestListTranslations(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_list_translations_order_by_creation_time_desc(self, client):
         operations_count = 3
         docs_per_operation = 2
@@ -207,6 +217,7 @@ class TestListTranslations(DocumentTranslationTest):
     @pytest.mark.live_test_only()
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_list_translations_mixed_filters(self, client):
         # create some translations
         operations_count = 4

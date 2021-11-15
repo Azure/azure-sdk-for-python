@@ -8,6 +8,7 @@ import functools
 from testcase import Document
 from testcase import DocumentTranslationTest
 from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
+from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import HttpResponseError
 from azure.ai.translation.document import DocumentTranslationClient, DocumentTranslationInput, TranslationTarget
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
@@ -17,6 +18,7 @@ class TestCancelTranslation(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_cancel_translation(self, client):
         '''
             some notes (test sporadically failing):

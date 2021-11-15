@@ -9,7 +9,7 @@ import time
 import datetime
 import uuid
 from devtools_testutils import (
-    AzureTestCase,
+    AzureRecordedTestCase
 )
 from azure_devtools.scenario_tests import (
     RecordingProcessor,
@@ -61,25 +61,36 @@ class OperationLocationReplacer(RecordingProcessor):
             return response
 
 
-class DocumentTranslationTest(AzureTestCase):
-    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key']
+class DocumentTranslationTest(AzureRecordedTestCase):
+    # FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key']
 
-    def __init__(self, method_name):
-        super(DocumentTranslationTest, self).__init__(method_name)
-        self.vcr.match_on = ["path", "method", "query"]
-        self.recording_processors.append(OperationLocationReplacer())
-        self.storage_name = os.getenv("TRANSLATION_DOCUMENT_STORAGE_NAME", "redacted")
-        self.storage_endpoint = "https://" + self.storage_name + ".blob.core.windows.net/"
-        self.storage_key = os.getenv("TRANSLATION_DOCUMENT_STORAGE_KEY")
-        self.scrubber.register_name_pair(
-            self.storage_endpoint, "https://redacted.blob.core.windows.net/"
-        )
-        self.scrubber.register_name_pair(
-            self.storage_name, "redacted"
-        )
-        self.scrubber.register_name_pair(
-            self.storage_key, "fakeZmFrZV9hY29jdW50X2tleQ=="
-        )
+    # def __init__(self, method_name):
+    #     super(DocumentTranslationTest, self).__init__(method_name)
+    #     self.recording_processors.append(OperationLocationReplacer())
+    #     self.storage_name = os.getenv("TRANSLATION_DOCUMENT_STORAGE_NAME", "redacted")
+    #     self.storage_endpoint = "https://" + self.storage_name + ".blob.core.windows.net/"
+    #     self.storage_key = os.getenv("TRANSLATION_DOCUMENT_STORAGE_KEY")
+    #     self.scrubber.register_name_pair(
+    #         self.storage_endpoint, "https://redacted.blob.core.windows.net/"
+    #     )
+    #     self.scrubber.register_name_pair(
+    #         self.storage_name, "redacted"
+    #     )
+    #     self.scrubber.register_name_pair(
+    #         self.storage_key, "fakeZmFrZV9hY29jdW50X2tleQ=="
+    #     )
+
+    @property
+    def storage_name(self):
+        return os.getenv("TRANSLATION_DOCUMENT_STORAGE_NAME", "redacted")
+
+    @property
+    def storage_endpoint(self):
+        return "https://" + self.storage_name + ".blob.core.windows.net/"
+
+    @property
+    def storage_key(self):
+        return os.getenv("TRANSLATION_DOCUMENT_STORAGE_KEY")
 
     def get_oauth_endpoint(self):
         return os.getenv("TRANSLATION_DOCUMENT_TEST_ENDPOINT")

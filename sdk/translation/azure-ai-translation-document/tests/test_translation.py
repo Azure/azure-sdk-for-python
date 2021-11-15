@@ -12,6 +12,7 @@ from azure.core.exceptions import HttpResponseError
 from testcase import DocumentTranslationTest, Document
 from preparer import DocumentTranslationPreparer, \
     DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
+from devtools_testutils import recorded_by_proxy
 from azure.storage.blob import ContainerClient
 from azure.ai.translation.document._generated.models import StartTranslationDetails as _StartTranslationDetails
 from azure.ai.translation.document import (
@@ -29,6 +30,7 @@ class TestTranslation(DocumentTranslationTest):
 
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
+    @recorded_by_proxy
     def test_active_directory_auth(self):
         token = self.generate_oauth_token()
         endpoint = self.get_oauth_endpoint()
@@ -56,6 +58,7 @@ class TestTranslation(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_single_source_single_target(self, client):
         # prepare containers and test data
         blob_data = b'This is some text'
@@ -80,6 +83,7 @@ class TestTranslation(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_single_source_two_targets(self, client):
         # prepare containers and test data
         blob_data = b'This is some text'
@@ -109,6 +113,7 @@ class TestTranslation(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_multiple_sources_single_target(self, client):
         # prepare containers and test data
         blob_data = b'This is some text'
@@ -144,6 +149,7 @@ class TestTranslation(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_single_source_single_target_with_prefix(self, client):
         # prepare containers and test data
         blob_data = b'This is some text'
@@ -170,6 +176,7 @@ class TestTranslation(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_single_source_single_target_with_suffix(self, client):
         # prepare containers and test data
         blob_data = b'This is some text'
@@ -196,6 +203,7 @@ class TestTranslation(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_bad_input_source(self, client):
         # prepare containers and test data
         target_container_sas_url = self.create_target_container()
@@ -220,6 +228,7 @@ class TestTranslation(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_bad_input_target(self, client):
         # prepare containers and test data
         blob_data = b'This is some text'
@@ -245,6 +254,7 @@ class TestTranslation(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_use_supported_and_unsupported_files(self, client):
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(data=[
@@ -275,6 +285,7 @@ class TestTranslation(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_existing_documents_in_target(self, client):
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(data=Document(name="document"))
@@ -303,6 +314,7 @@ class TestTranslation(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_existing_documents_in_target_one_valid(self, client):
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(data=[Document(name="document"), Document()])
@@ -331,6 +343,7 @@ class TestTranslation(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_empty_document(self, client):
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(Document(data=b''))
@@ -359,6 +372,7 @@ class TestTranslation(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_overloaded_inputs(self, client):
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'))
@@ -392,6 +406,7 @@ class TestTranslation(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_overloaded_single_input(self, client):
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'))
@@ -410,6 +425,7 @@ class TestTranslation(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_overloaded_bad_input(self, client):
         translation_inputs = [
             DocumentTranslationInput(
@@ -438,6 +454,7 @@ class TestTranslation(DocumentTranslationTest):
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_translation_continuation_token(self, client):
         source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'))
         target_container_sas_url = self.create_target_container()
@@ -454,6 +471,7 @@ class TestTranslation(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_single_input_with_kwargs(self, client):
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'))
@@ -495,6 +513,7 @@ class TestTranslation(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_single_input_with_kwarg_successful(self, client):
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(data=[Document(data=b'hello world', prefix="kwargs"),
@@ -515,6 +534,7 @@ class TestTranslation(DocumentTranslationTest):
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_translation_with_glossary(self, client):
         doc = Document(data=b'testing')
         source_container_sas_url = self.create_source_container(data=[doc])

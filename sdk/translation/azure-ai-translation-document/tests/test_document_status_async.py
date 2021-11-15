@@ -8,6 +8,7 @@ import functools
 from testcase import Document
 from asynctestcase import AsyncDocumentTranslationTest
 from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
 from azure.ai.translation.document.aio import DocumentTranslationClient
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
@@ -17,6 +18,7 @@ class DocumentStatus(AsyncDocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy_async
     async def test_list_statuses(self, client):
         # prepare containers and test data
         blob_data = [Document(data=b'This is some text')]

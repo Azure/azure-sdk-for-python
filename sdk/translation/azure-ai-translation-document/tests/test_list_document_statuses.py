@@ -8,6 +8,7 @@ from datetime import datetime
 import functools
 from testcase import DocumentTranslationTest
 from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
+from devtools_testutils import recorded_by_proxy
 from azure.ai.translation.document import DocumentTranslationClient
 import pytest
 
@@ -19,6 +20,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_list_document_statuses(self, client):
         docs_count = 5
         target_language = "es"
@@ -35,6 +37,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_list_document_statuses_with_pagination(self, client):
         docs_count = 10
         results_per_page = 2
@@ -58,6 +61,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_list_document_statuses_with_skip(self, client):
         docs_count = 10
         skip = 2
@@ -77,6 +81,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_list_document_statuses_filter_by_status(self, client):
         docs_count = 10
         target_language = "es"
@@ -100,6 +105,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_list_document_statuses_filter_by_ids(self, client):
         docs_count = 5
         target_language = "es"
@@ -122,6 +128,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_list_document_statuses_order_by_creation_time_asc(self, client):
         docs_count = 5
         target_language = "es"
@@ -141,6 +148,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_list_document_statuses_order_by_creation_time_desc(self, client):
         docs_count = 5
         target_language = "es"
@@ -159,6 +167,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
     def test_list_document_statuses_mixed_filters(self, client):
         docs_count = 10
         target_language = "es"
