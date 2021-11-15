@@ -122,12 +122,12 @@ from azure.communication.callingserver import (
     )
 
 play_audio_result = await call_connection_async.play_audio(
-    audio_file_uri="<audio-file-uri>",
+    audio_url="<audio_url>",
     play_audio_options=PlayAudioOptions"<...>"))
     )
 ```
 
-- `audio_file_uri`: The uri of the audio file.
+- `audio_url`: The uri of the audio file.
 - `play_audio_options`: The playAudio options.
 
 ### Cancel all media operations in the call connection
@@ -164,7 +164,7 @@ call_connection = await callingserver_client.join_call(
 
 - `call_locator`: The callLocator contains the call id.
 - `source`: The source identity which join the call.
-- `play_audio_options`: The joinCall options.
+- `join_call_options`: The joinCall options.
 
 ### Add participant with calllocator to the server call
 Once the call is establised, the `add_participant` method can be invoked:
@@ -217,13 +217,13 @@ from azure.communication.callingserver import (
 call_locator = ServerCallLocator("<server-call-id>")
 play_audio_result = await callingserver_client.play_audio(
     call_locator=call_locator,
-    audio_file_uri="<audio-file-uri>",
+    audio_url="<audio_url>",
     play_audio_options=PlayAudioOptions"<...>"))
     )
 ```
 
 - `call_locator`: The callLocator contains the call id.
-- `audio_file_uri`: The uri of the audio file.
+- `audio_url`: The uri of the audio file.
 - `play_audio_options`: The playAudio options.
 
 ### Cancel media operations with calllocator in the server call
@@ -241,7 +241,7 @@ cancel_all_media_operations_result = await call_connection_async.cancel_media_op
 )
 ```
 
-- `audio_file_uri`: The callLocator contains the call id.
+- `call_locator`: The callLocator contains the call id.
 - `media_operation_id`: The operationId of the media operation to cancel.
 
 

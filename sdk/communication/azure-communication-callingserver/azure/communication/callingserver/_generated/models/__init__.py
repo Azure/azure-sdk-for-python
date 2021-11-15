@@ -36,12 +36,10 @@ try:
     from ._models_py3 import GetParticipantRequest
     from ._models_py3 import GetParticipantWithCallLocatorRequest
     from ._models_py3 import HoldMeetingAudioRequest
-    from ._models_py3 import HoldMeetingAudioWithCallLocatorRequest
     from ._models_py3 import JoinCallRequest
     from ._models_py3 import JoinCallResult
     from ._models_py3 import MicrosoftTeamsUserIdentifierModel
     from ._models_py3 import MuteParticipantRequest
-    from ._models_py3 import MuteParticipantWithCallLocatorRequest
     from ._models_py3 import ParticipantsUpdatedEvent
     from ._models_py3 import PhoneNumberIdentifierModel
     from ._models_py3 import PlayAudioRequest
@@ -55,14 +53,14 @@ try:
     from ._models_py3 import RemoveParticipantRequest
     from ._models_py3 import RemoveParticipantWithCallLocatorRequest
     from ._models_py3 import ResumeMeetingAudioRequest
-    from ._models_py3 import ResumeMeetingAudioWithCallLocatorRequest
     from ._models_py3 import StartCallRecordingResult
     from ._models_py3 import StartCallRecordingWithCallLocatorRequest
     from ._models_py3 import ToneInfo
     from ._models_py3 import ToneReceivedEvent
     from ._models_py3 import TransferCallRequest
+    from ._models_py3 import TransferCallResult
+    from ._models_py3 import TransferCallResultEvent
     from ._models_py3 import UnmuteParticipantRequest
-    from ._models_py3 import UnmuteParticipantWithCallLocatorRequest
     from ._models_py3 import UpdateAudioRoutingGroupRequest
 except (SyntaxError, ImportError):
     from ._models import AddParticipantRequest  # type: ignore
@@ -94,12 +92,10 @@ except (SyntaxError, ImportError):
     from ._models import GetParticipantRequest  # type: ignore
     from ._models import GetParticipantWithCallLocatorRequest  # type: ignore
     from ._models import HoldMeetingAudioRequest  # type: ignore
-    from ._models import HoldMeetingAudioWithCallLocatorRequest  # type: ignore
     from ._models import JoinCallRequest  # type: ignore
     from ._models import JoinCallResult  # type: ignore
     from ._models import MicrosoftTeamsUserIdentifierModel  # type: ignore
     from ._models import MuteParticipantRequest  # type: ignore
-    from ._models import MuteParticipantWithCallLocatorRequest  # type: ignore
     from ._models import ParticipantsUpdatedEvent  # type: ignore
     from ._models import PhoneNumberIdentifierModel  # type: ignore
     from ._models import PlayAudioRequest  # type: ignore
@@ -113,14 +109,14 @@ except (SyntaxError, ImportError):
     from ._models import RemoveParticipantRequest  # type: ignore
     from ._models import RemoveParticipantWithCallLocatorRequest  # type: ignore
     from ._models import ResumeMeetingAudioRequest  # type: ignore
-    from ._models import ResumeMeetingAudioWithCallLocatorRequest  # type: ignore
     from ._models import StartCallRecordingResult  # type: ignore
     from ._models import StartCallRecordingWithCallLocatorRequest  # type: ignore
     from ._models import ToneInfo  # type: ignore
     from ._models import ToneReceivedEvent  # type: ignore
     from ._models import TransferCallRequest  # type: ignore
+    from ._models import TransferCallResult  # type: ignore
+    from ._models import TransferCallResultEvent  # type: ignore
     from ._models import UnmuteParticipantRequest  # type: ignore
-    from ._models import UnmuteParticipantWithCallLocatorRequest  # type: ignore
     from ._models import UpdateAudioRoutingGroupRequest  # type: ignore
 
 from ._azure_communication_calling_server_service_enums import (
@@ -169,12 +165,10 @@ __all__ = [
     'GetParticipantRequest',
     'GetParticipantWithCallLocatorRequest',
     'HoldMeetingAudioRequest',
-    'HoldMeetingAudioWithCallLocatorRequest',
     'JoinCallRequest',
     'JoinCallResult',
     'MicrosoftTeamsUserIdentifierModel',
     'MuteParticipantRequest',
-    'MuteParticipantWithCallLocatorRequest',
     'ParticipantsUpdatedEvent',
     'PhoneNumberIdentifierModel',
     'PlayAudioRequest',
@@ -188,14 +182,14 @@ __all__ = [
     'RemoveParticipantRequest',
     'RemoveParticipantWithCallLocatorRequest',
     'ResumeMeetingAudioRequest',
-    'ResumeMeetingAudioWithCallLocatorRequest',
     'StartCallRecordingResult',
     'StartCallRecordingWithCallLocatorRequest',
     'ToneInfo',
     'ToneReceivedEvent',
     'TransferCallRequest',
+    'TransferCallResult',
+    'TransferCallResultEvent',
     'UnmuteParticipantRequest',
-    'UnmuteParticipantWithCallLocatorRequest',
     'UpdateAudioRoutingGroupRequest',
     'AudioRoutingMode',
     'CallConnectionState',

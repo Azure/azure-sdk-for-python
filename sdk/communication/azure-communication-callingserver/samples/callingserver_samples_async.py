@@ -50,21 +50,18 @@ class CallingServerClientSamplesAsync(object):
         endpoint = self.endpoint
         from_user = self.user
         # [START create_call_connection]
-        from azure.communication.callingserver import PhoneNumberIdentifier, CreateCallOptions, MediaType, EventSubscriptionType
+        from azure.communication.callingserver import PhoneNumberIdentifier, CallMediaType, CallingEventSubscriptionType
         from azure.communication.callingserver.aio import CallingServerClient
         from azure.identity.aio import DefaultAzureCredential
         to_user = PhoneNumberIdentifier(self.to_phone_number)
-        options = CreateCallOptions(
-            callback_uri="<your-callback-uri>",
-            requested_media_types=[MediaType.AUDIO],
-            requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED, EventSubscriptionType.DTMF_RECEIVED]
-        )
         # set `endpoint` to an existing ACS endpoint
         calling_server_client_async = CallingServerClient(endpoint, DefaultAzureCredential())
         call_connection_async = await calling_server_client_async.create_call_connection(
                     source=from_user,
                     targets=[to_user],
-                    options=options,
+                    callback_uri="<your-callback-uri>",
+                    requested_media_types=[CallMediaType.AUDIO],
+                    requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED, CallingEventSubscriptionType.TONE_RECEIVED]
                     )
         # [END create_call_connection]
         # [START hang_up_call]
@@ -76,20 +73,21 @@ class CallingServerClientSamplesAsync(object):
         from_user = self.user
         # [START create_server_call_with_calllocator]
         # set `endpoint` to an existing ACS endpoint
-        from azure.communication.callingserver import ServerCallLocator, CommunicationUserIdentifier, MediaType, EventSubscriptionType, JoinCallOptions
+        from azure.communication.callingserver import ServerCallLocator, CommunicationUserIdentifier, CallMediaType, CallingEventSubscriptionType
         from azure.communication.callingserver.aio import CallingServerClient
         from azure.identity.aio import DefaultAzureCredential
 
-        join_options = JoinCallOptions(
-            callback_uri="<your-callback-uri>",
-            requested_media_types=[MediaType.AUDIO],
-            requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED]
-        )
         # set `endpoint` to an existing ACS endpoint
         calling_server_client_async = CallingServerClient(endpoint, DefaultAzureCredential())
         server_call_id = "<your-server-call-id>"
         call_locator = ServerCallLocator(server_call_id)
-        call_connection_async = await calling_server_client_async.join_call(call_locator, CommunicationUserIdentifier(from_user), join_options)
+        call_connection_async = await calling_server_client_async.join_call(
+            call_locator,
+            CommunicationUserIdentifier(from_user),
+            callback_uri="<your-callback-uri>",
+            requested_media_types=[CallMediaType.AUDIO],
+            requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED]
+            )
         # [END create_server_call_with_calllocator]
         # [START hang_up_call]
         await call_connection_async.hang_up()

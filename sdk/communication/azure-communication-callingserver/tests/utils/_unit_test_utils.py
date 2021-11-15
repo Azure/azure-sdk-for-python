@@ -14,11 +14,8 @@ from azure.communication.callingserver._communication_identifier_serializer impo
 
 from azure.communication.callingserver import (
     AudioRoutingMode,
-    CreateCallOptions,
     CallMediaType,
     CallingEventSubscriptionType,
-    JoinCallOptions,
-    PlayAudioOptions,
     PlayAudioResult,
     AddParticipantResult,
     CallConnectionProperties,
@@ -31,33 +28,31 @@ from azure.communication.callingserver import (
     AudioRoutingGroupResult,
     CreateAudioRoutingGroupResult,
     CallRejectReason,
-    CallParticipant
+    CallParticipant,
+    TransferCallResult
     )
 
 class CallingServerUnitTestUtils:
 
     @staticmethod
     def data_source_test_create_connection():
-        options = CreateCallOptions(
-                callback_uri=_test_constants.CALLBACK_URI,
-                requested_media_types=[CallMediaType.AUDIO],
-                requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED])
-        options.subject=_test_constants.CALL_SUBJECT
-        options.alternate_Caller_Id = PhoneNumberIdentifier(_test_constants.PHONE_NUMBER)
-
         parameters = []
         parameters.append((
             _test_constants.ClientType_ConnectionString,
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
             [CommunicationUserIdentifier(_test_constants.RESOURCE_TARGET), PhoneNumberIdentifier(_test_constants.PHONE_NUMBER)],
-            options,
+            _test_constants.CALLBACK_URI,
+            [CallMediaType.AUDIO],
+            [CallingEventSubscriptionType.PARTICIPANTS_UPDATED],
             ))
 
         parameters.append((
             _test_constants.ClientType_ManagedIdentity,
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
             [CommunicationUserIdentifier(_test_constants.RESOURCE_TARGET), PhoneNumberIdentifier(_test_constants.PHONE_NUMBER)],
-            options,
+            _test_constants.CALLBACK_URI,
+            [CallMediaType.AUDIO],
+            [CallingEventSubscriptionType.PARTICIPANTS_UPDATED],
             True,
             ))
 
@@ -65,25 +60,23 @@ class CallingServerUnitTestUtils:
 
     @staticmethod
     def data_source_test_join_call():
-        options = JoinCallOptions(
-                callback_uri=_test_constants.CALLBACK_URI,
-                requested_media_types=[CallMediaType.AUDIO],
-                requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED])
-        options.subject=_test_constants.CALL_SUBJECT
-
         parameters = []
         parameters.append((
             _test_constants.ClientType_ConnectionString,
             ServerCallLocator(_test_constants.SEVERCALL_ID),
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-            options,
+            _test_constants.CALLBACK_URI,
+            [CallMediaType.AUDIO],
+            [CallingEventSubscriptionType.PARTICIPANTS_UPDATED],
             ))
 
         parameters.append((
             _test_constants.ClientType_ManagedIdentity,
             ServerCallLocator(_test_constants.SEVERCALL_ID),
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-            options,
+            _test_constants.CALLBACK_URI,
+            [CallMediaType.AUDIO],
+            [CallingEventSubscriptionType.PARTICIPANTS_UPDATED],
             True,
             ))
 
@@ -91,14 +84,18 @@ class CallingServerUnitTestUtils:
             _test_constants.ClientType_ConnectionString,
             GroupCallLocator(_test_constants.GROUPCALL_ID),
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-            options,
+            _test_constants.CALLBACK_URI,
+            [CallMediaType.AUDIO],
+            [CallingEventSubscriptionType.PARTICIPANTS_UPDATED],
             ))
 
         parameters.append((
             _test_constants.ClientType_ManagedIdentity,
             GroupCallLocator(_test_constants.GROUPCALL_ID),
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-            options,
+            _test_constants.CALLBACK_URI,
+            [CallMediaType.AUDIO],
+            [CallingEventSubscriptionType.PARTICIPANTS_UPDATED],
             True,
             ))
 
@@ -171,41 +168,46 @@ class CallingServerUnitTestUtils:
 
     @staticmethod
     def data_source_test_play_audio():
-        options = PlayAudioOptions(
-                loop = True,
-                audio_file_id=_test_constants.AUDIO_FILE_ID,
-                callback_uri=_test_constants.CALLBACK_URI,
-                operation_context=_test_constants.OPERATION_CONTEXT
-                )
-
         parameters = []
         parameters.append((
             _test_constants.ClientType_ConnectionString,
             ServerCallLocator(_test_constants.SEVERCALL_ID),
-            _test_constants.AUDIO_FILE_URI,
-            options,
+            _test_constants.AUDIO_URL,
+            True,
+            _test_constants.AUDIO_FILE_ID,
+            _test_constants.CALLBACK_URI,
+            _test_constants.OPERATION_CONTEXT,
             ))
 
         parameters.append((
             _test_constants.ClientType_ManagedIdentity,
             ServerCallLocator(_test_constants.SEVERCALL_ID),
-            _test_constants.AUDIO_FILE_URI,
-            options,
+            _test_constants.AUDIO_URL,
+            True,
+            _test_constants.AUDIO_FILE_ID,
+            _test_constants.CALLBACK_URI,
+            _test_constants.OPERATION_CONTEXT,
             True,
             ))
 
         parameters.append((
             _test_constants.ClientType_ConnectionString,
             GroupCallLocator(_test_constants.GROUPCALL_ID),
-            _test_constants.AUDIO_FILE_URI,
-            options,
+            _test_constants.AUDIO_URL,
+            True,
+            _test_constants.AUDIO_FILE_ID,
+            _test_constants.CALLBACK_URI,
+            _test_constants.OPERATION_CONTEXT,
             ))
 
         parameters.append((
             _test_constants.ClientType_ManagedIdentity,
             GroupCallLocator(_test_constants.GROUPCALL_ID),
-            _test_constants.AUDIO_FILE_URI,
-            options,
+            _test_constants.AUDIO_URL,
+            True,
+            _test_constants.AUDIO_FILE_ID,
+            _test_constants.CALLBACK_URI,
+            _test_constants.OPERATION_CONTEXT,
             True,
             ))
 
@@ -213,28 +215,27 @@ class CallingServerUnitTestUtils:
 
     @staticmethod
     def data_source_test_play_audio_to_participant():
-        play_audio_options = PlayAudioOptions(
-                loop = True,
-                audio_file_id = _test_constants.AUDIO_FILE_ID,
-                callback_uri = _test_constants.CALLBACK_URI,
-                operation_context = _test_constants.OPERATION_CONTEXT
-                )
-
         parameters = []
         parameters.append((
             _test_constants.ClientType_ConnectionString,
             ServerCallLocator(_test_constants.SEVERCALL_ID),
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-            _test_constants.AUDIO_FILE_URI,
-            play_audio_options,
+            _test_constants.AUDIO_URL,
+            True,
+            _test_constants.AUDIO_FILE_ID,
+            _test_constants.CALLBACK_URI,
+            _test_constants.OPERATION_CONTEXT,
             ))
 
         parameters.append((
             _test_constants.ClientType_ManagedIdentity,
             ServerCallLocator(_test_constants.SEVERCALL_ID),
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-            _test_constants.AUDIO_FILE_URI,
-            play_audio_options,
+            _test_constants.AUDIO_URL,
+            True,
+            _test_constants.AUDIO_FILE_ID,
+            _test_constants.CALLBACK_URI,
+            _test_constants.OPERATION_CONTEXT,
             True,
             ))
 
@@ -242,16 +243,22 @@ class CallingServerUnitTestUtils:
             _test_constants.ClientType_ConnectionString,
             GroupCallLocator(_test_constants.GROUPCALL_ID),
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-            _test_constants.AUDIO_FILE_URI,
-            play_audio_options,
+            _test_constants.AUDIO_URL,
+            True,
+            _test_constants.AUDIO_FILE_ID,
+            _test_constants.CALLBACK_URI,
+            _test_constants.OPERATION_CONTEXT,
             ))
 
         parameters.append((
             _test_constants.ClientType_ManagedIdentity,
             GroupCallLocator(_test_constants.GROUPCALL_ID),
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-            _test_constants.AUDIO_FILE_URI,
-            play_audio_options,
+            _test_constants.AUDIO_URL,
+            True,
+            _test_constants.AUDIO_FILE_ID,
+            _test_constants.CALLBACK_URI,
+            _test_constants.OPERATION_CONTEXT,
             True,
             ))
 
@@ -332,7 +339,7 @@ class CallingServerUnitTestUtils:
         return parameters
 
     @staticmethod
-    def data_source_test_get_participants_with_call_locator():
+    def data_source_test_list_participants_with_call_locator():
         parameters = []
         parameters.append((
             _test_constants.ClientType_ConnectionString,
@@ -360,68 +367,6 @@ class CallingServerUnitTestUtils:
 
     @staticmethod
     def data_source_test_get_participant_with_call_locator():
-        parameters = []
-        parameters.append((
-            _test_constants.ClientType_ConnectionString,
-            ServerCallLocator(_test_constants.SEVERCALL_ID),
-            CommunicationUserIdentifier(_test_constants.COMMUNICATION_USER_Id_01),
-            ))
-
-        parameters.append((
-            _test_constants.ClientType_ManagedIdentity,
-            ServerCallLocator(_test_constants.SEVERCALL_ID),
-            CommunicationUserIdentifier(_test_constants.COMMUNICATION_USER_Id_01),
-            True,
-            ))
-
-        parameters.append((
-            _test_constants.ClientType_ConnectionString,
-            GroupCallLocator(_test_constants.GROUPCALL_ID),
-            CommunicationUserIdentifier(_test_constants.COMMUNICATION_USER_Id_01),
-            ))
-
-        parameters.append((
-            _test_constants.ClientType_ManagedIdentity,
-            GroupCallLocator(_test_constants.GROUPCALL_ID),
-            CommunicationUserIdentifier(_test_constants.COMMUNICATION_USER_Id_01),
-            True,
-            ))
-
-        return parameters
-
-    @staticmethod
-    def data_source_test_mute_participant_with_call_locator():
-        parameters = []
-        parameters.append((
-            _test_constants.ClientType_ConnectionString,
-            ServerCallLocator(_test_constants.SEVERCALL_ID),
-            CommunicationUserIdentifier(_test_constants.COMMUNICATION_USER_Id_01),
-            ))
-
-        parameters.append((
-            _test_constants.ClientType_ManagedIdentity,
-            ServerCallLocator(_test_constants.SEVERCALL_ID),
-            CommunicationUserIdentifier(_test_constants.COMMUNICATION_USER_Id_01),
-            True,
-            ))
-
-        parameters.append((
-            _test_constants.ClientType_ConnectionString,
-            GroupCallLocator(_test_constants.GROUPCALL_ID),
-            CommunicationUserIdentifier(_test_constants.COMMUNICATION_USER_Id_01),
-            ))
-
-        parameters.append((
-            _test_constants.ClientType_ManagedIdentity,
-            GroupCallLocator(_test_constants.GROUPCALL_ID),
-            CommunicationUserIdentifier(_test_constants.COMMUNICATION_USER_Id_01),
-            True,
-            ))
-
-        return parameters
-
-    @staticmethod
-    def data_source_test_unmute_participant_with_call_locator():
         parameters = []
         parameters.append((
             _test_constants.ClientType_ConnectionString,
@@ -519,73 +464,9 @@ class CallingServerUnitTestUtils:
         return parameters
 
     @staticmethod
-    def data_source_test_hold_participant_meeting_audio_with_callLocator():
-
-        parameters = []
-        parameters.append((
-            _test_constants.ClientType_ConnectionString,
-            ServerCallLocator(_test_constants.SEVERCALL_ID),
-            CommunicationUserIdentifier(_test_constants.PARTICIPANT_ID_01),
-            ))
-
-        parameters.append((
-            _test_constants.ClientType_ManagedIdentity,
-            ServerCallLocator(_test_constants.SEVERCALL_ID),
-            CommunicationUserIdentifier(_test_constants.PARTICIPANT_ID_01),
-            True,
-            ))
-
-        parameters.append((
-            _test_constants.ClientType_ConnectionString,
-            GroupCallLocator(_test_constants.GROUPCALL_ID),
-            CommunicationUserIdentifier(_test_constants.PARTICIPANT_ID_01),
-            ))
-
-        parameters.append((
-            _test_constants.ClientType_ManagedIdentity,
-            GroupCallLocator(_test_constants.GROUPCALL_ID),
-            CommunicationUserIdentifier(_test_constants.PARTICIPANT_ID_01),
-            True,
-            ))
-
-        return parameters
-
-    @staticmethod
-    def data_source_test_resume_participant_meeting_audio_with_callLocator():
-
-        parameters = []
-        parameters.append((
-            _test_constants.ClientType_ConnectionString,
-            ServerCallLocator(_test_constants.SEVERCALL_ID),
-            CommunicationUserIdentifier(_test_constants.PARTICIPANT_ID_01),
-            ))
-
-        parameters.append((
-            _test_constants.ClientType_ManagedIdentity,
-            ServerCallLocator(_test_constants.SEVERCALL_ID),
-            CommunicationUserIdentifier(_test_constants.PARTICIPANT_ID_01),
-            True,
-            ))
-
-        parameters.append((
-            _test_constants.ClientType_ConnectionString,
-            GroupCallLocator(_test_constants.GROUPCALL_ID),
-            CommunicationUserIdentifier(_test_constants.PARTICIPANT_ID_01),
-            ))
-
-        parameters.append((
-            _test_constants.ClientType_ManagedIdentity,
-            GroupCallLocator(_test_constants.GROUPCALL_ID),
-            CommunicationUserIdentifier(_test_constants.PARTICIPANT_ID_01),
-            True,
-            ))
-
-        return parameters
-
-    @staticmethod
     def verify_play_audio_result(result):
         # type: (PlayAudioResult) -> None
-        assert "dummyId" == result.operation_id
+        assert _test_constants.OPERATION_ID == result.operation_id
         assert CallingOperationStatus.RUNNING == result.status
         assert _test_constants.OPERATION_CONTEXT == result.operation_context
 
@@ -600,7 +481,7 @@ class CallingServerUnitTestUtils:
         assert result.call_connection_id == _test_constants.CALL_ID
 
     @staticmethod
-    def verify_get_participants_result(result):
+    def verify_list_participants_result(result):
         # type: (List[CallParticipant]) -> None
         target_identifier_01 = deserialize_identifier(result[0].identifier)
         assert _test_constants.COMMUNICATION_USER_Id_01 == target_identifier_01.properties['id']
@@ -711,25 +592,25 @@ class CallConnectionUnitTestUtils:
 
     @staticmethod
     def data_source_test_play_audio():
-        options = PlayAudioOptions(
-                loop = True,
-                audio_file_id = _test_constants.AUDIO_FILE_ID,
-                callback_uri = _test_constants.CALLBACK_URI,
-                operation_context = _test_constants.OPERATION_CONTEXT
-                )
         parameters = []
         parameters.append((
             _test_constants.ClientType_ConnectionString,
             _test_constants.CALL_ID,
-            _test_constants.AUDIO_FILE_URI,
-            options,
+            _test_constants.AUDIO_URL,
+            True,
+            _test_constants.AUDIO_FILE_ID,
+            _test_constants.CALLBACK_URI,
+            _test_constants.OPERATION_CONTEXT
             ))
 
         parameters.append((
             _test_constants.ClientType_ManagedIdentity,
             _test_constants.CALL_ID,
-            _test_constants.AUDIO_FILE_URI,
-            options,
+            _test_constants.AUDIO_URL,
+            True,
+            _test_constants.AUDIO_FILE_ID,
+            _test_constants.CALLBACK_URI,
+            _test_constants.OPERATION_CONTEXT,
             True,
             ))
 
@@ -737,27 +618,27 @@ class CallConnectionUnitTestUtils:
 
     @staticmethod
     def data_source_test_play_audio_to_participant():
-        options = PlayAudioOptions(
-                loop = True,
-                audio_file_id = _test_constants.AUDIO_FILE_ID,
-                callback_uri = _test_constants.CALLBACK_URI,
-                operation_context = _test_constants.OPERATION_CONTEXT
-                )
         parameters = []
         parameters.append((
             _test_constants.ClientType_ConnectionString,
             _test_constants.CALL_ID,
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-            _test_constants.AUDIO_FILE_URI,
-            options,
+            _test_constants.AUDIO_URL,
+            True,
+            _test_constants.AUDIO_FILE_ID,
+            _test_constants.CALLBACK_URI,
+            _test_constants.OPERATION_CONTEXT
             ))
 
         parameters.append((
             _test_constants.ClientType_ManagedIdentity,
             _test_constants.CALL_ID,
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-            _test_constants.AUDIO_FILE_URI,
-            options,
+            _test_constants.AUDIO_URL,
+            True,
+            _test_constants.AUDIO_FILE_ID,
+            _test_constants.CALLBACK_URI,
+            _test_constants.OPERATION_CONTEXT,
             True,
             ))
 
@@ -786,16 +667,16 @@ class CallConnectionUnitTestUtils:
         return parameters
 
     @staticmethod
-    def data_source_test_transfer_call():
+    def data_source_test_transfer():
         parameters = []
         parameters.append((
             _test_constants.ClientType_ConnectionString,
             _test_constants.CALL_ID,
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
             _test_constants.SERVER_CALL_ID,
+            _test_constants.COMMUNICATION_USER_Id_02,
             _test_constants.USER_TO_USER_INFORMATION,
             _test_constants.OPERATION_CONTEXT,
-            _test_constants.CALLBACK_URI
             ))
 
         parameters.append((
@@ -803,9 +684,9 @@ class CallConnectionUnitTestUtils:
             _test_constants.CALL_ID,
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
             _test_constants.SERVER_CALL_ID,
+            _test_constants.COMMUNICATION_USER_Id_02,
             _test_constants.USER_TO_USER_INFORMATION,
             _test_constants.OPERATION_CONTEXT,
-            _test_constants.CALLBACK_URI,
             True,
             ))
 
@@ -830,7 +711,7 @@ class CallConnectionUnitTestUtils:
         return parameters
 
     @staticmethod
-    def data_source_test_get_participants():
+    def data_source_test_list_participants():
         parameters = []
         parameters.append((
             _test_constants.ClientType_ConnectionString,
@@ -976,7 +857,7 @@ class CallConnectionUnitTestUtils:
         return parameters
 
     @staticmethod
-    def data_source_test_get_audio_routing_group():
+    def data_source_test_list_audio_routing_groups():
         parameters = []
         parameters.append((
             _test_constants.ClientType_ConnectionString,
@@ -1081,3 +962,10 @@ class CallConnectionUnitTestUtils:
         assert result.audio_routing_mode == AudioRoutingMode.ONE_TO_ONE
         assert _test_constants.RESOURCE_SOURCE == target_identifier_01.properties['id']
         assert _test_constants.COMMUNICATION_USER_KIND == target_identifier_01.kind
+
+    @staticmethod
+    def verify_transfer_result(result):
+        # type: (TransferCallResult) -> None
+        assert _test_constants.OPERATION_ID == result.operation_id
+        assert CallingOperationStatus.COMPLETED == result.status
+        assert _test_constants.OPERATION_CONTEXT == result.operation_context

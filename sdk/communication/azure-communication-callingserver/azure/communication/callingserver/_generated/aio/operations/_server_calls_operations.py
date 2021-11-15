@@ -17,8 +17,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._server_calls_operations import build_add_participant_request, build_answer_call_request, build_cancel_media_operation_request, build_cancel_participant_media_operation_request, build_get_participant_request, build_get_participants_request, build_get_recording_properties_request, build_hold_participant_meeting_audio_request, build_join_call_request, build_mute_participant_request, build_participant_play_audio_request, build_pause_recording_request, build_play_audio_request, build_redirect_call_request, build_reject_call_request, build_remove_participant_request, build_resume_participant_meeting_audio_request, build_resume_recording_request, build_start_recording_request, build_stop_recording_request, build_unmute_participant_request
-
+from ...operations._server_calls_operations import build_add_participant_request, build_answer_call_request, build_cancel_media_operation_request, build_cancel_participant_media_operation_request, build_get_participant_request, build_get_participants_request, build_get_recording_properties_request, build_join_call_request, build_participant_play_audio_request, build_pause_recording_request, build_play_audio_request, build_redirect_call_request, build_reject_call_request, build_remove_participant_request, build_resume_recording_request, build_start_recording_request, build_stop_recording_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -58,6 +57,9 @@ class ServerCallsOperations:
          participants.
         :type get_all_participants_with_call_locator_request:
          ~azure.communication.callingserver.models.GetAllParticipantsWithCallLocatorRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of CallParticipant, or the result of cls(response)
         :rtype: list[~azure.communication.callingserver.models.CallParticipant]
@@ -74,11 +76,13 @@ class ServerCallsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(get_all_participants_with_call_locator_request, 'GetAllParticipantsWithCallLocatorRequest')
 
         request = build_get_participants_request(
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.get_participants.metadata['url'],
@@ -120,6 +124,9 @@ class ServerCallsOperations:
          locator.
         :type add_participant_with_call_locator_request:
          ~azure.communication.callingserver.models.AddParticipantWithCallLocatorRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AddParticipantResult, or the result of cls(response)
         :rtype: ~azure.communication.callingserver.models.AddParticipantResult
@@ -136,11 +143,13 @@ class ServerCallsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(add_participant_with_call_locator_request, 'AddParticipantWithCallLocatorRequest')
 
         request = build_add_participant_request(
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.add_participant.metadata['url'],
@@ -182,6 +191,9 @@ class ServerCallsOperations:
          removed from the call.
         :type remove_participant_with_call_locator_request:
          ~azure.communication.callingserver.models.RemoveParticipantWithCallLocatorRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -198,11 +210,13 @@ class ServerCallsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(remove_participant_with_call_locator_request, 'RemoveParticipantWithCallLocatorRequest')
 
         request = build_remove_participant_request(
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.remove_participant.metadata['url'],
@@ -239,6 +253,9 @@ class ServerCallsOperations:
         :param get_participant_with_call_locator_request: The get participant request.
         :type get_participant_with_call_locator_request:
          ~azure.communication.callingserver.models.GetParticipantWithCallLocatorRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of CallParticipant, or the result of cls(response)
         :rtype: list[~azure.communication.callingserver.models.CallParticipant]
@@ -255,11 +272,13 @@ class ServerCallsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(get_participant_with_call_locator_request, 'GetParticipantWithCallLocatorRequest')
 
         request = build_get_participant_request(
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.get_participant.metadata['url'],
@@ -300,6 +319,9 @@ class ServerCallsOperations:
         :param play_audio_to_participant_request: The play audio to participant request.
         :type play_audio_to_participant_request:
          ~azure.communication.callingserver.models.PlayAudioToParticipantWithCallLocatorRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PlayAudioResult, or the result of cls(response)
         :rtype: ~azure.communication.callingserver.models.PlayAudioResult
@@ -316,11 +338,13 @@ class ServerCallsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(play_audio_to_participant_request, 'PlayAudioToParticipantWithCallLocatorRequest')
 
         request = build_participant_play_audio_request(
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.participant_play_audio.metadata['url'],
@@ -362,6 +386,9 @@ class ServerCallsOperations:
          request.
         :type cancel_participant_media_operation_request:
          ~azure.communication.callingserver.models.CancelParticipantMediaOperationWithCallLocatorRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -378,11 +405,13 @@ class ServerCallsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(cancel_participant_media_operation_request, 'CancelParticipantMediaOperationWithCallLocatorRequest')
 
         request = build_cancel_participant_media_operation_request(
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.cancel_participant_media_operation.metadata['url'],
@@ -407,238 +436,6 @@ class ServerCallsOperations:
 
 
     @distributed_trace_async
-    async def mute_participant(
-        self,
-        mute_participant_with_call_locator_request: "_models.MuteParticipantWithCallLocatorRequest",
-        **kwargs: Any
-    ) -> None:
-        """Mute participant in the call.
-
-        Mute participant in the call.
-
-        :param mute_participant_with_call_locator_request: The identifier of the participant to mute in
-         the call.
-        :type mute_participant_with_call_locator_request:
-         ~azure.communication.callingserver.models.MuteParticipantWithCallLocatorRequest
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        json = self._serialize.body(mute_participant_with_call_locator_request, 'MuteParticipantWithCallLocatorRequest')
-
-        request = build_mute_participant_request(
-            content_type=content_type,
-            json=json,
-            template_url=self.mute_participant.metadata['url'],
-        )
-        request = _convert_request(request)
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    mute_participant.metadata = {'url': '/calling/participants:mute'}  # type: ignore
-
-
-    @distributed_trace_async
-    async def unmute_participant(
-        self,
-        unmute_participant_with_call_locator_request: "_models.UnmuteParticipantWithCallLocatorRequest",
-        **kwargs: Any
-    ) -> None:
-        """Unmute participant in the call.
-
-        Unmute participant in the call.
-
-        :param unmute_participant_with_call_locator_request: The identifier of the participant to
-         unmute in the call.
-        :type unmute_participant_with_call_locator_request:
-         ~azure.communication.callingserver.models.UnmuteParticipantWithCallLocatorRequest
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        json = self._serialize.body(unmute_participant_with_call_locator_request, 'UnmuteParticipantWithCallLocatorRequest')
-
-        request = build_unmute_participant_request(
-            content_type=content_type,
-            json=json,
-            template_url=self.unmute_participant.metadata['url'],
-        )
-        request = _convert_request(request)
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    unmute_participant.metadata = {'url': '/calling/participants:unmute'}  # type: ignore
-
-
-    @distributed_trace_async
-    async def hold_participant_meeting_audio(
-        self,
-        hold_meeting_audio_with_call_locator_request: "_models.HoldMeetingAudioWithCallLocatorRequest",
-        **kwargs: Any
-    ) -> None:
-        """Hold meeting audio of a participant in the call.
-
-        Hold meeting audio of a participant in the call.
-
-        :param hold_meeting_audio_with_call_locator_request: The request payload for holding meeting
-         audio for a participant.
-        :type hold_meeting_audio_with_call_locator_request:
-         ~azure.communication.callingserver.models.HoldMeetingAudioWithCallLocatorRequest
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        json = self._serialize.body(hold_meeting_audio_with_call_locator_request, 'HoldMeetingAudioWithCallLocatorRequest')
-
-        request = build_hold_participant_meeting_audio_request(
-            content_type=content_type,
-            json=json,
-            template_url=self.hold_participant_meeting_audio.metadata['url'],
-        )
-        request = _convert_request(request)
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    hold_participant_meeting_audio.metadata = {'url': '/calling/participants:holdMeetingAudio'}  # type: ignore
-
-
-    @distributed_trace_async
-    async def resume_participant_meeting_audio(
-        self,
-        resume_meeting_audio_with_call_locator_request: "_models.ResumeMeetingAudioWithCallLocatorRequest",
-        **kwargs: Any
-    ) -> None:
-        """Resume meeting audio of a participant in the call.
-
-        Resume meeting audio of a participant in the call.
-
-        :param resume_meeting_audio_with_call_locator_request: The request payload for resuming meeting
-         audio for a participant.
-        :type resume_meeting_audio_with_call_locator_request:
-         ~azure.communication.callingserver.models.ResumeMeetingAudioWithCallLocatorRequest
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        json = self._serialize.body(resume_meeting_audio_with_call_locator_request, 'ResumeMeetingAudioWithCallLocatorRequest')
-
-        request = build_resume_participant_meeting_audio_request(
-            content_type=content_type,
-            json=json,
-            template_url=self.resume_participant_meeting_audio.metadata['url'],
-        )
-        request = _convert_request(request)
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    resume_participant_meeting_audio.metadata = {'url': '/calling/participants:resumeMeetingAudio'}  # type: ignore
-
-
-    @distributed_trace_async
     async def start_recording(
         self,
         start_call_recording_with_call_locator_request: "_models.StartCallRecordingWithCallLocatorRequest",
@@ -652,6 +449,9 @@ class ServerCallsOperations:
          request.
         :type start_call_recording_with_call_locator_request:
          ~azure.communication.callingserver.models.StartCallRecordingWithCallLocatorRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StartCallRecordingResult, or the result of cls(response)
         :rtype: ~azure.communication.callingserver.models.StartCallRecordingResult
@@ -668,11 +468,13 @@ class ServerCallsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(start_call_recording_with_call_locator_request, 'StartCallRecordingWithCallLocatorRequest')
 
         request = build_start_recording_request(
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.start_recording.metadata['url'],
@@ -712,6 +514,9 @@ class ServerCallsOperations:
 
         :param recording_id: The recording id.
         :type recording_id: str
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CallRecordingProperties, or the result of cls(response)
         :rtype: ~azure.communication.callingserver.models.CallRecordingProperties
@@ -728,9 +533,12 @@ class ServerCallsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
+
         
         request = build_get_recording_properties_request(
             recording_id=recording_id,
+            api_version=api_version,
             template_url=self.get_recording_properties.metadata['url'],
         )
         request = _convert_request(request)
@@ -768,6 +576,9 @@ class ServerCallsOperations:
 
         :param recording_id: The recording id.
         :type recording_id: str
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -784,9 +595,12 @@ class ServerCallsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
+
         
         request = build_stop_recording_request(
             recording_id=recording_id,
+            api_version=api_version,
             template_url=self.stop_recording.metadata['url'],
         )
         request = _convert_request(request)
@@ -820,6 +634,9 @@ class ServerCallsOperations:
 
         :param recording_id: The recording id.
         :type recording_id: str
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -836,9 +653,12 @@ class ServerCallsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
+
         
         request = build_pause_recording_request(
             recording_id=recording_id,
+            api_version=api_version,
             template_url=self.pause_recording.metadata['url'],
         )
         request = _convert_request(request)
@@ -872,6 +692,9 @@ class ServerCallsOperations:
 
         :param recording_id: The recording id.
         :type recording_id: str
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -888,9 +711,12 @@ class ServerCallsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
+
         
         request = build_resume_recording_request(
             recording_id=recording_id,
+            api_version=api_version,
             template_url=self.resume_recording.metadata['url'],
         )
         request = _convert_request(request)
@@ -924,6 +750,9 @@ class ServerCallsOperations:
 
         :param call_request: The join call request.
         :type call_request: ~azure.communication.callingserver.models.JoinCallRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: JoinCallResult, or the result of cls(response)
         :rtype: ~azure.communication.callingserver.models.JoinCallResult
@@ -940,11 +769,13 @@ class ServerCallsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(call_request, 'JoinCallRequest')
 
         request = build_join_call_request(
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.join_call.metadata['url'],
@@ -985,6 +816,9 @@ class ServerCallsOperations:
         :param play_audio_request: Play audio request.
         :type play_audio_request:
          ~azure.communication.callingserver.models.PlayAudioWithCallLocatorRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PlayAudioResult, or the result of cls(response)
         :rtype: ~azure.communication.callingserver.models.PlayAudioResult
@@ -1001,11 +835,13 @@ class ServerCallsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(play_audio_request, 'PlayAudioWithCallLocatorRequest')
 
         request = build_play_audio_request(
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.play_audio.metadata['url'],
@@ -1046,6 +882,9 @@ class ServerCallsOperations:
         :param cancel_media_operation_request: The cancel media operation request.
         :type cancel_media_operation_request:
          ~azure.communication.callingserver.models.CancelMediaOperationWithCallLocatorRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1062,11 +901,13 @@ class ServerCallsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(cancel_media_operation_request, 'CancelMediaOperationWithCallLocatorRequest')
 
         request = build_cancel_media_operation_request(
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.cancel_media_operation.metadata['url'],
@@ -1102,6 +943,9 @@ class ServerCallsOperations:
 
         :param answer_call_request: The answer call request.
         :type answer_call_request: ~azure.communication.callingserver.models.AnswerCallRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnswerCallResult, or the result of cls(response)
         :rtype: ~azure.communication.callingserver.models.AnswerCallResult
@@ -1118,11 +962,13 @@ class ServerCallsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(answer_call_request, 'AnswerCallRequest')
 
         request = build_answer_call_request(
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.answer_call.metadata['url'],
@@ -1136,7 +982,7 @@ class ServerCallsOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [201]:
+        if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1162,6 +1008,9 @@ class ServerCallsOperations:
 
         :param reject_call_request: The reject call request.
         :type reject_call_request: ~azure.communication.callingserver.models.RejectCallRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1178,11 +1027,13 @@ class ServerCallsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(reject_call_request, 'RejectCallRequest')
 
         request = build_reject_call_request(
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.reject_call.metadata['url'],
@@ -1218,6 +1069,9 @@ class ServerCallsOperations:
 
         :param redirect_call_request: The redirect call request.
         :type redirect_call_request: ~azure.communication.callingserver.models.RedirectCallRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1234,11 +1088,13 @@ class ServerCallsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(redirect_call_request, 'RedirectCallRequest')
 
         request = build_redirect_call_request(
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.redirect_call.metadata['url'],

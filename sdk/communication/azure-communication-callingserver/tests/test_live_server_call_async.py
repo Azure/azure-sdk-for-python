@@ -9,7 +9,6 @@ from time import sleep
 import utils._test_constants as CONST
 from azure.communication.callingserver.aio import CallingServerClient
 from azure.communication.callingserver import (
-    PlayAudioOptions,
     CommunicationUserIdentifier,
     GroupCallLocator
     )
@@ -86,16 +85,14 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
                 # Play Audio
                 CallingServerLiveTestUtils.sleep_if_in_live_mode()
                 OperationContext = str(uuid.uuid4())
-                options = PlayAudioOptions(
-                    loop = True,
-                    audio_file_id = str(uuid.uuid4()),
-                    callback_uri = CONST.AppCallbackUrl,
-                    operation_context = OperationContext
-                    )
+
                 play_audio_result = await self.callingserver_client.play_audio(
                     GroupCallLocator(group_id),
                     CONST.AudioFileUrl,
-                    options
+                    is_looped = True,
+                    audio_file_id = str(uuid.uuid4()),
+                    callback_uri = CONST.AppCallbackUrl,
+                    operation_context = OperationContext
                     )
                 CallingServerLiveTestUtils.validate_play_audio_result(play_audio_result)
 
