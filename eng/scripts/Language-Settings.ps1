@@ -162,18 +162,43 @@ function Get-python-GithubIoDocIndex()
 }
 
 function ValidatePackage($packageName, $packageVersion, $workingDirectory) {
-  $packageExpression = "$packageName$packageVersion"
-  Write-Host "Validating $packageExpression"
-
-  $installTargetFolder = Join-Path $workingDirectory $packageName
-  New-Item -ItemType Directory -Force -Path $installTargetFolder | Out-Null
-
   # Add more validation by replicating as much of the docs CI process as
   # possible
   # https://github.com/Azure/azure-sdk-for-python/issues/20109
+  if (!$ImageId) {
+    Write-Host "Validating using pip command directly on $packageName."
+    FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $workingDirectory
+  } 
+  else {
+    Write-Host "Validating using $ImageId on $packageName."
+    DockerValidation -packageName "$packageName" -packageVersion "$packageVersion"
+  }
+}
+function DockerValidation($packageName, $packageVersion) {
+  $packageExpression = "$packageName==$packageVersion"
+  docker run -e TARGET_PACKAGE=$packageExpression -t $ImageId
+  # The docker exit codes: https://docs.docker.com/engine/reference/run/#exit-status
+  # If the docker failed because of docker itself instead of the application, 
+  # we should skip the validation and keep the packages. 
+  if ($LASTEXITCODE -eq 125 -Or $LASTEXITCODE -eq 126 -Or $LASTEXITCODE -eq 127) { 
+    Write-Host $commandLine
+    LogWarning "The `docker` command does not work with exit code $LASTEXITCODE. Fall back to npm install $packageName directly."
+    FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion"
+  }
+  elseif ($LASTEXITCODE -ne 0) { 
+    Write-Host $commandLine
+    LogWarning "Package $($Package.name) ref docs validation failed."
+    return $false
+  }
+  return $true
+}
+
+function FallbackValidation($packageName, $packageVersion, $workingDirectory) {
+  $installTargetFolder = Join-Path $workingDirectory $packageName
+  New-Item -ItemType Directory -Force -Path $installTargetFolder | Out-Null
+  $packageExpression = "$packageName$packageVersion"
   try {
     $pipInstallOutput = ""
-    $extraIndexUrl = " --extra-index-url=$PackageSourceOverride"
     if ($PackageSourceOverride) {
       Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder --extra-index-url=$PackageSourceOverride"
       $pipInstallOutput = pip `
@@ -206,7 +231,10 @@ function ValidatePackage($packageName, $packageVersion, $workingDirectory) {
   return $true
 }
 
-$PackageExclusions = @{ 
+$PackageExclusions = @{
+  'azure-mgmt-videoanalyzer' = 'Unsupported doc directives: https://github.com/Azure/azure-sdk-for-python/issues/21563';
+  'azure-mgmt-quota' = 'Unsupported doc directives: https://github.com/Azure/azure-sdk-for-python/issues/21366';
+  'azure-mgmt-webpubsub' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/21346';
   'azure-mgmt-apimanagement' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18084';
   'azure-mgmt-reservations' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18077';
   'azure-mgmt-signalr' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18085';
@@ -427,14 +455,15 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
   return $packages
 }
 
-function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseDate)
+function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseDate, $ReplaceLatestEntryTitle=$True)
 {
   if($null -eq $ReleaseDate)
   {
     $ReleaseDate = Get-Date -Format "yyyy-MM-dd"
   }
   pip install -r "$EngDir/versioning/requirements.txt" -q -I
-  python "$EngDir/versioning/version_set.py" --package-name $PackageName --new-version $Version --service $ServiceDirectory --release-date $ReleaseDate
+  python "$EngDir/versioning/version_set.py" --package-name $PackageName --new-version $Version `
+  --service $ServiceDirectory --release-date $ReleaseDate --replace-latest-entry-title $ReplaceLatestEntryTitle
 }
 
 function GetExistingPackageVersions ($PackageName, $GroupId=$null)

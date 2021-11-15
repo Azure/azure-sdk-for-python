@@ -21,6 +21,7 @@ try:
     from ._models_py3 import OperationInputs
     from ._models_py3 import OperationListResult
     from ._models_py3 import Resource
+    from ._models_py3 import SystemAssignedServiceIdentity
 except (SyntaxError, ImportError):
     from ._models import App  # type: ignore
     from ._models import AppAvailabilityInfo  # type: ignore
@@ -36,9 +37,12 @@ except (SyntaxError, ImportError):
     from ._models import OperationInputs  # type: ignore
     from ._models import OperationListResult  # type: ignore
     from ._models import Resource  # type: ignore
+    from ._models import SystemAssignedServiceIdentity  # type: ignore
 
 from ._iot_central_client_enums import (
     AppSku,
+    AppState,
+    SystemAssignedServiceIdentityType,
 )
 
 __all__ = [
@@ -56,5 +60,8 @@ __all__ = [
     'OperationInputs',
     'OperationListResult',
     'Resource',
+    'SystemAssignedServiceIdentity',
     'AppSku',
+    'AppState',
+    'SystemAssignedServiceIdentityType',
 ]

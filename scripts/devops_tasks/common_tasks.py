@@ -20,6 +20,7 @@ import textwrap
 import io
 import re
 import fnmatch
+import platform
 
 # Assumes the presence of setuptools
 from pkg_resources import parse_version, parse_requirements, Requirement, WorkingSet, working_set
@@ -28,7 +29,6 @@ from pkg_resources import parse_version, parse_requirements, Requirement, Workin
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 from packaging.version import parse
-
 
 DEV_REQ_FILE = "dev_requirements.txt"
 NEW_DEV_REQ_FILE = "new_dev_requirements.txt"
@@ -63,6 +63,10 @@ REGRESSION_EXCLUDED_PACKAGES = [
 MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
     "azure-mgmt-core",
 ]
+
+TEST_COMPATIBILITY_MAP = {
+    "azure-core-tracing-opentelemetry": "<3.10"
+}
 
 omit_regression = (
     lambda x: "nspkg" not in x
@@ -211,6 +215,24 @@ def filter_for_compatibility(package_set):
 
     return collected_packages
 
+
+def compare_python_version(version_spec):
+    current_sys_version = parse(platform.python_version())
+    spec_set = SpecifierSet(version_spec)
+
+    return current_sys_version in spec_set
+
+
+def filter_packages_by_compatibility_override(package_set, resolve_basename=True):
+    return [
+        p
+        for p in package_set
+        if compare_python_version(
+            TEST_COMPATIBILITY_MAP.get(
+                os.path.basename(p) if resolve_basename else p, ">=2.7"
+            )
+        )
+    ]
 
 # this function is where a glob string gets translated to a list of packages
 # It is called by both BUILD (package) and TEST. In the future, this function will be the central location

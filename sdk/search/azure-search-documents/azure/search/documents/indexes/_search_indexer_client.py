@@ -27,7 +27,7 @@ from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from ._generated.models import SearchIndexer, SearchIndexerStatus
+    from ._generated.models import SearchIndexer, SearchIndexerStatus, DocumentKeysOrIds
     from typing import Any, Optional, Sequence, Union
     from azure.core.credentials import TokenCredential
 
@@ -161,6 +161,10 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         # type: (**Any) -> Sequence[SearchIndexer]
         """Lists all indexers available for a search service.
 
+        :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
+         list of JSON property names, or '*' for all properties. The default is all
+         properties.
+        :paramtype select: list[str]
         :return: List of all the SearchIndexers.
         :rtype: `list[~azure.search.documents.indexes.models.SearchIndexer]`
 
@@ -174,6 +178,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
                 :caption: List all the SearchIndexers
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        if kwargs.get('select', None):
+            kwargs['select'] = ','.join(kwargs['select'])
         result = self._client.indexers.list(**kwargs)
         return result.indexers
 
@@ -278,6 +284,30 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         self._client.indexers.reset(name, **kwargs)
+
+    @distributed_trace
+    def reset_documents(self, indexer, keys_or_ids, **kwargs):
+        # type: (Union[str, SearchIndexer], DocumentKeysOrIds, **Any) -> None
+        """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
+
+        :param indexer: The indexer to reset documents for.
+        :type indexer: str or ~azure.search.documents.indexes.models.SearchIndexer
+        :param keys_or_ids:
+        :type keys_or_ids: ~azure.search.documents.indexes.models.DocumentKeysOrIds
+        :return: None, or the result of cls(response)
+        :keyword overwrite: If false, keys or ids will be appended to existing ones. If true, only the
+         keys or ids in this payload will be queued to be re-ingested. The default is false.
+        :paramtype overwrite: bool
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        kwargs["keys_or_ids"] = keys_or_ids
+        try:
+            name = indexer.name
+        except AttributeError:
+            name = indexer
+        return self._client.indexers.reset_docs(name, **kwargs)
 
     @distributed_trace
     def get_indexer_status(self, name, **kwargs):
@@ -390,6 +420,10 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         # type: (**Any) -> Sequence[SearchIndexerDataSourceConnection]
         """Lists all data source connections available for a search service.
 
+        :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
+         list of JSON property names, or '*' for all properties. The default is all
+         properties.
+        :paramtype select: list[str]
         :return: List of all the data source connections.
         :rtype: `list[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]`
 
@@ -403,6 +437,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
                 :caption: List all the SearchIndexerDataSourceConnections
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        if kwargs.get('select', None):
+            kwargs['select'] = ','.join(kwargs['select'])
         result = self._client.data_sources.list(**kwargs)
         # pylint:disable=protected-access
         return [
@@ -465,6 +501,10 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         # type: (**Any) -> List[SearchIndexerSkillset]
         """List the SearchIndexerSkillsets in an Azure Search service.
 
+        :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
+         list of JSON property names, or '*' for all properties. The default is all
+         properties.
+        :paramtype select: list[str]
         :return: List of SearchIndexerSkillsets
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexerSkillset]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -480,6 +520,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        if kwargs.get('select', None):
+            kwargs['select'] = ','.join(kwargs['select'])
         result = self._client.skillsets.list(**kwargs)
         return [SearchIndexerSkillset._from_generated(skillset) for skillset in result.skillsets] # pylint:disable=protected-access
 
@@ -529,8 +571,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         the SearchIndexerSkillset model must be provided instead of the name. It is enough to provide
         the name of the skillset to delete unconditionally
 
-        :param name: The SearchIndexerSkillset to delete
-        :type name: str or ~azure.search.documents.indexes.models.SearchIndexerSkillset
+        :param skillset: The SearchIndexerSkillset to delete
+        :type skillset: str or ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
 
@@ -616,6 +658,26 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             **kwargs
         )
         return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
+
+    @distributed_trace
+    def reset_skills(self, skillset, skill_names, **kwargs):
+        # type: (Union[str, SearchIndexerSkillset], List[str], **Any) -> None
+        """Reset an existing skillset in a search service.
+
+        :param skillset: The SearchIndexerSkillset to reset
+        :type skillset: str or ~azure.search.documents.indexes.models.SearchIndexerSkillset
+        :param skill_names: the names of skills to be reset.
+        :type skill_names: list[str]
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        try:
+            name = skillset.name
+        except AttributeError:
+            name = skillset
+        return self._client.skillsets.reset_skills(name, skill_names, **kwargs)
 
 def _validate_skillset(skillset):
     """Validates any multi-version skills in the skillset to verify that unsupported

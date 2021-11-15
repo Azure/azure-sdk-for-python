@@ -39,83 +39,77 @@ class SchemaRegistryTests(AzureTestCase):
     @SchemaRegistryPowerShellPreparer()
     def test_schema_basic(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
         client = self.create_client(schemaregistry_fully_qualified_namespace)
-        schema_name = self.get_resource_name('test-schema-basic')
+        name = self.get_resource_name('test-schema-basic')
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         format = "Avro"
-        schema_properties = client.register_schema(schemaregistry_group, schema_name, schema_str, format)
+        schema_properties = client.register_schema(schemaregistry_group, name, schema_str, format, logging_enable=True)
 
         assert schema_properties.id is not None
-        assert schema_properties.version is 1
         assert schema_properties.format == "Avro"
 
-        returned_schema = client.get_schema(id=schema_properties.id)
+        returned_schema = client.get_schema(schema_id=schema_properties.id, logging_enable=True)
 
         assert returned_schema.properties.id == schema_properties.id
-        assert returned_schema.properties.version == 1
         assert returned_schema.properties.format == "Avro"
-        assert returned_schema.schema_definition == schema_str
+        assert returned_schema.definition == schema_str
 
-        returned_schema_properties = client.get_schema_properties(schemaregistry_group, schema_name, schema_str, format)
+        returned_schema_properties = client.get_schema_properties(schemaregistry_group, name, schema_str, format, logging_enable=True)
 
         assert returned_schema_properties.id == schema_properties.id
-        assert returned_schema_properties.version == 1
         assert returned_schema_properties.format == "Avro"
 
     @SchemaRegistryPowerShellPreparer()
     def test_schema_update(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
         client = self.create_client(schemaregistry_fully_qualified_namespace)
-        schema_name = self.get_resource_name('test-schema-update')
+        name = self.get_resource_name('test-schema-update')
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         format = "Avro"
-        schema_properties = client.register_schema(schemaregistry_group, schema_name, schema_str, format)
+        schema_properties = client.register_schema(schemaregistry_group, name, schema_str, format)
 
         assert schema_properties.id is not None
-        assert schema_properties.version != 0
         assert schema_properties.format == "Avro"
 
         schema_str_new = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_food","type":["string","null"]}]}"""
-        new_schema_properties = client.register_schema(schemaregistry_group, schema_name, schema_str_new, format)
+        new_schema_properties = client.register_schema(schemaregistry_group, name, schema_str_new, format)
 
         assert new_schema_properties.id is not None
-        assert new_schema_properties.version == schema_properties.version + 1
         assert new_schema_properties.format == "Avro"
 
-        new_schema = client.get_schema(id=new_schema_properties.id)
+        new_schema = client.get_schema(schema_id=new_schema_properties.id)
 
         assert new_schema.properties.id != schema_properties.id
         assert new_schema.properties.id == new_schema_properties.id
-        assert new_schema.schema_definition == schema_str_new
-        assert new_schema.properties.version == schema_properties.version + 1
+        assert new_schema.definition == schema_str_new
         assert new_schema.properties.format == "Avro"
 
     @SchemaRegistryPowerShellPreparer()
     def test_schema_same_twice(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
         client = self.create_client(schemaregistry_fully_qualified_namespace)
-        schema_name = self.get_resource_name('test-schema-twice')
+        name = self.get_resource_name('test-schema-twice')
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}"""
         format = "Avro"
-        schema_properties = client.register_schema(schemaregistry_group, schema_name, schema_str, format)
-        schema_properties_second = client.register_schema(schemaregistry_group, schema_name, schema_str, format)
+        schema_properties = client.register_schema(schemaregistry_group, name, schema_str, format)
+        schema_properties_second = client.register_schema(schemaregistry_group, name, schema_str, format)
         assert schema_properties.id == schema_properties_second.id
 
     @SchemaRegistryPowerShellPreparer()
     def test_schema_negative_wrong_credential(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
         credential = ClientSecretCredential(tenant_id="fake", client_id="fake", client_secret="fake")
         client = SchemaRegistryClient(fully_qualified_namespace=schemaregistry_fully_qualified_namespace, credential=credential)
-        schema_name = self.get_resource_name('test-schema-negative')
+        name = self.get_resource_name('test-schema-negative')
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         format = "Avro"
         with pytest.raises(ClientAuthenticationError):
-            client.register_schema(schemaregistry_group, schema_name, schema_str, format)
+            client.register_schema(schemaregistry_group, name, schema_str, format)
 
     @SchemaRegistryPowerShellPreparer()
     def test_schema_negative_wrong_endpoint(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
         client = self.create_client("nonexist.servicebus.windows.net")
-        schema_name = self.get_resource_name('test-schema-nonexist')
+        name = self.get_resource_name('test-schema-nonexist')
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         format = "Avro"
         with pytest.raises(ServiceRequestError):
-            client.register_schema(schemaregistry_group, schema_name, schema_str, format)
+            client.register_schema(schemaregistry_group, name, schema_str, format)
 
     @SchemaRegistryPowerShellPreparer()
     def test_schema_negative_no_schema(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):

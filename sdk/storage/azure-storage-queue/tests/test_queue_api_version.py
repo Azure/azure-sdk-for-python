@@ -3,18 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
-import pytest
-import platform
-from datetime import datetime, timedelta
 
-from azure.core.exceptions import AzureError, ResourceExistsError
+import pytest
+
 from azure.storage.queue import (
     QueueServiceClient,
     QueueClient
 )
 from azure.storage.queue._serialize import _SUPPORTED_API_VERSIONS
-from _shared.testcase import GlobalStorageAccountPreparer, StorageTestCase
+from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 

@@ -14,12 +14,12 @@ These are code samples that show common scenario operations with the Schema Regi
 
 Several Schema Registry Avro Serializer Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Schema Registry Avro Serializer:
 
-* [avro_serializer.py][avro_serializer_sample] - Examples for common Schema Registry Avro Serializer tasks:
+* [avro_serializer.py][avro_serializer_sample] ([async version][avro_serializer_async_sample]) - Examples for common Schema Registry Avro Serializer tasks:
     * Serialize data according to the given schema
     * Deserialize data
-* [eventhub_send_integration.py][eventhub_send_integration_sample] - Examples for integration with EventHub in sending tasks:
+* [eventhub_send_integration.py][eventhub_send_integration_sample] ([async version][eventhub_send_integration_async_sample]) - Examples for integration with EventHub in sending tasks:
     * Serialize data with the given schema and send `EventData` to Event Hubs.
-* [eventhub_receive_integration.py][eventhub_receive_integration_sample] - Examples for integration with EventHub in receiving tasks:
+* [eventhub_receive_integration.py][eventhub_receive_integration_sample] ([async version][eventhub_receive_integration_async_sample]) - Examples for integration with EventHub in receiving tasks:
     * Receive `EventData` from Event Hubs and deserialize the received bytes.
 
 ## Prerequisites
@@ -50,7 +50,10 @@ Check out the [API reference documentation][api_reference] to learn more about
 what you can do with the Azure Schema Registry Avro Serializer library.
 
 <!-- LINKS -->
-[avro_serializer_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroserializer/samples/avro_serializer.py
-[eventhub_send_integration_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroserializer/samples/eventhub_send_integration.py
-[eventhub_receive_integration_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroserializer/samples/eventhub_receive_integration.py
-[api_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-schemaregistry-avroserializer/latest/index.html
+[avro_serializer_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroserializer/samples/sync_samples/avro_serializer.py
+[eventhub_send_integration_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroserializer/samples/sync_samples/eventhub_send_integration.py
+[eventhub_receive_integration_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroserializer/samples/sync_samples/eventhub_receive_integration.py
+[avro_serializer_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroserializer/samples/async_samples/avro_serializer_async.py
+[eventhub_send_integration_async_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroserializer/samples/async_samples/eventhub_send_integration_async.py
+[eventhub_receive_integration_async_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroserializer/samples/async_samples/eventhub_receive_integration_async.py
+[api_reference]: https://docs.microsoft.com/python/api/overview/azure/schemaregistry-avroserializer-readme

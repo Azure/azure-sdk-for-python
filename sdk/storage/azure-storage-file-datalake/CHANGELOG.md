@@ -1,5 +1,25 @@
 # Release History
 
+## 12.6.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 12.6.0b1 (2021-11-08)
+**New features**
+- Added support for batch deleting files using the `delete_files()` method from a `FileSystemClient`
+- Account level SAS tokens now support two new permissions:
+    - `permanent_delete`
+    - `set_immutability_policy`
+**Fixes**
+- `FileSystemProperties` was not subscriptable. Now it is both subscriptable and attributes can also be accessed directly (#20772) 
+- Datalake Client Typing annotation issues have been resolved (#19906)
+
 ## 12.5.0 (2021-09-15)
 **Stable release of preview features**
 - Added support for service version 2020-10-02 (STG78)

@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2021-04-01-preview",
-    "total_api_version_list": ["2021-04-01-preview"],
+    "chosen_version": "2021-10-01",
+    "total_api_version_list": ["2021-10-01"],
     "client": {
         "name": "WebPubSubManagementClient",
         "filename": "_web_pub_sub_management_client",
@@ -101,6 +101,7 @@
         "operations": "Operations",
         "web_pub_sub": "WebPubSubOperations",
         "usages": "UsagesOperations",
+        "web_pub_sub_hubs": "WebPubSubHubsOperations",
         "web_pub_sub_private_endpoint_connections": "WebPubSubPrivateEndpointConnectionsOperations",
         "web_pub_sub_private_link_resources": "WebPubSubPrivateLinkResourcesOperations",
         "web_pub_sub_shared_private_link_resources": "WebPubSubSharedPrivateLinkResourcesOperations"

@@ -47,7 +47,7 @@ class PurviewCatalogClientConfiguration(Configuration):
 
         self.endpoint = endpoint
         self.credential = credential
-        self.api_version = "2021-09-01"
+        self.api_version = "2021-05-01-preview"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://purview.azure.net/.default'])
         kwargs.setdefault('sdk_moniker', 'purview-catalog/{}'.format(VERSION))
         self._configure(**kwargs)

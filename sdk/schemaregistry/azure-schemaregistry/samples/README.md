@@ -31,10 +31,16 @@ If you do not have an existing Azure account, you may sign up for a free trial o
 1. Install the Azure Schema Registry client library and Azure Identity client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
-pip install azure-schemaregistry azure-identity
+pip install azure-schemaregistry
 ```
 
-2. Clone or download this sample repository
+To run samples utilizing the Azure Active Directory for authentication, please install the azure-identity library:
+
+```bash
+pip install azure-identity
+```
+
+2. Clone or download this sample repository.
 3. Open the sample folder in Visual Studio Code or your IDE of choice.
 
 ## Running the samples
@@ -51,4 +57,4 @@ what you can do with the Azure Schema Registry client library.
 <!-- LINKS -->
 [schema_registry_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry/samples/sync_samples/schema_registry.py
 [schema_registry_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry/samples/async_samples/schema_registry_async.py
-[api_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-schemaregistry/latest/index.html
+[api_reference]: https://docs.microsoft.com/python/api/overview/azure/schemaregistry-readme

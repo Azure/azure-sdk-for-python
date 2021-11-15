@@ -37,6 +37,15 @@ class ComparisonOperationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     LESS_THAN = "LessThan"
     LESS_THAN_OR_EQUAL = "LessThanOrEqual"
 
+class ConditionOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Operators allowed in the rule condition.
+    """
+
+    GREATER_THAN = "GreaterThan"
+    GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
+    LESS_THAN = "LessThan"
+    LESS_THAN_OR_EQUAL = "LessThanOrEqual"
+
 class EventLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """the event level
     """
@@ -55,6 +64,7 @@ class MetricStatisticType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MIN = "Min"
     MAX = "Max"
     SUM = "Sum"
+    COUNT = "Count"
 
 class RecurrenceFrequency(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """the recurrence frequency. How often the schedule profile should take effect. This value must be
@@ -95,6 +105,17 @@ class ScaleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CHANGE_COUNT = "ChangeCount"
     PERCENT_CHANGE_COUNT = "PercentChangeCount"
     EXACT_COUNT = "ExactCount"
+    SERVICE_ALLOWED_NEXT_VALUE = "ServiceAllowedNextValue"
+
+class TimeAggregationOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Aggregation operators allowed in a rule.
+    """
+
+    AVERAGE = "Average"
+    MINIMUM = "Minimum"
+    MAXIMUM = "Maximum"
+    TOTAL = "Total"
+    LAST = "Last"
 
 class TimeAggregationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """time aggregation type. How the data that is collected should be combined over time. The default
