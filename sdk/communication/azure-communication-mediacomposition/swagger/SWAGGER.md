@@ -17,7 +17,7 @@ autorest ./SWAGGER.md
 ### Settings
 ``` yaml
 tag: package-2021-12-31-preview
-require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/356ce88d1e5e4036e651f7189d17f26385b31242/specification/communication/data-plane/MediaComposition/readme.md
+require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/e00ba9e22c4d70d005625f6798807a3ecc5b59a9/specification/communication/data-plane/MediaComposition/readme.md
 output-folder: ../azure/communication/mediacomposition/_generated/
 namespace: azure.communication.mediacomposition
 license-header: MICROSOFT_MIT_NO_VERSION

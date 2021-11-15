@@ -120,6 +120,7 @@ def build_delete_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/mediaCompositions/{mediaCompositionId}')
     path_format_arguments = {
@@ -128,9 +129,14 @@ def build_delete_request(
 
     url = _format_url_section(url, **path_format_arguments)
 
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
     return HttpRequest(
         method="DELETE",
         url=url,
+        headers=header_parameters,
         **kwargs
     )
 
@@ -140,7 +146,7 @@ def build_start_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    accept = "text/plain, application/json, text/json"
+    accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/mediaCompositions/{mediaCompositionId}/start')
     path_format_arguments = {
@@ -166,7 +172,7 @@ def build_stop_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    accept = "text/plain, application/json, text/json"
+    accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/mediaCompositions/{mediaCompositionId}/stop')
     path_format_arguments = {
@@ -215,19 +221,25 @@ class MediaCompositionOperations(object):
         media_composition_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["_models.MediaCompositionBody"]
+        # type: (...) -> "_models.MediaCompositionBody"
         """get.
 
         :param media_composition_id:
         :type media_composition_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MediaCompositionBody, or the result of cls(response)
-        :rtype: ~azure.communication.mediacomposition.models.MediaCompositionBody or None
+        :rtype: ~azure.communication.mediacomposition.models.MediaCompositionBody
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.MediaCompositionBody"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MediaCompositionBody"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
 
@@ -242,13 +254,12 @@ class MediaCompositionOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 400]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('MediaCompositionBody', pipeline_response)
+        deserialized = self._deserialize('MediaCompositionBody', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -265,7 +276,7 @@ class MediaCompositionOperations(object):
         body=None,  # type: Optional["_models.MediaCompositionBody"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["_models.MediaCompositionBody"]
+        # type: (...) -> "_models.MediaCompositionBody"
         """create.
 
         :param media_composition_id:
@@ -274,12 +285,18 @@ class MediaCompositionOperations(object):
         :type body: ~azure.communication.mediacomposition.models.MediaCompositionBody
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MediaCompositionBody, or the result of cls(response)
-        :rtype: ~azure.communication.mediacomposition.models.MediaCompositionBody or None
+        :rtype: ~azure.communication.mediacomposition.models.MediaCompositionBody
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.MediaCompositionBody"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MediaCompositionBody"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
 
@@ -302,13 +319,12 @@ class MediaCompositionOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 400]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('MediaCompositionBody', pipeline_response)
+        deserialized = self._deserialize('MediaCompositionBody', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -325,7 +341,7 @@ class MediaCompositionOperations(object):
         body=None,  # type: Optional["_models.MediaCompositionBody"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["_models.MediaCompositionBody"]
+        # type: (...) -> "_models.MediaCompositionBody"
         """update.
 
         :param media_composition_id:
@@ -334,12 +350,18 @@ class MediaCompositionOperations(object):
         :type body: ~azure.communication.mediacomposition.models.MediaCompositionBody
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MediaCompositionBody, or the result of cls(response)
-        :rtype: ~azure.communication.mediacomposition.models.MediaCompositionBody or None
+        :rtype: ~azure.communication.mediacomposition.models.MediaCompositionBody
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.MediaCompositionBody"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MediaCompositionBody"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
 
@@ -362,13 +384,12 @@ class MediaCompositionOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 400]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('MediaCompositionBody', pipeline_response)
+        deserialized = self._deserialize('MediaCompositionBody', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -396,7 +417,13 @@ class MediaCompositionOperations(object):
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
 
@@ -413,7 +440,8 @@ class MediaCompositionOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})
@@ -427,19 +455,25 @@ class MediaCompositionOperations(object):
         media_composition_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional[Union[str, "_models.CompositionStreamState"]]
+        # type: (...) -> Union[str, "_models.CompositionStreamState"]
         """start.
 
         :param media_composition_id:
         :type media_composition_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CompositionStreamState, or the result of cls(response)
-        :rtype: str or ~azure.communication.mediacomposition.models.CompositionStreamState or None
+        :rtype: str or ~azure.communication.mediacomposition.models.CompositionStreamState
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Union[str, "_models.CompositionStreamState"]]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Union[str, "_models.CompositionStreamState"]]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
 
@@ -454,16 +488,12 @@ class MediaCompositionOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 200, 400]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('str', pipeline_response)
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('str', pipeline_response)
+        deserialized = self._deserialize('str', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -479,19 +509,25 @@ class MediaCompositionOperations(object):
         media_composition_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional[Union[str, "_models.CompositionStreamState"]]
+        # type: (...) -> Union[str, "_models.CompositionStreamState"]
         """stop.
 
         :param media_composition_id:
         :type media_composition_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CompositionStreamState, or the result of cls(response)
-        :rtype: str or ~azure.communication.mediacomposition.models.CompositionStreamState or None
+        :rtype: str or ~azure.communication.mediacomposition.models.CompositionStreamState
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Union[str, "_models.CompositionStreamState"]]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Union[str, "_models.CompositionStreamState"]]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
 
@@ -506,16 +542,12 @@ class MediaCompositionOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 200, 400]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('str', pipeline_response)
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('str', pipeline_response)
+        deserialized = self._deserialize('str', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

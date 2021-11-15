@@ -7,6 +7,8 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import CommunicationError
+    from ._models_py3 import CommunicationErrorResponse
     from ._models_py3 import CommunicationUserIdentifierModel
     from ._models_py3 import Container
     from ._models_py3 import GridLayoutOptions
@@ -25,6 +27,8 @@ try:
     from ._models_py3 import SrtStream
     from ._models_py3 import TeamsMeeting
 except (SyntaxError, ImportError):
+    from ._models import CommunicationError  # type: ignore
+    from ._models import CommunicationErrorResponse  # type: ignore
     from ._models import CommunicationUserIdentifierModel  # type: ignore
     from ._models import Container  # type: ignore
     from ._models import GridLayoutOptions  # type: ignore
@@ -54,6 +58,8 @@ from ._communication_media_composition_client_enums import (
 )
 
 __all__ = [
+    'CommunicationError',
+    'CommunicationErrorResponse',
     'CommunicationUserIdentifierModel',
     'Container',
     'GridLayoutOptions',

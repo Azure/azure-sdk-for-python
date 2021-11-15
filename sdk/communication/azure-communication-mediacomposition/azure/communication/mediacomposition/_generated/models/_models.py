@@ -6,7 +6,90 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+
+class CommunicationError(msrest.serialization.Model):
+    """The Communication Services error.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar code: Required. The error code.
+    :vartype code: str
+    :ivar message: Required. The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: Further details about specific errors that led to this error.
+    :vartype details: list[~azure.communication.mediacomposition.models.CommunicationError]
+    :ivar inner_error: The inner error if any.
+    :vartype inner_error: ~azure.communication.mediacomposition.models.CommunicationError
+    """
+
+    _validation = {
+        'code': {'required': True},
+        'message': {'required': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'inner_error': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[CommunicationError]'},
+        'inner_error': {'key': 'innererror', 'type': 'CommunicationError'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword code: Required. The error code.
+        :paramtype code: str
+        :keyword message: Required. The error message.
+        :paramtype message: str
+        """
+        super(CommunicationError, self).__init__(**kwargs)
+        self.code = kwargs['code']
+        self.message = kwargs['message']
+        self.target = None
+        self.details = None
+        self.inner_error = None
+
+
+class CommunicationErrorResponse(msrest.serialization.Model):
+    """The Communication Services error.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar error: Required. The Communication Services error.
+    :vartype error: ~azure.communication.mediacomposition.models.CommunicationError
+    """
+
+    _validation = {
+        'error': {'required': True},
+    }
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'CommunicationError'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword error: Required. The Communication Services error.
+        :paramtype error: ~azure.communication.mediacomposition.models.CommunicationError
+        """
+        super(CommunicationErrorResponse, self).__init__(**kwargs)
+        self.error = kwargs['error']
 
 
 class CommunicationUserIdentifierModel(msrest.serialization.Model):
