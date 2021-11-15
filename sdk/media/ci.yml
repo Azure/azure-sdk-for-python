@@ -30,6 +30,4 @@ extends:
     Artifacts:
     - name: azure-mgmt-media
       safeName: azuremgmtmedia
-    - name: azure-media-analytics-edge
-      safeName: azuremediaanalyticsedge
 
