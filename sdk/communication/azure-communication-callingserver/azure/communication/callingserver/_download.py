@@ -169,13 +169,8 @@ class _ChunkIterator(object):
 
 class ContentStreamDownloader():  # pylint: disable=too-many-instance-attributes
     """A streaming object to download recording content.
-    :param str endpoint:
+    :ivar str endpoint:
         The url where the content is located.
-    :param client:
-        The client that can download the content.
-    :paramtype client: ~azure.communication.callingserver.ContentDownloader
-    :param config:
-        The configuration used to serialize and deserialize data
     """
 
     def __init__(

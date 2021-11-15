@@ -739,7 +739,7 @@ class CallingServerClient(object):
         :keyword int block_size:
             Block size to download on each request.
         :returns: ContentStreamDownloader for a successful download request.
-        :rtype: ~ContentStreamDownloader
+        :rtype: ~azure.communication.callingserver.ContentStreamDownloader
         """
         if not content_url:
             raise ValueError("content_url can not be None")

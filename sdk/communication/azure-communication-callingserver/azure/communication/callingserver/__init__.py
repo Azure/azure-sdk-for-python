@@ -28,6 +28,7 @@ from ._models import (
     CallingServerEventType
     )
 from ._shared.models import CommunicationIdentifier, CommunicationUserIdentifier, PhoneNumberIdentifier
+from ._download import ContentStreamDownloader
 
 __all__ = [
     'AudioRoutingMode',
@@ -42,6 +43,7 @@ __all__ = [
     'CreateCallOptions',
     'CreateCallRequest',
     'CallingEventSubscriptionType',
+    'ContentStreamDownloader',
     'JoinCallOptions',
     'CallMediaType',
     'CallingOperationStatus',

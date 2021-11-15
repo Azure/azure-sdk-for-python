@@ -766,7 +766,7 @@ class CallingServerClient:
         :keyword int block_size:
             Block size to download on each request.
         :returns: ContentStreamDownloader for a successful download request.
-        :rtype: ~ContentStreamDownloader
+        :rtype: ~azure.communication.callingserver.aio.ContentStreamDownloader
         """
 
         #pylint: disable=protected-access
