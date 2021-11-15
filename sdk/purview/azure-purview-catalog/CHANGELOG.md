@@ -1,11 +1,20 @@
 # Release History
 
+## 1.0.0b3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.0.0b2 (2021-09-29)
 
 **Features**
 
   - Add convenience operations to client
-  - Api version has gone from `2021-05-01-preview` ot `2021-09-01`
 
 **Breaking changes**
 

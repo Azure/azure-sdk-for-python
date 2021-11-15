@@ -1,6 +1,6 @@
 # Release History
 
-## 11.3.0b5 (Unreleased)
+## 11.3.0b6 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,17 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 11.3.0b5 (2021-11-09)
+
+### Features Added
+
+- Added properties to `SearchClient.search`: `session_id`, `scoring_statistics`.
+- Added properties to `SearchIndexerDataSourceConnection`: `identity`, `encryption_key`.
+- Added `select` property to the following `SearchIndexClient` operations: `get_synonym_maps`, `list_indexes`.
+- Added `select` property to the following `SearchIndexersClient` operations: `get_data_source_connections`, `get_indexers`, `get_skillsets`.
+- Added operations to `SearchIndexerClient`: `reset_skills`, `reset_documents`.
+- Added model: `DocumentKeysOrIds`
 
 ## 11.3.0b4 (2021-10-05)
 

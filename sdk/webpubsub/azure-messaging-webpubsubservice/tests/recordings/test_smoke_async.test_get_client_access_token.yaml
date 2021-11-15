@@ -1,0 +1,26 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json, text/json
+      User-Agent:
+      - azsdk-python-messaging-webpubsubservice/1.0.0 Python/3.9.5 (macOS-11.6-x86_64-i386-64bit)
+    method: POST
+    uri: https://myservice.webpubsub.azure.com/api/hubs/hub/:generateToken?minutesToExpire=60&api-version=2021-10-01
+  response:
+    body:
+      string: '{"token":"eyJhbGciOiJIUzI1NiIsImtpZCI6InMtYTdhODUzZjMtZGE1NS00MGU5LWE0OGEtZTVhNTcxN2U4Yjk4IiwidHlwIjoiSldUIn0.eyJuYmYiOjE2MzY1NzI1MDgsImV4cCI6MTYzNjU3NjEwOCwiaWF0IjoxNjM2NTcyNTA4LCJhdWQiOiJodHRwczovL3dlYnB1YnN1Yi15eWMud2VicHVic3ViLmF6dXJlLmNvbS9jbGllbnQvaHVicy9odWIifQ._o2GwCnKhYcU7XZ8DehcW2GAshDgXaCbJyx0kCzSOfo"}'
+    headers:
+      api-supported-versions: '2021-10-01'
+      connection: keep-alive
+      content-type: application/json; charset=utf-8
+      date: Wed, 10 Nov 2021 19:28:28 GMT
+      strict-transport-security: max-age=15724800; includeSubDomains
+      transfer-encoding: chunked
+      vary: Accept-Encoding
+    status:
+      code: 200
+      message: OK
+    url: https://webpubsub-yyc.webpubsub.azure.com/api/hubs/hub/:generateToken?minutesToExpire=60&api-version=2021-10-01
+version: 1

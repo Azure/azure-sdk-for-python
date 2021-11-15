@@ -4,6 +4,7 @@
 # ------------------------------------
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
+import sys
 
 import pytest
 

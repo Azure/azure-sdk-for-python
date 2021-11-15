@@ -1,0 +1,9 @@
+[packaging]
+auto_update = false
+package_name = "azure-purview-administration"
+package_pprint_name = "Azure Purview Administration"
+is_stable = false
+is_arm = false
+
+# Package owners should uncomment and set this doc id.
+# package_doc_id = "purview-account"

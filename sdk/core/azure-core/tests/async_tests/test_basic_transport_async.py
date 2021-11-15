@@ -10,6 +10,7 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.exceptions import HttpResponseError
 from utils import HTTP_REQUESTS, request_and_responses_product
 import pytest
+import sys
 
 
 # transport = mock.MagicMock(spec=AsyncHttpTransport)
@@ -979,3 +980,12 @@ async def test_recursive_multipart_receive(http_request, mock_response):
 
     internal_response0 = internal_parts[0]
     assert internal_response0.status_code == 400
+
+
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="Loop parameter is deprecated since Python 3.10")
+def test_aiohttp_loop():
+    import asyncio
+    from azure.core.pipeline.transport import AioHttpTransport
+    loop = asyncio.get_event_loop()
+    with pytest.raises(ValueError):
+        transport = AioHttpTransport(loop=loop)

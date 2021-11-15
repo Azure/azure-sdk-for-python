@@ -39,6 +39,8 @@ jobs:
         export HEADERS=$(PIPELINE_HEADERS)
         export URL=$(PIPELINE_URL)
         export PIPELINE_TOKEN=$(PIPELINE-TOKEN)
+        export JF_TOKEN=$(Jiefeng-GitToken)
+        export ZED_TOKEN=$(Zed-GitToken)
         export COOKIE=$(USR_TOKEN)
 
         # create virtual env

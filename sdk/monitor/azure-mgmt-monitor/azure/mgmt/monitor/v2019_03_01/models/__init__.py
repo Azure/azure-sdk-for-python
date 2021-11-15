@@ -14,6 +14,7 @@ try:
     from ._models_py3 import AutomationRunbookReceiver
     from ._models_py3 import AzureAppPushReceiver
     from ._models_py3 import AzureFunctionReceiver
+    from ._models_py3 import AzureResource
     from ._models_py3 import BaselineMetadata
     from ._models_py3 import EmailReceiver
     from ._models_py3 import EnableRequest
@@ -22,7 +23,6 @@ try:
     from ._models_py3 import LogicAppReceiver
     from ._models_py3 import MetricBaselinesResponse
     from ._models_py3 import MetricSingleDimension
-    from ._models_py3 import Resource
     from ._models_py3 import SingleBaseline
     from ._models_py3 import SingleMetricBaseline
     from ._models_py3 import SmsReceiver
@@ -37,6 +37,7 @@ except (SyntaxError, ImportError):
     from ._models import AutomationRunbookReceiver  # type: ignore
     from ._models import AzureAppPushReceiver  # type: ignore
     from ._models import AzureFunctionReceiver  # type: ignore
+    from ._models import AzureResource  # type: ignore
     from ._models import BaselineMetadata  # type: ignore
     from ._models import EmailReceiver  # type: ignore
     from ._models import EnableRequest  # type: ignore
@@ -45,7 +46,6 @@ except (SyntaxError, ImportError):
     from ._models import LogicAppReceiver  # type: ignore
     from ._models import MetricBaselinesResponse  # type: ignore
     from ._models import MetricSingleDimension  # type: ignore
-    from ._models import Resource  # type: ignore
     from ._models import SingleBaseline  # type: ignore
     from ._models import SingleMetricBaseline  # type: ignore
     from ._models import SmsReceiver  # type: ignore
@@ -67,6 +67,7 @@ __all__ = [
     'AutomationRunbookReceiver',
     'AzureAppPushReceiver',
     'AzureFunctionReceiver',
+    'AzureResource',
     'BaselineMetadata',
     'EmailReceiver',
     'EnableRequest',
@@ -75,7 +76,6 @@ __all__ = [
     'LogicAppReceiver',
     'MetricBaselinesResponse',
     'MetricSingleDimension',
-    'Resource',
     'SingleBaseline',
     'SingleMetricBaseline',
     'SmsReceiver',

@@ -12,13 +12,14 @@ from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 from azure.mgmt.core.policies import ARMHttpLoggingPolicy
 
+from ._version import VERSION
+
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
 
     from azure.core.credentials import TokenCredential
 
-VERSION = "unknown"
 
 class MonitorManagementClientConfiguration(Configuration):
     """Configuration for MonitorManagementClient.
@@ -28,20 +29,25 @@ class MonitorManagementClientConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
+    :param subscription_id: The ID of the target subscription.
+    :type subscription_id: str
     """
 
     def __init__(
         self,
         credential,  # type: "TokenCredential"
+        subscription_id,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
+        if subscription_id is None:
+            raise ValueError("Parameter 'subscription_id' must not be None.")
         super(MonitorManagementClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
-        self.api_version = "2015-07-01"
+        self.subscription_id = subscription_id
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-monitor/{}'.format(VERSION))
         self._configure(**kwargs)

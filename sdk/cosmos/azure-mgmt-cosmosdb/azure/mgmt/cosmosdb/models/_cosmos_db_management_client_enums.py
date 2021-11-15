@@ -91,6 +91,17 @@ class ConflictResolutionMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     LAST_WRITER_WINS = "LastWriterWins"
     CUSTOM = "Custom"
 
+class ConnectionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The kind of connection error that occurred.
+    """
+
+    UNKNOWN = "Unknown"
+    OK = "OK"
+    OPERATOR_TO_DATA_CENTER_NETWORK_ERROR = "OperatorToDataCenterNetworkError"
+    DATACENTER_TO_DATACENTER_NETWORK_ERROR = "DatacenterToDatacenterNetworkError"
+    INTERNAL_OPERATOR_TO_DATA_CENTER_CERTIFICATE_ERROR = "InternalOperatorToDataCenterCertificateError"
+    INTERNAL_ERROR = "InternalError"
+
 class ConnectorOffer(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The cassandra connector offer type for the Cosmos DB C* database account.
     """
@@ -186,6 +197,13 @@ class ManagedCassandraProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta,
     FAILED = "Failed"
     CANCELED = "Canceled"
 
+class ManagedCassandraResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of the resource.
+    """
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    NONE = "None"
+
 class NetworkAclBypass(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates what services are allowed to bypass firewall checks.
     """
@@ -194,7 +212,7 @@ class NetworkAclBypass(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     AZURE_SERVICES = "AzureServices"
 
 class NodeState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The state of the node in relation to the cluster.
+    """The state of the node in Cassandra ring.
     """
 
     NORMAL = "Normal"

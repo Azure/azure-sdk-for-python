@@ -11,7 +11,7 @@ import datetime
 import functools
 
 import msrest
-from azure.servicebus.management import ServiceBusAdministrationClient, QueueProperties
+from azure.servicebus.management import ServiceBusAdministrationClient, QueueProperties, ApiVersion
 from azure.servicebus._common.utils import utc_now
 from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ServiceRequestError, ResourceNotFoundError, ResourceExistsError
@@ -786,3 +786,40 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
                 mgmt_service.update_queue(queue_description_only_name)
         finally:
             mgmt_service.delete_queue(queue_name)
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    def test_mgmt_queue_basic_v2017_04(self, servicebus_namespace_connection_string, servicebus_namespace,
+                                    servicebus_namespace_key_name, servicebus_namespace_primary_key):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string, api_version=ApiVersion.V2017_04)
+        clear_queues(mgmt_service)
+
+        mgmt_service.create_queue("test_queue")
+        queues = list(mgmt_service.list_queues())
+        assert len(queues) == 1 and queues[0].name == "test_queue"
+        queue = mgmt_service.get_queue("test_queue")
+        assert queue.name == "test_queue"
+        mgmt_service.delete_queue("test_queue")
+        queues = list(mgmt_service.list_queues())
+        assert len(queues) == 0
+
+        with pytest.raises(HttpResponseError):
+            mgmt_service.create_queue("queue_can_not_be_created", max_message_size_in_kilobytes=1024)
+
+        fully_qualified_namespace = servicebus_namespace.name + '.servicebus.windows.net'
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace,
+            credential=ServiceBusSharedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key),
+            api_version=ApiVersion.V2017_04
+        )
+        mgmt_service.create_queue("test_queue")
+        queues = list(mgmt_service.list_queues())
+        assert len(queues) == 1 and queues[0].name == "test_queue"
+        queue = mgmt_service.get_queue("test_queue")
+        assert queue.name == "test_queue"
+        mgmt_service.delete_queue("test_queue")
+        queues = list(mgmt_service.list_queues())
+        assert len(queues) == 0
+
+        with pytest.raises(HttpResponseError):
+            mgmt_service.create_queue("queue_can_not_be_created", max_message_size_in_kilobytes=1024)

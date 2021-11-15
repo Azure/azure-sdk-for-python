@@ -113,6 +113,63 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 assert received_cnt_dic['0'] == 2 and received_cnt_dic['1'] == 2 and received_cnt_dic['2'] == 2
                 assert count == 6
 
+            session_id = ""
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5)
+
+            with sender, receiver:
+                for i in range(3):
+                    message = ServiceBusMessage("Handler message no. {}".format(i))
+
+                    message.partition_key = 'pkey'
+
+                    message.session_id = session_id
+                    message.partition_key = session_id
+                    message.application_properties = {'key': 'value'}
+                    message.subject = 'label'
+                    message.content_type = 'application/text'
+                    message.correlation_id = 'cid'
+                    message.message_id = str(i)
+                    message.to = 'to'
+                    message.reply_to = 'reply_to'
+                    message.reply_to_session_id = 'reply_to_session_id'
+
+                    with pytest.raises(ValueError):
+                        message.partition_key = 'pkey'
+
+                    sender.send_messages(message)
+
+                with pytest.raises(ServiceBusError):
+                    receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)._open_with_retry()
+
+                count = 0
+                received_cnt_dic = {}
+                for message in receiver:
+                    print_message(_logger, message)
+                    assert message.delivery_count == 0
+                    assert message.application_properties
+                    assert message.application_properties[b'key'] == b'value'
+                    assert message.subject == 'label'
+                    assert message.content_type == 'application/text'
+                    assert message.correlation_id == 'cid'
+                    assert message.partition_key == session_id
+                    assert message.to == 'to'
+                    assert message.reply_to == 'reply_to'
+                    assert message.sequence_number
+                    assert message.enqueued_time_utc
+                    assert message.session_id == session_id
+                    assert message.reply_to_session_id == 'reply_to_session_id'
+                    count += 1
+                    receiver.complete_message(message)
+                    if message.message_id not in received_cnt_dic:
+                        received_cnt_dic[message.message_id] = 1
+                        sender.send_messages(message)
+                    else:
+                        received_cnt_dic[message.message_id] += 1
+
+                assert received_cnt_dic['0'] == 2 and received_cnt_dic['1'] == 2 and received_cnt_dic['2'] == 2
+                assert count == 6
+
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')

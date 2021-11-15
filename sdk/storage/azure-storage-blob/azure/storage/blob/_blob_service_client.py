@@ -8,8 +8,8 @@ import functools
 import warnings
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, Dict, List,
-    TYPE_CHECKING
-)
+    TYPE_CHECKING,
+    TypeVar)
 
 
 try:
@@ -51,6 +51,8 @@ if TYPE_CHECKING:
         StaticWebsite,
         FilteredBlob
     )
+
+ClassType = TypeVar("ClassType")
 
 
 class BlobServiceClient(StorageAccountHostsMixin):
@@ -144,10 +146,11 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
+            cls,  # type: Type[ClassType]
+            conn_str,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):  # type: (...) -> BlobServiceClient
+        ):  # type: (...) -> ClassType
         """Create BlobServiceClient from a Connection String.
 
         :param str conn_str:

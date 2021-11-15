@@ -37,6 +37,7 @@ async def analyze_business_card_async():
             "./sample_forms/business_cards/business-card-english.jpg",
         )
     )
+
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 

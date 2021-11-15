@@ -15,7 +15,7 @@ from msrest.serialization import UTC
 from urllib.parse import urlparse
 import datetime as dt
 
-from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
+from devtools_testutils import AzureTestCase, CachedResourceGroupPreparer
 
 from azure_devtools.scenario_tests import ReplayableTest
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
@@ -30,7 +30,7 @@ from eventgrid_preparer import (
 )
 
 
-class EventGridPublisherClientTests(AzureMgmtTestCase):
+class EventGridPublisherClientTests(AzureTestCase):
     FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['aeg-sas-key', 'aeg-sas-token']
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
