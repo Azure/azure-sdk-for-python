@@ -48,14 +48,6 @@ if __name__ == "__main__":
         required=True,
     )
     
-    parser.add_argument(
-        "-o",
-        "--out",
-        dest="out",
-        help="Output directory to create apistub file",
-        required=True,
-    )
-
     args = parser.parse_args()
 
     # Check if a wheel is already built for current package and install from wheel when available
@@ -64,6 +56,4 @@ if __name__ == "__main__":
     if not pkg_path:
         pkg_path = args.target_package
 
-    if not os.path.exists(args.out):
-        os.mkdir(args.out)
-    check_call(["apistubgen", "--pkg-path", pkg_path, "--out-path", args.out], cwd=args.work_dir)
+    check_call(["apistubgen", "--pkg-path", pkg_path], cwd=args.work_dir)
