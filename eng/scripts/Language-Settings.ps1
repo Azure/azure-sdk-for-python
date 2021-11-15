@@ -503,3 +503,12 @@ function Get-python-DocsMsMetadataForPackage($PackageInfo) {
     Suffix = ''
   }
 }
+
+function Import-Dev-Cert-python
+{
+  Write-Host "Python Trust Methodology"
+
+  $pathToScript = Resolve-Path (Join-Path -Path $PSScriptRoot -ChildPath "../../scripts/devops_tasks/trust_proxy_cert.py")
+
+  python $pathToScript
+}
