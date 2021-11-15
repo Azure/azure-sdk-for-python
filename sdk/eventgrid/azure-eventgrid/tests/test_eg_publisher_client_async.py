@@ -32,7 +32,6 @@ from eventgrid_preparer import (
 
 
 class TestEventGridPublisherClient(AzureRecordedTestCase):
-    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['aeg-sas-key', 'aeg-sas-token']
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')

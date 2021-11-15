@@ -21,7 +21,6 @@ except ImportError:
 
 from devtools_testutils import  AzureRecordedTestCase, recorded_by_proxy, CachedResourceGroupPreparer
 
-from azure_devtools.scenario_tests import ReplayableTest
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from azure.core.messaging import CloudEvent
 from azure.core.serialization import NULL
@@ -33,7 +32,6 @@ from eventgrid_preparer import (
 )
 
 class TestEventGridPublisherClient(AzureRecordedTestCase):
-    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['aeg-sas-key', 'aeg-sas-token']
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
