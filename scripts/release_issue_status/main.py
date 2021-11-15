@@ -145,11 +145,11 @@ def _latest_comment_time(comments, delay_from_create_date):
 
 def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python_piplines, assigner_repoes):
     logging.info("new issue number: {}".format(item.issue_object.number))
-
+    assigner_repo = assigner_repoes[item.assignee]
     if 'auto-link' not in item.labels:
         item.issue_object.add_to_labels('auto-link')
         try:
-            package_name, readme_link, output_folder = update_issue_body(assigner_repoes, rest_repo,
+            package_name, readme_link, output_folder = update_issue_body(assigner_repo, rest_repo,
                                                                          item.issue_object.number)
             logging.info("pkname, readme", package_name, readme_link)
             item.package = package_name
@@ -172,7 +172,6 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python
     try:
         logging.info(python_piplines)
         pipeline_url = get_pipeline_url(python_piplines, output_folder)
-        assigner_repo = assigner_repoes[item.assignee]
         rg.begin_reply_generate(item=item, rest_repo=rest_repo, readme_link=readme_link,
                                 sdk_repo=sdk_repo, pipeline_url=pipeline_url, assigner_repo=assigner_repo)
         if 'Configured' in item.labels:
