@@ -1402,3 +1402,55 @@ class TestAnalyze(TextAnalyticsTest):
             else:
                 assert result.error.code == "InvalidRequest"
                 assert result.error.message == "Some error" + str(idx)  # confirms correct doc error order
+
+    @TextAnalyticsPreparer()
+    def test_action_job_failure(
+            self,
+            textanalytics_custom_text_endpoint,
+            textanalytics_custom_text_key,
+            textanalytics_custom_entities_project_name,
+            textanalytics_custom_entities_deployment_name
+    ):
+        docs = [
+            {"id": "1", "language": "en",
+             "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+            {"id": "2", "language": "en", "text": ""},
+        ]
+
+        response = mock.Mock(
+            status_code=200,
+            headers={"Content-Type": "application/json", "operation-location": "https://fakeurl.com"}
+        )
+
+        # action job failure with status=="failed", no partial results so we raise an exception in this case
+        path_to_mock_json_response = os.path.abspath(
+            os.path.join(
+                os.path.abspath(__file__),
+                "..",
+                "./mock_test_responses/action_job_failure.json",
+            )
+        )
+        with open(path_to_mock_json_response, "r") as fd:
+            mock_json_response = json.loads(fd.read())
+
+        response.text = lambda encoding=None: json.dumps(mock_json_response)
+        response.content_type = "application/json"
+        transport = mock.Mock(send=lambda request, **kwargs: response)
+
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key),
+                                     transport=transport)
+
+        with pytest.raises(HttpResponseError) as e:
+            response = list(client.begin_analyze_actions(
+                docs,
+                actions=[
+                    RecognizeCustomEntitiesAction(
+                        project_name=textanalytics_custom_entities_project_name,
+                        deployment_name=textanalytics_custom_entities_deployment_name
+                    ),
+                ],
+                show_stats=True,
+                polling_interval=self._interval(),
+            ).result())
+            assert len(response) == len(docs)
+        assert e.value.message == "(InternalServerError) 1 out of 1 job tasks failed. Failed job tasks : v3.2-preview.2/custom/entities/general."

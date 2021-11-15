@@ -40,8 +40,8 @@ exclude_packages = [
         'azure.schemaregistry',
     ]
 install_packages = [
-    'azure-schemaregistry==1.0.0b3',
-    'avro<2.0.0,==1.10.0',
+    'azure-schemaregistry>=1.0.0,<2.0.0',
+    'avro==1.10.0',
     'backports.functools-lru-cache >= 1.6.4; python_version == "2.7"'
 ]
 

@@ -112,7 +112,7 @@ class MgmtMonitorClientTest(AzureMgmtAsyncTestCase):
             "tag2": "value2"
           }
         }
-        result = self.eventhub_client.namespaces.create_or_update(group_name, name_space, BODY)
+        result = self.eventhub_client.namespaces.begin_create_or_update(group_name, name_space, BODY)
         result.result()
 
         # NameSpaceAuthorizationRuleCreate[put]
@@ -182,7 +182,7 @@ class MgmtMonitorClientTest(AzureMgmtAsyncTestCase):
     # use track 1 version
     def create_virtual_network(self, group_name, location, network_name, subnet_name):
       
-      azure_operation_poller = self.network_client.virtual_networks.create_or_update(
+      azure_operation_poller = self.network_client.virtual_networks.begin_create_or_update(
           group_name,
           network_name,
           {
@@ -193,7 +193,7 @@ class MgmtMonitorClientTest(AzureMgmtAsyncTestCase):
           },
       )
       result_create = azure_operation_poller.result()
-      async_subnet_creation = self.network_client.subnets.create_or_update(
+      async_subnet_creation = self.network_client.subnets.begincreate_or_update(
           group_name,
           network_name,
           subnet_name,
@@ -288,12 +288,12 @@ class MgmtMonitorClientTest(AzureMgmtAsyncTestCase):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name
         # RESOURCE_URI = "subscriptions/{}/resourcegroups/{}".format(SUBSCRIPTION_ID, RESOURCE_GROUP)
-        STORAGE_ACCOUNT_NAME = self.get_resource_name("storageaccountx")
-        NAMESPACE_NAME = self.get_resource_name("namespacex")
-        EVENTHUB_NAME = self.get_resource_name("eventhubx")
-        AUTHORIZATIONRULE_NAME = self.get_resource_name("authorizationrulex")
-        INSIGHT_NAME = self.get_resource_name("insightx")
-        WORKSPACE_NAME = self.get_resource_name("workspacex")
+        STORAGE_ACCOUNT_NAME = self.get_resource_name("storageaccountxx")
+        NAMESPACE_NAME = self.get_resource_name("namespacexx")
+        EVENTHUB_NAME = self.get_resource_name("eventhubxx")
+        AUTHORIZATIONRULE_NAME = self.get_resource_name("authorizationrulexx")
+        INSIGHT_NAME = self.get_resource_name("insightxx")
+        WORKSPACE_NAME = self.get_resource_name("workspacexx")
         WORKFLOW_NAME = self.get_resource_name("workflow")
 
         if self.is_live:
