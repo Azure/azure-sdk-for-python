@@ -10,61 +10,20 @@ from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
-class AliasesCreateResponse(msrest.serialization.Model):
-    """The response model for the Alias Create API for the case when the alias was successfully created.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar created_timestamp: The created timestamp for the alias.
-    :vartype created_timestamp: str
-    :ivar alias_id: The id for the alias.
-    :vartype alias_id: str
-    :ivar creator_data_item_id: The id for the creator data item that this alias references (could
-     be null if the alias has not been assigned).
-    :vartype creator_data_item_id: str
-    :ivar last_updated_timestamp: The timestamp of the last time the alias was assigned.
-    :vartype last_updated_timestamp: str
-    """
-
-    _validation = {
-        'created_timestamp': {'readonly': True},
-        'alias_id': {'readonly': True},
-        'creator_data_item_id': {'readonly': True},
-        'last_updated_timestamp': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'created_timestamp': {'key': 'createdTimestamp', 'type': 'str'},
-        'alias_id': {'key': 'aliasId', 'type': 'str'},
-        'creator_data_item_id': {'key': 'creatorDataItemId', 'type': 'str'},
-        'last_updated_timestamp': {'key': 'lastUpdatedTimestamp', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AliasesCreateResponse, self).__init__(**kwargs)
-        self.created_timestamp = None
-        self.alias_id = None
-        self.creator_data_item_id = None
-        self.last_updated_timestamp = None
-
-
-class AliasListItem(msrest.serialization.Model):
+class Alias(msrest.serialization.Model):
     """Detailed information for the alias.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar created_timestamp: The created timestamp for the alias.
-    :vartype created_timestamp: str
+    :vartype created_timestamp: ~datetime.datetime
     :ivar alias_id: The id for the alias.
     :vartype alias_id: str
     :ivar creator_data_item_id: The id for the creator data item that this alias references (could
      be null if the alias has not been assigned).
     :vartype creator_data_item_id: str
     :ivar last_updated_timestamp: The timestamp of the last time the alias was assigned.
-    :vartype last_updated_timestamp: str
+    :vartype last_updated_timestamp: ~datetime.datetime
     """
 
     _validation = {
@@ -75,30 +34,30 @@ class AliasListItem(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'created_timestamp': {'key': 'createdTimestamp', 'type': 'str'},
+        'created_timestamp': {'key': 'createdTimestamp', 'type': 'iso-8601'},
         'alias_id': {'key': 'aliasId', 'type': 'str'},
         'creator_data_item_id': {'key': 'creatorDataItemId', 'type': 'str'},
-        'last_updated_timestamp': {'key': 'lastUpdatedTimestamp', 'type': 'str'},
+        'last_updated_timestamp': {'key': 'lastUpdatedTimestamp', 'type': 'iso-8601'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(AliasListItem, self).__init__(**kwargs)
+        super(Alias, self).__init__(**kwargs)
         self.created_timestamp = None
         self.alias_id = None
         self.creator_data_item_id = None
         self.last_updated_timestamp = None
 
 
-class AliasListResponse(msrest.serialization.Model):
+class AliasListResult(msrest.serialization.Model):
     """The response model for the List API. Returns a list of all the previously created aliases.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar aliases: A list of all the previously created aliases.
-    :vartype aliases: list[~azure.maps.creator.models.AliasListItem]
+    :vartype aliases: list[~azure.maps.creator.models.Alias]
     :ivar next_link: If present, the location of the next page of data.
     :vartype next_link: str
     """
@@ -109,7 +68,7 @@ class AliasListResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'aliases': {'key': 'aliases', 'type': '[AliasListItem]'},
+        'aliases': {'key': 'aliases', 'type': '[Alias]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -117,12 +76,12 @@ class AliasListResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(AliasListResponse, self).__init__(**kwargs)
+        super(AliasListResult, self).__init__(**kwargs)
         self.aliases = None
         self.next_link = None
 
 
-class BooleanRuleObject(msrest.serialization.Model):
+class BooleanRule(msrest.serialization.Model):
     """The boolean rule. The color is selected based on the logic value of the key.
 
     :param true: The color when value is true. Color is a JSON string in a variety of permitted
@@ -146,16 +105,16 @@ class BooleanRuleObject(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(BooleanRuleObject, self).__init__(**kwargs)
+        super(BooleanRule, self).__init__(**kwargs)
         self.true = kwargs.get('true', None)
         self.false = kwargs.get('false', None)
 
 
-class StyleObject(msrest.serialization.Model):
-    """The stateset style model. The style rule could be a numeric type style rule or a boolean type style rule.  Refer to NumberRuleObject, StringRuleObject and BooleanRuleObject definitions `here <https://aka.ms/AzureMapsStatesetStylesObject>`_.
+class StyleRule(msrest.serialization.Model):
+    """The stateset style model. The style rule could be a numeric type style rule or a boolean type style rule.  Refer to NumberRule, StringRuleObject and BooleanRule definitions `here <https://aka.ms/AzureMapsStatesetStyles>`_.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: BooleanTypeStyleRule, NumberTypeStyleRule, StringTypeStyleRule.
+    sub-classes are: BooleanStyleRule, NumberStyleRule, StringStyleRule.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -164,7 +123,7 @@ class StyleObject(msrest.serialization.Model):
     :type key_name: str
     :param type: Required. The type of stateset style.Constant filled by server.  Possible values
      include: "boolean", "number", "string".
-    :type type: str or ~azure.maps.creator.models.StyleObjectType
+    :type type: str or ~azure.maps.creator.models.StyleRuleType
     """
 
     _validation = {
@@ -178,19 +137,19 @@ class StyleObject(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'type': {'boolean': 'BooleanTypeStyleRule', 'number': 'NumberTypeStyleRule', 'string': 'StringTypeStyleRule'}
+        'type': {'boolean': 'BooleanStyleRule', 'number': 'NumberStyleRule', 'string': 'StringStyleRule'}
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(StyleObject, self).__init__(**kwargs)
+        super(StyleRule, self).__init__(**kwargs)
         self.key_name = kwargs['key_name']
         self.type = None  # type: Optional[str]
 
 
-class BooleanTypeStyleRule(StyleObject):
+class BooleanStyleRule(StyleRule):
     """The boolean type style rule object.
 
     All required parameters must be populated in order to send to Azure.
@@ -200,9 +159,9 @@ class BooleanTypeStyleRule(StyleObject):
     :type key_name: str
     :param type: Required. The type of stateset style.Constant filled by server.  Possible values
      include: "boolean", "number", "string".
-    :type type: str or ~azure.maps.creator.models.StyleObjectType
+    :type type: str or ~azure.maps.creator.models.StyleRuleType
     :param rules: Required. Boolean style rules.
-    :type rules: list[~azure.maps.creator.models.BooleanRuleObject]
+    :type rules: list[~azure.maps.creator.models.BooleanRule]
     """
 
     _validation = {
@@ -214,14 +173,14 @@ class BooleanTypeStyleRule(StyleObject):
     _attribute_map = {
         'key_name': {'key': 'keyName', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'rules': {'key': 'rules', 'type': '[BooleanRuleObject]'},
+        'rules': {'key': 'rules', 'type': '[BooleanRule]'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(BooleanTypeStyleRule, self).__init__(**kwargs)
+        super(BooleanStyleRule, self).__init__(**kwargs)
         self.type = 'boolean'  # type: str
         self.rules = kwargs['rules']
 
@@ -251,15 +210,15 @@ class BufferRequestBody(msrest.serialization.Model):
         self.distances = kwargs.get('distances', None)
 
 
-class BufferResponse(msrest.serialization.Model):
+class BufferResult(msrest.serialization.Model):
     """This object is returned from a successful Spatial Buffer call.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar summary: Summary of the call.
-    :vartype summary: ~azure.maps.creator.models.BufferResponseSummary
-    :param result: The FeatureCollection of buffers for the input.
-    :type result: ~azure.maps.creator.models.GeoJsonFeatureCollection
+    :ivar summary:
+    :vartype summary: ~azure.maps.creator.models.BufferSummary
+    :param features: The FeatureCollection of buffers for the input.
+    :type features: ~azure.maps.creator.models.GeoJsonFeatureCollection
     """
 
     _validation = {
@@ -267,21 +226,21 @@ class BufferResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'summary': {'key': 'summary', 'type': 'BufferResponseSummary'},
-        'result': {'key': 'result', 'type': 'GeoJsonFeatureCollection'},
+        'summary': {'key': 'summary', 'type': 'BufferSummary'},
+        'features': {'key': 'result', 'type': 'GeoJsonFeatureCollection'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(BufferResponse, self).__init__(**kwargs)
+        super(BufferResult, self).__init__(**kwargs)
         self.summary = None
-        self.result = kwargs.get('result', None)
+        self.features = kwargs.get('features', None)
 
 
-class BufferResponseSummary(msrest.serialization.Model):
-    """Summary of the call.
+class BufferSummary(msrest.serialization.Model):
+    """BufferSummary.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -305,49 +264,21 @@ class BufferResponseSummary(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(BufferResponseSummary, self).__init__(**kwargs)
+        super(BufferSummary, self).__init__(**kwargs)
         self.udid = None
         self.information = None
 
 
-class ClosestPointResponse(msrest.serialization.Model):
-    """This object is returned from a successful Spatial Closest Point call.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar summary: Closest Point Summary object.
-    :vartype summary: ~azure.maps.creator.models.ClosestPointSummary
-    :param result: Closest Point Result Array.
-    :type result: list[~azure.maps.creator.models.ClosestPointResultEntry]
-    """
-
-    _validation = {
-        'summary': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'summary': {'key': 'summary', 'type': 'ClosestPointSummary'},
-        'result': {'key': 'result', 'type': '[ClosestPointResultEntry]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ClosestPointResponse, self).__init__(**kwargs)
-        self.summary = None
-        self.result = kwargs.get('result', None)
-
-
-class ClosestPointResultEntry(msrest.serialization.Model):
+class ClosestPoint(msrest.serialization.Model):
     """Closest Point Result Entry Object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar distance_in_meters: The distance in meters from the source point to the closest point.
     :vartype distance_in_meters: float
-    :param position: A location represented as a latitude and longitude.
-    :type position: ~azure.maps.creator.models.SpatialCoordinate
+    :param position: A location represented as a latitude and longitude using short names 'lat' &
+     'lon'.
+    :type position: ~azure.maps.creator.models.LatLongPairAbbreviated
     :ivar geometry_id: The unique id identifies a geometry.
     :vartype geometry_id: str
     """
@@ -359,7 +290,7 @@ class ClosestPointResultEntry(msrest.serialization.Model):
 
     _attribute_map = {
         'distance_in_meters': {'key': 'distanceInMeters', 'type': 'float'},
-        'position': {'key': 'position', 'type': 'SpatialCoordinate'},
+        'position': {'key': 'position', 'type': 'LatLongPairAbbreviated'},
         'geometry_id': {'key': 'geometryId', 'type': 'str'},
     }
 
@@ -367,10 +298,39 @@ class ClosestPointResultEntry(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(ClosestPointResultEntry, self).__init__(**kwargs)
+        super(ClosestPoint, self).__init__(**kwargs)
         self.distance_in_meters = None
         self.position = kwargs.get('position', None)
         self.geometry_id = None
+
+
+class ClosestPointResponse(msrest.serialization.Model):
+    """This object is returned from a successful Spatial Closest Point call.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar summary: Closest Point Summary object.
+    :vartype summary: ~azure.maps.creator.models.ClosestPointSummary
+    :param result: Closest Point Result Array.
+    :type result: list[~azure.maps.creator.models.ClosestPoint]
+    """
+
+    _validation = {
+        'summary': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'summary': {'key': 'summary', 'type': 'ClosestPointSummary'},
+        'result': {'key': 'result', 'type': '[ClosestPoint]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ClosestPointResponse, self).__init__(**kwargs)
+        self.summary = None
+        self.result = kwargs.get('result', None)
 
 
 class ClosestPointSummary(msrest.serialization.Model):
@@ -378,8 +338,9 @@ class ClosestPointSummary(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param source_point: A location represented as a latitude and longitude.
-    :type source_point: ~azure.maps.creator.models.SpatialCoordinate
+    :param source_point: A location represented as a latitude and longitude using short names 'lat'
+     & 'lon'.
+    :type source_point: ~azure.maps.creator.models.LatLongPairAbbreviated
     :ivar udid: A unique data id (udid) for the uploaded content.
     :vartype udid: str
     :ivar information: Processing information.
@@ -392,7 +353,7 @@ class ClosestPointSummary(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'source_point': {'key': 'sourcePoint', 'type': 'SpatialCoordinate'},
+        'source_point': {'key': 'sourcePoint', 'type': 'LatLongPairAbbreviated'},
         'udid': {'key': 'udid', 'type': 'str'},
         'information': {'key': 'information', 'type': 'str'},
     }
@@ -407,7 +368,52 @@ class ClosestPointSummary(msrest.serialization.Model):
         self.information = None
 
 
-class CollectionDefinitionResponse(msrest.serialization.Model):
+class Collection(msrest.serialization.Model):
+    """Collection.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. identifier of the collection used, for example, in URIs.
+    :type name: str
+    :param title: human readable title of the collection.
+    :type title: str
+    :ivar ontology: The ontology version of this dataset.
+    :vartype ontology: str
+    :param description: a description of the features in the collection.
+    :type description: str
+    :param links: Required. Links to other WFS endpoints.
+    :type links: list[~azure.maps.creator.models.WFSEndpointLink]
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'ontology': {'readonly': True},
+        'links': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'title': {'key': 'title', 'type': 'str'},
+        'ontology': {'key': 'ontology', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'links': {'key': 'links', 'type': '[WFSEndpointLink]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Collection, self).__init__(**kwargs)
+        self.name = kwargs['name']
+        self.title = kwargs.get('title', None)
+        self.ontology = None
+        self.description = kwargs.get('description', None)
+        self.links = kwargs['links']
+
+
+class CollectionDefinition(msrest.serialization.Model):
     """collection of GeoJSON features.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -430,9 +436,9 @@ class CollectionDefinitionResponse(msrest.serialization.Model):
     :param feature_types: Required. type of features returned.
     :type feature_types: list[str]
     :param properties: attributes of the collection used.
-    :type properties: list[~azure.maps.creator.models.DefinitionProperties]
+    :type properties: list[~azure.maps.creator.models.DefinitionProperty]
     :param links: Links to other WFS endpoints.
-    :type links: list[~azure.maps.creator.models.WfsEndpointLink]
+    :type links: list[~azure.maps.creator.models.WFSEndpointLink]
     """
 
     _validation = {
@@ -451,15 +457,15 @@ class CollectionDefinitionResponse(msrest.serialization.Model):
         'ontology': {'key': 'ontology', 'type': 'str'},
         'geometry_type': {'key': 'geometryType', 'type': 'str'},
         'feature_types': {'key': 'featureTypes', 'type': '[str]'},
-        'properties': {'key': 'properties', 'type': '[DefinitionProperties]'},
-        'links': {'key': 'links', 'type': '[WfsEndpointLink]'},
+        'properties': {'key': 'properties', 'type': '[DefinitionProperty]'},
+        'links': {'key': 'links', 'type': '[WFSEndpointLink]'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(CollectionDefinitionResponse, self).__init__(**kwargs)
+        super(CollectionDefinition, self).__init__(**kwargs)
         self.description = kwargs.get('description', None)
         self.id_prefix = kwargs['id_prefix']
         self.name = kwargs['name']
@@ -469,51 +475,6 @@ class CollectionDefinitionResponse(msrest.serialization.Model):
         self.feature_types = kwargs['feature_types']
         self.properties = kwargs.get('properties', None)
         self.links = kwargs.get('links', None)
-
-
-class CollectionInfo(msrest.serialization.Model):
-    """CollectionInfo.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: Required. identifier of the collection used, for example, in URIs.
-    :type name: str
-    :param title: human readable title of the collection.
-    :type title: str
-    :ivar ontology: The ontology version of this dataset.
-    :vartype ontology: str
-    :param description: a description of the features in the collection.
-    :type description: str
-    :param links: Required. Links to other WFS endpoints.
-    :type links: list[~azure.maps.creator.models.WfsEndpointLink]
-    """
-
-    _validation = {
-        'name': {'required': True},
-        'ontology': {'readonly': True},
-        'links': {'required': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'title': {'key': 'title', 'type': 'str'},
-        'ontology': {'key': 'ontology', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'links': {'key': 'links', 'type': '[WfsEndpointLink]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CollectionInfo, self).__init__(**kwargs)
-        self.name = kwargs['name']
-        self.title = kwargs.get('title', None)
-        self.ontology = None
-        self.description = kwargs.get('description', None)
-        self.links = kwargs['links']
 
 
 class CollectionsResponse(msrest.serialization.Model):
@@ -526,9 +487,9 @@ class CollectionsResponse(msrest.serialization.Model):
     :ivar ontology: The ontology version of this dataset.
     :vartype ontology: str
     :param links: Required. Links to other WFS endpoints.
-    :type links: list[~azure.maps.creator.models.WfsEndpointLink]
+    :type links: list[~azure.maps.creator.models.WFSEndpointLink]
     :param collections: Required. All the collections in a given dataset.
-    :type collections: list[~azure.maps.creator.models.CollectionInfo]
+    :type collections: list[~azure.maps.creator.models.Collection]
     """
 
     _validation = {
@@ -539,8 +500,8 @@ class CollectionsResponse(msrest.serialization.Model):
 
     _attribute_map = {
         'ontology': {'key': 'ontology', 'type': 'str'},
-        'links': {'key': 'links', 'type': '[WfsEndpointLink]'},
-        'collections': {'key': 'collections', 'type': '[CollectionInfo]'},
+        'links': {'key': 'links', 'type': '[WFSEndpointLink]'},
+        'collections': {'key': 'collections', 'type': '[Collection]'},
     }
 
     def __init__(
@@ -553,8 +514,8 @@ class CollectionsResponse(msrest.serialization.Model):
         self.collections = kwargs['collections']
 
 
-class ConformanceResponse(msrest.serialization.Model):
-    """ConformanceResponse.
+class ConformanceResult(msrest.serialization.Model):
+    """ConformanceResult.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -574,11 +535,11 @@ class ConformanceResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(ConformanceResponse, self).__init__(**kwargs)
+        super(ConformanceResult, self).__init__(**kwargs)
         self.conforms_to = kwargs['conforms_to']
 
 
-class ConversionListDetailInfo(msrest.serialization.Model):
+class Conversion(msrest.serialization.Model):
     """Detail information for the conversion requests.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -595,7 +556,7 @@ class ConversionListDetailInfo(msrest.serialization.Model):
     :ivar description: User provided description of the content being converted.
     :vartype description: str
     :ivar feature_counts: A summary of feature counts in this conversion.
-    :vartype feature_counts: any
+    :vartype feature_counts: dict[str, long]
     """
 
     _validation = {
@@ -613,14 +574,14 @@ class ConversionListDetailInfo(msrest.serialization.Model):
         'udid': {'key': 'udid', 'type': 'str'},
         'created': {'key': 'created', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
-        'feature_counts': {'key': 'featureCounts', 'type': 'object'},
+        'feature_counts': {'key': 'featureCounts', 'type': '{long}'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(ConversionListDetailInfo, self).__init__(**kwargs)
+        super(Conversion, self).__init__(**kwargs)
         self.conversion_id = None
         self.ontology = None
         self.udid = None
@@ -629,13 +590,13 @@ class ConversionListDetailInfo(msrest.serialization.Model):
         self.feature_counts = None
 
 
-class ConversionListResponse(msrest.serialization.Model):
+class ConversionListResult(msrest.serialization.Model):
     """The response model for the Conversion List API.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar conversions: A list of all the previously submitted conversion requests.
-    :vartype conversions: list[~azure.maps.creator.models.ConversionListDetailInfo]
+    :vartype conversions: list[~azure.maps.creator.models.Conversion]
     :ivar next_link: If present, the location of the next page of data.
     :vartype next_link: str
     """
@@ -646,7 +607,7 @@ class ConversionListResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'conversions': {'key': 'conversions', 'type': '[ConversionListDetailInfo]'},
+        'conversions': {'key': 'conversions', 'type': '[Conversion]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -654,18 +615,18 @@ class ConversionListResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(ConversionListResponse, self).__init__(**kwargs)
+        super(ConversionListResult, self).__init__(**kwargs)
         self.conversions = None
         self.next_link = None
 
 
-class DatasetDetailInfo(msrest.serialization.Model):
+class Dataset(msrest.serialization.Model):
     """Detail information for the dataset.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar created: The created timestamp for the dataset.
-    :vartype created: str
+    :vartype created: ~datetime.datetime
     :ivar dataset_id: The id for the dataset.
     :vartype dataset_id: str
     :ivar ontology: The ontology version of this dataset.
@@ -675,7 +636,7 @@ class DatasetDetailInfo(msrest.serialization.Model):
     :param dataset_sources: Information about the details of the create request for the dataset.
     :type dataset_sources: ~azure.maps.creator.models.DatasetSources
     :ivar feature_counts: The feature counts for the dataset.
-    :vartype feature_counts: any
+    :vartype feature_counts: object
     """
 
     _validation = {
@@ -687,7 +648,7 @@ class DatasetDetailInfo(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'created': {'key': 'created', 'type': 'str'},
+        'created': {'key': 'created', 'type': 'iso-8601'},
         'dataset_id': {'key': 'datasetId', 'type': 'str'},
         'ontology': {'key': 'ontology', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
@@ -699,7 +660,7 @@ class DatasetDetailInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(DatasetDetailInfo, self).__init__(**kwargs)
+        super(Dataset, self).__init__(**kwargs)
         self.created = None
         self.dataset_id = None
         self.ontology = None
@@ -708,13 +669,13 @@ class DatasetDetailInfo(msrest.serialization.Model):
         self.feature_counts = None
 
 
-class DatasetListResponse(msrest.serialization.Model):
+class DatasetListResult(msrest.serialization.Model):
     """The response model for the Dataset List API. The response body will contain a list of all the previously created datasets.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar datasets: A list of all the previously created datasets.
-    :vartype datasets: list[~azure.maps.creator.models.DatasetDetailInfo]
+    :vartype datasets: list[~azure.maps.creator.models.Dataset]
     :ivar next_link: If present, the location of the next page of data.
     :vartype next_link: str
     """
@@ -725,7 +686,7 @@ class DatasetListResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'datasets': {'key': 'datasets', 'type': '[DatasetDetailInfo]'},
+        'datasets': {'key': 'datasets', 'type': '[Dataset]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -733,7 +694,7 @@ class DatasetListResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(DatasetListResponse, self).__init__(**kwargs)
+        super(DatasetListResult, self).__init__(**kwargs)
         self.datasets = None
         self.next_link = None
 
@@ -768,8 +729,8 @@ class DatasetSources(msrest.serialization.Model):
         self.append_dataset_id = None
 
 
-class DefinitionProperties(msrest.serialization.Model):
-    """DefinitionProperties.
+class DefinitionProperty(msrest.serialization.Model):
+    """DefinitionProperty.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -778,7 +739,7 @@ class DefinitionProperties(msrest.serialization.Model):
     :param required: Required. is attribute required.
     :type required: bool
     :param type: Required. type of attribute.
-    :type type: any
+    :type type: object
     """
 
     _validation = {
@@ -797,7 +758,7 @@ class DefinitionProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(DefinitionProperties, self).__init__(**kwargs)
+        super(DefinitionProperty, self).__init__(**kwargs)
         self.name = kwargs['name']
         self.required = kwargs['required']
         self.type = kwargs['type']
@@ -811,7 +772,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: object
     """
 
     _validation = {
@@ -907,7 +868,7 @@ class ExtendedGeoJsonFeatureCollectionData(msrest.serialization.Model):
     :param number_returned: Number of returned features.
     :type number_returned: int
     :param links: Links to other WFS endpoints.
-    :type links: list[~azure.maps.creator.models.WfsEndpointLink]
+    :type links: list[~azure.maps.creator.models.WFSEndpointLink]
     """
 
     _validation = {
@@ -917,7 +878,7 @@ class ExtendedGeoJsonFeatureCollectionData(msrest.serialization.Model):
     _attribute_map = {
         'ontology': {'key': 'ontology', 'type': 'str'},
         'number_returned': {'key': 'numberReturned', 'type': 'int'},
-        'links': {'key': 'links', 'type': '[WfsEndpointLink]'},
+        'links': {'key': 'links', 'type': '[WFSEndpointLink]'},
     }
 
     def __init__(
@@ -955,85 +916,7 @@ class GeoJsonFeatureCollectionData(msrest.serialization.Model):
         self.features = kwargs['features']
 
 
-class GeoJsonObject(msrest.serialization.Model):
-    """A valid ``GeoJSON`` object. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3>`_ for details.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: GeoJsonFeature, GeoJsonFeatureCollection, GeoJsonGeometry.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-     "GeometryCollection", "Feature", "FeatureCollection".
-    :type type: str or ~azure.maps.creator.models.GeoJsonObjectType
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'type': {'Feature': 'GeoJsonFeature', 'FeatureCollection': 'GeoJsonFeatureCollection', 'GeoJsonGeometry': 'GeoJsonGeometry'}
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonObject, self).__init__(**kwargs)
-        self.type = None  # type: Optional[str]
-
-
-class GeoJsonFeatureCollection(GeoJsonObject, GeoJsonFeatureCollectionData):
-    """A valid ``GeoJSON FeatureCollection`` object type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.3>`_ for details.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ExtendedGeoJsonFeatureCollection.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param features: Required. Contains a list of valid ``GeoJSON Feature`` objects.
-    :type features: list[~azure.maps.creator.models.GeoJsonFeature]
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-     "GeometryCollection", "Feature", "FeatureCollection".
-    :type type: str or ~azure.maps.creator.models.GeoJsonObjectType
-    """
-
-    _validation = {
-        'features': {'required': True},
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'features': {'key': 'features', 'type': '[GeoJsonFeature]'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'type': {'FeatureCollection': 'ExtendedGeoJsonFeatureCollection'}
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonFeatureCollection, self).__init__(**kwargs)
-        self.features = kwargs['features']
-        self.type = 'FeatureCollection'  # type: str
-        self.type = 'FeatureCollection'  # type: str
-
-
-class ExtendedGeoJsonFeatureCollection(GeoJsonFeatureCollection, ExtendedGeoJsonFeatureCollectionData):
+class ExtendedGeoJsonFeatureCollection(GeoJsonFeatureCollectionData, ExtendedGeoJsonFeatureCollectionData):
     """A valid ``GeoJSON FeatureCollection`` object type extended with numberReturned and links array. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.3>`_ for details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1045,13 +928,11 @@ class ExtendedGeoJsonFeatureCollection(GeoJsonFeatureCollection, ExtendedGeoJson
     :param number_returned: Number of returned features.
     :type number_returned: int
     :param links: Links to other WFS endpoints.
-    :type links: list[~azure.maps.creator.models.WfsEndpointLink]
+    :type links: list[~azure.maps.creator.models.WFSEndpointLink]
     :param features: Required. Contains a list of valid ``GeoJSON Feature`` objects.
     :type features: list[~azure.maps.creator.models.GeoJsonFeature]
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
+    :param type: Specifies the ``GeoJSON`` type: FeatureCollection. Possible values include:
+     "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
      "GeometryCollection", "Feature", "FeatureCollection".
     :type type: str or ~azure.maps.creator.models.GeoJsonObjectType
     """
@@ -1059,13 +940,12 @@ class ExtendedGeoJsonFeatureCollection(GeoJsonFeatureCollection, ExtendedGeoJson
     _validation = {
         'ontology': {'readonly': True},
         'features': {'required': True},
-        'type': {'required': True},
     }
 
     _attribute_map = {
         'ontology': {'key': 'ontology', 'type': 'str'},
         'number_returned': {'key': 'numberReturned', 'type': 'int'},
-        'links': {'key': 'links', 'type': '[WfsEndpointLink]'},
+        'links': {'key': 'links', 'type': '[WFSEndpointLink]'},
         'features': {'key': 'features', 'type': '[GeoJsonFeature]'},
         'type': {'key': 'type', 'type': 'str'},
     }
@@ -1078,13 +958,13 @@ class ExtendedGeoJsonFeatureCollection(GeoJsonFeatureCollection, ExtendedGeoJson
         self.ontology = None
         self.number_returned = kwargs.get('number_returned', None)
         self.links = kwargs.get('links', None)
-        self.type = 'FeatureCollection'  # type: str
+        self.type = kwargs.get('type', None)
         self.features = kwargs['features']
-        self.type = 'FeatureCollection'  # type: str
+        self.type = kwargs.get('type', None)
 
 
-class FeatureResponse(msrest.serialization.Model):
-    """FeatureResponse.
+class FeatureResult(msrest.serialization.Model):
+    """FeatureResult.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1096,7 +976,7 @@ class FeatureResponse(msrest.serialization.Model):
      <https://tools.ietf.org/html/rfc7946#section-3.2>`_ for details.
     :type feature: ~azure.maps.creator.models.GeoJsonFeature
     :param links: Links to other WFS endpoints.
-    :type links: list[~azure.maps.creator.models.WfsEndpointLink]
+    :type links: list[~azure.maps.creator.models.WFSEndpointLink]
     """
 
     _validation = {
@@ -1107,34 +987,34 @@ class FeatureResponse(msrest.serialization.Model):
     _attribute_map = {
         'ontology': {'key': 'ontology', 'type': 'str'},
         'feature': {'key': 'feature', 'type': 'GeoJsonFeature'},
-        'links': {'key': 'links', 'type': '[WfsEndpointLink]'},
+        'links': {'key': 'links', 'type': '[WFSEndpointLink]'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(FeatureResponse, self).__init__(**kwargs)
+        super(FeatureResult, self).__init__(**kwargs)
         self.ontology = None
         self.feature = kwargs['feature']
         self.links = kwargs.get('links', None)
 
 
-class FeatureStateObject(msrest.serialization.Model):
+class FeatureState(msrest.serialization.Model):
     """Single feature state model.
 
     :param key_name: Feature state Keyname. Maximum length allowed is 1000.
     :type key_name: str
     :param value: Value for the feature state. Type should comply with the style definition
      attached to the featurestate. Maximum length allowed for string type is 1024.
-    :type value: any
+    :type value: str
     :param event_timestamp: Valid Timestamp when the feature state was captured.
     :type event_timestamp: str
     """
 
     _attribute_map = {
         'key_name': {'key': 'keyName', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'object'},
+        'value': {'key': 'value', 'type': 'str'},
         'event_timestamp': {'key': 'eventTimestamp', 'type': 'str'},
     }
 
@@ -1142,7 +1022,7 @@ class FeatureStateObject(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(FeatureStateObject, self).__init__(**kwargs)
+        super(FeatureState, self).__init__(**kwargs)
         self.key_name = kwargs.get('key_name', None)
         self.value = kwargs.get('value', None)
         self.event_timestamp = kwargs.get('event_timestamp', None)
@@ -1152,11 +1032,11 @@ class FeatureStatesStructure(msrest.serialization.Model):
     """The feature states model for a feature.
 
     :param states: The feature states array.
-    :type states: list[~azure.maps.creator.models.FeatureStateObject]
+    :type states: list[~azure.maps.creator.models.FeatureState]
     """
 
     _attribute_map = {
-        'states': {'key': 'states', 'type': '[FeatureStateObject]'},
+        'states': {'key': 'states', 'type': '[FeatureState]'},
     }
 
     def __init__(
@@ -1167,75 +1047,7 @@ class FeatureStatesStructure(msrest.serialization.Model):
         self.states = kwargs.get('states', None)
 
 
-class GeofenceGeometry(msrest.serialization.Model):
-    """The geofencing geometry.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar device_id: ID of the device.
-    :vartype device_id: str
-    :ivar ud_id: The unique id returned from `Data Upload API
-     <https://docs.microsoft.com/en-us/rest/api/maps/data/uploadPreview>`_ after uploading a valid
-     GeoJSON FeatureCollection object. Please refer to  `RFC 7946
-     <https://tools.ietf.org/html/rfc7946#section-3.3>`_ for details. All the feature's properties
-     should  contain ``geometryId``\ , which is used for identifying the geometry and is
-     case-sensitive.
-    :vartype ud_id: str
-    :ivar geometry_id: The unique id identifies a geometry.
-    :vartype geometry_id: str
-    :ivar distance: Distance from the coordinate to the closest border of the geofence. Positive
-     means the  coordinate is outside of the geofence. If the coordinate is outside of the geofence,
-     but more than the value of searchBuffer away from the closest geofence border, then the value
-     is 999. Negative means the coordinate is inside of the geofence. If the coordinate is inside
-     the polygon, but more than the value of searchBuffer away from the closest geofencing border,
-     then the value is -999. A value of 999 means that there is great confidence the coordinate is
-     well outside the geofence. A value of -999 means that there is great confidence the coordinate
-     is well within the geofence.
-    :vartype distance: float
-    :ivar nearest_lat: Latitude of the nearest point of the geometry.
-    :vartype nearest_lat: float
-    :ivar nearest_lon: Longitude of the nearest point of the geometry.
-    :vartype nearest_lon: float
-    :ivar nearest_z: Sea level in meter of the nearest point on the 2D extrusion geometry. This
-     will only be presented in response when value is provided for 'zInMeter' in the request.
-    :vartype nearest_z: float
-    """
-
-    _validation = {
-        'device_id': {'readonly': True},
-        'ud_id': {'readonly': True},
-        'geometry_id': {'readonly': True},
-        'distance': {'readonly': True},
-        'nearest_lat': {'readonly': True},
-        'nearest_lon': {'readonly': True},
-        'nearest_z': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'device_id': {'key': 'deviceId', 'type': 'str'},
-        'ud_id': {'key': 'udId', 'type': 'str'},
-        'geometry_id': {'key': 'geometryId', 'type': 'str'},
-        'distance': {'key': 'distance', 'type': 'float'},
-        'nearest_lat': {'key': 'nearestLat', 'type': 'float'},
-        'nearest_lon': {'key': 'nearestLon', 'type': 'float'},
-        'nearest_z': {'key': 'nearestZ', 'type': 'float'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeofenceGeometry, self).__init__(**kwargs)
-        self.device_id = None
-        self.ud_id = None
-        self.geometry_id = None
-        self.distance = None
-        self.nearest_lat = None
-        self.nearest_lon = None
-        self.nearest_z = None
-
-
-class GeofenceResponse(msrest.serialization.Model):
+class Geofence(msrest.serialization.Model):
     """This object is returned from a geofence proximity call.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1273,11 +1085,78 @@ class GeofenceResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(GeofenceResponse, self).__init__(**kwargs)
+        super(Geofence, self).__init__(**kwargs)
         self.geometries = None
         self.expired_geofence_geometry_id = None
         self.invalid_period_geofence_geometry_id = None
         self.is_event_published = None
+
+
+class GeofenceGeometry(msrest.serialization.Model):
+    """The geofencing geometry.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar device_id: ID of the device.
+    :vartype device_id: str
+    :ivar udid: The unique id returned from `Data Upload API <https://docs.microsoft.com/en-
+     us/rest/api/maps/data/uploadPreview>`_ after uploading a valid GeoJSON FeatureCollection
+     object. Please refer to  `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.3>`_ for
+     details. All the feature's properties should  contain ``geometryId``\ , which is used for
+     identifying the geometry and is case-sensitive.
+    :vartype udid: str
+    :ivar geometry_id: The unique id identifies a geometry.
+    :vartype geometry_id: str
+    :ivar distance: Distance from the coordinate to the closest border of the geofence (in meters
+     except when special values -999/999 are used). Positive means the  coordinate is outside of the
+     geofence. If the coordinate is outside of the geofence, but more than the value of searchBuffer
+     away from the closest geofence border, then the value is 999. Negative means the coordinate is
+     inside of the geofence. If the coordinate is inside the polygon, but more than the value of
+     searchBuffer away from the closest geofencing border, then the value is -999. A value of 999
+     means that there is great confidence the coordinate is well outside the geofence. A value of
+     -999 means that there is great confidence the coordinate is well within the geofence.
+    :vartype distance: float
+    :ivar nearest_lat: Latitude of the nearest point of the geometry.
+    :vartype nearest_lat: float
+    :ivar nearest_lon: Longitude of the nearest point of the geometry.
+    :vartype nearest_lon: float
+    :ivar nearest_elevation: Sea level in meter of the nearest point on the 2D extrusion geometry.
+     This will only be presented in response when value is provided for 'zInMeter' in the request.
+    :vartype nearest_elevation: float
+    """
+
+    _validation = {
+        'device_id': {'readonly': True},
+        'udid': {'readonly': True},
+        'geometry_id': {'readonly': True},
+        'distance': {'readonly': True},
+        'nearest_lat': {'readonly': True},
+        'nearest_lon': {'readonly': True},
+        'nearest_elevation': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'device_id': {'key': 'deviceId', 'type': 'str'},
+        'udid': {'key': 'udId', 'type': 'str'},
+        'geometry_id': {'key': 'geometryId', 'type': 'str'},
+        'distance': {'key': 'distance', 'type': 'float'},
+        'nearest_lat': {'key': 'nearestLat', 'type': 'float'},
+        'nearest_lon': {'key': 'nearestLon', 'type': 'float'},
+        'nearest_elevation': {'key': 'nearestZ', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(GeofenceGeometry, self).__init__(**kwargs)
+        self.device_id = None
+        self.udid = None
+        self.geometry_id = None
+        self.distance = None
+        self.nearest_lat = None
+        self.nearest_lon = None
+        self.nearest_elevation = None
 
 
 class GeoJsonFeatureData(msrest.serialization.Model):
@@ -1285,14 +1164,12 @@ class GeoJsonFeatureData(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param geometry: Required. A valid ``GeoJSON`` geometry object. The type must be one of the
-     seven valid GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon,
-     MultiPolygon and GeometryCollection. Please refer to `RFC 7946
-     <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details.
-    :type geometry: ~azure.maps.creator.models.GeoJsonGeometry
+    :param geometry: Required. A valid ``GeoJSON`` object. Please refer to `RFC 7946
+     <https://tools.ietf.org/html/rfc7946#section-3>`_ for details.
+    :type geometry: ~azure.maps.creator.models.GeoJsonObject
     :param properties: Properties can contain any additional metadata about the ``Feature``. Value
      can be any JSON object or a JSON null value.
-    :type properties: any
+    :type properties: object
     :param id: Identifier for the feature.
     :type id: str
     :param feature_type: The type of the feature. The value depends on the data model the current
@@ -1305,7 +1182,7 @@ class GeoJsonFeatureData(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'geometry': {'key': 'geometry', 'type': 'GeoJsonGeometry'},
+        'geometry': {'key': 'geometry', 'type': 'GeoJsonObject'},
         'properties': {'key': 'properties', 'type': 'object'},
         'id': {'key': 'id', 'type': 'str'},
         'feature_type': {'key': 'featureType', 'type': 'str'},
@@ -1322,63 +1199,11 @@ class GeoJsonFeatureData(msrest.serialization.Model):
         self.feature_type = kwargs.get('feature_type', None)
 
 
-class GeoJsonFeature(GeoJsonObject, GeoJsonFeatureData):
-    """A valid ``GeoJSON Feature`` object type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.2>`_ for details.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param geometry: Required. A valid ``GeoJSON`` geometry object. The type must be one of the
-     seven valid GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon,
-     MultiPolygon and GeometryCollection. Please refer to `RFC 7946
-     <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details.
-    :type geometry: ~azure.maps.creator.models.GeoJsonGeometry
-    :param properties: Properties can contain any additional metadata about the ``Feature``. Value
-     can be any JSON object or a JSON null value.
-    :type properties: any
-    :param id: Identifier for the feature.
-    :type id: str
-    :param feature_type: The type of the feature. The value depends on the data model the current
-     feature is part of. Some data models may have an empty value.
-    :type feature_type: str
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-     "GeometryCollection", "Feature", "FeatureCollection".
-    :type type: str or ~azure.maps.creator.models.GeoJsonObjectType
-    """
-
-    _validation = {
-        'geometry': {'required': True},
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'geometry': {'key': 'geometry', 'type': 'GeoJsonGeometry'},
-        'properties': {'key': 'properties', 'type': 'object'},
-        'id': {'key': 'id', 'type': 'str'},
-        'feature_type': {'key': 'featureType', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonFeature, self).__init__(**kwargs)
-        self.geometry = kwargs['geometry']
-        self.properties = kwargs.get('properties', None)
-        self.id = kwargs.get('id', None)
-        self.feature_type = kwargs.get('feature_type', None)
-        self.type = 'Feature'  # type: str
-        self.type = 'Feature'  # type: str
-
-
-class GeoJsonGeometry(GeoJsonObject):
-    """A valid ``GeoJSON`` geometry object. The type must be one of the seven valid GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon and GeometryCollection. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details.
+class GeoJsonObject(msrest.serialization.Model):
+    """A valid ``GeoJSON`` object. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3>`_ for details.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: GeoJsonGeometryCollection, GeoJsonLineString, GeoJsonMultiLineString, GeoJsonMultiPoint, GeoJsonMultiPolygon, GeoJsonPoint, GeoJsonPolygon.
+    sub-classes are: GeoJsonFeature, GeoJsonFeatureCollection, GeoJsonGeometry, GeoJsonGeometryCollection, GeoJsonLineString, GeoJsonMultiLineString, GeoJsonMultiPoint, GeoJsonMultiPolygon, GeoJsonPoint, GeoJsonPolygon.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1399,7 +1224,121 @@ class GeoJsonGeometry(GeoJsonObject):
     }
 
     _subtype_map = {
-        'type': {'GeometryCollection': 'GeoJsonGeometryCollection', 'LineString': 'GeoJsonLineString', 'MultiLineString': 'GeoJsonMultiLineString', 'MultiPoint': 'GeoJsonMultiPoint', 'MultiPolygon': 'GeoJsonMultiPolygon', 'Point': 'GeoJsonPoint', 'Polygon': 'GeoJsonPolygon'}
+        'type': {'Feature': 'GeoJsonFeature', 'FeatureCollection': 'GeoJsonFeatureCollection', 'GeoJsonGeometry': 'GeoJsonGeometry', 'GeometryCollection': 'GeoJsonGeometryCollection', 'LineString': 'GeoJsonLineString', 'MultiLineString': 'GeoJsonMultiLineString', 'MultiPoint': 'GeoJsonMultiPoint', 'MultiPolygon': 'GeoJsonMultiPolygon', 'Point': 'GeoJsonPoint', 'Polygon': 'GeoJsonPolygon'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(GeoJsonObject, self).__init__(**kwargs)
+        self.type = None  # type: Optional[str]
+
+
+class GeoJsonFeature(GeoJsonObject, GeoJsonFeatureData):
+    """A valid ``GeoJSON Feature`` object type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.2>`_ for details.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param geometry: Required. A valid ``GeoJSON`` object. Please refer to `RFC 7946
+     <https://tools.ietf.org/html/rfc7946#section-3>`_ for details.
+    :type geometry: ~azure.maps.creator.models.GeoJsonObject
+    :param properties: Properties can contain any additional metadata about the ``Feature``. Value
+     can be any JSON object or a JSON null value.
+    :type properties: object
+    :param id: Identifier for the feature.
+    :type id: str
+    :param feature_type: The type of the feature. The value depends on the data model the current
+     feature is part of. Some data models may have an empty value.
+    :type feature_type: str
+    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
+     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
+     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
+     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
+     "GeometryCollection", "Feature", "FeatureCollection".
+    :type type: str or ~azure.maps.creator.models.GeoJsonObjectType
+    """
+
+    _validation = {
+        'geometry': {'required': True},
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'geometry': {'key': 'geometry', 'type': 'GeoJsonObject'},
+        'properties': {'key': 'properties', 'type': 'object'},
+        'id': {'key': 'id', 'type': 'str'},
+        'feature_type': {'key': 'featureType', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(GeoJsonFeature, self).__init__(**kwargs)
+        self.geometry = kwargs['geometry']
+        self.properties = kwargs.get('properties', None)
+        self.id = kwargs.get('id', None)
+        self.feature_type = kwargs.get('feature_type', None)
+        self.type = 'Feature'  # type: str
+        self.type = 'Feature'  # type: str
+
+
+class GeoJsonFeatureCollection(GeoJsonObject, GeoJsonFeatureCollectionData):
+    """A valid ``GeoJSON FeatureCollection`` object type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.3>`_ for details.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param features: Required. Contains a list of valid ``GeoJSON Feature`` objects.
+    :type features: list[~azure.maps.creator.models.GeoJsonFeature]
+    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
+     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
+     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
+     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
+     "GeometryCollection", "Feature", "FeatureCollection".
+    :type type: str or ~azure.maps.creator.models.GeoJsonObjectType
+    """
+
+    _validation = {
+        'features': {'required': True},
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'features': {'key': 'features', 'type': '[GeoJsonFeature]'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(GeoJsonFeatureCollection, self).__init__(**kwargs)
+        self.features = kwargs['features']
+        self.type = 'FeatureCollection'  # type: str
+        self.type = 'FeatureCollection'  # type: str
+
+
+class GeoJsonGeometry(GeoJsonObject):
+    """A valid ``GeoJSON`` geometry object. The type must be one of the seven valid GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon and GeometryCollection. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
+     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
+     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
+     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
+     "GeometryCollection", "Feature", "FeatureCollection".
+    :type type: str or ~azure.maps.creator.models.GeoJsonObjectType
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
     }
 
     def __init__(
@@ -1417,7 +1356,7 @@ class GeoJsonGeometryCollectionData(msrest.serialization.Model):
 
     :param geometries: Required. Contains a list of valid ``GeoJSON`` geometry objects. **Note**
      that coordinates in GeoJSON are in x, y order (longitude, latitude).
-    :type geometries: list[~azure.maps.creator.models.GeoJsonGeometry]
+    :type geometries: list[~azure.maps.creator.models.GeoJsonObject]
     """
 
     _validation = {
@@ -1425,7 +1364,7 @@ class GeoJsonGeometryCollectionData(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'geometries': {'key': 'geometries', 'type': '[GeoJsonGeometry]'},
+        'geometries': {'key': 'geometries', 'type': '[GeoJsonObject]'},
     }
 
     def __init__(
@@ -1436,14 +1375,14 @@ class GeoJsonGeometryCollectionData(msrest.serialization.Model):
         self.geometries = kwargs['geometries']
 
 
-class GeoJsonGeometryCollection(GeoJsonGeometry, GeoJsonGeometryCollectionData):
+class GeoJsonGeometryCollection(GeoJsonObject, GeoJsonGeometryCollectionData):
     """A valid ``GeoJSON GeometryCollection`` object type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.8>`_ for details.
 
     All required parameters must be populated in order to send to Azure.
 
     :param geometries: Required. Contains a list of valid ``GeoJSON`` geometry objects. **Note**
      that coordinates in GeoJSON are in x, y order (longitude, latitude).
-    :type geometries: list[~azure.maps.creator.models.GeoJsonGeometry]
+    :type geometries: list[~azure.maps.creator.models.GeoJsonObject]
     :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
      object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
      GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
@@ -1458,7 +1397,7 @@ class GeoJsonGeometryCollection(GeoJsonGeometry, GeoJsonGeometryCollectionData):
     }
 
     _attribute_map = {
-        'geometries': {'key': 'geometries', 'type': '[GeoJsonGeometry]'},
+        'geometries': {'key': 'geometries', 'type': '[GeoJsonObject]'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -1497,7 +1436,7 @@ class GeoJsonLineStringData(msrest.serialization.Model):
         self.coordinates = kwargs['coordinates']
 
 
-class GeoJsonLineString(GeoJsonGeometry, GeoJsonLineStringData):
+class GeoJsonLineString(GeoJsonObject, GeoJsonLineStringData):
     """A valid ``GeoJSON LineString`` geometry type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.4>`_ for details.
 
     All required parameters must be populated in order to send to Azure.
@@ -1557,7 +1496,7 @@ class GeoJsonMultiLineStringData(msrest.serialization.Model):
         self.coordinates = kwargs['coordinates']
 
 
-class GeoJsonMultiLineString(GeoJsonGeometry, GeoJsonMultiLineStringData):
+class GeoJsonMultiLineString(GeoJsonObject, GeoJsonMultiLineStringData):
     """A valid ``GeoJSON MultiLineString`` geometry type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.5>`_ for details.
 
     All required parameters must be populated in order to send to Azure.
@@ -1617,7 +1556,7 @@ class GeoJsonMultiPointData(msrest.serialization.Model):
         self.coordinates = kwargs['coordinates']
 
 
-class GeoJsonMultiPoint(GeoJsonGeometry, GeoJsonMultiPointData):
+class GeoJsonMultiPoint(GeoJsonObject, GeoJsonMultiPointData):
     """A valid ``GeoJSON MultiPoint`` geometry type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.3>`_ for details.
 
     All required parameters must be populated in order to send to Azure.
@@ -1678,7 +1617,7 @@ class GeoJsonMultiPolygonData(msrest.serialization.Model):
         self.coordinates = kwargs['coordinates']
 
 
-class GeoJsonMultiPolygon(GeoJsonGeometry, GeoJsonMultiPolygonData):
+class GeoJsonMultiPolygon(GeoJsonObject, GeoJsonMultiPolygonData):
     """A valid ``GeoJSON MultiPolygon`` object type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.7>`_ for details.
 
     All required parameters must be populated in order to send to Azure.
@@ -1742,7 +1681,7 @@ class GeoJsonPointData(msrest.serialization.Model):
         self.coordinates = kwargs['coordinates']
 
 
-class GeoJsonPoint(GeoJsonGeometry, GeoJsonPointData):
+class GeoJsonPoint(GeoJsonObject, GeoJsonPointData):
     """A valid ``GeoJSON Point`` geometry type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.2>`_ for details.
 
     All required parameters must be populated in order to send to Azure.
@@ -1805,7 +1744,7 @@ class GeoJsonPolygonData(msrest.serialization.Model):
         self.coordinates = kwargs['coordinates']
 
 
-class GeoJsonPolygon(GeoJsonGeometry, GeoJsonPolygonData):
+class GeoJsonPolygon(GeoJsonObject, GeoJsonPolygonData):
     """A valid ``GeoJSON Polygon`` geometry type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.6>`_ for details.
 
     All required parameters must be populated in order to send to Azure.
@@ -1840,15 +1779,15 @@ class GeoJsonPolygon(GeoJsonGeometry, GeoJsonPolygonData):
         self.type = 'Polygon'  # type: str
 
 
-class GreatCircleDistanceResponse(msrest.serialization.Model):
+class GreatCircleDistanceResult(msrest.serialization.Model):
     """This object is returned from a successful Great Circle Distance call.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar summary: Summary object.
-    :vartype summary: ~azure.maps.creator.models.GreatCircleDistanceResponseSummary
+    :vartype summary: ~azure.maps.creator.models.GreatCircleDistanceSummary
     :ivar result: Result Object.
-    :vartype result: ~azure.maps.creator.models.GreatCircleDistanceResponseResult
+    :vartype result: ~azure.maps.creator.models.GreatCircleDistanceResultAutoGenerated
     """
 
     _validation = {
@@ -1857,20 +1796,20 @@ class GreatCircleDistanceResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'summary': {'key': 'summary', 'type': 'GreatCircleDistanceResponseSummary'},
-        'result': {'key': 'result', 'type': 'GreatCircleDistanceResponseResult'},
+        'summary': {'key': 'summary', 'type': 'GreatCircleDistanceSummary'},
+        'result': {'key': 'result', 'type': 'GreatCircleDistanceResultAutoGenerated'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(GreatCircleDistanceResponse, self).__init__(**kwargs)
+        super(GreatCircleDistanceResult, self).__init__(**kwargs)
         self.summary = None
         self.result = None
 
 
-class GreatCircleDistanceResponseResult(msrest.serialization.Model):
+class GreatCircleDistanceResultAutoGenerated(msrest.serialization.Model):
     """Result Object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1892,35 +1831,37 @@ class GreatCircleDistanceResponseResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(GreatCircleDistanceResponseResult, self).__init__(**kwargs)
+        super(GreatCircleDistanceResultAutoGenerated, self).__init__(**kwargs)
         self.distance_in_meters = None
 
 
-class GreatCircleDistanceResponseSummary(msrest.serialization.Model):
+class GreatCircleDistanceSummary(msrest.serialization.Model):
     """Summary object.
 
-    :param source_point: A location represented as a latitude and longitude.
-    :type source_point: ~azure.maps.creator.models.SpatialCoordinate
-    :param target_point: A location represented as a latitude and longitude.
-    :type target_point: ~azure.maps.creator.models.SpatialCoordinate
+    :param source_point: A location represented as a latitude and longitude using short names 'lat'
+     & 'lon'.
+    :type source_point: ~azure.maps.creator.models.LatLongPairAbbreviated
+    :param target_point: A location represented as a latitude and longitude using short names 'lat'
+     & 'lon'.
+    :type target_point: ~azure.maps.creator.models.LatLongPairAbbreviated
     """
 
     _attribute_map = {
-        'source_point': {'key': 'sourcePoint', 'type': 'SpatialCoordinate'},
-        'target_point': {'key': 'targetPoint', 'type': 'SpatialCoordinate'},
+        'source_point': {'key': 'sourcePoint', 'type': 'LatLongPairAbbreviated'},
+        'target_point': {'key': 'targetPoint', 'type': 'LatLongPairAbbreviated'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(GreatCircleDistanceResponseSummary, self).__init__(**kwargs)
+        super(GreatCircleDistanceSummary, self).__init__(**kwargs)
         self.source_point = kwargs.get('source_point', None)
         self.target_point = kwargs.get('target_point', None)
 
 
-class LandingPageResponse(msrest.serialization.Model):
-    """LandingPageResponse.
+class LandingPageResult(msrest.serialization.Model):
+    """LandingPageResult.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1929,7 +1870,7 @@ class LandingPageResponse(msrest.serialization.Model):
     :ivar ontology: The ontology version of this dataset.
     :vartype ontology: str
     :param links: Required. Links to other WFS endpoints.
-    :type links: list[~azure.maps.creator.models.WfsEndpointLink]
+    :type links: list[~azure.maps.creator.models.WFSEndpointLink]
     """
 
     _validation = {
@@ -1939,16 +1880,39 @@ class LandingPageResponse(msrest.serialization.Model):
 
     _attribute_map = {
         'ontology': {'key': 'ontology', 'type': 'str'},
-        'links': {'key': 'links', 'type': '[WfsEndpointLink]'},
+        'links': {'key': 'links', 'type': '[WFSEndpointLink]'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(LandingPageResponse, self).__init__(**kwargs)
+        super(LandingPageResult, self).__init__(**kwargs)
         self.ontology = None
         self.links = kwargs['links']
+
+
+class LatLongPairAbbreviated(msrest.serialization.Model):
+    """A location represented as a latitude and longitude using short names 'lat' & 'lon'.
+
+    :param lat: Latitude property.
+    :type lat: float
+    :param lon: Longitude property.
+    :type lon: float
+    """
+
+    _attribute_map = {
+        'lat': {'key': 'lat', 'type': 'float'},
+        'lon': {'key': 'lon', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LatLongPairAbbreviated, self).__init__(**kwargs)
+        self.lat = kwargs.get('lat', None)
+        self.lon = kwargs.get('lon', None)
 
 
 class LongRunningOperationResult(msrest.serialization.Model):
@@ -1962,7 +1926,7 @@ class LongRunningOperationResult(msrest.serialization.Model):
      "Running", "Failed", "Succeeded".
     :vartype status: str or ~azure.maps.creator.models.LroStatus
     :ivar created: The created timestamp.
-    :vartype created: str
+    :vartype created: ~datetime.datetime
     :param error: The error detail.
     :type error: ~azure.maps.creator.models.ErrorDetail
     :param warning: The error detail.
@@ -1977,7 +1941,7 @@ class LongRunningOperationResult(msrest.serialization.Model):
     _attribute_map = {
         'operation_id': {'key': 'operationId', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
-        'created': {'key': 'created', 'type': 'str'},
+        'created': {'key': 'created', 'type': 'iso-8601'},
         'error': {'key': 'error', 'type': 'ErrorDetail'},
         'warning': {'key': 'warning', 'type': 'ErrorDetail'},
     }
@@ -1994,38 +1958,38 @@ class LongRunningOperationResult(msrest.serialization.Model):
         self.warning = kwargs.get('warning', None)
 
 
-class MapDataDetailInfo(msrest.serialization.Model):
+class MapData(msrest.serialization.Model):
     """Detail information for the data.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar udid: The unique data id for the data.
     :vartype udid: str
-    :ivar location: The location of the data. Execute a HTTP ``GET`` on this location to download
-     the data.
-    :vartype location: str
+    :ivar location_url: The location of the data. Execute a HTTP ``GET`` on this location to
+     download the data.
+    :vartype location_url: str
     :ivar size_in_bytes: The size of the content in bytes.
     :vartype size_in_bytes: long
-    :ivar upload_status: The current upload status of the content.
-    :vartype upload_status: str
-    :ivar data_format: The current data format.
-    :vartype data_format: str
+    :ivar upload_status: The current upload status of the content. Possible values include:
+     "Pending", "Completed", "Failed".
+    :vartype upload_status: str or ~azure.maps.creator.models.UploadStatus
+    :param data_format:  Possible values include: "geojson", "zip", "dwgzippackage".
+    :type data_format: str or ~azure.maps.creator.models.DataFormat
     :ivar description: The current description.
     :vartype description: str
     """
 
     _validation = {
         'udid': {'readonly': True},
-        'location': {'readonly': True},
+        'location_url': {'readonly': True},
         'size_in_bytes': {'readonly': True},
         'upload_status': {'readonly': True},
-        'data_format': {'readonly': True},
         'description': {'readonly': True},
     }
 
     _attribute_map = {
         'udid': {'key': 'udid', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
+        'location_url': {'key': 'location', 'type': 'str'},
         'size_in_bytes': {'key': 'sizeInBytes', 'type': 'long'},
         'upload_status': {'key': 'uploadStatus', 'type': 'str'},
         'data_format': {'key': 'dataFormat', 'type': 'str'},
@@ -2036,22 +2000,22 @@ class MapDataDetailInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(MapDataDetailInfo, self).__init__(**kwargs)
+        super(MapData, self).__init__(**kwargs)
         self.udid = None
-        self.location = None
+        self.location_url = None
         self.size_in_bytes = None
         self.upload_status = None
-        self.data_format = None
+        self.data_format = kwargs.get('data_format', None)
         self.description = None
 
 
-class MapDataListResponse(msrest.serialization.Model):
+class MapDataListResult(msrest.serialization.Model):
     """The response model for the Data List API. Returns a list of all the previously uploaded data.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar map_data_list: A list of all the previously uploaded data.
-    :vartype map_data_list: list[~azure.maps.creator.models.MapDataDetailInfo]
+    :vartype map_data_list: list[~azure.maps.creator.models.MapData]
     """
 
     _validation = {
@@ -2059,23 +2023,23 @@ class MapDataListResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'map_data_list': {'key': 'mapDataList', 'type': '[MapDataDetailInfo]'},
+        'map_data_list': {'key': 'mapDataList', 'type': '[MapData]'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(MapDataListResponse, self).__init__(**kwargs)
+        super(MapDataListResult, self).__init__(**kwargs)
         self.map_data_list = None
 
 
-class NumberRuleObject(msrest.serialization.Model):
+class NumberRule(msrest.serialization.Model):
     """The numeric rule. The color is selected from the first range it falls into.
 
     :param range: The numeric value range for this style rule. If the value is in the range, all
      the conditions must hold true.
-    :type range: ~azure.maps.creator.models.RangeObject
+    :type range: ~azure.maps.creator.models.Range
     :param color: The color when value is within the range. Color is a JSON string in a variety of
      permitted formats, HTML-style hex values, RGB ("#ff0", "#ffff00", "rgb(255, 255, 0)"), RGBA
      ("rgba(255, 255, 0, 1)"), HSL("hsl(100, 50%, 50%)"), and HSLA("hsla(100, 50%, 50%, 1)").
@@ -2084,7 +2048,7 @@ class NumberRuleObject(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'range': {'key': 'range', 'type': 'RangeObject'},
+        'range': {'key': 'range', 'type': 'Range'},
         'color': {'key': 'color', 'type': 'str'},
     }
 
@@ -2092,12 +2056,12 @@ class NumberRuleObject(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(NumberRuleObject, self).__init__(**kwargs)
+        super(NumberRule, self).__init__(**kwargs)
         self.range = kwargs.get('range', None)
         self.color = kwargs.get('color', None)
 
 
-class NumberTypeStyleRule(StyleObject):
+class NumberStyleRule(StyleRule):
     """The numeric type style rule object.
 
     All required parameters must be populated in order to send to Azure.
@@ -2107,9 +2071,9 @@ class NumberTypeStyleRule(StyleObject):
     :type key_name: str
     :param type: Required. The type of stateset style.Constant filled by server.  Possible values
      include: "boolean", "number", "string".
-    :type type: str or ~azure.maps.creator.models.StyleObjectType
+    :type type: str or ~azure.maps.creator.models.StyleRuleType
     :param rules: Required. Numeric style rules.
-    :type rules: list[~azure.maps.creator.models.NumberRuleObject]
+    :type rules: list[~azure.maps.creator.models.NumberRule]
     """
 
     _validation = {
@@ -2121,19 +2085,19 @@ class NumberTypeStyleRule(StyleObject):
     _attribute_map = {
         'key_name': {'key': 'keyName', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'rules': {'key': 'rules', 'type': '[NumberRuleObject]'},
+        'rules': {'key': 'rules', 'type': '[NumberRule]'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(NumberTypeStyleRule, self).__init__(**kwargs)
+        super(NumberStyleRule, self).__init__(**kwargs)
         self.type = 'number'  # type: str
         self.rules = kwargs['rules']
 
 
-class PointInPolygonResponse(msrest.serialization.Model):
+class PointInPolygonResult(msrest.serialization.Model):
     """Returns true if point is within the polygon, false otherwise.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2141,7 +2105,7 @@ class PointInPolygonResponse(msrest.serialization.Model):
     :ivar summary: Point In Polygon Summary object.
     :vartype summary: ~azure.maps.creator.models.PointInPolygonSummary
     :param result: Point In Polygon Result Object.
-    :type result: ~azure.maps.creator.models.PointInPolygonResult
+    :type result: ~azure.maps.creator.models.PointInPolygonResultAutoGenerated
     """
 
     _validation = {
@@ -2150,37 +2114,7 @@ class PointInPolygonResponse(msrest.serialization.Model):
 
     _attribute_map = {
         'summary': {'key': 'summary', 'type': 'PointInPolygonSummary'},
-        'result': {'key': 'result', 'type': 'PointInPolygonResult'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PointInPolygonResponse, self).__init__(**kwargs)
-        self.summary = None
-        self.result = kwargs.get('result', None)
-
-
-class PointInPolygonResult(msrest.serialization.Model):
-    """Point In Polygon Result Object.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar point_in_polygons: Point In Polygons Property.
-    :vartype point_in_polygons: bool
-    :ivar intersecting_geometries: Geometries array.
-    :vartype intersecting_geometries: list[str]
-    """
-
-    _validation = {
-        'point_in_polygons': {'readonly': True},
-        'intersecting_geometries': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'point_in_polygons': {'key': 'pointInPolygons', 'type': 'bool'},
-        'intersecting_geometries': {'key': 'intersectingGeometries', 'type': '[str]'},
+        'result': {'key': 'result', 'type': 'PointInPolygonResultAutoGenerated'},
     }
 
     def __init__(
@@ -2188,7 +2122,37 @@ class PointInPolygonResult(msrest.serialization.Model):
         **kwargs
     ):
         super(PointInPolygonResult, self).__init__(**kwargs)
-        self.point_in_polygons = None
+        self.summary = None
+        self.result = kwargs.get('result', None)
+
+
+class PointInPolygonResultAutoGenerated(msrest.serialization.Model):
+    """Point In Polygon Result Object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar is_point_in_polygons: Point In Polygons Property.
+    :vartype is_point_in_polygons: bool
+    :ivar intersecting_geometries: Geometries array.
+    :vartype intersecting_geometries: list[str]
+    """
+
+    _validation = {
+        'is_point_in_polygons': {'readonly': True},
+        'intersecting_geometries': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'is_point_in_polygons': {'key': 'pointInPolygons', 'type': 'bool'},
+        'intersecting_geometries': {'key': 'intersectingGeometries', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PointInPolygonResultAutoGenerated, self).__init__(**kwargs)
+        self.is_point_in_polygons = None
         self.intersecting_geometries = None
 
 
@@ -2197,8 +2161,9 @@ class PointInPolygonSummary(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param source_point: A location represented as a latitude and longitude.
-    :type source_point: ~azure.maps.creator.models.SpatialCoordinate
+    :param source_point: A location represented as a latitude and longitude using short names 'lat'
+     & 'lon'.
+    :type source_point: ~azure.maps.creator.models.LatLongPairAbbreviated
     :ivar udid: A unique data id (udid) for the uploaded content. Udid is not applicable for POST
      spatial operations(set to null).
     :vartype udid: str
@@ -2212,7 +2177,7 @@ class PointInPolygonSummary(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'source_point': {'key': 'sourcePoint', 'type': 'SpatialCoordinate'},
+        'source_point': {'key': 'sourcePoint', 'type': 'LatLongPairAbbreviated'},
         'udid': {'key': 'udid', 'type': 'str'},
         'information': {'key': 'information', 'type': 'str'},
     }
@@ -2227,68 +2192,101 @@ class PointInPolygonSummary(msrest.serialization.Model):
         self.information = None
 
 
-class RangeObject(msrest.serialization.Model):
-    """The numeric value range for this style rule. If the value is in the range, all the conditions must hold true.
+class Position(msrest.serialization.Model):
+    """Parameter group.
 
-    :param minimum: All the number x that x ≥ minimum.
-    :type minimum: float
-    :param maximum: All the number x that x ≤ maximum.
-    :type maximum: float
-    :param exclusive_minimum: All the number x that x > exclusiveMinimum.
-    :type exclusive_minimum: float
-    :param exclusive_maximum: All the number x that x < exclusiveMaximum.
-    :type exclusive_maximum: float
+    All required parameters must be populated in order to send to Azure.
+
+    :param latitude: Required. The latitude of the location being passed.  Example: 48.36.
+    :type latitude: float
+    :param longitude: Required. The longitude of the location being passed.  Example: -124.63.
+    :type longitude: float
     """
 
+    _validation = {
+        'latitude': {'required': True},
+        'longitude': {'required': True},
+    }
+
     _attribute_map = {
-        'minimum': {'key': 'minimum', 'type': 'float'},
-        'maximum': {'key': 'maximum', 'type': 'float'},
-        'exclusive_minimum': {'key': 'exclusiveMinimum', 'type': 'float'},
-        'exclusive_maximum': {'key': 'exclusiveMaximum', 'type': 'float'},
+        'latitude': {'key': 'Latitude', 'type': 'float'},
+        'longitude': {'key': 'Longitude', 'type': 'float'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(RangeObject, self).__init__(**kwargs)
+        super(Position, self).__init__(**kwargs)
+        self.latitude = kwargs['latitude']
+        self.longitude = kwargs['longitude']
+
+
+class Range(msrest.serialization.Model):
+    """The numeric value range for this style rule. If the value is in the range, all the conditions must hold true.
+
+    :param minimum: All the number x that x ≥ minimum.
+    :type minimum: str
+    :param maximum: All the number x that x ≤ maximum.
+    :type maximum: str
+    :param exclusive_minimum: All the number x that x > exclusiveMinimum.
+    :type exclusive_minimum: str
+    :param exclusive_maximum: All the number x that x < exclusiveMaximum.
+    :type exclusive_maximum: str
+    """
+
+    _attribute_map = {
+        'minimum': {'key': 'minimum', 'type': 'str'},
+        'maximum': {'key': 'maximum', 'type': 'str'},
+        'exclusive_minimum': {'key': 'exclusiveMinimum', 'type': 'str'},
+        'exclusive_maximum': {'key': 'exclusiveMaximum', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Range, self).__init__(**kwargs)
         self.minimum = kwargs.get('minimum', None)
         self.maximum = kwargs.get('maximum', None)
         self.exclusive_minimum = kwargs.get('exclusive_minimum', None)
         self.exclusive_maximum = kwargs.get('exclusive_maximum', None)
 
 
-class SpatialCoordinate(msrest.serialization.Model):
-    """A location represented as a latitude and longitude.
+class Stateset(msrest.serialization.Model):
+    """The response model for the successful Stateset Get API.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar lat: Latitude property.
-    :vartype lat: float
-    :ivar lon: Longitude property.
-    :vartype lon: float
+    :ivar description: Description associated with the stateset.
+    :vartype description: str
+    :param dataset_ids: Dataset ID associated with the stateset.
+    :type dataset_ids: list[str]
+    :param style_rules: The styles model.
+    :type style_rules: ~azure.maps.creator.models.StyleRules
     """
 
     _validation = {
-        'lat': {'readonly': True},
-        'lon': {'readonly': True},
+        'description': {'readonly': True},
     }
 
     _attribute_map = {
-        'lat': {'key': 'lat', 'type': 'float'},
-        'lon': {'key': 'lon', 'type': 'float'},
+        'description': {'key': 'description', 'type': 'str'},
+        'dataset_ids': {'key': 'datasetIds', 'type': '[str]'},
+        'style_rules': {'key': 'statesetStyle', 'type': 'StyleRules'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(SpatialCoordinate, self).__init__(**kwargs)
-        self.lat = None
-        self.lon = None
+        super(Stateset, self).__init__(**kwargs)
+        self.description = None
+        self.dataset_ids = kwargs.get('dataset_ids', None)
+        self.style_rules = kwargs.get('style_rules', None)
 
 
-class StatesetCreatedResponse(msrest.serialization.Model):
+class StatesetCreatedResult(msrest.serialization.Model):
     """The response model for the successful Stateset Create API.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2309,87 +2307,52 @@ class StatesetCreatedResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(StatesetCreatedResponse, self).__init__(**kwargs)
+        super(StatesetCreatedResult, self).__init__(**kwargs)
         self.stateset_id = None
 
 
-class StatesetGetResponse(msrest.serialization.Model):
-    """The response model for the successful Stateset Get API.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar description: Description associated with the stateset.
-    :vartype description: str
-    :param dataset_ids: Dataset ID associated with the stateset.
-    :type dataset_ids: list[str]
-    :param stateset_style: The styles model.
-    :type stateset_style: ~azure.maps.creator.models.StylesObject
-    """
-
-    _validation = {
-        'description': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'dataset_ids': {'key': 'datasetIds', 'type': '[str]'},
-        'stateset_style': {'key': 'statesetStyle', 'type': 'StylesObject'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(StatesetGetResponse, self).__init__(**kwargs)
-        self.description = None
-        self.dataset_ids = kwargs.get('dataset_ids', None)
-        self.stateset_style = kwargs.get('stateset_style', None)
-
-
-class StatesetInfoObject(msrest.serialization.Model):
+class StatesetInfo(Stateset):
     """The stateset information detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param stateset_id: The stateset ID of this stateset.
-    :type stateset_id: str
     :ivar description: Description associated with the stateset.
     :vartype description: str
     :param dataset_ids: Dataset ID associated with the stateset.
     :type dataset_ids: list[str]
-    :param stateset_style: The styles model.
-    :type stateset_style: ~azure.maps.creator.models.StylesObject
+    :param style_rules: The styles model.
+    :type style_rules: ~azure.maps.creator.models.StyleRules
+    :ivar stateset_id: The stateset ID of this stateset.
+    :vartype stateset_id: str
     """
 
     _validation = {
         'description': {'readonly': True},
+        'stateset_id': {'readonly': True},
     }
 
     _attribute_map = {
-        'stateset_id': {'key': 'statesetId', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'dataset_ids': {'key': 'datasetIds', 'type': '[str]'},
-        'stateset_style': {'key': 'statesetStyle', 'type': 'StylesObject'},
+        'style_rules': {'key': 'statesetStyle', 'type': 'StyleRules'},
+        'stateset_id': {'key': 'statesetId', 'type': 'str'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(StatesetInfoObject, self).__init__(**kwargs)
-        self.stateset_id = kwargs.get('stateset_id', None)
-        self.description = None
-        self.dataset_ids = kwargs.get('dataset_ids', None)
-        self.stateset_style = kwargs.get('stateset_style', None)
+        super(StatesetInfo, self).__init__(**kwargs)
+        self.stateset_id = None
 
 
-class StatesetListResponse(msrest.serialization.Model):
+class StatesetListResult(msrest.serialization.Model):
     """The response model for the successful Stateset List API.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param statesets: A list of statesets information.
-    :type statesets: list[~azure.maps.creator.models.StatesetInfoObject]
+    :type statesets: list[~azure.maps.creator.models.StatesetInfo]
     :ivar next_link: If present, the location of the next page of data.
     :vartype next_link: str
     """
@@ -2399,7 +2362,7 @@ class StatesetListResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'statesets': {'key': 'statesets', 'type': '[StatesetInfoObject]'},
+        'statesets': {'key': 'statesets', 'type': '[StatesetInfo]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -2407,12 +2370,12 @@ class StatesetListResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(StatesetListResponse, self).__init__(**kwargs)
+        super(StatesetListResult, self).__init__(**kwargs)
         self.statesets = kwargs.get('statesets', None)
         self.next_link = None
 
 
-class StringTypeStyleRule(StyleObject):
+class StringStyleRule(StyleRule):
     """The string type style rule object.
 
     All required parameters must be populated in order to send to Azure.
@@ -2422,7 +2385,7 @@ class StringTypeStyleRule(StyleObject):
     :type key_name: str
     :param type: Required. The type of stateset style.Constant filled by server.  Possible values
      include: "boolean", "number", "string".
-    :type type: str or ~azure.maps.creator.models.StyleObjectType
+    :type type: str or ~azure.maps.creator.models.StyleRuleType
     :param rules: Required. String style rules.
     :type rules: list[dict[str, str]]
     """
@@ -2443,33 +2406,33 @@ class StringTypeStyleRule(StyleObject):
         self,
         **kwargs
     ):
-        super(StringTypeStyleRule, self).__init__(**kwargs)
+        super(StringStyleRule, self).__init__(**kwargs)
         self.type = 'string'  # type: str
         self.rules = kwargs['rules']
 
 
-class StylesObject(msrest.serialization.Model):
+class StyleRules(msrest.serialization.Model):
     """The styles model.
 
-    :param styles: An array of stateset styles. The style rule could be a numeric or string or a
-     boolean type style rule.  Refer to NumberRuleObject, StringRuleObject and BooleanRuleObject
-     definitions `here <https://aka.ms/AzureMapsStatesetStylesObject>`_.
-    :type styles: list[~azure.maps.creator.models.StyleObject]
+    :param style_rules: An array of stateset style rules. The style rule could be a numeric or
+     string or a boolean type style rule.  Refer to NumberRule, StringRule and BooleanRule
+     definitions `here <https://aka.ms/AzureMapsStatesetStyles>`_.
+    :type style_rules: list[~azure.maps.creator.models.StyleRule]
     """
 
     _attribute_map = {
-        'styles': {'key': 'styles', 'type': '[StyleObject]'},
+        'style_rules': {'key': 'styles', 'type': '[StyleRule]'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(StylesObject, self).__init__(**kwargs)
-        self.styles = kwargs.get('styles', None)
+        super(StyleRules, self).__init__(**kwargs)
+        self.style_rules = kwargs.get('style_rules', None)
 
 
-class TilesetDetailInfo(msrest.serialization.Model):
+class Tileset(msrest.serialization.Model):
     """Detail information for the data.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2516,7 +2479,7 @@ class TilesetDetailInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(TilesetDetailInfo, self).__init__(**kwargs)
+        super(Tileset, self).__init__(**kwargs)
         self.tileset_id = None
         self.ontology = None
         self.dataset_id = None
@@ -2526,13 +2489,13 @@ class TilesetDetailInfo(msrest.serialization.Model):
         self.bbox = None
 
 
-class TilesetListResponse(msrest.serialization.Model):
+class TilesetListResult(msrest.serialization.Model):
     """The response model for the Tileset List API. Returns a list of all tilesets.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar tilesets: A list of all tilesets.
-    :vartype tilesets: list[~azure.maps.creator.models.TilesetDetailInfo]
+    :vartype tilesets: list[~azure.maps.creator.models.Tileset]
     :ivar next_link: If present, the location of the next page of data.
     :vartype next_link: str
     """
@@ -2543,7 +2506,7 @@ class TilesetListResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'tilesets': {'key': 'tilesets', 'type': '[TilesetDetailInfo]'},
+        'tilesets': {'key': 'tilesets', 'type': '[Tileset]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -2551,12 +2514,12 @@ class TilesetListResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(TilesetListResponse, self).__init__(**kwargs)
+        super(TilesetListResult, self).__init__(**kwargs)
         self.tilesets = None
         self.next_link = None
 
 
-class WfsEndpointLink(msrest.serialization.Model):
+class WFSEndpointLink(msrest.serialization.Model):
     """Links to other WFS endpoints.
 
     All required parameters must be populated in order to send to Azure.
@@ -2568,12 +2531,12 @@ class WfsEndpointLink(msrest.serialization.Model):
     :param type: A hint indicating what the media type of the result of dereferencing the link
      should be.
     :type type: str
-    :param hreflang: A hint indicating what the language of the result of dereferencing the link
+    :param href_lang: A hint indicating what the language of the result of dereferencing the link
      should be.
-    :type hreflang: str
-    :param title: Used to label the destination of a link such that it can be used as a
-     human-readable identifier (e.g., a menu entry) in the language indicated by the
-     Content-Language header field (if present).
+    :type href_lang: str
+    :param title: Used to label the destination of a link such that it can be used as a human-
+     readable identifier (e.g., a menu entry) in the language indicated by the Content-Language
+     header field (if present).
     :type title: str
     """
 
@@ -2585,7 +2548,7 @@ class WfsEndpointLink(msrest.serialization.Model):
         'href': {'key': 'href', 'type': 'str'},
         'rel': {'key': 'rel', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'hreflang': {'key': 'hreflang', 'type': 'str'},
+        'href_lang': {'key': 'hreflang', 'type': 'str'},
         'title': {'key': 'title', 'type': 'str'},
     }
 
@@ -2593,9 +2556,9 @@ class WfsEndpointLink(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(WfsEndpointLink, self).__init__(**kwargs)
+        super(WFSEndpointLink, self).__init__(**kwargs)
         self.href = kwargs['href']
         self.rel = kwargs.get('rel', None)
         self.type = kwargs.get('type', None)
-        self.hreflang = kwargs.get('hreflang', None)
+        self.href_lang = kwargs.get('href_lang', None)
         self.title = kwargs.get('title', None)

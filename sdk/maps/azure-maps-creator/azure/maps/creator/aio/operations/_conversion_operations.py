@@ -15,7 +15,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 
-from ... import models as _models
+from ... import models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -34,7 +34,7 @@ class ConversionOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = _models
+    models = models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,11 +45,11 @@ class ConversionOperations:
     async def _convert_initial(
         self,
         udid: str,
-        output_ontology: str,
+        output_ontology: Union[str, "models.OutputOntology"] = "facility-2.0",
         description: Optional[str] = None,
-        **kwargs: Any
-    ) -> Optional["_models.LongRunningOperationResult"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LongRunningOperationResult"]]
+        **kwargs
+    ) -> Optional["models.LongRunningOperationResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.LongRunningOperationResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -74,8 +74,8 @@ class ConversionOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
@@ -84,7 +84,7 @@ class ConversionOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -105,23 +105,22 @@ class ConversionOperations:
     async def begin_convert(
         self,
         udid: str,
-        output_ontology: str,
+        output_ontology: Union[str, "models.OutputOntology"] = "facility-2.0",
         description: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncLROPoller["_models.LongRunningOperationResult"]:
+        **kwargs
+    ) -> AsyncLROPoller["models.LongRunningOperationResult"]:
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
         The Conversion API lets the caller import a set of DWG design files as a zipped `Drawing
         Package <https://aka.ms/am-drawing-package>`_ into Azure Maps. The `Drawing Package
         <https://aka.ms/am-drawing-package>`_ should first be uploaded using the `Azure Maps Data
         Service <https://docs.microsoft.com/rest/api/maps/data>`_. Once uploaded, use the ``udid``
-        returned by the `Data Upload API
-        <https://docs.microsoft.com/rest/api/maps/data/uploadpreview>`_ to call this Conversion API.
+        returned by the `Data Upload API <https://docs.microsoft.com/rest/api/maps/data-v2/upload-
+        preview>`_ to call this Conversion API.
 
         Convert DWG package
         -------------------
@@ -158,28 +157,27 @@ class ConversionOperations:
         be marked as *failed* if any errors are encountered.
 
         :param udid: The unique data id for the content. The ``udid`` must have been obtained from a
-         successful `Data Upload API
-         <https://docs.microsoft.com/en-us/rest/api/maps/data%20v2/uploadpreview>`_ call.
+         successful `Data Upload API <https://docs.microsoft.com/en-us/rest/api/maps/data-v2/upload-
+         preview>`_ call.
         :type udid: str
         :param output_ontology: Output ontology version. "facility-2.0" is the only supported value at
-         this time. Please refer to this `article
-         <https://docs.microsoft.com/en-us/azure/azure-maps/creator-facility-ontology>`_ for more
-         information about Azure Maps Creator ontologies.
-        :type output_ontology: str
+         this time. Please refer to this `article <https://docs.microsoft.com/en-us/azure/azure-
+         maps/creator-facility-ontology>`_ for more information about Azure Maps Creator ontologies.
+        :type output_ontology: str or ~azure.maps.creator.models.OutputOntology
         :param description: User provided description of the content being converted.
         :type description: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either LongRunningOperationResult or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.maps.creator.models.LongRunningOperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LongRunningOperationResult"]
+        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.LongRunningOperationResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -227,18 +225,17 @@ class ConversionOperations:
 
     def list(
         self,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.ConversionListResponse"]:
+        **kwargs
+    ) -> AsyncIterable["models.ConversionListResult"]:
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
         This API allows the caller to fetch a list of all successful data conversions submitted
-        previously using the `Conversion API
-        <https://docs.microsoft.com/en-us/rest/api/maps/conversion/convertpreview>`_.
+        previously using the `Conversion API <https://docs.microsoft.com/en-
+        us/rest/api/maps/v2/conversion/convert>`_.
 
         Submit List Request
         ^^^^^^^^^^^^^^^^^^^
@@ -297,11 +294,11 @@ class ConversionOperations:
         :code:`<br>`.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ConversionListResponse or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.maps.creator.models.ConversionListResponse]
+        :return: An iterator like instance of either ConversionListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.maps.creator.models.ConversionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConversionListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConversionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -312,8 +309,8 @@ class ConversionOperations:
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            if self._config.x_ms_client_id is not None:
-                header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+            if self._config.client_id is not None:
+                header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
             header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
@@ -339,7 +336,7 @@ class ConversionOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('ConversionListResponse', pipeline_response)
+            deserialized = self._deserialize('ConversionListResult', pipeline_response)
             list_of_elem = deserialized.conversions
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -352,7 +349,7 @@ class ConversionOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+                error = self._deserialize(models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -366,28 +363,27 @@ class ConversionOperations:
     async def get(
         self,
         conversion_id: str,
-        **kwargs: Any
-    ) -> "_models.ConversionListDetailInfo":
+        **kwargs
+    ) -> "models.Conversion":
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
         This API allows the caller to fetch a successful data conversion submitted previously using the
-        `Conversion API <https://docs.microsoft.com/en-us/rest/api/maps/conversion/convertpreview>`_.
+        `Conversion API <https://docs.microsoft.com/en-us/rest/api/maps/v2/conversion/convert>`_.
 
         :param conversion_id: The conversion id for the content. The ``conversionId`` must have been
-         obtained from a successful `Conversion API
-         <https://docs.microsoft.com/en-us/rest/api/maps/v2/conversion/convert>`_ call.
+         obtained from a successful `Conversion API <https://docs.microsoft.com/en-
+         us/rest/api/maps/v2/conversion/convert>`_ call.
         :type conversion_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ConversionListDetailInfo, or the result of cls(response)
-        :rtype: ~azure.maps.creator.models.ConversionListDetailInfo
+        :return: Conversion, or the result of cls(response)
+        :rtype: ~azure.maps.creator.models.Conversion
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConversionListDetailInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.Conversion"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -409,8 +405,8 @@ class ConversionOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
@@ -419,10 +415,10 @@ class ConversionOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('ConversionListDetailInfo', pipeline_response)
+        deserialized = self._deserialize('Conversion', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -433,7 +429,7 @@ class ConversionOperations:
     async def delete(
         self,
         conversion_id: str,
-        **kwargs: Any
+        **kwargs
     ) -> None:
         """.. role:: raw-html-m2r(raw)
            :format: html
@@ -442,12 +438,11 @@ class ConversionOperations:
         **Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
         This API allows the caller to delete any data conversions created previously using the
-        `Conversion API <https://docs.microsoft.com/en-us/rest/api/maps/conversion/convertpreview>`_.
+        `Conversion API <https://docs.microsoft.com/en-us/rest/api/maps/v2/conversion/convert>`_.
 
         Submit Delete Request
         ^^^^^^^^^^^^^^^^^^^^^
@@ -464,8 +459,8 @@ class ConversionOperations:
         passed-in ``conversionId`` is found.
 
         :param conversion_id: The conversion id for the content. The ``conversionId`` must have been
-         obtained from a successful `Conversion API
-         <https://docs.microsoft.com/en-us/rest/api/maps/v2/conversion/convert>`_ call.
+         obtained from a successful `Conversion API <https://docs.microsoft.com/en-
+         us/rest/api/maps/v2/conversion/convert>`_ call.
         :type conversion_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -494,8 +489,8 @@ class ConversionOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -504,7 +499,7 @@ class ConversionOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -515,20 +510,20 @@ class ConversionOperations:
     async def get_operation(
         self,
         operation_id: str,
-        **kwargs: Any
-    ) -> "_models.LongRunningOperationResult":
+        **kwargs
+    ) -> "models.LongRunningOperationResult":
         """This path will be obtained from a call to POST /conversions.  While in progress, an http200
         will be returned with no extra headers -  followed by an http200 with Resource-Location header
         once successfully completed.
 
-        :param operation_id: The ID to query the status for the dataset create/import request.
+        :param operation_id: The ID to query the status for the Conversion create/import request.
         :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LongRunningOperationResult, or the result of cls(response)
         :rtype: ~azure.maps.creator.models.LongRunningOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LongRunningOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.LongRunningOperationResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -558,7 +553,7 @@ class ConversionOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

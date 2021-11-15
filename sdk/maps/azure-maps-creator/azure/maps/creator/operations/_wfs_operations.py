@@ -12,11 +12,11 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from .. import models as _models
+from .. import models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class WFSOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = _models
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -48,18 +48,17 @@ class WFSOperations(object):
         dataset_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.LandingPageResponse"
+        # type: (...) -> "models.LandingPageResult"
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
          The Web Feature Service (WFS) API is part of  Creator. WFS API follows the `Open Geospatial
         Consortium API standard for Features
         <http://docs.opengeospatial.org/is/17-069r3/17-069r3.html>`_ to query `Datasets
-        <https://docs.microsoft.com/en-us/rest/api/maps/dataset/createpreview>`_.
+        <https://docs.microsoft.com/en-us/rest/api/maps/v2/dataset/create>`_.
         A dataset consists of multiple feature collections. A feature collection is a collection of
         features of a similar type, based on a common schema.
         The Get Landing Page API provides links to the API definition, the Conformance statements  and
@@ -68,11 +67,11 @@ class WFSOperations(object):
         :param dataset_id: The identifier for the dataset to query from.
         :type dataset_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: LandingPageResponse, or the result of cls(response)
-        :rtype: ~azure.maps.creator.models.LandingPageResponse
+        :return: LandingPageResult, or the result of cls(response)
+        :rtype: ~azure.maps.creator.models.LandingPageResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LandingPageResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.LandingPageResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -94,8 +93,8 @@ class WFSOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
@@ -104,10 +103,10 @@ class WFSOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('LandingPageResponse', pipeline_response)
+        deserialized = self._deserialize('LandingPageResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -115,23 +114,22 @@ class WFSOperations(object):
         return deserialized
     get_landing_page.metadata = {'url': '/wfs/datasets/{datasetId}/'}  # type: ignore
 
-    def get_conformance(
+    def list_conformance(
         self,
         dataset_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.ConformanceResponse"
+        # type: (...) -> "models.ConformanceResult"
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
         The Web Feature Service (WFS) API is part of  Creator. WFS API follows the `Open Geospatial
         Consortium API standard for Features
         <http://docs.opengeospatial.org/is/17-069r3/17-069r3.html>`_ to query `Datasets
-        <https://docs.microsoft.com/en-us/rest/api/maps/dataset/createpreview>`_.
+        <https://docs.microsoft.com/en-us/rest/api/maps/v2/dataset/create>`_.
         A dataset consists of multiple feature collections. A feature collection is a collection of
         features of a similar type, based on a common schema.
         The Get Requirements Classes lists all requirements classes specified in the standard that the
@@ -140,11 +138,11 @@ class WFSOperations(object):
         :param dataset_id: The identifier for the dataset to query from.
         :type dataset_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ConformanceResponse, or the result of cls(response)
-        :rtype: ~azure.maps.creator.models.ConformanceResponse
+        :return: ConformanceResult, or the result of cls(response)
+        :rtype: ~azure.maps.creator.models.ConformanceResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConformanceResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConformanceResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -153,7 +151,7 @@ class WFSOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.get_conformance.metadata['url']  # type: ignore
+        url = self.list_conformance.metadata['url']  # type: ignore
         path_format_arguments = {
             'geography': self._serialize.url("self._config.geography", self._config.geography, 'str'),
             'datasetId': self._serialize.url("dataset_id", dataset_id, 'str'),
@@ -166,8 +164,8 @@ class WFSOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
@@ -176,34 +174,33 @@ class WFSOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('ConformanceResponse', pipeline_response)
+        deserialized = self._deserialize('ConformanceResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_conformance.metadata = {'url': '/wfs/datasets/{datasetId}/conformance'}  # type: ignore
+    list_conformance.metadata = {'url': '/wfs/datasets/{datasetId}/conformance'}  # type: ignore
 
     def get_collections(
         self,
         dataset_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.CollectionsResponse"
+        # type: (...) -> "models.CollectionsResponse"
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
          The Web Feature Service (WFS) API is part of  Creator. WFS API follows the `Open Geospatial
         Consortium API standard for Features
         <http://docs.opengeospatial.org/is/17-069r3/17-069r3.html>`_ to query `Datasets
-        <https://docs.microsoft.com/en-us/rest/api/maps/dataset/createpreview>`_.
+        <https://docs.microsoft.com/en-us/rest/api/maps/v2/dataset/create>`_.
         A dataset consists of multiple feature collections. A feature collection is a collection of
         features of a similar type, based on a common schema.
         The Collections Description API provides descriptions of all the collections in a given
@@ -216,7 +213,7 @@ class WFSOperations(object):
         :rtype: ~azure.maps.creator.models.CollectionsResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CollectionsResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.CollectionsResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -238,8 +235,8 @@ class WFSOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
@@ -248,7 +245,7 @@ class WFSOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CollectionsResponse', pipeline_response)
@@ -265,18 +262,17 @@ class WFSOperations(object):
         collection_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.CollectionInfo"
+        # type: (...) -> "models.Collection"
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
          The Web Feature Service (WFS) API is part of  Creator. WFS API follows the `Open Geospatial
         Consortium API standard for Features
         <http://docs.opengeospatial.org/is/17-069r3/17-069r3.html>`_ to query `Datasets
-        <https://docs.microsoft.com/en-us/rest/api/maps/dataset/createpreview>`_.
+        <https://docs.microsoft.com/en-us/rest/api/maps/v2/dataset/create>`_.
         A dataset consists of multiple feature collections. A feature collection is a collection of
         features of a similar type, based on a common schema.
 
@@ -288,11 +284,11 @@ class WFSOperations(object):
         :param collection_id: Identifier (name) of a specific collection.
         :type collection_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CollectionInfo, or the result of cls(response)
-        :rtype: ~azure.maps.creator.models.CollectionInfo
+        :return: Collection, or the result of cls(response)
+        :rtype: ~azure.maps.creator.models.Collection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CollectionInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.Collection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -315,8 +311,8 @@ class WFSOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
@@ -325,10 +321,10 @@ class WFSOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('CollectionInfo', pipeline_response)
+        deserialized = self._deserialize('Collection', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -342,19 +338,18 @@ class WFSOperations(object):
         collection_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.CollectionDefinitionResponse"
+        # type: (...) -> "models.CollectionDefinition"
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
          `This <https://docs.microsoft.com/en-us/azure/azure-maps/creator-indoor-maps>`_ article
         introduces concepts and tools that apply to Azure Maps Creator. WFS API follows the `Open
         Geospatial Consortium API standard for Features
         <http://docs.opengeospatial.org/is/17-069r3/17-069r3.html>`_ to query `Datasets
-        <https://docs.microsoft.com/en-us/rest/api/maps/dataset/createpreview>`_.
+        <https://docs.microsoft.com/en-us/rest/api/maps/v2/dataset/create>`_.
         A dataset consists of multiple feature collections. A feature collection is a collection of
         features of a similar type, based on a common schema.
 
@@ -365,11 +360,11 @@ class WFSOperations(object):
         :param collection_id: Identifier (name) of a specific collection.
         :type collection_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CollectionDefinitionResponse, or the result of cls(response)
-        :rtype: ~azure.maps.creator.models.CollectionDefinitionResponse
+        :return: CollectionDefinition, or the result of cls(response)
+        :rtype: ~azure.maps.creator.models.CollectionDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CollectionDefinitionResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.CollectionDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -392,8 +387,8 @@ class WFSOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
@@ -402,10 +397,10 @@ class WFSOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('CollectionDefinitionResponse', pipeline_response)
+        deserialized = self._deserialize('CollectionDefinition', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -418,22 +413,21 @@ class WFSOperations(object):
         dataset_id,  # type: str
         collection_id,  # type: str
         limit=None,  # type: Optional[int]
-        bbox=None,  # type: Optional[str]
+        bounding_box=None,  # type: Optional[List[float]]
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.ExtendedGeoJsonFeatureCollection"
+        # type: (...) -> "models.ExtendedGeoJsonFeatureCollection"
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
          The Web Feature Service (WFS) API is part of  Creator. WFS API follows the `Open Geospatial
         Consortium API standard for Features
         <http://docs.opengeospatial.org/is/17-069r3/17-069r3.html>`_ to query `Datasets
-        <https://docs.microsoft.com/en-us/rest/api/maps/dataset/createpreview>`_.
+        <https://docs.microsoft.com/en-us/rest/api/maps/v2/dataset/create>`_.
         A dataset consists of multiple feature collections. A feature collection is a collection of
         features of a similar type, based on a common schema.
         The Get Features API returns the list of features in the given collection.
@@ -449,10 +443,10 @@ class WFSOperations(object):
          counted.
 
 
-         * Minimum = 1 * Maximum = 50 * Default = 10.
+         * Minimum = 1 * Maximum = 500 * Default = 10.
         :type limit: int
-        :param bbox: Only features that have a geometry that intersects the supplied bounding box are
-         selected.
+        :param bounding_box: Only features that have a geometry that intersects the supplied bounding
+         box are selected.
 
 
          * Lower left corner, coordinate axis 1 * Lower left corner, coordinate axis 2 * Upper right
@@ -464,7 +458,7 @@ class WFSOperations(object):
          minimum latitude, maximum longitude and maximum latitude. However, in cases where the box spans
          the antimeridian the first value (west-most box edge) is larger than the third value (east-most
          box edge).
-        :type bbox: str
+        :type bounding_box: list[float]
         :param filter: Filter expression to search for features with specific property values in a
          given collection. Only feature properties of scalar type and equals operator are supported.
          This is a special parameter where the parameter name is a case sensitive property name. The
@@ -480,7 +474,7 @@ class WFSOperations(object):
         :rtype: ~azure.maps.creator.models.ExtendedGeoJsonFeatureCollection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExtendedGeoJsonFeatureCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExtendedGeoJsonFeatureCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -501,16 +495,16 @@ class WFSOperations(object):
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
         if limit is not None:
-            query_parameters['limit'] = self._serialize.query("limit", limit, 'int', maximum=50, minimum=1)
-        if bbox is not None:
-            query_parameters['bbox'] = self._serialize.query("bbox", bbox, 'str')
+            query_parameters['limit'] = self._serialize.query("limit", limit, 'int', maximum=500, minimum=1)
+        if bounding_box is not None:
+            query_parameters['bbox'] = self._serialize.query("bounding_box", bounding_box, '[float]', div=',')
         if filter is not None:
             query_parameters['filter'] = self._serialize.query("filter", filter, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
@@ -519,7 +513,7 @@ class WFSOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('ExtendedGeoJsonFeatureCollection', pipeline_response)
@@ -537,18 +531,17 @@ class WFSOperations(object):
         feature_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.FeatureResponse"
+        # type: (...) -> "models.FeatureResult"
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
          The Web Feature Service (WFS) API is part of  Creator. WFS API follows the `Open Geospatial
         Consortium API standard for Features
         <http://docs.opengeospatial.org/is/17-069r3/17-069r3.html>`_ to query `Datasets
-        <https://docs.microsoft.com/en-us/rest/api/maps/dataset/createpreview>`_.
+        <https://docs.microsoft.com/en-us/rest/api/maps/v2/dataset/create>`_.
         A dataset consists of multiple feature collections. A feature collection is a collection of
         features of a similar type, based on a common schema.
         The Get Feature API returns the feature identified by the provided id in the given collection.
@@ -560,11 +553,11 @@ class WFSOperations(object):
         :param feature_id: Local identifier of a specific feature.
         :type feature_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: FeatureResponse, or the result of cls(response)
-        :rtype: ~azure.maps.creator.models.FeatureResponse
+        :return: FeatureResult, or the result of cls(response)
+        :rtype: ~azure.maps.creator.models.FeatureResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeatureResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.FeatureResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -596,10 +589,10 @@ class WFSOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('FeatureResponse', pipeline_response)
+        deserialized = self._deserialize('FeatureResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -618,14 +611,13 @@ class WFSOperations(object):
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
          The Web Feature Service (WFS) API is part of  Creator. WFS API follows the `Open Geospatial
         Consortium API standard for Features
         <http://docs.opengeospatial.org/is/17-069r3/17-069r3.html>`_ to query `Datasets
-        <https://docs.microsoft.com/en-us/rest/api/maps/dataset/createpreview>`_.
+        <https://docs.microsoft.com/en-us/rest/api/maps/v2/dataset/create>`_.
         A dataset consists of multiple feature collections. A feature collection is a collection of
         features of a similar type, based on a common schema.
         The Delete Feature API deletes the feature identified by the provided id in the given
@@ -675,7 +667,7 @@ class WFSOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:

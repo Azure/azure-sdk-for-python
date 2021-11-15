@@ -14,7 +14,7 @@ from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.polling.base_polling import LROBasePolling
 
-from .. import models as _models
+from .. import models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class DataOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = _models
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -45,19 +45,19 @@ class DataOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def _upload_preview_initial(
+    def _upload_initial(
         self,
-        upload_data_format,  # type: Union[str, "_models.UploadDataFormat"]
-        upload_content,  # type: Union[IO, Any]
-        upload_data_description=None,  # type: Optional[str]
+        data_format,  # type: Union[str, "models.DataFormat"]
+        upload_content,  # type: Union[IO, object]
+        description=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["_models.LongRunningOperationResult"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LongRunningOperationResult"]]
+        # type: (...) -> Optional["models.LongRunningOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.LongRunningOperationResult"]]
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
-            409: lambda response: ResourceExistsError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            409: lambda response: ResourceExistsError(response=response, model=self._deserialize(models.ErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2.0"
@@ -65,7 +65,7 @@ class DataOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self._upload_preview_initial.metadata['url']  # type: ignore
+        url = self._upload_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'geography': self._serialize.url("self._config.geography", self._config.geography, 'str'),
         }
@@ -74,14 +74,14 @@ class DataOperations(object):
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        if upload_data_description is not None:
-            query_parameters['description'] = self._serialize.query("upload_data_description", upload_data_description, 'str')
-        query_parameters['dataFormat'] = self._serialize.query("upload_data_format", upload_data_format, 'str')
+        if description is not None:
+            query_parameters['description'] = self._serialize.query("description", description, 'str')
+        query_parameters['dataFormat'] = self._serialize.query("data_format", data_format, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
@@ -102,7 +102,7 @@ class DataOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -118,16 +118,16 @@ class DataOperations(object):
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    _upload_preview_initial.metadata = {'url': '/mapData'}  # type: ignore
+    _upload_initial.metadata = {'url': '/mapData'}  # type: ignore
 
-    def begin_upload_preview(
+    def begin_upload(
         self,
-        upload_data_format,  # type: Union[str, "_models.UploadDataFormat"]
-        upload_content,  # type: Union[IO, Any]
-        upload_data_description=None,  # type: Optional[str]
+        data_format,  # type: Union[str, "models.DataFormat"]
+        upload_content,  # type: Union[IO, object]
+        description=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["_models.LongRunningOperationResult"]
+        # type: (...) -> LROPoller["models.LongRunningOperationResult"]
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         The Data Upload API allows the caller to upload data content to the Azure Maps service.
@@ -185,43 +185,44 @@ class DataOperations(object):
         ------------------
 
         Please, be aware that currently every Azure Maps account has a `data storage limit
-        <https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#azure-maps-limits>`_.
+        <https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-
+        service-limits#azure-maps-limits>`_.
         Once the storage limit is reached, all the new upload API calls will return a ``409 Conflict``
         http error response.
         You can always use the `Data Delete API
-        <https://docs.microsoft.com/rest/api/maps/data%20v2/deletepreview>`_ to
+        <https://docs.microsoft.com/rest/api/maps/data-v2/delete-preview>`_ to
         delete old/unused content and create space for new uploads.
 
-        :param upload_data_format: Data format of the content being uploaded.
-        :type upload_data_format: str or ~azure.maps.creator.models.UploadDataFormat
+        :param data_format: Data format of the content being uploaded.
+        :type data_format: str or ~azure.maps.creator.models.DataFormat
         :param upload_content: The content to upload.
-        :type upload_content: IO or any
-        :param upload_data_description: The description to be given to the upload.
-        :type upload_data_description: str
+        :type upload_content: IO or object
+        :param description: The description to be given to the upload.
+        :type description: str
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/octet-stream".
          Allowed values are: "application/octet-stream", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either LongRunningOperationResult or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.maps.creator.models.LongRunningOperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LongRunningOperationResult"]
+        polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.LongRunningOperationResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._upload_preview_initial(
-                upload_data_format=upload_data_format,
+            raw_result = self._upload_initial(
+                data_format=data_format,
                 upload_content=upload_content,
-                upload_data_description=upload_data_description,
+                description=description,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -255,17 +256,17 @@ class DataOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_upload_preview.metadata = {'url': '/mapData'}  # type: ignore
+    begin_upload.metadata = {'url': '/mapData'}  # type: ignore
 
-    def list_preview(
+    def list(
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.MapDataListResponse"
+        # type: (...) -> "models.MapDataListResult"
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         This API allows the caller to fetch a list of all content uploaded previously using the `Data
-        Upload API <https://docs.microsoft.com/en-us/rest/api/maps/data%20v2/uploadpreview>`_.
+        Upload API <https://docs.microsoft.com/en-us/rest/api/maps/data-v2/upload-preview>`_.
 
         Submit List Request
         ^^^^^^^^^^^^^^^^^^^
@@ -322,11 +323,11 @@ class DataOperations(object):
         :code:`<br>`.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: MapDataListResponse, or the result of cls(response)
-        :rtype: ~azure.maps.creator.models.MapDataListResponse
+        :return: MapDataListResult, or the result of cls(response)
+        :rtype: ~azure.maps.creator.models.MapDataListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MapDataListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.MapDataListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -335,7 +336,7 @@ class DataOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.list_preview.metadata['url']  # type: ignore
+        url = self.list.metadata['url']  # type: ignore
         path_format_arguments = {
             'geography': self._serialize.url("self._config.geography", self._config.geography, 'str'),
         }
@@ -347,8 +348,8 @@ class DataOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
@@ -357,30 +358,30 @@ class DataOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('MapDataListResponse', pipeline_response)
+        deserialized = self._deserialize('MapDataListResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list_preview.metadata = {'url': '/mapData'}  # type: ignore
+    list.metadata = {'url': '/mapData'}  # type: ignore
 
-    def _update_preview_initial(
+    def _update_initial(
         self,
-        unique_data_id,  # type: str
-        update_content,  # type: Any
-        upload_data_description=None,  # type: Optional[str]
+        udid,  # type: str
+        update_content,  # type: object
+        description=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["_models.LongRunningOperationResult"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LongRunningOperationResult"]]
+        # type: (...) -> Optional["models.LongRunningOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.LongRunningOperationResult"]]
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
-            409: lambda response: ResourceExistsError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            409: lambda response: ResourceExistsError(response=response, model=self._deserialize(models.ErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2.0"
@@ -388,23 +389,23 @@ class DataOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self._update_preview_initial.metadata['url']  # type: ignore
+        url = self._update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'geography': self._serialize.url("self._config.geography", self._config.geography, 'str'),
-            'udid': self._serialize.url("unique_data_id", unique_data_id, 'str'),
+            'udid': self._serialize.url("udid", udid, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        if upload_data_description is not None:
-            query_parameters['description'] = self._serialize.query("upload_data_description", upload_data_description, 'str')
+        if description is not None:
+            query_parameters['description'] = self._serialize.query("description", description, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
@@ -417,7 +418,7 @@ class DataOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -433,16 +434,16 @@ class DataOperations(object):
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    _update_preview_initial.metadata = {'url': '/mapData/{udid}'}  # type: ignore
+    _update_initial.metadata = {'url': '/mapData/{udid}'}  # type: ignore
 
-    def begin_update_preview(
+    def begin_update(
         self,
-        unique_data_id,  # type: str
-        update_content,  # type: Any
-        upload_data_description=None,  # type: Optional[str]
+        udid,  # type: str
+        update_content,  # type: object
+        description=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["_models.LongRunningOperationResult"]
+        # type: (...) -> LROPoller["models.LongRunningOperationResult"]
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         The Data Update API allows the caller to update a previously uploaded data content.
@@ -450,7 +451,7 @@ class DataOperations(object):
         You can use this API in a scenario like adding or removing geofences to or from an existing
         collection of geofences.
         Geofences are uploaded using the `Data Upload API
-        <https://docs.microsoft.com/rest/api/maps/data%20v2/uploadpreview>`_\ , for
+        <https://docs.microsoft.com/rest/api/maps/data-v2/upload-preview>`_\ , for
         use in the `Azure Maps Geofencing Service <https://docs.microsoft.com/rest/api/maps/spatial>`_.
 
         Please note that the Update API will *replace* and *override* the existing data content.
@@ -507,44 +508,45 @@ class DataOperations(object):
         ------------------
 
         Please, be aware that currently every Azure Maps account has a `data storage limit
-        <https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#azure-maps-limits>`_.
+        <https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-
+        service-limits#azure-maps-limits>`_.
         Once the storage limit is reached, all the new upload API calls will return a ``409 Conflict``
         http error response.
         You can always use the `Data Delete API
-        <https://docs.microsoft.com/rest/api/maps/data%20v2/deletepreview>`_ to
+        <https://docs.microsoft.com/rest/api/maps/data-v2/delete-preview>`_ to
         delete old/unused content and create space for new uploads.
 
-        :param unique_data_id: The unique data id for the content. The ``udid`` must have been obtained
-         from a successful `Data Upload API
-         <https://docs.microsoft.com/en-us/rest/api/maps/data%20v2/uploadpreview>`_ call.
-        :type unique_data_id: str
+        :param udid: The unique data id for the content. The ``udid`` must have been obtained from a
+         successful `Data Upload API <https://docs.microsoft.com/en-us/rest/api/maps/data-v2/upload-
+         preview>`_ call.
+        :type udid: str
         :param update_content: The new content that will update/replace the previously uploaded
          content.
-        :type update_content: any
-        :param upload_data_description: The description to be given to the upload.
-        :type upload_data_description: str
+        :type update_content: object
+        :param description: The description to be given to the upload.
+        :type description: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either LongRunningOperationResult or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.maps.creator.models.LongRunningOperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LongRunningOperationResult"]
+        polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.LongRunningOperationResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._update_preview_initial(
-                unique_data_id=unique_data_id,
+            raw_result = self._update_initial(
+                udid=udid,
                 update_content=update_content,
-                upload_data_description=upload_data_description,
+                description=description,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -564,7 +566,7 @@ class DataOperations(object):
 
         path_format_arguments = {
             'geography': self._serialize.url("self._config.geography", self._config.geography, 'str'),
-            'udid': self._serialize.url("unique_data_id", unique_data_id, 'str'),
+            'udid': self._serialize.url("udid", udid, 'str'),
         }
 
         if polling is True: polling_method = LROBasePolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
@@ -579,11 +581,11 @@ class DataOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_update_preview.metadata = {'url': '/mapData/{udid}'}  # type: ignore
+    begin_update.metadata = {'url': '/mapData/{udid}'}  # type: ignore
 
-    def download_preview(
+    def download(
         self,
-        unique_data_id,  # type: str
+        udid,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> IO
@@ -593,12 +595,12 @@ class DataOperations(object):
 
         **Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
-        This API allows the caller to download a previously uploaded data content.:code:`<br>`\
-        :raw-html-m2r:`<br>`
+        This API allows the caller to download a previously uploaded data content.:code:`<br>`\ :raw-
+        html-m2r:`<br>`
         You can use this API in a scenario like downloading an existing collection of geofences
-        uploaded previously using the `Data Upload API
-        <https://docs.microsoft.com/en-us/rest/api/maps/data%20v2/uploadpreview>`_ for use in our
-        `Azure Maps Geofencing Service <https://docs.microsoft.com/en-us/rest/api/maps/spatial>`_.
+        uploaded previously using the `Data Upload API <https://docs.microsoft.com/en-
+        us/rest/api/maps/data-v2/upload-preview>`_ for use in our `Azure Maps Geofencing Service
+        <https://docs.microsoft.com/en-us/rest/api/maps/spatial>`_.
 
         Submit Download Request
         ^^^^^^^^^^^^^^^^^^^^^^^
@@ -645,10 +647,10 @@ class DataOperations(object):
                }]
            }.
 
-        :param unique_data_id: The unique data id for the content. The ``udid`` must have been obtained
-         from a successful `Data Upload API
-         <https://docs.microsoft.com/en-us/rest/api/maps/data%20v2/uploadpreview>`_ call.
-        :type unique_data_id: str
+        :param udid: The unique data id for the content. The ``udid`` must have been obtained from a
+         successful `Data Upload API <https://docs.microsoft.com/en-us/rest/api/maps/data-v2/upload-
+         preview>`_ call.
+        :type udid: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IO, or the result of cls(response)
         :rtype: IO
@@ -660,13 +662,13 @@ class DataOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2.0"
-        accept = "application/json, application/vnd.geo+json, application/octet-stream"
+        accept = "application/octet-stream, application/json, application/vnd.geo+json"
 
         # Construct URL
-        url = self.download_preview.metadata['url']  # type: ignore
+        url = self.download.metadata['url']  # type: ignore
         path_format_arguments = {
             'geography': self._serialize.url("self._config.geography", self._config.geography, 'str'),
-            'udid': self._serialize.url("unique_data_id", unique_data_id, 'str'),
+            'udid': self._serialize.url("udid", udid, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -676,8 +678,8 @@ class DataOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
@@ -686,7 +688,7 @@ class DataOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -697,11 +699,11 @@ class DataOperations(object):
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    download_preview.metadata = {'url': '/mapData/{udid}'}  # type: ignore
+    download.metadata = {'url': '/mapData/{udid}'}  # type: ignore
 
-    def delete_preview(
+    def delete(
         self,
-        unique_data_id,  # type: str
+        udid,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -711,13 +713,13 @@ class DataOperations(object):
 
         **Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
-        This API allows the caller to delete a previously uploaded data content.:code:`<br>`\
-        :raw-html-m2r:`<br>`
+        This API allows the caller to delete a previously uploaded data content.:code:`<br>`\ :raw-
+        html-m2r:`<br>`
         You can use this API in a scenario like removing geofences previously uploaded using the `Data
-        Upload API <https://docs.microsoft.com/en-us/rest/api/maps/data%20v2/uploadpreview>`_ for use
-        in our `Azure Maps Geofencing Service
-        <https://docs.microsoft.com/en-us/rest/api/maps/spatial>`_. You can also use this API to delete
-        old/unused uploaded content and create space for new content.
+        Upload API <https://docs.microsoft.com/en-us/rest/api/maps/data-v2/upload-preview>`_ for use in
+        our `Azure Maps Geofencing Service <https://docs.microsoft.com/en-us/rest/api/maps/spatial>`_.
+        You can also use this API to delete old/unused uploaded content and create space for new
+        content.
 
         Submit Delete Request
         ^^^^^^^^^^^^^^^^^^^^^
@@ -736,10 +738,10 @@ class DataOperations(object):
         A HTTP ``400 Bad Request`` error response will be returned if the data resource with the
         passed-in ``udid`` is not found.
 
-        :param unique_data_id: The unique data id for the content. The ``udid`` must have been obtained
-         from a successful `Data Upload API
-         <https://docs.microsoft.com/en-us/rest/api/maps/data%20v2/uploadpreview>`_ call.
-        :type unique_data_id: str
+        :param udid: The unique data id for the content. The ``udid`` must have been obtained from a
+         successful `Data Upload API <https://docs.microsoft.com/en-us/rest/api/maps/data-v2/upload-
+         preview>`_ call.
+        :type udid: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -754,10 +756,10 @@ class DataOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.delete_preview.metadata['url']  # type: ignore
+        url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'geography': self._serialize.url("self._config.geography", self._config.geography, 'str'),
-            'udid': self._serialize.url("unique_data_id", unique_data_id, 'str'),
+            'udid': self._serialize.url("udid", udid, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -767,8 +769,8 @@ class DataOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -777,20 +779,20 @@ class DataOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete_preview.metadata = {'url': '/mapData/{udid}'}  # type: ignore
+    delete.metadata = {'url': '/mapData/{udid}'}  # type: ignore
 
-    def get_operation_preview(
+    def get_operation(
         self,
         operation_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.LongRunningOperationResult"
+        # type: (...) -> "models.LongRunningOperationResult"
         """This path will be obtained from a call to POST /mapData.  While in progress, an http200 will be
         returned with no extra headers -  followed by an http200 with Resource-Location header once
         completed.
@@ -802,7 +804,7 @@ class DataOperations(object):
         :rtype: ~azure.maps.creator.models.LongRunningOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LongRunningOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.LongRunningOperationResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -811,7 +813,7 @@ class DataOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.get_operation_preview.metadata['url']  # type: ignore
+        url = self.get_operation.metadata['url']  # type: ignore
         path_format_arguments = {
             'geography': self._serialize.url("self._config.geography", self._config.geography, 'str'),
             'operationId': self._serialize.url("operation_id", operation_id, 'str'),
@@ -832,7 +834,7 @@ class DataOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -843,4 +845,4 @@ class DataOperations(object):
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    get_operation_preview.metadata = {'url': '/mapData/operations/{operationId}'}  # type: ignore
+    get_operation.metadata = {'url': '/mapData/operations/{operationId}'}  # type: ignore

@@ -15,7 +15,7 @@ from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.polling.base_polling import LROBasePolling
 
-from .. import models as _models
+from .. import models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -38,7 +38,7 @@ class TilesetOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = _models
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,8 +52,8 @@ class TilesetOperations(object):
         description=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["_models.LongRunningOperationResult"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LongRunningOperationResult"]]
+        # type: (...) -> Optional["models.LongRunningOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.LongRunningOperationResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -77,8 +77,8 @@ class TilesetOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
@@ -87,7 +87,7 @@ class TilesetOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -111,13 +111,12 @@ class TilesetOperations(object):
         description=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["_models.LongRunningOperationResult"]
+        # type: (...) -> LROPoller["models.LongRunningOperationResult"]
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
          `This <https://docs.microsoft.com/en-us/azure/azure-maps/creator-indoor-maps>`_ article
         introduces concepts and tools that apply to Azure Maps Creator.
@@ -140,22 +139,22 @@ class TilesetOperations(object):
 
         :param dataset_id: The unique ``datasetId`` that the tileset create API uses to retrieve
          features to generate tiles. The ``datasetId`` must have been obtained from a successful
-         `Dataset Create API </en-us/rest/api/maps/dataset/createpreview>`_ call.
+         `Dataset Create API <https://docs.microsoft.com/en-us/rest/api/maps/v2/dataset/create>`_ call.
         :type dataset_id: str
         :param description: User provided description of the tileset.
         :type description: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either LongRunningOperationResult or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.maps.creator.models.LongRunningOperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LongRunningOperationResult"]
+        polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.LongRunningOperationResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -204,7 +203,7 @@ class TilesetOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.TilesetListResponse"]
+        # type: (...) -> Iterable["models.TilesetListResult"]
         """.. role:: raw-html-m2r(raw)
            :format: html
 
@@ -212,19 +211,18 @@ class TilesetOperations(object):
         **Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
         This API allows the caller to fetch a list of all tilesets created.\ :raw-html-m2r:`<br>`
         :code:`<br>`.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either TilesetListResponse or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.maps.creator.models.TilesetListResponse]
+        :return: An iterator like instance of either TilesetListResult or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.maps.creator.models.TilesetListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TilesetListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.TilesetListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -235,8 +233,8 @@ class TilesetOperations(object):
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            if self._config.x_ms_client_id is not None:
-                header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+            if self._config.client_id is not None:
+                header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
             header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
@@ -262,7 +260,7 @@ class TilesetOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('TilesetListResponse', pipeline_response)
+            deserialized = self._deserialize('TilesetListResult', pipeline_response)
             list_of_elem = deserialized.tilesets
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -275,7 +273,7 @@ class TilesetOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+                error = self._deserialize(models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -291,24 +289,23 @@ class TilesetOperations(object):
         tileset_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.TilesetDetailInfo"
+        # type: (...) -> "models.Tileset"
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
         This API allows the caller to fetch a tileset.
 
         :param tileset_id: The Tileset Id.
         :type tileset_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TilesetDetailInfo, or the result of cls(response)
-        :rtype: ~azure.maps.creator.models.TilesetDetailInfo
+        :return: Tileset, or the result of cls(response)
+        :rtype: ~azure.maps.creator.models.Tileset
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TilesetDetailInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.Tileset"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -330,8 +327,8 @@ class TilesetOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
@@ -340,10 +337,10 @@ class TilesetOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('TilesetDetailInfo', pipeline_response)
+        deserialized = self._deserialize('Tileset', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -364,9 +361,8 @@ class TilesetOperations(object):
         **Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
         This API allows the caller to delete a created tileset.:code:`<br>`\ :raw-html-m2r:`<br>`
         You can use this API if a tileset is no longer needed.
@@ -432,8 +428,8 @@ class TilesetOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -442,7 +438,7 @@ class TilesetOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -455,19 +451,19 @@ class TilesetOperations(object):
         operation_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.LongRunningOperationResult"
+        # type: (...) -> "models.LongRunningOperationResult"
         """This path will be obtained from a call to /tilesets/create.  While in progress, an http200 will
         be returned with no extra headers -  followed by an http200 with Resource-Location header once
         successfully completed.
 
-        :param operation_id: The ID to query the status for the dataset create/import request.
+        :param operation_id: The ID to query the status for the tileset create/import request.
         :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LongRunningOperationResult, or the result of cls(response)
         :rtype: ~azure.maps.creator.models.LongRunningOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LongRunningOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.LongRunningOperationResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -497,7 +493,7 @@ class TilesetOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

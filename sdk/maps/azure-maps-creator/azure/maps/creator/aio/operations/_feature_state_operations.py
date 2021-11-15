@@ -13,7 +13,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from ... import models as _models
+from ... import models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class FeatureStateOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = _models
+    models = models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -43,16 +43,15 @@ class FeatureStateOperations:
     async def create_stateset(
         self,
         dataset_id: str,
-        stateset_create_request_body: "_models.StylesObject",
+        style_rules: "models.StyleRules",
         description: Optional[str] = None,
-        **kwargs: Any
-    ) -> "_models.StatesetCreatedResponse":
+        **kwargs
+    ) -> "models.StatesetCreatedResult":
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
         This POST API allows the user to create a new Stateset and define stateset style using request
         body.
@@ -76,21 +75,22 @@ class FeatureStateOperations:
         later than the stored timestamp.
 
         Azure Maps MapControl provides a way to use these feature states to style the features. Please
-        refer to the State Tile documentation for more information.
+        refer to the `State Tile documentation <https://docs.microsoft.com/en-
+        us/rest/api/maps/render/get-map-state-tile-preview>`_ for more information.
 
         :param dataset_id: The datasetId must have been obtained from a successful `Dataset Create API
          <https://docs.microsoft.com/en-us/rest/api/maps/v2/dataset/create>`_ call.
         :type dataset_id: str
-        :param stateset_create_request_body: The stateset style JSON data.
-        :type stateset_create_request_body: ~azure.maps.creator.models.StylesObject
+        :param style_rules: The stateset style JSON data.
+        :type style_rules: ~azure.maps.creator.models.StyleRules
         :param description: Description for the stateset. Max length allowed is 1000.
         :type description: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: StatesetCreatedResponse, or the result of cls(response)
-        :rtype: ~azure.maps.creator.models.StatesetCreatedResponse
+        :return: StatesetCreatedResult, or the result of cls(response)
+        :rtype: ~azure.maps.creator.models.StatesetCreatedResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StatesetCreatedResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.StatesetCreatedResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -115,11 +115,13 @@ class FeatureStateOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(stateset_create_request_body, 'StylesObject')
+        body_content = self._serialize.body(style_rules, 'StyleRules')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -127,10 +129,10 @@ class FeatureStateOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('StatesetCreatedResponse', pipeline_response)
+        deserialized = self._deserialize('StatesetCreatedResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -138,25 +140,24 @@ class FeatureStateOperations:
         return deserialized
     create_stateset.metadata = {'url': '/featureStateSets'}  # type: ignore
 
-    def list_stateset(
+    def list_statesets(
         self,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.StatesetListResponse"]:
+        **kwargs
+    ) -> AsyncIterable["models.StatesetListResult"]:
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
          This API allows the caller to fetch a list of all previously successfully created statesets.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either StatesetListResponse or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.maps.creator.models.StatesetListResponse]
+        :return: An iterator like instance of either StatesetListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.maps.creator.models.StatesetListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StatesetListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.StatesetListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -167,11 +168,13 @@ class FeatureStateOperations:
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
+            if self._config.client_id is not None:
+                header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
             header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
-                url = self.list_stateset.metadata['url']  # type: ignore
+                url = self.list_statesets.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'geography': self._serialize.url("self._config.geography", self._config.geography, 'str'),
                 }
@@ -192,7 +195,7 @@ class FeatureStateOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('StatesetListResponse', pipeline_response)
+            deserialized = self._deserialize('StatesetListResult', pipeline_response)
             list_of_elem = deserialized.statesets
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -205,7 +208,7 @@ class FeatureStateOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+                error = self._deserialize(models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -214,28 +217,27 @@ class FeatureStateOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_stateset.metadata = {'url': '/featureStateSets'}  # type: ignore
+    list_statesets.metadata = {'url': '/featureStateSets'}  # type: ignore
 
-    async def put_stateset(
+    async def update_stateset(
         self,
         stateset_id: str,
-        stateset_style_update_request_body: "_models.StylesObject",
-        **kwargs: Any
+        style_rules: "models.StyleRules",
+        **kwargs
     ) -> None:
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
         This PUT API allows the user to update the stateset style rules.
 
         :param stateset_id: The stateset id that was created.
         :type stateset_id: str
-        :param stateset_style_update_request_body: The stateset style JSON data. Only style rules are
-         allowed to be updated, update on keyname and type is not allowed.
-        :type stateset_style_update_request_body: ~azure.maps.creator.models.StylesObject
+        :param style_rules: The stateset style JSON data. Only style rules are allowed to be updated,
+         update on keyname and type is not allowed.
+        :type style_rules: ~azure.maps.creator.models.StyleRules
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -251,7 +253,7 @@ class FeatureStateOperations:
         accept = "application/json"
 
         # Construct URL
-        url = self.put_stateset.metadata['url']  # type: ignore
+        url = self.update_stateset.metadata['url']  # type: ignore
         path_format_arguments = {
             'geography': self._serialize.url("self._config.geography", self._config.geography, 'str'),
             'statesetId': self._serialize.url("stateset_id", stateset_id, 'str'),
@@ -264,11 +266,13 @@ class FeatureStateOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(stateset_style_update_request_body, 'StylesObject')
+        body_content = self._serialize.body(style_rules, 'StyleRules')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -276,25 +280,24 @@ class FeatureStateOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    put_stateset.metadata = {'url': '/featureStateSets/{statesetId}'}  # type: ignore
+    update_stateset.metadata = {'url': '/featureStateSets/{statesetId}'}  # type: ignore
 
     async def delete_stateset(
         self,
         stateset_id: str,
-        **kwargs: Any
+        **kwargs
     ) -> None:
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
          This DELETE API allows the user to delete the stateset and the associated data.
 
@@ -327,6 +330,8 @@ class FeatureStateOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -335,7 +340,7 @@ class FeatureStateOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -346,14 +351,13 @@ class FeatureStateOperations:
     async def get_stateset(
         self,
         stateset_id: str,
-        **kwargs: Any
-    ) -> "_models.StatesetGetResponse":
+        **kwargs
+    ) -> "models.Stateset":
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
         This GET API allows the user to get the stateset Information.
 
@@ -363,11 +367,11 @@ class FeatureStateOperations:
         :param stateset_id: The stateset id that was created.
         :type stateset_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: StatesetGetResponse, or the result of cls(response)
-        :rtype: ~azure.maps.creator.models.StatesetGetResponse
+        :return: Stateset, or the result of cls(response)
+        :rtype: ~azure.maps.creator.models.Stateset
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StatesetGetResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.Stateset"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -389,6 +393,8 @@ class FeatureStateOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
@@ -397,10 +403,10 @@ class FeatureStateOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('StatesetGetResponse', pipeline_response)
+        deserialized = self._deserialize('Stateset', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -412,15 +418,14 @@ class FeatureStateOperations:
         self,
         stateset_id: str,
         feature_id: str,
-        feature_state_update_request_body: "_models.FeatureStatesStructure",
-        **kwargs: Any
+        feature_states: "models.FeatureStatesStructure",
+        **kwargs
     ) -> None:
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
         This PUT API allows the user to update the state of the given feature in the given stateset.
 
@@ -429,10 +434,10 @@ class FeatureStateOperations:
         :param feature_id: The id of a feature in the given dataset. If the featureId is not present in
          the dataset, Bad Request response will be returned.
         :type feature_id: str
-        :param feature_state_update_request_body: The feature state JSON data. A feature can have only
-         one state at a given point in time. The specified state keyname must have been defined during
-         the stateset creation.
-        :type feature_state_update_request_body: ~azure.maps.creator.models.FeatureStatesStructure
+        :param feature_states: The feature state JSON data. A feature can have only one state at a
+         given point in time. The specified state keyname must have been defined during the stateset
+         creation.
+        :type feature_states: ~azure.maps.creator.models.FeatureStatesStructure
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -462,11 +467,13 @@ class FeatureStateOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(feature_state_update_request_body, 'FeatureStatesStructure')
+        body_content = self._serialize.body(feature_states, 'FeatureStatesStructure')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -474,7 +481,7 @@ class FeatureStateOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -486,15 +493,14 @@ class FeatureStateOperations:
         self,
         stateset_id: str,
         feature_id: str,
-        state_key_name: str,
-        **kwargs: Any
+        key_name: str,
+        **kwargs
     ) -> None:
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
          This API deletes the state information identified by the StateKeyName parameter for the
         feature identified by the FeatureId parameter in the the stateset.
@@ -504,8 +510,8 @@ class FeatureStateOperations:
         :param feature_id: The id of a feature in the given stateset. If no state was set for the
          featureId in the stateset earlier, Bad Request response will be returned.
         :type feature_id: str
-        :param state_key_name: The Name of the state to be deleted.
-        :type state_key_name: str
+        :param key_name: The Name of the state to be deleted.
+        :type key_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -531,10 +537,12 @@ class FeatureStateOperations:
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['stateKeyName'] = self._serialize.query("state_key_name", state_key_name, 'str')
+        query_parameters['stateKeyName'] = self._serialize.query("key_name", key_name, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -543,7 +551,7 @@ class FeatureStateOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -551,18 +559,17 @@ class FeatureStateOperations:
 
     delete_state.metadata = {'url': '/featureStateSets/{statesetId}/featureStates/{featureId}'}  # type: ignore
 
-    async def get_states(
+    async def list_states(
         self,
         stateset_id: str,
         feature_id: str,
-        **kwargs: Any
-    ) -> "_models.FeatureStatesStructure":
+        **kwargs
+    ) -> "models.FeatureStatesStructure":
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
          This API returns the current state information associated with the given feature in the given
         stateset.
@@ -577,7 +584,7 @@ class FeatureStateOperations:
         :rtype: ~azure.maps.creator.models.FeatureStatesStructure
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeatureStatesStructure"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.FeatureStatesStructure"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -586,7 +593,7 @@ class FeatureStateOperations:
         accept = "application/json"
 
         # Construct URL
-        url = self.get_states.metadata['url']  # type: ignore
+        url = self.list_states.metadata['url']  # type: ignore
         path_format_arguments = {
             'geography': self._serialize.url("self._config.geography", self._config.geography, 'str'),
             'statesetId': self._serialize.url("stateset_id", stateset_id, 'str'),
@@ -600,6 +607,8 @@ class FeatureStateOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
@@ -608,7 +617,7 @@ class FeatureStateOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('FeatureStatesStructure', pipeline_response)
@@ -617,4 +626,4 @@ class FeatureStateOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_states.metadata = {'url': '/featureStateSets/{statesetId}/featureStates/{featureId}'}  # type: ignore
+    list_states.metadata = {'url': '/featureStateSets/{statesetId}/featureStates/{featureId}'}  # type: ignore

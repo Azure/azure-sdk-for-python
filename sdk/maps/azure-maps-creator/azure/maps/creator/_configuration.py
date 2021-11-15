@@ -28,8 +28,8 @@ class CreatorClientConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param x_ms_client_id: Specifies which account is intended for usage in conjunction with the Azure AD security model.  It represents a unique ID for the Azure Maps account and can be retrieved from the Azure Maps management  plane Account API. To use Azure AD security in Azure Maps see the following `articles <https://aka.ms/amauthdetails>`_ for guidance.
-    :type x_ms_client_id: str
+    :param client_id: Specifies which account is intended for usage in conjunction with the Azure AD security model.  It represents a unique ID for the Azure Maps account and can be retrieved from the Azure Maps management  plane Account API. To use Azure AD security in Azure Maps see the following `articles <https://aka.ms/amauthdetails>`_ for guidance.
+    :type client_id: str
     :param geography: This parameter specifies where the Azure Maps Creator resource is located.  Valid values are us and eu.
     :type geography: str or ~azure.maps.creator.models.Geography
     """
@@ -37,8 +37,8 @@ class CreatorClientConfiguration(Configuration):
     def __init__(
         self,
         credential,  # type: "TokenCredential"
-        x_ms_client_id=None,  # type: Optional[str]
-        geography="us",  # type: Union[str, "_models.Geography"]
+        client_id=None,  # type: Optional[str]
+        geography="us",  # type: Union[str, "models.Geography"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -49,7 +49,7 @@ class CreatorClientConfiguration(Configuration):
         super(CreatorClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
-        self.x_ms_client_id = x_ms_client_id
+        self.client_id = client_id
         self.geography = geography
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://atlas.microsoft.com/.default'])
         kwargs.setdefault('sdk_moniker', 'maps-creator/{}'.format(VERSION))

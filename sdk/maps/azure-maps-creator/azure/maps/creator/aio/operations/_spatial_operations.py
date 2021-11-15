@@ -13,7 +13,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from ... import models as _models
+from ... import models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class SpatialOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = _models
+    models = models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -42,18 +42,17 @@ class SpatialOperations:
 
     async def get_geofence(
         self,
-        format: Union[str, "_models.ResponseFormat"],
         device_id: str,
         udid: str,
-        latitude: float,
-        longitude: float,
-        z: Optional[float] = None,
+        position: "models.Position",
+        format: Union[str, "models.JsonFormat"] = "json",
+        altitude: Optional[float] = None,
         user_time: Optional[datetime.datetime] = None,
-        search_buffer: Optional[float] = None,
+        search_buffer_in_meters: Optional[float] = None,
         is_async: Optional[bool] = None,
-        mode: Optional[Union[str, "_models.GeofenceMode"]] = None,
-        **kwargs: Any
-    ) -> "_models.GeofenceResponse":
+        mode: Optional[Union[str, "models.GeofenceMode"]] = None,
+        **kwargs
+    ) -> "models.Geofence":
         """**Search Geofence Get API**
 
         **Applies to:** S1 Pricing tier.
@@ -62,8 +61,8 @@ class SpatialOperations:
         geofence that has been uploaded to the Data service. You can use the
         `Data Upload API <https://docs.microsoft.com/en-us/rest/api/maps/data/uploadPreview>`_ to
         upload
-        a geofence or set of fences. See `Geofencing GeoJSON data
-        <https://docs.microsoft.com/en-us/azure/azure-maps/geofence-geojson>`_
+        a geofence or set of fences. See `Geofencing GeoJSON data <https://docs.microsoft.com/en-
+        us/azure/azure-maps/geofence-geojson>`_
         for more details on the geofence data format. To query the proximity of a coordinate, you
         supply the location of the object you are tracking as well
         as the ID for the fence or set of fences, and the response will contain information about
@@ -73,9 +72,9 @@ class SpatialOperations:
         things like asset
         tracking, fleet management, or setting up alerts for moving objects.
 
-        The API supports `integration with Event Grid
-        <https://docs.microsoft.com/azure/azure-maps/azure-maps-event-grid-integration>`_. The isAsync
-        parameter is used to enable integration with Event Grid (disabled by default).
+        The API supports `integration with Event Grid <https://docs.microsoft.com/azure/azure-
+        maps/azure-maps-event-grid-integration>`_. The isAsync parameter is used to enable integration
+        with Event Grid (disabled by default).
         To test this API, you can upload the sample data from Post Geofence API examples(Request Body)
         via Data Upload API and replace the [udid] from the sample request below with the udid returned
         by Data Upload API.
@@ -122,47 +121,50 @@ class SpatialOperations:
            * - NoUserDataWithUdid
              - Can't find user geofencing data with provided udid.
 
-        :param format: Desired format of the response. Only ``json`` format is supported.
-        :type format: str or ~azure.maps.creator.models.ResponseFormat
         :param device_id: ID of the device.
         :type device_id: str
-        :param udid: The unique id returned from `Data Upload API
-         <https://docs.microsoft.com/en-us/rest/api/maps/data/uploadPreview>`_ after uploading a valid
-         GeoJSON FeatureCollection object. Please refer to `RFC 7946
-         <https://tools.ietf.org/html/rfc7946#section-3.3>`_ for details. All the feature's  properties
-         should contain ``geometryId``\ , which is used for identifying the geometry and is
-         case-sensitive.
+        :param udid: The unique id returned from `Data Upload API <https://docs.microsoft.com/en-
+         us/rest/api/maps/data/uploadPreview>`_ after uploading a valid GeoJSON FeatureCollection
+         object. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.3>`_ for
+         details. All the feature's  properties should contain ``geometryId``\ , which is used for
+         identifying the geometry and is case-sensitive.
         :type udid: str
-        :param latitude: The latitude of the location being passed.  Example: 48.36.
-        :type latitude: float
-        :param longitude: The longitude of the location being passed.  Example: -124.63.
-        :type longitude: float
-        :param z: The sea level in meter of the location being passed. If this parameter is presented,
-         2D extrusion is used. Example: 200.
-        :type z: float
+        :param position: Parameter group.
+        :type position: ~azure.maps.creator.models.Position
+        :param format: Desired format of the response. Only ``json`` format is supported.
+        :type format: str or ~azure.maps.creator.models.JsonFormat
+        :param altitude: The sea level in meter of the location being passed. If this parameter is
+         presented, 2D extrusion is used. Example: 200.
+        :type altitude: float
         :param user_time: The user request time. If not presented in the request, the default value is
          DateTime.Now.
         :type user_time: ~datetime.datetime
-        :param search_buffer: The radius of the buffer around the geofence in meters that defines how
-         far to search inside and outside the border of the fence against the coordinate that was
-         provided when calculating the result.  The minimum value is 0, and the maximum is 500.  The
-         default value is 50.
-        :type search_buffer: float
+        :param search_buffer_in_meters: The radius of the buffer around the geofence in meters that
+         defines how far to search inside and outside the border of the fence against the coordinate
+         that was provided when calculating the result.  The minimum value is 0, and the maximum is 500.
+         The default value is 50.
+        :type search_buffer_in_meters: float
         :param is_async: If true, the request will use async event mechanism; if false, the request
          will be synchronized and do not trigger any event. The default value is false.
         :type is_async: bool
         :param mode: Mode of the geofencing async event mechanism.
         :type mode: str or ~azure.maps.creator.models.GeofenceMode
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: GeofenceResponse, or the result of cls(response)
-        :rtype: ~azure.maps.creator.models.GeofenceResponse
+        :return: Geofence, or the result of cls(response)
+        :rtype: ~azure.maps.creator.models.Geofence
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GeofenceResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.Geofence"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        
+        _latitude = None
+        _longitude = None
+        if position is not None:
+            _latitude = position.latitude
+            _longitude = position.longitude
         api_version = "1.0"
         accept = "application/json"
 
@@ -179,14 +181,14 @@ class SpatialOperations:
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
         query_parameters['deviceId'] = self._serialize.query("device_id", device_id, 'str')
         query_parameters['udid'] = self._serialize.query("udid", udid, 'str')
-        query_parameters['lat'] = self._serialize.query("latitude", latitude, 'float')
-        query_parameters['lon'] = self._serialize.query("longitude", longitude, 'float')
-        if z is not None:
-            query_parameters['z'] = self._serialize.query("z", z, 'float')
+        query_parameters['lat'] = self._serialize.query("latitude", _latitude, 'float')
+        query_parameters['lon'] = self._serialize.query("longitude", _longitude, 'float')
+        if altitude is not None:
+            query_parameters['z'] = self._serialize.query("altitude", altitude, 'float')
         if user_time is not None:
             query_parameters['userTime'] = self._serialize.query("user_time", user_time, 'iso-8601')
-        if search_buffer is not None:
-            query_parameters['searchBuffer'] = self._serialize.query("search_buffer", search_buffer, 'float', maximum=500, minimum=0)
+        if search_buffer_in_meters is not None:
+            query_parameters['searchBuffer'] = self._serialize.query("search_buffer_in_meters", search_buffer_in_meters, 'float', maximum=500, minimum=0)
         if is_async is not None:
             query_parameters['isAsync'] = self._serialize.query("is_async", is_async, 'bool')
         if mode is not None:
@@ -194,8 +196,8 @@ class SpatialOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
@@ -204,12 +206,12 @@ class SpatialOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['X-Correlation-id']=self._deserialize('str', response.headers.get('X-Correlation-id'))
-        deserialized = self._deserialize('GeofenceResponse', pipeline_response)
+        deserialized = self._deserialize('Geofence', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
@@ -219,18 +221,17 @@ class SpatialOperations:
 
     async def post_geofence(
         self,
-        format: Union[str, "_models.ResponseFormat"],
         device_id: str,
-        latitude: float,
-        longitude: float,
-        search_geofence_request_body: "_models.GeoJsonFeatureCollection",
-        z: Optional[float] = None,
+        search_geofence_request_body: "models.GeoJsonFeatureCollection",
+        position: "models.Position",
+        format: Union[str, "models.JsonFormat"] = "json",
+        altitude: Optional[float] = None,
         user_time: Optional[datetime.datetime] = None,
         search_buffer: Optional[float] = None,
         is_async: Optional[bool] = None,
-        mode: Optional[Union[str, "_models.GeofenceMode"]] = None,
-        **kwargs: Any
-    ) -> "_models.GeofenceResponse":
+        mode: Optional[Union[str, "models.GeofenceMode"]] = None,
+        **kwargs
+    ) -> "models.Geofence":
         """**Search Geofence Post API**
         **Applies to:** S1 Pricing tier.
         The Geofence Post API allows you to retrieve the proximity of a coordinate to a  provided
@@ -244,23 +245,21 @@ class SpatialOperations:
         can be used for a variety of scenarios that include things like asset  tracking, fleet
         management, or setting up alerts for moving objects.
 
-        The API supports `integration with Event Grid
-        <https://docs.microsoft.com/azure/azure-maps/azure-maps-event-grid-integration>`_.  The isAsync
-        parameter is used to enable integration with Event Grid (disabled by default).
+        The API supports `integration with Event Grid <https://docs.microsoft.com/azure/azure-
+        maps/azure-maps-event-grid-integration>`_.  The isAsync parameter is used to enable integration
+        with Event Grid (disabled by default).
 
-        :param format: Desired format of the response. Only ``json`` format is supported.
-        :type format: str or ~azure.maps.creator.models.ResponseFormat
         :param device_id: ID of the device.
         :type device_id: str
-        :param latitude: The latitude of the location being passed.  Example: 48.36.
-        :type latitude: float
-        :param longitude: The longitude of the location being passed.  Example: -124.63.
-        :type longitude: float
         :param search_geofence_request_body: The geofencing GeoJSON data.
         :type search_geofence_request_body: ~azure.maps.creator.models.GeoJsonFeatureCollection
-        :param z: The sea level in meter of the location being passed. If this parameter is presented,
-         2D extrusion geofencing is applied. Example: 200.
-        :type z: float
+        :param position: Parameter group.
+        :type position: ~azure.maps.creator.models.Position
+        :param format: Desired format of the response. Only ``json`` format is supported.
+        :type format: str or ~azure.maps.creator.models.JsonFormat
+        :param altitude: The sea level in meter of the location being passed. If this parameter is
+         presented, 2D extrusion geofencing is applied. Example: 200.
+        :type altitude: float
         :param user_time: The user request time. If not presented in the request, the default value is
          DateTime.UtcNow.
         :type user_time: ~datetime.datetime
@@ -275,15 +274,21 @@ class SpatialOperations:
         :param mode: Mode of the geofencing async event mechanism.
         :type mode: str or ~azure.maps.creator.models.GeofenceMode
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: GeofenceResponse, or the result of cls(response)
-        :rtype: ~azure.maps.creator.models.GeofenceResponse
+        :return: Geofence, or the result of cls(response)
+        :rtype: ~azure.maps.creator.models.Geofence
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GeofenceResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.Geofence"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        
+        _latitude = None
+        _longitude = None
+        if position is not None:
+            _latitude = position.latitude
+            _longitude = position.longitude
         api_version = "1.0"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -300,10 +305,10 @@ class SpatialOperations:
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
         query_parameters['deviceId'] = self._serialize.query("device_id", device_id, 'str')
-        query_parameters['lat'] = self._serialize.query("latitude", latitude, 'float')
-        query_parameters['lon'] = self._serialize.query("longitude", longitude, 'float')
-        if z is not None:
-            query_parameters['z'] = self._serialize.query("z", z, 'float')
+        query_parameters['lat'] = self._serialize.query("latitude", _latitude, 'float')
+        query_parameters['lon'] = self._serialize.query("longitude", _longitude, 'float')
+        if altitude is not None:
+            query_parameters['z'] = self._serialize.query("altitude", altitude, 'float')
         if user_time is not None:
             query_parameters['userTime'] = self._serialize.query("user_time", user_time, 'iso-8601')
         if search_buffer is not None:
@@ -315,8 +320,8 @@ class SpatialOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
@@ -329,12 +334,12 @@ class SpatialOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['X-Correlation-id']=self._deserialize('str', response.headers.get('X-Correlation-id'))
-        deserialized = self._deserialize('GeofenceResponse', pipeline_response)
+        deserialized = self._deserialize('Geofence', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
@@ -344,10 +349,10 @@ class SpatialOperations:
 
     async def post_buffer(
         self,
-        format: Union[str, "_models.ResponseFormat"],
-        buffer_request_body: "_models.BufferRequestBody",
-        **kwargs: Any
-    ) -> "_models.BufferResponse":
+        buffer_request_body: "models.BufferRequestBody",
+        format: Union[str, "models.JsonFormat"] = "json",
+        **kwargs
+    ) -> "models.BufferResult":
         """**Applies to**\ : S1 pricing tier.
 
         This API returns a FeatureCollection where each Feature is a buffer around the corresponding
@@ -361,17 +366,17 @@ class SpatialOperations:
         always an empty polygon. The input may contain a collection of Point, MultiPoint, Polygon,
         MultiPolygon, LineString and MultiLineString. GeometryCollection will be ignored if provided.
 
-        :param format: Desired format of the response. Only ``json`` format is supported.
-        :type format: str or ~azure.maps.creator.models.ResponseFormat
         :param buffer_request_body: The FeatureCollection and the list of distances (one per feature or
          one for all features).
         :type buffer_request_body: ~azure.maps.creator.models.BufferRequestBody
+        :param format: Desired format of the response. Only ``json`` format is supported.
+        :type format: str or ~azure.maps.creator.models.JsonFormat
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: BufferResponse, or the result of cls(response)
-        :rtype: ~azure.maps.creator.models.BufferResponse
+        :return: BufferResult, or the result of cls(response)
+        :rtype: ~azure.maps.creator.models.BufferResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BufferResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.BufferResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -394,8 +399,8 @@ class SpatialOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
@@ -408,10 +413,10 @@ class SpatialOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('BufferResponse', pipeline_response)
+        deserialized = self._deserialize('BufferResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -421,11 +426,11 @@ class SpatialOperations:
 
     async def get_buffer(
         self,
-        format: Union[str, "_models.ResponseFormat"],
         udid: str,
         distances: str,
-        **kwargs: Any
-    ) -> "_models.BufferResponse":
+        format: Union[str, "models.JsonFormat"] = "json",
+        **kwargs
+    ) -> "models.BufferResult":
         """**Applies to**\ : S1 pricing tier.
 
         This API returns a FeatureCollection where each Feature is a buffer around the corresponding
@@ -444,32 +449,30 @@ class SpatialOperations:
 
         To test this API, you can upload the sample data from `Post Buffer API
         <https://docs.microsoft.com/en-us/rest/api/maps/spatial/postbuffer#examples>`_ examples(Request
-        Body without distances array) via `Data Upload API
-        <https://docs.microsoft.com/en-us/rest/api/maps/data/uploadPreview>`_ and replace the [udid]
-        from the `sample request below
+        Body without distances array) via `Data Upload API <https://docs.microsoft.com/en-
+        us/rest/api/maps/data/uploadPreview>`_ and replace the [udid] from the `sample request below
         <https://docs.microsoft.com/en-us/rest/api/maps/spatial/getbuffer#examples>`_ with the udid
         returned by Data Upload API.
 
-        :param format: Desired format of the response. Only ``json`` format is supported.
-        :type format: str or ~azure.maps.creator.models.ResponseFormat
-        :param udid: The unique id returned from `Data Upload API
-         <https://docs.microsoft.com/en-us/rest/api/maps/data/uploadPreview>`_ after uploading a valid
-         GeoJSON FeatureCollection object.  Please refer to `RFC 7946
-         <https://tools.ietf.org/html/rfc7946#section-3.3>`_ for details. All the feature's properties
-         should contain ``geometryId``\ , which is used for identifying the geometry and is
-         case-sensitive.
+        :param udid: The unique id returned from `Data Upload API <https://docs.microsoft.com/en-
+         us/rest/api/maps/data/uploadPreview>`_ after uploading a valid GeoJSON FeatureCollection
+         object.  Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.3>`_ for
+         details. All the feature's properties should contain ``geometryId``\ , which is used for
+         identifying the geometry and is case-sensitive.
         :type udid: str
         :param distances: The list of distances (one per feature or one for all features), delimited by
          semicolons. For example, 12.34;-56.78. Positive distance will generate a buffer outside of the
          feature, whereas negative distance will generate a buffer inside of the feature. If the
          negative distance larger than the geometry itself, an empty polygon will be returned.
         :type distances: str
+        :param format: Desired format of the response. Only ``json`` format is supported.
+        :type format: str or ~azure.maps.creator.models.JsonFormat
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: BufferResponse, or the result of cls(response)
-        :rtype: ~azure.maps.creator.models.BufferResponse
+        :return: BufferResult, or the result of cls(response)
+        :rtype: ~azure.maps.creator.models.BufferResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BufferResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.BufferResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -493,8 +496,8 @@ class SpatialOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
@@ -503,10 +506,10 @@ class SpatialOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('BufferResponse', pipeline_response)
+        deserialized = self._deserialize('BufferResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -516,13 +519,12 @@ class SpatialOperations:
 
     async def post_closest_point(
         self,
-        format: Union[str, "_models.ResponseFormat"],
-        latitude: float,
-        longitude: float,
-        closest_point_request_body: "_models.GeoJsonFeatureCollection",
+        closest_point_request_body: "models.GeoJsonFeatureCollection",
+        position: "models.Position",
+        format: Union[str, "models.JsonFormat"] = "json",
         number_of_closest_points: Optional[int] = None,
-        **kwargs: Any
-    ) -> "_models.ClosestPointResponse":
+        **kwargs
+    ) -> "models.ClosestPointResponse":
         """**Applies to**\ : S1 pricing tier.
 
         This API returns the closest point between a base point and a given set of target points. The
@@ -532,16 +534,14 @@ class SpatialOperations:
         points accepted is 100,000. Information returned includes closest point latitude, longitude,
         and distance in meters from the closest point.
 
-        :param format: Desired format of the response. Only ``json`` format is supported.
-        :type format: str or ~azure.maps.creator.models.ResponseFormat
-        :param latitude: The latitude of the location being passed.  Example: 48.36.
-        :type latitude: float
-        :param longitude: The longitude of the location being passed.  Example: -124.63.
-        :type longitude: float
         :param closest_point_request_body: The FeatureCollection of Point geometries from which closest
          point to source point should be determined. All the feature's properties should contain
          ``geometryId``\ , which is used for identifying the geometry and is case-sensitive.
         :type closest_point_request_body: ~azure.maps.creator.models.GeoJsonFeatureCollection
+        :param position: Parameter group.
+        :type position: ~azure.maps.creator.models.Position
+        :param format: Desired format of the response. Only ``json`` format is supported.
+        :type format: str or ~azure.maps.creator.models.JsonFormat
         :param number_of_closest_points: The number of closest points expected from response. Default:
          1, minimum: 1 and maximum: 50.
         :type number_of_closest_points: int
@@ -550,11 +550,17 @@ class SpatialOperations:
         :rtype: ~azure.maps.creator.models.ClosestPointResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ClosestPointResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.ClosestPointResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        
+        _latitude = None
+        _longitude = None
+        if position is not None:
+            _latitude = position.latitude
+            _longitude = position.longitude
         api_version = "1.0"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -570,15 +576,15 @@ class SpatialOperations:
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['lat'] = self._serialize.query("latitude", latitude, 'float')
-        query_parameters['lon'] = self._serialize.query("longitude", longitude, 'float')
+        query_parameters['lat'] = self._serialize.query("latitude", _latitude, 'float')
+        query_parameters['lon'] = self._serialize.query("longitude", _longitude, 'float')
         if number_of_closest_points is not None:
             query_parameters['numberOfClosestPoints'] = self._serialize.query("number_of_closest_points", number_of_closest_points, 'int')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
@@ -591,7 +597,7 @@ class SpatialOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('ClosestPointResponse', pipeline_response)
@@ -604,45 +610,40 @@ class SpatialOperations:
 
     async def get_closest_point(
         self,
-        format: Union[str, "_models.ResponseFormat"],
         udid: str,
-        latitude: float,
-        longitude: float,
+        position: "models.Position",
+        format: Union[str, "models.JsonFormat"] = "json",
         number_of_closest_points: Optional[int] = None,
-        **kwargs: Any
-    ) -> "_models.ClosestPointResponse":
+        **kwargs
+    ) -> "models.ClosestPointResponse":
         """**Applies to**\ : S1 pricing tier.
 
         This API returns the closest point between a base point and a given set of points in the user
         uploaded data set identified by udid. The set of target points is provided by a GeoJSON file
-        which is uploaded via `Data Upload API
-        <https://docs.microsoft.com/en-us/rest/api/maps/data/uploadPreview>`_ and referenced by a
-        unique udid. The GeoJSON file may only contain a collection of Point geometry. MultiPoint or
-        other geometries will be ignored if provided. The maximum number of points accepted is 100,000.
-        The algorithm does not take into account routing or traffic. Information returned includes
-        closest point latitude, longitude, and distance in meters from the closest point.
+        which is uploaded via `Data Upload API <https://docs.microsoft.com/en-
+        us/rest/api/maps/data/uploadPreview>`_ and referenced by a unique udid. The GeoJSON file may
+        only contain a collection of Point geometry. MultiPoint or other geometries will be ignored if
+        provided. The maximum number of points accepted is 100,000. The algorithm does not take into
+        account routing or traffic. Information returned includes closest point latitude, longitude,
+        and distance in meters from the closest point.
 
         To test this API, you can upload the sample data from `Post Closest Point API
         <https://docs.microsoft.com/en-us/rest/api/maps/spatial/postclosestpoint#examples>`_
-        examples(Request Body) via `Data Upload API
-        <https://docs.microsoft.com/en-us/rest/api/maps/data/uploadPreview>`_ and replace the [udid]
-        from the `sample request below
+        examples(Request Body) via `Data Upload API <https://docs.microsoft.com/en-
+        us/rest/api/maps/data/uploadPreview>`_ and replace the [udid] from the `sample request below
         <https://docs.microsoft.com/en-us/rest/api/maps/spatial/getclosestpoint#examples>`_ with the
         udid returned by Data Upload API.
 
-        :param format: Desired format of the response. Only ``json`` format is supported.
-        :type format: str or ~azure.maps.creator.models.ResponseFormat
-        :param udid: The unique id returned from `Data Upload API
-         <https://docs.microsoft.com/en-us/rest/api/maps/data/uploadPreview>`_ after uploading a valid
-         GeoJSON FeatureCollection object.  Please refer to `RFC 7946
-         <https://tools.ietf.org/html/rfc7946#section-3.3>`_ for details. All the feature's properties
-         should contain ``geometryId``\ , which is used for identifying the geometry and is
-         case-sensitive.
+        :param udid: The unique id returned from `Data Upload API <https://docs.microsoft.com/en-
+         us/rest/api/maps/data/uploadPreview>`_ after uploading a valid GeoJSON FeatureCollection
+         object.  Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.3>`_ for
+         details. All the feature's properties should contain ``geometryId``\ , which is used for
+         identifying the geometry and is case-sensitive.
         :type udid: str
-        :param latitude: The latitude of the location being passed.  Example: 48.36.
-        :type latitude: float
-        :param longitude: The longitude of the location being passed.  Example: -124.63.
-        :type longitude: float
+        :param position: Parameter group.
+        :type position: ~azure.maps.creator.models.Position
+        :param format: Desired format of the response. Only ``json`` format is supported.
+        :type format: str or ~azure.maps.creator.models.JsonFormat
         :param number_of_closest_points: The number of closest points expected from response. Default:
          1, minimum: 1 and maximum: 50.
         :type number_of_closest_points: int
@@ -651,11 +652,17 @@ class SpatialOperations:
         :rtype: ~azure.maps.creator.models.ClosestPointResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ClosestPointResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.ClosestPointResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        
+        _latitude = None
+        _longitude = None
+        if position is not None:
+            _latitude = position.latitude
+            _longitude = position.longitude
         api_version = "1.0"
         accept = "application/json"
 
@@ -671,15 +678,15 @@ class SpatialOperations:
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
         query_parameters['udid'] = self._serialize.query("udid", udid, 'str')
-        query_parameters['lat'] = self._serialize.query("latitude", latitude, 'float')
-        query_parameters['lon'] = self._serialize.query("longitude", longitude, 'float')
+        query_parameters['lat'] = self._serialize.query("latitude", _latitude, 'float')
+        query_parameters['lon'] = self._serialize.query("longitude", _longitude, 'float')
         if number_of_closest_points is not None:
             query_parameters['numberOfClosestPoints'] = self._serialize.query("number_of_closest_points", number_of_closest_points, 'int')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
@@ -688,7 +695,7 @@ class SpatialOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('ClosestPointResponse', pipeline_response)
@@ -701,12 +708,11 @@ class SpatialOperations:
 
     async def post_point_in_polygon(
         self,
-        format: Union[str, "_models.ResponseFormat"],
-        latitude: float,
-        longitude: float,
-        point_in_polygon_request_body: "_models.GeoJsonFeatureCollection",
-        **kwargs: Any
-    ) -> "_models.PointInPolygonResponse":
+        point_in_polygon_request_body: "models.GeoJsonFeatureCollection",
+        position: "models.Position",
+        format: Union[str, "models.JsonFormat"] = "json",
+        **kwargs
+    ) -> "models.PointInPolygonResult":
         """**Applies to**\ : S1 pricing tier.
 
         This API returns a boolean value indicating whether a point is inside a set of polygons. The
@@ -717,27 +723,31 @@ class SpatialOperations:
         geometries (referenced by geometryId) in user data. The maximum number of vertices accepted to
         form a Polygon is 10,000.
 
-        :param format: Desired format of the response. Only ``json`` format is supported.
-        :type format: str or ~azure.maps.creator.models.ResponseFormat
-        :param latitude: The latitude of the location being passed.  Example: 48.36.
-        :type latitude: float
-        :param longitude: The longitude of the location being passed.  Example: -124.63.
-        :type longitude: float
         :param point_in_polygon_request_body: A FeatureCollection with a set of Polygon/MultiPolygon
          geometries. The maximum number of vertices accepted to form a Polygon is 10,000. All the
          feature's properties should contain ``geometryId``\ , which is used for identifying the
          geometry and is case-sensitive.
         :type point_in_polygon_request_body: ~azure.maps.creator.models.GeoJsonFeatureCollection
+        :param position: Parameter group.
+        :type position: ~azure.maps.creator.models.Position
+        :param format: Desired format of the response. Only ``json`` format is supported.
+        :type format: str or ~azure.maps.creator.models.JsonFormat
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PointInPolygonResponse, or the result of cls(response)
-        :rtype: ~azure.maps.creator.models.PointInPolygonResponse
+        :return: PointInPolygonResult, or the result of cls(response)
+        :rtype: ~azure.maps.creator.models.PointInPolygonResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PointInPolygonResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.PointInPolygonResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        
+        _latitude = None
+        _longitude = None
+        if position is not None:
+            _latitude = position.latitude
+            _longitude = position.longitude
         api_version = "1.0"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -753,13 +763,13 @@ class SpatialOperations:
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['lat'] = self._serialize.query("latitude", latitude, 'float')
-        query_parameters['lon'] = self._serialize.query("longitude", longitude, 'float')
+        query_parameters['lat'] = self._serialize.query("latitude", _latitude, 'float')
+        query_parameters['lon'] = self._serialize.query("longitude", _longitude, 'float')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
@@ -772,10 +782,10 @@ class SpatialOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('PointInPolygonResponse', pipeline_response)
+        deserialized = self._deserialize('PointInPolygonResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -783,14 +793,13 @@ class SpatialOperations:
         return deserialized
     post_point_in_polygon.metadata = {'url': '/spatial/pointInPolygon/{format}'}  # type: ignore
 
-    async def get_point_in_polygon(
+    async def evaluate_point_in_polygon(
         self,
-        format: Union[str, "_models.ResponseFormat"],
         udid: str,
-        latitude: float,
-        longitude: float,
-        **kwargs: Any
-    ) -> "_models.PointInPolygonResponse":
+        position: "models.Position",
+        format: Union[str, "models.JsonFormat"] = "json",
+        **kwargs
+    ) -> "models.PointInPolygonResult":
         """**Applies to**\ : S1 pricing tier.
 
         This API returns a boolean value indicating whether a point is inside a set of polygons. The
@@ -805,40 +814,42 @@ class SpatialOperations:
 
         To test this API, you can upload the sample data from `Post Point In Polygon API
         <https://docs.microsoft.com/en-us/rest/api/maps/spatial/postpointinpolygon#examples>`_
-        examples(Request Body) via `Data Upload API
-        <https://docs.microsoft.com/en-us/rest/api/maps/data/uploadPreview>`_ and replace the [udid]
-        from the `sample request below
+        examples(Request Body) via `Data Upload API <https://docs.microsoft.com/en-
+        us/rest/api/maps/data/uploadPreview>`_ and replace the [udid] from the `sample request below
         <https://docs.microsoft.com/en-us/rest/api/maps/spatial/getpointinpolygon#examples>`_ with the
         udid returned by Data Upload API.
 
-        :param format: Desired format of the response. Only ``json`` format is supported.
-        :type format: str or ~azure.maps.creator.models.ResponseFormat
-        :param udid: The unique id returned from `Data Upload API
-         <https://docs.microsoft.com/en-us/rest/api/maps/data/uploadPreview>`_ after uploading a valid
-         GeoJSON FeatureCollection object.  Please refer to `RFC 7946
-         <https://tools.ietf.org/html/rfc7946#section-3.3>`_ for details. All the feature's properties
-         should contain ``geometryId``\ , which is used for identifying the geometry and is
-         case-sensitive.
+        :param udid: The unique id returned from `Data Upload API <https://docs.microsoft.com/en-
+         us/rest/api/maps/data/uploadPreview>`_ after uploading a valid GeoJSON FeatureCollection
+         object.  Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.3>`_ for
+         details. All the feature's properties should contain ``geometryId``\ , which is used for
+         identifying the geometry and is case-sensitive.
         :type udid: str
-        :param latitude: The latitude of the location being passed.  Example: 48.36.
-        :type latitude: float
-        :param longitude: The longitude of the location being passed.  Example: -124.63.
-        :type longitude: float
+        :param position: Parameter group.
+        :type position: ~azure.maps.creator.models.Position
+        :param format: Desired format of the response. Only ``json`` format is supported.
+        :type format: str or ~azure.maps.creator.models.JsonFormat
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PointInPolygonResponse, or the result of cls(response)
-        :rtype: ~azure.maps.creator.models.PointInPolygonResponse
+        :return: PointInPolygonResult, or the result of cls(response)
+        :rtype: ~azure.maps.creator.models.PointInPolygonResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PointInPolygonResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.PointInPolygonResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        
+        _latitude = None
+        _longitude = None
+        if position is not None:
+            _latitude = position.latitude
+            _longitude = position.longitude
         api_version = "1.0"
         accept = "application/json"
 
         # Construct URL
-        url = self.get_point_in_polygon.metadata['url']  # type: ignore
+        url = self.evaluate_point_in_polygon.metadata['url']  # type: ignore
         path_format_arguments = {
             'geography': self._serialize.url("self._config.geography", self._config.geography, 'str'),
             'format': self._serialize.url("format", format, 'str'),
@@ -849,13 +860,13 @@ class SpatialOperations:
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
         query_parameters['udid'] = self._serialize.query("udid", udid, 'str')
-        query_parameters['lat'] = self._serialize.query("latitude", latitude, 'float')
-        query_parameters['lon'] = self._serialize.query("longitude", longitude, 'float')
+        query_parameters['lat'] = self._serialize.query("latitude", _latitude, 'float')
+        query_parameters['lon'] = self._serialize.query("longitude", _longitude, 'float')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
@@ -864,23 +875,23 @@ class SpatialOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('PointInPolygonResponse', pipeline_response)
+        deserialized = self._deserialize('PointInPolygonResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_point_in_polygon.metadata = {'url': '/spatial/pointInPolygon/{format}'}  # type: ignore
+    evaluate_point_in_polygon.metadata = {'url': '/spatial/pointInPolygon/{format}'}  # type: ignore
 
     async def get_great_circle_distance(
         self,
-        format: Union[str, "_models.ResponseFormat"],
         query: str,
-        **kwargs: Any
-    ) -> "_models.GreatCircleDistanceResponse":
+        format: Union[str, "models.JsonFormat"] = "json",
+        **kwargs
+    ) -> "models.GreatCircleDistanceResult":
         """**Applies to**\ : S1 pricing tier.
 
         This API will return the great-circle or shortest distance between two points on the surface of
@@ -888,18 +899,18 @@ class SpatialOperations:
         line through the sphere's interior. This method is helpful for estimating travel distances for
         airplanes by calculating the shortest distance between airports.
 
-        :param format: Desired format of the response. Only ``json`` format is supported.
-        :type format: str or ~azure.maps.creator.models.ResponseFormat
         :param query: The Coordinates through which the distance is calculated, delimited by a colon.
          Two coordinates are required.  The first one is the source point coordinate and the last is the
          target point coordinate. For example, 47.622942,122.316456:57.673988,127.121513.
         :type query: str
+        :param format: Desired format of the response. Only ``json`` format is supported.
+        :type format: str or ~azure.maps.creator.models.JsonFormat
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: GreatCircleDistanceResponse, or the result of cls(response)
-        :rtype: ~azure.maps.creator.models.GreatCircleDistanceResponse
+        :return: GreatCircleDistanceResult, or the result of cls(response)
+        :rtype: ~azure.maps.creator.models.GreatCircleDistanceResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GreatCircleDistanceResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.GreatCircleDistanceResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -922,8 +933,8 @@ class SpatialOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if self._config.x_ms_client_id is not None:
-            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.x_ms_client_id", self._config.x_ms_client_id, 'str')
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
@@ -932,10 +943,10 @@ class SpatialOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('GreatCircleDistanceResponse', pipeline_response)
+        deserialized = self._deserialize('GreatCircleDistanceResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

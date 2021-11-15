@@ -15,7 +15,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 
-from ... import models as _models
+from ... import models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -34,7 +34,7 @@ class DatasetOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = _models
+    models = models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,10 +46,10 @@ class DatasetOperations:
         self,
         conversion_id: str,
         dataset_id: Optional[str] = None,
-        description_dataset: Optional[str] = None,
-        **kwargs: Any
-    ) -> Optional["_models.LongRunningOperationResult"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LongRunningOperationResult"]]
+        description: Optional[str] = None,
+        **kwargs
+    ) -> Optional["models.LongRunningOperationResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.LongRunningOperationResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -70,11 +70,13 @@ class DatasetOperations:
         query_parameters['conversionId'] = self._serialize.query("conversion_id", conversion_id, 'str')
         if dataset_id is not None:
             query_parameters['datasetId'] = self._serialize.query("dataset_id", dataset_id, 'str')
-        if description_dataset is not None:
-            query_parameters['description'] = self._serialize.query("description_dataset", description_dataset, 'str')
+        if description is not None:
+            query_parameters['description'] = self._serialize.query("description", description, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
@@ -83,7 +85,7 @@ class DatasetOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -105,15 +107,14 @@ class DatasetOperations:
         self,
         conversion_id: str,
         dataset_id: Optional[str] = None,
-        description_dataset: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncLROPoller["_models.LongRunningOperationResult"]:
+        description: Optional[str] = None,
+        **kwargs
+    ) -> AsyncLROPoller["models.LongRunningOperationResult"]:
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
          This API allows the caller to create a dataset from data that was uploaded to the Azure Maps
         Data Service and converted using the Azure Maps Conversion Service.
@@ -135,26 +136,27 @@ class DatasetOperations:
         The Create API is a `long-running request <https://aka.ms/am-creator-lrt-v2>`_.
 
         :param conversion_id: The unique ID used to create the dataset. The ``conversionId`` must have
-         been obtained from a successful call to the Conversion Service Convert API and may be provided
+         been obtained from a successful call to the Conversion Service `Convert API
+         <https://docs.microsoft.com/en-us/rest/api/maps/v2/conversion/convert>`_ and may be provided
          with multiple query parameters with same name (if more than one is provided).
         :type conversion_id: str
         :param dataset_id: The ID for the dataset to append with. The dataset must originate from a
          previous dataset creation call that matches the datasetId.
         :type dataset_id: str
-        :param description_dataset: The description to be given to the dataset.
-        :type description_dataset: str
+        :param description: The description to be given to the dataset.
+        :type description: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either LongRunningOperationResult or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.maps.creator.models.LongRunningOperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LongRunningOperationResult"]
+        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.LongRunningOperationResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -164,7 +166,7 @@ class DatasetOperations:
             raw_result = await self._create_initial(
                 conversion_id=conversion_id,
                 dataset_id=dataset_id,
-                description_dataset=description_dataset,
+                description=description,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -202,14 +204,13 @@ class DatasetOperations:
 
     def list(
         self,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.DatasetListResponse"]:
+        **kwargs
+    ) -> AsyncIterable["models.DatasetListResult"]:
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
         This API allows the caller to fetch a list of all previously successfully created datasets.
 
@@ -230,9 +231,8 @@ class DatasetOperations:
            datasetId - The id for the dataset.
            description - The description for the dataset.
            datasetSources - The source data that was used when the create request was issued.
-           ontology - The source `ontology
-        <https://docs.microsoft.com/en-us/azure/azure-maps/creator-facility-ontology>`_ that was used
-        in the conversion service for the input data.:code:`<br/>`
+           ontology - The source `ontology <https://docs.microsoft.com/en-us/azure/azure-maps/creator-
+        facility-ontology>`_ that was used in the conversion service for the input data.:code:`<br/>`
 
 
         The ``datasetSources`` describes the source data that was used when the create request was
@@ -261,7 +261,7 @@ class DatasetOperations:
                    "conversionIds": [
                      "15d21452-c9bb-27b6-5e79-743ca5c3205d"
                    ],      },
-                 "ontology": "facility-2.0",
+                 "": "facility-2.0",
                  "featureCounts": {
                    "directoryInfo": 2,
                    "category": 10,
@@ -301,11 +301,11 @@ class DatasetOperations:
            }.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DatasetListResponse or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.maps.creator.models.DatasetListResponse]
+        :return: An iterator like instance of either DatasetListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.maps.creator.models.DatasetListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatasetListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.DatasetListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -316,6 +316,8 @@ class DatasetOperations:
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
+            if self._config.client_id is not None:
+                header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
             header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
@@ -341,7 +343,7 @@ class DatasetOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('DatasetListResponse', pipeline_response)
+            deserialized = self._deserialize('DatasetListResult', pipeline_response)
             list_of_elem = deserialized.datasets
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -354,7 +356,7 @@ class DatasetOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+                error = self._deserialize(models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -368,14 +370,13 @@ class DatasetOperations:
     async def get(
         self,
         dataset_id: str,
-        **kwargs: Any
-    ) -> "_models.DatasetDetailInfo":
+        **kwargs
+    ) -> "models.Dataset":
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
         This API allows the caller to fetch a previously successfully created dataset.
 
@@ -397,9 +398,8 @@ class DatasetOperations:
            datasetId - The id for the dataset.
            description - The description for the dataset.
            datasetSources - The source data that was used when the create request was issued.
-           ontology - The source `ontology
-        <https://docs.microsoft.com/en-us/azure/azure-maps/creator-facility-ontology>`_ that was used
-        in the conversion service for the input data.:code:`<br/>`
+           ontology - The source `ontology <https://docs.microsoft.com/en-us/azure/azure-maps/creator-
+        facility-ontology>`_ that was used in the conversion service for the input data.:code:`<br/>`
 
 
         The ``datasetSources`` describes the source data that was used when the create request was
@@ -444,11 +444,11 @@ class DatasetOperations:
         :param dataset_id: The identifier for the dataset to query from.
         :type dataset_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DatasetDetailInfo, or the result of cls(response)
-        :rtype: ~azure.maps.creator.models.DatasetDetailInfo
+        :return: Dataset, or the result of cls(response)
+        :rtype: ~azure.maps.creator.models.Dataset
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatasetDetailInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.Dataset"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -470,6 +470,8 @@ class DatasetOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
@@ -478,10 +480,10 @@ class DatasetOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('DatasetDetailInfo', pipeline_response)
+        deserialized = self._deserialize('Dataset', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -492,14 +494,13 @@ class DatasetOperations:
     async def delete(
         self,
         dataset_id: str,
-        **kwargs: Any
+        **kwargs
     ) -> None:
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Creator makes it possible to develop applications based on your private indoor map data using
-        Azure Maps API and SDK. `This
-        <https://docs.microsoft.com/azure/azure-maps/creator-indoor-maps>`_ article introduces concepts
-        and tools that apply to Azure Maps Creator.
+        Azure Maps API and SDK. `This <https://docs.microsoft.com/azure/azure-maps/creator-indoor-
+        maps>`_ article introduces concepts and tools that apply to Azure Maps Creator.
 
         You can also use this API to delete old/unused datasets to create space for new Creator
         content.
@@ -539,6 +540,8 @@ class DatasetOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -547,7 +550,7 @@ class DatasetOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -558,8 +561,8 @@ class DatasetOperations:
     async def get_operation(
         self,
         operation_id: str,
-        **kwargs: Any
-    ) -> "_models.LongRunningOperationResult":
+        **kwargs
+    ) -> "models.LongRunningOperationResult":
         """This API allows the caller to view the current progress of a dataset operation and the path is
         obtained from a call to the Create API.
 
@@ -583,7 +586,7 @@ class DatasetOperations:
         :rtype: ~azure.maps.creator.models.LongRunningOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LongRunningOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.LongRunningOperationResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -605,6 +608,8 @@ class DatasetOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        if self._config.client_id is not None:
+            header_parameters['x-ms-client-id'] = self._serialize.header("self._config.client_id", self._config.client_id, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
@@ -613,7 +618,7 @@ class DatasetOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

@@ -26,19 +26,21 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class DataFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    GEOJSON = "geojson"  #: `GeoJSON <https://tools.ietf.org/html/rfc7946>`_ is a JSON based geospatial data interchange format.
+    ZIP = "zip"  #: Compressed data format.
+    DWG_ZIP_PACKAGE = "dwgzippackage"  #: ZIP package containing DWG file.
+
 class GeofenceMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    #: Publish all the query results to Azure Maps account event subscription.
-    ALL = "All"
-    #: Only publish result when user location is considered as crossing geofencing boarder.
-    ENTER_AND_EXIT = "EnterAndExit"
+    ALL = "All"  #: Publish all the query results to Azure Maps account event subscription.
+    ENTER_AND_EXIT = "EnterAndExit"  #: Only publish result when user location is considered as crossing geofencing boarder.
 
 class GeographicResourceLocation(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    #: Used to access an Azure Maps Creator resource in the United States.
-    US = "us"
-    #: Used to access an Azure Maps Creator resource in Europe.
-    EU = "eu"
+    US = "us"  #: Used to access an Azure Maps Creator resource in the United States.
+    EU = "eu"  #: Used to access an Azure Maps Creator resource in Europe.
 
 class Geography(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """This parameter specifies where the Azure Maps Creator resource is located.  Valid values are us
@@ -52,20 +54,13 @@ class GeoJsonGeometryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """type of geometry returned
     """
 
-    #: ``GeoJSON Point`` geometry.
-    GEO_JSON_POINT = "Point"
-    #: ``GeoJSON MultiPoint`` geometry.
-    GEO_JSON_MULTI_POINT = "MultiPoint"
-    #: ``GeoJSON LineString`` geometry.
-    GEO_JSON_LINE_STRING = "LineString"
-    #: ``GeoJSON MultiLineString`` geometry.
-    GEO_JSON_MULTI_LINE_STRING = "MultiLineString"
-    #: ``GeoJSON Polygon`` geometry.
-    GEO_JSON_POLYGON = "Polygon"
-    #: ``GeoJSON MultiPolygon`` geometry.
-    GEO_JSON_MULTI_POLYGON = "MultiPolygon"
-    #: ``GeoJSON GeometryCollection`` geometry.
-    GEO_JSON_GEOMETRY_COLLECTION = "GeometryCollection"
+    GEO_JSON_POINT = "Point"  #: ``GeoJSON Point`` geometry.
+    GEO_JSON_MULTI_POINT = "MultiPoint"  #: ``GeoJSON MultiPoint`` geometry.
+    GEO_JSON_LINE_STRING = "LineString"  #: ``GeoJSON LineString`` geometry.
+    GEO_JSON_MULTI_LINE_STRING = "MultiLineString"  #: ``GeoJSON MultiLineString`` geometry.
+    GEO_JSON_POLYGON = "Polygon"  #: ``GeoJSON Polygon`` geometry.
+    GEO_JSON_MULTI_POLYGON = "MultiPolygon"  #: ``GeoJSON MultiPolygon`` geometry.
+    GEO_JSON_GEOMETRY_COLLECTION = "GeometryCollection"  #: ``GeoJSON GeometryCollection`` geometry.
 
 class GeoJsonObjectType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types - Point,
@@ -73,61 +68,45 @@ class GeoJsonObjectType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FeatureCollection.
     """
 
-    #: ``GeoJSON Point`` geometry.
-    GEO_JSON_POINT = "Point"
-    #: ``GeoJSON MultiPoint`` geometry.
-    GEO_JSON_MULTI_POINT = "MultiPoint"
-    #: ``GeoJSON LineString`` geometry.
-    GEO_JSON_LINE_STRING = "LineString"
-    #: ``GeoJSON MultiLineString`` geometry.
-    GEO_JSON_MULTI_LINE_STRING = "MultiLineString"
-    #: ``GeoJSON Polygon`` geometry.
-    GEO_JSON_POLYGON = "Polygon"
-    #: ``GeoJSON MultiPolygon`` geometry.
-    GEO_JSON_MULTI_POLYGON = "MultiPolygon"
-    #: ``GeoJSON GeometryCollection`` geometry.
-    GEO_JSON_GEOMETRY_COLLECTION = "GeometryCollection"
-    #: ``GeoJSON Feature`` object.
-    GEO_JSON_FEATURE = "Feature"
-    #: ``GeoJSON FeatureCollection`` object.
-    GEO_JSON_FEATURE_COLLECTION = "FeatureCollection"
+    GEO_JSON_POINT = "Point"  #: ``GeoJSON Point`` geometry.
+    GEO_JSON_MULTI_POINT = "MultiPoint"  #: ``GeoJSON MultiPoint`` geometry.
+    GEO_JSON_LINE_STRING = "LineString"  #: ``GeoJSON LineString`` geometry.
+    GEO_JSON_MULTI_LINE_STRING = "MultiLineString"  #: ``GeoJSON MultiLineString`` geometry.
+    GEO_JSON_POLYGON = "Polygon"  #: ``GeoJSON Polygon`` geometry.
+    GEO_JSON_MULTI_POLYGON = "MultiPolygon"  #: ``GeoJSON MultiPolygon`` geometry.
+    GEO_JSON_GEOMETRY_COLLECTION = "GeometryCollection"  #: ``GeoJSON GeometryCollection`` geometry.
+    GEO_JSON_FEATURE = "Feature"  #: ``GeoJSON Feature`` object.
+    GEO_JSON_FEATURE_COLLECTION = "FeatureCollection"  #: ``GeoJSON FeatureCollection`` object.
+
+class JsonFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    JSON = "json"  #: `The JavaScript Object Notation Data Interchange Format <https://tools.ietf.org/html/rfc8259>`_.
 
 class LroStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The status state of the request.
     """
 
-    #: The request has not started processing yet.
-    NOT_STARTED = "NotStarted"
-    #: The request has started processing.
-    RUNNING = "Running"
-    #: The request has one or more failures.
-    FAILED = "Failed"
-    #: The request has successfully completed.
-    SUCCEEDED = "Succeeded"
+    NOT_STARTED = "NotStarted"  #: The request has not started processing yet.
+    RUNNING = "Running"  #: The request has started processing.
+    FAILED = "Failed"  #: The request has one or more failures.
+    SUCCEEDED = "Succeeded"  #: The request has successfully completed.
 
-class ResponseFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OutputOntology(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    #: `The JavaScript Object Notation Data Interchange Format
-    #: <https://tools.ietf.org/html/rfc8259>`_.
-    JSON = "json"
+    FACILITY2_0 = "facility-2.0"  #: Facility ontology defines how Azure Maps Creator internally stores facility data in a Creator dataset.
 
-class StyleObjectType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StyleRuleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of stateset style.
     """
 
-    #: Boolean type of stateset style.
-    BOOLEAN_TYPE_STYLE_RULE = "boolean"
-    #: Number type of stateset style.
-    NUMBER_TYPE_STYLE_RULE = "number"
-    #: String type of stateset style.
-    STRING_TYPE_STYLE_RULE = "string"
+    BOOLEAN = "boolean"  #: Boolean type of stateset style.
+    NUMBER = "number"  #: Number type of stateset style.
+    STRING = "string"  #: String type of stateset style.
 
-class UploadDataFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class UploadStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The current upload status of the content.
+    """
 
-    #: `GeoJSON <https://tools.ietf.org/html/rfc7946>`_ is a JSON based geospatial data interchange
-    #: format.
-    GEOJSON = "geojson"
-    #: Compressed data format.
-    ZIP = "zip"
-    #: ZIP package containing DWG file.
-    DWGZIPPACKAGE = "dwgzippackage"
+    PENDING = "Pending"  #: Upload is processing.
+    COMPLETED = "Completed"  #: Upload validation and processing completed.
+    FAILED = "Failed"  #: Upload validation and/or processing failure.
