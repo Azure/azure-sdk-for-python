@@ -696,9 +696,9 @@ class CallingServerClient(object):
         start_call_recording_with_calllocator_request = StartCallRecordingWithCallLocatorRequest(
             call_locator=serialize_call_locator(call_locator),
             recording_state_callback_uri=recording_state_callback_uri,
-            recording_content_type=recording_content_type,
-            recording_channel_type=recording_channel_type,
-            recording_format_type=recording_format_type,
+            recording_content_type=kwargs.pop("content_type", None),
+            recording_channel_type=kwargs.pop("channel_type", None),
+            recording_format_type=kwargs.pop("format_type", None),
             **kwargs
         )
 
@@ -712,13 +712,11 @@ class CallingServerClient(object):
         self,
         recording_id,  # type: str
         **kwargs  # type: Any
-    ):  # type: (...) -> HttpResponse
+    ):  # type: (...) -> None
         """Pause recording the call.
 
         :param recording_id: Required. The recording id.
         :type recording_id: str
-        :return: The response of the operation.
-        :rtype: ~azure.core.rest.HttpResponse
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
@@ -732,13 +730,11 @@ class CallingServerClient(object):
         self,
         recording_id,  # type: str
         **kwargs  # type: Any
-    ):  # type: (...) -> HttpResponse
+    ):  # type: (...) -> None
         """Resume recording the call.
 
         :param recording_id: Required. The recording id.
         :type recording_id: str
-        :return: The response of the operation.
-        :rtype: ~azure.core.rest.HttpResponse
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
@@ -752,13 +748,11 @@ class CallingServerClient(object):
         self,
         recording_id,  # type: str
         **kwargs  # type: Any
-    ):  # type: (...) -> HttpResponse
+    ):  # type: (...) -> None
         """Stop recording the call.
 
         :param recording_id: Required. The recording id.
         :type recording_id: str
-        :return: The response of the operation.
-        :rtype: ~azure.core.rest.HttpResponse
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
@@ -768,7 +762,7 @@ class CallingServerClient(object):
         )
 
     @distributed_trace()
-    def get_recording_properities(
+    def get_recording_properties(
         self,
         recording_id,  # type: str
         **kwargs  # type: Any
@@ -819,12 +813,9 @@ class CallingServerClient(object):
             self._callingserver_service_client._config)
 
         return ContentStreamDownloader(
+            content_url,
             content_downloader,
             self._callingserver_service_client._config,
-            start_range,
-            end_range,
-            endpoint=content_url,
-            parallel_download_options=parallel_download_options,
             **kwargs
         )
 
@@ -833,14 +824,11 @@ class CallingServerClient(object):
         self,
         content_delete_url, # type: str
         **kwargs # type: Any
-    ): # type: (...) -> HttpResponse
-        """Delete recording.
+    ): # type: (...) -> None
+        """Deletes the recording and all its related content.
 
         :param content_delete_url: Required. The content delete url.
         :type content_delete_url: str
-        :return: The response of the operation.
-        :rtype: ~azure.core.rest.HttpResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
 
         """
         # pylint: disable=protected-access
@@ -868,5 +856,3 @@ class CallingServerClient(object):
             map_error(status_code=response.status_code,
                         response=response, error_map=error_map)
             raise HttpResponseError(response=response)
-
-        return response

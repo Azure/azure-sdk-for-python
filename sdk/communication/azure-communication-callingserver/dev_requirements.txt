@@ -5,6 +5,7 @@
 -e ../../../tools/vcrpy
 ../../nspkg/azure-communication-nspkg
 ../../core/azure-core
+cchardet
 aiohttp>=3.0; python_version >= '3.5'
 parameterized
 validators

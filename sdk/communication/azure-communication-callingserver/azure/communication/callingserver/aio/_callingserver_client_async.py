@@ -674,9 +674,9 @@ class CallingServerClient:
         call_locator: CallLocator,
         recording_state_callback_uri: str,
         *,
-        recording_content_type: Optional[RecordingContentType] = None,
-        recording_channel_type: Optional[RecordingChannelType] = None,
-        recording_format_type: Optional[RecordingFormatType] = None,
+        content_type: Optional[RecordingContentType] = None,
+        channel_type: Optional[RecordingChannelType] = None,
+        format_type: Optional[RecordingFormatType] = None,
         **kwargs: Any
     ) -> StartCallRecordingResult:
         """Start recording the call.
@@ -705,9 +705,9 @@ class CallingServerClient:
         start_call_recording_request = StartCallRecordingWithCallLocatorRequest(
             call_locator=serialize_call_locator(call_locator),
             recording_state_callback_uri=recording_state_callback_uri,
-            recording_content_type=recording_content_type,
-            recording_channel_type=recording_channel_type,
-            recording_format_type=recording_format_type,
+            recording_content_type=content_type,
+            recording_channel_type=channel_type,
+            recording_format_type=format_type,
             **kwargs
         )
 
@@ -721,16 +721,14 @@ class CallingServerClient:
         self,
         recording_id: str,
         **kwargs: Any
-    ) -> HttpResponse:
+    ) -> None:
         """Pause recording the call.
 
         :param recording_id: Required. The recording id.
         :type recording_id: str
-        :return: The response of the operation.
-        :rtype: ~azure.core.rest.HttpResponse
         :raises: ~azure.core.exceptions.HttpResponseError
-
         """
+        
         return await self._server_call_client.pause_recording(
             recording_id=recording_id,
             **kwargs
@@ -741,13 +739,11 @@ class CallingServerClient:
         self,
         recording_id: str,
         **kwargs: Any
-    ) -> HttpResponse:
+    ) -> None:
         """Resume recording the call.
 
         :param recording_id: Required. The recording id.
         :type recording_id: str
-        :return: The response of the operation.
-        :rtype: ~azure.core.rest.HttpResponse
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
@@ -761,13 +757,11 @@ class CallingServerClient:
         self,
         recording_id: str,
         **kwargs: Any
-    ) -> HttpResponse:
+    ) -> None:
         """Stop recording the call.
 
         :param recording_id: Required. The recording id.
         :type recording_id: str
-        :return: The response of the operation.
-        :rtype: ~azure.core.rest.HttpResponse
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
@@ -777,7 +771,7 @@ class CallingServerClient:
         )
 
     @distributed_trace_async()
-    async def get_recording_properities(
+    async def get_recording_properties(
         self,
         recording_id: str,
         **kwargs: Any
@@ -800,9 +794,11 @@ class CallingServerClient:
     async def download(
             self,
             content_url: str,
-            start_range: int = None,
-            end_range: int = None,
-            parallel_download_options: ParallelDownloadOptions = None,
+            *,
+            start_range: Optional[int] = None,
+            end_range: Optional[int] = None,
+            max_concurrency: Optional[int] = 1,
+            block_size: Optional[int] = 4*1024*1024,
             **kwargs: Any
         ) -> ContentStreamDownloader:
         """Download using content url.
@@ -828,12 +824,13 @@ class CallingServerClient:
             self._callingserver_service_client._deserialize
         )
         stream_downloader = ContentStreamDownloader(
+            content_url,
             content_downloader,
             self._callingserver_service_client._config,
-            start_range,
-            end_range,
-            endpoint=content_url,
-            parallel_download_options=parallel_download_options,
+            start_range=start_range,
+            end_range=end_range,
+            max_concurrency=max_concurrency,
+            block_size=block_size,
             **kwargs
         )
         await stream_downloader._setup()
@@ -845,7 +842,7 @@ class CallingServerClient:
         content_delete_url: str,
         **kwargs: Any
 
-    ): # type: (...) -> HttpResponse
+    ) -> None:
         """Delete recording.
 
         :param content_delete_url: Required. The content delete url.
@@ -861,9 +858,9 @@ class CallingServerClient:
 
         uri_to_sign_with = CallingServerUtils.get_url_to_sign_request_with(self._endpoint, content_delete_url)
 
-        query_parameters = {} # type: Dict[str, Any]
+        query_parameters = {}
         # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters = {}
         header_parameters['UriToSignWith'] = self._callingserver_service_client._serialize.header(
             name="uri_to_sign_with",
             data=uri_to_sign_with,
@@ -880,8 +877,6 @@ class CallingServerClient:
             map_error(status_code=response.status_code,
                         response=response, error_map=error_map)
             raise HttpResponseError(response=response)
-
-        return response
 
     async def close(self) -> None:
         """Close the :class:
