@@ -17,7 +17,7 @@ root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "
 def stage_apistubs(targeted_packages, dest_directory):
     # run the apistubgen for each package
     for package_root in targeted_packages:
-        path_to_search = os.path.join(package_root, ".tox", "dist", "*python.json")
+        path_to_search = os.path.join(package_root, ".tox", "dist", "apiview", "*python.json")
         globs = glob.glob(path_to_search)
         if globs:
             json_file_path = globs[0]
