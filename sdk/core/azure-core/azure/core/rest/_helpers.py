@@ -82,13 +82,13 @@ ContentTypeBase = Union[str, bytes, Iterable[bytes]]
 ########################### HELPER SECTION #################################
 
 def _verify_data_object(name, value):
-    if not isinstance(name, str):
+    if not isinstance(name, six.string_types):
         raise TypeError(
             "Invalid type for data name. Expected str, got {}: {}".format(
                 type(name), name
             )
         )
-    if value is not None and not isinstance(value, (str, bytes, int, float)):
+    if value is not None and not isinstance(value, (six.string_types, bytes, int, float)):
         raise TypeError(
             "Invalid type for data value. Expected primitive type, got {}: {}".format(
                 type(name), name
@@ -134,7 +134,7 @@ def _shared_set_content_body(content):
     if isinstance(content, ET.Element):
         # XML body
         return set_xml_body(content)
-    if isinstance(content, (str, bytes)):
+    if isinstance(content, (six.string_types, bytes)):
         headers = {}
         body = content
         if isinstance(content, six.string_types):
@@ -157,11 +157,14 @@ def set_content_body(content):
 
 def set_json_body(json):
     # type: (Any) -> Tuple[Dict[str, str], Any]
-    body = dumps(json, cls=AzureJSONEncoder)
-    return {
-        "Content-Type": "application/json",
-        "Content-Length": str(len(body))
-    }, body
+    headers = {"Content-Type": "application/json"}
+    if hasattr(json, "read"):
+        content_headers, body = set_content_body(json)
+        headers.update(content_headers)
+    else:
+        body = dumps(json, cls=AzureJSONEncoder)
+        headers.update({"Content-Length": str(len(body))})
+    return headers, body
 
 def lookup_encoding(encoding):
     # type: (str) -> bool

@@ -27,7 +27,7 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
 
 
 class Unit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """the unit of the metric.
+    """The unit of the metric.
     """
 
     COUNT = "Count"
@@ -37,3 +37,9 @@ class Unit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     BYTES_PER_SECOND = "BytesPerSecond"
     PERCENT = "Percent"
     MILLI_SECONDS = "MilliSeconds"
+    BYTE_SECONDS = "ByteSeconds"
+    UNSPECIFIED = "Unspecified"
+    CORES = "Cores"
+    MILLI_CORES = "MilliCores"
+    NANO_CORES = "NanoCores"
+    BITS_PER_SECOND = "BitsPerSecond"

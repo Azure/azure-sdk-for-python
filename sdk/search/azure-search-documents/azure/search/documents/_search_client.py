@@ -226,6 +226,18 @@ class SearchClient(HeadersMixin):
          $skip to implement client-side paging of search results. If results are truncated due to
          server-side paging, the response will include a continuation token that can be used to issue
          another Search request for the next page of results.
+        :keyword scoring_statistics: A value that specifies whether we want to calculate scoring
+         statistics (such as document frequency) globally for more consistent scoring, or locally, for
+         lower latency. The default is 'local'. Use 'global' to aggregate scoring statistics globally
+         before scoring. Using global scoring statistics can increase latency of search queries.
+         Possible values include: "local", "global".
+        :paramtype scoring_statistics: str or ~azure.search.documents.models.ScoringStatistics
+        :keyword str session_id: A value to be used to create a sticky session, which can help getting more
+         consistent results. As long as the same sessionId is used, a best-effort attempt will be made
+         to target the same replica set. Be wary that reusing the same sessionID values repeatedly can
+         interfere with the load balancing of the requests across replicas and adversely affect the
+         performance of the search service. The value used as sessionId cannot start with a '_'
+         character.
         :rtype:  SearchItemPaged[dict]
 
         .. admonition:: Example:
@@ -274,6 +286,8 @@ class SearchClient(HeadersMixin):
         select = kwargs.pop("select", None)
         skip = kwargs.pop("skip", None)
         top = kwargs.pop("top", None)
+        session_id = kwargs.pop("session_id", None)
+        scoring_statistics = kwargs.pop("scoring_statistics", None)
 
         query_answer = kwargs.pop("query_answer", None)
         query_answer_count = kwargs.pop("query_answer_count", None)
@@ -312,6 +326,8 @@ class SearchClient(HeadersMixin):
             select=select if isinstance(select, six.string_types) else None,
             skip=skip,
             top=top,
+            session_id=session_id,
+            scoring_statistics=scoring_statistics
         )
         if isinstance(select, list):
             query.select(select)

@@ -15,28 +15,41 @@ import sys
 import time
 import zlib
 
+from devtools_testutils import AzureTestCase
+
 from .processors import XMSRequestIDBody
 from . import ApiVersionAssertPolicy, service_version_map
-from .. import AzureMgmtTestCase, FakeTokenCredential
+from .. import FakeTokenCredential
 
-from azure.storage.blob import generate_account_sas, AccountSasPermissions, ResourceTypes
+try:
+    from cStringIO import StringIO      # Python 2
+except ImportError:
+    from io import StringIO
+
+try:
+    from azure.storage.blob import generate_account_sas, AccountSasPermissions, ResourceTypes
+except:
+    try:
+        from azure.storage.queue import generate_account_sas, AccountSasPermissions, ResourceTypes
+    except:
+        from azure.storage.fileshare import generate_account_sas, AccountSasPermissions, ResourceTypes
 
 LOGGING_FORMAT = "%(asctime)s %(name)-20s %(levelname)-5s %(message)s"
 
 ENABLE_LOGGING = True
 
 
-class StorageTestCase(AzureMgmtTestCase):
+class StorageTestCase(AzureTestCase):
     def __init__(self, *args, **kwargs):
         super(StorageTestCase, self).__init__(*args, **kwargs)
         self.replay_processors.append(XMSRequestIDBody())
         self.logger = logging.getLogger("azure.storage")
         self.configure_logging()
 
-    def connection_string(self, account, key):
+    def connection_string(self, account_name, key):
         return (
             "DefaultEndpointsProtocol=https;AcCounTName="
-            + account.name
+            + account_name
             + ";AccOuntKey="
             + str(key)
             + ";EndpoIntSuffix=core.windows.net"
@@ -48,17 +61,8 @@ class StorageTestCase(AzureMgmtTestCase):
         :param str storage_account: Storage account name
         :param str storage_type: The Storage type part of the URL. Should be "blob", or "queue", etc.
         """
-        try:
-            if storage_type == "blob":
-                return storage_account.primary_endpoints.blob.rstrip("/")
-            if storage_type == "queue":
-                return storage_account.primary_endpoints.queue.rstrip("/")
-            if storage_type == "file":
-                return storage_account.primary_endpoints.file.rstrip("/")
-            else:
-                raise ValueError("Unknown storage type {}".format(storage_type))
-        except AttributeError:  # Didn't find "primary_endpoints"
-            return "https://{}.{}.core.windows.net".format(storage_account, storage_type)
+        return "{}://{}.{}.{}".format(os.environ.get("PROTOCOL", "https"), storage_account, storage_type,
+                                      os.environ.get("ACCOUNT_URL_SUFFIX", "core.windows.net"))
 
     def configure_logging(self):
         enable_logging = ENABLE_LOGGING
@@ -203,3 +207,37 @@ class StorageTestCase(AzureMgmtTestCase):
         kwargs["api_version"] = self._get_service_version(**kwargs)
         kwargs["_additional_pipeline_policies"] = [ApiVersionAssertPolicy(kwargs["api_version"])]
         return client.from_connection_string(*args, **kwargs)
+
+
+class LogCaptured(object):
+    def __init__(self, test_case=None):
+        # accept the test case so that we may reset logging after capturing logs
+        self.test_case = test_case
+
+    def __enter__(self):
+        # enable logging
+        # it is possible that the global logging flag is turned off
+        self.test_case.enable_logging()
+
+        # create a string stream to send the logs to
+        self.log_stream = StringIO()
+
+        # the handler needs to be stored so that we can remove it later
+        self.handler = logging.StreamHandler(self.log_stream)
+        self.handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
+
+        # get and enable the logger to send the outputs to the string stream
+        self.logger = logging.getLogger('azure.storage')
+        self.logger.level = logging.DEBUG
+        self.logger.addHandler(self.handler)
+
+        # the stream is returned to the user so that the capture logs can be retrieved
+        return self.log_stream
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        # stop the handler, and close the stream to exit
+        self.logger.removeHandler(self.handler)
+        self.log_stream.close()
+
+        # reset logging since we messed with the setting
+        self.test_case.configure_logging()

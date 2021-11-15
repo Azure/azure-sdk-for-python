@@ -38,6 +38,7 @@ async def analyze_receipts_async():
             "./sample_forms/receipt/contoso-allinone.jpg",
         )
     )
+
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 

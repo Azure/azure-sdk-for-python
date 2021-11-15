@@ -1,5 +1,48 @@
 # Release History
 
+## 19.3.0 (2021-11-05)
+
+**Features**
+
+  - Model LoadBalancerBackendAddress has a new parameter inbound_nat_rules_port_mapping
+  - Model VpnNatRuleMapping has a new parameter port_range
+  - Model OwaspCrsExclusionEntry has a new parameter exclusion_managed_rule_sets
+  - Model VirtualNetworkPeering has a new parameter remote_virtual_network_encryption
+  - Model NetworkInterface has a new parameter vnet_encryption_supported
+  - Model VirtualNetworkGateway has a new parameter disable_ip_sec_replay_protection
+  - Model VirtualNetwork has a new parameter encryption
+  - Model BackendAddressPool has a new parameter inbound_nat_rules
+  - Added operation LoadBalancersOperations.begin_list_inbound_nat_rule_port_mappings
+  - Added operation group FirewallPolicyIdpsSignaturesOverridesOperations
+  - Added operation group RoutingIntentOperations
+  - Added operation group FirewallPolicyIdpsSignaturesOperations
+  - Added operation group FirewallPolicyIdpsSignaturesFilterValuesOperations
+
+## 19.2.0 (2021-10-21)
+
+**Features**
+
+  - Added operation group AdminRuleCollectionsOperations
+  - Added operation group SecurityUserConfigurationsOperations
+  - Added operation group ConnectivityConfigurationsOperations
+  - Added operation group ActiveSecurityUserRulesOperations
+  - Added operation group NetworkManagerCommitsOperations
+  - Added operation group NetworkManagersOperations
+  - Added operation group NetworkManagerDeploymentStatusOperations
+  - Added operation group ActiveConnectivityConfigurationsOperations
+  - Added operation group NetworkManagerEffectiveSecurityAdminRulesOperations
+  - Added operation group UserRuleCollectionsOperations
+  - Added operation group ActiveSecurityAdminRulesOperations
+  - Added operation group UserRulesOperations
+  - Added operation group NetworkGroupsOperations
+  - Added operation group EffectiveVirtualNetworksOperations
+  - Added operation group NetworkSecurityPerimetersOperations
+  - Added operation group PerimeterAssociableResourceTypesOperations
+  - Added operation group AdminRulesOperations
+  - Added operation group SecurityAdminConfigurationsOperations
+  - Added operation group EffectiveConnectivityConfigurationsOperations
+  - Removed old api-version `2017-08-01`
+
 ## 19.1.0 (2021-10-09)
 
 **Features**

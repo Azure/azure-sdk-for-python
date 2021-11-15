@@ -380,6 +380,93 @@ class Capability(msrest.serialization.Model):
         self.name = kwargs.get('name', None)
 
 
+class Capacity(msrest.serialization.Model):
+    """The object that represents all properties related to capacity enforcement on an account.
+
+    :param total_throughput_limit: The total throughput limit imposed on the account. A
+     totalThroughputLimit of 2000 imposes a strict limit of max throughput that can be provisioned
+     on that account to be 2000. A totalThroughputLimit of -1 indicates no limits on provisioning of
+     throughput.
+    :type total_throughput_limit: int
+    """
+
+    _validation = {
+        'total_throughput_limit': {'minimum': -1},
+    }
+
+    _attribute_map = {
+        'total_throughput_limit': {'key': 'totalThroughputLimit', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Capacity, self).__init__(**kwargs)
+        self.total_throughput_limit = kwargs.get('total_throughput_limit', None)
+
+
+class CassandraClusterPublicStatus(msrest.serialization.Model):
+    """Properties of a managed Cassandra cluster public status.
+
+    :param e_tag:
+    :type e_tag: str
+    :param reaper_status:
+    :type reaper_status: ~azure.mgmt.cosmosdb.models.ManagedCassandraReaperStatus
+    :param connection_errors: List relevant information about any connection errors to the
+     Datacenters.
+    :type connection_errors: list[~azure.mgmt.cosmosdb.models.ConnectionError]
+    :param data_centers: List of the status of each datacenter in this cluster.
+    :type data_centers:
+     list[~azure.mgmt.cosmosdb.models.CassandraClusterPublicStatusDataCentersItem]
+    """
+
+    _attribute_map = {
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'reaper_status': {'key': 'reaperStatus', 'type': 'ManagedCassandraReaperStatus'},
+        'connection_errors': {'key': 'connectionErrors', 'type': '[ConnectionError]'},
+        'data_centers': {'key': 'dataCenters', 'type': '[CassandraClusterPublicStatusDataCentersItem]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CassandraClusterPublicStatus, self).__init__(**kwargs)
+        self.e_tag = kwargs.get('e_tag', None)
+        self.reaper_status = kwargs.get('reaper_status', None)
+        self.connection_errors = kwargs.get('connection_errors', None)
+        self.data_centers = kwargs.get('data_centers', None)
+
+
+class CassandraClusterPublicStatusDataCentersItem(msrest.serialization.Model):
+    """CassandraClusterPublicStatusDataCentersItem.
+
+    :param name: The name of this Datacenter.
+    :type name: str
+    :param seed_nodes: A list of all seed nodes in the cluster, managed and unmanaged.
+    :type seed_nodes: list[str]
+    :param nodes:
+    :type nodes:
+     list[~azure.mgmt.cosmosdb.models.ComponentsM9L909SchemasCassandraclusterpublicstatusPropertiesDatacentersItemsPropertiesNodesItems]
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'seed_nodes': {'key': 'seedNodes', 'type': '[str]'},
+        'nodes': {'key': 'nodes', 'type': '[ComponentsM9L909SchemasCassandraclusterpublicstatusPropertiesDatacentersItemsPropertiesNodesItems]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CassandraClusterPublicStatusDataCentersItem, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.seed_nodes = kwargs.get('seed_nodes', None)
+        self.nodes = kwargs.get('nodes', None)
+
+
 class CassandraKeyspaceCreateUpdateParameters(ARMResourceProperties):
     """Parameters to create and update Cosmos DB Cassandra keyspace.
 
@@ -964,8 +1051,27 @@ class CassandraTableListResult(msrest.serialization.Model):
         self.value = None
 
 
-class CassandraViewCreateUpdateParameters(ARMResourceProperties):
-    """Parameters to create and update Cosmos DB Cassandra view.
+class Certificate(msrest.serialization.Model):
+    """Certificate.
+
+    :param pem: PEM formatted public key.
+    :type pem: str
+    """
+
+    _attribute_map = {
+        'pem': {'key': 'pem', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Certificate, self).__init__(**kwargs)
+        self.pem = kwargs.get('pem', None)
+
+
+class ClusterKey(msrest.serialization.Model):
+    """Cosmos DB Cassandra table cluster key.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1022,8 +1128,228 @@ class CassandraViewCreateUpdateParameters(ARMResourceProperties):
         self.options = kwargs.get('options', None)
 
 
-class CassandraViewGetPropertiesOptions(OptionsResource):
-    """CassandraViewGetPropertiesOptions.
+class ManagedCassandraARMResourceProperties(msrest.serialization.Model):
+    """The core properties of ARM resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource belongs.
+    :type location: str
+    :param tags: A set of tags. Tags are a list of key-value pairs that describe the resource.
+     These tags can be used in viewing and grouping this resource (across resource groups). A
+     maximum of 15 tags can be provided for a resource. Each tag must have a key no greater than 128
+     characters and value no greater than 256 characters. For example, the default experience for a
+     template type is set with "defaultExperience": "Cassandra". Current "defaultExperience" values
+     also include "Table", "Graph", "DocumentDB", and "MongoDB".
+    :type tags: dict[str, str]
+    :param identity: Identity for the resource.
+    :type identity: ~azure.mgmt.cosmosdb.models.ManagedCassandraManagedServiceIdentity
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ManagedCassandraManagedServiceIdentity'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ManagedCassandraARMResourceProperties, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+        self.identity = kwargs.get('identity', None)
+
+
+class ClusterResource(ManagedCassandraARMResourceProperties):
+    """Representation of a managed Cassandra cluster.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource belongs.
+    :type location: str
+    :param tags: A set of tags. Tags are a list of key-value pairs that describe the resource.
+     These tags can be used in viewing and grouping this resource (across resource groups). A
+     maximum of 15 tags can be provided for a resource. Each tag must have a key no greater than 128
+     characters and value no greater than 256 characters. For example, the default experience for a
+     template type is set with "defaultExperience": "Cassandra". Current "defaultExperience" values
+     also include "Table", "Graph", "DocumentDB", and "MongoDB".
+    :type tags: dict[str, str]
+    :param identity: Identity for the resource.
+    :type identity: ~azure.mgmt.cosmosdb.models.ManagedCassandraManagedServiceIdentity
+    :param properties: Properties of a managed Cassandra cluster.
+    :type properties: ~azure.mgmt.cosmosdb.models.ClusterResourceProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ManagedCassandraManagedServiceIdentity'},
+        'properties': {'key': 'properties', 'type': 'ClusterResourceProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ClusterResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
+class ClusterResourceProperties(msrest.serialization.Model):
+    """Properties of a managed Cassandra cluster.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param provisioning_state: The status of the resource at the time the operation was called.
+     Possible values include: "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+    :type provisioning_state: str or ~azure.mgmt.cosmosdb.models.ManagedCassandraProvisioningState
+    :param restore_from_backup_id: To create an empty cluster, omit this field or set it to null.
+     To restore a backup into a new cluster, set this field to the resource id of the backup.
+    :type restore_from_backup_id: str
+    :param delegated_management_subnet_id: Resource id of a subnet that this cluster's management
+     service should have its network interface attached to. The subnet must be routable to all
+     subnets that will be delegated to data centers. The resource id must be of the form
+     '/subscriptions/:code:`<subscription id>`/resourceGroups/:code:`<resource
+     group>`/providers/Microsoft.Network/virtualNetworks/:code:`<virtual
+     network>`/subnets/:code:`<subnet>`'.
+    :type delegated_management_subnet_id: str
+    :param cassandra_version: Which version of Cassandra should this cluster converge to running
+     (e.g., 3.11). When updated, the cluster may take some time to migrate to the new version.
+    :type cassandra_version: str
+    :param cluster_name_override: If you need to set the clusterName property in cassandra.yaml to
+     something besides the resource name of the cluster, set the value to use on this property.
+    :type cluster_name_override: str
+    :param authentication_method: Which authentication method Cassandra should use to authenticate
+     clients. 'None' turns off authentication, so should not be used except in emergencies.
+     'Cassandra' is the default password based authentication. The default is 'Cassandra'. Possible
+     values include: "None", "Cassandra".
+    :type authentication_method: str or ~azure.mgmt.cosmosdb.models.AuthenticationMethod
+    :param initial_cassandra_admin_password: Initial password for clients connecting as admin to
+     the cluster. Should be changed after cluster creation. Returns null on GET. This field only
+     applies when the authenticationMethod field is 'Cassandra'.
+    :type initial_cassandra_admin_password: str
+    :param prometheus_endpoint: Hostname or IP address where the Prometheus endpoint containing
+     data about the managed Cassandra nodes can be reached.
+    :type prometheus_endpoint: ~azure.mgmt.cosmosdb.models.SeedNode
+    :param repair_enabled: Should automatic repairs run on this cluster? If omitted, this is true,
+     and should stay true unless you are running a hybrid cluster where you are already doing your
+     own repairs.
+    :type repair_enabled: bool
+    :param client_certificates: List of TLS certificates used to authorize clients connecting to
+     the cluster. All connections are TLS encrypted whether clientCertificates is set or not, but if
+     clientCertificates is set, the managed Cassandra cluster will reject all connections not
+     bearing a TLS client certificate that can be validated from one or more of the public
+     certificates in this property.
+    :type client_certificates: list[~azure.mgmt.cosmosdb.models.Certificate]
+    :param external_gossip_certificates: List of TLS certificates used to authorize gossip from
+     unmanaged data centers. The TLS certificates of all nodes in unmanaged data centers must be
+     verifiable using one of the certificates provided in this property.
+    :type external_gossip_certificates: list[~azure.mgmt.cosmosdb.models.Certificate]
+    :ivar gossip_certificates: List of TLS certificates that unmanaged nodes must trust for gossip
+     with managed nodes. All managed nodes will present TLS client certificates that are verifiable
+     using one of the certificates provided in this property.
+    :vartype gossip_certificates: list[~azure.mgmt.cosmosdb.models.Certificate]
+    :param external_seed_nodes: List of IP addresses of seed nodes in unmanaged data centers. These
+     will be added to the seed node lists of all managed nodes.
+    :type external_seed_nodes: list[~azure.mgmt.cosmosdb.models.SeedNode]
+    :ivar seed_nodes: List of IP addresses of seed nodes in the managed data centers. These should
+     be added to the seed node lists of all unmanaged nodes.
+    :vartype seed_nodes: list[~azure.mgmt.cosmosdb.models.SeedNode]
+    :param hours_between_backups: Number of hours to wait between taking a backup of the cluster.
+     To disable backups, set this property to 0.
+    :type hours_between_backups: int
+    :param deallocated: Whether the cluster and associated data centers has been deallocated.
+    :type deallocated: bool
+    :param cassandra_audit_logging_enabled: Whether Cassandra audit logging is enabled.
+    :type cassandra_audit_logging_enabled: bool
+    """
+
+    _validation = {
+        'gossip_certificates': {'readonly': True},
+        'seed_nodes': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'restore_from_backup_id': {'key': 'restoreFromBackupId', 'type': 'str'},
+        'delegated_management_subnet_id': {'key': 'delegatedManagementSubnetId', 'type': 'str'},
+        'cassandra_version': {'key': 'cassandraVersion', 'type': 'str'},
+        'cluster_name_override': {'key': 'clusterNameOverride', 'type': 'str'},
+        'authentication_method': {'key': 'authenticationMethod', 'type': 'str'},
+        'initial_cassandra_admin_password': {'key': 'initialCassandraAdminPassword', 'type': 'str'},
+        'prometheus_endpoint': {'key': 'prometheusEndpoint', 'type': 'SeedNode'},
+        'repair_enabled': {'key': 'repairEnabled', 'type': 'bool'},
+        'client_certificates': {'key': 'clientCertificates', 'type': '[Certificate]'},
+        'external_gossip_certificates': {'key': 'externalGossipCertificates', 'type': '[Certificate]'},
+        'gossip_certificates': {'key': 'gossipCertificates', 'type': '[Certificate]'},
+        'external_seed_nodes': {'key': 'externalSeedNodes', 'type': '[SeedNode]'},
+        'seed_nodes': {'key': 'seedNodes', 'type': '[SeedNode]'},
+        'hours_between_backups': {'key': 'hoursBetweenBackups', 'type': 'int'},
+        'deallocated': {'key': 'deallocated', 'type': 'bool'},
+        'cassandra_audit_logging_enabled': {'key': 'cassandraAuditLoggingEnabled', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ClusterResourceProperties, self).__init__(**kwargs)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.restore_from_backup_id = kwargs.get('restore_from_backup_id', None)
+        self.delegated_management_subnet_id = kwargs.get('delegated_management_subnet_id', None)
+        self.cassandra_version = kwargs.get('cassandra_version', None)
+        self.cluster_name_override = kwargs.get('cluster_name_override', None)
+        self.authentication_method = kwargs.get('authentication_method', None)
+        self.initial_cassandra_admin_password = kwargs.get('initial_cassandra_admin_password', None)
+        self.prometheus_endpoint = kwargs.get('prometheus_endpoint', None)
+        self.repair_enabled = kwargs.get('repair_enabled', None)
+        self.client_certificates = kwargs.get('client_certificates', None)
+        self.external_gossip_certificates = kwargs.get('external_gossip_certificates', None)
+        self.gossip_certificates = None
+        self.external_seed_nodes = kwargs.get('external_seed_nodes', None)
+        self.seed_nodes = None
+        self.hours_between_backups = kwargs.get('hours_between_backups', None)
+        self.deallocated = kwargs.get('deallocated', None)
+        self.cassandra_audit_logging_enabled = kwargs.get('cassandra_audit_logging_enabled', None)
+
+
+class Column(msrest.serialization.Model):
+    """Cosmos DB Cassandra table column.
 
     :param throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
      ThroughputSetting resource when retrieving offer details.
@@ -1044,8 +1370,71 @@ class CassandraViewGetPropertiesOptions(OptionsResource):
         super(CassandraViewGetPropertiesOptions, self).__init__(**kwargs)
 
 
-class CassandraViewResource(msrest.serialization.Model):
-    """Cosmos DB Cassandra view resource object.
+class CommandOutput(msrest.serialization.Model):
+    """Response of /command api.
+
+    :param command_output: Output of the command.
+    :type command_output: str
+    """
+
+    _attribute_map = {
+        'command_output': {'key': 'commandOutput', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CommandOutput, self).__init__(**kwargs)
+        self.command_output = kwargs.get('command_output', None)
+
+
+class CommandPostBody(msrest.serialization.Model):
+    """Specification of which command to run where.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param command: Required. The command which should be run.
+    :type command: str
+    :param arguments: The arguments for the command to be run.
+    :type arguments: dict[str, str]
+    :param host: Required. IP address of the cassandra host to run the command on.
+    :type host: str
+    :param cassandra_stop_start: If true, stops cassandra before executing the command and then
+     start it again.
+    :type cassandra_stop_start: bool
+    :param readwrite: If true, allows the command to *write* to the cassandra directory, otherwise
+     read-only.
+    :type readwrite: bool
+    """
+
+    _validation = {
+        'command': {'required': True},
+        'host': {'required': True},
+    }
+
+    _attribute_map = {
+        'command': {'key': 'command', 'type': 'str'},
+        'arguments': {'key': 'arguments', 'type': '{str}'},
+        'host': {'key': 'host', 'type': 'str'},
+        'cassandra_stop_start': {'key': 'cassandra-stop-start', 'type': 'bool'},
+        'readwrite': {'key': 'readwrite', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CommandPostBody, self).__init__(**kwargs)
+        self.command = kwargs['command']
+        self.arguments = kwargs.get('arguments', None)
+        self.host = kwargs['host']
+        self.cassandra_stop_start = kwargs.get('cassandra_stop_start', None)
+        self.readwrite = kwargs.get('readwrite', None)
+
+
+class Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties(msrest.serialization.Model):
+    """Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1074,8 +1463,92 @@ class CassandraViewResource(msrest.serialization.Model):
         self.view_definition = kwargs['view_definition']
 
 
-class CassandraViewGetPropertiesResource(ExtendedResourceProperties, CassandraViewResource):
-    """CassandraViewGetPropertiesResource.
+class ComponentsM9L909SchemasCassandraclusterpublicstatusPropertiesDatacentersItemsPropertiesNodesItems(msrest.serialization.Model):
+    """ComponentsM9L909SchemasCassandraclusterpublicstatusPropertiesDatacentersItemsPropertiesNodesItems.
+
+    :param address: The node's IP address.
+    :type address: str
+    :param state: The state of the node in Cassandra ring. Possible values include: "Normal",
+     "Leaving", "Joining", "Moving", "Stopped".
+    :type state: str or ~azure.mgmt.cosmosdb.models.NodeState
+    :param status:
+    :type status: str
+    :param load: The amount of file system data in the data directory (e.g., 47.66 kB), excluding
+     all content in the snapshots subdirectories. Because all SSTable data files are included, any
+     data that is not cleaned up (such as TTL-expired cells or tombstones) is counted.
+    :type load: str
+    :param tokens: List of tokens this node covers.
+    :type tokens: list[str]
+    :param size:
+    :type size: int
+    :param host_id: The network ID of the node.
+    :type host_id: str
+    :param rack: The rack this node is part of.
+    :type rack: str
+    :param timestamp: The timestamp when these statistics were captured.
+    :type timestamp: str
+    :param disk_used_kb: The amount of disk used, in kB, of the directory /var/lib/cassandra.
+    :type disk_used_kb: long
+    :param disk_free_kb: The amount of disk free, in kB, of the directory /var/lib/cassandra.
+    :type disk_free_kb: long
+    :param memory_used_kb: Used memory (calculated as total - free - buffers - cache), in kB.
+    :type memory_used_kb: long
+    :param memory_buffers_and_cached_kb: Memory used by kernel buffers (Buffers in /proc/meminfo)
+     and page cache and slabs (Cached and SReclaimable in /proc/meminfo), in kB.
+    :type memory_buffers_and_cached_kb: long
+    :param memory_free_kb: Unused memory (MemFree and SwapFree in /proc/meminfo), in kB.
+    :type memory_free_kb: long
+    :param memory_total_kb: Total installed memory (MemTotal and SwapTotal in /proc/meminfo), in
+     kB.
+    :type memory_total_kb: long
+    :param cpu_usage: A float representing the current system-wide CPU utilization as a percentage.
+    :type cpu_usage: float
+    """
+
+    _attribute_map = {
+        'address': {'key': 'address', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'load': {'key': 'load', 'type': 'str'},
+        'tokens': {'key': 'tokens', 'type': '[str]'},
+        'size': {'key': 'size', 'type': 'int'},
+        'host_id': {'key': 'hostID', 'type': 'str'},
+        'rack': {'key': 'rack', 'type': 'str'},
+        'timestamp': {'key': 'timestamp', 'type': 'str'},
+        'disk_used_kb': {'key': 'diskUsedKB', 'type': 'long'},
+        'disk_free_kb': {'key': 'diskFreeKB', 'type': 'long'},
+        'memory_used_kb': {'key': 'memoryUsedKB', 'type': 'long'},
+        'memory_buffers_and_cached_kb': {'key': 'memoryBuffersAndCachedKB', 'type': 'long'},
+        'memory_free_kb': {'key': 'memoryFreeKB', 'type': 'long'},
+        'memory_total_kb': {'key': 'memoryTotalKB', 'type': 'long'},
+        'cpu_usage': {'key': 'cpuUsage', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ComponentsM9L909SchemasCassandraclusterpublicstatusPropertiesDatacentersItemsPropertiesNodesItems, self).__init__(**kwargs)
+        self.address = kwargs.get('address', None)
+        self.state = kwargs.get('state', None)
+        self.status = kwargs.get('status', None)
+        self.load = kwargs.get('load', None)
+        self.tokens = kwargs.get('tokens', None)
+        self.size = kwargs.get('size', None)
+        self.host_id = kwargs.get('host_id', None)
+        self.rack = kwargs.get('rack', None)
+        self.timestamp = kwargs.get('timestamp', None)
+        self.disk_used_kb = kwargs.get('disk_used_kb', None)
+        self.disk_free_kb = kwargs.get('disk_free_kb', None)
+        self.memory_used_kb = kwargs.get('memory_used_kb', None)
+        self.memory_buffers_and_cached_kb = kwargs.get('memory_buffers_and_cached_kb', None)
+        self.memory_free_kb = kwargs.get('memory_free_kb', None)
+        self.memory_total_kb = kwargs.get('memory_total_kb', None)
+        self.cpu_usage = kwargs.get('cpu_usage', None)
+
+
+class CompositePath(msrest.serialization.Model):
+    """CompositePath.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1176,8 +1649,45 @@ class CassandraViewGetResults(ARMResourceProperties):
         self.options = kwargs.get('options', None)
 
 
-class CassandraViewListResult(msrest.serialization.Model):
-    """The List operation response, that contains the Cassandra views and their properties.
+class ConnectionError(msrest.serialization.Model):
+    """ConnectionError.
+
+    :param connection_state: The kind of connection error that occurred. Possible values include:
+     "Unknown", "OK", "OperatorToDataCenterNetworkError", "DatacenterToDatacenterNetworkError",
+     "InternalOperatorToDataCenterCertificateError", "InternalError".
+    :type connection_state: str or ~azure.mgmt.cosmosdb.models.ConnectionState
+    :param i_p_from: The IP of host that originated the failed connection.
+    :type i_p_from: str
+    :param i_p_to: The IP that the connection attempted to reach.
+    :type i_p_to: str
+    :param port: The TCP port the connection was attempted on.
+    :type port: int
+    :param exception: Detailed error message about the failed connection.
+    :type exception: str
+    """
+
+    _attribute_map = {
+        'connection_state': {'key': 'connectionState', 'type': 'str'},
+        'i_p_from': {'key': 'iPFrom', 'type': 'str'},
+        'i_p_to': {'key': 'iPTo', 'type': 'str'},
+        'port': {'key': 'port', 'type': 'int'},
+        'exception': {'key': 'exception', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ConnectionError, self).__init__(**kwargs)
+        self.connection_state = kwargs.get('connection_state', None)
+        self.i_p_from = kwargs.get('i_p_from', None)
+        self.i_p_to = kwargs.get('i_p_to', None)
+        self.port = kwargs.get('port', None)
+        self.exception = kwargs.get('exception', None)
+
+
+class ConsistencyPolicy(msrest.serialization.Model):
+    """The consistency policy for the Cosmos DB database account.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1551,301 +2061,6 @@ class CompositePath(msrest.serialization.Model):
         'order': {'key': 'order', 'type': 'str'},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CompositePath, self).__init__(**kwargs)
-        self.path = kwargs.get('path', None)
-        self.order = kwargs.get('order', None)
-
-
-class ConflictResolutionPolicy(msrest.serialization.Model):
-    """The conflict resolution policy for the container.
-
-    :param mode: Indicates the conflict resolution mode. Possible values include: "LastWriterWins",
-     "Custom". Default value: "LastWriterWins".
-    :type mode: str or ~azure.mgmt.cosmosdb.models.ConflictResolutionMode
-    :param conflict_resolution_path: The conflict resolution path in the case of LastWriterWins
-     mode.
-    :type conflict_resolution_path: str
-    :param conflict_resolution_procedure: The procedure to resolve conflicts in the case of custom
-     mode.
-    :type conflict_resolution_procedure: str
-    """
-
-    _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'conflict_resolution_path': {'key': 'conflictResolutionPath', 'type': 'str'},
-        'conflict_resolution_procedure': {'key': 'conflictResolutionProcedure', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ConflictResolutionPolicy, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', "LastWriterWins")
-        self.conflict_resolution_path = kwargs.get('conflict_resolution_path', None)
-        self.conflict_resolution_procedure = kwargs.get('conflict_resolution_procedure', None)
-
-
-class ConsistencyPolicy(msrest.serialization.Model):
-    """The consistency policy for the Cosmos DB database account.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param default_consistency_level: Required. The default consistency level and configuration
-     settings of the Cosmos DB account. Possible values include: "Eventual", "Session",
-     "BoundedStaleness", "Strong", "ConsistentPrefix".
-    :type default_consistency_level: str or ~azure.mgmt.cosmosdb.models.DefaultConsistencyLevel
-    :param max_staleness_prefix: When used with the Bounded Staleness consistency level, this value
-     represents the number of stale requests tolerated. Accepted range for this value is 1 –
-     2,147,483,647. Required when defaultConsistencyPolicy is set to 'BoundedStaleness'.
-    :type max_staleness_prefix: long
-    :param max_interval_in_seconds: When used with the Bounded Staleness consistency level, this
-     value represents the time amount of staleness (in seconds) tolerated. Accepted range for this
-     value is 5 - 86400. Required when defaultConsistencyPolicy is set to 'BoundedStaleness'.
-    :type max_interval_in_seconds: int
-    """
-
-    _validation = {
-        'default_consistency_level': {'required': True},
-        'max_staleness_prefix': {'maximum': 2147483647, 'minimum': 1},
-        'max_interval_in_seconds': {'maximum': 86400, 'minimum': 5},
-    }
-
-    _attribute_map = {
-        'default_consistency_level': {'key': 'defaultConsistencyLevel', 'type': 'str'},
-        'max_staleness_prefix': {'key': 'maxStalenessPrefix', 'type': 'long'},
-        'max_interval_in_seconds': {'key': 'maxIntervalInSeconds', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ConsistencyPolicy, self).__init__(**kwargs)
-        self.default_consistency_level = kwargs['default_consistency_level']
-        self.max_staleness_prefix = kwargs.get('max_staleness_prefix', None)
-        self.max_interval_in_seconds = kwargs.get('max_interval_in_seconds', None)
-
-
-class ContainerPartitionKey(msrest.serialization.Model):
-    """The configuration of the partition key to be used for partitioning data into multiple partitions.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param paths: List of paths using which data within the container can be partitioned.
-    :type paths: list[str]
-    :param kind: Indicates the kind of algorithm used for partitioning. For MultiHash, multiple
-     partition keys (upto three maximum) are supported for container create. Possible values
-     include: "Hash", "Range", "MultiHash". Default value: "Hash".
-    :type kind: str or ~azure.mgmt.cosmosdb.models.PartitionKind
-    :param version: Indicates the version of the partition key definition.
-    :type version: int
-    :ivar system_key: Indicates if the container is using a system generated partition key.
-    :vartype system_key: bool
-    """
-
-    _validation = {
-        'version': {'maximum': 2, 'minimum': 1},
-        'system_key': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'paths': {'key': 'paths', 'type': '[str]'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'int'},
-        'system_key': {'key': 'systemKey', 'type': 'bool'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ContainerPartitionKey, self).__init__(**kwargs)
-        self.paths = kwargs.get('paths', None)
-        self.kind = kwargs.get('kind', "Hash")
-        self.version = kwargs.get('version', None)
-        self.system_key = None
-
-
-class ContinuousBackupInformation(msrest.serialization.Model):
-    """Information about the status of continuous backups.
-
-    :param latest_restorable_timestamp: The latest restorable timestamp for a resource.
-    :type latest_restorable_timestamp: str
-    """
-
-    _attribute_map = {
-        'latest_restorable_timestamp': {'key': 'latestRestorableTimestamp', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ContinuousBackupInformation, self).__init__(**kwargs)
-        self.latest_restorable_timestamp = kwargs.get('latest_restorable_timestamp', None)
-
-
-class ContinuousBackupRestoreLocation(msrest.serialization.Model):
-    """Properties of the regional restorable account.
-
-    :param location: The name of the continuous backup restore location.
-    :type location: str
-    """
-
-    _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ContinuousBackupRestoreLocation, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-
-
-class ContinuousModeBackupPolicy(BackupPolicy):
-    """The object representing continuous mode backup policy.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param type: Required. Describes the mode of backups.Constant filled by server.  Possible
-     values include: "Periodic", "Continuous".
-    :type type: str or ~azure.mgmt.cosmosdb.models.BackupPolicyType
-    :param migration_state: The object representing the state of the migration between the backup
-     policies.
-    :type migration_state: ~azure.mgmt.cosmosdb.models.BackupPolicyMigrationState
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'migration_state': {'key': 'migrationState', 'type': 'BackupPolicyMigrationState'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ContinuousModeBackupPolicy, self).__init__(**kwargs)
-        self.type = 'Continuous'  # type: str
-
-
-class CorsPolicy(msrest.serialization.Model):
-    """The CORS policy for the Cosmos DB database account.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param allowed_origins: Required. The origin domains that are permitted to make a request
-     against the service via CORS.
-    :type allowed_origins: str
-    :param allowed_methods: The methods (HTTP request verbs) that the origin domain may use for a
-     CORS request.
-    :type allowed_methods: str
-    :param allowed_headers: The request headers that the origin domain may specify on the CORS
-     request.
-    :type allowed_headers: str
-    :param exposed_headers: The response headers that may be sent in the response to the CORS
-     request and exposed by the browser to the request issuer.
-    :type exposed_headers: str
-    :param max_age_in_seconds: The maximum amount time that a browser should cache the preflight
-     OPTIONS request.
-    :type max_age_in_seconds: long
-    """
-
-    _validation = {
-        'allowed_origins': {'required': True},
-        'max_age_in_seconds': {'maximum': 2147483647, 'minimum': 1},
-    }
-
-    _attribute_map = {
-        'allowed_origins': {'key': 'allowedOrigins', 'type': 'str'},
-        'allowed_methods': {'key': 'allowedMethods', 'type': 'str'},
-        'allowed_headers': {'key': 'allowedHeaders', 'type': 'str'},
-        'exposed_headers': {'key': 'exposedHeaders', 'type': 'str'},
-        'max_age_in_seconds': {'key': 'maxAgeInSeconds', 'type': 'long'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CorsPolicy, self).__init__(**kwargs)
-        self.allowed_origins = kwargs['allowed_origins']
-        self.allowed_methods = kwargs.get('allowed_methods', None)
-        self.allowed_headers = kwargs.get('allowed_headers', None)
-        self.exposed_headers = kwargs.get('exposed_headers', None)
-        self.max_age_in_seconds = kwargs.get('max_age_in_seconds', None)
-
-
-class CreateUpdateOptions(msrest.serialization.Model):
-    """CreateUpdateOptions are a list of key-value pairs that describe the resource. Supported keys are "If-Match", "If-None-Match", "Session-Token" and "Throughput".
-
-    :param throughput: Request Units per second. For example, "throughput": 10000.
-    :type throughput: int
-    :param autoscale_settings: Specifies the Autoscale settings.
-    :type autoscale_settings: ~azure.mgmt.cosmosdb.models.AutoscaleSettings
-    """
-
-    _attribute_map = {
-        'throughput': {'key': 'throughput', 'type': 'int'},
-        'autoscale_settings': {'key': 'autoscaleSettings', 'type': 'AutoscaleSettings'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CreateUpdateOptions, self).__init__(**kwargs)
-        self.throughput = kwargs.get('throughput', None)
-        self.autoscale_settings = kwargs.get('autoscale_settings', None)
-
-
-class DatabaseAccountConnectionString(msrest.serialization.Model):
-    """Connection string for the Cosmos DB account.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar connection_string: Value of the connection string.
-    :vartype connection_string: str
-    :ivar description: Description of the connection string.
-    :vartype description: str
-    """
-
-    _validation = {
-        'connection_string': {'readonly': True},
-        'description': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DatabaseAccountConnectionString, self).__init__(**kwargs)
-        self.connection_string = None
-        self.description = None
-
-
-class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
-    """Parameters to create and update Cosmos DB database accounts.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: The unique resource identifier of the ARM resource.
     :vartype id: str
     :ivar name: The name of the ARM resource.
@@ -1861,11 +2076,11 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
      template type is set with "defaultExperience": "Cassandra". Current "defaultExperience" values
      also include "Table", "Graph", "DocumentDB", and "MongoDB".
     :type tags: dict[str, str]
-    :param identity: Identity for the resource.
-    :type identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     :param kind: Indicates the type of database account. This can only be set at database account
      creation. Possible values include: "GlobalDocumentDB", "MongoDB", "Parse".
     :type kind: str or ~azure.mgmt.cosmosdb.models.DatabaseAccountKind
+    :param identity: Identity for the resource.
+    :type identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     :param consistency_policy: The consistency policy for the Cosmos DB account.
     :type consistency_policy: ~azure.mgmt.cosmosdb.models.ConsistencyPolicy
     :param locations: Required. An array that contains the georeplication locations enabled for the
@@ -1917,9 +2132,6 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
     :param analytical_storage_configuration: Analytical storage specific properties.
     :type analytical_storage_configuration:
      ~azure.mgmt.cosmosdb.models.AnalyticalStorageConfiguration
-    :param create_mode: Required. Enum to indicate the mode of account creation.Constant filled by
-     server.  Possible values include: "Default", "Restore". Default value: "Default".
-    :type create_mode: str or ~azure.mgmt.cosmosdb.models.CreateMode
     :param backup_policy: The object representing the policy for taking backups on an account.
     :type backup_policy: ~azure.mgmt.cosmosdb.models.BackupPolicy
     :param cors: The CORS policy for the Cosmos DB database account.
@@ -1938,28 +2150,17 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
     :type disable_local_auth: bool
     :param restore_parameters: Parameters to indicate the information about the restore.
     :type restore_parameters: ~azure.mgmt.cosmosdb.models.RestoreParameters
+    :param capacity: The object that represents all properties related to capacity enforcement on
+     an account.
+    :type capacity: ~azure.mgmt.cosmosdb.models.Capacity
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'locations': {'required': True},
-        'database_account_offer_type': {'required': True, 'constant': True},
-        'create_mode': {'required': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'kind': {'key': 'kind', 'type': 'str'},
         'consistency_policy': {'key': 'properties.consistencyPolicy', 'type': 'ConsistencyPolicy'},
         'locations': {'key': 'properties.locations', 'type': '[Location]'},
-        'database_account_offer_type': {'key': 'properties.databaseAccountOfferType', 'type': 'str'},
         'ip_rules': {'key': 'properties.ipRules', 'type': '[IpAddressOrRange]'},
         'is_virtual_network_filter_enabled': {'key': 'properties.isVirtualNetworkFilterEnabled', 'type': 'bool'},
         'enable_automatic_failover': {'key': 'properties.enableAutomaticFailover', 'type': 'bool'},
@@ -1976,7 +2177,6 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
         'enable_analytical_storage': {'key': 'properties.enableAnalyticalStorage', 'type': 'bool'},
         'analytical_storage_configuration': {'key': 'properties.analyticalStorageConfiguration', 'type': 'AnalyticalStorageConfiguration'},
-        'create_mode': {'key': 'properties.createMode', 'type': 'str'},
         'backup_policy': {'key': 'properties.backupPolicy', 'type': 'BackupPolicy'},
         'cors': {'key': 'properties.cors', 'type': '[CorsPolicy]'},
         'network_acl_bypass': {'key': 'properties.networkAclBypass', 'type': 'str'},
@@ -1984,679 +2184,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         'diagnostic_log_settings': {'key': 'properties.diagnosticLogSettings', 'type': 'DiagnosticLogSettings'},
         'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
         'restore_parameters': {'key': 'properties.restoreParameters', 'type': 'RestoreParameters'},
-    }
-
-    database_account_offer_type = "Standard"
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DatabaseAccountCreateUpdateParameters, self).__init__(**kwargs)
-        self.kind = kwargs.get('kind', None)
-        self.consistency_policy = kwargs.get('consistency_policy', None)
-        self.locations = kwargs['locations']
-        self.ip_rules = kwargs.get('ip_rules', None)
-        self.is_virtual_network_filter_enabled = kwargs.get('is_virtual_network_filter_enabled', None)
-        self.enable_automatic_failover = kwargs.get('enable_automatic_failover', None)
-        self.capabilities = kwargs.get('capabilities', None)
-        self.virtual_network_rules = kwargs.get('virtual_network_rules', None)
-        self.enable_multiple_write_locations = kwargs.get('enable_multiple_write_locations', None)
-        self.enable_cassandra_connector = kwargs.get('enable_cassandra_connector', None)
-        self.connector_offer = kwargs.get('connector_offer', None)
-        self.disable_key_based_metadata_write_access = kwargs.get('disable_key_based_metadata_write_access', None)
-        self.key_vault_key_uri = kwargs.get('key_vault_key_uri', None)
-        self.default_identity = kwargs.get('default_identity', None)
-        self.public_network_access = kwargs.get('public_network_access', None)
-        self.enable_free_tier = kwargs.get('enable_free_tier', None)
-        self.api_properties = kwargs.get('api_properties', None)
-        self.enable_analytical_storage = kwargs.get('enable_analytical_storage', None)
-        self.analytical_storage_configuration = kwargs.get('analytical_storage_configuration', None)
-        self.create_mode = None  # type: Optional[str]
-        self.backup_policy = kwargs.get('backup_policy', None)
-        self.cors = kwargs.get('cors', None)
-        self.network_acl_bypass = kwargs.get('network_acl_bypass', None)
-        self.network_acl_bypass_resource_ids = kwargs.get('network_acl_bypass_resource_ids', None)
-        self.diagnostic_log_settings = kwargs.get('diagnostic_log_settings', None)
-        self.disable_local_auth = kwargs.get('disable_local_auth', None)
-        self.restore_parameters = kwargs.get('restore_parameters', None)
-
-
-class DatabaseAccountCreateUpdateProperties(msrest.serialization.Model):
-    """Properties to create and update Azure Cosmos DB database accounts.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DefaultRequestDatabaseAccountCreateUpdateProperties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param consistency_policy: The consistency policy for the Cosmos DB account.
-    :type consistency_policy: ~azure.mgmt.cosmosdb.models.ConsistencyPolicy
-    :param locations: Required. An array that contains the georeplication locations enabled for the
-     Cosmos DB account.
-    :type locations: list[~azure.mgmt.cosmosdb.models.Location]
-    :ivar database_account_offer_type: The offer type for the database. Has constant value:
-     "Standard".
-    :vartype database_account_offer_type: str
-    :param ip_rules: List of IpRules.
-    :type ip_rules: list[~azure.mgmt.cosmosdb.models.IpAddressOrRange]
-    :param is_virtual_network_filter_enabled: Flag to indicate whether to enable/disable Virtual
-     Network ACL rules.
-    :type is_virtual_network_filter_enabled: bool
-    :param enable_automatic_failover: Enables automatic failover of the write region in the rare
-     event that the region is unavailable due to an outage. Automatic failover will result in a new
-     write region for the account and is chosen based on the failover priorities configured for the
-     account.
-    :type enable_automatic_failover: bool
-    :param capabilities: List of Cosmos DB capabilities for the account.
-    :type capabilities: list[~azure.mgmt.cosmosdb.models.Capability]
-    :param virtual_network_rules: List of Virtual Network ACL rules configured for the Cosmos DB
-     account.
-    :type virtual_network_rules: list[~azure.mgmt.cosmosdb.models.VirtualNetworkRule]
-    :param enable_multiple_write_locations: Enables the account to write in multiple locations.
-    :type enable_multiple_write_locations: bool
-    :param enable_cassandra_connector: Enables the cassandra connector on the Cosmos DB C* account.
-    :type enable_cassandra_connector: bool
-    :param connector_offer: The cassandra connector offer type for the Cosmos DB database C*
-     account. Possible values include: "Small".
-    :type connector_offer: str or ~azure.mgmt.cosmosdb.models.ConnectorOffer
-    :param disable_key_based_metadata_write_access: Disable write operations on metadata resources
-     (databases, containers, throughput) via account keys.
-    :type disable_key_based_metadata_write_access: bool
-    :param key_vault_key_uri: The URI of the key vault.
-    :type key_vault_key_uri: str
-    :param default_identity: The default identity for accessing key vault used in features like
-     customer managed keys. The default identity needs to be explicitly set by the users. It can be
-     "FirstPartyIdentity", "SystemAssignedIdentity" and more.
-    :type default_identity: str
-    :param public_network_access: Whether requests from Public Network are allowed. Possible values
-     include: "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
-    :param enable_free_tier: Flag to indicate whether Free Tier is enabled.
-    :type enable_free_tier: bool
-    :param api_properties: API specific properties. Currently, supported only for MongoDB API.
-    :type api_properties: ~azure.mgmt.cosmosdb.models.ApiProperties
-    :param enable_analytical_storage: Flag to indicate whether to enable storage analytics.
-    :type enable_analytical_storage: bool
-    :param analytical_storage_configuration: Analytical storage specific properties.
-    :type analytical_storage_configuration:
-     ~azure.mgmt.cosmosdb.models.AnalyticalStorageConfiguration
-    :param create_mode: Required. Enum to indicate the mode of account creation.Constant filled by
-     server.  Possible values include: "Default", "Restore". Default value: "Default".
-    :type create_mode: str or ~azure.mgmt.cosmosdb.models.CreateMode
-    :param backup_policy: The object representing the policy for taking backups on an account.
-    :type backup_policy: ~azure.mgmt.cosmosdb.models.BackupPolicy
-    :param cors: The CORS policy for the Cosmos DB database account.
-    :type cors: list[~azure.mgmt.cosmosdb.models.CorsPolicy]
-    :param network_acl_bypass: Indicates what services are allowed to bypass firewall checks.
-     Possible values include: "None", "AzureServices".
-    :type network_acl_bypass: str or ~azure.mgmt.cosmosdb.models.NetworkAclBypass
-    :param network_acl_bypass_resource_ids: An array that contains the Resource Ids for Network Acl
-     Bypass for the Cosmos DB account.
-    :type network_acl_bypass_resource_ids: list[str]
-    :param diagnostic_log_settings: The Object representing the different Diagnostic log settings
-     for the Cosmos DB Account.
-    :type diagnostic_log_settings: ~azure.mgmt.cosmosdb.models.DiagnosticLogSettings
-    :param disable_local_auth: Opt-out of local authentication and ensure only MSI and AAD can be
-     used exclusively for authentication.
-    :type disable_local_auth: bool
-    :param restore_parameters: Parameters to indicate the information about the restore.
-    :type restore_parameters: ~azure.mgmt.cosmosdb.models.RestoreParameters
-    """
-
-    _validation = {
-        'locations': {'required': True},
-        'database_account_offer_type': {'required': True, 'constant': True},
-        'create_mode': {'required': True},
-    }
-
-    _attribute_map = {
-        'consistency_policy': {'key': 'consistencyPolicy', 'type': 'ConsistencyPolicy'},
-        'locations': {'key': 'locations', 'type': '[Location]'},
-        'database_account_offer_type': {'key': 'databaseAccountOfferType', 'type': 'str'},
-        'ip_rules': {'key': 'ipRules', 'type': '[IpAddressOrRange]'},
-        'is_virtual_network_filter_enabled': {'key': 'isVirtualNetworkFilterEnabled', 'type': 'bool'},
-        'enable_automatic_failover': {'key': 'enableAutomaticFailover', 'type': 'bool'},
-        'capabilities': {'key': 'capabilities', 'type': '[Capability]'},
-        'virtual_network_rules': {'key': 'virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
-        'enable_multiple_write_locations': {'key': 'enableMultipleWriteLocations', 'type': 'bool'},
-        'enable_cassandra_connector': {'key': 'enableCassandraConnector', 'type': 'bool'},
-        'connector_offer': {'key': 'connectorOffer', 'type': 'str'},
-        'disable_key_based_metadata_write_access': {'key': 'disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
-        'key_vault_key_uri': {'key': 'keyVaultKeyUri', 'type': 'str'},
-        'default_identity': {'key': 'defaultIdentity', 'type': 'str'},
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
-        'enable_free_tier': {'key': 'enableFreeTier', 'type': 'bool'},
-        'api_properties': {'key': 'apiProperties', 'type': 'ApiProperties'},
-        'enable_analytical_storage': {'key': 'enableAnalyticalStorage', 'type': 'bool'},
-        'analytical_storage_configuration': {'key': 'analyticalStorageConfiguration', 'type': 'AnalyticalStorageConfiguration'},
-        'create_mode': {'key': 'createMode', 'type': 'str'},
-        'backup_policy': {'key': 'backupPolicy', 'type': 'BackupPolicy'},
-        'cors': {'key': 'cors', 'type': '[CorsPolicy]'},
-        'network_acl_bypass': {'key': 'networkAclBypass', 'type': 'str'},
-        'network_acl_bypass_resource_ids': {'key': 'networkAclBypassResourceIds', 'type': '[str]'},
-        'diagnostic_log_settings': {'key': 'diagnosticLogSettings', 'type': 'DiagnosticLogSettings'},
-        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
-        'restore_parameters': {'key': 'restoreParameters', 'type': 'RestoreParameters'},
-    }
-
-    _subtype_map = {
-        'create_mode': {'Default': 'DefaultRequestDatabaseAccountCreateUpdateProperties'}
-    }
-
-    database_account_offer_type = "Standard"
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DatabaseAccountCreateUpdateProperties, self).__init__(**kwargs)
-        self.consistency_policy = kwargs.get('consistency_policy', None)
-        self.locations = kwargs['locations']
-        self.ip_rules = kwargs.get('ip_rules', None)
-        self.is_virtual_network_filter_enabled = kwargs.get('is_virtual_network_filter_enabled', None)
-        self.enable_automatic_failover = kwargs.get('enable_automatic_failover', None)
-        self.capabilities = kwargs.get('capabilities', None)
-        self.virtual_network_rules = kwargs.get('virtual_network_rules', None)
-        self.enable_multiple_write_locations = kwargs.get('enable_multiple_write_locations', None)
-        self.enable_cassandra_connector = kwargs.get('enable_cassandra_connector', None)
-        self.connector_offer = kwargs.get('connector_offer', None)
-        self.disable_key_based_metadata_write_access = kwargs.get('disable_key_based_metadata_write_access', None)
-        self.key_vault_key_uri = kwargs.get('key_vault_key_uri', None)
-        self.default_identity = kwargs.get('default_identity', None)
-        self.public_network_access = kwargs.get('public_network_access', None)
-        self.enable_free_tier = kwargs.get('enable_free_tier', None)
-        self.api_properties = kwargs.get('api_properties', None)
-        self.enable_analytical_storage = kwargs.get('enable_analytical_storage', None)
-        self.analytical_storage_configuration = kwargs.get('analytical_storage_configuration', None)
-        self.create_mode = None  # type: Optional[str]
-        self.backup_policy = kwargs.get('backup_policy', None)
-        self.cors = kwargs.get('cors', None)
-        self.network_acl_bypass = kwargs.get('network_acl_bypass', None)
-        self.network_acl_bypass_resource_ids = kwargs.get('network_acl_bypass_resource_ids', None)
-        self.diagnostic_log_settings = kwargs.get('diagnostic_log_settings', None)
-        self.disable_local_auth = kwargs.get('disable_local_auth', None)
-        self.restore_parameters = kwargs.get('restore_parameters', None)
-
-
-class DatabaseAccountGetResults(ARMResourceProperties):
-    """An Azure Cosmos DB database account.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The unique resource identifier of the ARM resource.
-    :vartype id: str
-    :ivar name: The name of the ARM resource.
-    :vartype name: str
-    :ivar type: The type of Azure resource.
-    :vartype type: str
-    :param location: The location of the resource group to which the resource belongs.
-    :type location: str
-    :param tags: A set of tags. Tags are a list of key-value pairs that describe the resource.
-     These tags can be used in viewing and grouping this resource (across resource groups). A
-     maximum of 15 tags can be provided for a resource. Each tag must have a key no greater than 128
-     characters and value no greater than 256 characters. For example, the default experience for a
-     template type is set with "defaultExperience": "Cassandra". Current "defaultExperience" values
-     also include "Table", "Graph", "DocumentDB", and "MongoDB".
-    :type tags: dict[str, str]
-    :param identity: Identity for the resource.
-    :type identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
-    :param kind: Indicates the type of database account. This can only be set at database account
-     creation. Possible values include: "GlobalDocumentDB", "MongoDB", "Parse".
-    :type kind: str or ~azure.mgmt.cosmosdb.models.DatabaseAccountKind
-    :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
-    :ivar provisioning_state: The status of the Cosmos DB account at the time the operation was
-     called. The status can be one of following. 'Creating' – the Cosmos DB account is being
-     created. When an account is in Creating state, only properties that are specified as input for
-     the Create Cosmos DB account operation are returned. 'Succeeded' – the Cosmos DB account is
-     active for use. 'Updating' – the Cosmos DB account is being updated. 'Deleting' – the Cosmos DB
-     account is being deleted. 'Failed' – the Cosmos DB account failed creation. 'DeletionFailed' –
-     the Cosmos DB account deletion failed.
-    :vartype provisioning_state: str
-    :ivar document_endpoint: The connection endpoint for the Cosmos DB database account.
-    :vartype document_endpoint: str
-    :ivar database_account_offer_type: The offer type for the Cosmos DB database account. Default
-     value: Standard. The only acceptable values to pass in are None and "Standard". The default
-     value is None.
-    :vartype database_account_offer_type: str
-    :param ip_rules: List of IpRules.
-    :type ip_rules: list[~azure.mgmt.cosmosdb.models.IpAddressOrRange]
-    :param is_virtual_network_filter_enabled: Flag to indicate whether to enable/disable Virtual
-     Network ACL rules.
-    :type is_virtual_network_filter_enabled: bool
-    :param enable_automatic_failover: Enables automatic failover of the write region in the rare
-     event that the region is unavailable due to an outage. Automatic failover will result in a new
-     write region for the account and is chosen based on the failover priorities configured for the
-     account.
-    :type enable_automatic_failover: bool
-    :param consistency_policy: The consistency policy for the Cosmos DB database account.
-    :type consistency_policy: ~azure.mgmt.cosmosdb.models.ConsistencyPolicy
-    :param capabilities: List of Cosmos DB capabilities for the account.
-    :type capabilities: list[~azure.mgmt.cosmosdb.models.Capability]
-    :ivar write_locations: An array that contains the write location for the Cosmos DB account.
-    :vartype write_locations: list[~azure.mgmt.cosmosdb.models.Location]
-    :ivar read_locations: An array that contains of the read locations enabled for the Cosmos DB
-     account.
-    :vartype read_locations: list[~azure.mgmt.cosmosdb.models.Location]
-    :ivar locations: An array that contains all of the locations enabled for the Cosmos DB account.
-    :vartype locations: list[~azure.mgmt.cosmosdb.models.Location]
-    :ivar failover_policies: An array that contains the regions ordered by their failover
-     priorities.
-    :vartype failover_policies: list[~azure.mgmt.cosmosdb.models.FailoverPolicy]
-    :param virtual_network_rules: List of Virtual Network ACL rules configured for the Cosmos DB
-     account.
-    :type virtual_network_rules: list[~azure.mgmt.cosmosdb.models.VirtualNetworkRule]
-    :ivar private_endpoint_connections: List of Private Endpoint Connections configured for the
-     Cosmos DB account.
-    :vartype private_endpoint_connections:
-     list[~azure.mgmt.cosmosdb.models.PrivateEndpointConnection]
-    :param enable_multiple_write_locations: Enables the account to write in multiple locations.
-    :type enable_multiple_write_locations: bool
-    :param enable_cassandra_connector: Enables the cassandra connector on the Cosmos DB C* account.
-    :type enable_cassandra_connector: bool
-    :param connector_offer: The cassandra connector offer type for the Cosmos DB database C*
-     account. Possible values include: "Small".
-    :type connector_offer: str or ~azure.mgmt.cosmosdb.models.ConnectorOffer
-    :param disable_key_based_metadata_write_access: Disable write operations on metadata resources
-     (databases, containers, throughput) via account keys.
-    :type disable_key_based_metadata_write_access: bool
-    :param key_vault_key_uri: The URI of the key vault.
-    :type key_vault_key_uri: str
-    :param default_identity: The default identity for accessing key vault used in features like
-     customer managed keys. The default identity needs to be explicitly set by the users. It can be
-     "FirstPartyIdentity", "SystemAssignedIdentity" and more.
-    :type default_identity: str
-    :param public_network_access: Whether requests from Public Network are allowed. Possible values
-     include: "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
-    :param enable_free_tier: Flag to indicate whether Free Tier is enabled.
-    :type enable_free_tier: bool
-    :param api_properties: API specific properties.
-    :type api_properties: ~azure.mgmt.cosmosdb.models.ApiProperties
-    :param enable_analytical_storage: Flag to indicate whether to enable storage analytics.
-    :type enable_analytical_storage: bool
-    :param analytical_storage_configuration: Analytical storage specific properties.
-    :type analytical_storage_configuration:
-     ~azure.mgmt.cosmosdb.models.AnalyticalStorageConfiguration
-    :ivar instance_id: A unique identifier assigned to the database account.
-    :vartype instance_id: str
-    :param create_mode: Enum to indicate the mode of account creation. Possible values include:
-     "Default", "Restore". Default value: "Default".
-    :type create_mode: str or ~azure.mgmt.cosmosdb.models.CreateMode
-    :param restore_parameters: Parameters to indicate the information about the restore.
-    :type restore_parameters: ~azure.mgmt.cosmosdb.models.RestoreParameters
-    :param backup_policy: The object representing the policy for taking backups on an account.
-    :type backup_policy: ~azure.mgmt.cosmosdb.models.BackupPolicy
-    :param cors: The CORS policy for the Cosmos DB database account.
-    :type cors: list[~azure.mgmt.cosmosdb.models.CorsPolicy]
-    :param network_acl_bypass: Indicates what services are allowed to bypass firewall checks.
-     Possible values include: "None", "AzureServices".
-    :type network_acl_bypass: str or ~azure.mgmt.cosmosdb.models.NetworkAclBypass
-    :param network_acl_bypass_resource_ids: An array that contains the Resource Ids for Network Acl
-     Bypass for the Cosmos DB account.
-    :type network_acl_bypass_resource_ids: list[str]
-    :param diagnostic_log_settings: The Object representing the different Diagnostic log settings
-     for the Cosmos DB Account.
-    :type diagnostic_log_settings: ~azure.mgmt.cosmosdb.models.DiagnosticLogSettings
-    :param disable_local_auth: Opt-out of local authentication and ensure only MSI and AAD can be
-     used exclusively for authentication.
-    :type disable_local_auth: bool
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'document_endpoint': {'readonly': True},
-        'database_account_offer_type': {'readonly': True},
-        'write_locations': {'readonly': True},
-        'read_locations': {'readonly': True},
-        'locations': {'readonly': True},
-        'failover_policies': {'readonly': True},
-        'private_endpoint_connections': {'readonly': True},
-        'instance_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'document_endpoint': {'key': 'properties.documentEndpoint', 'type': 'str'},
-        'database_account_offer_type': {'key': 'properties.databaseAccountOfferType', 'type': 'str'},
-        'ip_rules': {'key': 'properties.ipRules', 'type': '[IpAddressOrRange]'},
-        'is_virtual_network_filter_enabled': {'key': 'properties.isVirtualNetworkFilterEnabled', 'type': 'bool'},
-        'enable_automatic_failover': {'key': 'properties.enableAutomaticFailover', 'type': 'bool'},
-        'consistency_policy': {'key': 'properties.consistencyPolicy', 'type': 'ConsistencyPolicy'},
-        'capabilities': {'key': 'properties.capabilities', 'type': '[Capability]'},
-        'write_locations': {'key': 'properties.writeLocations', 'type': '[Location]'},
-        'read_locations': {'key': 'properties.readLocations', 'type': '[Location]'},
-        'locations': {'key': 'properties.locations', 'type': '[Location]'},
-        'failover_policies': {'key': 'properties.failoverPolicies', 'type': '[FailoverPolicy]'},
-        'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
-        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
-        'enable_multiple_write_locations': {'key': 'properties.enableMultipleWriteLocations', 'type': 'bool'},
-        'enable_cassandra_connector': {'key': 'properties.enableCassandraConnector', 'type': 'bool'},
-        'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
-        'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
-        'key_vault_key_uri': {'key': 'properties.keyVaultKeyUri', 'type': 'str'},
-        'default_identity': {'key': 'properties.defaultIdentity', 'type': 'str'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
-        'enable_free_tier': {'key': 'properties.enableFreeTier', 'type': 'bool'},
-        'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
-        'enable_analytical_storage': {'key': 'properties.enableAnalyticalStorage', 'type': 'bool'},
-        'analytical_storage_configuration': {'key': 'properties.analyticalStorageConfiguration', 'type': 'AnalyticalStorageConfiguration'},
-        'instance_id': {'key': 'properties.instanceId', 'type': 'str'},
-        'create_mode': {'key': 'properties.createMode', 'type': 'str'},
-        'restore_parameters': {'key': 'properties.restoreParameters', 'type': 'RestoreParameters'},
-        'backup_policy': {'key': 'properties.backupPolicy', 'type': 'BackupPolicy'},
-        'cors': {'key': 'properties.cors', 'type': '[CorsPolicy]'},
-        'network_acl_bypass': {'key': 'properties.networkAclBypass', 'type': 'str'},
-        'network_acl_bypass_resource_ids': {'key': 'properties.networkAclBypassResourceIds', 'type': '[str]'},
-        'diagnostic_log_settings': {'key': 'properties.diagnosticLogSettings', 'type': 'DiagnosticLogSettings'},
-        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DatabaseAccountGetResults, self).__init__(**kwargs)
-        self.kind = kwargs.get('kind', None)
-        self.system_data = None
-        self.provisioning_state = None
-        self.document_endpoint = None
-        self.database_account_offer_type = None
-        self.ip_rules = kwargs.get('ip_rules', None)
-        self.is_virtual_network_filter_enabled = kwargs.get('is_virtual_network_filter_enabled', None)
-        self.enable_automatic_failover = kwargs.get('enable_automatic_failover', None)
-        self.consistency_policy = kwargs.get('consistency_policy', None)
-        self.capabilities = kwargs.get('capabilities', None)
-        self.write_locations = None
-        self.read_locations = None
-        self.locations = None
-        self.failover_policies = None
-        self.virtual_network_rules = kwargs.get('virtual_network_rules', None)
-        self.private_endpoint_connections = None
-        self.enable_multiple_write_locations = kwargs.get('enable_multiple_write_locations', None)
-        self.enable_cassandra_connector = kwargs.get('enable_cassandra_connector', None)
-        self.connector_offer = kwargs.get('connector_offer', None)
-        self.disable_key_based_metadata_write_access = kwargs.get('disable_key_based_metadata_write_access', None)
-        self.key_vault_key_uri = kwargs.get('key_vault_key_uri', None)
-        self.default_identity = kwargs.get('default_identity', None)
-        self.public_network_access = kwargs.get('public_network_access', None)
-        self.enable_free_tier = kwargs.get('enable_free_tier', None)
-        self.api_properties = kwargs.get('api_properties', None)
-        self.enable_analytical_storage = kwargs.get('enable_analytical_storage', None)
-        self.analytical_storage_configuration = kwargs.get('analytical_storage_configuration', None)
-        self.instance_id = None
-        self.create_mode = kwargs.get('create_mode', "Default")
-        self.restore_parameters = kwargs.get('restore_parameters', None)
-        self.backup_policy = kwargs.get('backup_policy', None)
-        self.cors = kwargs.get('cors', None)
-        self.network_acl_bypass = kwargs.get('network_acl_bypass', None)
-        self.network_acl_bypass_resource_ids = kwargs.get('network_acl_bypass_resource_ids', None)
-        self.diagnostic_log_settings = kwargs.get('diagnostic_log_settings', None)
-        self.disable_local_auth = kwargs.get('disable_local_auth', None)
-
-
-class DatabaseAccountListConnectionStringsResult(msrest.serialization.Model):
-    """The connection strings for the given database account.
-
-    :param connection_strings: An array that contains the connection strings for the Cosmos DB
-     account.
-    :type connection_strings: list[~azure.mgmt.cosmosdb.models.DatabaseAccountConnectionString]
-    """
-
-    _attribute_map = {
-        'connection_strings': {'key': 'connectionStrings', 'type': '[DatabaseAccountConnectionString]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DatabaseAccountListConnectionStringsResult, self).__init__(**kwargs)
-        self.connection_strings = kwargs.get('connection_strings', None)
-
-
-class DatabaseAccountListReadOnlyKeysResult(msrest.serialization.Model):
-    """The read-only access keys for the given database account.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar primary_readonly_master_key: Base 64 encoded value of the primary read-only key.
-    :vartype primary_readonly_master_key: str
-    :ivar secondary_readonly_master_key: Base 64 encoded value of the secondary read-only key.
-    :vartype secondary_readonly_master_key: str
-    """
-
-    _validation = {
-        'primary_readonly_master_key': {'readonly': True},
-        'secondary_readonly_master_key': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'primary_readonly_master_key': {'key': 'primaryReadonlyMasterKey', 'type': 'str'},
-        'secondary_readonly_master_key': {'key': 'secondaryReadonlyMasterKey', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DatabaseAccountListReadOnlyKeysResult, self).__init__(**kwargs)
-        self.primary_readonly_master_key = None
-        self.secondary_readonly_master_key = None
-
-
-class DatabaseAccountListKeysResult(DatabaseAccountListReadOnlyKeysResult):
-    """The access keys for the given database account.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar primary_readonly_master_key: Base 64 encoded value of the primary read-only key.
-    :vartype primary_readonly_master_key: str
-    :ivar secondary_readonly_master_key: Base 64 encoded value of the secondary read-only key.
-    :vartype secondary_readonly_master_key: str
-    :ivar primary_master_key: Base 64 encoded value of the primary read-write key.
-    :vartype primary_master_key: str
-    :ivar secondary_master_key: Base 64 encoded value of the secondary read-write key.
-    :vartype secondary_master_key: str
-    """
-
-    _validation = {
-        'primary_readonly_master_key': {'readonly': True},
-        'secondary_readonly_master_key': {'readonly': True},
-        'primary_master_key': {'readonly': True},
-        'secondary_master_key': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'primary_readonly_master_key': {'key': 'primaryReadonlyMasterKey', 'type': 'str'},
-        'secondary_readonly_master_key': {'key': 'secondaryReadonlyMasterKey', 'type': 'str'},
-        'primary_master_key': {'key': 'primaryMasterKey', 'type': 'str'},
-        'secondary_master_key': {'key': 'secondaryMasterKey', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DatabaseAccountListKeysResult, self).__init__(**kwargs)
-        self.primary_master_key = None
-        self.secondary_master_key = None
-
-
-class DatabaseAccountRegenerateKeyParameters(msrest.serialization.Model):
-    """Parameters to regenerate the keys within the database account.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param key_kind: Required. The access key to regenerate. Possible values include: "primary",
-     "secondary", "primaryReadonly", "secondaryReadonly".
-    :type key_kind: str or ~azure.mgmt.cosmosdb.models.KeyKind
-    """
-
-    _validation = {
-        'key_kind': {'required': True},
-    }
-
-    _attribute_map = {
-        'key_kind': {'key': 'keyKind', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DatabaseAccountRegenerateKeyParameters, self).__init__(**kwargs)
-        self.key_kind = kwargs['key_kind']
-
-
-class DatabaseAccountsListResult(msrest.serialization.Model):
-    """The List operation response, that contains the database accounts and their properties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: List of database account and their properties.
-    :vartype value: list[~azure.mgmt.cosmosdb.models.DatabaseAccountGetResults]
-    """
-
-    _validation = {
-        'value': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[DatabaseAccountGetResults]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DatabaseAccountsListResult, self).__init__(**kwargs)
-        self.value = None
-
-
-class DatabaseAccountUpdateParameters(msrest.serialization.Model):
-    """Parameters for patching Azure Cosmos DB database account properties.
-
-    :param tags: A set of tags. Tags are a list of key-value pairs that describe the resource.
-     These tags can be used in viewing and grouping this resource (across resource groups). A
-     maximum of 15 tags can be provided for a resource. Each tag must have a key no greater than 128
-     characters and value no greater than 256 characters. For example, the default experience for a
-     template type is set with "defaultExperience": "Cassandra". Current "defaultExperience" values
-     also include "Table", "Graph", "DocumentDB", and "MongoDB".
-    :type tags: dict[str, str]
-    :param location: The location of the resource group to which the resource belongs.
-    :type location: str
-    :param identity: Identity for the resource.
-    :type identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
-    :param consistency_policy: The consistency policy for the Cosmos DB account.
-    :type consistency_policy: ~azure.mgmt.cosmosdb.models.ConsistencyPolicy
-    :param locations: An array that contains the georeplication locations enabled for the Cosmos DB
-     account.
-    :type locations: list[~azure.mgmt.cosmosdb.models.Location]
-    :param ip_rules: List of IpRules.
-    :type ip_rules: list[~azure.mgmt.cosmosdb.models.IpAddressOrRange]
-    :param is_virtual_network_filter_enabled: Flag to indicate whether to enable/disable Virtual
-     Network ACL rules.
-    :type is_virtual_network_filter_enabled: bool
-    :param enable_automatic_failover: Enables automatic failover of the write region in the rare
-     event that the region is unavailable due to an outage. Automatic failover will result in a new
-     write region for the account and is chosen based on the failover priorities configured for the
-     account.
-    :type enable_automatic_failover: bool
-    :param capabilities: List of Cosmos DB capabilities for the account.
-    :type capabilities: list[~azure.mgmt.cosmosdb.models.Capability]
-    :param virtual_network_rules: List of Virtual Network ACL rules configured for the Cosmos DB
-     account.
-    :type virtual_network_rules: list[~azure.mgmt.cosmosdb.models.VirtualNetworkRule]
-    :param enable_multiple_write_locations: Enables the account to write in multiple locations.
-    :type enable_multiple_write_locations: bool
-    :param enable_cassandra_connector: Enables the cassandra connector on the Cosmos DB C* account.
-    :type enable_cassandra_connector: bool
-    :param connector_offer: The cassandra connector offer type for the Cosmos DB database C*
-     account. Possible values include: "Small".
-    :type connector_offer: str or ~azure.mgmt.cosmosdb.models.ConnectorOffer
-    :param disable_key_based_metadata_write_access: Disable write operations on metadata resources
-     (databases, containers, throughput) via account keys.
-    :type disable_key_based_metadata_write_access: bool
-    :param key_vault_key_uri: The URI of the key vault.
-    :type key_vault_key_uri: str
-    :param default_identity: The default identity for accessing key vault used in features like
-     customer managed keys. The default identity needs to be explicitly set by the users. It can be
-     "FirstPartyIdentity", "SystemAssignedIdentity" and more.
-    :type default_identity: str
-    :param public_network_access: Whether requests from Public Network are allowed. Possible values
-     include: "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
-    :param enable_free_tier: Flag to indicate whether Free Tier is enabled.
-    :type enable_free_tier: bool
-    :param api_properties: API specific properties. Currently, supported only for MongoDB API.
-    :type api_properties: ~azure.mgmt.cosmosdb.models.ApiProperties
-    :param enable_analytical_storage: Flag to indicate whether to enable storage analytics.
-    :type enable_analytical_storage: bool
-    :param analytical_storage_configuration: Analytical storage specific properties.
-    :type analytical_storage_configuration:
-     ~azure.mgmt.cosmosdb.models.AnalyticalStorageConfiguration
-    :param backup_policy: The object representing the policy for taking backups on an account.
-    :type backup_policy: ~azure.mgmt.cosmosdb.models.BackupPolicy
-    :param cors: The CORS policy for the Cosmos DB database account.
-    :type cors: list[~azure.mgmt.cosmosdb.models.CorsPolicy]
-    :param network_acl_bypass: Indicates what services are allowed to bypass firewall checks.
-     Possible values include: "None", "AzureServices".
-    :type network_acl_bypass: str or ~azure.mgmt.cosmosdb.models.NetworkAclBypass
-    :param network_acl_bypass_resource_ids: An array that contains the Resource Ids for Network Acl
-     Bypass for the Cosmos DB account.
-    :type network_acl_bypass_resource_ids: list[str]
-    :param diagnostic_log_settings: The Object representing the different Diagnostic log settings
-     for the Cosmos DB Account.
-    :type diagnostic_log_settings: ~azure.mgmt.cosmosdb.models.DiagnosticLogSettings
-    :param disable_local_auth: Opt-out of local authentication and ensure only MSI and AAD can be
-     used exclusively for authentication.
-    :type disable_local_auth: bool
-    """
-
-    _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'consistency_policy': {'key': 'properties.consistencyPolicy', 'type': 'ConsistencyPolicy'},
-        'locations': {'key': 'properties.locations', 'type': '[Location]'},
-        'ip_rules': {'key': 'properties.ipRules', 'type': '[IpAddressOrRange]'},
-        'is_virtual_network_filter_enabled': {'key': 'properties.isVirtualNetworkFilterEnabled', 'type': 'bool'},
-        'enable_automatic_failover': {'key': 'properties.enableAutomaticFailover', 'type': 'bool'},
-        'capabilities': {'key': 'properties.capabilities', 'type': '[Capability]'},
-        'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
-        'enable_multiple_write_locations': {'key': 'properties.enableMultipleWriteLocations', 'type': 'bool'},
-        'enable_cassandra_connector': {'key': 'properties.enableCassandraConnector', 'type': 'bool'},
-        'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
-        'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
-        'key_vault_key_uri': {'key': 'properties.keyVaultKeyUri', 'type': 'str'},
-        'default_identity': {'key': 'properties.defaultIdentity', 'type': 'str'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
-        'enable_free_tier': {'key': 'properties.enableFreeTier', 'type': 'bool'},
-        'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
-        'enable_analytical_storage': {'key': 'properties.enableAnalyticalStorage', 'type': 'bool'},
-        'analytical_storage_configuration': {'key': 'properties.analyticalStorageConfiguration', 'type': 'AnalyticalStorageConfiguration'},
-        'backup_policy': {'key': 'properties.backupPolicy', 'type': 'BackupPolicy'},
-        'cors': {'key': 'properties.cors', 'type': '[CorsPolicy]'},
-        'network_acl_bypass': {'key': 'properties.networkAclBypass', 'type': 'str'},
-        'network_acl_bypass_resource_ids': {'key': 'properties.networkAclBypassResourceIds', 'type': '[str]'},
-        'diagnostic_log_settings': {'key': 'properties.diagnosticLogSettings', 'type': 'DiagnosticLogSettings'},
-        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
+        'capacity': {'key': 'properties.capacity', 'type': 'Capacity'},
     }
 
     def __init__(
@@ -2691,6 +2219,8 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
         self.network_acl_bypass_resource_ids = kwargs.get('network_acl_bypass_resource_ids', None)
         self.diagnostic_log_settings = kwargs.get('diagnostic_log_settings', None)
         self.disable_local_auth = kwargs.get('disable_local_auth', None)
+        self.restore_parameters = kwargs.get('restore_parameters', None)
+        self.capacity = kwargs.get('capacity', None)
 
 
 class DatabaseRestoreResource(msrest.serialization.Model):
@@ -2727,306 +2257,35 @@ class DataCenterResource(ARMProxyResource):
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
-    :param properties: Properties of a managed Cassandra data center.
-    :type properties: ~azure.mgmt.cosmosdb.models.DataCenterResourceProperties
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'DataCenterResourceProperties'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataCenterResource, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
-
-
-class DataCenterResourceProperties(msrest.serialization.Model):
-    """Properties of a managed Cassandra data center.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param provisioning_state: The status of the resource at the time the operation was called.
-     Possible values include: "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
-    :type provisioning_state: str or ~azure.mgmt.cosmosdb.models.ManagedCassandraProvisioningState
-    :param data_center_location: The region this data center should be created in.
-    :type data_center_location: str
-    :param delegated_subnet_id: Resource id of a subnet the nodes in this data center should have
-     their network interfaces connected to. The subnet must be in the same region specified in
-     'dataCenterLocation' and must be able to route to the subnet specified in the cluster's
-     'delegatedManagementSubnetId' property. This resource id will be of the form
-     '/subscriptions/:code:`<subscription id>`/resourceGroups/:code:`<resource
-     group>`/providers/Microsoft.Network/virtualNetworks/:code:`<virtual
-     network>`/subnets/:code:`<subnet>`'.
-    :type delegated_subnet_id: str
-    :param node_count: The number of nodes the data center should have. This is the desired number.
-     After it is set, it may take some time for the data center to be scaled to match. To monitor
-     the number of nodes and their status, use the fetchNodeStatus method on the cluster.
-    :type node_count: int
-    :ivar seed_nodes: IP addresses for seed nodes in this data center. This is for reference.
-     Generally you will want to use the seedNodes property on the cluster, which aggregates the seed
-     nodes from all data centers in the cluster.
-    :vartype seed_nodes: list[~azure.mgmt.cosmosdb.models.SeedNode]
-    :param base64_encoded_cassandra_yaml_fragment: A fragment of a cassandra.yaml configuration
-     file to be included in the cassandra.yaml for all nodes in this data center. The fragment
-     should be Base64 encoded, and only a subset of keys are allowed.
-    :type base64_encoded_cassandra_yaml_fragment: str
-    """
-
-    _validation = {
-        'seed_nodes': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'data_center_location': {'key': 'dataCenterLocation', 'type': 'str'},
-        'delegated_subnet_id': {'key': 'delegatedSubnetId', 'type': 'str'},
-        'node_count': {'key': 'nodeCount', 'type': 'int'},
-        'seed_nodes': {'key': 'seedNodes', 'type': '[SeedNode]'},
-        'base64_encoded_cassandra_yaml_fragment': {'key': 'base64EncodedCassandraYamlFragment', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataCenterResourceProperties, self).__init__(**kwargs)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
-        self.data_center_location = kwargs.get('data_center_location', None)
-        self.delegated_subnet_id = kwargs.get('delegated_subnet_id', None)
-        self.node_count = kwargs.get('node_count', None)
-        self.seed_nodes = None
-        self.base64_encoded_cassandra_yaml_fragment = kwargs.get('base64_encoded_cassandra_yaml_fragment', None)
-
-
-class RegionalServiceResource(msrest.serialization.Model):
-    """Resource for a regional service location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar name: The regional service name.
-    :vartype name: str
-    :ivar location: The location name.
-    :vartype location: str
-    :ivar status: Describes the status of a service. Possible values include: "Creating",
-     "Running", "Updating", "Deleting", "Error", "Stopped".
-    :vartype status: str or ~azure.mgmt.cosmosdb.models.ServiceStatus
-    """
-
-    _validation = {
-        'name': {'readonly': True},
-        'location': {'readonly': True},
-        'status': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RegionalServiceResource, self).__init__(**kwargs)
-        self.name = None
-        self.location = None
-        self.status = None
-
-
-class DataTransferRegionalServiceResource(RegionalServiceResource):
-    """Resource for a regional service location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar name: The regional service name.
-    :vartype name: str
-    :ivar location: The location name.
-    :vartype location: str
-    :ivar status: Describes the status of a service. Possible values include: "Creating",
-     "Running", "Updating", "Deleting", "Error", "Stopped".
-    :vartype status: str or ~azure.mgmt.cosmosdb.models.ServiceStatus
-    """
-
-    _validation = {
-        'name': {'readonly': True},
-        'location': {'readonly': True},
-        'status': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataTransferRegionalServiceResource, self).__init__(**kwargs)
-
-
-class DataTransferServiceResource(msrest.serialization.Model):
-    """Describes the service response property.
-
-    :param properties: Properties for DataTransferServiceResource.
-    :type properties: ~azure.mgmt.cosmosdb.models.DataTransferServiceResourceProperties
-    """
-
-    _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'DataTransferServiceResourceProperties'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataTransferServiceResource, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
-
-
-class ServiceResourceProperties(msrest.serialization.Model):
-    """Services response resource.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DataTransferServiceResourceProperties, GraphAPIComputeServiceResourceProperties, SqlDedicatedGatewayServiceResourceProperties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :type additional_properties: dict[str, any]
-    :ivar creation_time: Time of the last state change (ISO-8601 format).
-    :vartype creation_time: ~datetime.datetime
-    :param instance_size: Instance type for the service. Possible values include: "Cosmos.D4s",
-     "Cosmos.D8s", "Cosmos.D16s".
-    :type instance_size: str or ~azure.mgmt.cosmosdb.models.ServiceSize
-    :param instance_count: Instance count for the service.
-    :type instance_count: int
-    :param service_type: Required. ServiceType for the service.Constant filled by server.  Possible
-     values include: "SqlDedicatedGateway", "DataTransfer", "GraphAPICompute".
-    :type service_type: str or ~azure.mgmt.cosmosdb.models.ServiceType
-    :ivar status: Describes the status of a service. Possible values include: "Creating",
-     "Running", "Updating", "Deleting", "Error", "Stopped".
-    :vartype status: str or ~azure.mgmt.cosmosdb.models.ServiceStatus
-    """
-
-    _validation = {
-        'creation_time': {'readonly': True},
-        'instance_count': {'minimum': 0},
-        'service_type': {'required': True},
-        'status': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
-        'instance_size': {'key': 'instanceSize', 'type': 'str'},
-        'instance_count': {'key': 'instanceCount', 'type': 'int'},
-        'service_type': {'key': 'serviceType', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'service_type': {'DataTransfer': 'DataTransferServiceResourceProperties', 'GraphAPICompute': 'GraphAPIComputeServiceResourceProperties', 'SqlDedicatedGateway': 'SqlDedicatedGatewayServiceResourceProperties'}
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ServiceResourceProperties, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.creation_time = None
-        self.instance_size = kwargs.get('instance_size', None)
-        self.instance_count = kwargs.get('instance_count', None)
-        self.service_type = 'ServiceResourceProperties'  # type: str
-        self.status = None
-
-
-class DataTransferServiceResourceProperties(ServiceResourceProperties):
-    """Properties for DataTransferServiceResource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :type additional_properties: dict[str, any]
-    :ivar creation_time: Time of the last state change (ISO-8601 format).
-    :vartype creation_time: ~datetime.datetime
-    :param instance_size: Instance type for the service. Possible values include: "Cosmos.D4s",
-     "Cosmos.D8s", "Cosmos.D16s".
-    :type instance_size: str or ~azure.mgmt.cosmosdb.models.ServiceSize
-    :param instance_count: Instance count for the service.
-    :type instance_count: int
-    :param service_type: Required. ServiceType for the service.Constant filled by server.  Possible
-     values include: "SqlDedicatedGateway", "DataTransfer", "GraphAPICompute".
-    :type service_type: str or ~azure.mgmt.cosmosdb.models.ServiceType
-    :ivar status: Describes the status of a service. Possible values include: "Creating",
-     "Running", "Updating", "Deleting", "Error", "Stopped".
-    :vartype status: str or ~azure.mgmt.cosmosdb.models.ServiceStatus
-    :ivar locations: An array that contains all of the locations for the service.
-    :vartype locations: list[~azure.mgmt.cosmosdb.models.DataTransferRegionalServiceResource]
-    """
-
-    _validation = {
-        'creation_time': {'readonly': True},
-        'instance_count': {'minimum': 0},
-        'service_type': {'required': True},
-        'status': {'readonly': True},
-        'locations': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
-        'instance_size': {'key': 'instanceSize', 'type': 'str'},
-        'instance_count': {'key': 'instanceCount', 'type': 'int'},
-        'service_type': {'key': 'serviceType', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'locations': {'key': 'locations', 'type': '[DataTransferRegionalServiceResource]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataTransferServiceResourceProperties, self).__init__(**kwargs)
-        self.service_type = 'DataTransfer'  # type: str
-        self.locations = None
-
-
-class DefaultRequestDatabaseAccountCreateUpdateProperties(DatabaseAccountCreateUpdateProperties):
-    """Properties for non-restore Azure Cosmos DB database account requests.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param consistency_policy: The consistency policy for the Cosmos DB account.
-    :type consistency_policy: ~azure.mgmt.cosmosdb.models.ConsistencyPolicy
-    :param locations: Required. An array that contains the georeplication locations enabled for the
-     Cosmos DB account.
-    :type locations: list[~azure.mgmt.cosmosdb.models.Location]
-    :ivar database_account_offer_type: The offer type for the database. Has constant value:
-     "Standard".
+    :param location: The location of the resource group to which the resource belongs.
+    :type location: str
+    :param tags: A set of tags. Tags are a list of key-value pairs that describe the resource.
+     These tags can be used in viewing and grouping this resource (across resource groups). A
+     maximum of 15 tags can be provided for a resource. Each tag must have a key no greater than 128
+     characters and value no greater than 256 characters. For example, the default experience for a
+     template type is set with "defaultExperience": "Cassandra". Current "defaultExperience" values
+     also include "Table", "Graph", "DocumentDB", and "MongoDB".
+    :type tags: dict[str, str]
+    :param kind: Indicates the type of database account. This can only be set at database account
+     creation. Possible values include: "GlobalDocumentDB", "MongoDB", "Parse".
+    :type kind: str or ~azure.mgmt.cosmosdb.models.DatabaseAccountKind
+    :param identity: Identity for the resource.
+    :type identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
+    :ivar provisioning_state: The status of the Cosmos DB account at the time the operation was
+     called. The status can be one of following. 'Creating' – the Cosmos DB account is being
+     created. When an account is in Creating state, only properties that are specified as input for
+     the Create Cosmos DB account operation are returned. 'Succeeded' – the Cosmos DB account is
+     active for use. 'Updating' – the Cosmos DB account is being updated. 'Deleting' – the Cosmos DB
+     account is being deleted. 'Failed' – the Cosmos DB account failed creation. 'DeletionFailed' –
+     the Cosmos DB account deletion failed.
+    :vartype provisioning_state: str
+    :ivar document_endpoint: The connection endpoint for the Cosmos DB database account.
+    :vartype document_endpoint: str
+    :ivar database_account_offer_type: The offer type for the Cosmos DB database account. Default
+     value: Standard. The only acceptable values to pass in are None and "Standard". The default
+     value is None.
     :vartype database_account_offer_type: str
     :param ip_rules: List of IpRules.
     :type ip_rules: list[~azure.mgmt.cosmosdb.models.IpAddressOrRange]
@@ -3090,44 +2349,25 @@ class DefaultRequestDatabaseAccountCreateUpdateProperties(DatabaseAccountCreateU
     :param disable_local_auth: Opt-out of local authentication and ensure only MSI and AAD can be
      used exclusively for authentication.
     :type disable_local_auth: bool
-    :param restore_parameters: Parameters to indicate the information about the restore.
-    :type restore_parameters: ~azure.mgmt.cosmosdb.models.RestoreParameters
+    :param capacity: The object that represents all properties related to capacity enforcement on
+     an account.
+    :type capacity: ~azure.mgmt.cosmosdb.models.Capacity
     """
 
     _validation = {
-        'locations': {'required': True},
-        'database_account_offer_type': {'required': True, 'constant': True},
-        'create_mode': {'required': True},
-    }
-
-    _attribute_map = {
-        'consistency_policy': {'key': 'consistencyPolicy', 'type': 'ConsistencyPolicy'},
-        'locations': {'key': 'locations', 'type': '[Location]'},
-        'database_account_offer_type': {'key': 'databaseAccountOfferType', 'type': 'str'},
-        'ip_rules': {'key': 'ipRules', 'type': '[IpAddressOrRange]'},
-        'is_virtual_network_filter_enabled': {'key': 'isVirtualNetworkFilterEnabled', 'type': 'bool'},
-        'enable_automatic_failover': {'key': 'enableAutomaticFailover', 'type': 'bool'},
-        'capabilities': {'key': 'capabilities', 'type': '[Capability]'},
-        'virtual_network_rules': {'key': 'virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
-        'enable_multiple_write_locations': {'key': 'enableMultipleWriteLocations', 'type': 'bool'},
-        'enable_cassandra_connector': {'key': 'enableCassandraConnector', 'type': 'bool'},
-        'connector_offer': {'key': 'connectorOffer', 'type': 'str'},
-        'disable_key_based_metadata_write_access': {'key': 'disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
-        'key_vault_key_uri': {'key': 'keyVaultKeyUri', 'type': 'str'},
-        'default_identity': {'key': 'defaultIdentity', 'type': 'str'},
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
-        'enable_free_tier': {'key': 'enableFreeTier', 'type': 'bool'},
-        'api_properties': {'key': 'apiProperties', 'type': 'ApiProperties'},
-        'enable_analytical_storage': {'key': 'enableAnalyticalStorage', 'type': 'bool'},
-        'analytical_storage_configuration': {'key': 'analyticalStorageConfiguration', 'type': 'AnalyticalStorageConfiguration'},
-        'create_mode': {'key': 'createMode', 'type': 'str'},
-        'backup_policy': {'key': 'backupPolicy', 'type': 'BackupPolicy'},
-        'cors': {'key': 'cors', 'type': '[CorsPolicy]'},
-        'network_acl_bypass': {'key': 'networkAclBypass', 'type': 'str'},
-        'network_acl_bypass_resource_ids': {'key': 'networkAclBypassResourceIds', 'type': '[str]'},
-        'diagnostic_log_settings': {'key': 'diagnosticLogSettings', 'type': 'DiagnosticLogSettings'},
-        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
-        'restore_parameters': {'key': 'restoreParameters', 'type': 'RestoreParameters'},
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'document_endpoint': {'readonly': True},
+        'database_account_offer_type': {'readonly': True},
+        'write_locations': {'readonly': True},
+        'read_locations': {'readonly': True},
+        'locations': {'readonly': True},
+        'failover_policies': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
+        'instance_id': {'readonly': True},
     }
 
     database_account_offer_type = "Standard"
@@ -3149,38 +2389,92 @@ class DiagnosticLogSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'enable_full_text_query': {'key': 'enableFullTextQuery', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'document_endpoint': {'key': 'properties.documentEndpoint', 'type': 'str'},
+        'database_account_offer_type': {'key': 'properties.databaseAccountOfferType', 'type': 'str'},
+        'ip_rules': {'key': 'properties.ipRules', 'type': '[IpAddressOrRange]'},
+        'is_virtual_network_filter_enabled': {'key': 'properties.isVirtualNetworkFilterEnabled', 'type': 'bool'},
+        'enable_automatic_failover': {'key': 'properties.enableAutomaticFailover', 'type': 'bool'},
+        'consistency_policy': {'key': 'properties.consistencyPolicy', 'type': 'ConsistencyPolicy'},
+        'capabilities': {'key': 'properties.capabilities', 'type': '[Capability]'},
+        'write_locations': {'key': 'properties.writeLocations', 'type': '[Location]'},
+        'read_locations': {'key': 'properties.readLocations', 'type': '[Location]'},
+        'locations': {'key': 'properties.locations', 'type': '[Location]'},
+        'failover_policies': {'key': 'properties.failoverPolicies', 'type': '[FailoverPolicy]'},
+        'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        'enable_multiple_write_locations': {'key': 'properties.enableMultipleWriteLocations', 'type': 'bool'},
+        'enable_cassandra_connector': {'key': 'properties.enableCassandraConnector', 'type': 'bool'},
+        'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
+        'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
+        'key_vault_key_uri': {'key': 'properties.keyVaultKeyUri', 'type': 'str'},
+        'default_identity': {'key': 'properties.defaultIdentity', 'type': 'str'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'enable_free_tier': {'key': 'properties.enableFreeTier', 'type': 'bool'},
+        'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
+        'enable_analytical_storage': {'key': 'properties.enableAnalyticalStorage', 'type': 'bool'},
+        'analytical_storage_configuration': {'key': 'properties.analyticalStorageConfiguration', 'type': 'AnalyticalStorageConfiguration'},
+        'instance_id': {'key': 'properties.instanceId', 'type': 'str'},
+        'create_mode': {'key': 'properties.createMode', 'type': 'str'},
+        'restore_parameters': {'key': 'properties.restoreParameters', 'type': 'RestoreParameters'},
+        'backup_policy': {'key': 'properties.backupPolicy', 'type': 'BackupPolicy'},
+        'cors': {'key': 'properties.cors', 'type': '[CorsPolicy]'},
+        'network_acl_bypass': {'key': 'properties.networkAclBypass', 'type': 'str'},
+        'network_acl_bypass_resource_ids': {'key': 'properties.networkAclBypassResourceIds', 'type': '[str]'},
+        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
+        'capacity': {'key': 'properties.capacity', 'type': 'Capacity'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(DiagnosticLogSettings, self).__init__(**kwargs)
-        self.enable_full_text_query = kwargs.get('enable_full_text_query', None)
-
-
-class ErrorResponse(msrest.serialization.Model):
-    """Error Response.
-
-    :param code: Error code.
-    :type code: str
-    :param message: Error message indicating why the operation failed.
-    :type message: str
-    """
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorResponse, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
+        super(DatabaseAccountGetResults, self).__init__(**kwargs)
+        self.kind = kwargs.get('kind', None)
+        self.identity = kwargs.get('identity', None)
+        self.system_data = None
+        self.provisioning_state = None
+        self.document_endpoint = None
+        self.database_account_offer_type = None
+        self.ip_rules = kwargs.get('ip_rules', None)
+        self.is_virtual_network_filter_enabled = kwargs.get('is_virtual_network_filter_enabled', None)
+        self.enable_automatic_failover = kwargs.get('enable_automatic_failover', None)
+        self.consistency_policy = kwargs.get('consistency_policy', None)
+        self.capabilities = kwargs.get('capabilities', None)
+        self.write_locations = None
+        self.read_locations = None
+        self.locations = None
+        self.failover_policies = None
+        self.virtual_network_rules = kwargs.get('virtual_network_rules', None)
+        self.private_endpoint_connections = None
+        self.enable_multiple_write_locations = kwargs.get('enable_multiple_write_locations', None)
+        self.enable_cassandra_connector = kwargs.get('enable_cassandra_connector', None)
+        self.connector_offer = kwargs.get('connector_offer', None)
+        self.disable_key_based_metadata_write_access = kwargs.get('disable_key_based_metadata_write_access', None)
+        self.key_vault_key_uri = kwargs.get('key_vault_key_uri', None)
+        self.default_identity = kwargs.get('default_identity', None)
+        self.public_network_access = kwargs.get('public_network_access', None)
+        self.enable_free_tier = kwargs.get('enable_free_tier', None)
+        self.api_properties = kwargs.get('api_properties', None)
+        self.enable_analytical_storage = kwargs.get('enable_analytical_storage', None)
+        self.analytical_storage_configuration = kwargs.get('analytical_storage_configuration', None)
+        self.instance_id = None
+        self.create_mode = kwargs.get('create_mode', "Default")
+        self.restore_parameters = kwargs.get('restore_parameters', None)
+        self.backup_policy = kwargs.get('backup_policy', None)
+        self.cors = kwargs.get('cors', None)
+        self.network_acl_bypass = kwargs.get('network_acl_bypass', None)
+        self.network_acl_bypass_resource_ids = kwargs.get('network_acl_bypass_resource_ids', None)
+        self.disable_local_auth = kwargs.get('disable_local_auth', None)
+        self.capacity = kwargs.get('capacity', None)
 
 
 class ExcludedPath(msrest.serialization.Model):
@@ -3430,19 +2724,144 @@ class GraphResourceCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param identity: Identity for the resource.
     :type identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
-    :param resource: Required. The standard JSON format of a Graph resource.
-    :type resource: ~azure.mgmt.cosmosdb.models.GraphResource
-    :param options: A key-value pair of options to be applied for the request. This corresponds to
-     the headers sent with the request.
-    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
+    :param consistency_policy: The consistency policy for the Cosmos DB account.
+    :type consistency_policy: ~azure.mgmt.cosmosdb.models.ConsistencyPolicy
+    :param locations: An array that contains the georeplication locations enabled for the Cosmos DB
+     account.
+    :type locations: list[~azure.mgmt.cosmosdb.models.Location]
+    :param ip_rules: List of IpRules.
+    :type ip_rules: list[~azure.mgmt.cosmosdb.models.IpAddressOrRange]
+    :param is_virtual_network_filter_enabled: Flag to indicate whether to enable/disable Virtual
+     Network ACL rules.
+    :type is_virtual_network_filter_enabled: bool
+    :param enable_automatic_failover: Enables automatic failover of the write region in the rare
+     event that the region is unavailable due to an outage. Automatic failover will result in a new
+     write region for the account and is chosen based on the failover priorities configured for the
+     account.
+    :type enable_automatic_failover: bool
+    :param capabilities: List of Cosmos DB capabilities for the account.
+    :type capabilities: list[~azure.mgmt.cosmosdb.models.Capability]
+    :param virtual_network_rules: List of Virtual Network ACL rules configured for the Cosmos DB
+     account.
+    :type virtual_network_rules: list[~azure.mgmt.cosmosdb.models.VirtualNetworkRule]
+    :param enable_multiple_write_locations: Enables the account to write in multiple locations.
+    :type enable_multiple_write_locations: bool
+    :param enable_cassandra_connector: Enables the cassandra connector on the Cosmos DB C* account.
+    :type enable_cassandra_connector: bool
+    :param connector_offer: The cassandra connector offer type for the Cosmos DB database C*
+     account. Possible values include: "Small".
+    :type connector_offer: str or ~azure.mgmt.cosmosdb.models.ConnectorOffer
+    :param disable_key_based_metadata_write_access: Disable write operations on metadata resources
+     (databases, containers, throughput) via account keys.
+    :type disable_key_based_metadata_write_access: bool
+    :param key_vault_key_uri: The URI of the key vault.
+    :type key_vault_key_uri: str
+    :param default_identity: The default identity for accessing key vault used in features like
+     customer managed keys. The default identity needs to be explicitly set by the users. It can be
+     "FirstPartyIdentity", "SystemAssignedIdentity" and more.
+    :type default_identity: str
+    :param public_network_access: Whether requests from Public Network are allowed. Possible values
+     include: "Enabled", "Disabled".
+    :type public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
+    :param enable_free_tier: Flag to indicate whether Free Tier is enabled.
+    :type enable_free_tier: bool
+    :param api_properties: API specific properties. Currently, supported only for MongoDB API.
+    :type api_properties: ~azure.mgmt.cosmosdb.models.ApiProperties
+    :param enable_analytical_storage: Flag to indicate whether to enable storage analytics.
+    :type enable_analytical_storage: bool
+    :param analytical_storage_configuration: Analytical storage specific properties.
+    :type analytical_storage_configuration:
+     ~azure.mgmt.cosmosdb.models.AnalyticalStorageConfiguration
+    :param backup_policy: The object representing the policy for taking backups on an account.
+    :type backup_policy: ~azure.mgmt.cosmosdb.models.BackupPolicy
+    :param cors: The CORS policy for the Cosmos DB database account.
+    :type cors: list[~azure.mgmt.cosmosdb.models.CorsPolicy]
+    :param network_acl_bypass: Indicates what services are allowed to bypass firewall checks.
+     Possible values include: "None", "AzureServices".
+    :type network_acl_bypass: str or ~azure.mgmt.cosmosdb.models.NetworkAclBypass
+    :param network_acl_bypass_resource_ids: An array that contains the Resource Ids for Network Acl
+     Bypass for the Cosmos DB account.
+    :type network_acl_bypass_resource_ids: list[str]
+    :param disable_local_auth: Opt-out of local authentication and ensure only MSI and AAD can be
+     used exclusively for authentication.
+    :type disable_local_auth: bool
+    :param capacity: The object that represents all properties related to capacity enforcement on
+     an account.
+    :type capacity: ~azure.mgmt.cosmosdb.models.Capacity
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'resource': {'required': True},
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
+        'consistency_policy': {'key': 'properties.consistencyPolicy', 'type': 'ConsistencyPolicy'},
+        'locations': {'key': 'properties.locations', 'type': '[Location]'},
+        'ip_rules': {'key': 'properties.ipRules', 'type': '[IpAddressOrRange]'},
+        'is_virtual_network_filter_enabled': {'key': 'properties.isVirtualNetworkFilterEnabled', 'type': 'bool'},
+        'enable_automatic_failover': {'key': 'properties.enableAutomaticFailover', 'type': 'bool'},
+        'capabilities': {'key': 'properties.capabilities', 'type': '[Capability]'},
+        'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
+        'enable_multiple_write_locations': {'key': 'properties.enableMultipleWriteLocations', 'type': 'bool'},
+        'enable_cassandra_connector': {'key': 'properties.enableCassandraConnector', 'type': 'bool'},
+        'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
+        'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
+        'key_vault_key_uri': {'key': 'properties.keyVaultKeyUri', 'type': 'str'},
+        'default_identity': {'key': 'properties.defaultIdentity', 'type': 'str'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'enable_free_tier': {'key': 'properties.enableFreeTier', 'type': 'bool'},
+        'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
+        'enable_analytical_storage': {'key': 'properties.enableAnalyticalStorage', 'type': 'bool'},
+        'analytical_storage_configuration': {'key': 'properties.analyticalStorageConfiguration', 'type': 'AnalyticalStorageConfiguration'},
+        'backup_policy': {'key': 'properties.backupPolicy', 'type': 'BackupPolicy'},
+        'cors': {'key': 'properties.cors', 'type': '[CorsPolicy]'},
+        'network_acl_bypass': {'key': 'properties.networkAclBypass', 'type': 'str'},
+        'network_acl_bypass_resource_ids': {'key': 'properties.networkAclBypassResourceIds', 'type': '[str]'},
+        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
+        'capacity': {'key': 'properties.capacity', 'type': 'Capacity'},
     }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DatabaseAccountUpdateParameters, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.location = kwargs.get('location', None)
+        self.identity = kwargs.get('identity', None)
+        self.consistency_policy = kwargs.get('consistency_policy', None)
+        self.locations = kwargs.get('locations', None)
+        self.ip_rules = kwargs.get('ip_rules', None)
+        self.is_virtual_network_filter_enabled = kwargs.get('is_virtual_network_filter_enabled', None)
+        self.enable_automatic_failover = kwargs.get('enable_automatic_failover', None)
+        self.capabilities = kwargs.get('capabilities', None)
+        self.virtual_network_rules = kwargs.get('virtual_network_rules', None)
+        self.enable_multiple_write_locations = kwargs.get('enable_multiple_write_locations', None)
+        self.enable_cassandra_connector = kwargs.get('enable_cassandra_connector', None)
+        self.connector_offer = kwargs.get('connector_offer', None)
+        self.disable_key_based_metadata_write_access = kwargs.get('disable_key_based_metadata_write_access', None)
+        self.key_vault_key_uri = kwargs.get('key_vault_key_uri', None)
+        self.default_identity = kwargs.get('default_identity', None)
+        self.public_network_access = kwargs.get('public_network_access', None)
+        self.enable_free_tier = kwargs.get('enable_free_tier', None)
+        self.api_properties = kwargs.get('api_properties', None)
+        self.enable_analytical_storage = kwargs.get('enable_analytical_storage', None)
+        self.analytical_storage_configuration = kwargs.get('analytical_storage_configuration', None)
+        self.backup_policy = kwargs.get('backup_policy', None)
+        self.cors = kwargs.get('cors', None)
+        self.network_acl_bypass = kwargs.get('network_acl_bypass', None)
+        self.network_acl_bypass_resource_ids = kwargs.get('network_acl_bypass_resource_ids', None)
+        self.disable_local_auth = kwargs.get('disable_local_auth', None)
+        self.capacity = kwargs.get('capacity', None)
+
+
+class DatabaseRestoreResource(msrest.serialization.Model):
+    """Specific Databases to restore.
+
+    :param database_name: The name of the database available for restore.
+    :type database_name: str
+    :param collection_names: The names of the collections available for restore.
+    :type collection_names: list[str]
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -3464,8 +2883,130 @@ class GraphResourceCreateUpdateParameters(ARMResourceProperties):
         self.options = kwargs.get('options', None)
 
 
-class GraphResourceGetPropertiesOptions(OptionsResource):
-    """GraphResourceGetPropertiesOptions.
+class DataCenterResource(ARMProxyResource):
+    """A managed Cassandra data center.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The unique resource identifier of the database account.
+    :vartype id: str
+    :ivar name: The name of the database account.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param properties: Properties of a managed Cassandra data center.
+    :type properties: ~azure.mgmt.cosmosdb.models.DataCenterResourceProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'DataCenterResourceProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DataCenterResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
+class DataCenterResourceProperties(msrest.serialization.Model):
+    """Properties of a managed Cassandra data center.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param provisioning_state: The status of the resource at the time the operation was called.
+     Possible values include: "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+    :type provisioning_state: str or ~azure.mgmt.cosmosdb.models.ManagedCassandraProvisioningState
+    :param data_center_location: The region this data center should be created in.
+    :type data_center_location: str
+    :param delegated_subnet_id: Resource id of a subnet the nodes in this data center should have
+     their network interfaces connected to. The subnet must be in the same region specified in
+     'dataCenterLocation' and must be able to route to the subnet specified in the cluster's
+     'delegatedManagementSubnetId' property. This resource id will be of the form
+     '/subscriptions/:code:`<subscription id>`/resourceGroups/:code:`<resource
+     group>`/providers/Microsoft.Network/virtualNetworks/:code:`<virtual
+     network>`/subnets/:code:`<subnet>`'.
+    :type delegated_subnet_id: str
+    :param node_count: The number of nodes the data center should have. This is the desired number.
+     After it is set, it may take some time for the data center to be scaled to match. To monitor
+     the number of nodes and their status, use the fetchNodeStatus method on the cluster.
+    :type node_count: int
+    :ivar seed_nodes: IP addresses for seed nodes in this data center. This is for reference.
+     Generally you will want to use the seedNodes property on the cluster, which aggregates the seed
+     nodes from all data centers in the cluster.
+    :vartype seed_nodes: list[~azure.mgmt.cosmosdb.models.SeedNode]
+    :param base64_encoded_cassandra_yaml_fragment: A fragment of a cassandra.yaml configuration
+     file to be included in the cassandra.yaml for all nodes in this data center. The fragment
+     should be Base64 encoded, and only a subset of keys are allowed.
+    :type base64_encoded_cassandra_yaml_fragment: str
+    :param managed_disk_customer_key_uri: Key uri to use for encryption of managed disks. Ensure
+     the system assigned identity of the cluster has been assigned appropriate permissions(key
+     get/wrap/unwrap permissions) on the key.
+    :type managed_disk_customer_key_uri: str
+    :param backup_storage_customer_key_uri: Indicates the Key Uri of the customer key to use for
+     encryption of the backup storage account.
+    :type backup_storage_customer_key_uri: str
+    :param sku: Virtual Machine SKU used for data centers. Default value is Standard_DS14_v2.
+    :type sku: str
+    :param disk_sku: Disk SKU used for data centers. Default value is P30.
+    :type disk_sku: str
+    :param disk_capacity: Number of disk used for data centers. Default value is 4.
+    :type disk_capacity: int
+    :param availability_zone: If the azure data center has Availability Zone support, apply it to
+     the Virtual Machine ScaleSet that host the cassandra data center virtual machines.
+    :type availability_zone: bool
+    """
+
+    _validation = {
+        'seed_nodes': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'data_center_location': {'key': 'dataCenterLocation', 'type': 'str'},
+        'delegated_subnet_id': {'key': 'delegatedSubnetId', 'type': 'str'},
+        'node_count': {'key': 'nodeCount', 'type': 'int'},
+        'seed_nodes': {'key': 'seedNodes', 'type': '[SeedNode]'},
+        'base64_encoded_cassandra_yaml_fragment': {'key': 'base64EncodedCassandraYamlFragment', 'type': 'str'},
+        'managed_disk_customer_key_uri': {'key': 'managedDiskCustomerKeyUri', 'type': 'str'},
+        'backup_storage_customer_key_uri': {'key': 'backupStorageCustomerKeyUri', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'str'},
+        'disk_sku': {'key': 'diskSku', 'type': 'str'},
+        'disk_capacity': {'key': 'diskCapacity', 'type': 'int'},
+        'availability_zone': {'key': 'availabilityZone', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DataCenterResourceProperties, self).__init__(**kwargs)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.data_center_location = kwargs.get('data_center_location', None)
+        self.delegated_subnet_id = kwargs.get('delegated_subnet_id', None)
+        self.node_count = kwargs.get('node_count', None)
+        self.seed_nodes = None
+        self.base64_encoded_cassandra_yaml_fragment = kwargs.get('base64_encoded_cassandra_yaml_fragment', None)
+        self.managed_disk_customer_key_uri = kwargs.get('managed_disk_customer_key_uri', None)
+        self.backup_storage_customer_key_uri = kwargs.get('backup_storage_customer_key_uri', None)
+        self.sku = kwargs.get('sku', None)
+        self.disk_sku = kwargs.get('disk_sku', None)
+        self.disk_capacity = kwargs.get('disk_capacity', None)
+        self.availability_zone = kwargs.get('availability_zone', None)
+
+
+class ErrorResponse(msrest.serialization.Model):
+    """Error Response.
 
     :param throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
      ThroughputSetting resource when retrieving offer details.
@@ -4225,31 +3766,6 @@ class IpAddressOrRange(msrest.serialization.Model):
         self.ip_address_or_range = kwargs.get('ip_address_or_range', None)
 
 
-class ListBackups(msrest.serialization.Model):
-    """List of restorable backups for a Cassandra cluster.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: Container for array of backups.
-    :vartype value: list[~azure.mgmt.cosmosdb.models.BackupResource]
-    """
-
-    _validation = {
-        'value': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[BackupResource]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ListBackups, self).__init__(**kwargs)
-        self.value = None
-
-
 class ListClusters(msrest.serialization.Model):
     """List of managed Cassandra clusters.
 
@@ -4455,6 +3971,165 @@ class LocationProperties(msrest.serialization.Model):
         self.supports_availability_zone = None
         self.is_residency_restricted = None
         self.backup_storage_redundancies = None
+
+
+class LocationGetResult(ARMProxyResource):
+    """Cosmos DB location get result.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The unique resource identifier of the database account.
+    :vartype id: str
+    :ivar name: The name of the database account.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param properties: Cosmos DB location metadata.
+    :type properties: ~azure.mgmt.cosmosdb.models.LocationProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'LocationProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LocationGetResult, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
+class LocationListResult(msrest.serialization.Model):
+    """The List operation response, that contains Cosmos DB locations and their properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of Cosmos DB locations and their properties.
+    :vartype value: list[~azure.mgmt.cosmosdb.models.LocationGetResult]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[LocationGetResult]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LocationListResult, self).__init__(**kwargs)
+        self.value = None
+
+
+class LocationProperties(msrest.serialization.Model):
+    """Cosmos DB location metadata.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar supports_availability_zone: Flag indicating whether the location supports availability
+     zones or not.
+    :vartype supports_availability_zone: bool
+    :ivar is_residency_restricted: Flag indicating whether the location is residency sensitive.
+    :vartype is_residency_restricted: bool
+    :ivar backup_storage_redundancies: The properties of available backup storage redundancies.
+    :vartype backup_storage_redundancies: list[str or
+     ~azure.mgmt.cosmosdb.models.BackupStorageRedundancy]
+    """
+
+    _validation = {
+        'supports_availability_zone': {'readonly': True},
+        'is_residency_restricted': {'readonly': True},
+        'backup_storage_redundancies': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'supports_availability_zone': {'key': 'supportsAvailabilityZone', 'type': 'bool'},
+        'is_residency_restricted': {'key': 'isResidencyRestricted', 'type': 'bool'},
+        'backup_storage_redundancies': {'key': 'backupStorageRedundancies', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LocationProperties, self).__init__(**kwargs)
+        self.supports_availability_zone = None
+        self.is_residency_restricted = None
+        self.backup_storage_redundancies = None
+
+
+class ManagedCassandraManagedServiceIdentity(msrest.serialization.Model):
+    """Identity for the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The object id of the identity resource.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant id of the resource.
+    :vartype tenant_id: str
+    :param type: The type of the resource. Possible values include: "SystemAssigned", "None".
+    :type type: str or ~azure.mgmt.cosmosdb.models.ManagedCassandraResourceIdentityType
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ManagedCassandraManagedServiceIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = kwargs.get('type', None)
+
+
+class ManagedCassandraReaperStatus(msrest.serialization.Model):
+    """ManagedCassandraReaperStatus.
+
+    :param healthy:
+    :type healthy: bool
+    :param repair_run_ids: Dictionary of :code:`<string>`.
+    :type repair_run_ids: dict[str, str]
+    :param repair_schedules: Dictionary of :code:`<string>`.
+    :type repair_schedules: dict[str, str]
+    """
+
+    _attribute_map = {
+        'healthy': {'key': 'healthy', 'type': 'bool'},
+        'repair_run_ids': {'key': 'repairRunIds', 'type': '{str}'},
+        'repair_schedules': {'key': 'repairSchedules', 'type': '{str}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ManagedCassandraReaperStatus, self).__init__(**kwargs)
+        self.healthy = kwargs.get('healthy', None)
+        self.repair_run_ids = kwargs.get('repair_run_ids', None)
+        self.repair_schedules = kwargs.get('repair_schedules', None)
 
 
 class ManagedServiceIdentity(msrest.serialization.Model):
@@ -7172,100 +6847,6 @@ class SeedNode(msrest.serialization.Model):
     ):
         super(SeedNode, self).__init__(**kwargs)
         self.ip_address = kwargs.get('ip_address', None)
-
-
-class ServiceResource(ARMProxyResource):
-    """Properties for the database account.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The unique resource identifier of the database account.
-    :vartype id: str
-    :ivar name: The name of the database account.
-    :vartype name: str
-    :ivar type: The type of Azure resource.
-    :vartype type: str
-    :param properties: Services response resource.
-    :type properties: ~azure.mgmt.cosmosdb.models.ServiceResourceProperties
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ServiceResourceProperties'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ServiceResource, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
-
-
-class ServiceResourceCreateUpdateParameters(msrest.serialization.Model):
-    """Parameters for Create or Update Request for ServiceResource.
-
-    :param instance_size: Instance type for the service. Possible values include: "Cosmos.D4s",
-     "Cosmos.D8s", "Cosmos.D16s".
-    :type instance_size: str or ~azure.mgmt.cosmosdb.models.ServiceSize
-    :param instance_count: Instance count for the service.
-    :type instance_count: int
-    :param service_type: ServiceType for the service. Possible values include:
-     "SqlDedicatedGateway", "DataTransfer", "GraphAPICompute".
-    :type service_type: str or ~azure.mgmt.cosmosdb.models.ServiceType
-    """
-
-    _validation = {
-        'instance_count': {'minimum': 0},
-    }
-
-    _attribute_map = {
-        'instance_size': {'key': 'properties.instanceSize', 'type': 'str'},
-        'instance_count': {'key': 'properties.instanceCount', 'type': 'int'},
-        'service_type': {'key': 'properties.serviceType', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ServiceResourceCreateUpdateParameters, self).__init__(**kwargs)
-        self.instance_size = kwargs.get('instance_size', None)
-        self.instance_count = kwargs.get('instance_count', None)
-        self.service_type = kwargs.get('service_type', None)
-
-
-class ServiceResourceListResult(msrest.serialization.Model):
-    """The List operation response, that contains the Service Resource and their properties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: List of Service Resource and their properties.
-    :vartype value: list[~azure.mgmt.cosmosdb.models.ServiceResource]
-    """
-
-    _validation = {
-        'value': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[ServiceResource]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ServiceResourceListResult, self).__init__(**kwargs)
-        self.value = None
 
 
 class SpatialSpec(msrest.serialization.Model):

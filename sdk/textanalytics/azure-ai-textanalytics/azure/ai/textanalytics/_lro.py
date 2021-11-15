@@ -3,6 +3,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+
+import base64
+import functools
+import json
 from typing import TYPE_CHECKING, Generic
 from six.moves.urllib.parse import urlencode
 from azure.core.polling._poller import PollingReturnType
@@ -98,7 +102,14 @@ class TextAnalyticsLROPollingMethod(LROBasePolling):
             self.update_status()
 
         if TextAnalyticsLROPollingMethod._failed(self.status()):
-            raise OperationFailed("Operation failed or canceled")
+            try:
+                job = json.loads(self._pipeline_response.http_response.text())
+                error_message = ""
+                for err in job["errors"]:
+                    error_message += "({}) {}".format(err["code"], err["message"])
+                raise HttpResponseError(message=error_message, response=self._pipeline_response.http_response)
+            except KeyError:
+                raise OperationFailed("Operation failed or canceled")
 
         final_get_url = self._operation.get_final_get_url(self._pipeline_response)
         if final_get_url:
@@ -110,6 +121,8 @@ class TextAnalyticsLROPollingMethod(LROBasePolling):
 
 class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
     def __init__(self, *args, **kwargs):
+        self._doc_id_order = kwargs.pop("doc_id_order", None)
+        self._show_stats = kwargs.pop("show_stats", None)
         self._text_analytics_client = kwargs.pop("text_analytics_client")
         super(AnalyzeHealthcareEntitiesLROPollingMethod, self).__init__(*args, **kwargs)
 
@@ -142,6 +155,13 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
         if not self._current_body:
             return None
         return self._current_body.job_id
+
+    def get_continuation_token(self):
+        # type: () -> str
+        import pickle
+        self._initial_response.context.options["doc_id_order"] = self._doc_id_order
+        self._initial_response.context.options["show_stats"] = self._show_stats
+        return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
 
 
 class AnalyzeHealthcareEntitiesLROPoller(LROPoller, Generic[PollingReturnType]):
@@ -190,6 +210,24 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller, Generic[PollingReturnType]):
         """
         return self.polling_method().id
 
+    @classmethod
+    def from_continuation_token(cls, polling_method, continuation_token, **kwargs):  # type: ignore
+        # type: (AnalyzeHealthcareEntitiesLROPollingMethod, str, Any) -> AnalyzeHealthcareEntitiesLROPoller
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        polling_method._lro_algorithms = [  # pylint: disable=protected-access
+            TextAnalyticsOperationResourcePolling(
+                show_stats=initial_response.context.options["show_stats"]
+            )
+        ]
+        return cls(
+            client,
+            initial_response,
+            functools.partial(deserialization_callback, initial_response),
+            polling_method
+        )
+
     def cancel(self, **kwargs):  # type: ignore
         # type: (Any) -> LROPoller[None]
         """Cancel the operation currently being polled.
@@ -231,6 +269,12 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller, Generic[PollingReturnType]):
 
 
 class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
+    def __init__(self, *args, **kwargs):
+        self._doc_id_order = kwargs.pop("doc_id_order", None)
+        self._task_id_order = kwargs.pop("task_id_order", None)
+        self._show_stats = kwargs.pop("show_stats", None)
+        super(AnalyzeActionsLROPollingMethod, self).__init__(*args, **kwargs)
+
     @property
     def _current_body(self):
         from ._generated.models import AnalyzeJobMetadata
@@ -290,6 +334,14 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
         if not self._current_body:
             return None
         return self._current_body.job_id
+
+    def get_continuation_token(self):
+        # type: () -> str
+        import pickle
+        self._initial_response.context.options["doc_id_order"] = self._doc_id_order
+        self._initial_response.context.options["task_id_order"] = self._task_id_order
+        self._initial_response.context.options["show_stats"] = self._show_stats
+        return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
 
 
 class AnalyzeActionsLROPoller(LROPoller, Generic[PollingReturnType]):
@@ -390,3 +442,21 @@ class AnalyzeActionsLROPoller(LROPoller, Generic[PollingReturnType]):
         :rtype: str
         """
         return self.polling_method().id
+
+    @classmethod
+    def from_continuation_token(cls, polling_method, continuation_token, **kwargs):  # type: ignore
+        # type: (AnalyzeActionsLROPollingMethod, str, Any) -> AnalyzeActionsLROPoller
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        polling_method._lro_algorithms = [  # pylint: disable=protected-access
+            TextAnalyticsOperationResourcePolling(
+                show_stats=initial_response.context.options["show_stats"]
+            )
+        ]
+        return cls(
+            client,
+            initial_response,
+            functools.partial(deserialization_callback, initial_response),
+            polling_method
+        )

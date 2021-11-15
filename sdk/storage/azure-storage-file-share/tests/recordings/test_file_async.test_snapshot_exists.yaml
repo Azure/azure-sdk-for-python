@@ -1,0 +1,251 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-file-share/12.6.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 14 Oct 2021 18:12:07 GMT
+      x-ms-version:
+      - '2020-10-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare125e0ef9?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 14 Oct 2021 18:12:07 GMT
+      etag: '"0x8D98F3E22B0B3ED"'
+      last-modified: Thu, 14 Oct 2021 18:12:08 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2020-10-02'
+    status:
+      code: 201
+      message: Created
+    url: https://emilydevtest.file.core.windows.net/utshare125e0ef9?restype=share
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-file-share/12.6.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 14 Oct 2021 18:12:08 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
+      x-ms-version:
+      - '2020-10-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare125e0ef9/directory125e0ef9?restype=directory
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 14 Oct 2021 18:12:08 GMT
+      etag: '"0x8D98F3E22BE4EB3"'
+      last-modified: Thu, 14 Oct 2021 18:12:08 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Directory
+      x-ms-file-change-time: '2021-10-14T18:12:08.3277491Z'
+      x-ms-file-creation-time: '2021-10-14T18:12:08.3277491Z'
+      x-ms-file-id: '13835128424026341376'
+      x-ms-file-last-write-time: '2021-10-14T18:12:08.3277491Z'
+      x-ms-file-parent-id: '0'
+      x-ms-file-permission-key: 17913408918638655783*10394889115079208622
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2020-10-02'
+    status:
+      code: 201
+      message: Created
+    url: https://emilydevtest.file.core.windows.net/utshare125e0ef9/directory125e0ef9?restype=directory
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-file-share/12.6.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-content-length:
+      - '1024'
+      x-ms-date:
+      - Thu, 14 Oct 2021 18:12:08 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - Inherit
+      x-ms-type:
+      - file
+      x-ms-version:
+      - '2020-10-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare125e0ef9/directory125e0ef9/file125e0ef9
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 14 Oct 2021 18:12:08 GMT
+      etag: '"0x8D98F3E22C26E23"'
+      last-modified: Thu, 14 Oct 2021 18:12:08 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Archive
+      x-ms-file-change-time: '2021-10-14T18:12:08.3547683Z'
+      x-ms-file-creation-time: '2021-10-14T18:12:08.3547683Z'
+      x-ms-file-id: '11529285414812647424'
+      x-ms-file-last-write-time: '2021-10-14T18:12:08.3547683Z'
+      x-ms-file-parent-id: '13835128424026341376'
+      x-ms-file-permission-key: 4099112195243312672*10394889115079208622
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2020-10-02'
+    status:
+      code: 201
+      message: Created
+    url: https://emilydevtest.file.core.windows.net/utshare125e0ef9/directory125e0ef9/file125e0ef9
+- request:
+    body: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '1024'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-file-share/12.6.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 14 Oct 2021 18:12:08 GMT
+      x-ms-range:
+      - bytes=0-1023
+      x-ms-version:
+      - '2020-10-02'
+      x-ms-write:
+      - update
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare125e0ef9/directory125e0ef9/file125e0ef9?comp=range
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      content-md5: yaNM/IXZgmmMasifdgcavQ==
+      date: Thu, 14 Oct 2021 18:12:08 GMT
+      etag: '"0x8D98F3E22C68D97"'
+      last-modified: Thu, 14 Oct 2021 18:12:08 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2020-10-02'
+    status:
+      code: 201
+      message: Created
+    url: https://emilydevtest.file.core.windows.net/utshare125e0ef9/directory125e0ef9/file125e0ef9?comp=range
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-file-share/12.6.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 14 Oct 2021 18:12:08 GMT
+      x-ms-version:
+      - '2020-10-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare125e0ef9?restype=share&comp=snapshot
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 14 Oct 2021 18:12:08 GMT
+      etag: '"0x8D98F3E22B0B3ED"'
+      last-modified: Thu, 14 Oct 2021 18:12:08 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-snapshot: '2021-10-14T18:12:08.0000000Z'
+      x-ms-version: '2020-10-02'
+    status:
+      code: 201
+      message: Created
+    url: https://emilydevtest.file.core.windows.net/utshare125e0ef9?restype=share&comp=snapshot
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-file-share/12.6.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 14 Oct 2021 18:12:08 GMT
+      x-ms-version:
+      - '2020-10-02'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utshare125e0ef9/directory125e0ef9/file125e0ef9
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 14 Oct 2021 18:12:08 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2020-10-02'
+    status:
+      code: 202
+      message: Accepted
+    url: https://emilydevtest.file.core.windows.net/utshare125e0ef9/directory125e0ef9/file125e0ef9
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-file-share/12.6.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 14 Oct 2021 18:12:08 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2020-10-02'
+    method: GET
+    uri: https://storagename.file.core.windows.net/utshare125e0ef9/directory125e0ef9/file125e0ef9?sharesnapshot=2021-10-14T18:12:08.0000000Z
+  response:
+    body:
+      string: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    headers:
+      accept-ranges: bytes
+      content-length: '1024'
+      content-range: bytes 0-1023/1024
+      content-type: application/octet-stream
+      date: Thu, 14 Oct 2021 18:12:08 GMT
+      etag: '"0x8D98F3E22C68D97"'
+      last-modified: Thu, 14 Oct 2021 18:12:08 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      vary: Origin
+      x-ms-file-attributes: Archive
+      x-ms-file-change-time: '2021-10-14T18:12:08.3547683Z'
+      x-ms-file-creation-time: '2021-10-14T18:12:08.3547683Z'
+      x-ms-file-id: '11529285414812647424'
+      x-ms-file-last-write-time: '2021-10-14T18:12:08.3547683Z'
+      x-ms-file-parent-id: '13835128424026341376'
+      x-ms-file-permission-key: 4099112195243312672*10394889115079208622
+      x-ms-server-encrypted: 'true'
+      x-ms-type: File
+      x-ms-version: '2020-10-02'
+    status:
+      code: 206
+      message: Partial Content
+    url: https://emilydevtest.file.core.windows.net/utshare125e0ef9/directory125e0ef9/file125e0ef9?sharesnapshot=2021-10-14T18:12:08.0000000Z
+version: 1
