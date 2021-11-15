@@ -22,11 +22,11 @@ from .._vendor import _convert_request, _format_url_section
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar
-
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 # fmt: off
 
 def build_get_audio_routing_groups_request(
@@ -35,7 +35,8 @@ def build_get_audio_routing_groups_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-11-15-preview"
+    api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/calling/callConnections/{callConnectionId}/audioRoutingGroups/{audioRoutingGroupId}')
@@ -69,7 +70,8 @@ def build_delete_audio_routing_group_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-11-15-preview"
+    api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/calling/callConnections/{callConnectionId}/audioRoutingGroups/{audioRoutingGroupId}')
@@ -103,9 +105,9 @@ def build_update_audio_routing_group_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/calling/callConnections/{callConnectionId}/audioRoutingGroups/{audioRoutingGroupId}')
@@ -139,9 +141,9 @@ def build_create_call_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/calling/callConnections')
@@ -170,7 +172,8 @@ def build_get_call_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-11-15-preview"
+    api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/calling/callConnections/{callConnectionId}')
@@ -202,7 +205,8 @@ def build_delete_call_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-11-15-preview"
+    api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/calling/callConnections/{callConnectionId}')
@@ -234,7 +238,8 @@ def build_hangup_call_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-11-15-preview"
+    api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/calling/callConnections/{callConnectionId}/:hangup')
@@ -266,9 +271,9 @@ def build_play_audio_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/calling/callConnections/{callConnectionId}/:playAudio')
@@ -302,7 +307,8 @@ def build_cancel_all_media_operations_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-11-15-preview"
+    api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/calling/callConnections/{callConnectionId}/:cancelAllMediaOperations')
@@ -334,7 +340,8 @@ def build_keep_alive_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-11-15-preview"
+    api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/calling/callConnections/{callConnectionId}/:keepAlive')
@@ -366,9 +373,9 @@ def build_transfer_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/calling/callConnections/{callConnectionId}/:transfer')
@@ -402,9 +409,9 @@ def build_create_audio_routing_group_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/calling/callConnections/{callConnectionId}/:createAudioRoutingGroup')
@@ -438,7 +445,8 @@ def build_get_participants_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-11-15-preview"
+    api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/calling/callConnections/{callConnectionId}/participants')
@@ -470,9 +478,9 @@ def build_add_participant_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/calling/callConnections/{callConnectionId}/participants')
@@ -506,9 +514,9 @@ def build_remove_participant_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/calling/callConnections/{callConnectionId}/participants:remove')
@@ -542,9 +550,9 @@ def build_get_participant_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/calling/callConnections/{callConnectionId}/participants:get')
@@ -578,9 +586,9 @@ def build_participant_play_audio_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/calling/callConnections/{callConnectionId}/participants:playAudio')
@@ -614,9 +622,9 @@ def build_cancel_participant_media_operation_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/calling/callConnections/{callConnectionId}/participants:cancelMediaOperation')
@@ -650,9 +658,9 @@ def build_mute_participant_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/calling/callConnections/{callConnectionId}/participants:mute')
@@ -686,9 +694,9 @@ def build_unmute_participant_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/calling/callConnections/{callConnectionId}/participants:unmute')
@@ -722,9 +730,9 @@ def build_hold_participant_meeting_audio_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/calling/callConnections/{callConnectionId}/participants:holdMeetingAudio')
@@ -758,9 +766,9 @@ def build_resume_participant_meeting_audio_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/calling/callConnections/{callConnectionId}/participants:resumeMeetingAudio')
@@ -827,6 +835,9 @@ class CallConnectionsOperations(object):
         :type call_connection_id: str
         :param audio_routing_group_id: The audio routing group id.
         :type audio_routing_group_id: str
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AudioRoutingGroupResult, or the result of cls(response)
         :rtype: ~azure.communication.callingserver.models.AudioRoutingGroupResult
@@ -843,10 +854,13 @@ class CallConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
+
         
         request = build_get_audio_routing_groups_request(
             call_connection_id=call_connection_id,
             audio_routing_group_id=audio_routing_group_id,
+            api_version=api_version,
             template_url=self.get_audio_routing_groups.metadata['url'],
         )
         request = _convert_request(request)
@@ -888,6 +902,9 @@ class CallConnectionsOperations(object):
         :type call_connection_id: str
         :param audio_routing_group_id: The audio routing group id.
         :type audio_routing_group_id: str
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -904,10 +921,13 @@ class CallConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
+
         
         request = build_delete_audio_routing_group_request(
             call_connection_id=call_connection_id,
             audio_routing_group_id=audio_routing_group_id,
+            api_version=api_version,
             template_url=self.delete_audio_routing_group.metadata['url'],
         )
         request = _convert_request(request)
@@ -949,6 +969,9 @@ class CallConnectionsOperations(object):
         :param update_audio_routing_group_request: The update audio routing group request.
         :type update_audio_routing_group_request:
          ~azure.communication.callingserver.models.UpdateAudioRoutingGroupRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -965,6 +988,7 @@ class CallConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(update_audio_routing_group_request, 'UpdateAudioRoutingGroupRequest')
@@ -972,6 +996,7 @@ class CallConnectionsOperations(object):
         request = build_update_audio_routing_group_request(
             call_connection_id=call_connection_id,
             audio_routing_group_id=audio_routing_group_id,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.update_audio_routing_group.metadata['url'],
@@ -1008,6 +1033,9 @@ class CallConnectionsOperations(object):
 
         :param call_request: Create call request.
         :type call_request: ~azure.communication.callingserver.models.CreateCallRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CreateCallResult, or the result of cls(response)
         :rtype: ~azure.communication.callingserver.models.CreateCallResult
@@ -1024,11 +1052,13 @@ class CallConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(call_request, 'CreateCallRequest')
 
         request = build_create_call_request(
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.create_call.metadata['url'],
@@ -1069,6 +1099,9 @@ class CallConnectionsOperations(object):
 
         :param call_connection_id: The call connection id.
         :type call_connection_id: str
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CallConnectionProperties, or the result of cls(response)
         :rtype: ~azure.communication.callingserver.models.CallConnectionProperties
@@ -1085,9 +1118,12 @@ class CallConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
+
         
         request = build_get_call_request(
             call_connection_id=call_connection_id,
+            api_version=api_version,
             template_url=self.get_call.metadata['url'],
         )
         request = _convert_request(request)
@@ -1126,6 +1162,9 @@ class CallConnectionsOperations(object):
 
         :param call_connection_id: The call connection id.
         :type call_connection_id: str
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1142,9 +1181,12 @@ class CallConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
+
         
         request = build_delete_call_request(
             call_connection_id=call_connection_id,
+            api_version=api_version,
             template_url=self.delete_call.metadata['url'],
         )
         request = _convert_request(request)
@@ -1179,6 +1221,9 @@ class CallConnectionsOperations(object):
 
         :param call_connection_id: The call connection id.
         :type call_connection_id: str
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1195,9 +1240,12 @@ class CallConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
+
         
         request = build_hangup_call_request(
             call_connection_id=call_connection_id,
+            api_version=api_version,
             template_url=self.hangup_call.metadata['url'],
         )
         request = _convert_request(request)
@@ -1223,7 +1271,7 @@ class CallConnectionsOperations(object):
     def play_audio(
         self,
         call_connection_id,  # type: str
-        request,  # type: "_models.PlayAudioRequest"
+        play_audio_request,  # type: "_models.PlayAudioRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.PlayAudioResult"
@@ -1233,8 +1281,11 @@ class CallConnectionsOperations(object):
 
         :param call_connection_id: The call connection id.
         :type call_connection_id: str
-        :param request: Play audio request.
-        :type request: ~azure.communication.callingserver.models.PlayAudioRequest
+        :param play_audio_request: The play audio request.
+        :type play_audio_request: ~azure.communication.callingserver.models.PlayAudioRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PlayAudioResult, or the result of cls(response)
         :rtype: ~azure.communication.callingserver.models.PlayAudioResult
@@ -1251,12 +1302,14 @@ class CallConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(request, 'PlayAudioRequest')
+        json = self._serialize.body(play_audio_request, 'PlayAudioRequest')
 
         request = build_play_audio_request(
             call_connection_id=call_connection_id,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.play_audio.metadata['url'],
@@ -1297,6 +1350,9 @@ class CallConnectionsOperations(object):
 
         :param call_connection_id: The call connection id.
         :type call_connection_id: str
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1313,9 +1369,12 @@ class CallConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
+
         
         request = build_cancel_all_media_operations_request(
             call_connection_id=call_connection_id,
+            api_version=api_version,
             template_url=self.cancel_all_media_operations.metadata['url'],
         )
         request = _convert_request(request)
@@ -1350,6 +1409,9 @@ class CallConnectionsOperations(object):
 
         :param call_connection_id: The call connection id.
         :type call_connection_id: str
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1366,9 +1428,12 @@ class CallConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
+
         
         request = build_keep_alive_request(
             call_connection_id=call_connection_id,
+            api_version=api_version,
             template_url=self.keep_alive.metadata['url'],
         )
         request = _convert_request(request)
@@ -1397,7 +1462,7 @@ class CallConnectionsOperations(object):
         transfer_call_request,  # type: "_models.TransferCallRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> None
+        # type: (...) -> "_models.TransferCallResult"
         """Transfer the call to a participant or to another call.
 
         Transfer the call to a participant or to another call.
@@ -1406,12 +1471,15 @@ class CallConnectionsOperations(object):
         :type call_connection_id: str
         :param transfer_call_request: The transfer call request.
         :type transfer_call_request: ~azure.communication.callingserver.models.TransferCallRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: TransferCallResult, or the result of cls(response)
+        :rtype: ~azure.communication.callingserver.models.TransferCallResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TransferCallResult"]
         error_map = {
             409: ResourceExistsError,
             400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
@@ -1422,12 +1490,14 @@ class CallConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(transfer_call_request, 'TransferCallRequest')
 
         request = build_transfer_request(
             call_connection_id=call_connection_id,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.transfer.metadata['url'],
@@ -1445,8 +1515,12 @@ class CallConnectionsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = self._deserialize('TransferCallResult', pipeline_response)
+
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
 
     transfer.metadata = {'url': '/calling/callConnections/{callConnectionId}/:transfer'}  # type: ignore
 
@@ -1468,6 +1542,9 @@ class CallConnectionsOperations(object):
         :param audio_routing_group_request: The audio routing group request.
         :type audio_routing_group_request:
          ~azure.communication.callingserver.models.AudioRoutingGroupRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CreateAudioRoutingGroupResult, or the result of cls(response)
         :rtype: ~azure.communication.callingserver.models.CreateAudioRoutingGroupResult
@@ -1484,12 +1561,14 @@ class CallConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(audio_routing_group_request, 'AudioRoutingGroupRequest')
 
         request = build_create_audio_routing_group_request(
             call_connection_id=call_connection_id,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.create_audio_routing_group.metadata['url'],
@@ -1530,6 +1609,9 @@ class CallConnectionsOperations(object):
 
         :param call_connection_id: The call connection id.
         :type call_connection_id: str
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of CallParticipant, or the result of cls(response)
         :rtype: list[~azure.communication.callingserver.models.CallParticipant]
@@ -1546,9 +1628,12 @@ class CallConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
+
         
         request = build_get_participants_request(
             call_connection_id=call_connection_id,
+            api_version=api_version,
             template_url=self.get_participants.metadata['url'],
         )
         request = _convert_request(request)
@@ -1590,6 +1675,9 @@ class CallConnectionsOperations(object):
         :type call_connection_id: str
         :param add_participant_request: Add participant request.
         :type add_participant_request: ~azure.communication.callingserver.models.AddParticipantRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AddParticipantResult, or the result of cls(response)
         :rtype: ~azure.communication.callingserver.models.AddParticipantResult
@@ -1606,12 +1694,14 @@ class CallConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(add_participant_request, 'AddParticipantRequest')
 
         request = build_add_participant_request(
             call_connection_id=call_connection_id,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.add_participant.metadata['url'],
@@ -1657,6 +1747,9 @@ class CallConnectionsOperations(object):
          call.
         :type remove_participant_request:
          ~azure.communication.callingserver.models.RemoveParticipantRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1673,12 +1766,14 @@ class CallConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(remove_participant_request, 'RemoveParticipantRequest')
 
         request = build_remove_participant_request(
             call_connection_id=call_connection_id,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.remove_participant.metadata['url'],
@@ -1718,6 +1813,9 @@ class CallConnectionsOperations(object):
         :type call_connection_id: str
         :param get_participant_request: The identifier of the participant to get from the call.
         :type get_participant_request: ~azure.communication.callingserver.models.GetParticipantRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of CallParticipant, or the result of cls(response)
         :rtype: list[~azure.communication.callingserver.models.CallParticipant]
@@ -1734,12 +1832,14 @@ class CallConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(get_participant_request, 'GetParticipantRequest')
 
         request = build_get_participant_request(
             call_connection_id=call_connection_id,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.get_participant.metadata['url'],
@@ -1784,6 +1884,9 @@ class CallConnectionsOperations(object):
         :param play_audio_to_participant_request: The play audio to participant request.
         :type play_audio_to_participant_request:
          ~azure.communication.callingserver.models.PlayAudioToParticipantRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PlayAudioResult, or the result of cls(response)
         :rtype: ~azure.communication.callingserver.models.PlayAudioResult
@@ -1800,12 +1903,14 @@ class CallConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(play_audio_to_participant_request, 'PlayAudioToParticipantRequest')
 
         request = build_participant_play_audio_request(
             call_connection_id=call_connection_id,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.participant_play_audio.metadata['url'],
@@ -1850,6 +1955,9 @@ class CallConnectionsOperations(object):
         :param cancel_media_operation_request: The cancel media operation for participant request.
         :type cancel_media_operation_request:
          ~azure.communication.callingserver.models.CancelParticipantMediaOperationRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1866,12 +1974,14 @@ class CallConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(cancel_media_operation_request, 'CancelParticipantMediaOperationRequest')
 
         request = build_cancel_participant_media_operation_request(
             call_connection_id=call_connection_id,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.cancel_participant_media_operation.metadata['url'],
@@ -1912,6 +2022,9 @@ class CallConnectionsOperations(object):
         :param mute_participant_request: The identifier of the participant to mute in the call.
         :type mute_participant_request:
          ~azure.communication.callingserver.models.MuteParticipantRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1928,12 +2041,14 @@ class CallConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(mute_participant_request, 'MuteParticipantRequest')
 
         request = build_mute_participant_request(
             call_connection_id=call_connection_id,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.mute_participant.metadata['url'],
@@ -1974,6 +2089,9 @@ class CallConnectionsOperations(object):
         :param unmute_participant_request: The identifier of the participant to unmute in the call.
         :type unmute_participant_request:
          ~azure.communication.callingserver.models.UnmuteParticipantRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1990,12 +2108,14 @@ class CallConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(unmute_participant_request, 'UnmuteParticipantRequest')
 
         request = build_unmute_participant_request(
             call_connection_id=call_connection_id,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.unmute_participant.metadata['url'],
@@ -2037,6 +2157,9 @@ class CallConnectionsOperations(object):
          participant.
         :type hold_meeting_audio_request:
          ~azure.communication.callingserver.models.HoldMeetingAudioRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -2053,12 +2176,14 @@ class CallConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(hold_meeting_audio_request, 'HoldMeetingAudioRequest')
 
         request = build_hold_participant_meeting_audio_request(
             call_connection_id=call_connection_id,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.hold_participant_meeting_audio.metadata['url'],
@@ -2100,6 +2225,9 @@ class CallConnectionsOperations(object):
          participant.
         :type resume_meeting_audio_request:
          ~azure.communication.callingserver.models.ResumeMeetingAudioRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -2116,12 +2244,14 @@ class CallConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         json = self._serialize.body(resume_meeting_audio_request, 'ResumeMeetingAudioRequest')
 
         request = build_resume_participant_meeting_audio_request(
             call_connection_id=call_connection_id,
+            api_version=api_version,
             content_type=content_type,
             json=json,
             template_url=self.resume_participant_meeting_audio.metadata['url'],

@@ -10,9 +10,7 @@ import utils._test_constants as CONST
 
 from azure.communication.callingserver.aio import CallingServerClient
 from azure.communication.callingserver import (
-    PlayAudioOptions,
     PhoneNumberIdentifier,
-    CreateCallOptions,
     CallMediaType,
     CallingEventSubscriptionType,
     CommunicationUserIdentifier
@@ -66,20 +64,15 @@ class CallConnectionTestAsync(AsyncCommunicationTestCase):
 
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_play_cancel_hangup_scenario_async(self):
-        # create call option
-        options = CreateCallOptions(
-            callback_uri=CONST.AppCallbackUrl,
-            requested_media_types=[CallMediaType.AUDIO],
-            requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED, CallingEventSubscriptionType.TONE_RECEIVED]
-        )
-        options.alternate_Caller_Id = PhoneNumberIdentifier(self.from_phone_number)
-
-        # Establish a call
+        # create call option and establish a call
         async with self.callingserver_client:
             call_connection_async = await self.callingserver_client.create_call_connection(
                         source=CommunicationUserIdentifier(self.from_user),
                         targets=[PhoneNumberIdentifier(self.to_phone_number)],
-                        options=options
+                        callback_uri=CONST.AppCallbackUrl,
+                        requested_media_types=[CallMediaType.AUDIO],
+                        requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED, CallingEventSubscriptionType.TONE_RECEIVED],
+                        alternate_Caller_Id = PhoneNumberIdentifier(self.from_phone_number)
                         )
             CallingServerLiveTestUtilsAsync.validate_callconnection_Async(call_connection_async)
 
@@ -89,15 +82,12 @@ class CallConnectionTestAsync(AsyncCommunicationTestCase):
                     CallingServerLiveTestUtils.sleep_if_in_live_mode()
                     OperationContext = str(uuid.uuid4())
                     AudioFileId = str(uuid.uuid4())
-                    options = PlayAudioOptions(
-                        loop = True,
+                    play_audio_result = await call_connection_async.play_audio(
+                        CONST.AudioFileUrl,
+                        is_looped = True,
                         audio_file_id = AudioFileId,
                         callback_uri = CONST.AppCallbackUrl,
                         operation_context = OperationContext
-                        )
-                    play_audio_result = await call_connection_async.play_audio(
-                        CONST.AudioFileUrl,
-                        options
                         )
                     CallingServerLiveTestUtils.validate_play_audio_result(play_audio_result)
 
@@ -111,20 +101,15 @@ class CallConnectionTestAsync(AsyncCommunicationTestCase):
 
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_add_remove_hangup_scenario_async(self):
-        # create call option
-        options = CreateCallOptions(
-            callback_uri=CONST.AppCallbackUrl,
-            requested_media_types=[CallMediaType.AUDIO],
-            requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED, CallingEventSubscriptionType.TONE_RECEIVED]
-        )
-        options.alternate_Caller_Id = PhoneNumberIdentifier(self.from_phone_number)
-
-        # Establish a call
+        # create call option and establish a call
         async with self.callingserver_client:
             call_connection_async = await self.callingserver_client.create_call_connection(
                         source=CommunicationUserIdentifier(self.from_user),
                         targets=[PhoneNumberIdentifier(self.to_phone_number)],
-                        options=options
+                        callback_uri=CONST.AppCallbackUrl,
+                        requested_media_types=[CallMediaType.AUDIO],
+                        requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED, CallingEventSubscriptionType.TONE_RECEIVED],
+                        alternate_Caller_Id = PhoneNumberIdentifier(self.from_phone_number)
                         )
             CallingServerLiveTestUtils.validate_callconnection(call_connection_async)
 

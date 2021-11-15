@@ -10,9 +10,6 @@ import utils._test_constants as _test_constants
 from typing import List
 from parameterized import parameterized
 from azure.communication.callingserver import (
-    CreateCallOptions,
-    JoinCallOptions,
-    PlayAudioOptions,
     CommunicationIdentifier,
     CallLocator,
     ServerCallLocator,
@@ -28,7 +25,9 @@ async def test_create_connection_succeed(
     test_name, # type: str
     source_user, # type: CommunicationIdentifier
     target_users, # type: List[CommunicationIdentifier]
-    options, # type: CreateCallOptions
+    callback_uri, # type: str
+    requested_media_types, # type: List[CallMediaType]
+    requested_call_events, # type: List[CallingEventSubscriptionType]
     use_managed_identity = False # type: bool
     ):
 
@@ -38,8 +37,13 @@ async def test_create_connection_succeed(
         use_managed_identity = use_managed_identity
         )
 
-    call_connection = await calling_server_client.create_call_connection(source_user,
-        target_users, options)
+    call_connection = await calling_server_client.create_call_connection(
+        source_user,
+        target_users,
+        callback_uri,
+        requested_media_types,
+        requested_call_events
+        )
 
     assert call_connection.call_connection_id == _test_constants.CALL_ID
 
@@ -49,7 +53,9 @@ async def test_create_connection_failed(
     test_name, # type: str
     source_user, # type: CommunicationIdentifier
     target_users, # type: List[CommunicationIdentifier]
-    options, # type: CreateCallOptions
+    callback_uri, # type: str
+    requested_media_types, # type: List[CallMediaType]
+    requested_call_events, # type: List[CallingEventSubscriptionType]
     use_managed_identity = False # type: bool
     ):
 
@@ -61,7 +67,13 @@ async def test_create_connection_failed(
 
     raised = False
     try:
-        await calling_server_client.create_call_connection(source_user, target_users, options)
+        await calling_server_client.create_call_connection(
+            source_user,
+            target_users,
+            callback_uri,
+            requested_media_types,
+            requested_call_events
+            )
     except:
         raised = True
     assert raised == True
@@ -72,7 +84,9 @@ async def test_join_call_succeed(
     test_name, # type: str
     call_locator, # type: CallLocator
     source_user, # type: CommunicationIdentifier
-    options, # type: JoinCallOptions
+    callback_uri, # type: str
+    requested_media_types, # type: List[CallMediaType]
+    requested_call_events, # type: List[CallingEventSubscriptionType]
     use_managed_identity = False # type: bool
     ):
 
@@ -85,7 +99,9 @@ async def test_join_call_succeed(
     call_connection = await calling_server_client.join_call(
         call_locator,
         source_user,
-        options
+        callback_uri,
+        requested_media_types,
+        requested_call_events
         )
 
     assert call_connection.call_connection_id == _test_constants.CALL_ID
@@ -96,7 +112,9 @@ async def test_join_call_failed(
     test_name, # type: str
     call_locator, # type: CallLocator
     source_user, # type: CommunicationIdentifier
-    options, # type: JoinCallOptions
+    callback_uri, # type: str
+    requested_media_types, # type: List[CallMediaType]
+    requested_call_events, # type: List[CallingEventSubscriptionType]
     use_managed_identity = False # type: bool
     ):
 
@@ -111,7 +129,9 @@ async def test_join_call_failed(
         await calling_server_client.join_call(
             call_locator,
             source_user,
-            options
+            callback_uri,
+            requested_media_types,
+            requested_call_events
             )
     except:
         raised = True
@@ -129,13 +149,13 @@ async def test_answer_call_succeed(
     ):
 
     calling_server_client = _mock_utils_async.create_mock_calling_server_client(
-        status_code=201,
+        status_code=202,
         payload=_test_constants.AnswerCallResponsePayload,
         use_managed_identity = use_managed_identity
         )
 
     result = await calling_server_client.answer_call(
-        incoming_call_context=incoming_call_context,
+        incoming_call_context,
         callback_uri=callback_uri,
         requested_media_types=requested_media_types,
         requested_call_events=requested_call_events
@@ -279,8 +299,11 @@ async def test_redirect_call_failed(
 async def test_play_audio_succeed(
     test_name, # type: str
     call_locator, # type: CallLocator
-    audio_file_uri, # type: str
-    options, # type: PlayAudioOptions
+    audio_url, # type: str
+    is_looped, # type: bool
+    audio_file_id, # type: str
+    callback_uri, # type: str
+    operation_context, # type: str
     use_managed_identity = False # type: bool
     ):
 
@@ -292,8 +315,11 @@ async def test_play_audio_succeed(
 
     result = await calling_server_client.play_audio(
         call_locator,
-        audio_file_uri,
-        options
+        audio_url,
+        is_looped,
+        audio_file_id = audio_file_id,
+        callback_uri = callback_uri,
+        operation_context = operation_context
         )
 
     CallingServerUnitTestUtils.verify_play_audio_result(result)
@@ -303,8 +329,11 @@ async def test_play_audio_succeed(
 async def test_play_audio_failed(
     test_name, # type: str
     call_locator, # type: CallLocator
-    audio_file_uri, # type: str
-    options, # type: PlayAudioOptions
+    audio_url, # type: str
+    is_looped, # type: bool
+    audio_file_id, # type: str
+    callback_uri, # type: str
+    operation_context, # type: str
     use_managed_identity = False # type: bool
     ):
 
@@ -318,8 +347,11 @@ async def test_play_audio_failed(
     try:
         await calling_server_client.play_audio(
             call_locator,
-            audio_file_uri,
-            options
+            audio_url,
+            is_looped,
+            audio_file_id = audio_file_id,
+            callback_uri = callback_uri,
+            operation_context = operation_context
             )
     except:
         raised = True
@@ -331,8 +363,11 @@ async def test_play_audio_to_participant_succeed(
     test_name, # type: str
     call_locator, # type: CallLocator
     participant, # type: CommunicationIdentifier
-    audio_file_uri, # type: str
-    play_audio_options, # type: PlayAudioOptions
+    audio_url, # type: str
+    is_looped, # type: bool
+    audio_file_id, # type: str
+    callback_uri, # type: str
+    operation_context, # type: str
     use_managed_identity = False # type: bool
     ):
 
@@ -345,8 +380,11 @@ async def test_play_audio_to_participant_succeed(
     result = await calling_server_client.play_audio_to_participant(
         call_locator,
         participant,
-        audio_file_uri,
-        play_audio_options
+        audio_url,
+        is_looped,
+        audio_file_id = audio_file_id,
+        callback_uri = callback_uri,
+        operation_context = operation_context
         )
     CallingServerUnitTestUtils.verify_play_audio_result(result)
 
@@ -356,8 +394,11 @@ async def test_play_audio_to_participant_failed(
     test_name, # type: str
     call_locator, # type: CallLocator
     participant, # type: CommunicationIdentifier
-    audio_file_uri, # type: str
-    play_audio_options, # type: PlayAudioOptions
+    audio_url, # type: str
+    is_looped, # type: bool
+    audio_file_id, # type: str
+    callback_uri, # type: str
+    operation_context, # type: str
     use_managed_identity = False # type: bool
     ):
 
@@ -372,8 +413,11 @@ async def test_play_audio_to_participant_failed(
         await calling_server_client.play_audio_to_participant(
             call_locator,
             participant,
-            audio_file_uri,
-            play_audio_options
+            audio_url,
+            is_looped,
+            audio_file_id = audio_file_id,
+            callback_uri = callback_uri,
+            operation_context = operation_context
             )
     except:
         raised = True
@@ -483,9 +527,9 @@ async def test_remove_participant_failed(
         raised = True
     assert raised == True
 
-@parameterized.expand(CallingServerUnitTestUtils.data_source_test_get_participants_with_call_locator())
+@parameterized.expand(CallingServerUnitTestUtils.data_source_test_list_participants_with_call_locator())
 @pytest.mark.asyncio
-async def test_get_participants_succeed(
+async def test_list_participants_succeed(
     test_name, # type: str
     call_locator, # type: CallLocator
     use_managed_identity = False # type: bool
@@ -497,14 +541,14 @@ async def test_get_participants_succeed(
         use_managed_identity=use_managed_identity
         )
 
-    result = await calling_server_client.get_participants(
+    result = await calling_server_client.list_participants(
         call_locator
         )
-    CallingServerUnitTestUtils.verify_get_participants_result(result)
+    CallingServerUnitTestUtils.verify_list_participants_result(result)
 
-@parameterized.expand(CallingServerUnitTestUtils.data_source_test_get_participants_with_call_locator())
+@parameterized.expand(CallingServerUnitTestUtils.data_source_test_list_participants_with_call_locator())
 @pytest.mark.asyncio
-async def test_get_participants_failed(
+async def test_list_participants_failed(
     test_name, # type: str
     call_locator, # type: CallLocator
     use_managed_identity = False # type: bool
@@ -518,7 +562,7 @@ async def test_get_participants_failed(
 
     raised = False
     try:
-        await calling_server_client.get_participants(
+        await calling_server_client.list_participants(
             call_locator
             )
     except:
@@ -564,96 +608,6 @@ async def test_get_participant_failed(
     raised = False
     try:
         await calling_server_client.get_participant(
-            call_locator,
-            participant=participant
-            )
-    except:
-        raised = True
-    assert raised == True
-
-@parameterized.expand(CallingServerUnitTestUtils.data_source_test_mute_participant_with_call_locator())
-@pytest.mark.asyncio
-async def test_mute_participant_succeed(
-    test_name, # type: str
-    call_locator, # type: CallLocator
-    participant, # type: CommunicationIdentifier
-    use_managed_identity = False # type: bool
-    ):
-
-    calling_server_client = _mock_utils_async.create_mock_calling_server_client(
-        status_code=200,
-        payload=None,
-        use_managed_identity=use_managed_identity
-        )
-
-    await calling_server_client.mute_participant(
-        call_locator,
-        participant=participant
-        )
-
-@parameterized.expand(CallingServerUnitTestUtils.data_source_test_mute_participant_with_call_locator())
-@pytest.mark.asyncio
-async def test_mute_participant_failed(
-    test_name, # type: str
-    call_locator, # type: CallLocator
-    participant, # type: CommunicationIdentifier
-    use_managed_identity = False # type: bool
-    ):
-
-    calling_server_client = _mock_utils_async.create_mock_calling_server_client(
-        status_code=404,
-        payload=_test_constants.ErrorPayload,
-        use_managed_identity = use_managed_identity
-        )
-
-    raised = False
-    try:
-        await calling_server_client.mute_participant(
-            call_locator,
-            participant=participant
-            )
-    except:
-        raised = True
-    assert raised == True
-
-@parameterized.expand(CallingServerUnitTestUtils.data_source_test_unmute_participant_with_call_locator())
-@pytest.mark.asyncio
-async def test_unmute_participant_succeed(
-    test_name, # type: str
-    call_locator, # type: CallLocator
-    participant, # type: CommunicationIdentifier
-    use_managed_identity = False # type: bool
-    ):
-
-    calling_server_client = _mock_utils_async.create_mock_calling_server_client(
-        status_code=200,
-        payload=None,
-        use_managed_identity=use_managed_identity
-        )
-
-    await calling_server_client.unmute_participant(
-        call_locator,
-        participant=participant
-        )
-
-@parameterized.expand(CallingServerUnitTestUtils.data_source_test_unmute_participant_with_call_locator())
-@pytest.mark.asyncio
-async def test_unmute_participant_failed(
-    test_name, # type: str
-    call_locator, # type: CallLocator
-    participant, # type: CommunicationIdentifier
-    use_managed_identity = False # type: bool
-    ):
-
-    calling_server_client = _mock_utils_async.create_mock_calling_server_client(
-        status_code=404,
-        payload=_test_constants.ErrorPayload,
-        use_managed_identity = use_managed_identity
-        )
-
-    raised = False
-    try:
-        await calling_server_client.unmute_participant(
             call_locator,
             participant=participant
             )
@@ -750,96 +704,6 @@ async def test_cancel_participant_media_operation_failed(
             call_locator,
             participant,
             media_operation_id
-            )
-    except:
-        raised = True
-    assert raised == True
-
-@parameterized.expand(CallingServerUnitTestUtils.data_source_test_hold_participant_meeting_audio_with_callLocator())
-@pytest.mark.asyncio
-async def test_hold_participant_meeting_audio(
-    test_name, # type: str
-    call_locator, # type: CallLocator
-    participant, # type: CommunicationIdentifier
-    use_managed_identity = False # type: bool
-    ):
-
-    calling_server_client = _mock_utils_async.create_mock_calling_server_client(
-        status_code=200,
-        payload=None,
-        use_managed_identity=use_managed_identity
-        )
-
-    await calling_server_client.hold_participant_meeting_audio(
-        call_locator,
-        participant
-        )
-
-@parameterized.expand(CallingServerUnitTestUtils.data_source_test_hold_participant_meeting_audio_with_callLocator())
-@pytest.mark.asyncio
-async def test_hold_participant_meeting_audio_failed(
-    test_name, # type: str
-    call_locator, # type: CallLocator
-    participant, # type: CommunicationIdentifier
-    use_managed_identity = False # type: bool
-    ):
-
-    calling_server_client = _mock_utils_async.create_mock_calling_server_client(
-        status_code=404,
-        payload=_test_constants.ErrorPayload,
-        use_managed_identity = use_managed_identity
-        )
-
-    raised = False
-    try:
-        await calling_server_client.hold_participant_meeting_audio(
-            call_locator,
-            participant
-            )
-    except:
-        raised = True
-    assert raised == True
-
-@parameterized.expand(CallingServerUnitTestUtils.data_source_test_resume_participant_meeting_audio_with_callLocator())
-@pytest.mark.asyncio
-async def test_resume_participant_meeting_audio(
-    test_name, # type: str
-    call_locator, # type: CallLocator
-    participant, # type: CommunicationIdentifier
-    use_managed_identity = False # type: bool
-    ):
-
-    calling_server_client = _mock_utils_async.create_mock_calling_server_client(
-        status_code=200,
-        payload=None,
-        use_managed_identity=use_managed_identity
-        )
-
-    await calling_server_client.resume_participant_meeting_audio(
-        call_locator,
-        participant
-        )
-
-@parameterized.expand(CallingServerUnitTestUtils.data_source_test_resume_participant_meeting_audio_with_callLocator())
-@pytest.mark.asyncio
-async def test_resume_participant_meeting_audio_failed(
-    test_name, # type: str
-    call_locator, # type: CallLocator
-    participant, # type: CommunicationIdentifier
-    use_managed_identity = False # type: bool
-    ):
-
-    calling_server_client = _mock_utils_async.create_mock_calling_server_client(
-        status_code=404,
-        payload=_test_constants.ErrorPayload,
-        use_managed_identity = use_managed_identity
-        )
-
-    raised = False
-    try:
-        await calling_server_client.resume_participant_meeting_audio(
-            call_locator,
-            participant
             )
     except:
         raised = True

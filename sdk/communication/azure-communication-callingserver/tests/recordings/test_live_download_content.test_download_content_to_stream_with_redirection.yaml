@@ -82,9 +82,9 @@ interactions:
       cache-control:
       - no-cache, max-age=0, s-maxage=0, private
       content-length:
-      - '1077'
+      - '1078'
       content-range:
-      - bytes 0-1076/1077
+      - bytes 0-1077/1078
       content-type:
       - application/octet-stream
       date:
