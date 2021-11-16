@@ -75,14 +75,13 @@ class AzureRecordedTestCase(object):
     def recording_processors(self):
         return []
 
-    @property
     def is_playback(self):
         return not self.is_live
 
     def get_settings_value(self, key):
         key_value = os.environ.get("AZURE_" + key, None)
 
-        if not key_value or self.is_playback:
+        if not key_value or self.is_playback():
             try:
                 key_value = getattr(self.settings, key)
             except Exception as ex:
