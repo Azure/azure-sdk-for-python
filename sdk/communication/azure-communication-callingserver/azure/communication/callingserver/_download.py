@@ -181,30 +181,27 @@ class ContentStreamDownloader():  # pylint: disable=too-many-instance-attributes
 
     def __init__(
         self,
-        clients=None,
-        config=None,
-        start_range=None,
-        end_range=None,
-        endpoint=None,
-        parallel_download_options=None,
+        endpoint,
+        client,
+        config,
         **kwargs
     ):
         self.endpoint = endpoint
         self.properties = None
         self.size = None
 
-        self._clients = clients
+        self._clients = client
         self._config = config
-        self._start_range = start_range
-        self._end_range = end_range
-        self._max_concurrency = parallel_download_options.max_concurrency if parallel_download_options else 1
+        self._start_range = kwargs.pop("start_range", None)
+        self._end_range = kwargs.pop("end_range", None)
+        self._max_concurrency = kwargs.pop("max_concurrency", 1)
         self._request_options = kwargs
         self._download_complete = False
         self._current_content = None
         self._file_size = None
         self._non_empty_ranges = None
         self._response = None
-        self._block_size = parallel_download_options.block_size if parallel_download_options else 4*1024*1024
+        self._block_size = kwargs.pop("block_size", 4*1024*1024)
         initial_request_start = self._start_range if self._start_range is not None else 0
         if self._end_range is not None and self._end_range - self._start_range < self._block_size:
             initial_request_end = self._end_range

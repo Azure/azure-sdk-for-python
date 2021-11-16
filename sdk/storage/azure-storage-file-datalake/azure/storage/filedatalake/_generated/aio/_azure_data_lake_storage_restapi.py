@@ -28,7 +28,7 @@ class AzureDataLakeStorageRESTAPI(object):
     :vartype file_system: azure.storage.filedatalake.aio.operations.FileSystemOperations
     :ivar path: PathOperations operations
     :vartype path: azure.storage.filedatalake.aio.operations.PathOperations
-    :param url: The URL of the service account, container, or blob that is the targe of the desired operation.
+    :param url: The URL of the service account, container, or blob that is the target of the desired operation.
     :type url: str
     """
 

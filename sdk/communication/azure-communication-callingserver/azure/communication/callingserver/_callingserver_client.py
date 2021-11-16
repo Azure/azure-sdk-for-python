@@ -117,14 +117,6 @@ class CallingServerClient(object):
         :returns: Instance of CallingServerClient.
         :rtype: ~azure.communication.callingserver.CallingServerClient
 
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/callingserver_sample.py
-                :start-after: [START auth_from_connection_string]
-                :end-before: [END auth_from_connection_string]
-                :language: python
-                :dedent: 8
-                :caption: Creating the CallingServerClient from a connection string.
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
@@ -672,33 +664,33 @@ class CallingServerClient(object):
         :type call_locator: ~azure.communication.callingserver.models.CallLocator
         :param recording_state_callback_uri: Required. The uri to send notifications to.
         :type recording_state_callback_uri: str
-        :keyword recording_content_type: The content type of call recording. Possible values include:
+        :keyword content_type: The content type of call recording. Possible values include:
          "audio", "audioVideo".
-        :paramtype recording_content_type: str or
+        :paramtype content_type: str or
          ~azure.communication.callingserver.models.RecordingContentType
-        :keyword recording_channel_type: The channel type of call recording. Possible values include:
+        :keyword channel_type: The channel type of call recording. Possible values include:
         "mixed", "unmixed".
-        :paramtype recording_channel_type: str or
+        :paramtype channel_type: str or
          ~azure.communication.callingserver.models.RecordingChannelType
-        :keyword recording_format_type: The format type of call recording. Possible values include: "wav",
+        :keyword format_type: The format type of call recording. Possible values include: "wav",
          "mp3", "mp4".
-        :paramtype recording_format_type: str or
+        :paramtype format_type: str or
          ~azure.communication.callingserver.models.RecordingFormatType
         :return: StartCallRecordingResult
         :rtype: ~azure.communication.callingserver.StartCallRecordingResult
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
-        recording_content_type = kwargs.pop("recording_content_type", None)
-        recording_channel_type = kwargs.pop("recording_channel_type", None)
-        recording_format_type = kwargs.pop("recording_format_type", None)
+        content_type = kwargs.pop("content_type", None)
+        channel_type = kwargs.pop("channel_type", None)
+        format_type = kwargs.pop("format_type", None)
 
         start_call_recording_with_calllocator_request = StartCallRecordingWithCallLocatorRequest(
             call_locator=serialize_call_locator(call_locator),
             recording_state_callback_uri=recording_state_callback_uri,
-            recording_content_type=recording_content_type,
-            recording_channel_type=recording_channel_type,
-            recording_format_type=recording_format_type,
+            recording_content_type=content_type,
+            recording_channel_type=channel_type,
+            recording_format_type=format_type,
             **kwargs
         )
 
@@ -712,13 +704,13 @@ class CallingServerClient(object):
         self,
         recording_id,  # type: str
         **kwargs  # type: Any
-    ):  # type: (...) -> HttpResponse
+    ):  # type: (...) -> None
         """Pause recording the call.
 
         :param recording_id: Required. The recording id.
         :type recording_id: str
-        :return: The response of the operation.
-        :rtype: ~azure.core.rest.HttpResponse
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
@@ -732,13 +724,13 @@ class CallingServerClient(object):
         self,
         recording_id,  # type: str
         **kwargs  # type: Any
-    ):  # type: (...) -> HttpResponse
+    ):  # type: (...) -> None
         """Resume recording the call.
 
         :param recording_id: Required. The recording id.
         :type recording_id: str
-        :return: The response of the operation.
-        :rtype: ~azure.core.rest.HttpResponse
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
@@ -752,13 +744,13 @@ class CallingServerClient(object):
         self,
         recording_id,  # type: str
         **kwargs  # type: Any
-    ):  # type: (...) -> HttpResponse
+    ):  # type: (...) -> None
         """Stop recording the call.
 
         :param recording_id: Required. The recording id.
         :type recording_id: str
-        :return: The response of the operation.
-        :rtype: ~azure.core.rest.HttpResponse
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
@@ -768,7 +760,7 @@ class CallingServerClient(object):
         )
 
     @distributed_trace()
-    def get_recording_properities(
+    def get_recording_properties(
         self,
         recording_id,  # type: str
         **kwargs  # type: Any
@@ -819,12 +811,9 @@ class CallingServerClient(object):
             self._callingserver_service_client._config)
 
         return ContentStreamDownloader(
+            content_url,
             content_downloader,
             self._callingserver_service_client._config,
-            start_range,
-            end_range,
-            endpoint=content_url,
-            parallel_download_options=parallel_download_options,
             **kwargs
         )
 
@@ -833,13 +822,13 @@ class CallingServerClient(object):
         self,
         content_delete_url, # type: str
         **kwargs # type: Any
-    ): # type: (...) -> HttpResponse
+    ): # type: (...) -> None
         """Delete recording.
 
         :param content_delete_url: Required. The content delete url.
         :type content_delete_url: str
-        :return: The response of the operation.
-        :rtype: ~azure.core.rest.HttpResponse
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
@@ -868,5 +857,3 @@ class CallingServerClient(object):
             map_error(status_code=response.status_code,
                         response=response, error_map=error_map)
             raise HttpResponseError(response=response)
-
-        return response

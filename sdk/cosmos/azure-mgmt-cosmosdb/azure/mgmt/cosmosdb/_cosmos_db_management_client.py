@@ -38,7 +38,7 @@ from .operations import MongoDBResourcesOperations
 from .operations import TableResourcesOperations
 from .operations import CassandraResourcesOperations
 from .operations import GremlinResourcesOperations
-from .operations import CosmosDBManagementClientOperationsMixin
+from .operations import LocationsOperations
 from .operations import NotebookWorkspacesOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
@@ -51,7 +51,6 @@ from .operations import RestorableMongodbCollectionsOperations
 from .operations import RestorableMongodbResourcesOperations
 from .operations import CassandraClustersOperations
 from .operations import CassandraDataCentersOperations
-from .operations import ServiceOperations
 from . import models
 
 
@@ -96,6 +95,8 @@ class CosmosDBManagementClient(CosmosDBManagementClientOperationsMixin):
     :vartype cassandra_resources: azure.mgmt.cosmosdb.operations.CassandraResourcesOperations
     :ivar gremlin_resources: GremlinResourcesOperations operations
     :vartype gremlin_resources: azure.mgmt.cosmosdb.operations.GremlinResourcesOperations
+    :ivar locations: LocationsOperations operations
+    :vartype locations: azure.mgmt.cosmosdb.operations.LocationsOperations
     :ivar notebook_workspaces: NotebookWorkspacesOperations operations
     :vartype notebook_workspaces: azure.mgmt.cosmosdb.operations.NotebookWorkspacesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
@@ -120,8 +121,6 @@ class CosmosDBManagementClient(CosmosDBManagementClientOperationsMixin):
     :vartype cassandra_clusters: azure.mgmt.cosmosdb.operations.CassandraClustersOperations
     :ivar cassandra_data_centers: CassandraDataCentersOperations operations
     :vartype cassandra_data_centers: azure.mgmt.cosmosdb.operations.CassandraDataCentersOperations
-    :ivar service: ServiceOperations operations
-    :vartype service: azure.mgmt.cosmosdb.operations.ServiceOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
@@ -186,6 +185,8 @@ class CosmosDBManagementClient(CosmosDBManagementClientOperationsMixin):
             self._client, self._config, self._serialize, self._deserialize)
         self.gremlin_resources = GremlinResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.locations = LocationsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.notebook_workspaces = NotebookWorkspacesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
@@ -209,8 +210,6 @@ class CosmosDBManagementClient(CosmosDBManagementClientOperationsMixin):
         self.cassandra_clusters = CassandraClustersOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.cassandra_data_centers = CassandraDataCentersOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.service = ServiceOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, http_request, **kwargs):

@@ -169,17 +169,17 @@ class ServerCallTest(CommunicationTestCase):
             assert recording_id is not None
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
 
-            recording_state = self.callingserver_client.get_recording_properities(recording_id)
+            recording_state = self.callingserver_client.get_recording_properties(recording_id)
             assert recording_state.recording_state == "active"
 
             self.callingserver_client.pause_recording(recording_id)
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
-            recording_state = self.callingserver_client.get_recording_properities(recording_id)
+            recording_state = self.callingserver_client.get_recording_properties(recording_id)
             assert recording_state.recording_state == "inactive"
 
             self.callingserver_client.resume_recording(recording_id)
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
-            recording_state = self.callingserver_client.get_recording_properities(recording_id)
+            recording_state = self.callingserver_client.get_recording_properties(recording_id)
             assert recording_state.recording_state == "active"
 
             self.callingserver_client.stop_recording(recording_id)
@@ -223,9 +223,7 @@ class ServerCallTest(CommunicationTestCase):
     @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
     def test_delete_success(self):
         delete_url = CallingServerLiveTestUtils.get_delete_url()  
-        delete_response = self.callingserver_client.delete_recording(delete_url)
-        assert delete_response is not None
-        assert delete_response.status_code == 200
+        self.callingserver_client.delete_recording(delete_url)
 
     @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
     def test_delete_content_not_exists(self):

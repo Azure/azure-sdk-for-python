@@ -32,6 +32,11 @@ from ._virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMs
 from ._log_analytics_operations import LogAnalyticsOperations
 from ._virtual_machine_run_commands_operations import VirtualMachineRunCommandsOperations
 from ._virtual_machine_scale_set_vm_run_commands_operations import VirtualMachineScaleSetVMRunCommandsOperations
+from ._disks_operations import DisksOperations
+from ._snapshots_operations import SnapshotsOperations
+from ._disk_encryption_sets_operations import DiskEncryptionSetsOperations
+from ._disk_accesses_operations import DiskAccessesOperations
+from ._disk_restore_point_operations import DiskRestorePointOperations
 
 __all__ = [
     'Operations',
@@ -60,4 +65,9 @@ __all__ = [
     'LogAnalyticsOperations',
     'VirtualMachineRunCommandsOperations',
     'VirtualMachineScaleSetVMRunCommandsOperations',
+    'DisksOperations',
+    'SnapshotsOperations',
+    'DiskEncryptionSetsOperations',
+    'DiskAccessesOperations',
+    'DiskRestorePointOperations',
 ]

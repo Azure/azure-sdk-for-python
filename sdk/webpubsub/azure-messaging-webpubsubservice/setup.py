@@ -39,9 +39,9 @@ setup(
     license="MIT License",
     author="Microsoft Corporation",
     author_email="azpysdkhelp@microsoft.com",
-    url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/signalr/azure-messaging-webpubsubservice",
+    url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/webpubsub/azure-messaging-webpubsubservice",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.7",
@@ -61,9 +61,9 @@ setup(
         ]
     ),
     install_requires=[
-        "azure-core<2.0.0,>=1.10.0",
-        "msrest>=0.6.18",
-        "cryptography>=2.1.4",
+        "azure-core<2.0.0,>=1.20.1",
+        "msrest>=0.6.21",
+        "cryptography>=2.8.0",
         "pyjwt>=1.7.1",
         "six>=1.12.0",
     ],
