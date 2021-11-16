@@ -56,4 +56,9 @@ if __name__ == "__main__":
     if not pkg_path:
         pkg_path = args.target_package
 
-    check_call(["apistubgen", "--pkg-path", pkg_path], cwd=args.work_dir)
+    out_dir = args.work_dir
+    staging_dir = os.getenv("STAGING_DIRECTORY")
+    if staging_dir:
+        out_dir = os.path.join(staging_dir, os.path.basename(pkg_path))
+    print("Running apistubgen on {0}. Json output path: {1}".format(pkg_path, out_dir))
+    check_call(["apistubgen", "--pkg-path", pkg_path, "--out-path", out_dir], cwd=args.work_dir)

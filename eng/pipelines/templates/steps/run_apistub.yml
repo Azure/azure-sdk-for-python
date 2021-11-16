@@ -9,7 +9,11 @@ parameters:
 #     eng/pipelines/templates/jobs/live.test.yml
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
-steps:  
+steps:
+  - script: |
+      $env:STAGING_DIRECTORY = "$(Build.ArtifactStagingDirectory)"
+    displayName: "Set Staging Directory Env Variable"
+
   - task: PythonScript@0
     condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
     displayName: 'Generate API stub files'
@@ -23,13 +27,3 @@ steps:
         --toxenv="apistub"
         --disablecov
         --filter-type="Omit_management"
-      
-  - task: PythonScript@0
-    condition: succeeded()
-    displayName: 'Copy API stub files'
-    inputs:
-      scriptPath: 'scripts/devops_tasks/stage_apistub_files.py'
-      arguments: >-
-        "$(TargetingString)"
-        --service="${{ parameters.ServiceDirectory }}" 
-        --dest-dir="$(Build.ArtifactStagingDirectory)"
