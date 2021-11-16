@@ -350,9 +350,9 @@ class TestInvoice(FormRecognizerTest):
         self.assertEqual(invoice.fields.get("Items").value[0].value["Quantity"].value, 1.0)
         self.assertEqual(invoice.fields.get("Items").value[0].value["UnitPrice"].value, 1.0)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    @pytest.mark.live_test_only
     def test_invoice_continuation_token(self, client):
 
         with open(self.invoice_tiff, "rb") as fd:
