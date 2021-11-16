@@ -4,17 +4,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import xml.etree.ElementTree as ET
 import base64
 import functools
-from json import JSONEncoder
-from typing import Dict, Union, cast
+from json import JSONEncoder, JSONDecoder
+from typing import Any, Dict, Type, Union, cast, Literal, Optional
 from datetime import datetime, date, time, timedelta
 from .utils._utils import _FixedOffset
 
-
-
-__all__ = ["NULL", "AzureJSONEncoder"]
-
+__all__ = ["NULL", "AzureJSONEncoder", "Model", "rest_property"]
 
 
 class _Null(object):
@@ -148,27 +146,51 @@ class AzureJSONEncoder(JSONEncoder):
                 pass
             return super(AzureJSONEncoder, self).default(o)
 
-def _fget(self, rest_name):
-    return self.__getitem__(rest_name)
+def _deserialize_base64(attr: str) -> bytes:
+    """Deserialize base64 encoded string into string.
 
-def _fset(self, value, rest_name):
+    :param str attr: string to be deserialized.
+    :rtype: bytearray
+    :raises: TypeError if string format invalid.
+    """
+    padding = '=' * (3 - (len(attr) + 3) % 4)
+    attr = attr + padding
+    encoded = attr.replace('-', '+').replace('_', '/')
+    return base64.b64decode(encoded)
+
+TYPES = Literal[
+    'base64'
+]
+
+def _deserialize(obj: Any, type: Union[TYPES, Type]) -> Any:
+    try:
+        return type(obj)
+    except TypeError:
+        if type == "base64":
+            return _deserialize_base64(obj)
+        return obj
+
+def _fget(self, rest_name: str, type: Optional[str]):
+    retval = self.__getitem__(rest_name)
+    if not type:
+        return retval
+    return _deserialize(retval, type)
+
+def _fset(self, value: Any, rest_name: str):
     self.__setitem__(rest_name, value)
 
-def _fdel(self, rest_name):
+def _fdel(self, rest_name: str):
     self.__delitem__(rest_name)
 
 class rest_property(property):
-    def __init__(self, name):
+    def __init__(self, name, type: Union[TYPES, Type] = None):
         super().__init__(
-            functools.partial(_fget, rest_name=name),
+            functools.partial(_fget, rest_name=name, type=type),
             functools.partial(_fset, rest_name=name),
             functools.partial(_fdel, rest_name=name)
         )
-        self._rest_name = name
-        self._attr_name = None
 
     def __call__(self, func):
-        self._attr_name = func.__name__
         return self
 
 class Model(dict):

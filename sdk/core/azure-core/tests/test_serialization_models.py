@@ -3,6 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
+import base64
+from typing import Any, List, Literal
 import pytest
 from azure.core.serialization import Model, rest_property
 
@@ -18,16 +20,16 @@ def modify_args(init):
 class BasicResource(Model):
 
     @rest_property(name="platformUpdateDomainCount")
-    def platform_update_domain_count(self):
+    def platform_update_domain_count(self) -> int:
         """How many times the platform update domain has been counted"""
 
     @rest_property(name="platformFaultDomainCount")
-    def platform_fault_domain_count(self):
+    def platform_fault_domain_count(self) -> int:
         """How many times the platform fault domain has been counted"""
 
     @rest_property(name="virtualMachines")
-    def virtual_machines(self):
-        """Number of virtual machines"""
+    def virtual_machines(self) -> List[Any]:
+        """List of virtual machines"""
 
 
 def test_model_and_dict_equal():
@@ -163,3 +165,48 @@ def test_modify_property():
     model.platform_fault_domain_count = 2000
     model['platformFaultDomainCount']
     assert model.platform_fault_domain_count == model["platformFaultDomainCount"] == 2000
+
+def test_property_is_a_type():
+    class Fish(Model):
+
+        @rest_property(name="name")
+        def name(self) -> str:
+            """My Fish name"""
+
+        @rest_property(name="species")
+        def species(self) -> Literal['Salmon', 'Halibut']:
+            """My species"""
+
+    class Fishery(Model):
+
+        @rest_property(name="fish", type=Fish)
+        def fish(self) -> Fish:
+            """The fish in my fishery."""
+
+    fishery = Fishery({"fish": {"name": "Benjamin", "species": "Salmon"}})
+    assert isinstance(fishery.fish, Fish)
+    assert fishery.fish.name == fishery.fish['name'] == fishery['fish']['name'] == "Benjamin"
+    assert fishery.fish.species == fishery.fish['species'] == fishery['fish']['species'] == "Salmon"
+
+def test_base64_deserialize():
+    class Base64Model(Model):
+        @rest_property(name="base64Value", type="base64")
+        def base64_value(self) -> bytes:
+            """My base 64 Value"""
+
+    val = bytearray([0x0FF, 0x0FE, 0x0FD, 0x0FC, 0x0FB, 0x0FA, 0x0F9, 0x0F8, 0x0F7, 0x0F6])
+    val_str = base64.b64encode(val).decode()
+    model = Base64Model({"base64Value": val_str})
+    assert model['base64Value'] == val_str
+    assert model.base64_value == val
+
+    class BaseModel(Model):
+
+        @rest_property(name="myProp", type=Base64Model)
+        def my_prop(self) -> Base64Model:
+            """My property, which is an instance of Base64Model"""
+
+    model = BaseModel({"myProp": {"base64Value": val_str}})
+    assert isinstance(model.my_prop, Base64Model)
+    assert model.my_prop['base64Value'] == model['myProp']['base64Value'] == val_str
+    assert model.my_prop.base64_value == val
