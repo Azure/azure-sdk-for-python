@@ -311,7 +311,7 @@ class SearchClient(HeadersMixin):
         )
 
         semantic_fields = kwargs.pop("semantic_fields", None)
-        semantic_configuration = kwargs.pop("semantic_configuration_name")
+        semantic_configuration = kwargs.pop("semantic_configuration_name", None)
 
         query = SearchQuery(
             search_text=search_text,
