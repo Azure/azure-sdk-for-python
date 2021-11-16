@@ -102,6 +102,9 @@ class IssueProcess:
     def get_default_readme_tag(self):
         pass
 
+    def edit_issue_body(self) -> None:
+        pass
+
     def auto_parse(self) -> None:
         if AUTO_PARSE_LABEL in self.issue.labels_name:
             return
@@ -117,6 +120,8 @@ class IssueProcess:
 
         # get default tag with readme_link
         self.get_default_readme_tag()
+
+        self.edit_issue_body()
 
     def add_label(self, label: str) -> None:
         self.issue.issue.add_to_labels(label)
