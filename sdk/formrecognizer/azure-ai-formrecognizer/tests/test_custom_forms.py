@@ -301,9 +301,9 @@ class TestCustomForms(FormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    @pytest.mark.live_test_only
     def test_custom_form_continuation_token(self, client, formrecognizer_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
 
