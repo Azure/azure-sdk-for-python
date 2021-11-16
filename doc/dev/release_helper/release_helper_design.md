@@ -64,7 +64,7 @@ def main():
 It is the general class to provide common flow of handling issues.
 
 ```python
-class IssueProcess():
+class IssueProcess:
     ...
     
     def run():
@@ -75,12 +75,12 @@ class IssueProcess():
         self.auto_bot()
         self.auto_close()
 
-class General():
+class General:
     ...
     
     def run():
     	for item in self.issues:
-			issue = IssueProcess(item)
+            issue = IssueProcess(item)
             issue.run()
             self.handled_issues.append(issue)
         self.auto_summary()
