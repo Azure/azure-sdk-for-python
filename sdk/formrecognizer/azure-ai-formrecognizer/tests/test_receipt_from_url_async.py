@@ -308,9 +308,9 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    @pytest.mark.live_test_only
     async def test_receipt_continuation_token(self, client):
 
         async with client:
