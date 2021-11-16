@@ -66,6 +66,32 @@ class CommunicationRelayClientTestAsync(AsyncCommunicationTestCase):
             assert iceServer.route_type is not None
 
         assert config is not None
+    
+    @CommunicationPreparer()
+    async def test_get_relay_configuration_without_identity(self, communication_livetest_dynamic_connection_string):     
+
+        networkTraversalClient = CommunicationRelayClient.from_connection_string(
+            communication_livetest_dynamic_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
+
+        async with networkTraversalClient:
+            print('Getting relay config:\n')
+            config = await networkTraversalClient.get_relay_configuration()
+        
+        print('Ice Servers Async:\n')
+        for iceServer in config.ice_servers:
+            assert iceServer.username is not None
+            print('Username: ' + iceServer.username)
+
+            assert iceServer.credential is not None
+            print('Credential: ' + iceServer.credential)
+            
+            assert iceServer.urls is not None
+            for url in iceServer.urls:
+                print('Url:' + url)
+
+        assert config is not None
         
     @CommunicationPreparer()
     async def test_get_relay_configuration_with_route_type_nearest(self, communication_livetest_dynamic_connection_string):

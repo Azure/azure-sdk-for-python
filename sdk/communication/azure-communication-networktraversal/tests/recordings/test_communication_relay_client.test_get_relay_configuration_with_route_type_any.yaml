@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.1.0b2 Python/3.7.4 (Windows-10-10.0.22494-SP0)
       x-ms-date:
-      - Wed, 10 Nov 2021 22:11:51 GMT
+      - Tue, 16 Nov 2021 04:40:46 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -26,15 +26,15 @@ interactions:
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
-        2021-10-31-preview
+        2021-10-31-preview, 2021-11-01
       content-length:
       - '101'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 10 Nov 2021 22:11:50 GMT
+      - Tue, 16 Nov 2021 04:40:46 GMT
       ms-cv:
-      - pea7KFeta0yz+d5I+l5x5A.0
+      - BfDeZYO3AEyM5dy+AnonDw.0
       request-context:
       - appId=
       strict-transport-security:
@@ -62,7 +62,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-networktraversal/1.0.0b1 Python/3.7.4 (Windows-10-10.0.22494-SP0)
       x-ms-date:
-      - Wed, 10 Nov 2021 22:11:51 GMT
+      - Tue, 16 Nov 2021 04:40:46 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -70,7 +70,7 @@ interactions:
   response:
     body:
       string: '{"iceServers": [{"routeType": "any", "urls": ["turn.skype.com", "turn:world.relay.skype.com:3478"],
-        "username": "sanitized", "credential": "sanitized"}], "expiresOn": "2021-11-10T22:11:51.6345782+00:00"}'
+        "username": "sanitized", "credential": "sanitized"}], "expiresOn": "2021-11-16T04:40:46.7398695+00:00"}'
     headers:
       api-supported-versions:
       - 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview
@@ -79,9 +79,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 10 Nov 2021 22:11:51 GMT
+      - Tue, 16 Nov 2021 04:40:46 GMT
       ms-cv:
-      - JQL72YekxEO0P35AwHKGwQ.0
+      - ip6U5Ji77k+Q1DO1+2Gg0w.0
       request-context:
       - appId=
       strict-transport-security:
@@ -89,7 +89,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 88ms
+      - 22ms
     status:
       code: 200
       message: OK

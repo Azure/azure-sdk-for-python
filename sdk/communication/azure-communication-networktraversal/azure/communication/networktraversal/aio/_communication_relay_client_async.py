@@ -90,7 +90,7 @@ class CommunicationRelayClient:
         """get a Communication Relay configuration.
         :param: CommunicationUserIdentifier user: A user from which we will get an id
         :return: CommunicationRelayConfiguration
-        :rtype: ~azure.communication.networktraversal.CommunicationRelayConfiguration
+        :rtype: ~azure.communication.networktraversal.models.CommunicationRelayConfiguration
         """
         if user is None:
             return await self._network_traversal_service_client.communication_network_traversal. \

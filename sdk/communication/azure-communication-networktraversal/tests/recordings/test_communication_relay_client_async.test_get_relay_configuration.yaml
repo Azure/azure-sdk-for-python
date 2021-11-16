@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.1.0b2 Python/3.7.4 (Windows-10-10.0.22494-SP0)
       x-ms-date:
-      - Wed, 10 Nov 2021 22:11:51 GMT
+      - Tue, 16 Nov 2021 04:40:47 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -21,15 +21,15 @@ interactions:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
-        2021-03-31-preview1, 2021-10-31-preview
+        2021-03-31-preview1, 2021-10-31-preview, 2021-11-01
       content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Wed, 10 Nov 2021 22:11:51 GMT
-      ms-cv: GynjuQm1oUuxQMqmcjtgyg.0
+      date: Tue, 16 Nov 2021 04:40:46 GMT
+      ms-cv: 3+1oH5z9t0OADoly/cuolA.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 27ms
+      x-processing-time: 26ms
     status:
       code: 201
       message: Created
@@ -46,7 +46,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-networktraversal/1.0.0b1 Python/3.7.4 (Windows-10-10.0.22494-SP0)
       x-ms-date:
-      - Wed, 10 Nov 2021 22:11:51 GMT
+      - Tue, 16 Nov 2021 04:40:47 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -56,18 +56,18 @@ interactions:
       string: '{"iceServers": [{"routeType": "any", "urls": ["turn.skype.com", "turn:world.relay.skype.com:3478"],
         "username": "sanitized", "credential": "sanitized"}, {"routeType": "nearest",
         "urls": ["stun:13.107.17.41:3478", "turn:13.107.17.41:3478"], "username":
-        "BQAANkukXQMB19gSYdXtLqhi7A41dwQPkLVlfAK8wZ8AAAAMARCsgNlqhd5IsZldo6P6NifIM3HjmLwECvQ6BTJYFW5n/fzu2Gg=",
-        "credential": "5caHpuagc1m5x9BvsVMcbC2D+EQ="}], "expiresOn": "2021-11-10T22:11:52.0851966+00:00"}'
+        "BQAANnSXU4EB19w2aCWTWAJL01t6XoklNPG7HphtE/8AAAAMARCsgNlqhd5IsZldo6P6NifIEHLHZlovGBYG/Um0CEiYowfIPEM=",
+        "credential": "zQTkxP2TkfXcd37rPKsaK8x47mE="}], "expiresOn": "2021-11-16T04:40:47.3233983+00:00"}'
     headers:
       api-supported-versions: 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview
       content-length: '560'
       content-type: application/json; charset=utf-8
-      date: Wed, 10 Nov 2021 22:11:51 GMT
-      ms-cv: rTN2hcJ8DE65nzciBzPGfA.0
+      date: Tue, 16 Nov 2021 04:40:46 GMT
+      ms-cv: adJLtbC3R02Dl6M5sFljLw.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 20ms
+      x-processing-time: 22ms
     status:
       code: 200
       message: OK

@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.1.0b2 Python/3.7.4 (Windows-10-10.0.22494-SP0)
       x-ms-date:
-      - Wed, 10 Nov 2021 22:11:52 GMT
+      - Tue, 16 Nov 2021 04:40:47 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -21,11 +21,11 @@ interactions:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
-        2021-03-31-preview1, 2021-10-31-preview
+        2021-03-31-preview1, 2021-10-31-preview, 2021-11-01
       content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Wed, 10 Nov 2021 22:11:51 GMT
-      ms-cv: 7N/qTH9boE2H1wsmfTEtqA.0
+      date: Tue, 16 Nov 2021 04:40:47 GMT
+      ms-cv: m/sTsHdtBUSU/ZLS1u+p4w.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
@@ -46,7 +46,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-networktraversal/1.0.0b1 Python/3.7.4 (Windows-10-10.0.22494-SP0)
       x-ms-date:
-      - Wed, 10 Nov 2021 22:11:52 GMT
+      - Tue, 16 Nov 2021 04:40:47 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -54,13 +54,13 @@ interactions:
   response:
     body:
       string: '{"iceServers": [{"routeType": "any", "urls": ["turn.skype.com", "turn:world.relay.skype.com:3478"],
-        "username": "sanitized", "credential": "sanitized"}], "expiresOn": "2021-11-10T22:11:52.3668579+00:00"}'
+        "username": "sanitized", "credential": "sanitized"}], "expiresOn": "2021-11-16T04:40:47.511629+00:00"}'
     headers:
       api-supported-versions: 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview
-      content-length: '319'
+      content-length: '318'
       content-type: application/json; charset=utf-8
-      date: Wed, 10 Nov 2021 22:11:52 GMT
-      ms-cv: drPQHdOrqk+qbrxWVnPsPg.0
+      date: Tue, 16 Nov 2021 04:40:47 GMT
+      ms-cv: d49KyvQFC0Cf2j4Au4SALQ.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE

@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from azure.core.tracing.decorator import distributed_trace
 
@@ -13,7 +13,6 @@ from ._generated._communication_network_traversal_client\
         as CommunicationNetworkTraversalClientGen
 from ._shared.utils import parse_connection_str, get_authentication_policy
 from ._version import SDK_MONIKER
-from ._generated.models import CommunicationRelayConfiguration
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -85,15 +84,14 @@ class CommunicationRelayClient(object):
     @distributed_trace
     def get_relay_configuration(
             self,
-            user=None, # type: CommunicationUserIdentifier
-            route_type=None, #type: RouteType
+            user: 'CommunicationUserIdentifier' = None,
+            route_type: 'CommunicationRelayConfigurationRequestRouteType' = None,
             **kwargs # type: Any
-    ):
-        # type: (Any) -> CommunicationRelayConfiguration
+    ) -> 'CommunicationRelayConfiguration':
         """get a Communication Relay configuration
         :param: CommunicationUserIdentifier user: A user from which we will get an id
         :return: CommunicationRelayConfiguration
-        :rtype: ~azure.communication.networktraversal.CommunicationRelayConfiguration
+        :rtype: ~azure.communication.networktraversal.models.CommunicationRelayConfiguration
         """
         if user is None:
             return self._network_traversal_service_client.communication_network_traversal.issue_relay_configuration(
