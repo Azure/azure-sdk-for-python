@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+import logging
 from typing import TYPE_CHECKING
 
 from six.moves.urllib_parse import urlparse
@@ -29,6 +30,7 @@ except ImportError:
 
     within_credential_chain = AlwaysFalse()  # type: ignore
 
+_LOGGER = logging.getLogger(__name__)
 
 def normalize_authority(authority):
     # type: (str) -> str
@@ -67,13 +69,19 @@ def validate_tenant_id(tenant_id):
 def resolve_tenant(default_tenant, tenant_id=None, **_):
     # type: (str, Optional[str], **Any) -> str
     """Returns the correct tenant for a token request given a credential's configuration"""
+    if tenant_id is None:
+        return default_tenant
     if (
-        tenant_id is None
-        or default_tenant == "adfs"
+        default_tenant == "adfs"
         or os.environ.get(EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH)
     ):
+        _LOGGER.info("A token was request for a different tenant than was configured on the credential, "
+                     "but the configured value was used since multi tenant authentication has been disabled. "
+                     "Configured tenant ID: %s, Requested tenant ID %s", default_tenant, tenant_id)
         return default_tenant
-
+    _LOGGER.info("A token was requested for a different tenant than was configured on the credential, "
+                 "and the requested tenant ID was used to authenticate. Configured tenant ID: %s, "
+                 "Requested tenant ID %s", default_tenant, tenant_id)
     return tenant_id
 
 
