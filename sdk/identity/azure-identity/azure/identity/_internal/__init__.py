@@ -80,8 +80,8 @@ def resolve_tenant(default_tenant, tenant_id=None, **_):
                      "Configured tenant ID: %s, Requested tenant ID %s", default_tenant, tenant_id)
         return default_tenant
     _LOGGER.info("A token was requested for a different tenant than was configured on the credential, "
-                 "and the requested tenant ID was used to authenticate. Configured TenantId: %s, "
-                 "Requested TenantId %s", default_tenant, tenant_id)
+                 "and the requested tenant ID was used to authenticate. Configured tenant ID: %s, "
+                 "Requested tenant ID %s", default_tenant, tenant_id)
     return tenant_id
 
 
