@@ -38,6 +38,7 @@ def test_model_and_dict_equal():
         "virtualMachines": []
     }
     model = BasicResource(dict_response)
+    model.platform_update_domain_count
     assert model == dict_response
     assert (
         model.platform_update_domain_count ==
@@ -103,10 +104,11 @@ def test_has_no_property():
         dict_response["platformUpdateDomainCount"] ==
         5
     )
+    assert not hasattr(model, "no_prop")
     with pytest.raises(AttributeError) as ex:
         model.no_prop
 
-    assert str(ex.value) == "BasicResource instance has no attribute 'no_prop'"
+    assert str(ex.value) == "'BasicResource' object has no attribute 'no_prop'"
     assert model["noprop"] == dict_response["noprop"] == "bonjour!"
 
     # let's add it to model now

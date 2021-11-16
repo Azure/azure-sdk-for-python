@@ -5,8 +5,9 @@
 # license information.
 # --------------------------------------------------------------------------
 import base64
+import functools
 from json import JSONEncoder
-from typing import Union, cast
+from typing import Dict, Union, cast
 from datetime import datetime, date, time, timedelta
 from .utils._utils import _FixedOffset
 
@@ -147,36 +148,28 @@ class AzureJSONEncoder(JSONEncoder):
                 pass
             return super(AzureJSONEncoder, self).default(o)
 
-def _deserialize(item):
-    return item
+def _fget(self, rest_name):
+    return self.__getitem__(rest_name)
 
-_SENTINEL = object()
+def _fset(self, value, rest_name):
+    self.__setitem__(rest_name, value)
 
-def _fget(self):
-    return "hello"
-    if self._get_rest_name(self.__name__) == _SENTINEL:
-        self._set_rest_name(attr_name=self.__name__, rest_name=rest_name)
-    return self.__getattr__(func.__name__)
+def _fdel(self, rest_name):
+    self.__delitem__(rest_name)
 
 class rest_property(property):
     def __init__(self, name):
-        super().__init__(fget=_fget)
-        self._name = name
+        super().__init__(
+            functools.partial(_fget, rest_name=name),
+            functools.partial(_fset, rest_name=name),
+            functools.partial(_fdel, rest_name=name)
+        )
+        self._rest_name = name
+        self._attr_name = None
 
     def __call__(self, func):
-        rest_name = self._name
-        def wrapper(self, *args, **kwargs):
-            if self._get_rest_name(func.__name__) == _SENTINEL:
-                self._set_rest_name(attr_name=func.__name__, rest_name=rest_name)
-            return self.__getattr__(func.__name__)
-        return property(wrapper)
-
-_MY_MODEL_PROPERTIES = [
-    "_attr_name_to_rest_name",
-    "_get_rest_name",
-    "_set_rest_name",
-]
-
+        self._attr_name = func.__name__
+        return self
 
 class Model(dict):
 
@@ -185,47 +178,6 @@ class Model(dict):
         if isinstance(other, self.__class__):
             return self.__dict__ == other.__dict__
         return super().__eq__(other)
-
-    def __getattr__(self, attr):
-        if attr in _MY_MODEL_PROPERTIES:
-            return super().__getattribute__(attr)
-        if not self.__hasattr__(attr):
-            raise AttributeError(
-                "{} instance has no attribute '{}'".format(
-                    type(self).__name__,
-                    attr
-                )
-            )
-
-        return self.__getitem__(self._get_rest_name(attr))
-
-    def _get_rest_name(self, attr_name):
-        if not hasattr(self, "_attr_name_to_rest_name"):
-            self._attr_name_to_rest_name = {}
-        return self._attr_name_to_rest_name.get(attr_name, _SENTINEL)
-
-    def _set_rest_name(self, attr_name, rest_name):
-        if not hasattr(self, "_attr_name_to_rest_name"):
-            self._attr_name_to_rest_name = {}
-        self._attr_name_to_rest_name[attr_name] = rest_name
-
-    def __setattr__(self, name, value):
-        # the properties on the base class
-        if name in _MY_MODEL_PROPERTIES:
-            super().__setattr__(name, value)
-        else:
-            self.__setitem__(self._get_rest_name(name), value)
-            property.setter(rest_property(name), value)
-
-    def __delattr__(self, attr):
-        if attr in _MY_MODEL_PROPERTIES:
-            return super().__delattr__(attr)
-        return self.__delitem__(self._get_rest_name(attr))
-
-    def __hasattr__(self, attr):
-        if attr in _MY_MODEL_PROPERTIES:
-            return True
-        return self._get_rest_name(attr) != _SENTINEL
 
     def copy(self):
         return Model(self.__dict__)
