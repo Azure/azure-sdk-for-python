@@ -15,10 +15,9 @@ from msrest.serialization import UTC
 from urllib.parse import urlparse
 import datetime as dt
 
-from devtools_testutils import AzureRecordedTestCase, CachedResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 
-from azure_devtools.scenario_tests import ReplayableTest
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from azure.core.messaging import CloudEvent
 from azure.core.serialization import NULL
@@ -31,7 +30,7 @@ from eventgrid_preparer import (
 )
 
 
-class TestEventGridPublisherClient(AzureRecordedTestCase):
+class TestEventGridPublisherClient(AzureMgmtRecordedTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
@@ -344,8 +343,6 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
-    @recorded_by_proxy_async
-    @pytest.mark.asyncio
     def test_send_NONE_credential_async(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         with pytest.raises(ValueError, match="Parameter 'self._credential' must not be None."):
             client = EventGridPublisherClient(eventgrid_topic_endpoint, None)

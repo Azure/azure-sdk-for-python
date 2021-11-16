@@ -1,7 +1,7 @@
 
 import json
 import pytest
-from devtools_testutils import AzureRecordedTestCase, CachedResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
@@ -12,7 +12,7 @@ from eventgrid_preparer import (
     CachedEventGridTopicPreparer,
 )
 
-class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
+class TestEventGridPublisherClientCncf(AzureMgmtRecordedTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')

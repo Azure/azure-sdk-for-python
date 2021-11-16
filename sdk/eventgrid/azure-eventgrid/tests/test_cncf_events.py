@@ -1,6 +1,6 @@
 
 import json
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, CachedResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, CachedResourceGroupPreparer
 
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from azure.eventgrid import EventGridPublisherClient
@@ -10,7 +10,7 @@ from eventgrid_preparer import (
     CachedEventGridTopicPreparer,
 )
 
-class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
+class TestEventGridPublisherClientCncf(AzureMgmtRecordedTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')

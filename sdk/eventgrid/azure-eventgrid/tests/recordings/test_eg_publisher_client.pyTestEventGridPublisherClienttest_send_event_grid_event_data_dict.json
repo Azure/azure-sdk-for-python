@@ -1,0 +1,29 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://eventgridtestzup7kkexjmx.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "212",
+        "Content-Type": "application/json; charset=utf-8",
+        "User-Agent": "azsdk-python-eventgrid/4.7.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
+        "x-ms-client-request-id": "57b323d4-4678-11ec-945a-2816a845e8c6"
+      },
+      "RequestBody": "[{\u0022id\u0022: \u00225a01fe33-3896-44d5-9d6e-3fc008f7411a\u0022, \u0022subject\u0022: \u0022sample\u0022, \u0022data\u0022: {\u0022sample\u0022: \u0022eventgridevent\u0022}, \u0022eventType\u0022: \u0022Sample.EventGrid.Event\u0022, \u0022eventTime\u0022: \u00222021-11-16T00:58:42.295055Z\u0022, \u0022dataVersion\u0022: \u00222.0\u0022}]",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2018-01-01",
+        "Content-Length": "0",
+        "Date": "Tue, 16 Nov 2021 00:58:43 GMT",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-ms-request-id": "77e81a0c-5aa8-42c8-ad00-c6f625a7ba6e"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

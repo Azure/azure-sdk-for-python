@@ -19,7 +19,7 @@ try:
 except ImportError:
     from urlparse import urlparse
 
-from devtools_testutils import  AzureRecordedTestCase, recorded_by_proxy, CachedResourceGroupPreparer
+from devtools_testutils import  AzureMgmtRecordedTestCase, recorded_by_proxy, CachedResourceGroupPreparer
 
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from azure.core.messaging import CloudEvent
@@ -31,7 +31,7 @@ from eventgrid_preparer import (
     CachedEventGridTopicPreparer,
 )
 
-class TestEventGridPublisherClient(AzureRecordedTestCase):
+class TestEventGridPublisherClient(AzureMgmtRecordedTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
