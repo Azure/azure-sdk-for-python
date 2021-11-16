@@ -88,7 +88,10 @@ class CommunicationRelayClient:
             **kwargs # type: Any
         ) -> 'CommunicationRelayConfiguration':
         """get a Communication Relay configuration.
-        :param: CommunicationUserIdentifier user: A user from which we will get an id
+        :param user: Azure Communication User
+        :type user: ~azure.communication.identity.CommunicationUserIdentifier
+        :param route_type: Azure Communication Route Type
+        :type route_type: ~azure.communication.networktraversal.RouteType
         :return: CommunicationRelayConfiguration
         :rtype: ~azure.communication.networktraversal.models.CommunicationRelayConfiguration
         """

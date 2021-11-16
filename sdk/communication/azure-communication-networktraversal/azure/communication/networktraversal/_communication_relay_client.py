@@ -13,10 +13,12 @@ from ._generated._communication_network_traversal_client\
         as CommunicationNetworkTraversalClientGen
 from ._shared.utils import parse_connection_str, get_authentication_policy
 from ._version import SDK_MONIKER
+from ._generated.models import CommunicationRelayConfiguration
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.communication.identity import CommunicationUserIdentifier
+    from azure.communication.networktraversal import RouteType
 
 class CommunicationRelayClient(object):
     """Azure Communication Services Relay client.
@@ -84,12 +86,16 @@ class CommunicationRelayClient(object):
     @distributed_trace
     def get_relay_configuration(
             self,
-            user: 'CommunicationUserIdentifier' = None,
-            route_type: 'CommunicationRelayConfigurationRequestRouteType' = None,
+            user=None, # type: CommunicationUserIdentifier
+            route_type=None, #type: RouteType
             **kwargs # type: Any
-    ) -> 'CommunicationRelayConfiguration':
+    ):
+    # type: (...) -> CommunicationRelayConfiguration
         """get a Communication Relay configuration
-        :param: CommunicationUserIdentifier user: A user from which we will get an id
+        :param user: Azure Communication User
+        :type user: ~azure.communication.identity.CommunicationUserIdentifier
+        :param route_type: Azure Communication Route Type
+        :type route_type: ~azure.communication.networktraversal.RouteType
         :return: CommunicationRelayConfiguration
         :rtype: ~azure.communication.networktraversal.models.CommunicationRelayConfiguration
         """

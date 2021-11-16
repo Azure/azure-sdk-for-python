@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-networktraversal/1.0.0b1 Python/3.7.4 (Windows-10-10.0.22494-SP0)
       x-ms-date:
-      - Tue, 16 Nov 2021 04:40:47 GMT
+      - Tue, 16 Nov 2021 18:12:14 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -25,8 +25,8 @@ interactions:
       string: '{"iceServers": [{"routeType": "any", "urls": ["turn.skype.com", "turn:world.relay.skype.com:3478"],
         "username": "sanitized", "credential": "sanitized"}, {"routeType": "nearest",
         "urls": ["stun:13.107.17.41:3478", "turn:13.107.17.41:3478"], "username":
-        "BQAANnSBao0B19w2X3qe7o9e7W+6rvySC4FEqP0Jp0QAAAAMARCsgNlqhd5IsZldo6P6NifIf0Y1au0lIjmsCWlNNw3+1jt/4FE=",
-        "credential": "jcE0W+ai0GTWM29K0Q4nnsVS4UI="}], "expiresOn": "2021-11-16T04:40:47.1711817+00:00"}'
+        "BQAANtBz/NYB19yn7SY1nkF612kTjgmPttjhkO6JCNwAAAAMARCsgNlqhd5IsZldo6P6NifID2+vKJ0vXLUjx7ZnoagxJH/7578=",
+        "credential": "HaIJfgMzmK926LaQhAYHwNHmcl8="}], "expiresOn": "2021-11-16T18:12:14.5755767+00:00"}'
     headers:
       api-supported-versions:
       - 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview
@@ -35,9 +35,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 16 Nov 2021 04:40:46 GMT
+      - Tue, 16 Nov 2021 18:12:14 GMT
       ms-cv:
-      - 7iXw5vjfgkGvhAx8VKBp2Q.0
+      - tkBLnT2bVEOs+LkVHtAWtA.0
       request-context:
       - appId=
       strict-transport-security:
