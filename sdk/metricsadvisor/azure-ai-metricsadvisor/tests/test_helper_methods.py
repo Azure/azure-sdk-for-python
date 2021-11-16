@@ -7,7 +7,7 @@
 
 import datetime
 import pytest
-from azure.ai.metricsadvisor._helpers import convert_datetime
+from azure.ai.metricsadvisor._patch import convert_datetime
 
 
 def test_convert_datetime():

@@ -1,5 +1,5 @@
 -e ../../../tools/azure-sdk-tools
 -e ../../../tools/azure-devtools
 -e ../../identity/azure-identity
-../../core/azure-core
+git+https://github.com/iscai-msft/azure-sdk-for-python@version_tolerant_models#subdirectory=sdk/core/azure-core&egg=azure-core
 aiohttp>=3.0; python_version >= '3.5'
