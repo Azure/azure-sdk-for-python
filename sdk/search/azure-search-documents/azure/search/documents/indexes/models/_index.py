@@ -258,7 +258,7 @@ class SearchField(msrest.serialization.Model):
             analyzer_name=search_field.analyzer,
             search_analyzer_name=search_field.search_analyzer,
             index_analyzer_name=search_field.index_analyzer,
-            normalizer=normalizer,
+            normalizer_name=normalizer,
             synonym_map_names=search_field.synonym_maps,
             fields=fields,
         )
