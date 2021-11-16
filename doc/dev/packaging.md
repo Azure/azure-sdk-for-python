@@ -1,6 +1,6 @@
 # Azure packaging
 
-This article describes the recommendation on how to define namespace packaging to release a package inside the `azure` namespace. Being inside the `azure` namespace meaning you have a service `myservice` that you want to import using:
+This article describes the recommendations for defining namespace packaging to release a package inside the `azure` namespace. Being inside the `azure` namespace means that a service `myservice` can be imported using:
 ```python
 import azure.myservice
 ```
@@ -11,9 +11,9 @@ Namespace packaging is complicated in Python, here's a few reading if you still 
 - https://github.com/pypa/sample-namespace-packages
 
 Note:
-While this article provides example using setup.py, there is no problem with achieving it with setup.cfg or other methods, as long as the constraints on the final wheels/sdist are met.
+While this article provides an example using setup.py, this can also be achieved with setup.cfg or other methods, as long as the constraints on the final wheels/sdist are met.
 
-*This page has been updated to be Python 3 only packages as we do not recommend to support Python 2 after January 1st 2022.* If you still want to support Python 2 for some reasons, there is a section at the bottom with some details (or you have the Github history, to read the page as it was on November 1st 2021).
+*This page has been updated to be Python 3 only packages as we do not recommend supporting Python 2 after January 1st 2022.* If you still want to support Python 2 for some reasons, there is a section at the bottom with some details (or you have the Github history, to read the page as it was on November 1st 2021).
 
 # What are the constraints?
 
@@ -138,12 +138,12 @@ Since the package is Python 3 only, do NOT make this wheel universal. This usual
 # How can I check if my packages are built correctly?
 
 - wheel file must NOT contain a `azure/__init__.py` file (you can open it with a zip util to check)
-- wheel file name finishes with `py3-none-any`, and NOT by `py2.py3-none-any`.
+- wheel file name suffix is `py3-none-any`, and NOT `py2.py3-none-any`.
 - sdist must contain a `azure/__init__.py` file that declares `azure` as a namespace package using the `pkgutil` syntax
 
 # I already have a package that supports Python 2, can I get short version on how to udpate to Python 3 only?
 
-- Remove "universal" from setup.cfg, or remove completly the file if it was the only option
+- Remove "universal" from setup.cfg, or completly remove the file if it was the only option
 - In setup.py:
   - Remove `extra_requires`
   - Add `python_requires=">=3.7",`
@@ -153,7 +153,7 @@ Since the package is Python 3 only, do NOT make this wheel universal. This usual
 
 # Note on checking old Azure packages
 
-You may see code looking like this:
+You may see code in `setup.py` looking like this:
 ```python
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
