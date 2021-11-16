@@ -20,7 +20,6 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
             access_key, # type: str
             decode_url=False # type: bool
         ):
-        # pylint: disable=bad-option-value,useless-object-inheritance,disable=super-with-arguments
         # type: (...) -> None
         super(HMACCredentialsPolicy, self).__init__()
 
