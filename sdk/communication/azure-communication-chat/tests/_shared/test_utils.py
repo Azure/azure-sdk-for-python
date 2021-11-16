@@ -11,7 +11,10 @@ class UtilsTest(unittest.TestCase):
     def test_convert_datetime_to_utc_int(self):
         # UTC
         utc_time_in_sec = _convert_datetime_to_utc_int(datetime(1970, 1, 1, 0, 0, 0, 0, tzinfo=dateutil.tz.tzutc()))
-        assert utc_time_in_sec == 0
+        assert utc_time_in_sec == 0        
+        # UTC naive (without a timezone specified)
+        utc_naive_time_in_sec = _convert_datetime_to_utc_int(datetime(1970, 1, 1, 0, 0, 0, 0))
+        assert utc_naive_time_in_sec == 0
         # PST is UTC-8
         pst_time_in_sec = _convert_datetime_to_utc_int(datetime(1970, 1, 1, 0, 0, 0, 0, tzinfo=dateutil.tz.gettz('America/Vancouver')))
         assert pst_time_in_sec == 8 * 3600
