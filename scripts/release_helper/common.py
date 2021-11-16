@@ -100,7 +100,13 @@ class IssueProcess:
             self.readme_link = link.split('/resource-manager')[0] + '/resource-manager'
 
     def get_default_readme_tag(self):
-        pass
+        pattern_resource_manager = re.compile(r'/specification/([\w-]+/)+resource-manager')
+        readme_path = pattern_resource_manager.search(self.readme_link).group()+'/readme.md'
+        contents = str(self.issue.rest_repo.get_contents(readme_path).decoded_content)
+        pattern_tag = re.compile(r'tag: package-[\w+-.]+')
+        default_tag = pattern_tag.findall(contents)
+        default_tag = default_tag[0].split(':')[-1].strip()
+
 
     def edit_issue_body(self) -> None:
         pass
