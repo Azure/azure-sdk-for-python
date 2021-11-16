@@ -1,0 +1,56 @@
+# Release status statistics
+
+name: ReleaseIssueStatus
+
+trigger:
+  branches:
+    exclude:
+    - '*'
+
+
+jobs:
+- job: ReleaseIssueStatus
+  displayName: ReleaseIssueStatus Python 3.8
+  timeoutInMinutes: 30
+  strategy:
+    maxParallel: 3
+  pool:
+    vmImage: 'ubuntu-20.04'
+  steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.8'
+        addToPath: true
+        architecture: 'x64'
+    - bash: |
+        script_path=$(pwd)/scripts/release_issue_status
+        cd ..
+        git config --global user.email "ReleaseIssueStatus"
+        git config --global user.name "ReleaseIssueStatus"
+
+        # clone(REPO: https://github.com/Azure/azure-sdk-for-python.git, USR_NAME: Azure, USR_TOKEN: xxxxxxxxxxxxx)
+        mkdir file-storage
+        git clone ${REPO:0:8}$(USR_NAME):$(USR_TOKEN)@${REPO:8} $(pwd)/file-storage
+
+        # import env variable
+        export CONN_STR=$(ENV_CONN_STR)
+        export FILE=$(ENV_FILE)
+        export TOKEN=$(USR_TOKEN)
+        export HEADERS=$(PIPELINE_HEADERS)
+        export URL=$(PIPELINE_URL)
+        export PIPELINE_TOKEN=$(PIPELINE-TOKEN)
+        export JF_TOKEN=$(Jiefeng-GitToken)
+        export ZED_TOKEN=$(Zed-GitToken)
+        export COOKIE=$(USR_TOKEN)
+
+        # create virtual env
+        python -m venv venv-sdk
+        source venv-sdk/bin/activate
+        pip install -r $script_path/requirement.txt
+
+        # checkout the target branch
+        cd file-storage
+        git checkout release-issue-status
+
+        # run
+        python $script_path/main.py
