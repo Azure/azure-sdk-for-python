@@ -75,6 +75,7 @@ class AzureRecordedTestCase(object):
     def recording_processors(self):
         return []
 
+    @property
     def is_playback(self):
         return not self.is_live
 
