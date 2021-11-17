@@ -4,10 +4,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import xml.etree.ElementTree as ET
 import base64
-import functools
-from json import JSONEncoder, JSONDecoder
+import re
+import isodate
+from json import JSONEncoder
 from typing import Any, Dict, Type, Union, cast, Literal, Optional
 from datetime import datetime, date, time, timedelta
 from .utils._utils import _FixedOffset
@@ -146,57 +146,46 @@ class AzureJSONEncoder(JSONEncoder):
                 pass
             return super(AzureJSONEncoder, self).default(o)
 
-def _deserialize_base64(attr: str) -> bytes:
-    """Deserialize base64 encoded string into string.
 
-    :param str attr: string to be deserialized.
-    :rtype: bytearray
-    :raises: TypeError if string format invalid.
+_VALID_DATE = re.compile(
+    r'\d{4}[-]\d{2}[-]\d{2}T\d{2}:\d{2}:\d{2}'
+    r'\.?\d*Z?[-+]?[\d{2}]?:?[\d{2}]?')
+
+def _deserialize_datetime(attr: str) -> datetime:
+    """Deserialize ISO-8601 formatted string into Datetime object.
+
+    :param str attr: response string to be deserialized.
+    :rtype: ~datetime.datetime
     """
-    padding = '=' * (3 - (len(attr) + 3) % 4)
-    attr = attr + padding
-    encoded = attr.replace('-', '+').replace('_', '/')
-    return base64.b64decode(encoded)
+    attr = attr.upper()
+    match = _VALID_DATE.match(attr)
+    if not match:
+        raise ValueError("Invalid datetime string: " + attr)
 
-TYPES = Literal[
-    'base64'
-]
+    check_decimal = attr.split('.')
+    if len(check_decimal) > 1:
+        decimal_str = ""
+        for digit in check_decimal[1]:
+            if digit.isdigit():
+                decimal_str += digit
+            else:
+                break
+        if len(decimal_str) > 6:
+            attr = attr.replace(decimal_str, decimal_str[0:6])
 
-def _deserialize(obj: Any, type: Union[TYPES, Type]) -> Any:
+    date_obj = isodate.parse_datetime(attr)
+    test_utc = date_obj.utctimetuple()
+    if test_utc.tm_year > 9999 or test_utc.tm_year < 1:
+        raise OverflowError("Hit max or min date")
+    return date_obj
+
+def _deserialize(obj: Any, type) -> Any:
     try:
         return type(obj)
-    except TypeError:
-        if type == "base64":
-            return _deserialize_base64(obj)
+    except Exception:
+        if type == datetime:
+            return _deserialize_datetime(obj)
         return obj
-
-def _fget(self, rest_name: str, type: Optional[str]):
-    retval = self.__getitem__(rest_name)
-    if not type:
-        return retval
-    return _deserialize(retval, type)
-
-def _fset(self, value: Any, rest_name: str):
-    self.__setitem__(rest_name, value)
-
-def _fdel(self, rest_name: str):
-    self.__delitem__(rest_name)
-
-class rest_property(property):
-    def __init__(self, name):
-        super().__init__(
-            functools.partial(_fget, rest_name=name, type=type),
-            functools.partial(_fset, rest_name=name),
-            functools.partial(_fdel, rest_name=name)
-        )
-        self._annotations = None
-
-    def __call__(self, func):
-        try:
-            self._annotations = func.__annotations__['return']
-        except KeyError:
-            raise TypeError(f"You need to add a response type annotation to the property {func.__name__}.")
-        return self
 
 class Model(dict):
 
@@ -208,3 +197,26 @@ class Model(dict):
 
     def copy(self):
         return Model(self.__dict__)
+
+class rest_property:
+    def __init__(self, name: Optional[str] = None):
+        self._deserialization_type = None
+        self._rest_name = name
+
+    def __get__(self, obj: Model, type=None):
+        return _deserialize(obj.__getitem__(self._rest_name), self._deserialization_type)
+
+    def __set__(self, obj: Model, value) -> None:
+        obj.__setitem__(self._rest_name, value)
+
+    def __delete__(self, obj) -> None:
+        obj.__delitem__(self._rest_name)
+
+    def __call__(self, func):
+        try:
+            self._deserialization_type = func.__annotations__['return']
+        except KeyError:
+            raise TypeError(f"You need to add a response type annotation to the property {func.__name__}.")
+        if not self._rest_name:
+            self._rest_name = func.__name__
+        return self

@@ -3,9 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
-import base64
+import datetime
 from typing import Any, List, Literal
 import pytest
+import isodate
 from azure.core.serialization import Model, rest_property
 
 def modify_args(init):
@@ -118,7 +119,7 @@ def test_has_no_property():
     class BasicResourceWithProperty(BasicResource):
 
         @rest_property(name="noprop")
-        def no_prop(self):
+        def no_prop(self) -> str:
             """Added prop"""
 
     model = BasicResourceWithProperty(dict_response)
@@ -133,8 +134,8 @@ def test_has_no_property():
 def test_original_and_attr_name_same():
 
     class MyModel(Model):
-        @rest_property(name="hello")
-        def hello(self):
+        @rest_property()
+        def hello(self) -> str:
             """Prop with the same attr and dict name"""
 
     dict_response = {"hello": "nihao"}
@@ -179,7 +180,7 @@ def test_property_is_a_type():
 
     class Fishery(Model):
 
-        @rest_property(name="fish", type=Fish)
+        @rest_property(name="fish")
         def fish(self) -> Fish:
             """The fish in my fishery."""
 
@@ -188,26 +189,26 @@ def test_property_is_a_type():
     assert fishery.fish.name == fishery.fish['name'] == fishery['fish']['name'] == "Benjamin"
     assert fishery.fish.species == fishery.fish['species'] == fishery['fish']['species'] == "Salmon"
 
-def test_base64_deserialize():
-    class Base64Model(Model):
+def test_datetime_deserialization():
+    class DatetimeModel(Model):
 
-        @rest_property(name="base64Value", type="base64")
-        def base64_value(self) -> bytes:
-            """My base 64 Value"""
+        @rest_property(name="datetimeValue")
+        def datetime_value(self) -> datetime.datetime:
+            """My datetime Value"""
 
-    val = bytearray([0x0FF, 0x0FE, 0x0FD, 0x0FC, 0x0FB, 0x0FA, 0x0F9, 0x0F8, 0x0F7, 0x0F6])
-    val_str = base64.b64encode(val).decode()
-    model = Base64Model({"base64Value": val_str})
-    assert model['base64Value'] == val_str
-    assert model.base64_value == val
+    val_str = "9999-12-31T23:59:59.999Z"
+    val = isodate.parse_datetime(val_str)
+    model = DatetimeModel({"datetimeValue": val_str})
+    assert model['datetimeValue'] == val_str
+    assert model.datetime_value == val
 
     class BaseModel(Model):
 
         @rest_property(name="myProp")
-        def my_prop(self) -> Base64Model:
-            """My property, which is an instance of Base64Model"""
+        def my_prop(self) -> DatetimeModel:
+            """My property, which is an instance of DatetimeModel"""
 
-    model = BaseModel({"myProp": {"base64Value": val_str}})
-    assert isinstance(model.my_prop, Base64Model)
-    assert model.my_prop['base64Value'] == model['myProp']['base64Value'] == val_str
-    assert model.my_prop.base64_value == val
+    model = BaseModel({"myProp": {"datetimeValue": val_str}})
+    assert isinstance(model.my_prop, DatetimeModel)
+    assert model.my_prop['datetimeValue'] == model['myProp']['datetimeValue'] == val_str
+    assert model.my_prop.datetime_value == val
