@@ -6,11 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._question_answering_projects_client import QuestionAnsweringProjectsClient
-__all__ = ['QuestionAnsweringProjectsClient']
+from ._operations import QuestionAnsweringProjectsOperations
 
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
+__all__ = [
+    'QuestionAnsweringProjectsOperations',
+]

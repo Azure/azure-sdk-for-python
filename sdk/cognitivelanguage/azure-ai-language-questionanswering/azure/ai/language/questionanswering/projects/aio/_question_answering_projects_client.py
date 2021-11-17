@@ -7,23 +7,23 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, Optional
 
 from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from msrest import Deserializer, Serializer
 
+from .. import models
 from ._configuration import QuestionAnsweringProjectsClientConfiguration
-from ._operations import QuestionAnsweringProjectsClientOperationsMixin
+from .operations import QuestionAnsweringProjectsOperations
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Dict
-
-class QuestionAnsweringProjectsClient(QuestionAnsweringProjectsClientOperationsMixin):
+class QuestionAnsweringProjectsClient:
     """The language service API is a suite of natural language processing (NLP) skills built with best-in-class Microsoft machine learning algorithms.  The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction, language detection and question answering. Further documentation can be found in :code:`<a href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
 
+    :ivar question_answering_projects: QuestionAnsweringProjectsOperations operations
+    :vartype question_answering_projects:
+     azure.ai.language.questionanswering.projects.aio.operations.QuestionAnsweringProjectsOperations
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
     :type endpoint: str
@@ -46,9 +46,11 @@ class QuestionAnsweringProjectsClient(QuestionAnsweringProjectsClientOperationsM
         self._config = QuestionAnsweringProjectsClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        self._serialize = Serializer()
-        self._deserialize = Deserializer()
+        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self._serialize = Serializer(client_models)
+        self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
+        self.question_answering_projects = QuestionAnsweringProjectsOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def send_request(

@@ -9,7 +9,8 @@
 from ._question_answering_projects_client import QuestionAnsweringProjectsClient
 __all__ = ['QuestionAnsweringProjectsClient']
 
-# `._patch.py` is used for handwritten extensions to the generated code
-# Example: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
-from ._patch import patch_sdk
-patch_sdk()
+try:
+    from ._patch import patch_sdk  # type: ignore
+    patch_sdk()
+except ImportError:
+    pass
