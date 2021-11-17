@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.1.0b2 Python/3.7.4 (Windows-10-10.0.22494-SP0)
       x-ms-date:
-      - Tue, 16 Nov 2021 23:06:39 GMT
+      - Tue, 16 Nov 2021 23:06:40 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -34,7 +34,7 @@ interactions:
       date:
       - Tue, 16 Nov 2021 23:06:39 GMT
       ms-cv:
-      - U9b65h5ASkKa+KIPCvUxWQ.0
+      - rmh6d+6tBkiqtYEPdBND/Q.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,12 +42,12 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 41ms
+      - 43ms
     status:
       code: 201
       message: Created
 - request:
-    body: '{"id": "sanitized"}'
+    body: '{"id": "sanitized", "routeType": "any"}'
     headers:
       Accept:
       - application/json
@@ -56,13 +56,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '89'
+      - '109'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-communication-networktraversal/1.0.0b1 Python/3.7.4 (Windows-10-10.0.22494-SP0)
       x-ms-date:
-      - Tue, 16 Nov 2021 23:06:39 GMT
+      - Tue, 16 Nov 2021 23:06:40 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -70,21 +70,18 @@ interactions:
   response:
     body:
       string: '{"iceServers": [{"routeType": "any", "urls": ["turn.skype.com", "turn:world.relay.skype.com:3478"],
-        "username": "sanitized", "credential": "sanitized"}, {"routeType": "nearest",
-        "urls": ["stun:13.107.17.41:3478", "turn:13.107.17.41:3478"], "username":
-        "BQAANvHfttoB19zQystmgxt0S2mLYX7tGAxJeabzv9sAAAAMARCsgNlqhd5IsZldo6P6NifItsKK7e2LnRB0Ih7ljEfqyuKo124=",
-        "credential": "jCELLqJ7zq/h3iDdbwz9KEikIt0="}], "expiresOn": "2021-11-16T23:06:40.0024453+00:00"}'
+        "username": "sanitized", "credential": "sanitized"}], "expiresOn": "2021-11-16T23:06:40.4127712+00:00"}'
     headers:
       api-supported-versions:
       - 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview
       content-length:
-      - '560'
+      - '319'
       content-type:
       - application/json; charset=utf-8
       date:
       - Tue, 16 Nov 2021 23:06:39 GMT
       ms-cv:
-      - qEuVYpr70Ei+7tA9v36ydg.0
+      - fuapfk2WNE2Qo3K+cXomnw.0
       request-context:
       - appId=
       strict-transport-security:
@@ -92,7 +89,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 40ms
+      - 39ms
     status:
       code: 200
       message: OK
