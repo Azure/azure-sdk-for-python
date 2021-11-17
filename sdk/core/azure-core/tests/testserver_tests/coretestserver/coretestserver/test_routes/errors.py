@@ -33,3 +33,24 @@ def get_short_data():
     response.automatically_set_content_length = False
     response.headers["Content-Length"] = "8"
     return response
+
+@errors_api.route('/non-odatav4-body', methods=['GET'])
+def get_non_odata_v4_response_body():
+    return Response(
+        '{"code": 400, "error": {"global": ["MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API"]}}',
+        status=400
+    )
+
+@errors_api.route('/malformed-json', methods=['GET'])
+def get_malformed_json():
+    return Response(
+        '{"code": 400, "error": {"global": ["MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API"]',
+        status=400
+    )
+
+@errors_api.route('/text', methods=['GET'])
+def get_text_body():
+    return Response(
+        'I am throwing an error',
+        status=400
+    )

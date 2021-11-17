@@ -37,6 +37,7 @@ from azure.core.exceptions import HttpResponseError, ODataV4Error, ODataV4Format
 from azure.core.pipeline.transport import RequestsTransportResponse
 from azure.core.pipeline.transport._base import _HttpResponseBase as PipelineTransportHttpResponseBase
 from azure.core.rest._http_response_impl import _HttpResponseBaseImpl as RestHttpResponseBase
+from utils import HTTP_REQUESTS
 
 class PipelineTransportMockResponse(PipelineTransportHttpResponseBase):
     def __init__(self, json_body):
@@ -285,3 +286,27 @@ class TestExceptions(object):
         }
         exp = HttpResponseError(response=mock_response(json.dumps(message).encode("utf-8")))
         assert exp.error.code == "501"
+
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    def test_non_odatav4_error_body(self, client, http_request):
+        request = http_request("GET", "/errors/non-odatav4-body")
+        response = client.send_request(request)
+        with pytest.raises(HttpResponseError) as ex:
+            response.raise_for_status()
+        assert str(ex.value) == "Operation returned an invalid status 'BAD REQUEST'. Error: {\"code\": 400, \"error\": {\"global\": [\"MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API\"]}}."
+
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    def test_malformed_json(self, client, http_request):
+        request = http_request("GET", "/errors/malformed-json")
+        response = client.send_request(request)
+        with pytest.raises(HttpResponseError) as ex:
+            response.raise_for_status()
+        assert str(ex.value) == "Operation returned an invalid status 'BAD REQUEST'. Error: {\"code\": 400, \"error\": {\"global\": [\"MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API\"]."
+
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    def test_text(self, client, http_request):
+        request = http_request("GET", "/errors/text")
+        response = client.send_request(request)
+        with pytest.raises(HttpResponseError) as ex:
+            response.raise_for_status()
+        assert str(ex.value) == "Operation returned an invalid status 'BAD REQUEST'. Error: I am throwing an error."

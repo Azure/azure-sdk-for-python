@@ -333,6 +333,16 @@ class HttpResponseError(AzureError):
             pass
         return None
 
+    def __str__(self):
+        retval = super(HttpResponseError, self).__str__()
+        try:
+            body = self.response.text()
+            if body:
+                return "{}. Error: {}.".format(retval, body)[:2048]
+            return retval
+        except Exception:
+            return retval
+
 
 class DecodeError(HttpResponseError):
     """Error raised during response deserialization."""
