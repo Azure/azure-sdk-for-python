@@ -44,7 +44,7 @@ def publish_event():
             sample_members = sample(services, k=randint(1, 4))      # select random subset of team members
             event = CloudEvent(
                     type="Azure.Sdk.Demo",
-                    source='/demo/domain_name',
+                    source='domainname',
                     data={"team": sample_members}
                     )
             event_list.append(event)
