@@ -6,11 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._communication_network_traversal_client import CommunicationNetworkTraversalClient
-__all__ = ['CommunicationNetworkTraversalClient']
+from enum import Enum
+from six import with_metaclass
+from azure.core import CaseInsensitiveEnumMeta
 
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
+
+class RouteType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The routing methodology to where the ICE server will be located from the client.
+    """
+
+    ANY = "any"
+    NEAREST = "nearest"

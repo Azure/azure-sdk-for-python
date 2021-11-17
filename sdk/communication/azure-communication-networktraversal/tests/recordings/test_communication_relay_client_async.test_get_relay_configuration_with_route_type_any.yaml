@@ -24,23 +24,23 @@ interactions:
         2021-03-31-preview1, 2021-10-31-preview, 2021-11-01
       content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Tue, 16 Nov 2021 23:06:40 GMT
-      ms-cv: 4ptSJ2AmVE+PjMCylDY7Aw.0
+      date: Tue, 16 Nov 2021 23:06:41 GMT
+      ms-cv: +m4qlverWU2x1qiBYz7jkw.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 21ms
+      x-processing-time: 24ms
     status:
       code: 201
       message: Created
     url: https://smstestapp.communication.azure.com/identities?api-version=2021-10-31-preview
 - request:
-    body: '{"id": "sanitized"}'
+    body: '{"id": "sanitized", "routeType": "any"}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '89'
+      - '109'
       Content-Type:
       - application/json
       User-Agent:
@@ -54,20 +54,17 @@ interactions:
   response:
     body:
       string: '{"iceServers": [{"routeType": "any", "urls": ["turn.skype.com", "turn:world.relay.skype.com:3478"],
-        "username": "sanitized", "credential": "sanitized"}, {"routeType": "nearest",
-        "urls": ["stun:13.107.17.41:3478", "turn:13.107.17.41:3478"], "username":
-        "BQAANvLEk3sB19zQDFB99XfvREaYUjaW+99mXybbmD8AAAAMARCsgNlqhd5IsZldo6P6NifI+iWmJVl8G6EL9UYo+n1+3Vjdkrg=",
-        "credential": "HHySJRALhMrETWsv/DWRtfjHZ4E="}], "expiresOn": "2021-11-16T23:06:41.5125461+00:00"}'
+        "username": "sanitized", "credential": "sanitized"}], "expiresOn": "2021-11-16T23:06:41.9304572+00:00"}'
     headers:
       api-supported-versions: 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview
-      content-length: '560'
+      content-length: '319'
       content-type: application/json; charset=utf-8
       date: Tue, 16 Nov 2021 23:06:41 GMT
-      ms-cv: cxYKkXL150+Dhco9akfN/Q.0
+      ms-cv: KRB1BWGVHk24ApJNUrmViw.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 21ms
+      x-processing-time: 280ms
     status:
       code: 200
       message: OK
