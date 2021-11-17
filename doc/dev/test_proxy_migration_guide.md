@@ -139,6 +139,7 @@ For more details about sanitizers and their options, please refer to [devtools_t
 
 To enable test proxy on the CI, you need to set the parameter `TestProxy: true` on ci.yml and on tests.yml are present in the service level folder.
 
+![image](https://user-images.githubusercontent.com/45376673/142270668-5be58bca-87e5-45f5-b593-44f8b1f757bc.png)
 ### Record test variables
 
 To run recorded tests successfully when there's an element of non-secret randomness to them, the test proxy provides a
