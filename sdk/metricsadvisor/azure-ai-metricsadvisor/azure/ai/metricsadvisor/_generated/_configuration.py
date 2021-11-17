@@ -11,13 +11,14 @@ from typing import TYPE_CHECKING
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
+from ._version import VERSION
+
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
 
     from azure.core.credentials import TokenCredential
 
-VERSION = "unknown"
 
 class MetricsAdvisorConfiguration(Configuration):
     """Configuration for MetricsAdvisor.
@@ -38,11 +39,11 @@ class MetricsAdvisorConfiguration(Configuration):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
+        super(MetricsAdvisorConfiguration, self).__init__(**kwargs)
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        super(MetricsAdvisorConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.endpoint = endpoint
