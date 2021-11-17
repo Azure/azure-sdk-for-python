@@ -11,7 +11,11 @@ import json
 import pytest
 import uuid
 from datetime import datetime, timedelta
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ServiceRequestError
+from azure.core.exceptions import (
+    HttpResponseError,
+    ClientAuthenticationError,
+    ServiceRequestError
+)
 from msrest.serialization import UTC
 import datetime as dt
 
@@ -47,7 +51,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 event_type="Sample.EventGrid.Event",
                 data_version="2.0"
                 )
-        with pytest.raises(HttpResponseError, match="The request authorization key is not authorized for*"):
+        with pytest.raises(ClientAuthenticationError, match="The request authorization key is not authorized for*"):
             client.send(eg_event)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
@@ -79,5 +83,6 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 event_type="Sample.EventGrid.Event",
                 data_version="2.0"
                 )
-        with pytest.raises(HttpResponseError):
+        with pytest.raises(HttpResponseError) as err:
             client.send(eg_event)
+        assert "The maximum size (1536000) has been exceeded." in err.value.message
