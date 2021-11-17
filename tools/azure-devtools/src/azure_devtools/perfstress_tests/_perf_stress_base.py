@@ -3,13 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from typing import List, Tuple
+from typing import Any
 import abc
-import datetime
 import threading
 
 
-class _PerfStressTestABC(abc.ABC):
+class _PerfTestABC(abc.ABC):
 
     @property
     @abc.abstractmethod
@@ -21,7 +20,7 @@ class _PerfStressTestABC(abc.ABC):
 
     @property
     @abc.abstractmethod
-    def last_completion_time(self) -> datetime.datetime:
+    def last_completion_time(self) -> float:
         """
         Elapsed time between start of warmup/run and last completed operation.
         Reset after warmup.
@@ -29,7 +28,7 @@ class _PerfStressTestABC(abc.ABC):
 
     @property
     @abc.abstractmethod
-    def latencies(self) -> List[datetime.timedelta]:
+    def latencies(self) -> Any:
         """
         Elapsed time between start and end of each completed operation.
         Reset after warmup.
@@ -39,7 +38,7 @@ class _PerfStressTestABC(abc.ABC):
 
     @property
     @abc.abstractmethod
-    def corrected_latencies(self) -> List[datetime.timedelta]:
+    def corrected_latencies(self) -> Any:
         """
         Elapsed time between scheduled start and actual end of each completed operation.
         Reset after warmup.
@@ -49,10 +48,11 @@ class _PerfStressTestABC(abc.ABC):
 
     @property
     @abc.abstractmethod
-    def pending_operations(self) -> Tuple[datetime.timedelta, int]:
+    def pending_operations(self) -> Any:
         """
         Channel containing the scheduled start time of each operation.
         Also includes a Stopwatch measuring elapsed time since scheduled start.
+        NOT YET SUPPORTED IN PYTHON
         """
 
     @abc.abstractmethod
@@ -116,7 +116,7 @@ class _PerfStressTestABC(abc.ABC):
         """
 
 
-class _PerfStressTestBase(_PerfStressTestABC):
+class _PerfTestBase(_PerfTestABC):
     """Base class for implementing a python perf test."""
 
     args = {}
@@ -126,11 +126,11 @@ class _PerfStressTestBase(_PerfStressTestABC):
     def __init__(self, arguments):
         self.args = arguments
         self._completed_operations = 0
-        self._last_completion_time = None
+        self._last_completion_time = 0.0
 
-        with _PerfStressTestBase._global_parallel_index_lock:
-            self._parallel_index = _PerfStressTestBase._global_parallel_index
-            _PerfStressTestBase._global_parallel_index += 1
+        with _PerfTestBase._global_parallel_index_lock:
+            self._parallel_index = _PerfTestBase._global_parallel_index
+            _PerfTestBase._global_parallel_index += 1
 
     @property
     def completed_operations(self) -> int:
@@ -141,7 +141,7 @@ class _PerfStressTestBase(_PerfStressTestABC):
         return self._completed_operations
 
     @property
-    def last_completion_time(self) -> datetime.datetime:
+    def last_completion_time(self) -> float:
         """
         Elapsed time between start of warmup/run and last completed operation.
         Reset after warmup.
@@ -149,7 +149,7 @@ class _PerfStressTestBase(_PerfStressTestABC):
         return self._last_completion_time
 
     @property
-    def latencies(self) -> List[datetime.timedelta]:
+    def latencies(self) -> Any:
         """
         Elapsed time between start and end of each completed operation.
         Reset after warmup.
@@ -159,7 +159,7 @@ class _PerfStressTestBase(_PerfStressTestABC):
         raise NotImplementedError()
 
     @property
-    def corrected_latencies(self) -> List[datetime.timedelta]:
+    def corrected_latencies(self) -> Any:
         """
         Elapsed time between scheduled start and actual end of each completed operation.
         Reset after warmup.
@@ -169,10 +169,11 @@ class _PerfStressTestBase(_PerfStressTestABC):
         raise NotImplementedError()
 
     @property
-    def pending_operations(self) -> Tuple[datetime.timedelta, int]:
+    def pending_operations(self) -> Any:
         """
         Channel containing the scheduled start time of each operation.
         Also includes a Stopwatch measuring elapsed time since scheduled start.
+        NOT YET SUPPORTED IN PYTHON
         """
         raise NotImplementedError()
 
