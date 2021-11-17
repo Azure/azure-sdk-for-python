@@ -435,6 +435,9 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
         if parsed_args.tenvparallel:
             tox_execution_array.extend(["-p", "all"])
 
+        if parsed_args.output_path:
+            local_options_array.extend(["--out-path", parsed_args.output_path])
+
         if local_options_array:
             tox_execution_array.extend(["--"] + local_options_array)
 

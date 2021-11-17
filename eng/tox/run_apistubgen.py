@@ -42,10 +42,17 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "-w",
-        "--work_dir",
+        "--work-dir",
         dest="work_dir",
         help="Working directory to run apistubgen",
         required=True,
+    )
+
+    parser.add_argument(
+        "-o",
+        "--out-path",
+        dest="out_path",
+        help="Output directory to generate json token file"
     )
     
     args = parser.parse_args()
@@ -56,9 +63,9 @@ if __name__ == "__main__":
     if not pkg_path:
         pkg_path = args.target_package
 
-    out_dir = args.work_dir
-    staging_dir = os.getenv("STAGING_DIRECTORY")
-    if staging_dir:
-        out_dir = os.path.join(staging_dir, os.path.basename(pkg_path))
-    print("Running apistubgen on {0}. Json output path: {1}".format(pkg_path, out_dir))
-    check_call(["apistubgen", "--pkg-path", pkg_path, "--out-path", out_dir], cwd=args.work_dir)
+    cmds = ["apistubgen", "--pkg-path", pkg_path]
+    if args.out_path:        
+        cmds.extend(["--out-path", os.path.join(args.out_path, os.path.basename(pkg_path))])
+
+    print("Running apistubgen {}.".format(cmds))
+    check_call(cmds, cwd=args.work_dir)
