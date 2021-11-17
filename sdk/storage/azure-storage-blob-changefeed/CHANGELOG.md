@@ -1,5 +1,6 @@
-## 12.0.0b3 (Unreleased)
-
+## 12.0.0b3 (2021-11-17)
+**Fixes**
+- `pip install` now supports latest blob version
 
 ## 12.0.0b2 (2020-9-10)
 **Breaking changes**
