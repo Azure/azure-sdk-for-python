@@ -58,12 +58,48 @@ identity_client = CommunicationIdentityClient.from_connection_string(self.connec
 relay_client = CommunicationRelayClient.from_connection_string(self.connection_string)
 ```
 
-### Getting the relay configuration 
+### Getting the relay configuration providing a user
 
 ```python
 # We need a user from Identity
 user = identity_client.create_user()
 relay_configuration = relay_client.get_relay_configuration(user)
+
+for iceServer in config.ice_servers:
+    assert iceServer.username is not None
+    print('Username: ' + iceServer.username)
+
+    assert iceServer.credential is not None
+    print('Credential: ' + iceServer.credential)
+    
+    assert iceServer.urls is not None
+    for url in iceServer.urls:
+        print('Url:' + url)
+```
+
+### Getting the relay configuration without providing a user
+
+```python
+relay_configuration = relay_client.get_relay_configuration()
+
+for iceServer in config.ice_servers:
+    assert iceServer.username is not None
+    print('Username: ' + iceServer.username)
+
+    assert iceServer.credential is not None
+    print('Credential: ' + iceServer.credential)
+    
+    assert iceServer.urls is not None
+    for url in iceServer.urls:
+        print('Url:' + url)
+```
+
+### Getting the relay configuration without providing a RouteType
+
+```python
+# We need a user from Identity
+user = identity_client.create_user()
+relay_configuration = relay_client.get_relay_configuration(user, RouteType.NEAREST)
 
 for iceServer in config.ice_servers:
     assert iceServer.username is not None

@@ -6,4 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.0.1"
+from enum import Enum
+from six import with_metaclass
+from azure.core import CaseInsensitiveEnumMeta
+
+
+class RouteType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The routing methodology to where the ICE server will be located from the client.
+    """
+
+    ANY = "any"
+    NEAREST = "nearest"
