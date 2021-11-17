@@ -18,19 +18,20 @@ from .repeated_timer import RepeatedTimer
 
 
 class PerfStressRunner:
-    def __init__(self, test_folder_path=None):
-        if test_folder_path is None:
-            # Use current working directory
-            test_folder_path = os.getcwd()
+    def __init__(self, test_folder_path=None, debug=False):
 
         self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(level=logging.INFO)
         handler = logging.StreamHandler()
-        handler.setLevel(level=logging.INFO)
+        if debug:
+            self.logger.setLevel(level=logging.DEBUG)
+            handler.setLevel(level=logging.DEBUG)
+        else:
+            self.logger.setLevel(level=logging.INFO)
+            handler.setLevel(level=logging.INFO)
         self.logger.addHandler(handler)
 
         # NOTE: If you need to support registering multiple test locations, move this into Initialize, call lazily on Run, expose RegisterTestLocation function.
-        self._discover_tests(test_folder_path)
+        self._discover_tests(test_folder_path or os.getcwd())
         self._parse_args()
 
     def _get_completed_operations(self):
@@ -100,6 +101,9 @@ class PerfStressRunner:
             "-x", "--test-proxies", help="URIs of TestProxy Servers (separated by ';')",
             type=lambda s: s.split(';')
         )
+        per_test_arg_parser.add_argument(
+            "--insecure", action="store_true", help="Disable SSL validation. Default is False.", default=False
+        )
 
         # Per-test args
         self._test_class_to_run.add_arguments(per_test_arg_parser)
@@ -115,11 +119,11 @@ class PerfStressRunner:
         self._test_classes = {}
 
         # Dynamically enumerate all python modules under the tests path for classes that implement PerfStressTest
-        for loader, name, _ in pkgutil.walk_packages([test_folder_path]):
+        for loader, name, _ in pkgutil.walk_packages([test_folder_path, os.path.join(test_folder_path, 'tests')]):
             try:
                 module = loader.find_module(name).load_module(name)
             except Exception as e:
-                self.logger.warn("Unable to load module {}: {}".format(name, e))
+                self.logger.debug("Unable to load module {}: {}".format(name, e))
                 continue
             for name, value in inspect.getmembers(module):
 

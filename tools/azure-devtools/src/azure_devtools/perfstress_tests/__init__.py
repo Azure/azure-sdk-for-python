@@ -20,9 +20,15 @@ def run_perfstress_cmd():
     loop.run_until_complete(main_loop.start())
 
 
+def run_perfstress_debug_cmd():
+    main_loop = PerfStressRunner(debug=True)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main_loop.start())
+
+
 def run_system_perfstress_tests_cmd():
     root_dir = os.path.dirname(os.path.abspath(__file__))
     sys_test_dir = os.path.join(root_dir, "system_perfstress")
-    main_loop = PerfStressRunner(test_folder_path=sys_test_dir)
+    main_loop = PerfStressRunner(test_folder_path=sys_test_dir, debug=True)
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main_loop.start())
