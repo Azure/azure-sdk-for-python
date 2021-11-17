@@ -10,10 +10,6 @@ parameters:
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
 steps:
-  - script: |
-      $env:STAGING_DIRECTORY = "$(Build.ArtifactStagingDirectory)"
-    displayName: "Set Staging Directory Env Variable"
-
   - task: PythonScript@0
     condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
     displayName: 'Generate API stub files'
@@ -22,6 +18,7 @@ steps:
       arguments: >-
         "$(TargetingString)"
         ${{ parameters.AdditionalTestArgs }}
+        -d "$(Build.ArtifactStagingDirectory)"
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv="apistub"
