@@ -135,6 +135,10 @@ made to `https://fakeendpoint-secondary.table.core.windows.net`, and URIs will a
 
 For more details about sanitizers and their options, please refer to [devtools_testutils/sanitizers.py][py_sanitizers].
 
+### Enabling Testproxy on the CI
+
+To enable test proxy on the CI, you need to set the parameter `TestProxy: true` on ci.yml and on tests.yml are present in the service level folder.
+
 ### Record test variables
 
 To run recorded tests successfully when there's an element of non-secret randomness to them, the test proxy provides a
