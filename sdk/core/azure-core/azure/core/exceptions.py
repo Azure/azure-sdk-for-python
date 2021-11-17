@@ -340,7 +340,7 @@ class HttpResponseError(AzureError):
             if body:
                 return "{}. Error: {}.".format(retval, body)[:2048]
             return retval
-        except Exception:
+        except Exception:  # pylint: disable=broad-except
             return retval
 
 
