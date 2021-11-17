@@ -594,7 +594,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         properties.can_list = kwargs.pop("can_list", properties.can_list)
         properties.can_read = kwargs.pop("can_read", properties.can_read)
         properties.can_write = kwargs.pop("can_write", properties.can_write)
-        properties.teleport_enabled = kwargs.pop("teleport_enabled", None)
 
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry.update_properties(

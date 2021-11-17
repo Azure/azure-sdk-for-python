@@ -10,6 +10,7 @@ from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 from .._generated.aio import ContainerRegistry
+from .._generated.models import PostContentSchemaGrantType
 from .._helpers import _parse_challenge, _parse_exp_time
 from .._user_agent import USER_AGENT
 
@@ -68,7 +69,7 @@ class ACRExchangeClient(object):
     async def exchange_aad_token_for_refresh_token(self, service: str = None, **kwargs: Dict[str, Any]) -> str:
         token = await self._credential.get_token(*self.credential_scopes)
         refresh_token = await self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
-            service, token.token, **kwargs
+            service, token.token, grant_type=PostContentSchemaGrantType.ACCESS_TOKEN, **kwargs
         )
         return refresh_token.refresh_token
 

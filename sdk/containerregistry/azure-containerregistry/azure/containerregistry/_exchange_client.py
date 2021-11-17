@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Dict, Any
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 from ._generated import ContainerRegistry
+from ._generated.models import PostContentSchemaGrantType
 from ._helpers import _parse_challenge, _parse_exp_time
 from ._user_agent import USER_AGENT
 
@@ -73,7 +74,7 @@ class ACRExchangeClient(object):
     def exchange_aad_token_for_refresh_token(self, service=None, **kwargs):
         # type: (str, Dict[str, Any]) -> str
         refresh_token = self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
-            service=service, access_token=self._credential.get_token(*self.credential_scopes).token, **kwargs
+            service=service, access_token=self._credential.get_token(*self.credential_scopes).token, grant_type=PostContentSchemaGrantType.ACCESS_TOKEN, **kwargs
         )
         return refresh_token.refresh_token
 
