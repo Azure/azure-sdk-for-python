@@ -24,6 +24,7 @@ class IssueProcess:
     bot = ''  # bot advice to help SDK owner
     target_readme_tag = ''  # swagger content that customers want
     readme_link = ''  # https link which swagger definition is in
+    default_readme_tag = ''  # configured in `README.md`
 
     def __init__(self, issue: IssuePackage, request_repo_dict: Dict[str, Repository]):
         self.issue = issue
@@ -105,6 +106,9 @@ class IssueProcess:
     def edit_issue_body(self) -> None:
         pass
 
+    def check_tag_consistency(self) -> None:
+        pass
+
     def auto_parse(self) -> None:
         if AUTO_PARSE_LABEL in self.issue.labels_name:
             return
@@ -120,6 +124,8 @@ class IssueProcess:
 
         # get default tag with readme_link
         self.get_default_readme_tag()
+
+        self.check_tag_consisitency()
 
         self.edit_issue_body()
 
