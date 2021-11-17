@@ -73,6 +73,7 @@ from ...utils._pipeline_transport_rest_shared import (
     _get_raw_parts_helper,
     _parts_helper,
 )
+from .._tools import rstrip_one, lstrip_one
 
 
 if TYPE_CHECKING:
@@ -127,8 +128,8 @@ def _strip_and_combine_url_sections(base_section, stub_section, join_symbol):
     :returns: The joined sections
     :rtype: str
     """
-    stripped_base = base_section.rstrip(join_symbol)
-    stripped_stub = stub_section.lstrip(join_symbol)
+    stripped_base = rstrip_one(base_section, join_symbol)
+    stripped_stub = lstrip_one(stub_section, join_symbol)
     joiner = ""
     if stripped_base != base_section or stripped_stub != stub_section:
         joiner = join_symbol

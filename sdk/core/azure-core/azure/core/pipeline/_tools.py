@@ -38,6 +38,18 @@ def await_result(func, *args, **kwargs):
         )
     return result
 
+def rstrip_one(input, character):
+    # type: (str, str) -> str
+    if input.endswith(character):
+        input = input[:len(input) - 1]
+    return input
+
+def lstrip_one(input, character):
+    # type: (str, str) -> str
+    if input.startswith(character):
+        input = input[1:]
+    return input
+
 def is_rest(obj):
     # type: (Any) -> bool
     """Return whether a request or a response is a rest request / response.

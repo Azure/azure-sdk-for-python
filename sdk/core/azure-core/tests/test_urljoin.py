@@ -36,11 +36,8 @@ def test_query():
     )
 
 def test_extra_slashes():
-    assert (
-        _urljoin("http://example.com//", "hello") ==
-        _urljoin("http://example.com///", "/hello") ==
-        "http://example.com/hello"
-    )
+    assert _urljoin("http://example.com//", "hello") == "http://example.com//hello"
+    assert _urljoin("http://example.com///", "/hello") == "http://example.com///hello"
 
 def test_colons():
     assert (
