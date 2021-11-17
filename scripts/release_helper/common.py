@@ -125,7 +125,7 @@ class IssueProcess:
         # get default tag with readme_link
         self.get_default_readme_tag()
 
-        self.check_tag_consisitency()
+        self.check_tag_consistency()
 
         self.edit_issue_body()
 
