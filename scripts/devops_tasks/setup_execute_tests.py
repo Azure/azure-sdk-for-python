@@ -286,7 +286,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "-d",
-        "--dest-dir,
+        "--dest-dir",
         dest="dest_dir",
         help="Location to generate any output files(if any). For e.g. apiview stub file",
     )
