@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.1.0b2 Python/3.7.4 (Windows-10-10.0.22494-SP0)
       x-ms-date:
-      - Tue, 16 Nov 2021 18:12:13 GMT
+      - Tue, 16 Nov 2021 23:06:39 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -32,9 +32,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 16 Nov 2021 18:12:13 GMT
+      - Tue, 16 Nov 2021 23:06:39 GMT
       ms-cv:
-      - rMk10TBNvUqvS4oHz1IS/A.0
+      - U9b65h5ASkKa+KIPCvUxWQ.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,7 +42,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 22ms
+      - 41ms
     status:
       code: 201
       message: Created
@@ -62,7 +62,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-networktraversal/1.0.0b1 Python/3.7.4 (Windows-10-10.0.22494-SP0)
       x-ms-date:
-      - Tue, 16 Nov 2021 18:12:13 GMT
+      - Tue, 16 Nov 2021 23:06:39 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -72,8 +72,8 @@ interactions:
       string: '{"iceServers": [{"routeType": "any", "urls": ["turn.skype.com", "turn:world.relay.skype.com:3478"],
         "username": "sanitized", "credential": "sanitized"}, {"routeType": "nearest",
         "urls": ["stun:13.107.17.41:3478", "turn:13.107.17.41:3478"], "username":
-        "BQAANs/yomQB19ynHsyCrY2MbvzaJwv0gMDo0xYRPUkAAAAMARCsgNlqhd5IsZldo6P6NifIRdfvTVWYnnh2/8NGGhXsQ4Rxtr4=",
-        "credential": "lOKKYLHezJ6nfn9w2XkK4VLnn6w="}], "expiresOn": "2021-11-16T18:12:13.7183673+00:00"}'
+        "BQAANvHfttoB19zQystmgxt0S2mLYX7tGAxJeabzv9sAAAAMARCsgNlqhd5IsZldo6P6NifItsKK7e2LnRB0Ih7ljEfqyuKo124=",
+        "credential": "jCELLqJ7zq/h3iDdbwz9KEikIt0="}], "expiresOn": "2021-11-16T23:06:40.0024453+00:00"}'
     headers:
       api-supported-versions:
       - 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview
@@ -82,9 +82,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 16 Nov 2021 18:12:13 GMT
+      - Tue, 16 Nov 2021 23:06:39 GMT
       ms-cv:
-      - a8WXPhWFpEKMOH10HY4JQw.0
+      - qEuVYpr70Ei+7tA9v36ydg.0
       request-context:
       - appId=
       strict-transport-security:
@@ -92,7 +92,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 21ms
+      - 40ms
     status:
       code: 200
       message: OK

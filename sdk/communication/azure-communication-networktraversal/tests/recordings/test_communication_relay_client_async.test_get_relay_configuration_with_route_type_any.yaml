@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.1.0b2 Python/3.7.4 (Windows-10-10.0.22494-SP0)
       x-ms-date:
-      - Tue, 16 Nov 2021 18:12:14 GMT
+      - Tue, 16 Nov 2021 23:06:41 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -24,12 +24,12 @@ interactions:
         2021-03-31-preview1, 2021-10-31-preview, 2021-11-01
       content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Tue, 16 Nov 2021 18:12:14 GMT
-      ms-cv: LEAkDfI/fEi/OJCg03CiIQ.0
+      date: Tue, 16 Nov 2021 23:06:41 GMT
+      ms-cv: +m4qlverWU2x1qiBYz7jkw.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 28ms
+      x-processing-time: 24ms
     status:
       code: 201
       message: Created
@@ -46,7 +46,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-networktraversal/1.0.0b1 Python/3.7.4 (Windows-10-10.0.22494-SP0)
       x-ms-date:
-      - Tue, 16 Nov 2021 18:12:14 GMT
+      - Tue, 16 Nov 2021 23:06:41 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -54,17 +54,17 @@ interactions:
   response:
     body:
       string: '{"iceServers": [{"routeType": "any", "urls": ["turn.skype.com", "turn:world.relay.skype.com:3478"],
-        "username": "sanitized", "credential": "sanitized"}], "expiresOn": "2021-11-16T18:12:14.9614738+00:00"}'
+        "username": "sanitized", "credential": "sanitized"}], "expiresOn": "2021-11-16T23:06:41.9304572+00:00"}'
     headers:
       api-supported-versions: 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview
       content-length: '319'
       content-type: application/json; charset=utf-8
-      date: Tue, 16 Nov 2021 18:12:14 GMT
-      ms-cv: t/AVmHA780enpqECFu5waw.0
+      date: Tue, 16 Nov 2021 23:06:41 GMT
+      ms-cv: KRB1BWGVHk24ApJNUrmViw.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 22ms
+      x-processing-time: 280ms
     status:
       code: 200
       message: OK

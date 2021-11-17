@@ -87,7 +87,7 @@ class CommunicationRelayClient(object):
     def get_relay_configuration(
             self,
             user=None, # type: CommunicationUserIdentifier
-            route_type=None, #type: RouteType
+            route_type=None, # type: Optional[Union[str, "RouteType"]]
             **kwargs # type: Any
     ):
     # type: (...) -> CommunicationRelayConfiguration
