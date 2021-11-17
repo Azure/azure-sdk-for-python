@@ -7,6 +7,7 @@
 import pytest
 import functools
 from io import BytesIO
+from devtools_testutils import recorded_by_proxy
 from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormRecognizerApiVersion, DocumentAnalysisClient
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -18,9 +19,11 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 
 
 class TestBusinessCard(FormRecognizerTest):
-
+    
+    @pytest.mark.skip
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_passing_enum_content_type(self, client):
         with open(self.business_card_png, "rb") as fd:
             myfile = fd.read()
@@ -31,8 +34,10 @@ class TestBusinessCard(FormRecognizerTest):
         result = poller.result()
         assert result is not None
 
+    @pytest.mark.skip
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_damaged_file_bytes_fails_autodetect_content_type(self, client):
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
         with self.assertRaises(ValueError):
@@ -40,8 +45,10 @@ class TestBusinessCard(FormRecognizerTest):
                 damaged_pdf
             )
 
+    @pytest.mark.skip
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_damaged_file_bytes_io_fails_autodetect(self, client):
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
         with self.assertRaises(ValueError):
@@ -49,8 +56,10 @@ class TestBusinessCard(FormRecognizerTest):
                 damaged_pdf
             )
 
+    @pytest.mark.skip
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_passing_bad_content_type_param_passed(self, client):
         with open(self.business_card_jpg, "rb") as fd:
             myfile = fd.read()
@@ -60,8 +69,10 @@ class TestBusinessCard(FormRecognizerTest):
                 content_type="application/jpeg"
             )
 
+    @pytest.mark.skip
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_business_card_multipage_pdf(self, client):
         with open(self.business_card_multipage_pdf, "rb") as fd:
             business_card = fd.read()
@@ -119,8 +130,10 @@ class TestBusinessCard(FormRecognizerTest):
         assert len(business_card.fields.get("CompanyNames").value) == 1
         assert business_card.fields.get("CompanyNames").value[0].value == "Contoso"
 
+    @pytest.mark.skip
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_business_card_multipage_pdf(self, client):
 
         with open(self.business_card_multipage_pdf, "rb") as fd:
@@ -181,8 +194,10 @@ class TestBusinessCard(FormRecognizerTest):
         assert len(business_card.fields.get("CompanyNames").value) == 1
         assert business_card.fields.get("CompanyNames").value[0].value == "Contoso"
 
+    @pytest.mark.skip
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_business_card_jpg_include_field_elements(self, client):
         with open(self.business_card_jpg, "rb") as fd:
             business_card = fd.read()
@@ -234,6 +249,7 @@ class TestBusinessCard(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
+    @recorded_by_proxy
     def test_business_card_v2(self, client):
         with open(self.business_card_jpg, "rb") as fd:
             business_card = fd.read()

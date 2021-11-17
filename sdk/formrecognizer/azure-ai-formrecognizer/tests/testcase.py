@@ -16,7 +16,7 @@ from azure.ai.formrecognizer._helpers import (
     adjust_confidence,
     adjust_text_angle
 )
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from azure_devtools.scenario_tests import (
     RecordingProcessor,
     ReplayableTest
@@ -112,10 +112,10 @@ class FakeTokenCredential(object):
         return self.token
 
 
-class FormRecognizerTest(AzureTestCase):
-    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key']
+class FormRecognizerTest(AzureRecordedTestCase):
+    # FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key']
 
-    def __init__(self, method_name):
+    def some_func(self, method_name):
         super(FormRecognizerTest, self).__init__(method_name)
         self.vcr.match_on = ["path", "method", "query"]
         self.recording_processors.append(AccessTokenReplacer())
