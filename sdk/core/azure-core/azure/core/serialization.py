@@ -183,14 +183,19 @@ def _fdel(self, rest_name: str):
     self.__delitem__(rest_name)
 
 class rest_property(property):
-    def __init__(self, name, type: Union[TYPES, Type] = None):
+    def __init__(self, name):
         super().__init__(
             functools.partial(_fget, rest_name=name, type=type),
             functools.partial(_fset, rest_name=name),
             functools.partial(_fdel, rest_name=name)
         )
+        self._annotations = None
 
     def __call__(self, func):
+        try:
+            self._annotations = func.__annotations__['return']
+        except KeyError:
+            raise TypeError(f"You need to add a response type annotation to the property {func.__name__}.")
         return self
 
 class Model(dict):

@@ -190,6 +190,7 @@ def test_property_is_a_type():
 
 def test_base64_deserialize():
     class Base64Model(Model):
+
         @rest_property(name="base64Value", type="base64")
         def base64_value(self) -> bytes:
             """My base 64 Value"""
@@ -202,7 +203,7 @@ def test_base64_deserialize():
 
     class BaseModel(Model):
 
-        @rest_property(name="myProp", type=Base64Model)
+        @rest_property(name="myProp")
         def my_prop(self) -> Base64Model:
             """My property, which is an instance of Base64Model"""
 
